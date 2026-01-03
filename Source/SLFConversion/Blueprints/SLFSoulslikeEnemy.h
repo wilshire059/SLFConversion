@@ -1,0 +1,128 @@
+// SLFSoulslikeEnemy.h
+// C++ base class for B_Soulslike_Enemy
+//
+// ═══════════════════════════════════════════════════════════════════════════════
+// MIGRATION SUMMARY - B_Soulslike_Enemy
+// ═══════════════════════════════════════════════════════════════════════════════
+// Variables:         1/1 migrated (excluding 1 dispatcher counted separately)
+// Functions:         1/1 migrated (excluding EventGraph)
+// Event Dispatchers: 1/1 migrated
+// Interfaces:        BPI_Enemy (8), BPI_Executable (3)
+// Components:        4 (Healthbar, AC_AI_CombatManager, AC_AI_BehaviorManager, NS_Souls)
+// ═══════════════════════════════════════════════════════════════════════════════
+//
+// Original Blueprint: /Game/SoulslikeFramework/Blueprints/_Characters/B_Soulslike_Enemy
+//
+// PURPOSE: Base enemy character - AI perception, attack events
+// PARENT: B_BaseCharacter
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "SLFBaseCharacter.h"
+#include "Interfaces/BPI_Enemy.h"
+#include "Interfaces/BPI_Executable.h"
+#include "Components/WidgetComponent.h"
+#include "NiagaraComponent.h"
+#include "SLFSoulslikeEnemy.generated.h"
+
+// Forward declarations
+class UAICombatManagerComponent;
+class UAIBehaviorManagerComponent;
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// EVENT DISPATCHERS: 1/1 migrated
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/** [1/1] Called when attack sequence ends */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyAttackEnd);
+
+/**
+ * Soulslike enemy character - AI, perception, combat
+ * Implements BPI_Enemy (8 functions) and BPI_Executable (3 functions)
+ */
+UCLASS(Blueprintable, BlueprintType)
+class SLFCONVERSION_API ASLFSoulslikeEnemy : public ASLFBaseCharacter, public IBPI_Enemy, public IBPI_Executable
+{
+	GENERATED_BODY()
+
+public:
+	ASLFSoulslikeEnemy();
+
+protected:
+	virtual void BeginPlay() override;
+
+public:
+	// ═══════════════════════════════════════════════════════════════════
+	// COMPONENTS (from JSON)
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** Healthbar widget - named HealthbarWidget to avoid collision with Blueprint SCS "Healthbar" */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<UWidgetComponent> HealthbarWidget;
+
+	/** AI Combat Manager - named CombatManagerComponent to avoid collision with Blueprint SCS "AC_AI_CombatManager" */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<UAICombatManagerComponent> CombatManagerComponent;
+
+	/** AI Behavior Manager - named BehaviorManagerComponent to avoid collision with Blueprint SCS "AC_AI_BehaviorManager" */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<UAIBehaviorManagerComponent> BehaviorManagerComponent;
+
+	/** Souls VFX Niagara component - named SoulsNiagaraComponent to avoid collision with Blueprint SCS "NS_Souls" */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<UNiagaraComponent> SoulsNiagaraComponent;
+
+	// ═══════════════════════════════════════════════════════════════════
+	// VARIABLES: 1/1 migrated
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** [1/1] Unique identifier for this enemy instance */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy")
+	FGuid EnemyId;
+
+	/** Patrol path reference */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|AI")
+	TObjectPtr<AActor> PatrolPath;
+
+	// ═══════════════════════════════════════════════════════════════════
+	// EVENT DISPATCHERS: 1/1 migrated
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** [1/1] */
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnEnemyAttackEnd OnAttackEnd;
+
+	// ═══════════════════════════════════════════════════════════════════
+	// FUNCTIONS: 1/1 migrated
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** [1/1] Check if target is sensed by AI perception
+	 * @param Target - Actor to check for sensing
+	 * @return True if target is perceived
+	 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Enemy|AI")
+	bool CheckSense(AActor* Target);
+	virtual bool CheckSense_Implementation(AActor* Target);
+
+	// ═══════════════════════════════════════════════════════════════════
+	// BPI_ENEMY INTERFACE IMPLEMENTATIONS (8 functions)
+	// ═══════════════════════════════════════════════════════════════════
+
+	virtual void GetExecutionMoveToTransform_Implementation(FVector& MoveToLocation, FRotator& Rotation) override;
+	virtual void StopRotateTowardsTarget_Implementation() override;
+	virtual void RotateTowardsTarget_Implementation(double Duration) override;
+	virtual void PickAndSpawnLoot_Implementation() override;
+	virtual void GetPatrolPath_Implementation(AActor*& OutPatrolPath) override;
+	virtual void DisplayDeathVfx_Implementation(FVector AttractorPosition) override;
+	virtual void ToggleHealthbarVisual_Implementation(bool bVisible) override;
+	virtual void UpdateEnemyHealth_Implementation(double CurrentValue, double MaxValue, double Change) override;
+
+	// ═══════════════════════════════════════════════════════════════════
+	// BPI_EXECUTABLE INTERFACE IMPLEMENTATIONS (3 functions)
+	// ═══════════════════════════════════════════════════════════════════
+
+	virtual void OnExecutionStarted_Implementation() override;
+	virtual void OnExecuted_Implementation(FGameplayTag ExecutionTag) override;
+	virtual void OnBackstabbed_Implementation(FGameplayTag ExecutionTag) override;
+};
