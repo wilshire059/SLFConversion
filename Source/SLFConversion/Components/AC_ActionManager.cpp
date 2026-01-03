@@ -16,6 +16,7 @@
 #include "Blueprints/BFL_Helper.h"
 #include "Blueprints/B_Stat.h"
 #include "SLFStatTypes.h"
+#include "SLFPrimaryDataAssets.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "TimerManager.h"
@@ -791,25 +792,67 @@ void UAC_ActionManager::BuildAvailableActionsFromActionsMap()
 			continue;
 		}
 
-		// Get the ActionClass from the data asset using reflection
-		// PDA_Action has an ActionClass property that's a TSubclassOf<UB_Action>
-		FProperty* ActionClassProp = ActionData->GetClass()->FindPropertyByName(FName("ActionClass"));
-		if (ActionClassProp)
+		// Cast to UPDA_Action to access ActionClass directly
+		// This works for both C++ UPDA_Action and Blueprint PDA_Action (derived from UPDA_Action)
+		if (UPDA_Action* ActionAsset = Cast<UPDA_Action>(ActionData))
 		{
-			FClassProperty* ClassProp = CastField<FClassProperty>(ActionClassProp);
-			if (ClassProp)
+			// Load the soft class reference
+			if (!ActionAsset->ActionClass.IsNull())
 			{
-				UClass* ActionClass = Cast<UClass>(ClassProp->GetPropertyValue_InContainer(ActionData));
-				if (ActionClass && ActionClass->IsChildOf(UB_Action::StaticClass()))
+				UClass* LoadedClass = ActionAsset->ActionClass.LoadSynchronous();
+				if (LoadedClass && LoadedClass->IsChildOf(UB_Action::StaticClass()))
 				{
-					AvailableActions.Add(Tag, ActionClass);
-					UE_LOG(LogTemp, Verbose, TEXT("  Added: %s -> %s"), *Tag.ToString(), *ActionClass->GetName());
+					AvailableActions.Add(Tag, LoadedClass);
+					UE_LOG(LogTemp, Log, TEXT("  Added: %s -> %s"), *Tag.ToString(), *LoadedClass->GetName());
 				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("  ActionClass failed to load or invalid type for: %s"), *ActionData->GetName());
+				}
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("  ActionClass is null for: %s"), *ActionData->GetName());
 			}
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("  ActionClass property not found on %s"), *ActionData->GetName());
+			// Fallback: Try reflection for non-UPDA_Action assets (Blueprint-only classes)
+			FProperty* ActionClassProp = ActionData->GetClass()->FindPropertyByName(FName("ActionClass"));
+			if (ActionClassProp)
+			{
+				// Try soft class property first (Blueprint uses TSoftClassPtr)
+				FSoftClassProperty* SoftClassProp = CastField<FSoftClassProperty>(ActionClassProp);
+				if (SoftClassProp)
+				{
+					FSoftObjectPtr SoftClassPtr = SoftClassProp->GetPropertyValue_InContainer(ActionData);
+					UClass* ActionClass = Cast<UClass>(SoftClassPtr.LoadSynchronous());
+					if (ActionClass && ActionClass->IsChildOf(UB_Action::StaticClass()))
+					{
+						AvailableActions.Add(Tag, ActionClass);
+						UE_LOG(LogTemp, Log, TEXT("  Added (soft reflection): %s -> %s"), *Tag.ToString(), *ActionClass->GetName());
+					}
+				}
+				else
+				{
+					// Try hard class reference
+					FClassProperty* ClassProp = CastField<FClassProperty>(ActionClassProp);
+					if (ClassProp)
+					{
+						UClass* ActionClass = Cast<UClass>(ClassProp->GetPropertyValue_InContainer(ActionData));
+						if (ActionClass && ActionClass->IsChildOf(UB_Action::StaticClass()))
+						{
+							AvailableActions.Add(Tag, ActionClass);
+							UE_LOG(LogTemp, Log, TEXT("  Added (reflection): %s -> %s"), *Tag.ToString(), *ActionClass->GetName());
+						}
+					}
+				}
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("  Cannot cast to UPDA_Action and no ActionClass property on %s (class: %s)"),
+					*ActionData->GetName(), *ActionData->GetClass()->GetName());
+			}
 		}
 	}
 
