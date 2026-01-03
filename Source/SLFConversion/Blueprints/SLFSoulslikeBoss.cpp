@@ -47,14 +47,34 @@ void ASLFSoulslikeBoss::BeginPlay()
 void ASLFSoulslikeBoss::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	// Check if player entered the boss trigger area
-	if (OtherActor && OtherActor != this)
+	// From Blueprint: B_Soulslike_Boss EventGraph
+	// 1. Check if OtherActor has tag "Player"
+	// 2. Check if EncounterTriggerType == TriggerCollision (NewEnumerator1)
+	// 3. If both true, start fight
+
+	if (!OtherActor || OtherActor == this)
 	{
-		// Notify the boss component to start the encounter
+		return;
+	}
+
+	// Check if player entered (actor must have "Player" tag)
+	const bool bIsPlayer = OtherActor->ActorHasTag(FName("Player"));
+
+	// Check if trigger type is CollisionTrigger (enum index 1)
+	bool bIsTriggerEncounterType = false;
+	if (BossComponent)
+	{
+		bIsTriggerEncounterType = (BossComponent->EncounterTriggerType == ESLFAIBossEncounterType::CollisionTrigger);
+	}
+
+	// If both conditions met, start the fight
+	if (bIsPlayer && bIsTriggerEncounterType)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[SoulslikeBoss] Player entered trigger - starting boss encounter"));
+
 		if (BossComponent)
 		{
-			UE_LOG(LogTemp, Log, TEXT("[SoulslikeBoss] Trigger overlap - Actor: %s"), *OtherActor->GetName());
-			// BossComponent->StartBossEncounter(OtherActor); // TODO: Implement when BossComponent is migrated
+			BossComponent->SetFightActive(true);
 		}
 	}
 }

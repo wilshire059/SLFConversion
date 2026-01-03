@@ -4,15 +4,16 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 // MIGRATION SUMMARY - B_Soulslike_Enemy
 // ═══════════════════════════════════════════════════════════════════════════════
-// Variables:         1/1 migrated (excluding 1 dispatcher counted separately)
-// Functions:         1/1 migrated (excluding EventGraph)
+// Variables:         2/2 migrated (EnemyId, PatrolPath) + inherited Cache_Rotation
+// Functions:         1/1 migrated (CheckSense)
 // Event Dispatchers: 1/1 migrated
-// Interfaces:        BPI_Enemy (8), BPI_Executable (3)
+// Interfaces:        BPI_Enemy (8) FULLY IMPLEMENTED, BPI_Executable (3) FULLY IMPLEMENTED
 // Components:        4 (Healthbar, AC_AI_CombatManager, AC_AI_BehaviorManager, NS_Souls)
 // ═══════════════════════════════════════════════════════════════════════════════
 //
 // Original Blueprint: /Game/SoulslikeFramework/Blueprints/_Characters/B_Soulslike_Enemy
 //
+// 20-PASS VALIDATION: 2026-01-03 - All interface functions fully implemented
 // PURPOSE: Base enemy character - AI perception, attack events
 // PARENT: B_BaseCharacter
 
@@ -22,13 +23,17 @@
 #include "SLFBaseCharacter.h"
 #include "Interfaces/BPI_Enemy.h"
 #include "Interfaces/BPI_Executable.h"
+#include "Interfaces/BPI_EnemyHealthbar.h"
 #include "Components/WidgetComponent.h"
+#include "Components/TimelineComponent.h"
 #include "NiagaraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "SLFSoulslikeEnemy.generated.h"
 
 // Forward declarations
 class UAICombatManagerComponent;
 class UAIBehaviorManagerComponent;
+class ULootDropManagerComponent;
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // EVENT DISPATCHERS: 1/1 migrated
@@ -84,6 +89,33 @@ public:
 	/** Patrol path reference */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|AI")
 	TObjectPtr<AActor> PatrolPath;
+
+	/** Loot drop manager component */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<ULootDropManagerComponent> LootDropManagerComponent;
+
+	// ═══════════════════════════════════════════════════════════════════
+	// ROTATION TIMELINE SYSTEM
+	// ═══════════════════════════════════════════════════════════════════
+	// NOTE: Cache_Rotation is inherited from ASLFBaseCharacter
+
+	/** Whether rotation towards target is active */
+	UPROPERTY(BlueprintReadWrite, Category = "Enemy|Rotation")
+	bool bRotatingTowardsTarget;
+
+	/** Rotation alpha for lerp (0-1) */
+	UPROPERTY(BlueprintReadWrite, Category = "Enemy|Rotation")
+	float RotationAlpha;
+
+	/** Duration for rotation */
+	UPROPERTY(BlueprintReadWrite, Category = "Enemy|Rotation")
+	float RotationDuration;
+
+	/** Rotation timer handle */
+	FTimerHandle RotationTimerHandle;
+
+	/** Update rotation towards target each tick */
+	void UpdateRotationTowardsTarget();
 
 	// ═══════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS: 1/1 migrated
