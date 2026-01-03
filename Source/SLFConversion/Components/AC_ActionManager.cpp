@@ -22,6 +22,7 @@
 #include "TimerManager.h"
 #include "Engine/StreamableManager.h"
 #include "Engine/AssetManager.h"
+#include "Engine/Blueprint.h"
 
 UAC_ActionManager::UAC_ActionManager()
 {
@@ -42,22 +43,25 @@ UAC_ActionManager::UAC_ActionManager()
 void UAC_ActionManager::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(LogTemp, Log, TEXT("UAC_ActionManager::BeginPlay"));
 
 	// Migration fallback: If Actions map is empty, load default actions
+	bool bLoadedDefaults = false;
 	if (Actions.Num() == 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UAC_ActionManager::BeginPlay - Actions map empty, loading defaults"));
 		InitializeDefaultActions();
+		bLoadedDefaults = true;
 	}
 
-	// Build AvailableActions from Actions map
-	if (AvailableActions.Num() == 0 && Actions.Num() > 0)
+	// Build AvailableActions from Actions map if needed
+	if ((AvailableActions.Num() == 0 && Actions.Num() > 0) ||
+		bLoadedDefaults ||
+		(AvailableActions.Num() != Actions.Num() && Actions.Num() > 0))
 	{
 		BuildAvailableActionsFromActionsMap();
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("UAC_ActionManager::BeginPlay - Actions: %d, AvailableActions: %d"), Actions.Num(), AvailableActions.Num());
+	UE_LOG(LogTemp, Log, TEXT("UAC_ActionManager: Ready with %d actions (this=%p, Owner=%s)"),
+		AvailableActions.Num(), this, *GetOwner()->GetName());
 }
 
 void UAC_ActionManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -520,7 +524,8 @@ void UAC_ActionManager::StartStaminaRegen()
  */
 void UAC_ActionManager::EventPerformAction_Implementation(const FGameplayTag& ActionTag)
 {
-	UE_LOG(LogTemp, Log, TEXT("UAC_ActionManager::EventPerformAction - Tag: %s"), *ActionTag.ToString());
+	UE_LOG(LogTemp, Log, TEXT("UAC_ActionManager::EventPerformAction - Tag: %s, AvailableActions.Num()=%d, Actions.Num()=%d (this=%p)"),
+		*ActionTag.ToString(), AvailableActions.Num(), Actions.Num(), this);
 
 	// Validate the action tag
 	if (!ActionTag.IsValid())
@@ -529,18 +534,47 @@ void UAC_ActionManager::EventPerformAction_Implementation(const FGameplayTag& Ac
 		return;
 	}
 
+	// Debug: Log all keys in AvailableActions if it has entries
+	if (AvailableActions.Num() > 0 && AvailableActions.Num() < 30)
+	{
+		UE_LOG(LogTemp, Log, TEXT("  AvailableActions keys:"));
+		for (const auto& Pair : AvailableActions)
+		{
+			UE_LOG(LogTemp, Log, TEXT("    - %s"), *Pair.Key.ToString());
+		}
+	}
+
 	// Look up the action class in AvailableActions map
-	TSubclassOf<UB_Action>* ActionClassPtr = AvailableActions.Find(ActionTag);
+	// Using UClass* instead of TSubclassOf to avoid parent chain validation issues
+	UClass** ActionClassPtr = AvailableActions.Find(ActionTag);
+
+	// Fallback: If direct lookup fails, try string-based matching
+	// This handles cases where serialized tags and RequestGameplayTag() create different objects
+	if (!ActionClassPtr || !*ActionClassPtr)
+	{
+		FString ActionTagString = ActionTag.ToString();
+		for (auto& Pair : AvailableActions)
+		{
+			if (Pair.Key.ToString() == ActionTagString)
+			{
+				ActionClassPtr = &Pair.Value;
+				UE_LOG(LogTemp, Log, TEXT("  Found via string match: %s"), *ActionTagString);
+				break;
+			}
+		}
+	}
+
 	if (!ActionClassPtr || !*ActionClassPtr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("  Action class not found in AvailableActions map for tag: %s"), *ActionTag.ToString());
 		return;
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("  Found action class: %s"), *(*ActionClassPtr)->GetName());
+	UClass* ActionClass = *ActionClassPtr;
+	UE_LOG(LogTemp, Log, TEXT("  Found action class: %s"), *ActionClass->GetName());
 
 	// Create an instance of the action class
-	UB_Action* ActionInstance = NewObject<UB_Action>(this, *ActionClassPtr);
+	UB_Action* ActionInstance = NewObject<UB_Action>(this, ActionClass);
 	if (!ActionInstance)
 	{
 		UE_LOG(LogTemp, Error, TEXT("  Failed to create action instance"));
@@ -699,8 +733,6 @@ void UAC_ActionManager::OnActionLoaded()
  */
 void UAC_ActionManager::InitializeDefaultActions()
 {
-	UE_LOG(LogTemp, Log, TEXT("UAC_ActionManager::InitializeDefaultActions - Populating default actions"));
-
 	// Mapping: {TagName, AssetFileName} - Tag names from DefaultGameplayTags.ini, asset names from /Data/Actions/ActionData/
 	struct FActionMapping { const TCHAR* TagName; const TCHAR* AssetName; };
 	static const FActionMapping ActionMappings[] = {
@@ -739,9 +771,6 @@ void UAC_ActionManager::InitializeDefaultActions()
 		{TEXT("ScrollWheel.Bottom"), TEXT("ScrollWheel_Tools")},
 	};
 
-	int32 LoadedCount = 0;
-	const int32 NumMappings = sizeof(ActionMappings) / sizeof(ActionMappings[0]);
-
 	for (const FActionMapping& Mapping : ActionMappings)
 	{
 		FString TagString = FString::Printf(TEXT("SoulslikeFramework.Action.%s"), Mapping.TagName);
@@ -750,25 +779,15 @@ void UAC_ActionManager::InitializeDefaultActions()
 		FGameplayTag Tag = FGameplayTag::RequestGameplayTag(FName(*TagString), false);
 		if (!Tag.IsValid())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("  Tag not found: %s"), *TagString);
 			continue;
 		}
 
-		// Load as UPrimaryDataAsset - works with Blueprint-based PDA_Action
 		UPrimaryDataAsset* Asset = LoadObject<UPrimaryDataAsset>(nullptr, *AssetPath);
 		if (Asset)
 		{
 			Actions.Add(Tag, Asset);
-			LoadedCount++;
-			UE_LOG(LogTemp, Log, TEXT("  Loaded: %s -> %s"), *TagString, *Asset->GetName());
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("  Asset not found: %s"), *AssetPath);
 		}
 	}
-
-	UE_LOG(LogTemp, Log, TEXT("  Loaded %d/%d default actions"), LoadedCount, NumMappings);
 }
 
 /**
@@ -777,8 +796,6 @@ void UAC_ActionManager::InitializeDefaultActions()
  */
 void UAC_ActionManager::BuildAvailableActionsFromActionsMap()
 {
-	UE_LOG(LogTemp, Log, TEXT("UAC_ActionManager::BuildAvailableActionsFromActionsMap - %d actions to process"), Actions.Num());
-
 	AvailableActions.Empty();
 
 	for (const auto& Pair : Actions)
@@ -788,73 +805,109 @@ void UAC_ActionManager::BuildAvailableActionsFromActionsMap()
 
 		if (!ActionData)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("  Null action data for tag: %s"), *Tag.ToString());
 			continue;
 		}
 
-		// Cast to UPDA_Action to access ActionClass directly
-		// This works for both C++ UPDA_Action and Blueprint PDA_Action (derived from UPDA_Action)
-		if (UPDA_Action* ActionAsset = Cast<UPDA_Action>(ActionData))
+		// Try to get ActionClass via reflection (Blueprint property) or C++ fallback
+		UClass* ActionClass = nullptr;
+
+		// First try reflection on the actual class (works for Blueprint-defined properties)
+		FProperty* ActionClassProp = ActionData->GetClass()->FindPropertyByName(FName("ActionClass"));
+		if (ActionClassProp)
 		{
-			// Load the soft class reference
-			if (!ActionAsset->ActionClass.IsNull())
+			// Try soft class property first (Blueprint uses TSoftClassPtr)
+			FSoftClassProperty* SoftClassProp = CastField<FSoftClassProperty>(ActionClassProp);
+			if (SoftClassProp)
 			{
-				UClass* LoadedClass = ActionAsset->ActionClass.LoadSynchronous();
-				if (LoadedClass && LoadedClass->IsChildOf(UB_Action::StaticClass()))
+				void* ValuePtr = SoftClassProp->ContainerPtrToValuePtr<void>(ActionData);
+				if (ValuePtr)
 				{
-					AvailableActions.Add(Tag, LoadedClass);
-					UE_LOG(LogTemp, Log, TEXT("  Added: %s -> %s"), *Tag.ToString(), *LoadedClass->GetName());
+					FSoftObjectPath* SoftPath = reinterpret_cast<FSoftObjectPath*>(ValuePtr);
+					if (SoftPath && !SoftPath->IsNull())
+					{
+						UObject* Resolved = SoftPath->ResolveObject();
+						if (!Resolved)
+						{
+							Resolved = SoftPath->TryLoad();
+						}
+						ActionClass = Cast<UClass>(Resolved);
+					}
+				}
+			}
+
+			// Try hard class reference if soft didn't work
+			if (!ActionClass)
+			{
+				FClassProperty* ClassProp = CastField<FClassProperty>(ActionClassProp);
+				if (ClassProp)
+				{
+					ActionClass = Cast<UClass>(ClassProp->GetPropertyValue_InContainer(ActionData));
+				}
+			}
+		}
+
+		// If reflection didn't work, try the C++ property (for future C++-based assets)
+		if (!ActionClass)
+		{
+			if (UPDA_Action* ActionAsset = Cast<UPDA_Action>(ActionData))
+			{
+				if (!ActionAsset->ActionClass.IsNull())
+				{
+					ActionClass = ActionAsset->ActionClass.LoadSynchronous();
+				}
+			}
+		}
+
+		// Fallback: Derive action class from data asset name
+		// DA_Action_Jump -> B_Action_Jump (naming convention)
+		if (!ActionClass)
+		{
+			FString AssetName = ActionData->GetName();
+			if (AssetName.StartsWith(TEXT("DA_")))
+			{
+				FString ActionClassName = AssetName.Replace(TEXT("DA_"), TEXT("B_"));
+
+				// Handle naming mismatches
+				if (ActionClassName == TEXT("B_Action_Projectile"))
+				{
+					ActionClassName = TEXT("B_Action_ThrowProjectile");
+				}
+
+				// Load Blueprint asset and get its generated class
+				FString BlueprintPath = FString::Printf(
+					TEXT("/Game/SoulslikeFramework/Data/Actions/ActionLogic/%s.%s"),
+					*ActionClassName, *ActionClassName);
+
+				UBlueprint* ActionBlueprint = LoadObject<UBlueprint>(nullptr, *BlueprintPath);
+				if (ActionBlueprint && ActionBlueprint->GeneratedClass)
+				{
+					ActionClass = ActionBlueprint->GeneratedClass;
 				}
 				else
 				{
-					UE_LOG(LogTemp, Warning, TEXT("  ActionClass failed to load or invalid type for: %s"), *ActionData->GetName());
+					// Fallback: try direct class path
+					FString ActionClassPath = FString::Printf(
+						TEXT("/Game/SoulslikeFramework/Data/Actions/ActionLogic/%s.%s_C"),
+						*ActionClassName, *ActionClassName);
+					ActionClass = LoadClass<UB_Action>(nullptr, *ActionClassPath);
+					if (!ActionClass)
+					{
+						UE_LOG(LogTemp, Warning, TEXT("UAC_ActionManager: Name derivation failed for %s"), *AssetName);
+					}
 				}
 			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("  ActionClass is null for: %s"), *ActionData->GetName());
-			}
+		}
+
+		// Add to AvailableActions if we found a valid action class
+		if (ActionClass)
+		{
+			AvailableActions.Add(Tag, ActionClass);
+			UE_LOG(LogTemp, Log, TEXT("UAC_ActionManager: Added %s -> %s (UClass*=%p)"),
+				*Tag.ToString(), *ActionClass->GetName(), ActionClass);
 		}
 		else
 		{
-			// Fallback: Try reflection for non-UPDA_Action assets (Blueprint-only classes)
-			FProperty* ActionClassProp = ActionData->GetClass()->FindPropertyByName(FName("ActionClass"));
-			if (ActionClassProp)
-			{
-				// Try soft class property first (Blueprint uses TSoftClassPtr)
-				FSoftClassProperty* SoftClassProp = CastField<FSoftClassProperty>(ActionClassProp);
-				if (SoftClassProp)
-				{
-					FSoftObjectPtr SoftClassPtr = SoftClassProp->GetPropertyValue_InContainer(ActionData);
-					UClass* ActionClass = Cast<UClass>(SoftClassPtr.LoadSynchronous());
-					if (ActionClass && ActionClass->IsChildOf(UB_Action::StaticClass()))
-					{
-						AvailableActions.Add(Tag, ActionClass);
-						UE_LOG(LogTemp, Log, TEXT("  Added (soft reflection): %s -> %s"), *Tag.ToString(), *ActionClass->GetName());
-					}
-				}
-				else
-				{
-					// Try hard class reference
-					FClassProperty* ClassProp = CastField<FClassProperty>(ActionClassProp);
-					if (ClassProp)
-					{
-						UClass* ActionClass = Cast<UClass>(ClassProp->GetPropertyValue_InContainer(ActionData));
-						if (ActionClass && ActionClass->IsChildOf(UB_Action::StaticClass()))
-						{
-							AvailableActions.Add(Tag, ActionClass);
-							UE_LOG(LogTemp, Log, TEXT("  Added (reflection): %s -> %s"), *Tag.ToString(), *ActionClass->GetName());
-						}
-					}
-				}
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("  Cannot cast to UPDA_Action and no ActionClass property on %s (class: %s)"),
-					*ActionData->GetName(), *ActionData->GetClass()->GetName());
-			}
+			UE_LOG(LogTemp, Warning, TEXT("UAC_ActionManager: No ActionClass found for %s"), *ActionData->GetName());
 		}
 	}
-
-	UE_LOG(LogTemp, Log, TEXT("  Built %d available actions"), AvailableActions.Num());
 }

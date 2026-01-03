@@ -65,8 +65,10 @@ public:
 	bool IsResting;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Runtime")
 	bool IsOnLadder;
+	// Using UClass* instead of TSubclassOf<UB_Action> to avoid implicit parent class validation
+	// that fails for Blueprint classes after migration (parent chain not fully resolved)
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Runtime")
-	TMap<FGameplayTag, TSubclassOf<UB_Action>> AvailableActions;
+	TMap<FGameplayTag, UClass*> AvailableActions;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Runtime")
 	ESLFDirection MovementDirection;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Runtime")

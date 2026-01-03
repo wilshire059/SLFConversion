@@ -26,6 +26,13 @@
 // Forward declarations
 class UAnimMontage;
 class UDataTable;
+class UAC_EquipmentManager;
+class UAC_InteractionManager;
+class UAC_InventoryManager;
+class UAC_StatManager;
+class UAC_CombatManager;
+class UAC_ActionManager;
+class UAC_InputBuffer;
 
 
 // Event Dispatchers
