@@ -1,0 +1,10 @@
+============================================================
+BLUEPRINT COMPILATION TEST
+============================================================
+ERROR: /Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework - module 'unreal' has no attribute 'KismetEditorUtilities'
+NOT FOUND: /Game/SoulslikeFramework/Blueprints/UI/W_HUD
+NOT FOUND: /Game/SoulslikeFramework/Blueprints/UI/W_Inventory
+NOT FOUND: /Game/SoulslikeFramework/Blueprints/Items/B_Interactable_Item
+ERROR: /Game/SoulslikeFramework/Blueprints/Components/AC_InventoryManager - module 'unreal' has no attribute 'KismetEditorUtilities'
+
+Success: 0, Fail: 5

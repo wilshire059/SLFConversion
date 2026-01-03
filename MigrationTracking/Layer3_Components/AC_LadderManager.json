@@ -1,0 +1,4647 @@
+{
+  "blueprint_name": "AC_LadderManager",
+  "blueprint_path": "/Game/SoulslikeFramework/Blueprints/Components/AC_LadderManager.AC_LadderManager",
+  "json_export_path": "C:\\scripts\\SLFConversion\\Exports\\BlueprintDNA_v2\\Component\\AC_LadderManager.json",
+  "cpp_header": "LadderManagerComponent.h",
+  "cpp_source": "LadderManagerComponent.cpp",
+  "parent_class": "UActorComponent",
+  "parent_class_raw": "ActorComponent",
+  "implemented_interfaces": [],
+  "migration_status": {
+    "pass1_complete": false,
+    "pass2_validated": false,
+    "pass3_complete": false,
+    "overall_status": "not_started"
+  },
+  "summary": {
+    "variable_count": 10,
+    "function_count": 40,
+    "event_dispatcher_count": 0,
+    "graph_count": 7,
+    "total_items": 57
+  },
+  "variables": [
+    {
+      "name": "IsOnGround",
+      "type": "bool",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "bool",
+        "SubCategory": "None"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "IsClimbing",
+      "type": "bool",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "bool",
+        "SubCategory": "None"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "IsClimbingOffTop",
+      "type": "bool",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "bool",
+        "SubCategory": "None"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "IsClimbingDownFromTop",
+      "type": "bool",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "bool",
+        "SubCategory": "None"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "IsOrientedToLadder",
+      "type": "bool",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "bool",
+        "SubCategory": "None"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "ClimbAnimState",
+      "type": "ESLFLadderClimbState",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "byte",
+        "SubCategory": "None",
+        "SubCategoryObject": "E_LadderClimbState",
+        "SubCategoryObjectPath": "/Game/SoulslikeFramework/Enums/E_LadderClimbState.E_LadderClimbState"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "CurrentLadder",
+      "type": "UObject* /* B_Ladder_C */",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "object",
+        "SubCategory": "None",
+        "SubCategoryObject": "B_Ladder_C",
+        "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Ladder.B_Ladder_C"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "LadderAnimset",
+      "type": "UObject* /* PDA_LadderAnimData_C */",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "object",
+        "SubCategory": "None",
+        "SubCategoryObject": "PDA_LadderAnimData_C",
+        "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/_AnimationData/PDA_LadderAnimData.PDA_LadderAnimData_C"
+      },
+      "category": "Config",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "ClimbFast?",
+      "type": "bool",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "bool",
+        "SubCategory": "None"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "ClimbSprintMultiplier",
+      "type": "double",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "real",
+        "SubCategory": "double"
+      },
+      "category": "Config",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    }
+  ],
+  "functions": [
+    {
+      "name": "SetCurrentLadder",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "CurrentLadder",
+          "type": "UObject* /* B_Ladder_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Ladder_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Ladder.B_Ladder_C"
+          }
+        }
+      ],
+      "category": "Setters",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "SetIsClimbingDownFromTop",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "IsClimbingDownFromTop",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Not_PreBool_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_BooleanAND_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "Setters",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "SetIsClimbingOffTop",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "IsClimbingOffTop",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue",
+          "type": "UObject* /* CharacterMovementComponent */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "CharacterMovementComponent",
+            "SubCategoryObjectPath": "/Script/Engine.CharacterMovementComponent"
+          }
+        },
+        {
+          "name": "CallFunc_Not_PreBool_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_BooleanAND_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_SwitchEnum_CmpSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "Setters",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "SetIsClimbing",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "IsClimbing",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue",
+          "type": "UObject* /* AC_ActionManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_ActionManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_ActionManager.AC_ActionManager_C"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_1",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue_1",
+          "type": "UObject* /* CharacterMovementComponent */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "CharacterMovementComponent",
+            "SubCategoryObjectPath": "/Script/Engine.CharacterMovementComponent"
+          }
+        }
+      ],
+      "category": "Setters",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "SetIsOnGround",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "IsOnGround",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue",
+          "type": "UObject* /* CharacterMovementComponent */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "CharacterMovementComponent",
+            "SubCategoryObjectPath": "/Script/Engine.CharacterMovementComponent"
+          }
+        }
+      ],
+      "category": "Setters",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnLoaded_C809D5414242B1C048B1DCABFAAC5C06",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Loaded",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnLoaded_E02507BE428B721FF77BC69A5DC53BDD",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Loaded",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnLoaded_C809D5414242B1C048B1DCABF5C5D3DB",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Loaded",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnLoaded_E02507BE428B721FF77BC69A783FE35A",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Loaded",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnLoaded_C809D5414242B1C048B1DCABD03F0B5C",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Loaded",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "InpActEvt_IA_Move_K2Node_EnhancedInputActionEvent_2",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "ActionValue",
+          "type": "FInputActionValue",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InputActionValue",
+            "SubCategoryObjectPath": "/Script/EnhancedInput.InputActionValue"
+          }
+        },
+        {
+          "name": "ElapsedTime",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        },
+        {
+          "name": "TriggeredTime",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        },
+        {
+          "name": "SourceAction",
+          "type": "UObject* /* InputAction */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "InputAction",
+            "SubCategoryObjectPath": "/Script/EnhancedInput.InputAction"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnNotifyEnd_B5351570417A08D1FF74FFBE5CFC927B",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnNotifyBegin_B5351570417A08D1FF74FFBE5CFC927B",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnInterrupted_B5351570417A08D1FF74FFBE5CFC927B",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnBlendOut_B5351570417A08D1FF74FFBE5CFC927B",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnCompleted_B5351570417A08D1FF74FFBE5CFC927B",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnLoaded_11D0217146F0A2808459DB874E255793",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Loaded",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnLoaded_6B2D919D4836BE272B3B178DF87B8ACC",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Loaded",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnNotifyEnd_F8E1533C410D253FEBF64CACA53B05B7",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnNotifyBegin_F8E1533C410D253FEBF64CACA53B05B7",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnInterrupted_F8E1533C410D253FEBF64CACA53B05B7",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnBlendOut_F8E1533C410D253FEBF64CACA53B05B7",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnCompleted_F8E1533C410D253FEBF64CACA53B05B7",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnLoaded_A7BBA1344C05C05CB15F128353675340",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Loaded",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnNotifyEnd_52741A4B4A5CDB9089ECBD891E9C820B",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnNotifyBegin_52741A4B4A5CDB9089ECBD891E9C820B",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnInterrupted_52741A4B4A5CDB9089ECBD891E9C820B",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnBlendOut_52741A4B4A5CDB9089ECBD891E9C820B",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnCompleted_52741A4B4A5CDB9089ECBD891E9C820B",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnLoaded_E02507BE428B721FF77BC69A52ACB400",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Loaded",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "InpActEvt_IA_Sprint_Dodge_K2Node_EnhancedInputActionEvent_1",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "ActionValue",
+          "type": "FInputActionValue",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InputActionValue",
+            "SubCategoryObjectPath": "/Script/EnhancedInput.InputActionValue"
+          }
+        },
+        {
+          "name": "ElapsedTime",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        },
+        {
+          "name": "TriggeredTime",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        },
+        {
+          "name": "SourceAction",
+          "type": "UObject* /* InputAction */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "InputAction",
+            "SubCategoryObjectPath": "/Script/EnhancedInput.InputAction"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "InpActEvt_IA_Sprint_Dodge_K2Node_EnhancedInputActionEvent_0",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "ActionValue",
+          "type": "FInputActionValue",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InputActionValue",
+            "SubCategoryObjectPath": "/Script/EnhancedInput.InputActionValue"
+          }
+        },
+        {
+          "name": "ElapsedTime",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        },
+        {
+          "name": "TriggeredTime",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        },
+        {
+          "name": "SourceAction",
+          "type": "UObject* /* InputAction */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "InputAction",
+            "SubCategoryObjectPath": "/Script/EnhancedInput.InputAction"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnNotifyEnd_E88C2D0244A108757B19FEB6A5E6A4C6",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnNotifyBegin_E88C2D0244A108757B19FEB6A5E6A4C6",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnInterrupted_E88C2D0244A108757B19FEB6A5E6A4C6",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnBlendOut_E88C2D0244A108757B19FEB6A5E6A4C6",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnCompleted_E88C2D0244A108757B19FEB6A5E6A4C6",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event OnClimbOut",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event OnClimbDownFromTop",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "ExecuteUbergraph_AC_LadderManager",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "EntryPoint",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_EnhancedInputActionEvent_ActionValue_2",
+          "type": "FInputActionValue",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InputActionValue",
+            "SubCategoryObjectPath": "/Script/EnhancedInput.InputActionValue"
+          }
+        },
+        {
+          "name": "K2Node_EnhancedInputActionEvent_ElapsedTime_2",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        },
+        {
+          "name": "K2Node_EnhancedInputActionEvent_TriggeredTime_2",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        },
+        {
+          "name": "K2Node_EnhancedInputActionEvent_SourceAction_2",
+          "type": "UObject* /* InputAction */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "InputAction",
+            "SubCategoryObjectPath": "/Script/EnhancedInput.InputAction"
+          }
+        },
+        {
+          "name": "Temp_object_Variable",
+          "type": "UObject* /* InputAction */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "InputAction",
+            "SubCategoryObjectPath": "/Script/EnhancedInput.InputAction"
+          }
+        },
+        {
+          "name": "CallFunc_Conv_InputActionValueToAxis2D_ReturnValue",
+          "type": "FVector2D",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Vector2D",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Vector2D"
+          }
+        },
+        {
+          "name": "Temp_real_Variable",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "Temp_real_Variable_1",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "Temp_real_Variable",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "Temp_real_Variable_1",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "Temp_struct_Variable",
+          "type": "FVector2D",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Vector2D",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Vector2D"
+          }
+        },
+        {
+          "name": "CallFunc_BreakVector2D_X",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "CallFunc_BreakVector2D_Y",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate",
+          "type": "/* UNKNOWN: delegate/None/OnMontagePlayDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnMontagePlayDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "CallFunc_Less_DoubleDouble_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Less_DoubleDouble_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_NotifyName_19",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_NotifyName_18",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_1",
+          "type": "/* UNKNOWN: delegate/None/OnMontagePlayDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnMontagePlayDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_NotifyName_17",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_2",
+          "type": "/* UNKNOWN: delegate/None/OnMontagePlayDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnMontagePlayDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_NotifyName_16",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_3",
+          "type": "/* UNKNOWN: delegate/None/OnMontagePlayDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnMontagePlayDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_NotifyName_15",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_4",
+          "type": "/* UNKNOWN: delegate/None/OnMontagePlayDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnMontagePlayDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "Temp_name_Variable",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_bool_Variable",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_EqualEqual_NameName_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_Loaded_3",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        },
+        {
+          "name": "Temp_object_Variable_1",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsAnim_Montage",
+          "type": "UAnimMontage*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AnimMontage",
+            "SubCategoryObjectPath": "/Script/Engine.AnimMontage"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_Loaded_2",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        },
+        {
+          "name": "Temp_object_Variable_2",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsAnim_Montage_1",
+          "type": "UAnimMontage*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AnimMontage",
+            "SubCategoryObjectPath": "/Script/Engine.AnimMontage"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_NotifyName_14",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_5",
+          "type": "/* UNKNOWN: delegate/None/OnMontagePlayDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnMontagePlayDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_NotifyName_13",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_6",
+          "type": "/* UNKNOWN: delegate/None/OnMontagePlayDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnMontagePlayDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_NotifyName_12",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_7",
+          "type": "/* UNKNOWN: delegate/None/OnMontagePlayDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnMontagePlayDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_NotifyName_11",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_8",
+          "type": "/* UNKNOWN: delegate/None/OnMontagePlayDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnMontagePlayDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_NotifyName_10",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_9",
+          "type": "/* UNKNOWN: delegate/None/OnMontagePlayDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnMontagePlayDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "Temp_name_Variable_1",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_Loaded_1",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        },
+        {
+          "name": "Temp_object_Variable_3",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsAnim_Montage_2",
+          "type": "UAnimMontage*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AnimMontage",
+            "SubCategoryObjectPath": "/Script/Engine.AnimMontage"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess_2",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_NotifyName_9",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_10",
+          "type": "/* UNKNOWN: delegate/None/OnMontagePlayDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnMontagePlayDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_NotifyName_8",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_11",
+          "type": "/* UNKNOWN: delegate/None/OnMontagePlayDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnMontagePlayDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_NotifyName_7",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_12",
+          "type": "/* UNKNOWN: delegate/None/OnMontagePlayDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnMontagePlayDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_NotifyName_6",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_13",
+          "type": "/* UNKNOWN: delegate/None/OnMontagePlayDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnMontagePlayDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_NotifyName_5",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_14",
+          "type": "/* UNKNOWN: delegate/None/OnMontagePlayDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnMontagePlayDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "Temp_name_Variable_2",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_Loaded",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        },
+        {
+          "name": "Temp_object_Variable_4",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsAnim_Montage_3",
+          "type": "UAnimMontage*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AnimMontage",
+            "SubCategoryObjectPath": "/Script/Engine.AnimMontage"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess_3",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_EnhancedInputActionEvent_ActionValue_1",
+          "type": "FInputActionValue",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InputActionValue",
+            "SubCategoryObjectPath": "/Script/EnhancedInput.InputActionValue"
+          }
+        },
+        {
+          "name": "K2Node_EnhancedInputActionEvent_ElapsedTime_1",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        },
+        {
+          "name": "K2Node_EnhancedInputActionEvent_TriggeredTime_1",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        },
+        {
+          "name": "K2Node_EnhancedInputActionEvent_SourceAction_1",
+          "type": "UObject* /* InputAction */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "InputAction",
+            "SubCategoryObjectPath": "/Script/EnhancedInput.InputAction"
+          }
+        },
+        {
+          "name": "K2Node_EnhancedInputActionEvent_ActionValue",
+          "type": "FInputActionValue",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InputActionValue",
+            "SubCategoryObjectPath": "/Script/EnhancedInput.InputActionValue"
+          }
+        },
+        {
+          "name": "K2Node_EnhancedInputActionEvent_ElapsedTime",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        },
+        {
+          "name": "K2Node_EnhancedInputActionEvent_TriggeredTime",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        },
+        {
+          "name": "K2Node_EnhancedInputActionEvent_SourceAction",
+          "type": "UObject* /* InputAction */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "InputAction",
+            "SubCategoryObjectPath": "/Script/EnhancedInput.InputAction"
+          }
+        },
+        {
+          "name": "CallFunc_Conv_InputActionValueToBool_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Conv_InputActionValueToBool_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_object_Variable_5",
+          "type": "UObject* /* InputAction */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "InputAction",
+            "SubCategoryObjectPath": "/Script/EnhancedInput.InputAction"
+          }
+        },
+        {
+          "name": "Temp_real_Variable_2",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "Temp_real_Variable_2",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "Temp_real_Variable_2",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "Temp_real_Variable_3",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "Temp_bool_Variable_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_real_Variable_3",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "Temp_real_Variable_3",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_NotifyName_4",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_15",
+          "type": "/* UNKNOWN: delegate/None/OnMontagePlayDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnMontagePlayDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_NotifyName_3",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_16",
+          "type": "/* UNKNOWN: delegate/None/OnMontagePlayDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnMontagePlayDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_NotifyName_2",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_17",
+          "type": "/* UNKNOWN: delegate/None/OnMontagePlayDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnMontagePlayDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_NotifyName_1",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_18",
+          "type": "/* UNKNOWN: delegate/None/OnMontagePlayDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnMontagePlayDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_19",
+          "type": "/* UNKNOWN: delegate/None/OnMontagePlayDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnMontagePlayDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "Temp_name_Variable_3",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_object_Variable_6",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsAnim_Montage_4",
+          "type": "UAnimMontage*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AnimMontage",
+            "SubCategoryObjectPath": "/Script/Engine.AnimMontage"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess_4",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_EqualEqual_NameName_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_Loaded_8",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_20",
+          "type": "/* UNKNOWN: delegate/None/OnAssetLoaded__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnAssetLoaded__DelegateSignature"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_21",
+          "type": "/* UNKNOWN: delegate/None/OnAssetLoaded__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnAssetLoaded__DelegateSignature"
+          }
+        },
+        {
+          "name": "K2Node_SwitchEnum_CmpSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_object_Variable_7",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsAnim_Montage_5",
+          "type": "UAnimMontage*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AnimMontage",
+            "SubCategoryObjectPath": "/Script/Engine.AnimMontage"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess_5",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_BooleanAND_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_BooleanAND_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_SwitchEnum_CmpSuccess_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_22",
+          "type": "/* UNKNOWN: delegate/None/OnAssetLoaded__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnAssetLoaded__DelegateSignature"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsCharacter",
+          "type": "UObject* /* Character */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Character",
+            "SubCategoryObjectPath": "/Script/Engine.Character"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess_6",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_Loaded_4",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_object_Variable_8",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        },
+        {
+          "name": "CallFunc_Not_PreBool_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsAnim_Montage_6",
+          "type": "UAnimMontage*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AnimMontage",
+            "SubCategoryObjectPath": "/Script/Engine.AnimMontage"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess_7",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_BooleanAND_ReturnValue_2",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_1",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_BooleanAND_ReturnValue_3",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsCharacter_1",
+          "type": "UObject* /* Character */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Character",
+            "SubCategoryObjectPath": "/Script/Engine.Character"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess_8",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_Select_Default",
+          "type": "UAnimMontage*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AnimMontage",
+            "SubCategoryObjectPath": "/Script/Engine.AnimMontage"
+          }
+        },
+        {
+          "name": "CallFunc_GetAnimInstance_ReturnValue",
+          "type": "UObject* /* AnimInstance */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AnimInstance",
+            "SubCategoryObjectPath": "/Script/Engine.AnimInstance"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_23",
+          "type": "/* UNKNOWN: delegate/None/OnAssetLoaded__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnAssetLoaded__DelegateSignature"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_2",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsCharacter_2",
+          "type": "UObject* /* Character */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Character",
+            "SubCategoryObjectPath": "/Script/Engine.Character"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess_9",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_CreateProxyObjectForPlayMontage_ReturnValue",
+          "type": "UObject* /* PlayMontageCallbackProxy */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "PlayMontageCallbackProxy",
+            "SubCategoryObjectPath": "/Script/AnimGraphRuntime.PlayMontageCallbackProxy"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_2",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_24",
+          "type": "/* UNKNOWN: delegate/None/OnAssetLoaded__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnAssetLoaded__DelegateSignature"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_Loaded_5",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_25",
+          "type": "/* UNKNOWN: delegate/None/OnAssetLoaded__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnAssetLoaded__DelegateSignature"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_3",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsCharacter_3",
+          "type": "UObject* /* Character */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Character",
+            "SubCategoryObjectPath": "/Script/Engine.Character"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess_10",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_26",
+          "type": "/* UNKNOWN: delegate/None/OnAssetLoaded__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnAssetLoaded__DelegateSignature"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_3",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_CreateProxyObjectForPlayMontage_ReturnValue_1",
+          "type": "UObject* /* PlayMontageCallbackProxy */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "PlayMontageCallbackProxy",
+            "SubCategoryObjectPath": "/Script/AnimGraphRuntime.PlayMontageCallbackProxy"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_4",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_object_Variable_9",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsAnim_Montage_7",
+          "type": "UAnimMontage*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AnimMontage",
+            "SubCategoryObjectPath": "/Script/Engine.AnimMontage"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess_11",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_27",
+          "type": "/* UNKNOWN: delegate/None/OnAssetLoaded__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnAssetLoaded__DelegateSignature"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_4",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsCharacter_4",
+          "type": "UObject* /* Character */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Character",
+            "SubCategoryObjectPath": "/Script/Engine.Character"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess_12",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetAnimInstance_ReturnValue_1",
+          "type": "UObject* /* AnimInstance */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AnimInstance",
+            "SubCategoryObjectPath": "/Script/Engine.AnimInstance"
+          }
+        },
+        {
+          "name": "CallFunc_GetCurrentActiveMontage_ReturnValue",
+          "type": "UAnimMontage*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AnimMontage",
+            "SubCategoryObjectPath": "/Script/Engine.AnimMontage"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_Loaded_6",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        },
+        {
+          "name": "CallFunc_EqualEqual_ObjectObject_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_object_Variable_10",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_Loaded_7",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsAnim_Montage_8",
+          "type": "UAnimMontage*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AnimMontage",
+            "SubCategoryObjectPath": "/Script/Engine.AnimMontage"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess_13",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_EqualEqual_ObjectObject_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_BooleanOR_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_SelectFloat_ReturnValue",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "CallFunc_SelectFloat_ReturnValue_1",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_5",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_CreateProxyObjectForPlayMontage_ReturnValue_2",
+          "type": "UObject* /* PlayMontageCallbackProxy */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "PlayMontageCallbackProxy",
+            "SubCategoryObjectPath": "/Script/AnimGraphRuntime.PlayMontageCallbackProxy"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsCharacter_5",
+          "type": "UObject* /* Character */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Character",
+            "SubCategoryObjectPath": "/Script/Engine.Character"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess_14",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_5",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_CreateProxyObjectForPlayMontage_ReturnValue_3",
+          "type": "UObject* /* PlayMontageCallbackProxy */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "PlayMontageCallbackProxy",
+            "SubCategoryObjectPath": "/Script/AnimGraphRuntime.PlayMontageCallbackProxy"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_6",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_7",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_28",
+          "type": "/* UNKNOWN: delegate/None/OnAssetLoaded__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnAssetLoaded__DelegateSignature"
+          }
+        },
+        {
+          "name": "CallFunc_Montage_SetPlayRate_NewPlayRate_ImplicitCast",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        },
+        {
+          "name": "CallFunc_CreateProxyObjectForPlayMontage_PlayRate_ImplicitCast",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    }
+  ],
+  "event_dispatchers": [],
+  "graphs": [
+    {
+      "name": "EventGraph",
+      "type": "edgraphschema_k2",
+      "entry_points": [
+        "Event OnClimbOut",
+        "Event OnClimbDownFromTop"
+      ],
+      "node_count": 114,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "BreakVector2D",
+        "SetIsClimbing",
+        "GetOwner",
+        "Not_PreBool",
+        "GetOwner",
+        "GetAnimInstance",
+        "Montage_Stop",
+        "GetOwner",
+        "SetIsClimbing",
+        "SetIsClimbing",
+        "GetOwner",
+        "GetOwner",
+        "GetAnimInstance",
+        "GetCurrentActiveMontage",
+        "Montage_SetPlayRate",
+        "SelectFloat",
+        "SelectFloat",
+        "GetOwner"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "SetIsOnGround",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 15,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "GetOwner",
+        "GetComponentByClass",
+        "SetMovementMode",
+        "SetMovementMode"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "SetIsClimbing",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 24,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "GetOwner",
+        "GetComponentByClass",
+        "SetMovementMode",
+        "StopMovementImmediately",
+        "SetMovementMode",
+        "GetOwner",
+        "GetComponentByClass"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "SetIsClimbingOffTop",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 19,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "GetOwner",
+        "GetComponentByClass",
+        "SetMovementMode",
+        "Not_PreBool",
+        "Event OnClimbOut"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "SetIsClimbingDownFromTop",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 8,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "Not_PreBool",
+        "Event OnClimbDownFromTop"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "SetCurrentLadder",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 3,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "TryLoadClimbMontages",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 13,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    }
+  ],
+  "collapsed_graphs": [],
+  "dependencies": {
+    "structs": [],
+    "enums": [
+      "E_LadderClimbState"
+    ],
+    "interfaces": [],
+    "components": [],
+    "blueprints": [],
+    "data_assets": []
+  },
+  "final_summary": "",
+  "known_issues": [],
+  "debug_notes": [],
+  "test_results": []
+}

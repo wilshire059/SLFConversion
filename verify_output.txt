@@ -1,0 +1,7 @@
+============================================================
+VERIFYING CDO VALUES
+============================================================
+PC_SoulslikeFramework CDO:
+  GameplayMappingContext = /Game/SoulslikeFramework/Input/IMC_Gameplay.IMC_Gameplay
+Parent C++ class CDO (APC_SoulslikeFramework):
+  GameplayMappingContext = None

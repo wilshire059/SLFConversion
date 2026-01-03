@@ -1,0 +1,970 @@
+LogInit: Display: Running engine for game: SLFConversion
+LogCore: Display: Requested channels: 'cpu,gpu,frame,log,bookmark,screenshot,region'
+LogTrace: Display: Control listening on port 1985
+LogCsvProfiler: Display: Metadata set : platform="Windows"
+LogCsvProfiler: Display: Metadata set : config="Development"
+LogCsvProfiler: Display: Metadata set : buildversion="++UE5+Release-5.7-CL-48512491"
+LogCsvProfiler: Display: Metadata set : engineversion="5.7.1-48512491+++UE5+Release-5.7"
+LogCsvProfiler: Display: Metadata set : enginereleaseversion="5.7.1"
+LogCsvProfiler: Display: Metadata set : os="Windows 11 (25H2) [10.0.26200.7462] "
+LogCsvProfiler: Display: Metadata set : cpu="GenuineIntel|Intel(R) Core(TM) 9 270H"
+LogCsvProfiler: Display: Metadata set : pgoenabled="0"
+LogCsvProfiler: Display: Metadata set : pgoprofilingenabled="0"
+LogCsvProfiler: Display: Metadata set : ltoenabled="0"
+LogCsvProfiler: Display: Metadata set : asan="0"
+LogCsvProfiler: Display: Metadata set : mergedmodules="0"
+LogCsvProfiler: Display: Metadata set : commandline="" C:/scripts/SLFConversion/SLFConversion.uproject -run=pythonscript -script=C:/scripts/SLFConversion/run_migration.py -stdout -unattended -nosplash""
+LogCsvProfiler: Display: Metadata set : loginid="d995c8d241966abb5189efb7e08079c5"
+LogCsvProfiler: Display: Metadata set : llm="0"
+LogCsvProfiler: Display: Metadata set : systemresolution.resx="1280"
+LogCsvProfiler: Display: Metadata set : systemresolution.resy="720"
+LogAudio: Display: Audio Device Manager not initializing due to all audio being disabled. If this is not intentional, please check command line arguments for "-nosound".
+LogConfig: Display: Loading IOS ini files took 0.04 seconds
+LogConfig: Display: Loading Android ini files took 0.04 seconds
+LogConfig: Display: Loading VulkanPC ini files took 0.04 seconds
+LogConfig: Display: Loading Mac ini files took 0.05 seconds
+LogConfig: Display: Loading Unix ini files took 0.05 seconds
+LogConfig: Display: Loading TVOS ini files took 0.05 seconds
+LogConfig: Display: Loading Windows ini files took 0.05 seconds
+LogConfig: Display: Loading VisionOS ini files took 0.05 seconds
+LogConfig: Display: Loading Linux ini files took 0.06 seconds
+LogPluginManager: Display: The Plugin StructUtils has been marked deprecated for 5.5 and will be removed soon. Please update your dependencies.
+RenderDocPlugin: Display: RenderDoc plugin will not be loaded. Use '-AttachRenderDoc' on the cmd line or enable 'renderdoc.AutoAttach' in the plugin settings.
+[2026.01.02-14.20.03:354][  0]LogHAL: Display: Platform has ~ 32 GB [34032443392 / 34359738368 / 32], which maps to Largest [LargestMinGB=32, LargerMinGB=12, DefaultMinGB=8, SmallerMinGB=6, SmallestMinGB=0)
+[2026.01.02-14.20.03:355][  0]LogCsvProfiler: Display: Metadata set : extradevelopmentmemorymb="0"
+[2026.01.02-14.20.03:655][  0]LogObj: Display: Attempting to load config data for Default__SlateThemeManager before the Class has been constructed/registered/linked (likely during module loading or early startup). This will result in the load silently failing and should be fixed.
+[2026.01.02-14.20.03:743][  0]LogCsvProfiler: Display: Metadata set : verbatimrhiname="Null"
+[2026.01.02-14.20.03:743][  0]LogCsvProfiler: Display: Metadata set : rhiname="Null"
+[2026.01.02-14.20.03:743][  0]LogCsvProfiler: Display: Metadata set : rhifeaturelevel="SM6"
+[2026.01.02-14.20.03:743][  0]LogCsvProfiler: Display: Metadata set : shaderplatform="PCD3D_SM6"
+[2026.01.02-14.20.03:749][  0]LogTextureFormatASTC: Display: ASTCEnc version 5.0.1 library loaded
+[2026.01.02-14.20.03:749][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatASTC
+[2026.01.02-14.20.03:749][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatDXT
+[2026.01.02-14.20.03:749][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatETC2
+[2026.01.02-14.20.03:749][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatIntelISPCTexComp
+[2026.01.02-14.20.03:749][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatUncompressed
+[2026.01.02-14.20.03:749][  0]LogTextureFormatOodle: Display: Oodle Texture TFO init; latest sdk version = 2.9.14
+[2026.01.02-14.20.03:749][  0]LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.14.dll
+[2026.01.02-14.20.03:749][  0]LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.5.dll
+[2026.01.02-14.20.03:750][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatOodle
+[2026.01.02-14.20.03:771][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android'
+[2026.01.02-14.20.03:771][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ASTC'
+[2026.01.02-14.20.03:771][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_DXT'
+[2026.01.02-14.20.03:771][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ETC2'
+[2026.01.02-14.20.03:771][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_OpenXR'
+[2026.01.02-14.20.03:771][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'AndroidClient'
+[2026.01.02-14.20.03:771][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ASTCClient'
+[2026.01.02-14.20.03:771][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_DXTClient'
+[2026.01.02-14.20.03:771][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ETC2Client'
+[2026.01.02-14.20.03:771][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_OpenXRClient'
+[2026.01.02-14.20.03:771][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_Multi'
+[2026.01.02-14.20.03:771][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_MultiClient'
+[2026.01.02-14.20.03:780][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'IOS'
+[2026.01.02-14.20.03:780][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'IOSClient'
+[2026.01.02-14.20.03:789][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Linux'
+[2026.01.02-14.20.03:789][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'LinuxEditor'
+[2026.01.02-14.20.03:789][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'LinuxServer'
+[2026.01.02-14.20.03:789][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'LinuxClient'
+[2026.01.02-14.20.03:798][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Mac'
+[2026.01.02-14.20.03:798][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'MacEditor'
+[2026.01.02-14.20.03:798][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'MacServer'
+[2026.01.02-14.20.03:798][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'MacClient'
+[2026.01.02-14.20.03:807][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'TVOS'
+[2026.01.02-14.20.03:807][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'TVOSClient'
+[2026.01.02-14.20.03:816][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Windows'
+[2026.01.02-14.20.03:816][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsEditor'
+[2026.01.02-14.20.03:816][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsServer'
+[2026.01.02-14.20.03:816][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsClient'
+[2026.01.02-14.20.03:816][  0]LogTargetPlatformManager: Display: Building Assets For WindowsEditor
+[2026.01.02-14.20.03:820][  0]LogAudioDebug: Display: Lib vorbis DLL was dynamically loaded.
+[2026.01.02-14.20.03:860][  0]LogDerivedDataCache: Display: Memory: Max Cache Size: -1 MB
+[2026.01.02-14.20.04:101][  0]LogDerivedDataCache: Display: ../../../Engine/DerivedDataCache/Compressed.ddp: Opened pak cache for reading. (1732 MiB)
+[2026.01.02-14.20.04:101][  0]LogZenServiceInstance: Display: Launching zen utility 'C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/zen.exe service status'.
+[2026.01.02-14.20.04:407][  0]LogZenServiceInstance: Display: Launching zen utility 'C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/zen.exe service status'.
+[2026.01.02-14.20.04:609][  0]LogZenServiceInstance: Display: Read zen version cache file from 'C:/Users/james/AppData/Local/UnrealEngine/5.7/Saved/Zen/zen.version', version: '5.7.6-202510061608-windows-x64-release-9a1ebb9'
+[2026.01.02-14.20.04:610][  0]LogZenServiceInstance: Display: Read zen version cache file from 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Install/zen.version', version: '5.7.6-202510061608-windows-x64-release-9a1ebb9'
+[2026.01.02-14.20.04:610][  0]LogZenServiceInstance: Display: Installed service at 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe' is up to date
+[2026.01.02-14.20.04:610][  0]LogZenServiceInstance: Display: Launching executable 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe', working dir 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Install', data dir 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Data', args '--port 8558 --data-dir C:\Users\james\AppData\Local\UnrealEngine\Common\Zen\Data --http asio --gc-cache-duration-seconds 1209600 --gc-interval-seconds 21600 --gc-low-diskspace-threshold 2147483648 --cache-bucket-limit-overwrites --quiet --http-forceloopback --owner-pid 34652  --child-id Zen_34652_Startup'
+[2026.01.02-14.20.04:692][  0]LogZenServiceInstance: Display: Unreal Zen Storage Server HTTP service at http://[::1]:8558 status: OK!.
+[2026.01.02-14.20.04:704][  0]LogDerivedDataCache: Display: ZenLocal: Using ZenServer HTTP service at [::1] with namespace ue.ddc status: OK!.
+[2026.01.02-14.20.04:709][  0]LogDerivedDataCache: Display: C:/Users/james/AppData/Local/UnrealEngine/Common/DerivedDataCache: Performance: Latency=0.02ms. RandomReadSpeed=1770.83MBs, RandomWriteSpeed=249.23MBs. Assigned SpeedClass 'Local'
+[2026.01.02-14.20.04:719][  0]LogUbaHorde: Display: UBA/Horde Configuration [Uba.Provider.Horde]: Not Enabled
+[2026.01.02-14.20.04:725][  0]LogXGEController: Display: Initialized XGE controller. XGE tasks will be spawned on this machine.
+[2026.01.02-14.20.04:726][  0]LogShaderCompilers: Display: Using XGE Controller for shader compilation
+[2026.01.02-14.20.04:726][  0]LogShaderCompilers: Display: Compiling shader autogen file: ../../../../../../scripts/SLFConversion/Intermediate/ShaderAutogen/PCD3D_SM6/AutogenShaderHeaders.ush
+[2026.01.02-14.20.04:727][  0]LogShaderCompilers: Display: Autogen file is unchanged, skipping write.
+[2026.01.02-14.20.05:120][  0]LogEditorDomain: Display: EditorDomain is Disabled
+[2026.01.02-14.20.05:316][  0]LogDeviceProfileManager: Display: Deviceprofile LinuxArm64Editor not found.
+[2026.01.02-14.20.05:316][  0]LogDeviceProfileManager: Display: Deviceprofile LinuxArm64 not found.
+[2026.01.02-14.20.05:350][  0]LogCsvProfiler: Display: Metadata set : deviceprofile="WindowsEditor"
+[2026.01.02-14.20.05:353][  0]LogStreaming: Display: FlushAsyncLoading(1): 1 QueuedPackages, 0 AsyncPackages
+[2026.01.02-14.20.05:362][  0]LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-14.20.05:362][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultTextMaterialOpaque is adding a dynamic import to package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness because of a recursive sync load
+[2026.01.02-14.20.05:362][  0]LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-14.20.05:362][  0]LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-14.20.05:363][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultTextMaterialOpaque is adding a dynamic import to package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec because of a recursive sync load
+[2026.01.02-14.20.05:363][  0]LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-14.20.05:363][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/WorldGridMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-14.20.05:364][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/WorldGridMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-14.20.05:365][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-14.20.05:365][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultPostProcessMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-14.20.05:366][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultLightFunctionMaterial is adding a dynamic import to package /Engine/EngineMaterials/DefaultPostProcessMaterial because of a recursive sync load
+[2026.01.02-14.20.05:366][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultPostProcessMaterial (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-14.20.05:367][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultDeferredDecalMaterial is adding a dynamic import to package /Engine/EngineMaterials/DefaultLightFunctionMaterial because of a recursive sync load
+[2026.01.02-14.20.05:367][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-14.20.05:367][  0]LogStreaming: Display: Package /Engine/EngineMaterials/WorldGridMaterial is adding a dynamic import to package /Engine/EngineMaterials/DefaultDeferredDecalMaterial because of a recursive sync load
+[2026.01.02-14.20.05:367][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/WorldGridMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-14.20.05:368][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultTextMaterialOpaque is adding a dynamic import to package /Engine/EngineMaterials/WorldGridMaterial because of a recursive sync load
+[2026.01.02-14.20.05:368][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/WorldGridMaterial (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-14.20.05:368][  0]LogTextureEncodingSettings: Display: Texture Encode Speed: Final (cook).
+[2026.01.02-14.20.05:368][  0]LogTextureEncodingSettings: Display: Oodle Texture Encode Speed settings: Fast: RDO Off Lambda=0, Effort=Normal Final: RDO Off Lambda=0, Effort=Normal
+[2026.01.02-14.20.05:368][  0]LogTextureEncodingSettings: Display: Shared linear texture encoding: Disabled
+[2026.01.02-14.20.05:385][  0]LogMeshReduction: Display: Using QuadricMeshReduction for automatic static mesh reduction
+[2026.01.02-14.20.05:385][  0]LogMeshReduction: Display: Using SkeletalMeshReduction for automatic skeletal mesh reduction
+[2026.01.02-14.20.05:385][  0]LogMeshReduction: Display: Using ProxyLODMeshReduction for automatic mesh merging
+[2026.01.02-14.20.05:385][  0]LogMeshReduction: Display: No distributed automatic mesh merging module available
+[2026.01.02-14.20.05:508][  0]LogShaderCompilers: Display: Compiling shader autogen file: ../../../../../../scripts/SLFConversion/Intermediate/ShaderAutogen/PCD3D_SM5/AutogenShaderHeaders.ush
+[2026.01.02-14.20.05:509][  0]LogShaderCompilers: Display: Autogen file is unchanged, skipping write.
+[2026.01.02-14.20.05:509][  0]LogVirtualization: Display: VirtualizationSystem name found in ini file: None
+[2026.01.02-14.20.05:509][  0]LogVirtualization: Display: FNullVirtualizationSystem mounted, virtualization will be disabled
+[2026.01.02-14.20.05:567][  0]LogWorldPartition: Display: FWorldPartitionClassDescRegistry::Initialize started...
+[2026.01.02-14.20.05:569][  0]LogWorldPartition: Display: FWorldPartitionClassDescRegistry::Initialize took 1.768 ms
+[2026.01.02-14.20.06:138][  0]LogMetaSound: Display: MetaSound Page Target Initialized to 'Default'
+[2026.01.02-14.20.06:139][  0]LogAudio: Display: Registering Engine Module Parameter Interfaces...
+[2026.01.02-14.20.06:377][  0]LogAudioCaptureCore: Display: No Audio Capture implementations found. Audio input will be silent.
+[2026.01.02-14.20.06:377][  0]LogAudioCaptureCore: Display: No Audio Capture implementations found. Audio input will be silent.
+[2026.01.02-14.20.06:638][  0]LogAssetRegistry: Display: No AssetDiscovery cache present at ../../../../../../scripts/SLFConversion/Intermediate/CachedAssetRegistryDiscovery.bin. AssetRegistry discovery of files will be uncached.
+[2026.01.02-14.20.06:689][  0]LogAssetRegistry: Display: Asset registry cache read as 74.9 MiB from ../../../../../../scripts/SLFConversion/Intermediate/CachedAssetRegistry_0.bin.
+[2026.01.02-14.20.06:689][  0]LogAssetRegistry: Display: AssetDataGatherer spent 0.039s loading caches ../../../../../../scripts/SLFConversion/Intermediate/CachedAssetRegistry_*.bin.
+[2026.01.02-14.20.17:288][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_ActionManager.uasset: [Compiler] In use pin  Velocity  no longer exists on node  Get Is Moving 2D? . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:288][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_ActionManager.uasset: [Compiler] Input pin  Speed to Check  specifying non-default value no longer exists on node  Get Is Moving 2D? . Please refresh node or reset pin to default value to remove pin.
+[2026.01.02-14.20.17:289][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_ActionManager.uasset: [Compiler] In use pin  Return Value  no longer exists on node  Get Is Moving 2D? . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:289][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_ActionManager.uasset: [Compiler] Could not find a function named "GetIsMoving2D?" in 'AC_ActionManager'.
+Make sure 'AC_ActionManager' has been compiled for  Get Is Moving 2D?
+[2026.01.02-14.20.17:301][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_Boss.uasset: [Compiler] In use pin  Success  no longer exists on node  TryGetHudForActor . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:301][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_Boss.uasset: [Compiler] In use pin  HUD  no longer exists on node  TryGetHudForActor . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:301][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_Boss.uasset: [Compiler] In use pin  Success  no longer exists on node  TryGetHudForActor . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:302][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_Boss.uasset: [Compiler] In use pin  HUD  no longer exists on node  TryGetHudForActor . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:302][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_Boss.uasset: [Compiler] In use pin  Success  no longer exists on node  TryGetHudForActor . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:302][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_Boss.uasset: [Compiler] In use pin  HUD  no longer exists on node  TryGetHudForActor . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:302][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_Boss.uasset: [Compiler] In use pin  Success  no longer exists on node  TryGetHudForActor . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:302][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_Boss.uasset: [Compiler] In use pin  HUD  no longer exists on node  TryGetHudForActor . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:304][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_Boss.uasset: [Compiler] In use pin  Success  no longer exists on node  TryGetHudForActor . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:304][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_Boss.uasset: [Compiler] In use pin  HUD  no longer exists on node  TryGetHudForActor . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:304][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_Boss.uasset: [Compiler] In use pin  Success  no longer exists on node  TryGetHudForActor . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:305][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_Boss.uasset: [Compiler] In use pin  HUD  no longer exists on node  TryGetHudForActor . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:306][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_Boss.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:307][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_Boss.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:307][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_Boss.uasset: [Compiler] In use pin  Max Value  no longer exists on node  GetStatPercentValue . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:320][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:320][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:321][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_CombatManager.uasset: [Compiler] In use pin  Max Value  no longer exists on node  GetStatMaxValue . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:329][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:329][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:330][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_CombatManager.uasset: [Compiler] In use pin  Max Value  no longer exists on node  GetStatPercentValue . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:330][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:331][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:331][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_CombatManager.uasset: [Compiler] In use pin  Current Value  no longer exists on node  GetStatCurrentValue . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:332][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:332][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:333][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_CombatManager.uasset: [Compiler] In use pin  Current Value  no longer exists on node  GetStatCurrentValue . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:338][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:338][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:338][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_CombatManager.uasset: [Compiler] In use pin  Current Value  no longer exists on node  GetStatCurrentValue . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:340][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_CombatManager.uasset: [Compiler] Can't connect pins  Return Value  and  Stat Manager : AC Stat Manager Object Reference is not compatible with AC Stat Manager Object Reference.
+[2026.01.02-14.20.17:340][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_CombatManager.uasset: [Compiler] Invalid pin connection from ' Return Value ' to ' Stat Manager '. You may have changed the type after the connections were made.
+[2026.01.02-14.20.17:340][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:341][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:341][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_CombatManager.uasset: [Compiler] In use pin  Current Value  no longer exists on node  GetStatCurrentValue . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:341][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_CombatManager.uasset: [Compiler] Can't connect pins  Attack Power Stats  and  FWeapon Attack Power : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:341][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_CombatManager.uasset: [Compiler] Can't connect pins  Stat Manager  and  Return Value : AC Stat Manager Object Reference is not compatible with AC Stat Manager Object Reference.
+[2026.01.02-14.20.17:341][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_CombatManager.uasset: [Compiler] In use pin  Damage  no longer exists on node  CalculateWeaponDamage . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:342][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_AI_CombatManager.uasset: [Compiler] Can't connect pins  FWeapon Attack Power  and  Attack Power Stats : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:368][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:368][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:368][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] In use pin  Current Value  no longer exists on node  GetStatCurrentValue . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:371][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] GetEquipmentComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.17:373][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:373][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:374][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] In use pin  Current Value  no longer exists on node  GetStatCurrentValue . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:377][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] GetEquipmentComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.17:378][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] GetEquipmentComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.17:379][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:379][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] In use pin  Current Value  no longer exists on node  GetStatCurrentValue . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:380][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:380][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:380][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:380][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] In use pin  Current Value  no longer exists on node  GetStatCurrentValue . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:381][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:381][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:381][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:382][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] In use pin  Max Value  no longer exists on node  GetStatMaxValue . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:382][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:382][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] In use pin  Max Value  no longer exists on node  GetStatMaxValue . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:384][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] Can't connect pins  Return Value  and  Stat Manager : AC Stat Manager Object Reference is not compatible with AC Stat Manager Object Reference.
+[2026.01.02-14.20.17:385][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] Invalid pin connection from ' Return Value ' to ' Stat Manager '. You may have changed the type after the connections were made.
+[2026.01.02-14.20.17:385][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:386][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:386][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] In use pin  Current Value  no longer exists on node  GetStatCurrentValue . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:386][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] Can't connect pins  Attack Power Stats  and  FWeapon Attack Power : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:386][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] Can't connect pins  Stat Manager  and  Return Value : AC Stat Manager Object Reference is not compatible with AC Stat Manager Object Reference.
+[2026.01.02-14.20.17:387][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] In use pin  Damage  no longer exists on node  CalculateWeaponDamage . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:387][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] Can't connect pins  FWeapon Attack Power  and  Attack Power Stats : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:388][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:388][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:388][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] In use pin  Current Value  no longer exists on node  GetStatCurrentValue . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:389][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:389][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:389][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] In use pin  Current Value  no longer exists on node  GetStatCurrentValue . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:392][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] GetSaveLoadComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.17:395][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] This blueprint (self) is not a AC_EquipmentManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:396][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] This blueprint (self) is not a AC_SaveLoadManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:407][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_EquipmentManager.uasset: [Compiler] GetSaveLoadComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.17:408][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_EquipmentManager.uasset: [Compiler] Can't connect pins  Data  and  Loaded Data : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:408][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_EquipmentManager.uasset: [Compiler] In use pin  Success?  no longer exists on node  GetSaveDataByTag . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:408][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_EquipmentManager.uasset: [Compiler] In use pin  Return Value  no longer exists on node  GetSaveDataByTag . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:409][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_EquipmentManager.uasset: [Compiler] Can't connect pins  Loaded Data  and  Data : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:464][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_EquipmentManager.uasset: [Compiler] This blueprint (self) is not a AC_SaveLoadManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:480][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_InteractionManager.uasset: [Compiler] In use pin  Enemy  no longer exists on node  Is Enemy Dead? . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:480][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_InteractionManager.uasset: [Compiler] In use pin  Return Value  no longer exists on node  Is Enemy Dead? . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:480][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_InteractionManager.uasset: [Compiler] Could not find a function named "IsEnemyDead?" in 'AC_InteractionManager'.
+Make sure 'AC_InteractionManager' has been compiled for  Is Enemy Dead?
+[2026.01.02-14.20.17:487][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_InventoryManager.uasset: [Compiler] GetSaveLoadComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.17:488][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_InventoryManager.uasset: [Compiler] Can't connect pins  Data  and  Loaded Data : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:488][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_InventoryManager.uasset: [Compiler] In use pin  Success?  no longer exists on node  GetSaveDataByTag . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:489][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_InventoryManager.uasset: [Compiler] In use pin  Return Value  no longer exists on node  GetSaveDataByTag . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:489][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_InventoryManager.uasset: [Compiler] Can't connect pins  Data  and  Loaded Data : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:489][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_InventoryManager.uasset: [Compiler] In use pin  Success?  no longer exists on node  GetSaveDataByTag . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:489][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_InventoryManager.uasset: [Compiler] In use pin  Return Value  no longer exists on node  GetSaveDataByTag . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:489][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_InventoryManager.uasset: [Compiler] Can't connect pins  Data  and  Loaded Data : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:490][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_InventoryManager.uasset: [Compiler] In use pin  Success?  no longer exists on node  GetSaveDataByTag . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:490][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_InventoryManager.uasset: [Compiler] In use pin  Return Value  no longer exists on node  GetSaveDataByTag . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:490][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_InventoryManager.uasset: [Compiler] Can't connect pins  Loaded Data  and  Data : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:536][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_InventoryManager.uasset: [Compiler] This blueprint (self) is not a AC_SaveLoadManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:560][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_ProgressManager.uasset: [Compiler] GetSaveLoadComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.17:560][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_ProgressManager.uasset: [Compiler] Can't connect pins  Data  and  Loaded Data : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:561][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_ProgressManager.uasset: [Compiler] In use pin  Success?  no longer exists on node  GetSaveDataByTag . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:561][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_ProgressManager.uasset: [Compiler] In use pin  Return Value  no longer exists on node  GetSaveDataByTag . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:561][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_ProgressManager.uasset: [Compiler] Can't connect pins  Data  and  Loaded Data : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:561][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_ProgressManager.uasset: [Compiler] In use pin  Success?  no longer exists on node  GetSaveDataByTag . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:561][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_ProgressManager.uasset: [Compiler] In use pin  Return Value  no longer exists on node  GetSaveDataByTag . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:562][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_ProgressManager.uasset: [Compiler] Can't connect pins  Loaded Data  and  Data : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:565][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_ProgressManager.uasset: [Compiler] GetLocalProgressManager  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.17:568][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_ProgressManager.uasset: [Compiler] This blueprint (self) is not a AC_SaveLoadManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:590][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_StatManager.uasset: [Compiler] GetSaveLoadComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.17:591][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_StatManager.uasset: [Compiler] Can't connect pins  Loaded Data  and  Data : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:592][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_StatManager.uasset: [Compiler] Can't connect pins  Data  and  Loaded Data : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:592][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_StatManager.uasset: [Compiler] In use pin  Success?  no longer exists on node  GetSaveDataByTag . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:592][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_StatManager.uasset: [Compiler] In use pin  Return Value  no longer exists on node  GetSaveDataByTag . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:592][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_StatManager.uasset: [Compiler] Can't connect pins  Data  and  Loaded Data : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:592][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_StatManager.uasset: [Compiler] In use pin  Success?  no longer exists on node  GetSaveDataByTag . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:593][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_StatManager.uasset: [Compiler] In use pin  Return Value  no longer exists on node  GetSaveDataByTag . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:593][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_StatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:593][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_StatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:594][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_StatManager.uasset: [Compiler] In use pin  Current Value  no longer exists on node  GetStatCurrentValue . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:594][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_StatManager.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:594][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_StatManager.uasset: [Compiler] In use pin  Max Value  no longer exists on node  GetStatMaxValue . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:602][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_StatManager.uasset: [Compiler] This blueprint (self) is not a AC_SaveLoadManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:614][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\Interactables\B_Interactable.uasset: [Compiler] Can't connect pins  Data  and  Loaded Data : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:614][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\Interactables\B_Interactable.uasset: [Compiler] In use pin  Success?  no longer exists on node  GetSaveDataByTag . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:614][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\Interactables\B_Interactable.uasset: [Compiler] In use pin  Return Value  no longer exists on node  GetSaveDataByTag . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:615][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\Interactables\B_Interactable.uasset: [Compiler] Can't connect pins  Loaded Data  and  Data : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:615][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\Interactables\B_Interactable.uasset: [Compiler] GetSaveLoadComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.17:616][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\Interactables\B_Interactable.uasset: [Compiler] GetSaveLoadComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.17:616][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\Interactables\B_Interactable.uasset: [Compiler] This blueprint (self) is not a AC_SaveLoadManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:617][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\Interactables\B_Interactable.uasset: [Compiler] This blueprint (self) is not a AC_SaveLoadManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:623][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\Interactables\B_DeathCurrency.uasset: [Compiler] GetSaveLoadComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.17:623][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\Interactables\B_DeathCurrency.uasset: [Compiler] GetInventoryComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.17:626][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\Interactables\B_DeathCurrency.uasset: [Compiler] This blueprint (self) is not a AC_SaveLoadManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:626][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\Interactables\B_DeathCurrency.uasset: [Compiler] This blueprint (self) is not a AC_InventoryManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:634][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\Interactables\B_Door.uasset: [Compiler] GetInventoryComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.17:706][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_AbilityDisplay.uasset: [Compiler] GetEquipmentComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.17:707][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_AbilityDisplay.uasset: [Compiler] This blueprint (self) is not a AC_EquipmentManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:713][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_Boss_Healthbar.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:713][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_Boss_Healthbar.uasset: [Compiler] In use pin  Max Value  no longer exists on node  GetStatMaxValue . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:713][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_Boss_Healthbar.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:713][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_Boss_Healthbar.uasset: [Compiler] In use pin  Current Value  no longer exists on node  GetStatCurrentValue . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:713][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_Boss_Healthbar.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:733][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_CurrencyContainer.uasset: [Compiler] GetInventoryComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.17:734][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_CurrencyContainer.uasset: [Compiler] This blueprint (self) is not a AC_InventoryManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:734][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_CurrencyContainer.uasset: [Compiler] This blueprint (self) is not a AC_InventoryManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:735][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\RestMenu\LevelUpMenu\W_CurrencyEntry.uasset: [Compiler] GetInventoryComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.17:735][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\RestMenu\LevelUpMenu\W_CurrencyEntry.uasset: [Compiler] This blueprint (self) is not a AC_InventoryManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:735][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\RestMenu\LevelUpMenu\W_CurrencyEntry.uasset: [Compiler] This blueprint (self) is not a AC_InventoryManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:762][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\_Debug\W_DebugWindow.uasset: [Compiler] In use pin  Tag Name  no longer exists on node  ParseOutTagName . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:790][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Equipment\W_Equipment_Item_AttackPower.uasset: [Compiler] In use pin  Tag Name  no longer exists on node  ParseOutTagName . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:792][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Equipment\W_Equipment_Item_DamageNegation.uasset: [Compiler] In use pin  Tag Name  no longer exists on node  ParseOutTagName . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:795][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Equipment\W_Equipment_Item_RequiredStats.uasset: [Compiler] Input pin  Shorten?  specifying non-default value no longer exists on node  ParseOutTagName . Please refresh node or reset pin to default value to remove pin.
+[2026.01.02-14.20.17:795][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Equipment\W_Equipment_Item_RequiredStats.uasset: [Compiler] In use pin  Tag Name  no longer exists on node  ParseOutTagName . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:797][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Equipment\W_Equipment_Item_Resistance.uasset: [Compiler] In use pin  Tag Name  no longer exists on node  ParseOutTagName . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:799][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Equipment\W_Equipment_Item_StatScaling.uasset: [Compiler] Input pin  Shorten?  specifying non-default value no longer exists on node  ParseOutTagName . Please refresh node or reset pin to default value to remove pin.
+[2026.01.02-14.20.17:799][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Equipment\W_Equipment_Item_StatScaling.uasset: [Compiler] In use pin  Tag Name  no longer exists on node  ParseOutTagName . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:801][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Equipment\W_Equipment_Item_StatsGranted.uasset: [Compiler] In use pin  Tag Name  no longer exists on node  ParseOutTagName . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:805][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_FirstLootNotification.uasset: [Compiler] ParseStringLength  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.17:825][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_HUD.uasset: [Compiler] Can't connect pins  Loaded Data  and  Data : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:825][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_HUD.uasset: [Compiler] Can't connect pins  Data  and  Loaded Data : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.17:825][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_HUD.uasset: [Compiler] In use pin  Success?  no longer exists on node  GetSaveDataByTag . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:825][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_HUD.uasset: [Compiler] In use pin  Return Value  no longer exists on node  GetSaveDataByTag . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:831][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_HUD.uasset: [Compiler] GetEquipmentComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.17:831][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_HUD.uasset: [Compiler] GetInventoryComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.17:831][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_HUD.uasset: [Compiler] GetSaveLoadComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.17:837][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_HUD.uasset: [Compiler] This blueprint (self) is not a AC_EquipmentManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:837][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_HUD.uasset: [Compiler] This blueprint (self) is not a AC_SaveLoadManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:838][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_HUD.uasset: [Compiler] This blueprint (self) is not a AC_InventoryManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:845][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Inventory\W_InventoryAction.uasset: [Compiler] GetInventoryComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.17:845][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Inventory\W_InventoryAction.uasset: [Compiler] GetInventoryComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.17:846][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Inventory\W_InventoryAction.uasset: [Compiler] GetInventoryComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.17:852][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Inventory\W_InventoryAction.uasset: [Compiler] This blueprint (self) is not a AC_InventoryManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:852][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Inventory\W_InventoryAction.uasset: [Compiler] This blueprint (self) is not a AC_InventoryManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:852][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Inventory\W_InventoryAction.uasset: [Compiler] This blueprint (self) is not a AC_InventoryManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:852][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Inventory\W_InventoryAction.uasset: [Compiler] This blueprint (self) is not a AC_InventoryManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:852][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Inventory\W_InventoryAction.uasset: [Compiler] This blueprint (self) is not a AC_InventoryManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:853][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Inventory\W_InventoryAction.uasset: [Compiler] This blueprint (self) is not a AC_InventoryManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:853][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Inventory\W_InventoryAction.uasset: [Compiler] This blueprint (self) is not a AC_InventoryManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:893][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\RestMenu\LevelUpMenu\W_LevelCurrencyBlock_LevelUp.uasset: [Compiler] GetInventoryComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.17:895][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\RestMenu\LevelUpMenu\W_LevelCurrencyBlock_LevelUp.uasset: [Compiler] This blueprint (self) is not a AC_InventoryManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:895][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\RestMenu\LevelUpMenu\W_LevelCurrencyBlock_LevelUp.uasset: [Compiler] This blueprint (self) is not a AC_InventoryManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.17:898][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_LootNotification.uasset: [Compiler] ParseStringLength  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.17:956][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_Characters\B_Soulslike_Character.uasset: [Compiler] In use pin  Enemy  no longer exists on node  Is Enemy Dead? . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:956][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_Characters\B_Soulslike_Character.uasset: [Compiler] In use pin  Return Value  no longer exists on node  Is Enemy Dead? . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:956][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_Characters\B_Soulslike_Character.uasset: [Compiler] Could not find a function named "IsEnemyDead?" in 'B_Soulslike_Character'.
+Make sure 'B_Soulslike_Character' has been compiled for  Is Enemy Dead?
+[2026.01.02-14.20.17:998][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Crafting\W_Crafting.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:998][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Crafting\W_Crafting.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:998][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Crafting\W_Crafting.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:998][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Crafting\W_Crafting.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:998][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Crafting\W_Crafting.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.17:999][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Crafting\W_Crafting.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:028][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Equipment\W_Equipment.uasset: [Compiler] In use pin  Tag Name  no longer exists on node  ParseOutTagName . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:048][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Equipment\W_Equipment.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:048][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Equipment\W_Equipment.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:049][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Equipment\W_Equipment.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:049][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Equipment\W_Equipment.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:049][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Equipment\W_Equipment.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:049][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Equipment\W_Equipment.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:060][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_GameMenu.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:060][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_GameMenu.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:064][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_Interaction.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:127][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Inventory\W_Inventory.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:127][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Inventory\W_Inventory.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:127][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Inventory\W_Inventory.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:128][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Inventory\W_Inventory.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:128][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Inventory\W_Inventory.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:128][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Inventory\W_Inventory.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:128][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Inventory\W_Inventory.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:148][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\RestMenu\LevelUpMenu\W_LevelUp.uasset: [Compiler] GetInventoryComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.18:163][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\RestMenu\LevelUpMenu\W_LevelUp.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:163][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\RestMenu\LevelUpMenu\W_LevelUp.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:164][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\RestMenu\LevelUpMenu\W_LevelUp.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:164][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\RestMenu\LevelUpMenu\W_LevelUp.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:172][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Vendor\W_NPC_Window.uasset: [Compiler] GetLocalProgressManager  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.18:178][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Vendor\W_NPC_Window.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:178][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Vendor\W_NPC_Window.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:199][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Vendor\W_NPC_Window_Vendor.uasset: [Compiler] GetInventoryComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.18:200][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Vendor\W_NPC_Window_Vendor.uasset: [Compiler] GetInventoryComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.18:200][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Vendor\W_NPC_Window_Vendor.uasset: [Compiler] GetInventoryComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.18:214][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Vendor\W_NPC_Window_Vendor.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:214][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Vendor\W_NPC_Window_Vendor.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:214][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Vendor\W_NPC_Window_Vendor.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:215][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Vendor\W_NPC_Window_Vendor.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:216][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Vendor\W_NPC_Window_Vendor.uasset: [Compiler] GetInventoryComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.18:220][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Vendor\W_NPC_Window_Vendor.uasset: [Compiler] This blueprint (self) is not a AC_InventoryManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.18:220][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Vendor\W_NPC_Window_Vendor.uasset: [Compiler] This blueprint (self) is not a AC_InventoryManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.18:220][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Vendor\W_NPC_Window_Vendor.uasset: [Compiler] This blueprint (self) is not a AC_InventoryManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.18:221][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Vendor\W_NPC_Window_Vendor.uasset: [Compiler] This blueprint (self) is not a AC_InventoryManager_C, therefore ' Target ' must have a connection.
+[2026.01.02-14.20.18:241][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\RestMenu\W_RestMenu.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:241][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\RestMenu\W_RestMenu.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:266][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\SettingsMenu\W_Settings.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:266][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\SettingsMenu\W_Settings.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:266][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\SettingsMenu\W_Settings.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:267][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\SettingsMenu\W_Settings.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:267][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\SettingsMenu\W_Settings.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:275][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\SettingsMenu\W_Settings_KeyMapping.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:275][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\SettingsMenu\W_Settings_KeyMapping.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:276][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\SettingsMenu\W_Settings_KeyMapping.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:276][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\SettingsMenu\W_Settings_KeyMapping.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:276][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\SettingsMenu\W_Settings_KeyMapping.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:278][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_SkipCinematic.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:281][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Status\W_Status.uasset: [Compiler] GetInventoryComponent  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-14.20.18:283][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\Status\W_Status.uasset: [Compiler] In use pin  Mapped Keys  no longer exists on node  GetKeysForIA . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:311][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_CombatManager.uasset: [Compiler] Variable node  Get  uses an invalid target.  It may depend on a node that is not connected to the execution chain, and got purged.
+[2026.01.02-14.20.18:315][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_EquipmentManager.uasset: [Compiler] The current value ((TagName="SoulslikeFramework.Saving.Equipment")) of the ' Save Game Tag ' pin is invalid: 'Save Game Tag' in action 'GetSaveDataByTag' must have an input wired into it ("by ref" params expect a valid input to operate on).
+[2026.01.02-14.20.18:321][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_EquipmentManager.uasset: [Compiler] Create Event  Signature Error: Unable to find the selected function/event: 'Event OnDataLoaded' - has it been deleted?
+[2026.01.02-14.20.18:324][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_InventoryManager.uasset: [Compiler] The current value ((TagName="SoulslikeFramework.Saving.Storage")) of the ' Save Game Tag ' pin is invalid: 'Save Game Tag' in action 'GetSaveDataByTag' must have an input wired into it ("by ref" params expect a valid input to operate on).
+[2026.01.02-14.20.18:324][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_InventoryManager.uasset: [Compiler] The current value ((TagName="SoulslikeFramework.Saving.Inventory")) of the ' Save Game Tag ' pin is invalid: 'Save Game Tag' in action 'GetSaveDataByTag' must have an input wired into it ("by ref" params expect a valid input to operate on).
+[2026.01.02-14.20.18:325][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_InventoryManager.uasset: [Compiler] The current value ((TagName="SoulslikeFramework.Saving.Currency")) of the ' Save Game Tag ' pin is invalid: 'Save Game Tag' in action 'GetSaveDataByTag' must have an input wired into it ("by ref" params expect a valid input to operate on).
+[2026.01.02-14.20.18:329][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_InventoryManager.uasset: [Compiler] Create Event  Signature Error: Unable to find the selected function/event: 'Event OnDataLoaded' - has it been deleted?
+[2026.01.02-14.20.18:335][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_ProgressManager.uasset: [Compiler] The current value ((TagName="SoulslikeFramework.Saving.PlayTime")) of the ' Save Game Tag ' pin is invalid: 'Save Game Tag' in action 'GetSaveDataByTag' must have an input wired into it ("by ref" params expect a valid input to operate on).
+[2026.01.02-14.20.18:335][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_ProgressManager.uasset: [Compiler] The current value ((TagName="SoulslikeFramework.Saving.Progress")) of the ' Save Game Tag ' pin is invalid: 'Save Game Tag' in action 'GetSaveDataByTag' must have an input wired into it ("by ref" params expect a valid input to operate on).
+[2026.01.02-14.20.18:335][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_ProgressManager.uasset: [Compiler] Create Event  Signature Error: Unable to find the selected function/event: 'Event OnDataLoaded' - has it been deleted?
+[2026.01.02-14.20.18:340][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_StatManager.uasset: [Compiler] The current value ((TagName="SoulslikeFramework.Saving.PlayerLevel")) of the ' Save Game Tag ' pin is invalid: 'Save Game Tag' in action 'GetSaveDataByTag' must have an input wired into it ("by ref" params expect a valid input to operate on).
+[2026.01.02-14.20.18:340][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_StatManager.uasset: [Compiler] The current value ((TagName="SoulslikeFramework.Saving.Stats")) of the ' Save Game Tag ' pin is invalid: 'Save Game Tag' in action 'GetSaveDataByTag' must have an input wired into it ("by ref" params expect a valid input to operate on).
+[2026.01.02-14.20.18:342][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\Components\AC_StatManager.uasset: [Compiler] Create Event  Signature Error: Unable to find the selected function/event: 'Event OnDataLoaded' - has it been deleted?
+[2026.01.02-14.20.18:345][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\Interactables\B_Interactable.uasset: [Compiler] The current value ((TagName="SoulslikeFramework.Saving.InteractableStates")) of the ' Save Game Tag ' pin is invalid: 'Save Game Tag' in action 'GetSaveDataByTag' must have an input wired into it ("by ref" params expect a valid input to operate on).
+[2026.01.02-14.20.18:345][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\Interactables\B_Interactable.uasset: [Compiler] Create Event  Signature Error: Unable to find the selected function/event: 'Event OnDataLoaded' - has it been deleted?
+[2026.01.02-14.20.18:379][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\RestMenu\LevelUpMenu\W_CurrencyEntry.uasset: [Compiler] Variable node  Get Currency  uses an invalid target.  It may depend on a node that is not connected to the execution chain, and got purged.
+[2026.01.02-14.20.18:398][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_HUD.uasset: [Compiler] The current value ((TagName="SoulslikeFramework.Saving.ItemWheel")) of the ' Save Game Tag ' pin is invalid: 'Save Game Tag' in action 'GetSaveDataByTag' must have an input wired into it ("by ref" params expect a valid input to operate on).
+[2026.01.02-14.20.18:401][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\HUD\W_HUD.uasset: [Compiler] Create Event  Signature Error: Unable to find the selected function/event: 'Event OnDataLoaded' - has it been deleted?
+[2026.01.02-14.20.18:421][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Widgets\RestMenu\LevelUpMenu\W_LevelCurrencyBlock_LevelUp.uasset: [Compiler] Variable node  Get Currency  uses an invalid target.  It may depend on a node that is not connected to the execution chain, and got purged.
+[2026.01.02-14.20.18:982][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_AI\Tasks\BTT_TryExecuteAbility.uasset: [Compiler] In use pin  <Unnamed>  no longer exists on node  Event Perform Ability . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:982][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_AI\Tasks\BTT_TryExecuteAbility.uasset: [Compiler] In use pin  Target  no longer exists on node  Event Perform Ability . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.18:982][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_AI\Tasks\BTT_TryExecuteAbility.uasset: [Compiler] Could not find a function named "Event PerformAbility" in 'B_Soulslike_Enemy_C'.
+Make sure 'B_Soulslike_Enemy_C' has been compiled for  Event Perform Ability
+[2026.01.02-14.20.20:247][  0]LogAssetManager: Display: Ignoring PrimaryAssetType PDA_CombatReactionAnimData_C - Conflicts with PDA_CombatReactionAnimData_Player_C - Asset: DA_ExamplePlayerReactionAnimset
+[2026.01.02-14.20.20:270][  0]LogCsvProfiler: Display: Metadata set : largeworldcoordinates="1"
+[2026.01.02-14.20.20:293][  0]LogPython: Display: No pip-enabled plugins with python dependencies found, skipping
+[2026.01.02-14.20.20:642][  0]LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.7/Engine/Plugins/Animation/IKRig/Content/Python/init_unreal.py... started...
+[2026.01.02-14.20.20:657][  0]LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.7/Engine/Plugins/Animation/IKRig/Content/Python/init_unreal.py... took 14.961 ms
+[2026.01.02-14.20.20:657][  0]LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.7/Engine/Plugins/Animation/ControlRig/Content/Python/init_unreal.py... started...
+[2026.01.02-14.20.20:668][  0]LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.7/Engine/Plugins/Animation/ControlRig/Content/Python/init_unreal.py... took 10.300 ms (total: 25.262 ms)
+[2026.01.02-14.20.20:668][  0]LogPythonScriptCommandlet: Display: Running Python script: C:/scripts/SLFConversion/run_migration.py
+[2026.01.02-14.20.20:671][  0]LogPython: Warning: ============================================================
+[2026.01.02-14.20.20:671][  0]LogPython: Warning: LOAD-FIRST MIGRATION
+[2026.01.02-14.20.20:671][  0]LogPython: Warning: ============================================================
+[2026.01.02-14.20.20:672][  0]LogPython: Warning: Strategy: Load ALL Blueprints first, then clear ALL, then reparent ALL
+[2026.01.02-14.20.20:672][  0]LogPython: Warning: This prevents cascade loading from triggering compile of partially-cleared BPs
+[2026.01.02-14.20.20:734][  0]LogPython: Warning:   find_bp: Looking for ANS_InputBuffer
+[2026.01.02-14.20.20:734][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_InputBuffer
+[2026.01.02-14.20.20:734][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.20:734][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.20:745][  0]LogPython: Warning:   find_bp: Looking for ANS_RegisterAttackSequence
+[2026.01.02-14.20.20:745][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_RegisterAttackSequence
+[2026.01.02-14.20.20:745][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.20:751][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.20:756][  0]LogPython: Warning:   find_bp: Looking for ANS_InvincibilityFrame
+[2026.01.02-14.20.20:756][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_InvincibilityFrame
+[2026.01.02-14.20.20:756][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.20:756][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.20:766][  0]LogPython: Warning:   find_bp: Looking for ANS_HyperArmor
+[2026.01.02-14.20.20:766][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_HyperArmor
+[2026.01.02-14.20.20:766][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.20:775][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.20:799][  0]LogPython: Warning:   find_bp: Looking for ABP_SoulslikeNPC
+[2026.01.02-14.20.20:799][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeNPC
+[2026.01.02-14.20.20:799][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.20:799][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.20:810][  0]LogPython: Warning:   find_bp: Looking for ABP_SoulslikeEnemy
+[2026.01.02-14.20.20:810][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeEnemy
+[2026.01.02-14.20.20:811][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.20:917][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.20:920][  0]LogPython: Warning:   find_bp: Looking for ABP_SoulslikeBossNew
+[2026.01.02-14.20.20:920][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeBossNew
+[2026.01.02-14.20.20:920][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.20:995][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:028][  0]LogPython: Warning:   find_bp: Looking for B_Soulslike_NPC
+[2026.01.02-14.20.21:028][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC
+[2026.01.02-14.20.21:028][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:028][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:039][  0]LogPython: Warning:   find_bp: Looking for B_Soulslike_NPC_ShowcaseGuide
+[2026.01.02-14.20.21:039][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC_ShowcaseGuide
+[2026.01.02-14.20.21:039][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:181][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:190][  0]LogPython: Warning:   find_bp: Looking for B_Soulslike_NPC_ShowcaseVendor
+[2026.01.02-14.20.21:190][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC_ShowcaseVendor
+[2026.01.02-14.20.21:190][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:287][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:313][  0]LogPython: Warning:   find_bp: Looking for AC_StatManager
+[2026.01.02-14.20.21:313][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/Components/AC_StatManager
+[2026.01.02-14.20.21:313][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:313][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:313][  0]LogPython: Warning:   find_bp: Looking for AC_InputBuffer
+[2026.01.02-14.20.21:313][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/Components/AC_InputBuffer
+[2026.01.02-14.20.21:313][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:313][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:314][  0]LogPython: Warning:   find_bp: Looking for AC_BuffManager
+[2026.01.02-14.20.21:314][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/Components/AC_BuffManager
+[2026.01.02-14.20.21:314][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:314][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:314][  0]LogPython: Warning:   find_bp: Looking for AC_StatusEffectManager
+[2026.01.02-14.20.21:314][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/Components/AC_StatusEffectManager
+[2026.01.02-14.20.21:314][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:314][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:314][  0]LogPython: Warning:   find_bp: Looking for AC_InventoryManager
+[2026.01.02-14.20.21:314][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/Components/AC_InventoryManager
+[2026.01.02-14.20.21:314][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:314][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:314][  0]LogPython: Warning:   find_bp: Looking for AC_CollisionManager
+[2026.01.02-14.20.21:314][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/Components/AC_CollisionManager
+[2026.01.02-14.20.21:314][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:332][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:332][  0]LogPython: Warning:   find_bp: Looking for AC_RadarManager
+[2026.01.02-14.20.21:332][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/Components/AC_RadarManager
+[2026.01.02-14.20.21:332][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:332][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:332][  0]LogPython: Warning:   find_bp: Looking for AC_RadarElement
+[2026.01.02-14.20.21:332][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/Components/AC_RadarElement
+[2026.01.02-14.20.21:332][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:332][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:332][  0]LogPython: Warning:   find_bp: Looking for AC_DebugCentral
+[2026.01.02-14.20.21:332][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/Components/AC_DebugCentral
+[2026.01.02-14.20.21:333][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:333][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:333][  0]LogPython: Warning:   find_bp: Looking for AC_ProgressManager
+[2026.01.02-14.20.21:333][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/Components/AC_ProgressManager
+[2026.01.02-14.20.21:333][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:333][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:333][  0]LogPython: Warning:   find_bp: Looking for AC_SaveLoadManager
+[2026.01.02-14.20.21:333][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/Components/AC_SaveLoadManager
+[2026.01.02-14.20.21:333][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:333][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:333][  0]LogPython: Warning:   find_bp: Looking for AC_LadderManager
+[2026.01.02-14.20.21:333][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/Components/AC_LadderManager
+[2026.01.02-14.20.21:333][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:334][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:334][  0]LogPython: Warning:   find_bp: Looking for AC_LootDropManager
+[2026.01.02-14.20.21:334][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/Components/AC_LootDropManager
+[2026.01.02-14.20.21:334][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:334][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:334][  0]LogPython: Warning:   find_bp: Looking for AC_AI_Boss
+[2026.01.02-14.20.21:334][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/Components/AC_AI_Boss
+[2026.01.02-14.20.21:334][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:334][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:334][  0]LogPython: Warning:   find_bp: Looking for AC_AI_BehaviorManager
+[2026.01.02-14.20.21:334][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/Components/AC_AI_BehaviorManager
+[2026.01.02-14.20.21:334][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:334][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:334][  0]LogPython: Warning:   find_bp: Looking for AC_AI_InteractionManager
+[2026.01.02-14.20.21:334][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/Components/AC_AI_InteractionManager
+[2026.01.02-14.20.21:335][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:335][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:335][  0]LogPython: Warning:   find_bp: Looking for AC_AI_CombatManager
+[2026.01.02-14.20.21:335][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager
+[2026.01.02-14.20.21:335][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:335][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:335][  0]LogPython: Warning:   find_bp: Looking for AC_AI_SenseManager
+[2026.01.02-14.20.21:335][  0]LogPython: Warning:   find_bp: Not found anywhere
+[2026.01.02-14.20.21:335][  0]LogPython: Warning:   find_bp: Looking for AC_AI_TargetSortManager
+[2026.01.02-14.20.21:335][  0]LogPython: Warning:   find_bp: Not found anywhere
+[2026.01.02-14.20.21:335][  0]LogPython: Warning:   find_bp: Looking for AC_ActionManager
+[2026.01.02-14.20.21:335][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/Components/AC_ActionManager
+[2026.01.02-14.20.21:335][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:335][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:335][  0]LogPython: Warning:   find_bp: Looking for AC_CombatManager
+[2026.01.02-14.20.21:335][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/Components/AC_CombatManager
+[2026.01.02-14.20.21:336][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:336][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:337][  0]LogPython: Warning:   find_bp: Looking for AC_EquipmentManager
+[2026.01.02-14.20.21:337][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/Components/AC_EquipmentManager
+[2026.01.02-14.20.21:337][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:337][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:337][  0]LogPython: Warning:   find_bp: Looking for AC_InteractionManager
+[2026.01.02-14.20.21:337][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/Components/AC_InteractionManager
+[2026.01.02-14.20.21:337][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:337][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:337][  0]LogPython: Warning:   find_bp: Looking for AC_TargetManager
+[2026.01.02-14.20.21:337][  0]LogPython: Warning:   find_bp: Not found anywhere
+[2026.01.02-14.20.21:337][  0]LogPython: Warning:   find_bp: Looking for GM_SoulslikeFramework
+[2026.01.02-14.20.21:337][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/Global/GM_SoulslikeFramework
+[2026.01.02-14.20.21:337][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:340][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:340][  0]LogPython: Warning:   find_bp: Looking for GI_SoulslikeFramework
+[2026.01.02-14.20.21:340][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/Global/GI_SoulslikeFramework
+[2026.01.02-14.20.21:341][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:341][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:341][  0]LogPython: Warning:   find_bp: Looking for PC_SoulslikeFramework
+[2026.01.02-14.20.21:341][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework
+[2026.01.02-14.20.21:341][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:341][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:341][  0]LogPython: Warning:   find_bp: Looking for GS_SoulslikeFramework
+[2026.01.02-14.20.21:341][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/Global/GS_SoulslikeFramework
+[2026.01.02-14.20.21:341][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:341][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:341][  0]LogPython: Warning:   find_bp: Looking for PS_SoulslikeFramework
+[2026.01.02-14.20.21:341][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/Global/PS_SoulslikeFramework
+[2026.01.02-14.20.21:341][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:341][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:341][  0]LogPython: Warning:   find_bp: Looking for AIC_SoulslikeFramework
+[2026.01.02-14.20.21:342][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_AI/Misc/AIC_SoulslikeFramework
+[2026.01.02-14.20.21:342][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:342][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:342][  0]LogPython: Warning:   find_bp: Looking for B_BaseCharacter
+[2026.01.02-14.20.21:342][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_Characters/B_BaseCharacter
+[2026.01.02-14.20.21:342][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:342][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:342][  0]LogPython: Warning:   find_bp: Looking for B_Soulslike_Character
+[2026.01.02-14.20.21:342][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_Characters/B_Soulslike_Character
+[2026.01.02-14.20.21:342][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:342][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:342][  0]LogPython: Warning:   find_bp: Looking for B_Soulslike_Enemy
+[2026.01.02-14.20.21:342][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy
+[2026.01.02-14.20.21:342][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:343][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:343][  0]LogPython: Warning:   find_bp: Looking for B_Soulslike_Boss
+[2026.01.02-14.20.21:343][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss
+[2026.01.02-14.20.21:343][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:343][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:343][  0]LogPython: Warning:   find_bp: Looking for B_Soulslike_Boss_Malgareth
+[2026.01.02-14.20.21:343][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss_Malgareth
+[2026.01.02-14.20.21:343][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:432][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.21:433][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.21:433][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.21:433][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.21:433][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.21:433][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.21:434][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.21:434][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] In use pin  Current Value  no longer exists on node  GetStatCurrentValue . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.21:434][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.21:434][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] In use pin  Current Value  no longer exists on node  GetStatCurrentValue . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.21:434][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.21:435][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] In use pin  Current Value  no longer exists on node  GetStatCurrentValue . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.21:435][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.21:435][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] In use pin  Current Value  no longer exists on node  GetStatCurrentValue . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.21:435][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.21:435][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] In use pin  Current Value  no longer exists on node  GetStatCurrentValue . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.21:436][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] Can't connect pins  Stat Info  and  Stat Info : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.21:436][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] In use pin  Current Value  no longer exists on node  GetStatCurrentValue . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.21:438][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] Can't connect pins  Return Value  and  Stat Manager : AC Stat Manager Object Reference is not compatible with AC Stat Manager Object Reference.
+[2026.01.02-14.20.21:439][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] Invalid pin connection from ' Return Value ' to ' Stat Manager '. You may have changed the type after the connections were made.
+[2026.01.02-14.20.21:439][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] Can't connect pins  Scaling  and  Scaling Factor : Only exactly matching structures are considered compatible. Derived structures are disallowed.
+[2026.01.02-14.20.21:439][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] Can't connect pins  Attack Power Stats  and  Attack Power Data : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.21:439][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] Can't connect pins  Scaling Factor  and  Scaling : Only exactly matching structures are considered compatible. Derived structures are disallowed.
+[2026.01.02-14.20.21:439][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] Can't connect pins  Stat Manager  and  Return Value : AC Stat Manager Object Reference is not compatible with AC Stat Manager Object Reference.
+[2026.01.02-14.20.21:440][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] In use pin  Additional Modifier  no longer exists on node  CalculateWeaponDamage . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.21:440][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] In use pin  Damage  no longer exists on node  CalculateWeaponDamage . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.21:440][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_Weapon.uasset: [Compiler] Can't connect pins  Attack Power Data  and  Attack Power Stats : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.21:455][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_AI_Weapon.uasset: [Compiler] Can't connect pins  Weapon Attack Power Data  and  Attack Power Stats : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.21:456][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_AI_Weapon.uasset: [Compiler] Can't connect pins  Attack Power Stats  and  Weapon Attack Power Data : Only exactly matching structures are considered compatible.
+[2026.01.02-14.20.21:456][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_AI_Weapon.uasset: [Compiler] Can't connect pins  Scaling Factor  and  Scaling : Only exactly matching structures are considered compatible. Derived structures are disallowed.
+[2026.01.02-14.20.21:456][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_AI_Weapon.uasset: [Compiler] Can't connect pins  Stat Manager  and  Return Value : AC Stat Manager Object Reference is not compatible with AC Stat Manager Object Reference.
+[2026.01.02-14.20.21:456][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_AI_Weapon.uasset: [Compiler] In use pin  Additional Modifier  no longer exists on node  CalculateWeaponDamage . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.21:457][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_AI_Weapon.uasset: [Compiler] In use pin  Damage  no longer exists on node  CalculateWeaponDamage . Please refresh node or break links to remove pin.
+[2026.01.02-14.20.21:457][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_AI_Weapon.uasset: [Compiler] Can't connect pins  Scaling  and  Scaling Factor : Only exactly matching structures are considered compatible. Derived structures are disallowed.
+[2026.01.02-14.20.21:457][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_AI_Weapon.uasset: [Compiler] Can't connect pins  Return Value  and  Stat Manager : AC Stat Manager Object Reference is not compatible with AC Stat Manager Object Reference.
+[2026.01.02-14.20.21:457][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\_Items\Weapons\B_Item_AI_Weapon.uasset: [Compiler] Invalid pin connection from ' Return Value ' to ' Stat Manager '. You may have changed the type after the connections were made.
+[2026.01.02-14.20.21:550][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:550][  0]LogPython: Warning:   find_bp: Looking for B_Soulslike_NPC
+[2026.01.02-14.20.21:550][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC
+[2026.01.02-14.20.21:550][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:550][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:550][  0]LogPython: Warning:   find_bp: Looking for B_Soulslike_Enemy_Guard
+[2026.01.02-14.20.21:550][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Guard
+[2026.01.02-14.20.21:550][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:569][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:569][  0]LogPython: Warning:   find_bp: Looking for B_Soulslike_Enemy_Showcase
+[2026.01.02-14.20.21:569][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Showcase
+[2026.01.02-14.20.21:569][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:583][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:583][  0]LogPython: Warning:   find_bp: Looking for B_Soulslike_NPC_ShowcaseGuide
+[2026.01.02-14.20.21:583][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC_ShowcaseGuide
+[2026.01.02-14.20.21:583][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:583][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:583][  0]LogPython: Warning:   find_bp: Looking for B_Soulslike_NPC_ShowcaseVendor
+[2026.01.02-14.20.21:583][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC_ShowcaseVendor
+[2026.01.02-14.20.21:584][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:584][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:584][  0]LogPython: Warning:   find_bp: Looking for B_StatusEffect
+[2026.01.02-14.20.21:584][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/StatusEffects/StatusEffectClasses/B_StatusEffect
+[2026.01.02-14.20.21:584][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:584][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:584][  0]LogPython: Warning:   find_bp: Looking for B_Stat
+[2026.01.02-14.20.21:584][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/B_Stat
+[2026.01.02-14.20.21:584][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:585][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:585][  0]LogPython: Warning:   find_bp: Looking for B_Buff
+[2026.01.02-14.20.21:585][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Buffs/Logic/B_Buff
+[2026.01.02-14.20.21:585][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:585][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:585][  0]LogPython: Warning:   find_bp: Looking for B_Action
+[2026.01.02-14.20.21:585][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action
+[2026.01.02-14.20.21:585][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:585][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:585][  0]LogPython: Warning:   find_bp: Looking for B_Item
+[2026.01.02-14.20.21:585][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/B_Item
+[2026.01.02-14.20.21:586][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:586][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:586][  0]LogPython: Warning:   find_bp: Looking for B_Interactable
+[2026.01.02-14.20.21:586][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Interactable
+[2026.01.02-14.20.21:586][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:586][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:586][  0]LogPython: Warning:   find_bp: Looking for B_Ladder
+[2026.01.02-14.20.21:586][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Ladder
+[2026.01.02-14.20.21:586][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:586][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:587][  0]LogPython: Warning:   find_bp: Looking for B_Door
+[2026.01.02-14.20.21:587][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Door
+[2026.01.02-14.20.21:587][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:587][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:587][  0]LogPython: Warning:   find_bp: Looking for B_Container
+[2026.01.02-14.20.21:587][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Container
+[2026.01.02-14.20.21:587][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:587][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:587][  0]LogPython: Warning:   find_bp: Looking for B_RestingPoint
+[2026.01.02-14.20.21:587][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_RestingPoint
+[2026.01.02-14.20.21:588][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:588][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:588][  0]LogPython: Warning:   find_bp: Looking for B_BaseProjectile
+[2026.01.02-14.20.21:588][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/Projectiles/B_BaseProjectile
+[2026.01.02-14.20.21:588][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:661][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:661][  0]LogPython: Warning:   find_bp: Looking for B_AbilityEffectBase
+[2026.01.02-14.20.21:661][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/WeaponAbilities/AbilityEffects/B_AbilityEffectBase
+[2026.01.02-14.20.21:661][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:661][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:661][  0]LogPython: Warning:   find_bp: Looking for B_HP
+[2026.01.02-14.20.21:661][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Secondary/B_HP
+[2026.01.02-14.20.21:661][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:661][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:662][  0]LogPython: Warning:   find_bp: Looking for B_FP
+[2026.01.02-14.20.21:662][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Secondary/B_FP
+[2026.01.02-14.20.21:662][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:662][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:662][  0]LogPython: Warning:   find_bp: Looking for B_Stamina
+[2026.01.02-14.20.21:662][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Secondary/B_Stamina
+[2026.01.02-14.20.21:662][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:662][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:662][  0]LogPython: Warning:   find_bp: Looking for B_Poise
+[2026.01.02-14.20.21:662][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/_Backend/B_Poise
+[2026.01.02-14.20.21:662][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:662][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:662][  0]LogPython: Warning:   find_bp: Looking for B_Vigor
+[2026.01.02-14.20.21:662][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Primary/B_Vigor
+[2026.01.02-14.20.21:662][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:662][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:663][  0]LogPython: Warning:   find_bp: Looking for B_Mind
+[2026.01.02-14.20.21:663][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Primary/B_Mind
+[2026.01.02-14.20.21:663][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:663][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:663][  0]LogPython: Warning:   find_bp: Looking for B_Endurance
+[2026.01.02-14.20.21:663][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Primary/B_Endurance
+[2026.01.02-14.20.21:664][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:664][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:664][  0]LogPython: Warning:   find_bp: Looking for B_Strength
+[2026.01.02-14.20.21:664][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Primary/B_Strength
+[2026.01.02-14.20.21:664][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:664][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:664][  0]LogPython: Warning:   find_bp: Looking for B_Dexterity
+[2026.01.02-14.20.21:664][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Primary/B_Dexterity
+[2026.01.02-14.20.21:664][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:665][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:665][  0]LogPython: Warning:   find_bp: Looking for B_Intelligence
+[2026.01.02-14.20.21:665][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Primary/B_Intelligence
+[2026.01.02-14.20.21:665][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:665][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:665][  0]LogPython: Warning:   find_bp: Looking for B_Faith
+[2026.01.02-14.20.21:665][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Primary/B_Faith
+[2026.01.02-14.20.21:665][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:665][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:665][  0]LogPython: Warning:   find_bp: Looking for B_Arcane
+[2026.01.02-14.20.21:665][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Primary/B_Arcane
+[2026.01.02-14.20.21:666][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:666][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:666][  0]LogPython: Warning:   find_bp: Looking for B_Weight
+[2026.01.02-14.20.21:666][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Misc/B_Weight
+[2026.01.02-14.20.21:666][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:666][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:666][  0]LogPython: Warning:   find_bp: Looking for B_Stance
+[2026.01.02-14.20.21:666][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/_Backend/B_Stance
+[2026.01.02-14.20.21:666][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:666][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:667][  0]LogPython: Warning:   find_bp: Looking for B_IncantationPower
+[2026.01.02-14.20.21:667][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/_Backend/B_IncantationPower
+[2026.01.02-14.20.21:667][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:667][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:667][  0]LogPython: Warning:   find_bp: Looking for B_Resistance_Focus
+[2026.01.02-14.20.21:667][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Focus
+[2026.01.02-14.20.21:667][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:667][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:667][  0]LogPython: Warning:   find_bp: Looking for B_Resistance_Immunity
+[2026.01.02-14.20.21:667][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Immunity
+[2026.01.02-14.20.21:668][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:668][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:668][  0]LogPython: Warning:   find_bp: Looking for B_Resistance_Robustness
+[2026.01.02-14.20.21:668][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Robustness
+[2026.01.02-14.20.21:668][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:668][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:668][  0]LogPython: Warning:   find_bp: Looking for B_Resistance_Vitality
+[2026.01.02-14.20.21:668][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Vitality
+[2026.01.02-14.20.21:668][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:668][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:668][  0]LogPython: Warning:   find_bp: Looking for B_AP_Physical
+[2026.01.02-14.20.21:669][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Physical
+[2026.01.02-14.20.21:669][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:669][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:669][  0]LogPython: Warning:   find_bp: Looking for B_AP_Fire
+[2026.01.02-14.20.21:669][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Fire
+[2026.01.02-14.20.21:669][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:669][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:669][  0]LogPython: Warning:   find_bp: Looking for B_AP_Frost
+[2026.01.02-14.20.21:669][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Frost
+[2026.01.02-14.20.21:669][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:670][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:670][  0]LogPython: Warning:   find_bp: Looking for B_AP_Lightning
+[2026.01.02-14.20.21:670][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Lightning
+[2026.01.02-14.20.21:670][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:670][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:670][  0]LogPython: Warning:   find_bp: Looking for B_AP_Magic
+[2026.01.02-14.20.21:670][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Magic
+[2026.01.02-14.20.21:670][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:670][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:670][  0]LogPython: Warning:   find_bp: Looking for B_AP_Holy
+[2026.01.02-14.20.21:670][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Holy
+[2026.01.02-14.20.21:671][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:671][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:671][  0]LogPython: Warning:   find_bp: Looking for B_DN_Physical
+[2026.01.02-14.20.21:671][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Physical
+[2026.01.02-14.20.21:671][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:671][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:671][  0]LogPython: Warning:   find_bp: Looking for B_DN_Fire
+[2026.01.02-14.20.21:671][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Fire
+[2026.01.02-14.20.21:671][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:671][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:671][  0]LogPython: Warning:   find_bp: Looking for B_DN_Frost
+[2026.01.02-14.20.21:672][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Frost
+[2026.01.02-14.20.21:672][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:672][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:672][  0]LogPython: Warning:   find_bp: Looking for B_DN_Lightning
+[2026.01.02-14.20.21:672][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Lightning
+[2026.01.02-14.20.21:672][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:672][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:672][  0]LogPython: Warning:   find_bp: Looking for B_DN_Magic
+[2026.01.02-14.20.21:673][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Magic
+[2026.01.02-14.20.21:673][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:673][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:673][  0]LogPython: Warning:   find_bp: Looking for B_DN_Holy
+[2026.01.02-14.20.21:673][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Holy
+[2026.01.02-14.20.21:673][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:673][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:673][  0]LogPython: Warning:   find_bp: Looking for B_Action_Execute
+[2026.01.02-14.20.21:674][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_Execute
+[2026.01.02-14.20.21:674][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:677][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:677][  0]LogPython: Warning:   find_bp: Looking for B_Action_GuardStart
+[2026.01.02-14.20.21:678][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_GuardStart
+[2026.01.02-14.20.21:678][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:682][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:682][  0]LogPython: Warning:   find_bp: Looking for B_Action_GuardEnd
+[2026.01.02-14.20.21:682][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_GuardEnd
+[2026.01.02-14.20.21:683][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:685][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:685][  0]LogPython: Warning:   find_bp: Looking for B_Action_GuardCancel
+[2026.01.02-14.20.21:685][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_GuardCancel
+[2026.01.02-14.20.21:685][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:687][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:687][  0]LogPython: Warning:   find_bp: Looking for B_Action_StartSprinting
+[2026.01.02-14.20.21:687][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_StartSprinting
+[2026.01.02-14.20.21:687][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:691][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:691][  0]LogPython: Warning:   find_bp: Looking for B_Action_StopSprinting
+[2026.01.02-14.20.21:691][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_StopSprinting
+[2026.01.02-14.20.21:692][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:695][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:695][  0]LogPython: Warning:   find_bp: Looking for B_Action_SprintAttack
+[2026.01.02-14.20.21:695][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_SprintAttack
+[2026.01.02-14.20.21:695][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:702][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:702][  0]LogPython: Warning:   find_bp: Looking for B_Action_ThrowProjectile
+[2026.01.02-14.20.21:702][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_ThrowProjectile
+[2026.01.02-14.20.21:703][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:705][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:705][  0]LogPython: Warning:   find_bp: Looking for B_Action_TwoHandedStance_L
+[2026.01.02-14.20.21:706][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_TwoHandedStance_L
+[2026.01.02-14.20.21:706][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:712][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:712][  0]LogPython: Warning:   find_bp: Looking for B_Action_TwoHandedStance_R
+[2026.01.02-14.20.21:712][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_TwoHandedStance_R
+[2026.01.02-14.20.21:712][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:718][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:718][  0]LogPython: Warning:   find_bp: Looking for B_Action_UseEquippedTool
+[2026.01.02-14.20.21:719][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_UseEquippedTool
+[2026.01.02-14.20.21:719][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:728][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:728][  0]LogPython: Warning:   find_bp: Looking for B_Action_WeaponAbility
+[2026.01.02-14.20.21:728][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_WeaponAbility
+[2026.01.02-14.20.21:728][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:739][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:739][  0]LogPython: Warning:   find_bp: Looking for B_Action_PickupItemMontage
+[2026.01.02-14.20.21:740][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_PickupItemMontage
+[2026.01.02-14.20.21:740][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:743][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:743][  0]LogPython: Warning:   find_bp: Looking for B_Action_ScrollWheel_LeftHand
+[2026.01.02-14.20.21:743][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_ScrollWheel_LeftHand
+[2026.01.02-14.20.21:743][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:787][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:788][  0]LogPython: Warning:   find_bp: Looking for B_Action_ScrollWheel_RightHand
+[2026.01.02-14.20.21:788][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_ScrollWheel_RightHand
+[2026.01.02-14.20.21:788][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:833][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:833][  0]LogPython: Warning:   find_bp: Looking for B_Action_ScrollWheel_Tools
+[2026.01.02-14.20.21:833][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_ScrollWheel_Tools
+[2026.01.02-14.20.21:833][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:875][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:875][  0]LogPython: Warning:   find_bp: Looking for B_BossDoor
+[2026.01.02-14.20.21:875][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_BossDoor
+[2026.01.02-14.20.21:875][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:875][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:875][  0]LogPython: Warning:   find_bp: Looking for B_DeathCurrency
+[2026.01.02-14.20.21:875][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_DeathCurrency
+[2026.01.02-14.20.21:875][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:875][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:875][  0]LogPython: Warning:   find_bp: Looking for B_PickupItem
+[2026.01.02-14.20.21:875][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/B_PickupItem
+[2026.01.02-14.20.21:875][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:875][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:875][  0]LogPython: Warning:   find_bp: Looking for B_Item_Lantern
+[2026.01.02-14.20.21:876][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Usables/B_Item_Lantern
+[2026.01.02-14.20.21:876][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:883][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:883][  0]LogPython: Warning:   find_bp: Looking for B_Item_AI_Weapon
+[2026.01.02-14.20.21:883][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/B_Item_AI_Weapon
+[2026.01.02-14.20.21:883][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:883][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:883][  0]LogPython: Warning:   find_bp: Looking for B_Item_AI_Weapon_BossMace
+[2026.01.02-14.20.21:883][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/AI/B_Item_AI_Weapon_BossMace
+[2026.01.02-14.20.21:883][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:883][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:883][  0]LogPython: Warning:   find_bp: Looking for B_Item_AI_Weapon_Greatsword
+[2026.01.02-14.20.21:883][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/AI/B_Item_AI_Weapon_Greatsword
+[2026.01.02-14.20.21:883][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:883][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:883][  0]LogPython: Warning:   find_bp: Looking for B_Item_AI_Weapon_Sword
+[2026.01.02-14.20.21:884][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/AI/B_Item_AI_Weapon_Sword
+[2026.01.02-14.20.21:884][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:884][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:884][  0]LogPython: Warning:   find_bp: Looking for B_Item_Weapon_BossMace
+[2026.01.02-14.20.21:884][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_BossMace
+[2026.01.02-14.20.21:884][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:886][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:886][  0]LogPython: Warning:   find_bp: Looking for B_Item_Weapon_Greatsword
+[2026.01.02-14.20.21:886][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Greatsword
+[2026.01.02-14.20.21:886][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:889][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:889][  0]LogPython: Warning:   find_bp: Looking for B_Item_Weapon_Katana
+[2026.01.02-14.20.21:889][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Katana
+[2026.01.02-14.20.21:889][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:893][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:893][  0]LogPython: Warning:   find_bp: Looking for B_Item_Weapon_PoisonSword
+[2026.01.02-14.20.21:893][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_PoisonSword
+[2026.01.02-14.20.21:893][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:966][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:966][  0]LogPython: Warning:   find_bp: Looking for B_Item_Weapon_SwordExample01
+[2026.01.02-14.20.21:966][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_SwordExample01
+[2026.01.02-14.20.21:966][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:974][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:974][  0]LogPython: Warning:   find_bp: Looking for B_Item_Weapon_SwordExample02
+[2026.01.02-14.20.21:974][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_SwordExample02
+[2026.01.02-14.20.21:974][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:977][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:977][  0]LogPython: Warning:   find_bp: Looking for B_Chaos_ForceField
+[2026.01.02-14.20.21:977][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/B_Chaos_ForceField
+[2026.01.02-14.20.21:977][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:978][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:978][  0]LogPython: Warning:   find_bp: Looking for B_SequenceActor
+[2026.01.02-14.20.21:978][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/B_SequenceActor
+[2026.01.02-14.20.21:978][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:978][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:978][  0]LogPython: Warning:   find_bp: Looking for B_DeathTrigger
+[2026.01.02-14.20.21:978][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_DeathTrigger
+[2026.01.02-14.20.21:978][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:984][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:985][  0]LogPython: Warning:   find_bp: Looking for B_Destructible
+[2026.01.02-14.20.21:985][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_Destructible
+[2026.01.02-14.20.21:985][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:990][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:990][  0]LogPython: Warning:   find_bp: Looking for B_LocationActor
+[2026.01.02-14.20.21:990][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_LocationActor
+[2026.01.02-14.20.21:990][  0]LogPython: Warning:   find_bp: exists=True
+[2026.01.02-14.20.21:990][  0]LogPython: Warning:   find_bp: Loaded from override
+[2026.01.02-14.20.21:990][  0]LogPython: Warning:   find_bp: Looking for B_Torch
+[2026.01.02-14.20.21:990][  0]LogPython: Warning:   find_bp: Checking override path: /Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_Torch
+[2026.01.02-14.20.21:991][  0]LogPython: Warning:   find_bp: exists=True

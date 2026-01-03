@@ -1,0 +1,3810 @@
+{
+  "blueprint_name": "AC_AI_Boss",
+  "blueprint_path": "/Game/SoulslikeFramework/Blueprints/Components/AC_AI_Boss.AC_AI_Boss",
+  "json_export_path": "C:\\scripts\\SLFConversion\\Exports\\BlueprintDNA_v2\\Component\\AC_AI_Boss.json",
+  "cpp_header": "AI_BossComponent.h",
+  "cpp_source": "AI_BossComponent.cpp",
+  "parent_class": "UActorComponent",
+  "parent_class_raw": "ActorComponent",
+  "implemented_interfaces": [],
+  "migration_status": {
+    "pass1_complete": false,
+    "pass2_validated": false,
+    "pass3_complete": false,
+    "overall_status": "not_started"
+  },
+  "summary": {
+    "variable_count": 18,
+    "function_count": 22,
+    "event_dispatcher_count": 0,
+    "graph_count": 6,
+    "total_items": 46
+  },
+  "variables": [
+    {
+      "name": "Name",
+      "type": "FText",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "text",
+        "SubCategory": "None"
+      },
+      "category": "Config",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": false,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "DoorCheckDistance",
+      "type": "double",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "real",
+        "SubCategory": "double"
+      },
+      "category": "Config|Trigger Settings",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "EncounterTriggerType",
+      "type": "ESLFAIBossEncounterType",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "byte",
+        "SubCategory": "None",
+        "SubCategoryObject": "E_AI_BossEncounterType",
+        "SubCategoryObjectPath": "/Game/SoulslikeFramework/Enums/E_AI_BossEncounterType.E_AI_BossEncounterType"
+      },
+      "category": "Config|Trigger Settings",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": false,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "FightActive?",
+      "type": "bool",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "bool",
+        "SubCategory": "None"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "TriggerCollisionRadius",
+      "type": "double",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "real",
+        "SubCategory": "double"
+      },
+      "category": "Config|Trigger Settings",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": false,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "ShowBossBar?",
+      "type": "bool",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "bool",
+        "SubCategory": "None"
+      },
+      "category": "Config|Trigger Settings",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": false,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "Phases",
+      "type": "TArray<FSLFAiBossPhase>",
+      "type_raw": {
+        "IsArray": true,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "struct",
+        "SubCategory": "None",
+        "SubCategoryObject": "FAiBossPhase",
+        "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/AI/FAiBossPhase.FAiBossPhase"
+      },
+      "category": "Config|Phase Settings",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": false,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "ActivePhase",
+      "type": "FSLFAiBossPhase",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "struct",
+        "SubCategory": "None",
+        "SubCategoryObject": "FAiBossPhase",
+        "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/AI/FAiBossPhase.FAiBossPhase"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "ActivePhaseIndex",
+      "type": "int32",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "int",
+        "SubCategory": "None"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "DebugActive?",
+      "type": "bool",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "bool",
+        "SubCategory": "None"
+      },
+      "category": "Config|Debug Settings",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": false,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "DebugPhase",
+      "type": "int32",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "int",
+        "SubCategory": "None"
+      },
+      "category": "Config|Debug Settings",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": false,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "DeathSequence",
+      "type": "TSoftObjectPtr<UObject>",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "softobject",
+        "SubCategory": "None",
+        "SubCategoryObject": "LevelSequence",
+        "SubCategoryObjectPath": "/Script/LevelSequence.LevelSequence"
+      },
+      "category": "Config|Phase Settings|Death",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "DeathText",
+      "type": "FText",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "text",
+        "SubCategory": "None"
+      },
+      "category": "Config|Phase Settings|Death|Text",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "DeathTextDelay",
+      "type": "double",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "real",
+        "SubCategory": "double"
+      },
+      "category": "Config|Phase Settings|Death|Text",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "RelatedBossDoors",
+      "type": "TArray<AActor*>",
+      "type_raw": {
+        "IsArray": true,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "object",
+        "SubCategory": "None",
+        "SubCategoryObject": "Actor",
+        "SubCategoryObjectPath": "/Script/Engine.Actor"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "HiddenInDeathSequence?",
+      "type": "bool",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "bool",
+        "SubCategory": "None"
+      },
+      "category": "Config|Phase Settings|Death",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "ActiveMusicComponent",
+      "type": "UObject* /* AudioComponent */",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "object",
+        "SubCategory": "None",
+        "SubCategoryObject": "AudioComponent",
+        "SubCategoryObjectPath": "/Script/Engine.AudioComponent"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "BossDoorClass",
+      "type": "UClass*",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "object",
+        "SubCategory": "None",
+        "SubCategoryObject": "Class",
+        "SubCategoryObjectPath": "/Script/CoreUObject.Class"
+      },
+      "category": "Config|Phase Settings|Death",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    }
+  ],
+  "functions": [
+    {
+      "name": "TryUnlockBossDoors",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Temp_int_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Add_IntInt_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Get_Item",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsBPI_Boss_Door",
+          "type": "/* UNKNOWN: interface/None/BPI_BossDoor_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "interface",
+            "SubCategory": "None",
+            "SubCategoryObject": "BPI_BossDoor_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Interfaces/BPI_BossDoor.BPI_BossDoor_C"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Length_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Less_IntInt_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_IsNotEmpty_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "TryGetBossDoors",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Temp_int_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_Array_Index_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Add_IntInt_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_ArrayLength_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Less_IntInt_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetAllActorsOfClass_OutActors",
+          "type": "TArray<AActor*>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Length_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Add_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetDistanceTo_ReturnValue",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        },
+        {
+          "name": "CallFunc_LessEqual_DoubleDouble_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_LessEqual_DoubleDouble_A_ImplicitCast",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "EvaluatePhaseRequirement",
+      "return_type": "bool",
+      "return_type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": true,
+        "IsConst": false,
+        "Category": "bool",
+        "SubCategory": "None"
+      },
+      "parameters": [
+        {
+          "name": "CallFunc_Array_IsNotEmpty_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_byte_Variable",
+          "type": "uint8",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "EComparisonMethod",
+            "SubCategoryObjectPath": "/Script/FunctionalTesting.EComparisonMethod"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue",
+          "type": "UObject* /* AC_StatManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_StatManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_StatManager.AC_StatManager_C"
+          }
+        },
+        {
+          "name": "CallFunc_GetStat_Found_Stat",
+          "type": "UObject* /* B_Stat_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Stat_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Stats/B_Stat.B_Stat_C"
+          }
+        },
+        {
+          "name": "CallFunc_GetStat_Stat_Info",
+          "type": "FSLFStatInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FStatInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Stats/FStatInfo.FStatInfo"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetStatPercentValue_Max_Value",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "CallFunc_EqualEqual_DoubleDouble_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_NotEqual_DoubleDouble_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GreaterEqual_DoubleDouble_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_LessEqual_DoubleDouble_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Greater_DoubleDouble_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Less_DoubleDouble_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_Select_Default",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "SetPhase",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Phase Index",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "LOCAL_Phase",
+          "type": "FSLFAiBossPhase",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FAiBossPhase",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/AI/FAiBossPhase.FAiBossPhase"
+          }
+        },
+        {
+          "name": "CallFunc_EvaluatePhaseRequirement_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Not_PreBool_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_NotEqual_IntInt_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Get_Item",
+          "type": "FSLFAiBossPhase",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FAiBossPhase",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/AI/FAiBossPhase.FAiBossPhase"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [
+        "LOCAL_Phase"
+      ],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "SetFightActive",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "FightActive?",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_1",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue",
+          "type": "UObject* /* AC_AI_BehaviorManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_AI_BehaviorManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_AI_BehaviorManager.AC_AI_BehaviorManager_C"
+          }
+        },
+        {
+          "name": "CallFunc_GetTarget_Target",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_TryGetHudForActor_Success",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_TryGetHudForActor_HUD",
+          "type": "UObject* /* W_HUD_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "W_HUD_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Widgets/HUD/W_HUD.W_HUD_C"
+          }
+        },
+        {
+          "name": "CallFunc_TryGetHudForActor_Success_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_TryGetHudForActor_HUD_1",
+          "type": "UObject* /* W_HUD_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "W_HUD_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Widgets/HUD/W_HUD.W_HUD_C"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnLoaded_1C786C0E4FD6169773D9C9AC22A7D484",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Loaded",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnNotifyEnd_DF55FAB2405F7AE706D14B8A73234607",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnNotifyBegin_DF55FAB2405F7AE706D14B8A73234607",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnInterrupted_DF55FAB2405F7AE706D14B8A73234607",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnBlendOut_DF55FAB2405F7AE706D14B8A73234607",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnCompleted_DF55FAB2405F7AE706D14B8A73234607",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnLoaded_B052161349778CB7AAE1FFBCC61BB1DF",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Loaded",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnLoaded_3611884A4A7BDCAC0ED3B0B368CF5C05",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Loaded",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnLoaded_570959F0421A115E400D6F81B50B296A",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Loaded",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "ReceiveBeginPlay",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event OnStatUpdated",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "UpdatedStat",
+          "type": "UObject* /* B_Stat_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Stat_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Stats/B_Stat.B_Stat_C"
+          }
+        },
+        {
+          "name": "Change",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "UpdateAffectedStats?",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "ValueType",
+          "type": "ESLFValueType",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "E_ValueType",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Enums/E_ValueType.E_ValueType"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event HandlePhaseChange",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Phase",
+          "type": "FSLFAiBossPhase",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FAiBossPhase",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/AI/FAiBossPhase.FAiBossPhase"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event OnDeath",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event ShowDeathText",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event OnPhaseSequenceFinished",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event OnDeathSequenceFinished",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "ExecuteUbergraph_AC_AI_Boss",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "EntryPoint",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_NotifyName_1",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_NotifyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate",
+          "type": "/* UNKNOWN: delegate/None/OnMontagePlayDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnMontagePlayDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "Temp_name_Variable",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_Loaded_2",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        },
+        {
+          "name": "Temp_object_Variable",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsAnim_Montage",
+          "type": "UAnimMontage*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AnimMontage",
+            "SubCategoryObjectPath": "/Script/Engine.AnimMontage"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_MakeTransform_ReturnValue",
+          "type": "FTransform",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Transform",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Transform"
+          }
+        },
+        {
+          "name": "CallFunc_BeginDeferredActorSpawnFromClass_ReturnValue",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_1",
+          "type": "/* UNKNOWN: delegate/None/OnSequenceFinished__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnSequenceFinished__DelegateSignature"
+          }
+        },
+        {
+          "name": "CallFunc_FinishSpawningActor_ReturnValue",
+          "type": "UObject* /* B_SequenceActor_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_SequenceActor_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/_WorldActors/B_SequenceActor.B_SequenceActor_C"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_Loaded_1",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        },
+        {
+          "name": "Temp_object_Variable_1",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsLevel_Sequence",
+          "type": "ULevelSequence*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "LevelSequence",
+            "SubCategoryObjectPath": "/Script/LevelSequence.LevelSequence"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_Loaded",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        },
+        {
+          "name": "Temp_object_Variable_2",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsSound_Base",
+          "type": "USoundBase*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "SoundBase",
+            "SubCategoryObjectPath": "/Script/Engine.SoundBase"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess_2",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_SpawnSound2D_ReturnValue",
+          "type": "UObject* /* AudioComponent */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AudioComponent",
+            "SubCategoryObjectPath": "/Script/Engine.AudioComponent"
+          }
+        },
+        {
+          "name": "Temp_bool_True_if_break_was_hit_Variable",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Not_PreBool_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_Array_Index_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_2",
+          "type": "/* UNKNOWN: delegate/None/OnMontagePlayDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnMontagePlayDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_UpdatedStat",
+          "type": "UObject* /* B_Stat_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Stat_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Stats/B_Stat.B_Stat_C"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_Change",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_UpdateAffectedStats_",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_ValueType",
+          "type": "ESLFValueType",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "E_ValueType",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Enums/E_ValueType.E_ValueType"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue",
+          "type": "UObject* /* AC_StatManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_StatManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_StatManager.AC_StatManager_C"
+          }
+        },
+        {
+          "name": "CallFunc_GetAllStats_StatObjects",
+          "type": "TArray<UObject* /* B_Stat_C */>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Stat_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Stats/B_Stat.B_Stat_C"
+          }
+        },
+        {
+          "name": "CallFunc_GetAllStats_StatClassesAndCategories",
+          "type": "TMap<UClass*, FGameplayTag>",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": true,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag",
+            "KeyType": {
+              "IsArray": false,
+              "IsSet": false,
+              "IsMap": false,
+              "IsReference": false,
+              "IsConst": false,
+              "Category": "object",
+              "SubCategory": "None",
+              "SubCategoryObject": "Class",
+              "SubCategoryObjectPath": "/Script/CoreUObject.Class"
+            }
+          }
+        },
+        {
+          "name": "CallFunc_Array_Length_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_3",
+          "type": "/* UNKNOWN: delegate/None/OnStatUpdated__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnStatUpdated__DelegateSignature"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Get_Item",
+          "type": "FSLFAiBossPhase",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FAiBossPhase",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/AI/FAiBossPhase.FAiBossPhase"
+          }
+        },
+        {
+          "name": "CallFunc_Array_IsNotEmpty_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_EvaluatePhaseRequirement_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_EqualEqual_GameplayTag_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Length_ReturnValue_1",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_NotifyName_2",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_4",
+          "type": "/* UNKNOWN: delegate/None/OnMontagePlayDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnMontagePlayDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_Phase",
+          "type": "FSLFAiBossPhase",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FAiBossPhase",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/AI/FAiBossPhase.FAiBossPhase"
+          }
+        },
+        {
+          "name": "CallFunc_Not_PreBool_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_1",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue_1",
+          "type": "UObject* /* AC_AI_CombatManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_AI_CombatManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager.AC_AI_CombatManager_C"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_NotifyName_3",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_2",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue_2",
+          "type": "UObject* /* AC_AI_CombatManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_AI_CombatManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager.AC_AI_CombatManager_C"
+          }
+        },
+        {
+          "name": "CallFunc_IsValidSoftObjectReference_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_IsValidSoftObjectReference_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_IsValidSoftObjectReference_ReturnValue_2",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_5",
+          "type": "/* UNKNOWN: delegate/None/OnDeath__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnDeath__DelegateSignature"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_6",
+          "type": "/* UNKNOWN: delegate/None/OnMontagePlayDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnMontagePlayDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_3",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue_3",
+          "type": "UObject* /* AC_AI_BehaviorManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_AI_BehaviorManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_AI_BehaviorManager.AC_AI_BehaviorManager_C"
+          }
+        },
+        {
+          "name": "CallFunc_GetTarget_Target",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_Greater_DoubleDouble_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetController_ReturnValue",
+          "type": "UObject* /* Controller */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Controller",
+            "SubCategoryObjectPath": "/Script/Engine.Controller"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsBPI_Controller",
+          "type": "/* UNKNOWN: interface/None/BPI_Controller_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "interface",
+            "SubCategory": "None",
+            "SubCategoryObject": "BPI_Controller_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Controller.BPI_Controller_C"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess_3",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_4",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue_4",
+          "type": "UObject* /* AC_AI_BehaviorManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_AI_BehaviorManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_AI_BehaviorManager.AC_AI_BehaviorManager_C"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_NotifyName_4",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_Loop_Counter_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_7",
+          "type": "/* UNKNOWN: delegate/None/OnMontagePlayDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnMontagePlayDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "CallFunc_Less_IntInt_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Add_IntInt_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_BooleanAND_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_5",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "Temp_object_Variable_3",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue_5",
+          "type": "UObject* /* AC_AI_BehaviorManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_AI_BehaviorManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_AI_BehaviorManager.AC_AI_BehaviorManager_C"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsLevel_Sequence_1",
+          "type": "ULevelSequence*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "LevelSequence",
+            "SubCategoryObjectPath": "/Script/LevelSequence.LevelSequence"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess_4",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetTarget_Target_1",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_Loaded_3",
+          "type": "UObject*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Object",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Object"
+          }
+        },
+        {
+          "name": "CallFunc_TryGetHudForActor_Success",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_TryGetHudForActor_HUD",
+          "type": "UObject* /* W_HUD_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "W_HUD_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Widgets/HUD/W_HUD.W_HUD_C"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_6",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue_6",
+          "type": "UObject* /* AC_AI_BehaviorManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_AI_BehaviorManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_AI_BehaviorManager.AC_AI_BehaviorManager_C"
+          }
+        },
+        {
+          "name": "K2Node_MakeStruct_MovieSceneSequencePlaybackSettings",
+          "type": "FMovieSceneSequencePlaybackSettings",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "MovieSceneSequencePlaybackSettings",
+            "SubCategoryObjectPath": "/Script/MovieScene.MovieSceneSequencePlaybackSettings"
+          }
+        },
+        {
+          "name": "CallFunc_GetTarget_Target_2",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_TryGetHudForActor_Success_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_TryGetHudForActor_HUD_1",
+          "type": "UObject* /* W_HUD_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "W_HUD_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Widgets/HUD/W_HUD.W_HUD_C"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_8",
+          "type": "/* UNKNOWN: delegate/None/OnSequenceFinished__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnSequenceFinished__DelegateSignature"
+          }
+        },
+        {
+          "name": "CallFunc_MakeTransform_ReturnValue_1",
+          "type": "FTransform",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Transform",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Transform"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_7",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_BeginDeferredActorSpawnFromClass_ReturnValue_1",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsCharacter",
+          "type": "UObject* /* Character */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Character",
+            "SubCategoryObjectPath": "/Script/Engine.Character"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess_5",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_CreateProxyObjectForPlayMontage_ReturnValue",
+          "type": "UObject* /* PlayMontageCallbackProxy */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "PlayMontageCallbackProxy",
+            "SubCategoryObjectPath": "/Script/AnimGraphRuntime.PlayMontageCallbackProxy"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_2",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_3",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_FinishSpawningActor_ReturnValue_1",
+          "type": "UObject* /* B_SequenceActor_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_SequenceActor_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/_WorldActors/B_SequenceActor.B_SequenceActor_C"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_9",
+          "type": "/* UNKNOWN: delegate/None/OnAssetLoaded__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnAssetLoaded__DelegateSignature"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_10",
+          "type": "/* UNKNOWN: delegate/None/OnAssetLoaded__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnAssetLoaded__DelegateSignature"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_11",
+          "type": "/* UNKNOWN: delegate/None/TimerDynamicDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "TimerDynamicDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "CallFunc_K2_SetTimerDelegate_ReturnValue",
+          "type": "FTimerHandle",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "TimerHandle",
+            "SubCategoryObjectPath": "/Script/Engine.TimerHandle"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_8",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_9",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue_7",
+          "type": "UObject* /* AC_AI_BehaviorManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_AI_BehaviorManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_AI_BehaviorManager.AC_AI_BehaviorManager_C"
+          }
+        },
+        {
+          "name": "CallFunc_GetTarget_Target_3",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_10",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_TryGetHudForActor_Success_2",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_TryGetHudForActor_HUD_2",
+          "type": "UObject* /* W_HUD_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "W_HUD_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Widgets/HUD/W_HUD.W_HUD_C"
+          }
+        },
+        {
+          "name": "Temp_int_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_11",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_Add_IntInt_ReturnValue_1",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue_8",
+          "type": "UObject* /* AC_AI_BehaviorManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_AI_BehaviorManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_AI_BehaviorManager.AC_AI_BehaviorManager_C"
+          }
+        },
+        {
+          "name": "CallFunc_GetTarget_Target_4",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Get_Item_1",
+          "type": "UObject* /* B_Stat_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Stat_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Stats/B_Stat.B_Stat_C"
+          }
+        },
+        {
+          "name": "CallFunc_TryGetHudForActor_Success_3",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_TryGetHudForActor_HUD_3",
+          "type": "UObject* /* W_HUD_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "W_HUD_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Widgets/HUD/W_HUD.W_HUD_C"
+          }
+        },
+        {
+          "name": "CallFunc_Less_IntInt_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_MakeStruct_MovieSceneSequencePlaybackSettings_1",
+          "type": "FMovieSceneSequencePlaybackSettings",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "MovieSceneSequencePlaybackSettings",
+            "SubCategoryObjectPath": "/Script/MovieScene.MovieSceneSequencePlaybackSettings"
+          }
+        },
+        {
+          "name": "CallFunc_IsValidSoftObjectReference_ReturnValue_3",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_12",
+          "type": "/* UNKNOWN: delegate/None/OnAssetLoaded__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnAssetLoaded__DelegateSignature"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_13",
+          "type": "/* UNKNOWN: delegate/None/OnAssetLoaded__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnAssetLoaded__DelegateSignature"
+          }
+        },
+        {
+          "name": "CallFunc_K2_SetTimerDelegate_Time_ImplicitCast",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    }
+  ],
+  "event_dispatchers": [],
+  "graphs": [
+    {
+      "name": "EventGraph",
+      "type": "edgraphschema_k2",
+      "entry_points": [
+        "ReceiveBeginPlay",
+        "Event OnStatUpdated",
+        "Event HandlePhaseChange",
+        "Event OnDeath",
+        "Event ShowDeathText"
+      ],
+      "node_count": 79,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": true,
+      "function_calls": [
+        "DelayUntilNextTick",
+        "GetOwner",
+        "GetComponentByClass",
+        "GetAllStats",
+        "EvaluatePhaseRequirement",
+        "SetPhase",
+        "Not_PreBool",
+        "GetOwner",
+        "GetComponentByClass",
+        "OverrideAbilities",
+        "SetState",
+        "GetOwner",
+        "GetComponentByClass",
+        "SetFightActive",
+        "K2_SetTimerDelegate",
+        "GetOwner",
+        "GetComponentByClass",
+        "GetTarget",
+        "GetController",
+        "GetOwner"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "SetFightActive",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 29,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "GetOwner",
+        "GetComponentByClass",
+        "GetTarget",
+        "TryGetHudForActor",
+        "Event ShowBossBar",
+        "GetOwner",
+        "TryGetHudForActor",
+        "Event HideBossBar",
+        "SetPhase",
+        "SetPhase",
+        "FadeOut"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "SetPhase",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 22,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "EvaluatePhaseRequirement",
+        "Not_PreBool",
+        "Event HandlePhaseChange"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "EvaluatePhaseRequirement",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 26,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "GetOwner",
+        "GetComponentByClass",
+        "GetStat",
+        "GetStatPercentValue"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "TryGetBossDoors",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 17,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "GetAllActorsOfClass",
+        "GetOwner",
+        "GetDistanceTo"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "TryUnlockBossDoors",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 7,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    }
+  ],
+  "collapsed_graphs": [],
+  "dependencies": {
+    "structs": [
+      "FAiBossPhase"
+    ],
+    "enums": [
+      "E_AI_BossEncounterType"
+    ],
+    "interfaces": [],
+    "components": [],
+    "blueprints": [],
+    "data_assets": []
+  },
+  "final_summary": "",
+  "known_issues": [],
+  "debug_notes": [],
+  "test_results": []
+}

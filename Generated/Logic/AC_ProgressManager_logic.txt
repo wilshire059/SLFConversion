@@ -1,0 +1,47 @@
+// Logic implementations for AC_ProgressManager
+// Generated from AC_ProgressManager.json
+
+// ═══ SetProgress ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_ProgressManager::SetProgress called"));
+
+	Map_Add(/*Key*/ ProgressTag, /*TargetMap*/ CurrentProgress, /*Value*/ State);
+	Map_Keys(/*TargetMap*/ CurrentProgress);
+	Map_Values(/*TargetMap*/ CurrentProgress);
+	// Macro: ForEachLoop
+
+// ═══ GetProgress ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_ProgressManager::GetProgress called"));
+
+	if (Map_FindResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	// Output Found? uses default value
+	// Set output: State = Map_FindResult.Value
+	return;
+	// Output Found? uses default value
+	// Output State uses default value
+	return;
+
+// ═══ ExecuteGameplayEvents ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_ProgressManager::ExecuteGameplayEvents called"));
+
+	// Macro: ForEachLoop
+
+// ═══ GetRequiredCurrencyForLevel ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_ProgressManager::GetRequiredCurrencyForLevel called"));
+
+	// Set output: ReturnValue = RoundResult.ReturnValue
+	return;
+
+// ═══ SerializeProgressData ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_ProgressManager::SerializeProgressData called"));
+
+	Map_Keys(/*TargetMap*/ CurrentProgress);
+	Map_Values(/*TargetMap*/ CurrentProgress);
+	// Macro: ForEachLoop
+

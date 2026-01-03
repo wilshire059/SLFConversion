@@ -1,0 +1,1902 @@
+{
+  "blueprint_name": "AC_CollisionManager",
+  "blueprint_path": "/Game/SoulslikeFramework/Blueprints/Components/AC_CollisionManager.AC_CollisionManager",
+  "json_export_path": "C:\\scripts\\SLFConversion\\Exports\\BlueprintDNA_v2\\Component\\AC_CollisionManager.json",
+  "cpp_header": "CollisionManagerComponent.h",
+  "cpp_source": "CollisionManagerComponent.cpp",
+  "parent_class": "UActorComponent",
+  "parent_class_raw": "ActorComponent",
+  "implemented_interfaces": [],
+  "migration_status": {
+    "pass1_complete": false,
+    "pass2_validated": false,
+    "pass3_complete": false,
+    "overall_status": "not_started"
+  },
+  "summary": {
+    "variable_count": 12,
+    "function_count": 10,
+    "event_dispatcher_count": 1,
+    "graph_count": 7,
+    "total_items": 30
+  },
+  "variables": [
+    {
+      "name": "TraceSocketStart",
+      "type": "FName",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "name",
+        "SubCategory": "None"
+      },
+      "category": "Config",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "TraceSocketEnd",
+      "type": "FName",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "name",
+        "SubCategory": "None"
+      },
+      "category": "Config",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "TraceRadius",
+      "type": "double",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "real",
+        "SubCategory": "double"
+      },
+      "category": "Config",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "TargetMesh",
+      "type": "USceneComponent*",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "object",
+        "SubCategory": "None",
+        "SubCategoryObject": "SceneComponent",
+        "SubCategoryObjectPath": "/Script/Engine.SceneComponent"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "TraceTypes",
+      "type": "TArray<uint8>",
+      "type_raw": {
+        "IsArray": true,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "byte",
+        "SubCategory": "None",
+        "SubCategoryObject": "EObjectTypeQuery",
+        "SubCategoryObjectPath": "/Script/Engine.EObjectTypeQuery"
+      },
+      "category": "Config",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "TraceDebugMode",
+      "type": "uint8",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "byte",
+        "SubCategory": "None",
+        "SubCategoryObject": "EDrawDebugTrace",
+        "SubCategoryObjectPath": "/Script/Engine.EDrawDebugTrace"
+      },
+      "category": "Config",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "OnActorTraced",
+      "type": "/* UNKNOWN: mcdelegate/None/OnActorTraced__DelegateSignature */",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "mcdelegate",
+        "SubCategory": "None",
+        "SubCategoryObject": "OnActorTraced__DelegateSignature"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "TracedActors",
+      "type": "TArray<AActor*>",
+      "type_raw": {
+        "IsArray": true,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "object",
+        "SubCategory": "None",
+        "SubCategoryObject": "Actor",
+        "SubCategoryObjectPath": "/Script/Engine.Actor"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "DamageMultiplier",
+      "type": "double",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "real",
+        "SubCategory": "double"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "TraceSizeMultiplier",
+      "type": "double",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "real",
+        "SubCategory": "double"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "LastStartPosition",
+      "type": "FVector",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "struct",
+        "SubCategory": "None",
+        "SubCategoryObject": "Vector",
+        "SubCategoryObjectPath": "/Script/CoreUObject.Vector"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "LastEndPosition",
+      "type": "FVector",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "struct",
+        "SubCategory": "None",
+        "SubCategoryObject": "Vector",
+        "SubCategoryObjectPath": "/Script/CoreUObject.Vector"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    }
+  ],
+  "functions": [
+    {
+      "name": "SetMultipliers",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "DamageMultiplier",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "TraceSizeMultiplier",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "GetMultipliers",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "Default",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "ProcessTrace",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "CallFunc_Array_Length_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_bool_True_if_break_was_hit_Variable",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Not_PreBool_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_Array_Index_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Get_Item",
+          "type": "FHitResult",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "HitResult",
+            "SubCategoryObjectPath": "/Script/Engine.HitResult"
+          }
+        },
+        {
+          "name": "CallFunc_BreakHitResult_bBlockingHit",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_BreakHitResult_bInitialOverlap",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_BreakHitResult_Time",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        },
+        {
+          "name": "CallFunc_BreakHitResult_Distance",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        },
+        {
+          "name": "CallFunc_BreakHitResult_Location",
+          "type": "FVector",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Vector",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Vector"
+          }
+        },
+        {
+          "name": "CallFunc_BreakHitResult_ImpactPoint",
+          "type": "FVector",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Vector",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Vector"
+          }
+        },
+        {
+          "name": "CallFunc_BreakHitResult_Normal",
+          "type": "FVector",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Vector",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Vector"
+          }
+        },
+        {
+          "name": "CallFunc_BreakHitResult_ImpactNormal",
+          "type": "FVector",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Vector",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Vector"
+          }
+        },
+        {
+          "name": "CallFunc_BreakHitResult_PhysMat",
+          "type": "UObject* /* PhysicalMaterial */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "PhysicalMaterial",
+            "SubCategoryObjectPath": "/Script/PhysicsCore.PhysicalMaterial"
+          }
+        },
+        {
+          "name": "CallFunc_BreakHitResult_HitActor",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_BreakHitResult_HitComponent",
+          "type": "UObject* /* PrimitiveComponent */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "PrimitiveComponent",
+            "SubCategoryObjectPath": "/Script/Engine.PrimitiveComponent"
+          }
+        },
+        {
+          "name": "CallFunc_BreakHitResult_HitBoneName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_BreakHitResult_BoneName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_BreakHitResult_HitItem",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_BreakHitResult_ElementIndex",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_BreakHitResult_FaceIndex",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_BreakHitResult_TraceStart",
+          "type": "FVector",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Vector",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Vector"
+          }
+        },
+        {
+          "name": "CallFunc_BreakHitResult_TraceEnd",
+          "type": "FVector",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Vector",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Vector"
+          }
+        },
+        {
+          "name": "Temp_int_Loop_Counter_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Less_IntInt_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Add_IntInt_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_BooleanAND_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Contains_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Add_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Not_PreBool_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "SubsteppedTrace",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "StepSize",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "LOCAL_NewEndPosition",
+          "type": "FVector",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Vector",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Vector"
+          }
+        },
+        {
+          "name": "LOCAL_NewStartPosition",
+          "type": "FVector",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Vector",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Vector"
+          }
+        },
+        {
+          "name": "LOCAL_Alpha",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "LOCAL_Substeps",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "LOCAL_Distance",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "LOCAL_CurrentEndPosition",
+          "type": "FVector",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Vector",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Vector"
+          }
+        },
+        {
+          "name": "LOCAL_CurrentStartPosition",
+          "type": "FVector",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Vector",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Vector"
+          }
+        },
+        {
+          "name": "Temp_int_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Conv_IntToDouble_ReturnValue",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "CallFunc_Add_IntInt_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_LessEqual_IntInt_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_NotEqual_ByteByte_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "K2Node_MakeArray_Array",
+          "type": "TArray<AActor*>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_Multiply_DoubleDouble_ReturnValue",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "CallFunc_SphereTraceMultiForObjects_OutHits",
+          "type": "TArray<FHitResult>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "HitResult",
+            "SubCategoryObjectPath": "/Script/Engine.HitResult"
+          }
+        },
+        {
+          "name": "CallFunc_SphereTraceMultiForObjects_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_VLerp_ReturnValue",
+          "type": "FVector",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Vector",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Vector"
+          }
+        },
+        {
+          "name": "CallFunc_VLerp_ReturnValue_1",
+          "type": "FVector",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Vector",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Vector"
+          }
+        },
+        {
+          "name": "CallFunc_Conv_IntToDouble_ReturnValue_1",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "CallFunc_Divide_DoubleDouble_ReturnValue",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "CallFunc_Divide_DoubleDouble_ReturnValue_1",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "CallFunc_FCeil_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Vector_Distance_ReturnValue",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "CallFunc_Max_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetTraceLocations_Trace_Start_Location",
+          "type": "FVector",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Vector",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Vector"
+          }
+        },
+        {
+          "name": "CallFunc_GetTraceLocations_Trace_End_Location",
+          "type": "FVector",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Vector",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Vector"
+          }
+        },
+        {
+          "name": "CallFunc_SphereTraceMultiForObjects_Radius_ImplicitCast",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        },
+        {
+          "name": "CallFunc_VLerp_Alpha_ImplicitCast",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        },
+        {
+          "name": "CallFunc_VLerp_Alpha_ImplicitCast_1",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        }
+      ],
+      "category": "Default",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [
+        "LOCAL_CurrentStartPosition",
+        "LOCAL_CurrentEndPosition",
+        "LOCAL_Distance",
+        "LOCAL_Substeps",
+        "LOCAL_Alpha",
+        "LOCAL_NewStartPosition",
+        "LOCAL_NewEndPosition"
+      ],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "GetTraceLocations",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "LOCAL_EndLoc",
+          "type": "FVector",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Vector",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Vector"
+          }
+        },
+        {
+          "name": "LOCAL_StartLoc",
+          "type": "FVector",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Vector",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Vector"
+          }
+        },
+        {
+          "name": "CallFunc_GetSocketLocation_ReturnValue",
+          "type": "FVector",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Vector",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Vector"
+          }
+        },
+        {
+          "name": "CallFunc_GetSocketLocation_ReturnValue_1",
+          "type": "FVector",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Vector",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Vector"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": true,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": true,
+      "is_blueprint_callable": true,
+      "has_exec_pins": false,
+      "local_variables": [
+        "LOCAL_StartLoc",
+        "LOCAL_EndLoc"
+      ],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event ToggleTrace",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Enabled?",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "ReceiveBeginPlay",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "ReceiveTick",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "DeltaSeconds",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event InitializeTracePoints",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "ExecuteUbergraph_AC_CollisionManager",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "EntryPoint",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_Enabled_",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_bool_Variable",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue",
+          "type": "UObject* /* SkeletalMeshComponent */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "SkeletalMeshComponent",
+            "SubCategoryObjectPath": "/Script/Engine.SkeletalMeshComponent"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue_1",
+          "type": "UObject* /* StaticMeshComponent */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "StaticMeshComponent",
+            "SubCategoryObjectPath": "/Script/Engine.StaticMeshComponent"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_Select_Default",
+          "type": "USceneComponent*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "SceneComponent",
+            "SubCategoryObjectPath": "/Script/Engine.SceneComponent"
+          }
+        },
+        {
+          "name": "K2Node_Event_DeltaSeconds",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        },
+        {
+          "name": "CallFunc_GetTraceLocations_Trace_Start_Location",
+          "type": "FVector",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Vector",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Vector"
+          }
+        },
+        {
+          "name": "CallFunc_GetTraceLocations_Trace_End_Location",
+          "type": "FVector",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Vector",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Vector"
+          }
+        },
+        {
+          "name": "CallFunc_Multiply_DoubleDouble_ReturnValue",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    }
+  ],
+  "event_dispatchers": [
+    {
+      "name": "OnActorTraced",
+      "parameters": [
+        {
+          "name": "Actor",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "Hit",
+          "type": "FHitResult",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "HitResult",
+            "SubCategoryObjectPath": "/Script/Engine.HitResult"
+          }
+        },
+        {
+          "name": "Multiplier",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        }
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    }
+  ],
+  "graphs": [
+    {
+      "name": "EventGraph",
+      "type": "edgraphschema_k2",
+      "entry_points": [
+        "ReceiveBeginPlay",
+        "Event ToggleTrace",
+        "ReceiveTick",
+        "Event InitializeTracePoints"
+      ],
+      "node_count": 28,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "GetOwner",
+        "GetComponentByClass",
+        "GetComponentByClass",
+        "IsValid",
+        "SetComponentTickEnabled",
+        "SetComponentTickEnabled",
+        "SubsteppedTrace",
+        "GetTraceLocations",
+        "Event InitializeTracePoints"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "GetTraceLocations",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 13,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "GetSocketLocation",
+        "GetSocketLocation"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "SubsteppedTrace",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 61,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "GetTraceLocations",
+        "Vector_Distance",
+        "FCeil",
+        "Conv_IntToDouble",
+        "VLerp",
+        "VLerp",
+        "SphereTraceMultiForObjects",
+        "GetOwner",
+        "ProcessTrace",
+        "DrawDebugLine"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "ProcessTrace",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 15,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "BreakHitResult",
+        "Not_PreBool"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "GetMultipliers",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 5,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "SetMultipliers",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 5,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "OnActorTraced",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 1,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    }
+  ],
+  "collapsed_graphs": [],
+  "dependencies": {
+    "structs": [],
+    "enums": [],
+    "interfaces": [],
+    "components": [],
+    "blueprints": [],
+    "data_assets": []
+  },
+  "final_summary": "",
+  "known_issues": [],
+  "debug_notes": [],
+  "test_results": []
+}

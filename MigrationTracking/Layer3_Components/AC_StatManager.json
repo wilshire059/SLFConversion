@@ -1,0 +1,3944 @@
+{
+  "blueprint_name": "AC_StatManager",
+  "blueprint_path": "/Game/SoulslikeFramework/Blueprints/Components/AC_StatManager.AC_StatManager",
+  "json_export_path": "C:\\scripts\\SLFConversion\\Exports\\BlueprintDNA_v2\\Component\\AC_StatManager.json",
+  "cpp_header": "StatManagerComponent.h",
+  "cpp_source": "StatManagerComponent.cpp",
+  "parent_class": "UActorComponent",
+  "parent_class_raw": "ActorComponent",
+  "implemented_interfaces": [],
+  "migration_status": {
+    "pass1_complete": false,
+    "pass2_validated": false,
+    "pass3_complete": false,
+    "overall_status": "not_started"
+  },
+  "summary": {
+    "variable_count": 11,
+    "function_count": 18,
+    "event_dispatcher_count": 3,
+    "graph_count": 16,
+    "total_items": 48
+  },
+  "variables": [
+    {
+      "name": "ActiveStats",
+      "type": "TMap<FGameplayTag, UObject* /* B_Stat_C */>",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": true,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "object",
+        "SubCategory": "None",
+        "SubCategoryObject": "B_Stat_C",
+        "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Stats/B_Stat.B_Stat_C",
+        "KeyType": {
+          "IsArray": false,
+          "IsSet": false,
+          "IsMap": false,
+          "IsReference": false,
+          "IsConst": false,
+          "Category": "struct",
+          "SubCategory": "None",
+          "SubCategoryObject": "GameplayTag",
+          "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+        }
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "IsAiComponent",
+      "type": "bool",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "bool",
+        "SubCategory": "None"
+      },
+      "category": "Config",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": false,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "SpeedAsset",
+      "type": "UObject* /* PDA_MovementSpeedData_C */",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "object",
+        "SubCategory": "None",
+        "SubCategoryObject": "PDA_MovementSpeedData_C",
+        "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/PDA_MovementSpeedData.PDA_MovementSpeedData_C"
+      },
+      "category": "Config",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "StatTable",
+      "type": "UDataTable*",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "object",
+        "SubCategory": "None",
+        "SubCategoryObject": "DataTable",
+        "SubCategoryObjectPath": "/Script/Engine.DataTable"
+      },
+      "category": "Config",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": false,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "Stats",
+      "type": "TMap<UClass*, FGameplayTag>",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": true,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "struct",
+        "SubCategory": "None",
+        "SubCategoryObject": "GameplayTag",
+        "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag",
+        "KeyType": {
+          "IsArray": false,
+          "IsSet": false,
+          "IsMap": false,
+          "IsReference": false,
+          "IsConst": false,
+          "Category": "object",
+          "SubCategory": "None",
+          "SubCategoryObject": "Class",
+          "SubCategoryObjectPath": "/Script/CoreUObject.Class"
+        }
+      },
+      "category": "Config",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": false,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "OnStatsInitialized",
+      "type": "/* UNKNOWN: mcdelegate/None/OnStatsInitialized__DelegateSignature */",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "mcdelegate",
+        "SubCategory": "None",
+        "SubCategoryObject": "OnStatsInitialized__DelegateSignature"
+      },
+      "category": "Default",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "Level",
+      "type": "int32",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "int",
+        "SubCategory": "None"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "OnLevelUpdated",
+      "type": "/* UNKNOWN: mcdelegate/None/OnLevelUpdated__DelegateSignature */",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "mcdelegate",
+        "SubCategory": "None",
+        "SubCategoryObject": "OnLevelUpdated__DelegateSignature"
+      },
+      "category": "Default",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "SelectedClassAsset",
+      "type": "UObject* /* PDA_BaseCharacterInfo_C */",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "object",
+        "SubCategory": "None",
+        "SubCategoryObject": "PDA_BaseCharacterInfo_C",
+        "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/PDA_BaseCharacterInfo.PDA_BaseCharacterInfo_C"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "OnSaveRequested",
+      "type": "/* UNKNOWN: mcdelegate/None/OnSaveRequested__DelegateSignature */",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "mcdelegate",
+        "SubCategory": "None",
+        "SubCategoryObject": "OnSaveRequested__DelegateSignature"
+      },
+      "category": "Default",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "StatOverrides",
+      "type": "TMap<FGameplayTag, FSLFStatOverride>",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": true,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "struct",
+        "SubCategory": "None",
+        "SubCategoryObject": "FStatOverride",
+        "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Stats/FStatOverride.FStatOverride",
+        "KeyType": {
+          "IsArray": false,
+          "IsSet": false,
+          "IsMap": false,
+          "IsReference": false,
+          "IsConst": false,
+          "Category": "struct",
+          "SubCategory": "None",
+          "SubCategoryObject": "GameplayTag",
+          "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+        }
+      },
+      "category": "Config",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": false,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    }
+  ],
+  "functions": [
+    {
+      "name": "ToggleRegenForStat",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "StatTag",
+          "type": "FGameplayTag",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+          }
+        },
+        {
+          "name": "Stop?",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Map_Find_Value",
+          "type": "UObject* /* B_Stat_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Stat_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Stats/B_Stat.B_Stat_C"
+          }
+        },
+        {
+          "name": "CallFunc_Map_Find_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "Helpers",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "IsStatMoreThan",
+      "return_type": "bool",
+      "return_type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": true,
+        "IsConst": false,
+        "Category": "bool",
+        "SubCategory": "None"
+      },
+      "parameters": [
+        {
+          "name": "StatTag",
+          "type": "FGameplayTag",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+          }
+        },
+        {
+          "name": "Threshold",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "CallFunc_GetStat_Found_Stat",
+          "type": "UObject* /* B_Stat_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Stat_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Stats/B_Stat.B_Stat_C"
+          }
+        },
+        {
+          "name": "CallFunc_GetStat_Stat_Info",
+          "type": "FSLFStatInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FStatInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Stats/FStatInfo.FStatInfo"
+          }
+        },
+        {
+          "name": "CallFunc_Greater_DoubleDouble_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "Helpers",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "AdjustLevel",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Delta",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Not_PreBool_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Add_IntInt_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "Setters",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "GetStatsForCategory",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "StatCategory",
+          "type": "FGameplayTag",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+          }
+        },
+        {
+          "name": "LOCAL_StatsContainer",
+          "type": "FGameplayTagContainer",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTagContainer",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTagContainer"
+          }
+        },
+        {
+          "name": "LOCAL_Stats",
+          "type": "TArray<FGameplayTag>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+          }
+        },
+        {
+          "name": "Temp_int_Loop_Counter_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Add_IntInt_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_Array_Index_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Map_Keys_Keys",
+          "type": "TArray<UClass*>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Class",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Class"
+          }
+        },
+        {
+          "name": "CallFunc_Map_Values_Values",
+          "type": "TArray<FGameplayTag>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Get_Item",
+          "type": "UClass*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Class",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Class"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Get_Item_1",
+          "type": "FGameplayTag",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+          }
+        },
+        {
+          "name": "CallFunc_EqualEqual_GameplayTag_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Length_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Less_IntInt_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "Getters",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [
+        "LOCAL_Stats",
+        "LOCAL_StatsContainer"
+      ],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "InitializeLoadedStats",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Temp_int_Loop_Counter_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Add_IntInt_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_Array_Index_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Get_Item",
+          "type": "FSLFStatInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FStatInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Stats/FStatInfo.FStatInfo"
+          }
+        },
+        {
+          "name": "CallFunc_Not_PreBool_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Length_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Less_IntInt_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Map_Find_Value",
+          "type": "UObject* /* B_Stat_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Stat_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Stats/B_Stat.B_Stat_C"
+          }
+        },
+        {
+          "name": "CallFunc_Map_Find_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "Setters|Save & Load",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "SerializeStatsData",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "LOCAL_InstancedStats",
+          "type": "TArray<FInstancedStruct>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        },
+        {
+          "name": "LOCAL_StatsToSave",
+          "type": "TArray<FSLFStatInfo>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FStatInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Stats/FStatInfo.FStatInfo"
+          }
+        },
+        {
+          "name": "Temp_int_Loop_Counter_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Add_IntInt_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_Array_Index_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetPlayerController_ReturnValue",
+          "type": "UObject* /* PlayerController */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "PlayerController",
+            "SubCategoryObjectPath": "/Script/Engine.PlayerController"
+          }
+        },
+        {
+          "name": "CallFunc_GetPlayerController_ReturnValue_1",
+          "type": "UObject* /* PlayerController */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "PlayerController",
+            "SubCategoryObjectPath": "/Script/Engine.PlayerController"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsBPI_Controller",
+          "type": "/* UNKNOWN: interface/None/BPI_Controller_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "interface",
+            "SubCategory": "None",
+            "SubCategoryObject": "BPI_Controller_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Controller.BPI_Controller_C"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsBPI_Controller_1",
+          "type": "/* UNKNOWN: interface/None/BPI_Controller_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "interface",
+            "SubCategory": "None",
+            "SubCategoryObject": "BPI_Controller_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Controller.BPI_Controller_C"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_MakeStruct_FInt",
+          "type": "FFInt",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FInt",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/_Misc/FInt.FInt"
+          }
+        },
+        {
+          "name": "CallFunc_MakeInstancedStruct_ReturnValue",
+          "type": "FInstancedStruct",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        },
+        {
+          "name": "K2Node_MakeArray_Array",
+          "type": "TArray<FInstancedStruct>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        },
+        {
+          "name": "CallFunc_GetAllStats_StatObjects",
+          "type": "TArray<UObject* /* B_Stat_C */>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Stat_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Stats/B_Stat.B_Stat_C"
+          }
+        },
+        {
+          "name": "CallFunc_GetAllStats_StatClassesAndCategories",
+          "type": "TMap<UClass*, FGameplayTag>",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": true,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag",
+            "KeyType": {
+              "IsArray": false,
+              "IsSet": false,
+              "IsMap": false,
+              "IsReference": false,
+              "IsConst": false,
+              "Category": "object",
+              "SubCategory": "None",
+              "SubCategoryObject": "Class",
+              "SubCategoryObjectPath": "/Script/CoreUObject.Class"
+            }
+          }
+        },
+        {
+          "name": "CallFunc_Array_Length_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Get_Item",
+          "type": "UObject* /* B_Stat_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Stat_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Stats/B_Stat.B_Stat_C"
+          }
+        },
+        {
+          "name": "CallFunc_Less_IntInt_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_MakeInstancedStruct_ReturnValue_1",
+          "type": "FInstancedStruct",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        },
+        {
+          "name": "CallFunc_Array_AddUnique_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Add_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "Setters|Save & Load",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [
+        "LOCAL_StatsToSave",
+        "LOCAL_InstancedStats"
+      ],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "AdjustAffectedStats",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Stat",
+          "type": "UObject* /* B_Stat_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Stat_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Stats/B_Stat.B_Stat_C"
+          }
+        },
+        {
+          "name": "Change",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "ValueType",
+          "type": "ESLFValueType",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "E_ValueType",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Enums/E_ValueType.E_ValueType"
+          }
+        },
+        {
+          "name": "Temp_int_Loop_Counter_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Add_IntInt_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_Array_Index_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_Array_Index_Variable_1",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Conv_IntToDouble_ReturnValue",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "Temp_int_Loop_Counter_Variable_1",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Add_IntInt_ReturnValue_1",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_bool_Variable",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Map_Length_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Map_Values_Values",
+          "type": "TArray<FSLFAffectedStats>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FAffectedStats",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Stats/FAffectedStats.FAffectedStats"
+          }
+        },
+        {
+          "name": "CallFunc_Greater_IntInt_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Get_Item",
+          "type": "FSLFAffectedStats",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FAffectedStats",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Stats/FAffectedStats.FAffectedStats"
+          }
+        },
+        {
+          "name": "CallFunc_Map_Keys_Keys",
+          "type": "TArray<FGameplayTag>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Get_Item_1",
+          "type": "FSLFAffectedStat",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FAffectedStat",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Stats/FAffectedStat.FAffectedStat"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Get_Item_2",
+          "type": "FGameplayTag",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Conv_IntToDouble_ReturnValue_1",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "CallFunc_LessEqual_DoubleDouble_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Conv_IntToDouble_ReturnValue_2",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GreaterEqual_DoubleDouble_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_BooleanAND_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_2",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetFloatValue_ReturnValue",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        },
+        {
+          "name": "CallFunc_Calculate_OutChange",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "K2Node_Select_Default",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Length_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Less_IntInt_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Length_ReturnValue_1",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Less_IntInt_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetFloatValue_InTime_ImplicitCast",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        },
+        {
+          "name": "K2Node_Select_Option_1_ImplicitCast",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        }
+      ],
+      "category": "Setters",
+      "access_specifier": "Private",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "AdjustAffected",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "StatTag",
+          "type": "FGameplayTag",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+          }
+        },
+        {
+          "name": "ValueType",
+          "type": "ESLFValueType",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "E_ValueType",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Enums/E_ValueType.E_ValueType"
+          }
+        },
+        {
+          "name": "Change",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "CallFunc_GetStat_Found_Stat",
+          "type": "UObject* /* B_Stat_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Stat_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Stats/B_Stat.B_Stat_C"
+          }
+        },
+        {
+          "name": "CallFunc_GetStat_Stat_Info",
+          "type": "FSLFStatInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FStatInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Stats/FStatInfo.FStatInfo"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "Setters",
+      "access_specifier": "Private",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "AdjustStat",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "StatTag",
+          "type": "FGameplayTag",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+          }
+        },
+        {
+          "name": "ValueType",
+          "type": "ESLFValueType",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "E_ValueType",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Enums/E_ValueType.E_ValueType"
+          }
+        },
+        {
+          "name": "Change",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "Level Up?",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "TriggerRegen?",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetStat_Found_Stat",
+          "type": "UObject* /* B_Stat_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Stat_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Stats/B_Stat.B_Stat_C"
+          }
+        },
+        {
+          "name": "CallFunc_GetStat_Stat_Info",
+          "type": "FSLFStatInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FStatInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Stats/FStatInfo.FStatInfo"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "Setters",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "ResetStat",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "StatTag",
+          "type": "FGameplayTag",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+          }
+        },
+        {
+          "name": "CallFunc_GetStat_Found_Stat",
+          "type": "UObject* /* B_Stat_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Stat_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Stats/B_Stat.B_Stat_C"
+          }
+        },
+        {
+          "name": "CallFunc_GetStat_Stat_Info",
+          "type": "FSLFStatInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FStatInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Stats/FStatInfo.FStatInfo"
+          }
+        },
+        {
+          "name": "CallFunc_GetStatCurrentValue_Current_Value",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "CallFunc_GetStatMaxValue_Max_Value",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "CallFunc_Subtract_DoubleDouble_ReturnValue",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        }
+      ],
+      "category": "Setters",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "GetAllStats",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "CallFunc_Map_Values_Values",
+          "type": "TArray<UObject* /* B_Stat_C */>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Stat_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Stats/B_Stat.B_Stat_C"
+          }
+        }
+      ],
+      "category": "Getters",
+      "access_specifier": "Public",
+      "is_pure": true,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": true,
+      "is_blueprint_callable": true,
+      "has_exec_pins": false,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "GetStat",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "StatTag",
+          "type": "FGameplayTag",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+          }
+        },
+        {
+          "name": "CallFunc_Map_Find_Value",
+          "type": "UObject* /* B_Stat_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Stat_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Stats/B_Stat.B_Stat_C"
+          }
+        },
+        {
+          "name": "CallFunc_Map_Find_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "Getters",
+      "access_specifier": "Public",
+      "is_pure": true,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": true,
+      "is_blueprint_callable": true,
+      "has_exec_pins": false,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event OnDataLoaded",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "LoadedData",
+          "type": "FSLFSaveGameInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FSaveGameInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Saving/FSaveGameInfo.FSaveGameInfo"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event Initialize Stats",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "ReceiveBeginPlay",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event OnStatUpdated",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "UpdatedStat",
+          "type": "UObject* /* B_Stat_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Stat_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Stats/B_Stat.B_Stat_C"
+          }
+        },
+        {
+          "name": "Change",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "UpdateAffectedStats?",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "ValueType",
+          "type": "ESLFValueType",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "E_ValueType",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Enums/E_ValueType.E_ValueType"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event OnLevelUpRequested",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Delta",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "ExecuteUbergraph_AC_StatManager",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "EntryPoint",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_Delta",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_Loop_Counter_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Add_IntInt_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_Array_Index_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_Loop_Counter_Variable_1",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Add_IntInt_ReturnValue_1",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_Array_Index_Variable_1",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_ArrayLength_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_Loop_Counter_Variable_2",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Add_IntInt_ReturnValue_2",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_Array_Index_Variable_2",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_Array_Index_Variable_3",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Add_IntInt_ReturnValue_3",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Less_IntInt_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_Loop_Counter_Variable_3",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Add_IntInt_ReturnValue_4",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_Array_Index_Variable_4",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_wildcard_Variable",
+          "type": "FSLFStatInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FStatInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Stats/FStatInfo.FStatInfo"
+          }
+        },
+        {
+          "name": "Temp_bool_Variable",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_wildcard_Variable_1",
+          "type": "TArray<FSLFStatInfo>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FStatInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Stats/FStatInfo.FStatInfo"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Add_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_LoadedData",
+          "type": "FSLFSaveGameInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FSaveGameInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Saving/FSaveGameInfo.FSaveGameInfo"
+          }
+        },
+        {
+          "name": "CallFunc_GetSaveDataByTag_Success_",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetSaveDataByTag_ReturnValue",
+          "type": "FSLFSaveData",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FSaveData",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Saving/FSaveData.FSaveData"
+          }
+        },
+        {
+          "name": "CallFunc_GetSaveDataByTag_Success__1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetSaveDataByTag_ReturnValue_1",
+          "type": "FSLFSaveData",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FSaveData",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Saving/FSaveData.FSaveData"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Get_Item",
+          "type": "FInstancedStruct",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_ExecResult",
+          "type": "uint8",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "EStructUtilsResult",
+            "SubCategoryObjectPath": "/Script/Engine.EStructUtilsResult"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_Value",
+          "type": "FFInt",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FInt",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/_Misc/FInt.FInt"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_ExecResult_1",
+          "type": "uint8",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "EStructUtilsResult",
+            "SubCategoryObjectPath": "/Script/Engine.EStructUtilsResult"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_Value_1",
+          "type": "FSLFStatInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FStatInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Stats/FStatInfo.FStatInfo"
+          }
+        },
+        {
+          "name": "CallFunc_Subtract_IntInt_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_SwitchEnum_CmpSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_SwitchEnum_CmpSuccess_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Length_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Map_Values_Values",
+          "type": "TArray<FSLFStatOverride>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FStatOverride",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Stats/FStatOverride.FStatOverride"
+          }
+        },
+        {
+          "name": "CallFunc_Map_Keys_Keys",
+          "type": "TArray<FGameplayTag>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Get_Item_1",
+          "type": "FGameplayTag",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+          }
+        },
+        {
+          "name": "CallFunc_GetStat_Found_Stat",
+          "type": "UObject* /* B_Stat_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Stat_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Stats/B_Stat.B_Stat_C"
+          }
+        },
+        {
+          "name": "CallFunc_GetStat_Stat_Info",
+          "type": "FSLFStatInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FStatInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Stats/FStatInfo.FStatInfo"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Length_ReturnValue_1",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Less_IntInt_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_Select_Default",
+          "type": "FSLFRegen",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FRegen",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Stats/FRegen.FRegen"
+          }
+        },
+        {
+          "name": "K2Node_MakeStruct_FStatInfo",
+          "type": "FSLFStatInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FStatInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Stats/FStatInfo.FStatInfo"
+          }
+        },
+        {
+          "name": "CallFunc_Not_PreBool_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetGameInstance_ReturnValue",
+          "type": "UObject* /* GameInstance */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameInstance",
+            "SubCategoryObjectPath": "/Script/Engine.GameInstance"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsBPI_Game_Instance",
+          "type": "/* UNKNOWN: interface/None/BPI_GameInstance_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "interface",
+            "SubCategory": "None",
+            "SubCategoryObject": "BPI_GameInstance_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Interfaces/BPI_GameInstance.BPI_GameInstance_C"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Map_Values_Values_1",
+          "type": "TArray<UObject* /* B_Stat_C */>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Stat_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Stats/B_Stat.B_Stat_C"
+          }
+        },
+        {
+          "name": "CallFunc_GetSelectedClass_SelectedBaseCharacterClass",
+          "type": "UObject* /* PDA_BaseCharacterInfo_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "PDA_BaseCharacterInfo_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/PDA_BaseCharacterInfo.PDA_BaseCharacterInfo_C"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Get_Item_2",
+          "type": "UObject* /* B_Stat_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Stat_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Stats/B_Stat.B_Stat_C"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Length_ReturnValue_2",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Less_IntInt_ReturnValue_2",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate",
+          "type": "/* UNKNOWN: delegate/None/OnLeveledUp__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnLeveledUp__DelegateSignature"
+          }
+        },
+        {
+          "name": "CallFunc_Map_IsEmpty_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetDataTableRowNames_OutRowNames",
+          "type": "TArray<FName>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Get_Item_3",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Length_ReturnValue_3",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Less_IntInt_ReturnValue_3",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetDataTableRowFromName_OutRow",
+          "type": "FSLFStatEntry",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FStatEntry",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Stats/FStatEntry.FStatEntry"
+          }
+        },
+        {
+          "name": "CallFunc_GetDataTableRowFromName_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Map_Keys_Keys_1",
+          "type": "TArray<UClass*>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Class",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Class"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_1",
+          "type": "/* UNKNOWN: delegate/None/OnStatUpdated__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnStatUpdated__DelegateSignature"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Get_Item_4",
+          "type": "UClass*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Class",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Class"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Length_ReturnValue_4",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Less_IntInt_ReturnValue_4",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_SpawnObject_ReturnValue",
+          "type": "UObject* /* B_Stat_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Stat_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Stats/B_Stat.B_Stat_C"
+          }
+        },
+        {
+          "name": "CallFunc_GetPlayerController_ReturnValue",
+          "type": "UObject* /* PlayerController */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "PlayerController",
+            "SubCategoryObjectPath": "/Script/Engine.PlayerController"
+          }
+        },
+        {
+          "name": "CallFunc_GetSaveLoadComponent_ReturnValue",
+          "type": "UObject* /* AC_SaveLoadManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_SaveLoadManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_SaveLoadManager.AC_SaveLoadManager_C"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_2",
+          "type": "/* UNKNOWN: delegate/None/OnDataLoaded__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnDataLoaded__DelegateSignature"
+          }
+        },
+        {
+          "name": "CallFunc_Not_PreBool_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_UpdatedStat",
+          "type": "UObject* /* B_Stat_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Stat_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Stats/B_Stat.B_Stat_C"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_Change",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_UpdateAffectedStats_",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_ValueType",
+          "type": "ESLFValueType",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "E_ValueType",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Enums/E_ValueType.E_ValueType"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    }
+  ],
+  "event_dispatchers": [
+    {
+      "name": "OnStatsInitialized",
+      "parameters": [],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "OnLevelUpdated",
+      "parameters": [
+        {
+          "name": "NewLevel",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "OnSaveRequested",
+      "parameters": [
+        {
+          "name": "SaveGameTag",
+          "type": "FGameplayTag",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+          }
+        },
+        {
+          "name": "DataToSave",
+          "type": "TArray<FInstancedStruct>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        }
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    }
+  ],
+  "graphs": [
+    {
+      "name": "EventGraph",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 2,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "GetStat",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 8,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "Map_Find"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "GetAllStats",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 6,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "Map_Values"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "ResetStat",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 8,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "GetStat",
+        "GetStatCurrentValue",
+        "GetStatMaxValue",
+        "AdjustValue"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "AdjustStat",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 16,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "GetStat",
+        "AdjustValue"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "AdjustAffected",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 11,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "GetStat",
+        "AdjustAffectedValue"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "AdjustAffectedStats",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 55,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "Map_Length",
+        "Greater_IntInt",
+        "AdjustAffected",
+        "AdjustAffected",
+        "Calculate",
+        "GetFloatValue",
+        "IsValid",
+        "AdjustAffected",
+        "AdjustAffected",
+        "Map_Keys",
+        "Map_Values",
+        "Conv_IntToDouble"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "SerializeStatsData",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 24,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "GetAllStats",
+        "GetPlayerController",
+        "GetPlayerController"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "InitializeLoadedStats",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 12,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "Map_Find",
+        "UpdateStatInfo",
+        "Not_PreBool"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "GetStatsForCategory",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 18,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "Map_Values",
+        "Map_Keys",
+        "AddGameplayTag"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "AdjustLevel",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 9,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "Not_PreBool"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "IsStatMoreThan",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 8,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "GetStat"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "ToggleRegenForStat",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 6,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "Map_Find",
+        "Event ToggleStatRegen"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "OnStatsInitialized",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 1,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "OnLevelUpdated",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 1,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "OnSaveRequested",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 1,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    }
+  ],
+  "collapsed_graphs": [],
+  "dependencies": {
+    "structs": [
+      "FStatOverride"
+    ],
+    "enums": [],
+    "interfaces": [],
+    "components": [],
+    "blueprints": [],
+    "data_assets": []
+  },
+  "final_summary": "",
+  "known_issues": [],
+  "debug_notes": [],
+  "test_results": []
+}

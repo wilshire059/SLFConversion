@@ -1,0 +1,13 @@
+============================================================
+PIE STARTUP TEST
+============================================================
+UnrealEditorSubsystem: OK
+GameMode asset loaded: OK
+GameMode class: GM_SoulslikeFramework_C
+PlayerController asset loaded: OK
+PlayerController class: PC_SoulslikeFramework_C
+GameplayMappingContext: /Game/SoulslikeFramework/Input/IMC_Gameplay.IMC_Gameplay
+
+Attempting PIE startup...
+(PIE cannot be tested in headless commandlet mode)
+All critical assets loaded successfully!

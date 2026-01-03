@@ -1,0 +1,2461 @@
+{
+  "blueprint_name": "AC_ActionManager",
+  "blueprint_path": "/Game/SoulslikeFramework/Blueprints/Components/AC_ActionManager.AC_ActionManager",
+  "json_export_path": "C:\\scripts\\SLFConversion\\Exports\\BlueprintDNA_v2\\Component\\AC_ActionManager.json",
+  "cpp_header": "ActionManagerComponent.h",
+  "cpp_source": "ActionManagerComponent.cpp",
+  "parent_class": "UActorComponent",
+  "parent_class_raw": "ActorComponent",
+  "implemented_interfaces": [],
+  "migration_status": {
+    "pass1_complete": false,
+    "pass2_validated": false,
+    "pass3_complete": false,
+    "overall_status": "not_started"
+  },
+  "summary": {
+    "variable_count": 13,
+    "function_count": 20,
+    "event_dispatcher_count": 0,
+    "graph_count": 10,
+    "total_items": 43
+  },
+  "variables": [
+    {
+      "name": "StaminaRegenDelay",
+      "type": "float",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "real",
+        "SubCategory": "float"
+      },
+      "category": "Config",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "OverrideTable",
+      "type": "UDataTable*",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "object",
+        "SubCategory": "None",
+        "SubCategoryObject": "DataTable",
+        "SubCategoryObjectPath": "/Script/Engine.DataTable"
+      },
+      "category": "Config",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "Actions",
+      "type": "TMap<FGameplayTag, UObject* /* PDA_Action_C */>",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": true,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "object",
+        "SubCategory": "None",
+        "SubCategoryObject": "PDA_Action_C",
+        "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Actions/ActionData/PDA_Action.PDA_Action_C",
+        "KeyType": {
+          "IsArray": false,
+          "IsSet": false,
+          "IsMap": false,
+          "IsReference": false,
+          "IsConst": false,
+          "Category": "struct",
+          "SubCategory": "None",
+          "SubCategoryObject": "GameplayTag",
+          "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+        }
+      },
+      "category": "Config",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "IsSprinting",
+      "type": "bool",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "bool",
+        "SubCategory": "None"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "IsCrouched",
+      "type": "bool",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "bool",
+        "SubCategory": "None"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "IsResting",
+      "type": "bool",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "bool",
+        "SubCategory": "None"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "IsOnLadder",
+      "type": "bool",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "bool",
+        "SubCategory": "None"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "AvailableActions",
+      "type": "TMap<FGameplayTag, UObject* /* B_Action_C */>",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": true,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "object",
+        "SubCategory": "None",
+        "SubCategoryObject": "B_Action_C",
+        "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action.B_Action_C",
+        "KeyType": {
+          "IsArray": false,
+          "IsSet": false,
+          "IsMap": false,
+          "IsReference": false,
+          "IsConst": false,
+          "Category": "struct",
+          "SubCategory": "None",
+          "SubCategoryObject": "GameplayTag",
+          "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+        }
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "MovementDirection",
+      "type": "ESLFDirection",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "byte",
+        "SubCategory": "None",
+        "SubCategoryObject": "E_Direction",
+        "SubCategoryObjectPath": "/Game/SoulslikeFramework/Enums/E_Direction.E_Direction"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "MovementVector",
+      "type": "FVector2D",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "struct",
+        "SubCategory": "None",
+        "SubCategoryObject": "Vector2D",
+        "SubCategoryObjectPath": "/Script/CoreUObject.Vector2D"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "StaminaLossTimer",
+      "type": "FTimerHandle",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "struct",
+        "SubCategory": "None",
+        "SubCategoryObject": "TimerHandle",
+        "SubCategoryObjectPath": "/Script/Engine.TimerHandle"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "ActionAssetsCache",
+      "type": "TArray<UObject* /* PDA_Action_C */>",
+      "type_raw": {
+        "IsArray": true,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "object",
+        "SubCategory": "None",
+        "SubCategoryObject": "PDA_Action_C",
+        "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Actions/ActionData/PDA_Action.PDA_Action_C"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "ActionTagsCache",
+      "type": "TArray<FGameplayTag>",
+      "type_raw": {
+        "IsArray": true,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "struct",
+        "SubCategory": "None",
+        "SubCategoryObject": "GameplayTag",
+        "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    }
+  ],
+  "functions": [
+    {
+      "name": "GetIsCrouched",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "Getters",
+      "access_specifier": "Public",
+      "is_pure": true,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": true,
+      "is_blueprint_callable": true,
+      "has_exec_pins": false,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "ToggleCrouch",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Temp_bool_Variable",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_byte_Variable",
+          "type": "ESLFMovementType",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "E_MovementType",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Enums/E_MovementType.E_MovementType"
+          }
+        },
+        {
+          "name": "Temp_byte_Variable_1",
+          "type": "ESLFMovementType",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "E_MovementType",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Enums/E_MovementType.E_MovementType"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsBPI_Generic_Character",
+          "type": "/* UNKNOWN: interface/None/BPI_GenericCharacter_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "interface",
+            "SubCategory": "None",
+            "SubCategoryObject": "BPI_GenericCharacter_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Interfaces/BPI_GenericCharacter.BPI_GenericCharacter_C"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_Select_Default",
+          "type": "ESLFMovementType",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "E_MovementType",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Enums/E_MovementType.E_MovementType"
+          }
+        },
+        {
+          "name": "CallFunc_Not_PreBool_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "Setters",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "SetIsSprinting",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Value",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "Setters",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "SetIsResting",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Value",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "Setters",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "GetDirectionalDodge",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "MontageData",
+          "type": "FSLFDodgeMontages",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FDodgeMontages",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Animation/FDodgeMontages.FDodgeMontages"
+          }
+        },
+        {
+          "name": "K2Node_SwitchEnum_CmpSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "Getters",
+      "access_specifier": "Public",
+      "is_pure": true,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": true,
+      "is_blueprint_callable": true,
+      "has_exec_pins": false,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "SetMoveDir",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "IA_Move",
+          "type": "FVector2D",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Vector2D",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Vector2D"
+          }
+        },
+        {
+          "name": "LOCAL_Degrees",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "CallFunc_InRange_FloatFloat_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_InRange_FloatFloat_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_InRange_FloatFloat_ReturnValue_2",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_InRange_FloatFloat_ReturnValue_3",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_InRange_FloatFloat_ReturnValue_4",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_InRange_FloatFloat_ReturnValue_5",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GreaterEqual_DoubleDouble_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_BreakVector2D_X",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "CallFunc_BreakVector2D_Y",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "CallFunc_VSize2D_ReturnValue",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "CallFunc_DegAtan2_ReturnValue",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "CallFunc_LessEqual_DoubleDouble_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Not_PreBool_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_LessEqual_DoubleDouble_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_BooleanOR_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_InRange_FloatFloat_ReturnValue_6",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "Setters",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [
+        "LOCAL_Degrees"
+      ],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "GetCombatManager",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "CallFunc_GetOwner_ReturnValue",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue",
+          "type": "UObject* /* AC_CombatManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_CombatManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_CombatManager.AC_CombatManager_C"
+          }
+        }
+      ],
+      "category": "Getters",
+      "access_specifier": "Public",
+      "is_pure": true,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": true,
+      "is_blueprint_callable": true,
+      "has_exec_pins": false,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "GetInteractionManager",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "CallFunc_GetOwner_ReturnValue",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue",
+          "type": "UObject* /* AC_InteractionManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_InteractionManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_InteractionManager.AC_InteractionManager_C"
+          }
+        }
+      ],
+      "category": "Getters",
+      "access_specifier": "Public",
+      "is_pure": true,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": true,
+      "is_blueprint_callable": true,
+      "has_exec_pins": false,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "GetStatManager",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "CallFunc_GetOwner_ReturnValue",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue",
+          "type": "UObject* /* AC_StatManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_StatManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_StatManager.AC_StatManager_C"
+          }
+        }
+      ],
+      "category": "Getters",
+      "access_specifier": "Public",
+      "is_pure": true,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": true,
+      "is_blueprint_callable": true,
+      "has_exec_pins": false,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "OnLoaded_9BE31187409A85A40934F3A57F943E4D",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Loaded",
+          "type": "UClass*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Class",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Class"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "MC_SetDirection",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "MovementDirection",
+          "type": "ESLFDirection",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "E_Direction",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Enums/E_Direction.E_Direction"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "SRV_SetDirection",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "MovementDirection",
+          "type": "ESLFDirection",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "E_Direction",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Enums/E_Direction.E_Direction"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event PerformAction",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "ActionTag",
+          "type": "FGameplayTag",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event StartStaminaRegen",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event StopStaminaLoss",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event ReduceStamina",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event StartStaminaLoss",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Tick",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        },
+        {
+          "name": "Change",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event RecursiveLoadActions",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "ReceiveBeginPlay",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "ExecuteUbergraph_AC_ActionManager",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "EntryPoint",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_Loaded",
+          "type": "UClass*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Class",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Class"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate",
+          "type": "/* UNKNOWN: delegate/None/OnAssetClassLoaded__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnAssetClassLoaded__DelegateSignature"
+          }
+        },
+        {
+          "name": "Temp_int_Loop_Counter_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Add_IntInt_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_Array_Index_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_MovementDirection_1",
+          "type": "ESLFDirection",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "E_Direction",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Enums/E_Direction.E_Direction"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_MovementDirection",
+          "type": "ESLFDirection",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "E_Direction",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Enums/E_Direction.E_Direction"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_ActionTag",
+          "type": "FGameplayTag",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+          }
+        },
+        {
+          "name": "CallFunc_Map_Find_Value",
+          "type": "UObject* /* B_Action_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Action_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action.B_Action_C"
+          }
+        },
+        {
+          "name": "CallFunc_Map_Find_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue",
+          "type": "UObject* /* AC_ActionManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_ActionManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_ActionManager.AC_ActionManager_C"
+          }
+        },
+        {
+          "name": "CallFunc_K2_IsValidTimerHandle_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Not_PreBool_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetStatManager_StatManager",
+          "type": "UObject* /* AC_StatManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_StatManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_StatManager.AC_StatManager_C"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_IsStatMoreThan_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetStatManager_StatManager_1",
+          "type": "UObject* /* AC_StatManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_StatManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_StatManager.AC_StatManager_C"
+          }
+        },
+        {
+          "name": "CallFunc_GetStat_Found_Stat",
+          "type": "UObject* /* B_Stat_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Stat_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Stats/B_Stat.B_Stat_C"
+          }
+        },
+        {
+          "name": "CallFunc_GetStat_Stat_Info",
+          "type": "FSLFStatInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FStatInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Stats/FStatInfo.FStatInfo"
+          }
+        },
+        {
+          "name": "CallFunc_GetStatManager_StatManager_2",
+          "type": "UObject* /* AC_StatManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_StatManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_StatManager.AC_StatManager_C"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_1",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_2",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetVelocity_ReturnValue",
+          "type": "FVector",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Vector",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Vector"
+          }
+        },
+        {
+          "name": "CallFunc_GetIsMoving2D__ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetStat_Found_Stat_1",
+          "type": "UObject* /* B_Stat_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Stat_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Stats/B_Stat.B_Stat_C"
+          }
+        },
+        {
+          "name": "CallFunc_GetStat_Stat_Info_1",
+          "type": "FSLFStatInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FStatInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Stats/FStatInfo.FStatInfo"
+          }
+        },
+        {
+          "name": "CallFunc_GetStatManager_StatManager_3",
+          "type": "UObject* /* AC_StatManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_StatManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_StatManager.AC_StatManager_C"
+          }
+        },
+        {
+          "name": "CallFunc_GetStatManager_StatManager_4",
+          "type": "UObject* /* AC_StatManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_StatManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_StatManager.AC_StatManager_C"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_3",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_Tick",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_Change",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_4",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Map_IsEmpty_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Not_PreBool_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetDataTableRowNames_OutRowNames",
+          "type": "TArray<FName>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Get_Item",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Map_Keys_Keys",
+          "type": "TArray<FGameplayTag>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+          }
+        },
+        {
+          "name": "CallFunc_GetDataTableRowFromName_OutRow",
+          "type": "FSLFActionsData",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FActionsData",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Actions/FActionsData.FActionsData"
+          }
+        },
+        {
+          "name": "CallFunc_GetDataTableRowFromName_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Length_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Less_IntInt_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Map_Values_Values",
+          "type": "TArray<UObject* /* PDA_Action_C */>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "PDA_Action_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Actions/ActionData/PDA_Action.PDA_Action_C"
+          }
+        },
+        {
+          "name": "CallFunc_Array_IsEmpty_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_IsEmpty_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_BooleanOR_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Get_Item_1",
+          "type": "UObject* /* PDA_Action_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "PDA_Action_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Actions/ActionData/PDA_Action.PDA_Action_C"
+          }
+        },
+        {
+          "name": "Temp_class_Variable",
+          "type": "UClass*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Class",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Class"
+          }
+        },
+        {
+          "name": "K2Node_ClassDynamicCast_AsAction_Object",
+          "type": "UClass*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Class",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Class"
+          }
+        },
+        {
+          "name": "K2Node_ClassDynamicCast_bSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_SpawnObject_ReturnValue",
+          "type": "UObject* /* B_Action_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Action_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action.B_Action_C"
+          }
+        },
+        {
+          "name": "CallFunc_IsValidSoftClassReference_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_2",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Get_Item_2",
+          "type": "FGameplayTag",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_1",
+          "type": "/* UNKNOWN: delegate/None/TimerDynamicDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "TimerDynamicDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "CallFunc_K2_SetTimerDelegate_ReturnValue",
+          "type": "FTimerHandle",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "TimerHandle",
+            "SubCategoryObjectPath": "/Script/Engine.TimerHandle"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    }
+  ],
+  "event_dispatchers": [],
+  "graphs": [
+    {
+      "name": "EventGraph",
+      "type": "edgraphschema_k2",
+      "entry_points": [
+        "MC_SetDirection",
+        "SRV_SetDirection",
+        "Event PerformAction"
+      ],
+      "node_count": 24,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": true,
+      "function_calls": [
+        "MC_SetDirection",
+        "SetMoveDir",
+        "Map_Find",
+        "ExecuteAction",
+        "GetOwner",
+        "GetComponentByClass",
+        "Not_PreBool"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "GetStatManager",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 5,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "GetOwner",
+        "GetComponentByClass"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "GetInteractionManager",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 5,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "GetOwner",
+        "GetComponentByClass"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "GetCombatManager",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 5,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "GetOwner",
+        "GetComponentByClass"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "SetMoveDir",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 48,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "BreakVector2D",
+        "DegAtan2",
+        "VSize2D",
+        "Not_PreBool",
+        "SRV_SetDirection",
+        "SRV_SetDirection",
+        "SRV_SetDirection",
+        "SRV_SetDirection",
+        "SRV_SetDirection",
+        "SRV_SetDirection",
+        "SRV_SetDirection",
+        "SRV_SetDirection",
+        "SRV_SetDirection",
+        "ParseOutTagName",
+        "InRange_FloatFloat",
+        "InRange_FloatFloat",
+        "InRange_FloatFloat",
+        "InRange_FloatFloat",
+        "InRange_FloatFloat",
+        "InRange_FloatFloat"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "GetDirectionalDodge",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 31,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "SetIsResting",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 3,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "SetIsSprinting",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 3,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "ToggleCrouch",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 8,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "Not_PreBool",
+        "GetOwner"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "GetIsCrouched",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 4,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    }
+  ],
+  "collapsed_graphs": [],
+  "dependencies": {
+    "structs": [],
+    "enums": [
+      "E_Direction"
+    ],
+    "interfaces": [],
+    "components": [],
+    "blueprints": [],
+    "data_assets": []
+  },
+  "final_summary": "",
+  "known_issues": [],
+  "debug_notes": [],
+  "test_results": []
+}

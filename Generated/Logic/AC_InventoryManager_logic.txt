@@ -1,0 +1,488 @@
+// Logic implementations for AC_InventoryManager
+// Generated from AC_InventoryManager.json
+
+// ═══ GetInventoryWidget ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::GetInventoryWidget called"));
+
+	// TODO: Handle K2Node_Message - Get Player HUD
+Target is BPI Controller
+	if (IsValid(/* GetPlayerHUD.W_HUD */))
+	{
+		// Is Valid branch
+	}
+
+// ═══ GetAmountOfItem ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::GetAmountOfItem called"));
+
+	if (Map_FindResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	LOCAL_Success = /* Select.ReturnValue */;
+	LOCAL_Amount = Map_FindResult.Value;
+	// Set output: Amount = LOCAL_Amount
+	// Set output: Success? = LOCAL_Success
+	return;
+	LOCAL_Success = /* value */;
+	LOCAL_Amount = /* value */;
+
+// ═══ GetStoredAmountOfItem ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::GetStoredAmountOfItem called"));
+
+	if (Map_FindResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	LOCAL_Success = /* value */;
+	LOCAL_Amount = Map_FindResult.Value;
+	// Set output: Amount = LOCAL_Amount
+	// Set output: Success? = LOCAL_Success
+	return;
+	LOCAL_Success = /* value */;
+	LOCAL_Amount = /* value */;
+
+// ═══ GetAmountOfItemWithTag ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::GetAmountOfItemWithTag called"));
+
+	Map_Keys(/*TargetMap*/ Items);
+	Map_Values(/*TargetMap*/ Items);
+	// Macro: ForEachLoopWithBreak
+
+// ═══ GetOverallCountForItem ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::GetOverallCountForItem called"));
+
+	if (Map_FindResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	if (Map_FindResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	// Set output: OverallCount = /* int + int.ReturnValue */
+	return;
+	// Set output: OverallCount = Map_FindResult.Value
+	return;
+	if (Map_FindResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	// Set output: OverallCount = Map_FindResult.Value
+	return;
+	// Output OverallCount uses default value
+	return;
+
+// ═══ GetTotalInventoryItemsCount ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::GetTotalInventoryItemsCount called"));
+
+	Map_Values(/*TargetMap*/ Items);
+	Map_Keys(/*TargetMap*/ Items);
+	// Macro: FastForEachLoop
+
+// ═══ GetTotalStorageItemsCount ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::GetTotalStorageItemsCount called"));
+
+	Map_Values(/*TargetMap*/ StoredItems);
+	Map_Keys(/*TargetMap*/ StoredItems);
+	// Macro: FastForEachLoop
+
+// ═══ HasItem? ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::HasItem? called"));
+
+	// Set output: ReturnValue = Map_FindResult.ReturnValue
+	return;
+
+// ═══ GetSlotWithItem ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::GetSlotWithItem called"));
+
+	// Macro: ForEachLoopWithBreak
+
+// ═══ GetSlotWithItemTag ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::GetSlotWithItemTag called"));
+
+	// Macro: FastForEachLoopWithBreak
+
+// ═══ LootPickupItem ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::LootPickupItem called"));
+
+	if (IsValid(LootedItem))
+	{
+		// Is Valid branch
+	}
+
+// ═══ GetEmptySlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::GetEmptySlot called"));
+
+	if (/* integer < integer.ReturnValue */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	LOCAL_MissingSlots = /* int - int.ReturnValue */;
+	// Macro: ForLoop
+
+// ═══ AddItem ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::AddItem called"));
+
+	LOCAL_ItemExists? = Map_FindResult.ReturnValue;
+	if (/* Set LOCAL_ItemExists?.Output_Get */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	if (/* integer <= integer.ReturnValue */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	Map_Add(/*Key*/ Item, /*TargetMap*/ Items, /*Value*/ /* int + int.ReturnValue */);
+	if (/* AND Boolean.ReturnValue */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	RemoveItem(/*Count*/ /* int - int.ReturnValue */, /*Item*/ Item);
+	AddItemToStorage(/*Amount*/ /* int - int.ReturnValue */, /*ItemAsset*/ Item);
+	// TODO: Handle K2Node_CallDelegate - Call On Inventory Updated
+	if (TriggerLootUi?)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	// TODO: Handle K2Node_CallDelegate - Call On Item Looted
+	// TODO: Handle K2Node_CallDelegate - Call On Item Amount Updated
+	// Macro: ForLoop
+	AddItemToStorage(/*Amount*/ /* int - int.ReturnValue */, /*ItemAsset*/ Item);
+	Map_Add(/*Key*/ Item, /*TargetMap*/ Items, /*Value*/ /* Break FItem Info.MaxAmount_20_8086B5ED4E66A339D9AD8190410B8817 */);
+	Map_Add(/*Key*/ Item, /*TargetMap*/ Items, /*Value*/ Count);
+
+// ═══ RemoveItem ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::RemoveItem called"));
+
+	LOCAL_Item = ItemInformation;
+	if (Map_FindResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	LOCAL_NewCount = /* int - int.ReturnValue */;
+	if (/* Not Equal (Integer).ReturnValue */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	if (/* integer > integer.ReturnValue */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	GetSlotWithItem(/*Item*/ Item, /*SlotType*/ NewEnumerator0);
+	if (IsValid(GetSlotWithItemResult.TargetSlot))
+	{
+		// Is Valid branch
+	}
+	Map_Add(/*Key*/ Item, /*TargetMap*/ Items, /*Value*/ /* Set LOCAL_NewCount.Output_Get */);
+	GetSlotWithItem(/*Item*/ Item, /*SlotType*/ NewEnumerator0);
+	if (IsValid(GetSlotWithItemResult.TargetSlot))
+	{
+		// Is Valid branch
+	}
+	GetComponentByClassResult.ReturnValue->IsItemEquipped?(/*TargetItem*/ LOCAL_Item);
+	if (Not_PreBoolResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	Map_Remove(/*Key*/ Item, /*TargetMap*/ Items);
+	GetSlotWithItem(/*Item*/ Item, /*SlotType*/ NewEnumerator0);
+	if (IsValid(GetSlotWithItemResult.TargetSlot))
+	{
+		// Is Valid branch
+	}
+	Map_Add(/*Key*/ Item, /*TargetMap*/ Items, /*Value*/ 0);
+	GetSlotWithItem(/*Item*/ Item, /*SlotType*/ NewEnumerator0);
+	if (IsValid(GetSlotWithItemResult.TargetSlot))
+	{
+		// Is Valid branch
+	}
+
+// ═══ RemoveStoredItem ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::RemoveStoredItem called"));
+
+	LOCAL_Item = ItemInformation;
+	if (Map_FindResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	LOCAL_NewCount = /* int - int.ReturnValue */;
+	if (/* Not Equal (Integer).ReturnValue */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	if (/* integer > integer.ReturnValue */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	GetSlotWithItem(/*Item*/ Item, /*SlotType*/ NewEnumerator1);
+	GetSlotWithItemResult.TargetSlot->Event ChangeAmount(/*NewCount*/ /* Set LOCAL_NewCount.Output_Get */);
+	Map_Add(/*Key*/ Item, /*TargetMap*/ StoredItems, /*Value*/ /* Set LOCAL_NewCount.Output_Get */);
+	Map_Add(/*Key*/ Item, /*TargetMap*/ StoredItems, /*Value*/ /* Set LOCAL_NewCount.Output_Get */);
+	GetSlotWithItem(/*Item*/ Item, /*SlotType*/ NewEnumerator1);
+	GetSlotWithItemResult.TargetSlot->Event ClearSlot(/*TriggerShift?*/ true);
+	// TODO: Handle K2Node_CallDelegate - Call On Item Amount Updated
+	GetSlotWithItemTag(/*ItemTag*/ /* Break FItem Info.ItemTag_57_F8BCB87E4BCB8A54C292AF9CB734BD13 */, /*SlotType*/ NewEnumerator1);
+	if (IsValid(GetSlotWithItemTagResult.TargetSlot))
+	{
+		// Is Valid branch
+	}
+	GetComponentByClassResult.ReturnValue->IsItemEquipped?(/*TargetItem*/ LOCAL_Item);
+	if (IsItemEquipped?Result.Equipped?)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	GetComponentByClassResult.ReturnValue->UnequipItemAtSlot(/*SlotTag*/ IsItemEquipped?Result.OnSlot);
+	Map_Remove(/*Key*/ Item, /*TargetMap*/ StoredItems);
+	GetSlotWithItem(/*Item*/ Item, /*SlotType*/ NewEnumerator1);
+	GetSlotWithItemResult.TargetSlot->Event ClearSlot(/*TriggerShift?*/ true);
+
+// ═══ RemoveItemAtSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::RemoveItemAtSlot called"));
+
+	if (IsValid(Slot))
+	{
+		// Is Valid branch
+	}
+
+// ═══ RemoveItemAtStorageSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::RemoveItemAtStorageSlot called"));
+
+	if (IsValid(Slot))
+	{
+		// Is Valid branch
+	}
+
+// ═══ GetItemsForEquipmentSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::GetItemsForEquipmentSlot called"));
+
+	Map_Values(/*TargetMap*/ Items);
+	Map_Keys(/*TargetMap*/ Items);
+	// Macro: ForEachLoop
+
+// ═══ AddItemToStorage ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::AddItemToStorage called"));
+
+	LOCAL_Item = ItemAsset;
+	if (Map_FindResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	Map_Add(/*Key*/ LOCAL_Item, /*TargetMap*/ StoredItems, /*Value*/ /* int + int.ReturnValue */);
+	// Macro: ForLoop
+	Map_Add(/*Key*/ LOCAL_Item, /*TargetMap*/ StoredItems, /*Value*/ Amount);
+
+// ═══ AddItemAtSlotToStorage ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::AddItemAtSlotToStorage called"));
+
+	LOCAL_Item = AssignedItem;
+	if (Map_FindResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	Map_Add(/*Key*/ LOCAL_Item, /*TargetMap*/ StoredItems, /*Value*/ /* int + int.ReturnValue */);
+	RemoveItemAtSlot(/*Count*/ Amount, /*Slot*/ CurrentSlot);
+	// Macro: ForLoop
+	Map_Add(/*Key*/ LOCAL_Item, /*TargetMap*/ StoredItems, /*Value*/ Amount);
+
+// ═══ RetrieveItemAtSlotFromStorage ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::RetrieveItemAtSlotFromStorage called"));
+
+	if (IsValid(StorageSlot))
+	{
+		// Is Valid branch
+	}
+
+// ═══ AdjustCurrency ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::AdjustCurrency called"));
+
+	Currency = /* int + int.ReturnValue */;
+	// TODO: Handle K2Node_CallDelegate - Call On Currency Updated
+	if (/* integer > integer.ReturnValue */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	// TODO: Handle K2Node_CallDelegate - Call On Currency Increased
+
+// ═══ SerializeInventoryStorageCurrencyData ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::SerializeInventoryStorageCurrencyData called"));
+
+	Map_Keys(/*TargetMap*/ Items);
+	Map_Values(/*TargetMap*/ Items);
+	// Macro: FastForEachLoop
+
+// ═══ InitializeLoadedInventory ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::InitializeLoadedInventory called"));
+
+	// Macro: ForEachLoop
+
+// ═══ UseItemFromInventory ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::UseItemFromInventory called"));
+
+	if (IsValid(Item))
+	{
+		// Is Valid branch
+	}
+
+// ═══ GetCurrentCurency ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::GetCurrentCurency called"));
+
+	// Set output: Currency = Currency
+	return;
+
+// ═══ GetItemsForCategory ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::GetItemsForCategory called"));
+
+	Map_Values(/*TargetMap*/ /* Select.ReturnValue */);
+	Map_Keys(/*TargetMap*/ /* Select.ReturnValue */);
+	// Macro: ForEachLoop
+
+// ═══ GetAllItems ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::GetAllItems called"));
+
+	Map_Values(/*TargetMap*/ /* Select.ReturnValue */);
+	Map_Keys(/*TargetMap*/ /* Select.ReturnValue */);
+	// Macro: ForEachLoop
+
+// ═══ UseItemAtSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::UseItemAtSlot called"));
+
+	if (IsValid(Slot))
+	{
+		// Is Valid branch
+	}
+
+// ═══ LeaveItemAtSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::LeaveItemAtSlot called"));
+
+	// TODO: Handle K2Node_Message - Get Pawn from Controller
+Target is BPI Controller
+	// TODO: Handle K2Node_Message - Spawn Pickup Item Replicated
+Target is BPI Generic Character
+	RemoveItemAtSlot(/*Count*/ Amount, /*Slot*/ InventorySlot);
+
+// ═══ DiscardItemAtSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::DiscardItemAtSlot called"));
+
+	RemoveItemAtSlot(/*Count*/ Amount, /*Slot*/ InventorySlot);
+
+// ═══ StoreItemAtSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::StoreItemAtSlot called"));
+
+	AddItemAtSlotToStorage(/*Amount*/ Amount, /*CurrentSlot*/ InventorySlot);
+
+// ═══ RetrieveItemAtSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::RetrieveItemAtSlot called"));
+
+	RetrieveItemAtSlotFromStorage(/*Amount*/ Amount, /*StorageSlot*/ InventorySlot);
+
+// ═══ InitializeLoadedStorage ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::InitializeLoadedStorage called"));
+
+	// Macro: ForEachLoop
+
+// ═══ ReplenishItem ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::ReplenishItem called"));
+
+	if (/* Break FItem Info.Rechargeable?_56_853B1C43435EFA79AB6FA0A0587ADCF2 */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	if (Map_FindResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	LOCAL_ExistingAmount = Map_FindResult.Value;
+	RemoveItem(/*Count*/ /* Set LOCAL_ExistingAmount.Output_Get */, /*Item*/ Item);
+

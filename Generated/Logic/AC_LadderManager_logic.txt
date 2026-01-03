@@ -1,0 +1,120 @@
+// Logic implementations for AC_LadderManager
+// Generated from AC_LadderManager.json
+
+// ═══ SetIsOnGround ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_LadderManager::SetIsOnGround called"));
+
+	IsOnGround = IsOnGround;
+	if (/* Set IsOnGround.Output_Get */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	if (IsClimbing)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	if (IsOrientedToLadder)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	GetComponentByClassResult.ReturnValue->SetMovementMode(/*NewCustomMode*/ 0, /*NewMovementMode*/ MOVE_Walking);
+	IsOrientedToLadder = /* value */;
+	if (IsClimbingDownFromTop)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	GetComponentByClassResult.ReturnValue->SetMovementMode(/*NewCustomMode*/ 0, /*NewMovementMode*/ MOVE_Walking);
+
+// ═══ SetIsClimbing ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_LadderManager::SetIsClimbing called"));
+
+	IsClimbing = IsClimbing;
+	if (/* Set IsClimbing.Output_Get */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	GetComponentByClassResult.ReturnValue->SetMovementMode(/*NewCustomMode*/ 0, /*NewMovementMode*/ MOVE_Flying);
+	bOrientRotationToMovement = /* value */;
+	GetComponentByClassResult.ReturnValue->StopMovementImmediately();
+	BrakingDecelerationFlying = /* value */;
+	if (IsValid(GetComponentByClassResult.ReturnValue))
+	{
+		// Is Valid branch
+	}
+	bOrientRotationToMovement = /* value */;
+	GetComponentByClassResult.ReturnValue->SetMovementMode(/*NewCustomMode*/ 0, /*NewMovementMode*/ MOVE_Walking);
+	if (IsValid(GetComponentByClassResult.ReturnValue))
+	{
+		// Is Valid branch
+	}
+
+// ═══ SetIsClimbingOffTop ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_LadderManager::SetIsClimbingOffTop called"));
+
+	IsClimbingOffTop = IsClimbingOffTop;
+	if (/* Set IsClimbingOffTop.Output_Get */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	if (IsClimbing)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	// TODO: Handle K2Node_SwitchEnum - Switch on E_LadderClimbState
+	if (/* AND Boolean.ReturnValue */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	GetComponentByClassResult.ReturnValue->SetMovementMode(/*NewCustomMode*/ 0, /*NewMovementMode*/ MOVE_Walking);
+
+// ═══ SetIsClimbingDownFromTop ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_LadderManager::SetIsClimbingDownFromTop called"));
+
+	IsClimbingDownFromTop = IsClimbingDownFromTop;
+	if (/* AND Boolean.ReturnValue */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	Event OnClimbDownFromTop();
+
+// ═══ SetCurrentLadder ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_LadderManager::SetCurrentLadder called"));
+
+	CurrentLadder = CurrentLadder;
+

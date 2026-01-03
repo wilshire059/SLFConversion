@@ -1,0 +1,115 @@
+# Migration Plan for W_HUD
+# Generated from JSON export
+# Compare with original Blueprint to verify
+
+blueprint: W_HUD
+path: /Game/SoulslikeFramework/Widgets/HUD/W_HUD.W_HUD
+parent_class: UserWidget
+
+# ============================================================
+# VARIABLES REQUIRING MIGRATION
+# ============================================================
+variables:
+  # No variable migrations needed
+
+# ============================================================
+# NODES REQUIRING MIGRATION (Break/Make/Switch)
+# ============================================================
+nodes:
+  # No node migrations needed
+
+# ============================================================
+# PIN VALUES REQUIRING MIGRATION
+# ============================================================
+pin_values:
+  - node_guid: "70BF10DF4E25E5008655E8910AE758E4"
+    graph: "EventGraph/MENU RELATED"
+    node_title: "Start Fade"
+    pin_name: "FadeType"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "08B314E642E2B86D3559C898CD78B53F"
+    graph: "EventGraph/MENU RELATED"
+    node_title: "Serialize All Data for Saving
+Target is BPI Controller"
+    pin_name: "Behavior"
+    original_value: "NewEnumerator1"
+    new_value: "MaxValue"
+    action: "Change value: NewEnumerator1 -> MaxValue"
+
+  - node_guid: "3E43E95F418078519D4F09B1BF83E767"
+    graph: "EventGraph/LISTENED EVENTS"
+    node_title: "Event OnStatUpdated
+Custom Event"
+    pin_name: "ValueType"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "A3F4950C4659BF520DD108A54E3B6F3D"
+    graph: "EventGraph/LISTENED EVENTS"
+    node_title: "Equal (Enum)"
+    pin_name: "B"
+    original_value: "NewEnumerator1"
+    new_value: "MaxValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator1 -> MaxValue"
+
+  - node_guid: "A867247A4E6DFB6CC357A6B64F1EC514"
+    graph: "EventGraph/GENERIC"
+    node_title: "Event Fade
+Custom Event"
+    pin_name: "FadeType"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "FB18236E48A8B77879F644966D4A9DD5"
+    graph: "EventGraph/GENERIC"
+    node_title: "Start Fade"
+    pin_name: "FadeType"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "8453147F45A47024722AAD9B51E6F179"
+    graph: "EventGraph/GENERIC"
+    node_title: "Event Fade
+Target is W HUD"
+    pin_name: "FadeType"
+    original_value: "NewEnumerator1"
+    new_value: "MaxValue"
+    action: "Change value: NewEnumerator1 -> MaxValue"
+
+  - node_guid: "51C77F22498B2F16F3DF04B66B46D9AF"
+    graph: "EventGraph/GENERIC"
+    node_title: "Start Fade"
+    pin_name: "FadeType"
+    original_value: "NewEnumerator1"
+    new_value: "MaxValue"
+    action: "Change value: NewEnumerator1 -> MaxValue"
+
+  - node_guid: "3888096D4CA519788BEC58AEDEFA79C6"
+    graph: "EventGraph/INITIALIZATION"
+    node_title: "Start Fade"
+    pin_name: "FadeType"
+    original_value: "NewEnumerator1"
+    new_value: "MaxValue"
+    action: "Change value: NewEnumerator1 -> MaxValue"
+
+  - node_guid: "44EA2D7C42E1ED93D1EFF2AB0D7E4670"
+    graph: "StartFade"
+    node_title: "Inputs"
+    pin_name: "FadeType"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "816D36BC4F1DE50581784EB5A020DFF6"
+    graph: "StartFade"
+    node_title: "Select"
+    pin_name: "Index"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change value: NewEnumerator0 -> CurrentValue"

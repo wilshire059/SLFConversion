@@ -1,0 +1,207 @@
+
+======================================================================
+DETAILED ENEMY DIAGNOSTIC
+======================================================================
+Testing all enemy characters, AI, and combat systems
+
+======================================================================
+1. ENEMY CHARACTER BLUEPRINTS
+======================================================================
+
+  [B_Soulslike_Enemy_Guard]
+    Loaded: OK
+    Parent: /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy.B_Soulslike_Enemy_C
+    NOTE: Parent is Blueprint, not C++
+    Components: 9
+      - AICombatManagerComponent
+      - AIBehaviorManagerComponent
+
+  [B_Soulslike_Enemy_Showcase]
+    Loaded: OK
+    Parent: /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy.B_Soulslike_Enemy_C
+    NOTE: Parent is Blueprint, not C++
+    Components: 9
+      - AICombatManagerComponent
+      - AIBehaviorManagerComponent
+
+  [B_Soulslike_Boss_Malgareth]
+    Loaded: OK
+    Parent: /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss.B_Soulslike_Boss_C
+    NOTE: Parent is Blueprint, not C++
+    Components: 11
+      - AICombatManagerComponent
+      - AIBehaviorManagerComponent
+      - AIBossComponent
+
+======================================================================
+2. ENEMY BASE CLASS (B_Soulslike_Enemy)
+======================================================================
+  Not found - checking alternate paths...
+
+======================================================================
+3. NPC CHARACTERS
+======================================================================
+  B_Soulslike_NPC_ShowcaseGuide
+    Parent: /Script/SLFConversion.SLFNPCShowcaseGuide
+  B_Soulslike_NPC_ShowcaseVendor
+    Parent: /Script/SLFConversion.SLFNPCShowcaseVendor
+
+======================================================================
+4. AI CONTROLLER
+======================================================================
+  Loaded: AIC_SoulslikeFramework
+  Parent: /Script/SLFConversion.SLFAIController
+
+======================================================================
+5. BEHAVIOR TREE
+======================================================================
+  Loaded: BT_Enemy
+  Class: BehaviorTree
+
+  Subtrees:
+    OK: BT_Combat
+    OK: BT_Idle
+    OK: BT_Investigating
+    OK: BT_PatrolPath
+    OK: BT_PoiseBroken
+    OK: BT_RandomRoam
+
+======================================================================
+6. BLACKBOARD
+======================================================================
+  Loaded: BB_Standard
+  Class: BlackboardData
+  Keys: 12
+    - SelfActor
+    - Target
+    - InCombat
+    - POI
+    - State
+    - StartPosition
+    - AttackRadius
+    - StrafeRadius
+    - CanAttack
+    - ChaseDistance
+    ... and 2 more
+
+======================================================================
+7. AI COMPONENTS
+======================================================================
+  AC_AI_BehaviorManager
+    Parent: /Script/SLFConversion.AIBehaviorManagerComponent
+    OK: Has C++ parent
+  AC_AI_CombatManager
+    Parent: /Script/SLFConversion.AC_AI_CombatManager
+    OK: Has C++ parent
+  AC_AI_InteractionManager
+    Parent: /Script/SLFConversion.AIInteractionManagerComponent
+    OK: Has C++ parent
+  AC_AI_Boss
+    Parent: /Script/SLFConversion.AIBossComponent
+    OK: Has C++ parent
+
+======================================================================
+8. AI ABILITIES (Attack Data)
+======================================================================
+  Enemy Abilities:
+    OK: DA_AI_Ability_Enemy_Attack01
+    OK: DA_AI_Ability_Enemy_Attack02
+    OK: DA_AI_Ability_Enemy_Attack03_Fast
+
+  Boss Abilities:
+    OK: DA_AI_Ability_Boss_FourSwings
+    OK: DA_AI_Ability_Boss_JumpAttackClose
+    OK: DA_AI_Ability_Boss_Ranged_Fireball
+
+======================================================================
+9. ENEMY ANIMATION BLUEPRINTS
+======================================================================
+  ABP_SoulslikeEnemy
+    Parent: /Script/Engine.AnimInstance
+  ABP_SoulslikeBossNew
+    Parent: /Script/Engine.AnimInstance
+  ABP_SoulslikeNPC
+    Parent: /Script/Engine.AnimInstance
+
+======================================================================
+10. ENEMIES IN L_Demo_Showcase
+======================================================================
+  Level: L_Demo_Showcase
+  Total Characters: 5
+
+  [B_Soulslike_Enemy_Guard_C_0]
+    Class: B_Soulslike_Enemy_Guard_C
+    Location: (17227, 0, 90)
+    Controller: None
+    AI/Combat Components:
+      - AICombatManagerComponent
+      - AIBehaviorManagerComponent
+      - AC_AI_CombatManager_C
+      - AC_AI_BehaviorManager_C
+
+  [B_Soulslike_Enemy_Demo_C_1]
+    Class: B_Soulslike_Enemy_Showcase_C
+    Location: (6982, 560, 100)
+    Controller: None
+    AI/Combat Components:
+      - AICombatManagerComponent
+      - AIBehaviorManagerComponent
+      - AC_AI_CombatManager_C
+      - AC_AI_BehaviorManager_C
+
+  [B_Soulslike_NPC_ShowcaseGuide_C_1]
+    Class: B_Soulslike_NPC_ShowcaseGuide_C
+    Location: (8117, 600, 105)
+    Controller: None
+
+  [B_Soulslike_NPC_ShowcaseVendor_C_1]
+    Class: B_Soulslike_NPC_ShowcaseVendor_C
+    Location: (7845, 600, 100)
+    Controller: None
+
+  [B_Soulslike_Boss_Malgareth_C_2]
+    Class: B_Soulslike_Boss_Malgareth_C
+    Location: (23550, 0, 129)
+    Controller: None
+    AI/Combat Components:
+      - AICombatManagerComponent
+      - AIBehaviorManagerComponent
+      - AIBossComponent
+      - AC_AI_Boss_C
+
+======================================================================
+11. C++ AI CLASSES
+======================================================================
+  Checking: AIBehaviorManagerComponent
+  Checking: AICombatManagerComponent
+  Checking: AIInteractionManagerComponent
+  Checking: AIBossComponent
+  Checking: SLFAIController
+
+======================================================================
+DIAGNOSTIC SUMMARY
+======================================================================
+
+Errors: 0
+Warnings: 3
+
+WARNINGS:
+  ! B_Soulslike_Enemy_Guard parent is not C++: /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy.B_Soulslike_Enemy_C
+  ! B_Soulslike_Enemy_Showcase parent is not C++: /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy.B_Soulslike_Enemy_C
+  ! B_Soulslike_Boss_Malgareth parent is not C++: /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss.B_Soulslike_Boss_C
+
+VERDICT: Enemy systems appear to be configured
+
+Enemy AI Flow:
+  1. Enemy spawns in level
+  2. AI Controller (AIC_SoulslikeFramework) possesses enemy
+  3. Behavior Tree (BT_Enemy) starts running
+  4. Blackboard (BB_Standard) stores AI state
+  5. AI Combat Manager handles attack selection
+  6. AI Behavior Manager handles state transitions
+
+To test enemy AI:
+  1. Open Unreal Editor
+  2. Open L_Demo_Showcase
+  3. Press Play
+  4. Approach enemies - they should detect and attack

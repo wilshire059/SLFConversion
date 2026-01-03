@@ -1,0 +1,21 @@
+{
+  "name": "B_Soulslike_Character",
+  "path": "/Game/SoulslikeFramework/Blueprints/_Characters/B_Soulslike_Character",
+  "blueprint_components": [],
+  "inherited_components": [
+    {
+      "name": "CharacterMesh0",
+      "class": "SkeletalMeshComponent",
+      "skeletal_mesh": "NONE"
+    },
+    {
+      "name": "CollisionCylinder",
+      "class": "CapsuleComponent"
+    },
+    {
+      "name": "CharMoveComp",
+      "class": "CharacterMovementComponent"
+    }
+  ],
+  "scs_error": "Blueprint: Failed to find property 'simple_construction_script' for attribute 'simple_construction_script' on 'Blueprint'"
+}

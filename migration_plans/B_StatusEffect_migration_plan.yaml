@@ -1,0 +1,92 @@
+# Migration Plan for B_StatusEffect
+# Generated from JSON export
+# Compare with original Blueprint to verify
+
+blueprint: B_StatusEffect
+path: /Game/SoulslikeFramework/Data/StatusEffects/StatusEffectClasses/B_StatusEffect.B_StatusEffect
+parent_class: Object
+
+# ============================================================
+# VARIABLES REQUIRING MIGRATION
+# ============================================================
+variables:
+  - name: "TickStatChange"
+    original:
+      type: "FStatusEffectTick"
+      path: "/Game/SoulslikeFramework/Structures/StatusEffects/FStatusEffectTick.FStatusEffectTick"
+      is_array: false
+      is_map: false
+    migration:
+      new_type: "FStatusEffectTick"
+      new_path: "/Script/SLFConversion.FStatusEffectTick"
+    action: "Change type to FStatusEffectTick"
+
+  - name: "OneShotStatChange"
+    original:
+      type: "FStatusEffectStatChanges"
+      path: "/Game/SoulslikeFramework/Structures/StatusEffects/FStatusEffectStatChanges.FStatusEffectStatChanges"
+      is_array: false
+      is_map: false
+    migration:
+      new_type: "FStatusEffectStatChanges"
+      new_path: "/Script/SLFConversion.FStatusEffectStatChanges"
+    action: "Change type to FStatusEffectStatChanges"
+
+  - name: "TickAndOneShotStatChange"
+    original:
+      type: "FStatusEffectOneShotAndTick"
+      path: "/Game/SoulslikeFramework/Structures/StatusEffects/FStatusEffectOneShotAndTick.FStatusEffectOneShotAndTick"
+      is_array: false
+      is_map: false
+    migration:
+      new_type: "FStatusEffectOneShotAndTick"
+      new_path: "/Script/SLFConversion.FStatusEffectOneShotAndTick"
+    action: "Change type to FStatusEffectOneShotAndTick"
+
+  - name: "StatsToAdjust"
+    original:
+      type: "FStatChange"
+      path: "/Game/SoulslikeFramework/Structures/Stats/FStatChange.FStatChange"
+      is_array: true
+      is_map: false
+    migration:
+      new_type: "FStatChange"
+      new_path: "/Script/SLFConversion.FStatChange"
+    action: "Change type to FStatChange"
+
+# ============================================================
+# NODES REQUIRING MIGRATION (Break/Make/Switch)
+# ============================================================
+nodes:
+  # No node migrations needed
+
+# ============================================================
+# PIN VALUES REQUIRING MIGRATION
+# ============================================================
+pin_values:
+  - node_guid: "328387F64B0BDE719191539BC0388F19"
+    graph: "EventGraph/TRIGGER LOGIC"
+    node_title: "Adjust Stat
+Target is AC Stat Manager"
+    pin_name: "ValueType"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "ED4EDF9F414AB399BF0EA593A64235BB"
+    graph: "EventGraph/TRIGGER LOGIC"
+    node_title: "Adjust Stat
+Target is AC Stat Manager"
+    pin_name: "ValueType"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "811BB1D144221AC2D8D609AA04B1E75A"
+    graph: "EventGraph/TRIGGER LOGIC"
+    node_title: "Adjust Stat
+Target is AC Stat Manager"
+    pin_name: "ValueType"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"

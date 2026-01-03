@@ -1,0 +1,454 @@
+{
+  "blueprint_name": "AC_RadarElement",
+  "blueprint_path": "/Game/SoulslikeFramework/Blueprints/Components/AC_RadarElement.AC_RadarElement",
+  "json_export_path": "C:\\scripts\\SLFConversion\\Exports\\BlueprintDNA_v2\\Component\\AC_RadarElement.json",
+  "cpp_header": "RadarElementComponent.h",
+  "cpp_source": "RadarElementComponent.cpp",
+  "parent_class": "UActorComponent",
+  "parent_class_raw": "ActorComponent",
+  "implemented_interfaces": [],
+  "migration_status": {
+    "pass1_complete": false,
+    "pass2_validated": false,
+    "pass3_complete": false,
+    "overall_status": "not_started"
+  },
+  "summary": {
+    "variable_count": 4,
+    "function_count": 4,
+    "event_dispatcher_count": 0,
+    "graph_count": 1,
+    "total_items": 9
+  },
+  "variables": [
+    {
+      "name": "Icon",
+      "type": "TSoftObjectPtr<UObject>",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "softobject",
+        "SubCategory": "None",
+        "SubCategoryObject": "Texture2D",
+        "SubCategoryObjectPath": "/Script/Engine.Texture2D"
+      },
+      "category": "Config|Icon",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "IconTint",
+      "type": "FLinearColor",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "struct",
+        "SubCategory": "None",
+        "SubCategoryObject": "LinearColor",
+        "SubCategoryObjectPath": "/Script/CoreUObject.LinearColor"
+      },
+      "category": "Config|Icon",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "IconSize",
+      "type": "FVector2D",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "struct",
+        "SubCategory": "None",
+        "SubCategoryObject": "Vector2D",
+        "SubCategoryObjectPath": "/Script/CoreUObject.Vector2D"
+      },
+      "category": "Config|Icon",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "MarkerWidget",
+      "type": "UObject* /* W_Radar_TrackedElement_C */",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "object",
+        "SubCategory": "None",
+        "SubCategoryObject": "W_Radar_TrackedElement_C",
+        "SubCategoryObjectPath": "/Game/SoulslikeFramework/Widgets/Radar/W_Radar_TrackedElement.W_Radar_TrackedElement_C"
+      },
+      "category": "Default",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    }
+  ],
+  "functions": [
+    {
+      "name": "Event AddTrackedElement",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "ReceiveEndPlay",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "EndPlayReason",
+          "type": "uint8",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "EEndPlayReason",
+            "SubCategoryObjectPath": "/Script/Engine.EEndPlayReason"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event RemoveTrackedElement",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "ExecuteUbergraph_AC_RadarElement",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "EntryPoint",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetPlayerController_ReturnValue",
+          "type": "UObject* /* PlayerController */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "PlayerController",
+            "SubCategoryObjectPath": "/Script/Engine.PlayerController"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue",
+          "type": "UObject* /* AC_RadarManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_RadarManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_RadarManager.AC_RadarManager_C"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_StartTrackElement_TrackedElementWidget",
+          "type": "UObject* /* W_Radar_TrackedElement_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "W_Radar_TrackedElement_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Widgets/Radar/W_Radar_TrackedElement.W_Radar_TrackedElement_C"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_2",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_Event_EndPlayReason",
+          "type": "uint8",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "EEndPlayReason",
+            "SubCategoryObjectPath": "/Script/Engine.EEndPlayReason"
+          }
+        },
+        {
+          "name": "CallFunc_GetPlayerController_ReturnValue_1",
+          "type": "UObject* /* PlayerController */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "PlayerController",
+            "SubCategoryObjectPath": "/Script/Engine.PlayerController"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_3",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue_1",
+          "type": "UObject* /* AC_RadarManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_RadarManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_RadarManager.AC_RadarManager_C"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_4",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    }
+  ],
+  "event_dispatchers": [],
+  "graphs": [
+    {
+      "name": "EventGraph",
+      "type": "edgraphschema_k2",
+      "entry_points": [
+        "Event AddTrackedElement",
+        "ReceiveEndPlay",
+        "Event RemoveTrackedElement"
+      ],
+      "node_count": 23,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "GetPlayerController",
+        "GetComponentByClass",
+        "StartTrackElement",
+        "GetPlayerController",
+        "GetComponentByClass",
+        "Event RemoveTrackedElement",
+        "StopTrackElement"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    }
+  ],
+  "collapsed_graphs": [],
+  "dependencies": {
+    "structs": [],
+    "enums": [],
+    "interfaces": [],
+    "components": [],
+    "blueprints": [],
+    "data_assets": []
+  },
+  "final_summary": "",
+  "known_issues": [],
+  "debug_notes": [],
+  "test_results": []
+}

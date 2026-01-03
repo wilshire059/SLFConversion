@@ -1,0 +1,1030 @@
+LogPython: exec(open(r"C:\scripts\SLFConversion\shell_migration_complete.py").read())
+LogPython: Loaded. Run: run()
+LogPython: run()
+LogPython: Processing: AC_StatManager
+LogSLFAutomation: Warning: === CLEARING ALL LOGIC FROM AC_StatManager  ===
+LogSLFAutomation: Warning: Clearing 1 event graphs in AC_StatManager
+LogSLFAutomation:   Cleared 113 nodes from EventGraph
+LogSLFAutomation: Warning: Cleared 113 total nodes from event graphs
+LogSLFAutomation: Warning: Removed 12 function graphs
+LogSLFAutomation: Warning: Removed 0 macro graphs
+LogSLFAutomation: Warning: Removed 11 variables
+LogSLFAutomation: Warning: Removed 3 delegate signature graphs
+LogSLFAutomation: Warning: Cleared 0 nodes from interface graphs
+LogSLFAutomation: Warning: === CLEARED ALL LOGIC FROM AC_StatManager ===
+LogSLFAutomation: Warning: Reparenting AC_StatManager: ActorComponent -> StatManagerComponent
+LogSLFAutomation: Warning: Successfully reparented AC_StatManager to StatManagerComponent
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+LogFileHelpers: Saving Package: /Game/SoulslikeFramework/Blueprints/Components/AC_StatManager
+OBJ SavePackage: Generating thumbnails for [0] asset(s) in package [/Game/SoulslikeFramework/Blueprints/Components/AC_StatManager] ([2] browsable assets)...
+OBJ SavePackage: Finished generating thumbnails for package [/Game/SoulslikeFramework/Blueprints/Components/AC_StatManager]
+LogSavePackage: Moving output files for package: /Game/SoulslikeFramework/Blueprints/Components/AC_StatManager
+LogSavePackage: Moving '../../../../../../scripts/SLFConversion/Saved/AC_StatManagerA7D0DF2C48D1313703AB23863DF895F6.tmp' to '../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Blueprints/Components/AC_StatManager.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 77.515 ms
+LogPython:   OK
+LogPython: Processing: AC_InputBuffer
+LogSLFAutomation: Warning: === CLEARING ALL LOGIC FROM AC_InputBuffer  ===
+LogSLFAutomation: Warning: Clearing 1 event graphs in AC_InputBuffer
+LogSLFAutomation:   Cleared 13 nodes from EventGraph
+LogSLFAutomation: Warning: Cleared 13 total nodes from event graphs
+LogSLFAutomation: Warning: Removed 4 function graphs
+LogSLFAutomation: Warning: Removed 0 macro graphs
+LogSLFAutomation: Warning: Removed 4 variables
+LogSLFAutomation: Warning: Removed 1 delegate signature graphs
+LogSLFAutomation: Warning: Cleared 0 nodes from interface graphs
+LogSLFAutomation: Warning: === CLEARED ALL LOGIC FROM AC_InputBuffer ===
+LogSLFAutomation: Warning: Reparenting AC_InputBuffer: ActorComponent -> InputBufferComponent
+LogSLFAutomation: Warning: Successfully reparented AC_InputBuffer to InputBufferComponent
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+LogFileHelpers: Saving Package: /Game/SoulslikeFramework/Blueprints/Components/AC_InputBuffer
+OBJ SavePackage: Generating thumbnails for [0] asset(s) in package [/Game/SoulslikeFramework/Blueprints/Components/AC_InputBuffer] ([2] browsable assets)...
+OBJ SavePackage: Finished generating thumbnails for package [/Game/SoulslikeFramework/Blueprints/Components/AC_InputBuffer]
+LogSavePackage: Moving output files for package: /Game/SoulslikeFramework/Blueprints/Components/AC_InputBuffer
+LogSavePackage: Moving '../../../../../../scripts/SLFConversion/Saved/AC_InputBufferEC4A00C54461D2B2DD1CAB96F071AD5B.tmp' to '../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Blueprints/Components/AC_InputBuffer.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 78.809 ms (total: 156.324 ms)
+LogPython:   OK
+LogPython: Processing: AC_ActionManager
+LogSLFAutomation: Warning: === CLEARING ALL LOGIC FROM AC_ActionManager  ===
+LogSLFAutomation: Warning: Clearing 1 event graphs in AC_ActionManager
+LogSLFAutomation:   Cleared 115 nodes from EventGraph
+LogSLFAutomation: Warning: Cleared 115 total nodes from event graphs
+LogSLFAutomation: Warning: Removed 9 function graphs
+LogSLFAutomation: Warning: Removed 0 macro graphs
+LogSLFAutomation: Warning: Removed 13 variables
+LogSLFAutomation: Warning: Removed 0 delegate signature graphs
+LogSLFAutomation: Warning: Cleared 0 nodes from interface graphs
+LogSLFAutomation: Warning: === CLEARED ALL LOGIC FROM AC_ActionManager ===
+LogSLFAutomation: Warning: Reparenting AC_ActionManager: ActorComponent -> ActionManagerComponent
+LogSLFAutomation: Warning: Successfully reparented AC_ActionManager to ActionManagerComponent
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+LogFileHelpers: Saving Package: /Game/SoulslikeFramework/Blueprints/Components/AC_ActionManager
+OBJ SavePackage: Generating thumbnails for [0] asset(s) in package [/Game/SoulslikeFramework/Blueprints/Components/AC_ActionManager] ([2] browsable assets)...
+OBJ SavePackage: Finished generating thumbnails for package [/Game/SoulslikeFramework/Blueprints/Components/AC_ActionManager]
+LogSavePackage: Moving output files for package: /Game/SoulslikeFramework/Blueprints/Components/AC_ActionManager
+LogSavePackage: Moving '../../../../../../scripts/SLFConversion/Saved/AC_ActionManagerB04E50B54F643417C8E5FC8C45DC89F6.tmp' to '../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Blueprints/Components/AC_ActionManager.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 78.766 ms (total: 235.090 ms)
+LogPython:   OK
+LogPython: Processing: AC_BuffManager
+LogSLFAutomation: Warning: === CLEARING ALL LOGIC FROM AC_BuffManager  ===
+LogSLFAutomation: Warning: Clearing 1 event graphs in AC_BuffManager
+LogSLFAutomation:   Cleared 40 nodes from EventGraph
+LogSLFAutomation: Warning: Cleared 40 total nodes from event graphs
+LogSLFAutomation: Warning: Removed 5 function graphs
+LogSLFAutomation: Warning: Removed 0 macro graphs
+LogSLFAutomation: Warning: Removed 3 variables
+LogSLFAutomation: Warning: Removed 1 delegate signature graphs
+LogSLFAutomation: Warning: Cleared 0 nodes from interface graphs
+LogSLFAutomation: Warning: === CLEARED ALL LOGIC FROM AC_BuffManager ===
+LogSLFAutomation: Warning: Reparenting AC_BuffManager: ActorComponent -> BuffManagerComponent
+LogSLFAutomation: Warning: Successfully reparented AC_BuffManager to BuffManagerComponent
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+LogFileHelpers: Saving Package: /Game/SoulslikeFramework/Blueprints/Components/AC_BuffManager
+OBJ SavePackage: Generating thumbnails for [0] asset(s) in package [/Game/SoulslikeFramework/Blueprints/Components/AC_BuffManager] ([2] browsable assets)...
+OBJ SavePackage: Finished generating thumbnails for package [/Game/SoulslikeFramework/Blueprints/Components/AC_BuffManager]
+LogSavePackage: Moving output files for package: /Game/SoulslikeFramework/Blueprints/Components/AC_BuffManager
+LogSavePackage: Moving '../../../../../../scripts/SLFConversion/Saved/AC_BuffManager3A69D6E945D5161294C3248E034F9CF4.tmp' to '../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Blueprints/Components/AC_BuffManager.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 80.060 ms (total: 315.151 ms)
+LogPython:   OK
+LogPython: Processing: AC_StatusEffectManager
+LogSLFAutomation: Warning: === CLEARING ALL LOGIC FROM AC_StatusEffectManager  ===
+LogSLFAutomation: Warning: Clearing 1 event graphs in AC_StatusEffectManager
+LogSLFAutomation:   Cleared 54 nodes from EventGraph
+LogSLFAutomation: Warning: Cleared 54 total nodes from event graphs
+LogSLFAutomation: Warning: Removed 4 function graphs
+LogSLFAutomation: Warning: Removed 0 macro graphs
+LogSLFAutomation: Warning: Removed 4 variables
+LogSLFAutomation: Warning: Removed 3 delegate signature graphs
+LogSLFAutomation: Warning: Cleared 0 nodes from interface graphs
+LogSLFAutomation: Warning: === CLEARED ALL LOGIC FROM AC_StatusEffectManager ===
+LogSLFAutomation: Warning: Reparenting AC_StatusEffectManager: ActorComponent -> StatusEffectManagerComponent
+LogSLFAutomation: Warning: Successfully reparented AC_StatusEffectManager to StatusEffectManagerComponent
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+LogFileHelpers: Saving Package: /Game/SoulslikeFramework/Blueprints/Components/AC_StatusEffectManager
+OBJ SavePackage: Generating thumbnails for [0] asset(s) in package [/Game/SoulslikeFramework/Blueprints/Components/AC_StatusEffectManager] ([2] browsable assets)...
+OBJ SavePackage: Finished generating thumbnails for package [/Game/SoulslikeFramework/Blueprints/Components/AC_StatusEffectManager]
+LogSavePackage: Moving output files for package: /Game/SoulslikeFramework/Blueprints/Components/AC_StatusEffectManager
+LogSavePackage: Moving '../../../../../../scripts/SLFConversion/Saved/AC_StatusEffectManagerD7D4C1BC44ACE484ED4698B197419566.tmp' to '../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Blueprints/Components/AC_StatusEffectManager.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 77.464 ms (total: 392.615 ms)
+LogPython:   OK
+LogPython: Processing: AC_EquipmentManager
+LogSLFAutomation: Warning: === CLEARING ALL LOGIC FROM AC_EquipmentManager  ===
+LogSLFAutomation: Warning: Clearing 1 event graphs in AC_EquipmentManager
+LogSLFAutomation:   Cleared 80 nodes from EventGraph
+LogSLFAutomation: Warning: Cleared 80 total nodes from event graphs
+LogSLFAutomation: Warning: Removed 41 function graphs
+LogSLFAutomation: Warning: Removed 2 macro graphs
+LogSLFAutomation: Warning: Removed 28 variables
+LogSLFAutomation: Warning: Removed 9 delegate signature graphs
+LogSLFAutomation: Warning: Cleared 0 nodes from interface graphs
+LogSLFAutomation: Warning: === CLEARED ALL LOGIC FROM AC_EquipmentManager ===
+LogSLFAutomation: Warning: Reparenting AC_EquipmentManager: ActorComponent -> EquipmentManagerComponent
+LogSLFAutomation: Warning: Successfully reparented AC_EquipmentManager to EquipmentManagerComponent
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+LogFileHelpers: Saving Package: /Game/SoulslikeFramework/Blueprints/Components/AC_EquipmentManager
+OBJ SavePackage: Generating thumbnails for [0] asset(s) in package [/Game/SoulslikeFramework/Blueprints/Components/AC_EquipmentManager] ([2] browsable assets)...
+OBJ SavePackage: Finished generating thumbnails for package [/Game/SoulslikeFramework/Blueprints/Components/AC_EquipmentManager]
+LogSavePackage: Moving output files for package: /Game/SoulslikeFramework/Blueprints/Components/AC_EquipmentManager
+LogSavePackage: Moving '../../../../../../scripts/SLFConversion/Saved/AC_EquipmentManagerFACBAF834993E700E2820A992644F657.tmp' to '../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Blueprints/Components/AC_EquipmentManager.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 80.503 ms (total: 473.119 ms)
+LogPython:   OK
+LogPython: Processing: AC_InventoryManager
+LogSLFAutomation: Warning: === CLEARING ALL LOGIC FROM AC_InventoryManager  ===
+LogSLFAutomation: Warning: Clearing 1 event graphs in AC_InventoryManager
+LogSLFAutomation:   Cleared 72 nodes from EventGraph
+LogSLFAutomation: Warning: Cleared 72 total nodes from event graphs
+LogSLFAutomation: Warning: Removed 35 function graphs
+LogSLFAutomation: Warning: Removed 0 macro graphs
+LogSLFAutomation: Warning: Removed 14 variables
+LogSLFAutomation: Warning: Removed 7 delegate signature graphs
+LogSLFAutomation: Warning: Cleared 0 nodes from interface graphs
+LogSLFAutomation: Warning: === CLEARED ALL LOGIC FROM AC_InventoryManager ===
+LogSLFAutomation: Warning: Reparenting AC_InventoryManager: ActorComponent -> InventoryManagerComponent
+LogSLFAutomation: Warning: Successfully reparented AC_InventoryManager to InventoryManagerComponent
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+LogFileHelpers: Saving Package: /Game/SoulslikeFramework/Blueprints/Components/AC_InventoryManager
+OBJ SavePackage: Generating thumbnails for [0] asset(s) in package [/Game/SoulslikeFramework/Blueprints/Components/AC_InventoryManager] ([2] browsable assets)...
+OBJ SavePackage: Finished generating thumbnails for package [/Game/SoulslikeFramework/Blueprints/Components/AC_InventoryManager]
+LogSavePackage: Moving output files for package: /Game/SoulslikeFramework/Blueprints/Components/AC_InventoryManager
+LogSavePackage: Moving '../../../../../../scripts/SLFConversion/Saved/AC_InventoryManager0367916946D6CCE3C76AD2B5F048D153.tmp' to '../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Blueprints/Components/AC_InventoryManager.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 83.488 ms (total: 556.607 ms)
+LogPython:   OK
+LogPython: Processing: AC_CombatManager
+LogSLFAutomation: Warning: === CLEARING ALL LOGIC FROM AC_CombatManager  ===
+LogSLFAutomation: Warning: Clearing 1 event graphs in AC_CombatManager
+LogSLFAutomation:   Cleared 196 nodes from EventGraph
+LogSLFAutomation: Warning: Cleared 196 total nodes from event graphs
+LogSLFAutomation: Warning: Removed 20 function graphs
+LogSLFAutomation: Warning: Removed 0 macro graphs
+LogSLFAutomation: Warning: Removed 37 variables
+LogSLFAutomation: Warning: Removed 0 delegate signature graphs
+LogSLFAutomation: Warning: Cleared 0 nodes from interface graphs
+LogSLFAutomation: Warning: === CLEARED ALL LOGIC FROM AC_CombatManager ===
+LogSLFAutomation: Warning: Reparenting AC_CombatManager: ActorComponent -> CombatManagerComponent
+LogSLFAutomation: Warning: Successfully reparented AC_CombatManager to CombatManagerComponent
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+LogFileHelpers: Saving Package: /Game/SoulslikeFramework/Blueprints/Components/AC_CombatManager
+OBJ SavePackage: Generating thumbnails for [0] asset(s) in package [/Game/SoulslikeFramework/Blueprints/Components/AC_CombatManager] ([2] browsable assets)...
+OBJ SavePackage: Finished generating thumbnails for package [/Game/SoulslikeFramework/Blueprints/Components/AC_CombatManager]
+LogSavePackage: Moving output files for package: /Game/SoulslikeFramework/Blueprints/Components/AC_CombatManager
+LogSavePackage: Moving '../../../../../../scripts/SLFConversion/Saved/AC_CombatManager81528316405990F0CBEA4AA4255F0CE1.tmp' to '../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Blueprints/Components/AC_CombatManager.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 81.177 ms (total: 637.784 ms)
+LogPython:   OK
+LogPython: Processing: AC_CollisionManager
+LogSLFAutomation: Warning: === CLEARING ALL LOGIC FROM AC_CollisionManager  ===
+LogSLFAutomation: Warning: Clearing 1 event graphs in AC_CollisionManager
+LogSLFAutomation:   Cleared 28 nodes from EventGraph
+LogSLFAutomation: Warning: Cleared 28 total nodes from event graphs
+LogSLFAutomation: Warning: Removed 5 function graphs
+LogSLFAutomation: Warning: Removed 0 macro graphs
+LogSLFAutomation: Warning: Removed 12 variables
+LogSLFAutomation: Warning: Removed 1 delegate signature graphs
+LogSLFAutomation: Warning: Cleared 0 nodes from interface graphs
+LogSLFAutomation: Warning: === CLEARED ALL LOGIC FROM AC_CollisionManager ===
+LogSLFAutomation: Warning: Reparenting AC_CollisionManager: ActorComponent -> CollisionManagerComponent
+LogSLFAutomation: Warning: Successfully reparented AC_CollisionManager to CollisionManagerComponent
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+LogFileHelpers: Saving Package: /Game/SoulslikeFramework/Blueprints/Components/AC_CollisionManager
+OBJ SavePackage: Generating thumbnails for [0] asset(s) in package [/Game/SoulslikeFramework/Blueprints/Components/AC_CollisionManager] ([2] browsable assets)...
+OBJ SavePackage: Finished generating thumbnails for package [/Game/SoulslikeFramework/Blueprints/Components/AC_CollisionManager]
+LogSavePackage: Moving output files for package: /Game/SoulslikeFramework/Blueprints/Components/AC_CollisionManager
+LogSavePackage: Moving '../../../../../../scripts/SLFConversion/Saved/AC_CollisionManager5B10FEAA4FDF6704FD335BAE6B73C20B.tmp' to '../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Blueprints/Components/AC_CollisionManager.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 75.687 ms (total: 713.471 ms)
+LogPython:   OK
+LogPython: Processing: AC_InteractionManager
+LogSLFAutomation: Warning: === CLEARING ALL LOGIC FROM AC_InteractionManager  ===
+LogSLFAutomation: Warning: Clearing 1 event graphs in AC_InteractionManager
+LogSLFAutomation:   Cleared 185 nodes from EventGraph
+LogSLFAutomation: Warning: Cleared 185 total nodes from event graphs
+LogSLFAutomation: Warning: Removed 6 function graphs
+LogSLFAutomation: Warning: Removed 0 macro graphs
+LogSLFAutomation: Warning: Removed 19 variables
+LogSLFAutomation: Warning: Removed 0 delegate signature graphs
+LogSLFAutomation: Warning: Cleared 0 nodes from interface graphs
+LogSLFAutomation: Warning: === CLEARED ALL LOGIC FROM AC_InteractionManager ===
+LogSLFAutomation: Warning: Reparenting AC_InteractionManager: ActorComponent -> InteractionManagerComponent
+LogSLFAutomation: Warning: Successfully reparented AC_InteractionManager to InteractionManagerComponent
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+LogFileHelpers: Saving Package: /Game/SoulslikeFramework/Blueprints/Components/AC_InteractionManager
+OBJ SavePackage: Generating thumbnails for [0] asset(s) in package [/Game/SoulslikeFramework/Blueprints/Components/AC_InteractionManager] ([2] browsable assets)...
+OBJ SavePackage: Finished generating thumbnails for package [/Game/SoulslikeFramework/Blueprints/Components/AC_InteractionManager]
+LogSavePackage: Moving output files for package: /Game/SoulslikeFramework/Blueprints/Components/AC_InteractionManager
+LogSavePackage: Moving '../../../../../../scripts/SLFConversion/Saved/AC_InteractionManager1C5710E64CDA39D250729F8C96840811.tmp' to '../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Blueprints/Components/AC_InteractionManager.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 75.341 ms (total: 788.813 ms)
+LogPython:   OK
+LogPython: Processing: AC_AI_Boss
+LogSLFAutomation: Warning: === CLEARING ALL LOGIC FROM AC_AI_Boss  ===
+LogSLFAutomation: Warning: Clearing 1 event graphs in AC_AI_Boss
+LogSLFAutomation:   Cleared 176 nodes from EventGraph
+LogSLFAutomation: Warning: Cleared 176 total nodes from event graphs
+LogSLFAutomation: Warning: Removed 5 function graphs
+LogSLFAutomation: Warning: Removed 0 macro graphs
+LogSLFAutomation: Warning: Removed 18 variables
+LogSLFAutomation: Warning: Removed 0 delegate signature graphs
+LogSLFAutomation: Warning: Cleared 0 nodes from interface graphs
+LogSLFAutomation: Warning: === CLEARED ALL LOGIC FROM AC_AI_Boss ===
+LogSLFAutomation: Warning: Reparenting AC_AI_Boss: ActorComponent -> AIBossComponent
+LogSLFAutomation: Warning: Successfully reparented AC_AI_Boss to AIBossComponent
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+LogFileHelpers: Saving Package: /Game/SoulslikeFramework/Blueprints/Components/AC_AI_Boss
+OBJ SavePackage: Generating thumbnails for [0] asset(s) in package [/Game/SoulslikeFramework/Blueprints/Components/AC_AI_Boss] ([2] browsable assets)...
+OBJ SavePackage: Finished generating thumbnails for package [/Game/SoulslikeFramework/Blueprints/Components/AC_AI_Boss]
+LogSavePackage: Moving output files for package: /Game/SoulslikeFramework/Blueprints/Components/AC_AI_Boss
+LogSavePackage: Moving '../../../../../../scripts/SLFConversion/Saved/AC_AI_BossCDDDB22F4BC8377B484E279FF01B476D.tmp' to '../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Blueprints/Components/AC_AI_Boss.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 79.122 ms (total: 867.936 ms)
+LogPython:   OK
+LogPython: Processing: AC_AI_CombatManager
+LogSLFAutomation: Warning: === CLEARING ALL LOGIC FROM AC_AI_CombatManager  ===
+LogSLFAutomation: Warning: Clearing 1 event graphs in AC_AI_CombatManager
+LogSLFAutomation:   Cleared 259 nodes from EventGraph
+LogSLFAutomation: Warning: Cleared 259 total nodes from event graphs
+LogSLFAutomation: Warning: Removed 15 function graphs
+LogSLFAutomation: Warning: Removed 0 macro graphs
+LogSLFAutomation: Warning: Removed 43 variables
+LogSLFAutomation: Warning: Removed 2 delegate signature graphs
+LogSLFAutomation: Warning: Cleared 0 nodes from interface graphs
+LogSLFAutomation: Warning: === CLEARED ALL LOGIC FROM AC_AI_CombatManager ===
+LogSLFAutomation: Warning: Reparenting AC_AI_CombatManager: ActorComponent -> AICombatManagerComponent
+LogSLFAutomation: Warning: Successfully reparented AC_AI_CombatManager to AICombatManagerComponent
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+LogFileHelpers: Saving Package: /Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager
+OBJ SavePackage: Generating thumbnails for [0] asset(s) in package [/Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager] ([2] browsable assets)...
+OBJ SavePackage: Finished generating thumbnails for package [/Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager]
+LogSavePackage: Moving output files for package: /Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager
+LogSavePackage: Moving '../../../../../../scripts/SLFConversion/Saved/AC_AI_CombatManager46E76402415879BFC369E0A3E26CE489.tmp' to '../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 80.267 ms (total: 948.203 ms)
+LogPython:   OK
+LogPython: Processing: AC_AI_BehaviorManager
+LogSLFAutomation: Warning: === CLEARING ALL LOGIC FROM AC_AI_BehaviorManager  ===
+LogSLFAutomation: Warning: Clearing 1 event graphs in AC_AI_BehaviorManager
+LogSLFAutomation:   Cleared 36 nodes from EventGraph
+LogSLFAutomation: Warning: Cleared 36 total nodes from event graphs
+LogSLFAutomation: Warning: Removed 7 function graphs
+LogSLFAutomation: Warning: Removed 0 macro graphs
+LogSLFAutomation: Warning: Removed 11 variables
+LogSLFAutomation: Warning: Removed 0 delegate signature graphs
+LogSLFAutomation: Warning: Cleared 0 nodes from interface graphs
+LogSLFAutomation: Warning: === CLEARED ALL LOGIC FROM AC_AI_BehaviorManager ===
+LogSLFAutomation: Warning: Reparenting AC_AI_BehaviorManager: ActorComponent -> AIBehaviorManagerComponent
+LogSLFAutomation: Warning: Successfully reparented AC_AI_BehaviorManager to AIBehaviorManagerComponent
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+LogFileHelpers: Saving Package: /Game/SoulslikeFramework/Blueprints/Components/AC_AI_BehaviorManager
+OBJ SavePackage: Generating thumbnails for [0] asset(s) in package [/Game/SoulslikeFramework/Blueprints/Components/AC_AI_BehaviorManager] ([2] browsable assets)...
+OBJ SavePackage: Finished generating thumbnails for package [/Game/SoulslikeFramework/Blueprints/Components/AC_AI_BehaviorManager]
+LogSavePackage: Moving output files for package: /Game/SoulslikeFramework/Blueprints/Components/AC_AI_BehaviorManager
+LogSavePackage: Moving '../../../../../../scripts/SLFConversion/Saved/AC_AI_BehaviorManager613B742B4C5B63D7020EA4BBFFB4FE17.tmp' to '../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Blueprints/Components/AC_AI_BehaviorManager.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 77.253 ms (total: 1.02 sec)
+LogPython:   OK
+LogPython: Processing: AC_AI_InteractionManager
+LogSLFAutomation: Warning: === CLEARING ALL LOGIC FROM AC_AI_InteractionManager  ===
+LogSLFAutomation: Warning: Clearing 1 event graphs in AC_AI_InteractionManager
+LogSLFAutomation:   Cleared 70 nodes from EventGraph
+LogSLFAutomation: Warning: Cleared 70 total nodes from event graphs
+LogSLFAutomation: Warning: Removed 1 function graphs
+LogSLFAutomation: Warning: Removed 0 macro graphs
+LogSLFAutomation: Warning: Removed 8 variables
+LogSLFAutomation: Warning: Removed 1 delegate signature graphs
+LogSLFAutomation: Warning: Cleared 0 nodes from interface graphs
+LogSLFAutomation: Warning: === CLEARED ALL LOGIC FROM AC_AI_InteractionManager ===
+LogSLFAutomation: Warning: Reparenting AC_AI_InteractionManager: ActorComponent -> AIInteractionManagerComponent
+LogSLFAutomation: Warning: Successfully reparented AC_AI_InteractionManager to AIInteractionManagerComponent
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+LogFileHelpers: Saving Package: /Game/SoulslikeFramework/Blueprints/Components/AC_AI_InteractionManager
+OBJ SavePackage: Generating thumbnails for [0] asset(s) in package [/Game/SoulslikeFramework/Blueprints/Components/AC_AI_InteractionManager] ([2] browsable assets)...
+OBJ SavePackage: Finished generating thumbnails for package [/Game/SoulslikeFramework/Blueprints/Components/AC_AI_InteractionManager]
+LogSavePackage: Moving output files for package: /Game/SoulslikeFramework/Blueprints/Components/AC_AI_InteractionManager
+LogSavePackage: Moving '../../../../../../scripts/SLFConversion/Saved/AC_AI_InteractionManager5208D7974D7482C3C234F69D2BE3A8D1.tmp' to '../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Blueprints/Components/AC_AI_InteractionManager.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 69.586 ms (total: 1.09 sec)
+LogPython:   OK
+LogPython: Processing: GM_SoulslikeFramework
+LogSLFAutomation: Warning: === CLEARING ALL LOGIC FROM GM_SoulslikeFramework  ===
+LogSLFAutomation: Warning: Clearing 1 event graphs in GM_SoulslikeFramework
+LogSLFAutomation:   Cleared 0 nodes from EventGraph
+LogSLFAutomation: Warning: Cleared 0 total nodes from event graphs
+LogSLFAutomation: Warning: Removed 1 function graphs
+LogSLFAutomation: Warning: Removed 0 macro graphs
+LogSLFAutomation: Warning: Removed 0 variables
+LogSLFAutomation: Warning: Removed 0 delegate signature graphs
+LogSLFAutomation: Warning: Cleared 0 nodes from interface graphs
+LogSLFAutomation: Warning: === CLEARED ALL LOGIC FROM GM_SoulslikeFramework ===
+LogSLFAutomation: Warning: Reparenting GM_SoulslikeFramework: GameMode -> SLFGameMode
+LogSLFAutomation: Warning: Successfully reparented GM_SoulslikeFramework to SLFGameMode
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+LogFileHelpers: Saving Package: /Game/SoulslikeFramework/Blueprints/Global/GM_SoulslikeFramework
+OBJ SavePackage: Generating thumbnails for [0] asset(s) in package [/Game/SoulslikeFramework/Blueprints/Global/GM_SoulslikeFramework] ([2] browsable assets)...
+OBJ SavePackage: Finished generating thumbnails for package [/Game/SoulslikeFramework/Blueprints/Global/GM_SoulslikeFramework]
+LogSavePackage: Moving output files for package: /Game/SoulslikeFramework/Blueprints/Global/GM_SoulslikeFramework
+LogSavePackage: Moving '../../../../../../scripts/SLFConversion/Saved/GM_SoulslikeFrameworkBAB72CA84C1C4EF9C9BB3A81A1F4C3C8.tmp' to '../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Blueprints/Global/GM_SoulslikeFramework.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 78.689 ms (total: 1.17 sec)
+LogPython:   OK
+LogPython: Processing: GI_SoulslikeFramework
+LogSLFAutomation: Warning: === CLEARING ALL LOGIC FROM GI_SoulslikeFramework  ===
+LogSLFAutomation: Warning: Clearing 1 event graphs in GI_SoulslikeFramework
+LogSLFAutomation:   Cleared 36 nodes from EventGraph
+LogSLFAutomation: Warning: Cleared 36 total nodes from event graphs
+LogSLFAutomation: Warning: Removed 0 function graphs
+LogSLFAutomation: Warning: Removed 0 macro graphs
+LogSLFAutomation: Warning: Removed 7 variables
+LogSLFAutomation: Warning: Removed 1 delegate signature graphs
+LogSLFAutomation: Warning: Clearing interface: BPI_GameInstance_C (6 graphs)
+LogSLFAutomation: Warning:   Cleared 1 nodes from interface graph: GetCustomGameSettings
+LogSLFAutomation: Warning:   Cleared 2 nodes from interface graph: GetSoulslikeGameInstance
+LogSLFAutomation: Warning:   Cleared 1 nodes from interface graph: GetSelectedClass
+LogSLFAutomation: Warning:   Cleared 1 nodes from interface graph: GetActiveSlotName
+LogSLFAutomation: Warning:   Cleared 2 nodes from interface graph: DoesAnySaveExist?
+LogSLFAutomation: Warning:   Cleared 2 nodes from interface graph: GetAllSaveSlots
+LogSLFAutomation: Warning: Cleared 9 nodes from interface graphs
+LogSLFAutomation: Warning: === CLEARED ALL LOGIC FROM GI_SoulslikeFramework ===
+LogSLFAutomation: Warning: Reparenting GI_SoulslikeFramework: GameInstance -> SLFGameInstance
+LogSLFAutomation: Warning: Successfully reparented GI_SoulslikeFramework to SLFGameInstance
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+LogFileHelpers: Saving Package: /Game/SoulslikeFramework/Blueprints/Global/GI_SoulslikeFramework
+OBJ SavePackage: Generating thumbnails for [0] asset(s) in package [/Game/SoulslikeFramework/Blueprints/Global/GI_SoulslikeFramework] ([2] browsable assets)...
+OBJ SavePackage: Finished generating thumbnails for package [/Game/SoulslikeFramework/Blueprints/Global/GI_SoulslikeFramework]
+LogSavePackage: Moving output files for package: /Game/SoulslikeFramework/Blueprints/Global/GI_SoulslikeFramework
+LogSavePackage: Moving '../../../../../../scripts/SLFConversion/Saved/GI_SoulslikeFrameworkE076F08D49B81ADD0452B0A6AB400C12.tmp' to '../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Blueprints/Global/GI_SoulslikeFramework.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 70.112 ms (total: 1.24 sec)
+LogPython:   OK
+LogPython: Processing: PC_SoulslikeFramework
+LogSLFAutomation: Warning: === CLEARING ALL LOGIC FROM PC_SoulslikeFramework  ===
+LogSLFAutomation: Warning: Clearing 1 event graphs in PC_SoulslikeFramework
+LogSLFAutomation:   Cleared 484 nodes from EventGraph
+LogSLFAutomation: Warning: Cleared 484 total nodes from event graphs
+LogSLFAutomation: Warning: Removed 3 function graphs
+LogSLFAutomation: Warning: Removed 0 macro graphs
+LogSLFAutomation: Warning: Removed 6 variables
+LogSLFAutomation: Warning: Removed 2 delegate signature graphs
+LogSLFAutomation: Warning: Clearing interface: BPI_Controller_C (6 graphs)
+LogSLFAutomation: Warning:   Cleared 1 nodes from interface graph: GetPlayerHUD
+LogSLFAutomation: Warning:   Cleared 2 nodes from interface graph: GetInventoryComponent
+LogSLFAutomation: Warning:   Cleared 2 nodes from interface graph: GetPawnFromController
+LogSLFAutomation: Warning:   Cleared 2 nodes from interface graph: GetSoulslikeController
+LogSLFAutomation: Warning:   Cleared 2 nodes from interface graph: GetProgressManager
+LogSLFAutomation: Warning:   Cleared 3 nodes from interface graph: GetCurrency
+LogSLFAutomation: Warning: Cleared 12 nodes from interface graphs
+LogSLFAutomation: Warning: === CLEARED ALL LOGIC FROM PC_SoulslikeFramework ===
+LogSLFAutomation: Warning: Reparenting PC_SoulslikeFramework: PlayerController -> SLFPlayerController
+LogSLFAutomation: Warning: Successfully reparented PC_SoulslikeFramework to SLFPlayerController
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+LogFileHelpers: Saving Package: /Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework
+OBJ SavePackage: Generating thumbnails for [0] asset(s) in package [/Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework] ([2] browsable assets)...
+OBJ SavePackage: Finished generating thumbnails for package [/Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework]
+LogSavePackage: Moving output files for package: /Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework
+LogSavePackage: Moving '../../../../../../scripts/SLFConversion/Saved/PC_SoulslikeFrameworkB91540114D8340EB6A60A182FB791A49.tmp' to '../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 83.341 ms (total: 1.32 sec)
+LogPython:   OK
+LogPython: Processing: GS_SoulslikeFramework
+LogSLFAutomation: Warning: === CLEARING ALL LOGIC FROM GS_SoulslikeFramework  ===
+LogSLFAutomation: Warning: Clearing 1 event graphs in GS_SoulslikeFramework
+LogSLFAutomation:   Cleared 0 nodes from EventGraph
+LogSLFAutomation: Warning: Cleared 0 total nodes from event graphs
+LogSLFAutomation: Warning: Removed 1 function graphs
+LogSLFAutomation: Warning: Removed 0 macro graphs
+LogSLFAutomation: Warning: Removed 0 variables
+LogSLFAutomation: Warning: Removed 0 delegate signature graphs
+LogSLFAutomation: Warning: Cleared 0 nodes from interface graphs
+LogSLFAutomation: Warning: === CLEARED ALL LOGIC FROM GS_SoulslikeFramework ===
+LogSLFAutomation: Warning: Reparenting GS_SoulslikeFramework: GameState -> SLFGameState
+LogSLFAutomation: Warning: Successfully reparented GS_SoulslikeFramework to SLFGameState
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+LogFileHelpers: Saving Package: /Game/SoulslikeFramework/Blueprints/Global/GS_SoulslikeFramework
+OBJ SavePackage: Generating thumbnails for [0] asset(s) in package [/Game/SoulslikeFramework/Blueprints/Global/GS_SoulslikeFramework] ([2] browsable assets)...
+OBJ SavePackage: Finished generating thumbnails for package [/Game/SoulslikeFramework/Blueprints/Global/GS_SoulslikeFramework]
+LogSavePackage: Moving output files for package: /Game/SoulslikeFramework/Blueprints/Global/GS_SoulslikeFramework
+LogSavePackage: Moving '../../../../../../scripts/SLFConversion/Saved/GS_SoulslikeFramework1A8CE8EF4ABCC25969EAC292A3068F32.tmp' to '../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Blueprints/Global/GS_SoulslikeFramework.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 79.027 ms (total: 1.40 sec)
+LogPython:   OK
+LogPython: Processing: PS_SoulslikeFramework
+LogSLFAutomation: Warning: === CLEARING ALL LOGIC FROM PS_SoulslikeFramework  ===
+LogSLFAutomation: Warning: Clearing 1 event graphs in PS_SoulslikeFramework
+LogSLFAutomation:   Cleared 2 nodes from EventGraph
+LogSLFAutomation: Warning: Cleared 2 total nodes from event graphs
+LogSLFAutomation: Warning: Removed 1 function graphs
+LogSLFAutomation: Warning: Removed 0 macro graphs
+LogSLFAutomation: Warning: Removed 0 variables
+LogSLFAutomation: Warning: Removed 0 delegate signature graphs
+LogSLFAutomation: Warning: Cleared 0 nodes from interface graphs
+LogSLFAutomation: Warning: === CLEARED ALL LOGIC FROM PS_SoulslikeFramework ===
+LogSLFAutomation: Warning: Reparenting PS_SoulslikeFramework: PlayerState -> SLFPlayerState
+LogSLFAutomation: Warning: Successfully reparented PS_SoulslikeFramework to SLFPlayerState
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+LogFileHelpers: Saving Package: /Game/SoulslikeFramework/Blueprints/Global/PS_SoulslikeFramework
+OBJ SavePackage: Generating thumbnails for [0] asset(s) in package [/Game/SoulslikeFramework/Blueprints/Global/PS_SoulslikeFramework] ([2] browsable assets)...
+OBJ SavePackage: Finished generating thumbnails for package [/Game/SoulslikeFramework/Blueprints/Global/PS_SoulslikeFramework]
+LogSavePackage: Moving output files for package: /Game/SoulslikeFramework/Blueprints/Global/PS_SoulslikeFramework
+LogSavePackage: Moving '../../../../../../scripts/SLFConversion/Saved/PS_SoulslikeFramework0192580E4C788FBE2177B8BD06A7E61B.tmp' to '../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Blueprints/Global/PS_SoulslikeFramework.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 75.828 ms (total: 1.48 sec)
+LogPython:   OK
+LogPython: Processing: B_BaseCharacter
+LogSLFAutomation: Warning: === CLEARING ALL LOGIC FROM B_BaseCharacter  ===
+LogSLFAutomation: Warning: Clearing 1 event graphs in B_BaseCharacter
+LogSLFAutomation:   Cleared 226 nodes from EventGraph
+LogSLFAutomation: Warning: Cleared 226 total nodes from event graphs
+LogSLFAutomation: Warning: Removed 1 function graphs
+LogSLFAutomation: Warning: Removed 0 macro graphs
+LogSLFAutomation: Warning: Removed 6 variables
+LogSLFAutomation: Warning: Removed 3 delegate signature graphs
+LogSLFAutomation: Warning: Clearing interface: BPI_GenericCharacter_C (5 graphs)
+LogSLFAutomation: Warning:   Cleared 2 nodes from interface graph: GetStatManager
+LogSLFAutomation: Warning:   Cleared 3 nodes from interface graph: GetSoulslikeAnimInstance
+LogSLFAutomation: Warning:   Cleared 2 nodes from interface graph: GetLockonComponent
+LogSLFAutomation: Warning:   Cleared 1 nodes from interface graph: GetMeshInitialized
+LogSLFAutomation: Warning:   Cleared 2 nodes from interface graph: GetHomingPositionComponent
+LogSLFAutomation: Warning: Cleared 10 nodes from interface graphs
+LogSLFAutomation: Warning: === CLEARED ALL LOGIC FROM B_BaseCharacter ===
+LogSLFAutomation: Warning: Reparenting B_BaseCharacter: Character -> SLFBaseCharacter
+LogSLFAutomation: Warning: Successfully reparented B_BaseCharacter to SLFBaseCharacter
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+LogFileHelpers: Saving Package: /Game/SoulslikeFramework/Blueprints/_Characters/B_BaseCharacter
+OBJ SavePackage: Generating thumbnails for [1] asset(s) in package [/Game/SoulslikeFramework/Blueprints/_Characters/B_BaseCharacter] ([2] browsable assets)...
+OBJ SavePackage:     Rendered thumbnail for [Blueprint /Game/SoulslikeFramework/Blueprints/_Characters/B_BaseCharacter.B_BaseCharacter]
+OBJ SavePackage: Finished generating thumbnails for package [/Game/SoulslikeFramework/Blueprints/_Characters/B_BaseCharacter]
+LogSavePackage: Moving output files for package: /Game/SoulslikeFramework/Blueprints/_Characters/B_BaseCharacter
+LogSavePackage: Moving '../../../../../../scripts/SLFConversion/Saved/B_BaseCharacter257EB1E64CC4DA63C84C73986CED16EB.tmp' to '../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Blueprints/_Characters/B_BaseCharacter.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 187.198 ms (total: 1.66 sec)
+LogPython:   OK
+LogPython: Processing: B_Soulslike_Character
+LogSLFAutomation: Warning: === CLEARING ALL LOGIC FROM B_Soulslike_Character  ===
+LogSLFAutomation: Warning: Clearing 1 event graphs in B_Soulslike_Character
+LogSLFAutomation:   Cleared 979 nodes from EventGraph
+LogSLFAutomation: Warning: Cleared 979 total nodes from event graphs
+LogSLFAutomation: Warning: Removed 5 function graphs
+LogSLFAutomation: Warning: Removed 0 macro graphs
+LogSLFAutomation: Warning: Removed 16 variables
+LogSLFAutomation: Warning: Removed 3 delegate signature graphs
+LogSLFAutomation: Warning: Clearing interface: BPI_Player_C (1 graphs)
+LogSLFAutomation: Warning:   Cleared 2 nodes from interface graph: GetSoulslikeCharacter
+LogSLFAutomation: Warning: Cleared 2 nodes from interface graphs
+LogSLFAutomation: Warning: === CLEARED ALL LOGIC FROM B_Soulslike_Character ===
+LogSLFAutomation: Warning: Reparenting B_Soulslike_Character: B_BaseCharacter_C -> SLFSoulslikeCharacter
+LogSLFAutomation: Warning: Successfully reparented B_Soulslike_Character to SLFSoulslikeCharacter
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+LogFileHelpers: Saving Package: /Game/SoulslikeFramework/Blueprints/_Characters/B_Soulslike_Character
+OBJ SavePackage: Generating thumbnails for [0] asset(s) in package [/Game/SoulslikeFramework/Blueprints/_Characters/B_Soulslike_Character] ([2] browsable assets)...
+OBJ SavePackage: Finished generating thumbnails for package [/Game/SoulslikeFramework/Blueprints/_Characters/B_Soulslike_Character]
+LogSavePackage: Moving output files for package: /Game/SoulslikeFramework/Blueprints/_Characters/B_Soulslike_Character
+LogSavePackage: Moving '../../../../../../scripts/SLFConversion/Saved/B_Soulslike_Character903CFAB94961EB637F56169230EF983A.tmp' to '../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Blueprints/_Characters/B_Soulslike_Character.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 103.888 ms (total: 1.77 sec)
+LogPython:   OK
+LogPython: Processing: B_Soulslike_Enemy
+LogSLFAutomation: Warning: === CLEARING ALL LOGIC FROM B_Soulslike_Enemy  ===
+LogSLFAutomation: Warning: Clearing 1 event graphs in B_Soulslike_Enemy
+LogSLFAutomation:   Cleared 238 nodes from EventGraph
+LogSLFAutomation: Warning: Cleared 238 total nodes from event graphs
+LogSLFAutomation: Warning: Removed 2 function graphs
+LogSLFAutomation: Warning: Removed 0 macro graphs
+LogSLFAutomation: Warning: Removed 2 variables
+LogSLFAutomation: Warning: Removed 1 delegate signature graphs
+LogSLFAutomation: Warning: Clearing interface: BPI_Enemy_C (2 graphs)
+LogSLFAutomation: Warning:   Cleared 3 nodes from interface graph: GetPatrolPath
+LogSLFAutomation: Warning:   Cleared 5 nodes from interface graph: GetExecutionMoveToTransform
+LogSLFAutomation: Warning: Clearing interface: BPI_Executable_C (0 graphs)
+LogSLFAutomation: Warning: Cleared 8 nodes from interface graphs
+LogSLFAutomation: Warning: === CLEARED ALL LOGIC FROM B_Soulslike_Enemy ===
+LogSLFAutomation: Warning: Reparenting B_Soulslike_Enemy: B_BaseCharacter_C -> SLFSoulslikeEnemy
+LogSLFAutomation: Warning: Successfully reparented B_Soulslike_Enemy to SLFSoulslikeEnemy
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+LogFileHelpers: Saving Package: /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy
+OBJ SavePackage: Generating thumbnails for [1] asset(s) in package [/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy] ([2] browsable assets)...
+OBJ SavePackage:     Rendered thumbnail for [Blueprint /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy.B_Soulslike_Enemy]
+OBJ SavePackage: Finished generating thumbnails for package [/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy]
+LogSavePackage: Moving output files for package: /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy
+LogSavePackage: Moving '../../../../../../scripts/SLFConversion/Saved/B_Soulslike_EnemyAE350DB54BFB67C4BAFFC7B18B88A3F3.tmp' to '../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 101.116 ms (total: 1.87 sec)
+LogPython:   OK
+LogPython: Processing: B_Soulslike_Boss
+LogSLFAutomation: Warning: === CLEARING ALL LOGIC FROM B_Soulslike_Boss  ===
+LogSLFAutomation: Warning: Clearing 1 event graphs in B_Soulslike_Boss
+LogSLFAutomation:   Cleared 50 nodes from EventGraph
+LogSLFAutomation: Warning: Cleared 50 total nodes from event graphs
+LogSLFAutomation: Warning: Removed 1 function graphs
+LogSLFAutomation: Warning: Removed 0 macro graphs
+LogSLFAutomation: Warning: Removed 0 variables
+LogSLFAutomation: Warning: Removed 0 delegate signature graphs
+LogSLFAutomation: Warning: Cleared 0 nodes from interface graphs
+LogSLFAutomation: Warning: === CLEARED ALL LOGIC FROM B_Soulslike_Boss ===
+LogSLFAutomation: Warning: Reparenting B_Soulslike_Boss: B_Soulslike_Enemy_C -> SLFSoulslikeBoss
+LogSLFAutomation: Warning: Successfully reparented B_Soulslike_Boss to SLFSoulslikeBoss
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+LogFileHelpers: Saving Package: /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss
+OBJ SavePackage: Generating thumbnails for [0] asset(s) in package [/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss] ([2] browsable assets)...
+OBJ SavePackage: Finished generating thumbnails for package [/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss]
+LogSavePackage: Moving output files for package: /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss
+LogSavePackage: Moving '../../../../../../scripts/SLFConversion/Saved/B_Soulslike_BossED521AC440D9C52D8226F790F5B6D7E0.tmp' to '../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 79.763 ms (total: 1.95 sec)
+LogPython:   OK
+LogPython: Processing: B_Soulslike_NPC
+LogSLFAutomation: Warning: === CLEARING ALL LOGIC FROM B_Soulslike_NPC  ===
+LogSLFAutomation: Warning: Clearing 1 event graphs in B_Soulslike_NPC
+LogSLFAutomation:   Cleared 98 nodes from EventGraph
+LogSLFAutomation: Warning: Cleared 98 total nodes from event graphs
+LogSLFAutomation: Warning: Removed 2 function graphs
+LogSLFAutomation: Warning: Removed 0 macro graphs
+LogSLFAutomation: Warning: Removed 3 variables
+LogSLFAutomation: Warning: Removed 0 delegate signature graphs
+LogSLFAutomation: Warning: Clearing interface: BPI_NPC_C (0 graphs)
+LogSLFAutomation: Warning: Clearing interface: BPI_Interactable_C (1 graphs)
+LogSLFAutomation: Warning:   Cleared 1 nodes from interface graph: TryGetItemInfo
+LogSLFAutomation: Warning: Cleared 1 nodes from interface graphs
+LogSLFAutomation: Warning: === CLEARED ALL LOGIC FROM B_Soulslike_NPC ===
+LogSLFAutomation: Warning: Reparenting B_Soulslike_NPC: B_BaseCharacter_C -> SLFSoulslikeNPC
+LogSLFAutomation: Warning: Successfully reparented B_Soulslike_NPC to SLFSoulslikeNPC
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+LogFileHelpers: Saving Package: /Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC
+OBJ SavePackage: Generating thumbnails for [1] asset(s) in package [/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC] ([2] browsable assets)...
+OBJ SavePackage:     Rendered thumbnail for [Blueprint /Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC.B_Soulslike_NPC]
+OBJ SavePackage: Finished generating thumbnails for package [/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC]
+LogSavePackage: Moving output files for package: /Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC
+LogSavePackage: Moving '../../../../../../scripts/SLFConversion/Saved/B_Soulslike_NPCC9FF8696496E2E41454243BF846AF448.tmp' to '../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 98.795 ms (total: 2.05 sec)
+LogPython:   OK
+LogPython: Clearing (no reparent): B_Soulslike_Boss_Malgareth
+LogSLFAutomation: Warning: === CLEARING ALL LOGIC FROM B_Soulslike_Boss_Malgareth  ===
+LogSLFAutomation: Warning: Clearing 1 event graphs in B_Soulslike_Boss_Malgareth
+LogSLFAutomation:   Cleared 11 nodes from EventGraph
+LogSLFAutomation: Warning: Cleared 11 total nodes from event graphs
+LogSLFAutomation: Warning: Removed 1 function graphs
+LogSLFAutomation: Warning: Removed 0 macro graphs
+LogSLFAutomation: Warning: Removed 0 variables
+LogSLFAutomation: Warning: Removed 0 delegate signature graphs
+LogSLFAutomation: Warning: Cleared 0 nodes from interface graphs
+LogSLFAutomation: Warning: === CLEARED ALL LOGIC FROM B_Soulslike_Boss_Malgareth ===
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+LogFileHelpers: Saving Package: /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss_Malgareth
+OBJ SavePackage: Generating thumbnails for [1] asset(s) in package [/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss_Malgareth] ([2] browsable assets)...
+LogScript: Warning: Accessed None trying to read (real) property AC AI Combat Manager in ABP_SoulslikeBossNew_C
+    ABP_SoulslikeBossNew_C /Engine/Transient.World_3:PersistentLevel.B_Soulslike_Boss_Malgareth_C_0.CharacterMesh0.ABP_SoulslikeBossNew_C_0
+    Function /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeBossNew.ABP_SoulslikeBossNew_C:ExecuteUbergraph_ABP_SoulslikeBossNew:00BA
+LogScript: Warning: Accessed None
+    ABP_SoulslikeBossNew_C /Engine/Transient.World_3:PersistentLevel.B_Soulslike_Boss_Malgareth_C_0.CharacterMesh0.ABP_SoulslikeBossNew_C_0
+    Function /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeBossNew.ABP_SoulslikeBossNew_C:ExecuteUbergraph_ABP_SoulslikeBossNew:00CF
+OBJ SavePackage:     Rendered thumbnail for [Blueprint /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss_Malgareth.B_Soulslike_Boss_Malgareth]
+OBJ SavePackage: Finished generating thumbnails for package [/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss_Malgareth]
+LogSavePackage: Moving output files for package: /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss_Malgareth
+LogSavePackage: Moving '../../../../../../scripts/SLFConversion/Saved/B_Soulslike_Boss_Malgareth8E90F43443A76580D1A07598112CC70F.tmp' to '../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss_Malgareth.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 98.587 ms (total: 2.15 sec)
+LogPython:   OK (cleared only)
+LogPython: Clearing (no reparent): ABP_SoulslikeNPC
+LogSLFAutomation: Warning: === CLEARING ALL LOGIC FROM ABP_SoulslikeNPC (Animation Blueprint) ===
+LogSLFAutomation: Warning: Clearing 1 event graphs in ABP_SoulslikeNPC
+LogSLFAutomation:   Cleared 46 nodes from EventGraph
+LogSLFAutomation: Warning: Cleared 46 total nodes from event graphs
+LogSLFAutomation: Warning: Skipping function graph removal (Animation Blueprint - preserving AnimGraph)
+LogSLFAutomation: Warning: Removed 0 macro graphs
+LogSLFAutomation: Warning: Skipping variable removal (Animation Blueprint)
+LogSLFAutomation: Warning: Removed 0 delegate signature graphs
+LogSLFAutomation: Warning: Cleared 0 nodes from interface graphs
+LogSLFAutomation: Warning: Detected Animation Blueprint - preserving AnimGraph, only clearing EventGraph logic
+LogStreaming: Display: FlushAsyncLoading(420): 1 QueuedPackages, 0 AsyncPackages
+LogSLFAutomation: Warning: === CLEARED ALL LOGIC FROM ABP_SoulslikeNPC ===
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+LogLinker: Conditionally flushing loading for linker(s) (/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeNPC)
+LogFileHelpers: Saving Package: /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeNPC
+OBJ SavePackage: Generating thumbnails for [0] asset(s) in package [/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeNPC] ([2] browsable assets)...
+OBJ SavePackage: Finished generating thumbnails for package [/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeNPC]
+LogSavePackage: Moving output files for package: /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeNPC
+LogSavePackage: Moving '../../../../../../scripts/SLFConversion/Saved/ABP_SoulslikeNPCAD2175A244D1CDD61E0ADB8B171CD88E.tmp' to '../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeNPC.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 123.387 ms (total: 2.27 sec)
+LogPython:   OK (cleared only)
+LogPython: Done: 24/24 migrated, 2/2 cleared
+LogContentValidation: Enabled validators:
+LogContentValidation:     /Script/DataValidation.DirtyFilesChangelistValidator
+LogContentValidation:     /Script/DataValidation.EditorValidator_Localization
+LogContentValidation:     /Script/DataValidation.EditorValidator_Material
+LogContentValidation:     /Script/DataValidation.PackageFileValidator
+LogContentValidation:     /Script/DataValidation.WorldPartitionChangelistValidator
+LogContentValidation:     /Script/InputBlueprintNodes.EnhancedInputUserWidgetValidator
+LogContentValidation: Display: Starting to validate 26 assets (0 associated objects such as actors)
+LogContentValidation: Additional assets added for validation by 0 validators:
+AssetCheck: /Game/SoulslikeFramework/Blueprints/Components/AC_StatManager Validating asset
+AssetCheck: /Game/SoulslikeFramework/Blueprints/Components/AC_InputBuffer Validating asset
+AssetCheck: /Game/SoulslikeFramework/Blueprints/Components/AC_ActionManager Validating asset
+AssetCheck: /Game/SoulslikeFramework/Blueprints/Components/AC_BuffManager Validating asset
+AssetCheck: /Game/SoulslikeFramework/Blueprints/Components/AC_StatusEffectManager Validating asset
+AssetCheck: /Game/SoulslikeFramework/Blueprints/Components/AC_EquipmentManager Validating asset
+AssetCheck: /Game/SoulslikeFramework/Blueprints/Components/AC_InventoryManager Validating asset
+AssetCheck: /Game/SoulslikeFramework/Blueprints/Components/AC_CombatManager Validating asset
+AssetCheck: /Game/SoulslikeFramework/Blueprints/Components/AC_CollisionManager Validating asset
+AssetCheck: /Game/SoulslikeFramework/Blueprints/Components/AC_InteractionManager Validating asset
+AssetCheck: /Game/SoulslikeFramework/Blueprints/Components/AC_AI_Boss Validating asset
+AssetCheck: /Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager Validating asset
+AssetCheck: /Game/SoulslikeFramework/Blueprints/Components/AC_AI_BehaviorManager Validating asset
+AssetCheck: /Game/SoulslikeFramework/Blueprints/Components/AC_AI_InteractionManager Validating asset
+AssetCheck: /Game/SoulslikeFramework/Blueprints/Global/GM_SoulslikeFramework Validating asset
+AssetCheck: /Game/SoulslikeFramework/Blueprints/Global/GI_SoulslikeFramework Validating asset
+AssetCheck: /Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework Validating asset
+AssetCheck: /Game/SoulslikeFramework/Blueprints/Global/GS_SoulslikeFramework Validating asset
+AssetCheck: /Game/SoulslikeFramework/Blueprints/Global/PS_SoulslikeFramework Validating asset
+AssetCheck: /Game/SoulslikeFramework/Blueprints/_Characters/B_BaseCharacter Validating asset
+AssetCheck: /Game/SoulslikeFramework/Blueprints/_Characters/B_Soulslike_Character Validating asset
+AssetCheck: /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy Validating asset
+AssetCheck: /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss Validating asset
+AssetCheck: /Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC Validating asset
+AssetCheck: /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss_Malgareth Validating asset
+AssetCheck: /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeNPC Validating asset
+LogContentValidation: Validated asset counts for 1 validators:
+LogContentValidation:   /Script/DataValidation.EditorValidator_Localization : 26
+LogAutomationController: Ignoring very large delta of 3.56 seconds in calls to FAutomationControllerManager::Tick() and not penalizing unresponsive tests
+LogDebuggerCommands: Repeating last play command: Selected Viewport
+LogCameraSystemEditor: No camera objects needed building (inspected 0 objects)
+LogPlayLevel: [PlayLevel] Compiling GI_SoulslikeFramework before play...
+LogPlayLevel: [PlayLevel] Compiling ABP_SoulslikeBossNew before play...
+LogPlayLevel: [PlayLevel]   Compiling ABP_SoulslikeEnemy as a dependent...
+LogPlayLevel: [PlayLevel]   Compiling ABP_SoulslikeNPC as a dependent...
+LogPlayLevel: [PlayLevel]   Compiling B_BaseCharacter as a dependent...
+LogPlayLevel: [PlayLevel]   Compiling B_Soulslike_Enemy_Guard as a dependent...
+LogPlayLevel: [PlayLevel]   Compiling B_Soulslike_Enemy_Showcase as a dependent...
+LogPlayLevel: [PlayLevel]   Compiling B_Soulslike_NPC_ShowcaseGuide as a dependent...
+LogPlayLevel: [PlayLevel]   Compiling B_Soulslike_NPC_ShowcaseVendor as a dependent...
+LogPlayLevel: [PlayLevel]   Compiling B_Soulslike_Boss_Malgareth as a dependent...
+LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\_Animations\Locomotion\AnimBP\ABP_SoulslikeBossNew.uasset: [Compiler] Could not find a variable named "PoiseBroken" in '/Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager.AC_AI_CombatManager_C'.
+Make sure '/Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager.AC_AI_CombatManager_C' has been compiled for  Get PoiseBroken
+LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\_Animations\Locomotion\AnimBP\ABP_SoulslikeBossNew.uasset: [Compiler] Could not find a variable named "PoiseBroken" in '/Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager.AC_AI_CombatManager_C'.
+Make sure '/Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager.AC_AI_CombatManager_C' has been compiled for  Get PoiseBroken
+LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\_Animations\Locomotion\AnimBP\ABP_SoulslikeEnemy.uasset: [Compiler] Could not find a variable named "PoiseBroken" in '/Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager.AC_AI_CombatManager_C'.
+Make sure '/Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager.AC_AI_CombatManager_C' has been compiled for  Get PoiseBroken
+LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\_Animations\Locomotion\AnimBP\ABP_SoulslikeEnemy.uasset: [Compiler] Could not find a variable named "PoiseBroken" in '/Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager.AC_AI_CombatManager_C'.
+Make sure '/Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager.AC_AI_CombatManager_C' has been compiled for  Get PoiseBroken
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(root): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(root): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(root): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(pelvis): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(pelvis): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(pelvis): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_l): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_l): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_l): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_r): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_r): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_r): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(root): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Engine/Transient.World_3:PersistentLevel.B_Soulslike_Boss_Malgareth_C_0)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(root): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Engine/Transient.World_3:PersistentLevel.B_Soulslike_Boss_Malgareth_C_0)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(root): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Engine/Transient.World_3:PersistentLevel.B_Soulslike_Boss_Malgareth_C_0)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(pelvis): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Engine/Transient.World_3:PersistentLevel.B_Soulslike_Boss_Malgareth_C_0)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(pelvis): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Engine/Transient.World_3:PersistentLevel.B_Soulslike_Boss_Malgareth_C_0)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(pelvis): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Engine/Transient.World_3:PersistentLevel.B_Soulslike_Boss_Malgareth_C_0)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_l): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Engine/Transient.World_3:PersistentLevel.B_Soulslike_Boss_Malgareth_C_0)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_l): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Engine/Transient.World_3:PersistentLevel.B_Soulslike_Boss_Malgareth_C_0)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_l): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Engine/Transient.World_3:PersistentLevel.B_Soulslike_Boss_Malgareth_C_0)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_r): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Engine/Transient.World_3:PersistentLevel.B_Soulslike_Boss_Malgareth_C_0)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_r): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Engine/Transient.World_3:PersistentLevel.B_Soulslike_Boss_Malgareth_C_0)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_r): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Engine/Transient.World_3:PersistentLevel.B_Soulslike_Boss_Malgareth_C_0)
+LogScript: Warning: Accessed None trying to read (real) property AC AI Combat Manager in ABP_SoulslikeBossNew_C
+    ABP_SoulslikeBossNew_C /Engine/Transient.World_3:PersistentLevel.REINST_B_Soulslike_Boss_Malgareth_C_0.CharacterMesh0.ABP_SoulslikeBossNew_C_0
+    Function /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeBossNew.ABP_SoulslikeBossNew_C:ExecuteUbergraph_ABP_SoulslikeBossNew:00BA
+LogScript: Warning: Accessed None
+    ABP_SoulslikeBossNew_C /Engine/Transient.World_3:PersistentLevel.REINST_B_Soulslike_Boss_Malgareth_C_0.CharacterMesh0.ABP_SoulslikeBossNew_C_0
+    Function /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeBossNew.ABP_SoulslikeBossNew_C:ExecuteUbergraph_ABP_SoulslikeBossNew:00CF
+LogScript: Warning: Accessed None trying to read (real) property AC AI Combat Manager in ABP_SoulslikeBossNew_C
+    ABP_SoulslikeBossNew_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.REINST_B_Soulslike_Boss_Malgareth_C_0.CharacterMesh0.ABP_SoulslikeBossNew_C_0
+    Function /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeBossNew.ABP_SoulslikeBossNew_C:ExecuteUbergraph_ABP_SoulslikeBossNew:00BA
+LogScript: Warning: Accessed None
+    ABP_SoulslikeBossNew_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.REINST_B_Soulslike_Boss_Malgareth_C_0.CharacterMesh0.ABP_SoulslikeBossNew_C_0
+    Function /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeBossNew.ABP_SoulslikeBossNew_C:ExecuteUbergraph_ABP_SoulslikeBossNew:00CF
+LogPlayLevel: [PlayLevel] Compiling B_Soulslike_Character before play...
+LogPlayLevel: [PlayLevel] Compiling ABP_SoulslikeNPC before play...
+LogPlayLevel: [PlayLevel]   Compiling B_Soulslike_NPC as a dependent...
+LogPlayLevel: [PlayLevel]   Compiling B_Soulslike_NPC_ShowcaseGuide as a dependent...
+LogPlayLevel: [PlayLevel]   Compiling B_Soulslike_NPC_ShowcaseVendor as a dependent...
+LogPlayLevel: [PlayLevel] Compiling PC_SoulslikeFramework before play...
+LogPlayLevel: [PlayLevel] Compiling ABP_SoulslikeBossNew before play...
+LogPlayLevel: [PlayLevel]   Compiling ABP_SoulslikeEnemy as a dependent...
+LogPlayLevel: [PlayLevel]   Compiling B_Soulslike_Enemy as a dependent...
+LogPlayLevel: [PlayLevel]   Compiling B_Soulslike_Boss as a dependent...
+LogPlayLevel: [PlayLevel]   Compiling B_Soulslike_Enemy_Guard as a dependent...
+LogPlayLevel: [PlayLevel]   Compiling B_Soulslike_Enemy_Showcase as a dependent...
+LogPlayLevel: [PlayLevel]   Compiling B_Soulslike_Boss_Malgareth as a dependent...
+LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\_Animations\Locomotion\AnimBP\ABP_SoulslikeBossNew.uasset: [Compiler] Could not find a variable named "PoiseBroken" in '/Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager.AC_AI_CombatManager_C'.
+Make sure '/Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager.AC_AI_CombatManager_C' has been compiled for  Get PoiseBroken
+LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\_Animations\Locomotion\AnimBP\ABP_SoulslikeBossNew.uasset: [Compiler] Could not find a variable named "PoiseBroken" in '/Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager.AC_AI_CombatManager_C'.
+Make sure '/Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager.AC_AI_CombatManager_C' has been compiled for  Get PoiseBroken
+LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\_Animations\Locomotion\AnimBP\ABP_SoulslikeEnemy.uasset: [Compiler] Could not find a variable named "PoiseBroken" in '/Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager.AC_AI_CombatManager_C'.
+Make sure '/Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager.AC_AI_CombatManager_C' has been compiled for  Get PoiseBroken
+LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\_Animations\Locomotion\AnimBP\ABP_SoulslikeEnemy.uasset: [Compiler] Could not find a variable named "PoiseBroken" in '/Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager.AC_AI_CombatManager_C'.
+Make sure '/Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager.AC_AI_CombatManager_C' has been compiled for  Get PoiseBroken
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_l): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_l): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_l): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_r): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_r): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_r): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_l): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Engine/Transient.World_3:PersistentLevel.B_Soulslike_Boss_Malgareth_C_0)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_l): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Engine/Transient.World_3:PersistentLevel.B_Soulslike_Boss_Malgareth_C_0)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_l): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Engine/Transient.World_3:PersistentLevel.B_Soulslike_Boss_Malgareth_C_0)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_r): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Engine/Transient.World_3:PersistentLevel.B_Soulslike_Boss_Malgareth_C_0)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_r): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Engine/Transient.World_3:PersistentLevel.B_Soulslike_Boss_Malgareth_C_0)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_r): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Engine/Transient.World_3:PersistentLevel.B_Soulslike_Boss_Malgareth_C_0)
+LogScript: Warning: Accessed None trying to read (real) property AC AI Combat Manager in ABP_SoulslikeBossNew_C
+    ABP_SoulslikeBossNew_C /Engine/Transient.World_3:PersistentLevel.REINST_B_Soulslike_Boss_Malgareth_C_0.CharacterMesh0.ABP_SoulslikeBossNew_C_0
+    Function /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeBossNew.ABP_SoulslikeBossNew_C:ExecuteUbergraph_ABP_SoulslikeBossNew:00BA
+LogScript: Warning: Accessed None
+    ABP_SoulslikeBossNew_C /Engine/Transient.World_3:PersistentLevel.REINST_B_Soulslike_Boss_Malgareth_C_0.CharacterMesh0.ABP_SoulslikeBossNew_C_0
+    Function /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeBossNew.ABP_SoulslikeBossNew_C:ExecuteUbergraph_ABP_SoulslikeBossNew:00CF
+LogScript: Warning: Accessed None trying to read (real) property AC AI Combat Manager in ABP_SoulslikeBossNew_C
+    ABP_SoulslikeBossNew_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.REINST_B_Soulslike_Boss_Malgareth_C_0.CharacterMesh0.ABP_SoulslikeBossNew_C_0
+    Function /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeBossNew.ABP_SoulslikeBossNew_C:ExecuteUbergraph_ABP_SoulslikeBossNew:00BA
+LogScript: Warning: Accessed None
+    ABP_SoulslikeBossNew_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.REINST_B_Soulslike_Boss_Malgareth_C_0.CharacterMesh0.ABP_SoulslikeBossNew_C_0
+    Function /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeBossNew.ABP_SoulslikeBossNew_C:ExecuteUbergraph_ABP_SoulslikeBossNew:00CF
+LogUObjectHash: Compacting FUObjectHashTables data took   1.08ms
+LogPlayLevel: PlayLevel: Blueprint regeneration took 556 ms (23 blueprints)
+LogPlayLevel: Creating play world package: /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase
+LogPlayLevel: PIE: StaticDuplicateObject took: (0.035756s)
+LogPlayLevel: PIE: Created PIE world by copying editor world from /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase to /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase (0.035794s)
+LogUObjectHash: Compacting FUObjectHashTables data took   0.61ms
+LogTemp: [SLFGameInstance] Init
+LogTemp: [SLFGameInstance] Loaded save slots
+LogChaosDD: Creating Chaos Debug Draw Scene for world L_Demo_Showcase
+LogPlayLevel: PIE: World Init took: (0.001646s)
+LogAudio: Display: Creating Audio Device:                 Id: 3, Scope: Unique, Realtime: True
+LogAudioMixer: Display: Audio Mixer Platform Settings:
+LogAudioMixer: Display:     Sample Rate:                          48000
+LogAudioMixer: Display:     Callback Buffer Frame Size Requested: 1024
+LogAudioMixer: Display:     Callback Buffer Frame Size To Use:    1024
+LogAudioMixer: Display:     Number of buffers to queue:           1
+LogAudioMixer: Display:     Max Channels (voices):                32
+LogAudioMixer: Display:     Number of Async Source Workers:       4
+LogAudio: Display: AudioDevice MaxSources: 32
+LogAudio: Display: Audio Spatialization Plugin: None (built-in).
+LogAudio: Display: Audio Reverb Plugin: None (built-in).
+LogAudio: Display: Audio Occlusion Plugin: None (built-in).
+LogAudioMixer: Display: Initializing audio mixer using platform API: 'XAudio2'
+LogAudioEnumeration: Display: FWindowsMMDeviceCache: Default Render Role='Console', Device='Speakers (Realtek(R) Audio)'
+LogAudioEnumeration: Display: FWindowsMMDeviceCache: Default Capture Role='Console', Device='Microphone Array (Intel® Smart Sound Technology for Digital Microphones)'
+LogAudioEnumeration: Display: FWindowsMMDeviceCache: Default Render Role='Multimedia', Device='Speakers (Realtek(R) Audio)'
+LogAudioEnumeration: Display: FWindowsMMDeviceCache: Default Capture Role='Multimedia', Device='Microphone Array (Intel® Smart Sound Technology for Digital Microphones)'
+LogAudioEnumeration: Display: FWindowsMMDeviceCache: Default Render Role='Communications', Device='Speakers (Realtek(R) Audio)'
+LogAudioEnumeration: Display: FWindowsMMDeviceCache: Default Capture Role='Communications', Device='Microphone Array (Intel® Smart Sound Technology for Digital Microphones)'
+LogAudioMixer: Display: Using Audio Hardware Device Speakers (Realtek(R) Audio)
+LogAudioMixer: Display: Initializing Sound Submixes...
+LogAudioMixer: Display: Creating Master Submix 'MasterSubmixDefault'
+LogAudioMixer: Display: Creating Master Submix 'MasterReverbSubmixDefault'
+LogAudioMixer: FMixerPlatformXAudio2::StartAudioStream() called. InstanceID=3
+LogAudioMixer: Display: Output buffers initialized: Frames=1024, Channels=2, Samples=2048, InstanceID=3
+LogAudioMixer: Display: Starting AudioMixerPlatformInterface::RunInternal(), InstanceID=3
+LogAudioMixer: Display: FMixerPlatformXAudio2::SubmitBuffer() called for the first time. InstanceID=3
+LogInit: FAudioDevice initialized with ID 3.
+LogAudio: Display: Audio Device (ID: 3) registered with world 'L_Demo_Showcase'.
+LogAudioMixer: Initializing Audio Bus Subsystem for audio device with ID 3
+LogLoad: Game class is 'GM_SoulslikeFramework_C'
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_l): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_l): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_l): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_r): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_r): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_r): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2)
+LogWorld: Bringing World /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase up for play (max tick rate 60) at 2025.12.31-18.56.48
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_l): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2)
+LogSkinnedMeshComp: Warning: GetSocketInfoByName(weapon_r): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_Boss_Malgareth_C /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2)
+LogWorld: Bringing up level for play took: 0.029763
+LogOnline: OSS: Created online subsystem instance for: :Context_6
+LogTemp: [SLFPlayerController] SetupInputComponent
+LogEnhancedInput: Enhanced Input local player subsystem has initialized the user settings!
+LogSpawn: Warning: SpawnActor failed because no class was specified
+LogGameMode: Display: Match State Changed from EnteringMap to WaitingToStart
+LogGameState: Match State Changed from EnteringMap to WaitingToStart
+LogGameMode: Display: Match State Changed from WaitingToStart to InProgress
+LogScript: Warning: Attempted to access missing property 'AC_StatManager'. If this is a packaged/cooked build, are you attempting to use an editor-only property?
+    B_ShowcaseEnemy_StatDisplay_C /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_ShowcaseEnemy_StatDisplay_C_1
+    Function /Game/SoulslikeFramework/Demo/ShowcaseRoom/DemoRoom/Blueprints/B_ShowcaseEnemy_StatDisplay.B_ShowcaseEnemy_StatDisplay_C:ExecuteUbergraph_B_ShowcaseEnemy_StatDisplay:0D8B
+PIE: Error: Blueprint Runtime Error: "Attempted to access missing property 'AC_StatManager'. If this is a packaged/cooked build, are you attempting to use an editor-only property?". Node:  Get Graph:  EventGraph Function:  Execute Ubergraph B Showcase Enemy Stat Display Blueprint:  B_ShowcaseEnemy_StatDisplay
+LogTemp: [BaseCharacter] BeginPlay: B_Soulslike_NPC_ShowcaseGuide_C_1
+LogTemp: [SoulslikeNPC] BeginPlay: B_Soulslike_NPC_ShowcaseGuide_C_1 (ID: 6930AFC544036104AD40C78893E00427)
+LogTemp: [BaseCharacter] BeginPlay: B_Soulslike_NPC_ShowcaseVendor_C_1
+LogTemp: [SoulslikeNPC] BeginPlay: B_Soulslike_NPC_ShowcaseVendor_C_1 (ID: FECA5576475FAB4CED85F29B39806E2F)
+LogTemp: [BaseCharacter] BeginPlay: B_Soulslike_Enemy_Guard_C_0
+LogTemp: [SoulslikeEnemy] BeginPlay: B_Soulslike_Enemy_Guard_C_0 (ID: 00000000000000000000000000000000)
+LogTemp: [BaseCharacter] BeginPlay: B_Soulslike_Enemy_Demo_C_1
+LogTemp: [SoulslikeEnemy] BeginPlay: B_Soulslike_Enemy_Demo_C_1 (ID: 00000000000000000000000000000000)
+LogTemp: [BaseCharacter] BeginPlay: B_Soulslike_Boss_Malgareth_C_2
+LogTemp: [SoulslikeEnemy] BeginPlay: B_Soulslike_Boss_Malgareth_C_2 (ID: 00000000000000000000000000000000)
+LogTemp: [SoulslikeBoss] BeginPlay: B_Soulslike_Boss_Malgareth_C_2
+LogBlueprintUserMessages: [AC_ProgressManager] Progress: SoulslikeFramework.Chapters.Demo | State: NotStarted
+LogTemp: [SLFPlayerController] BeginPlay
+LogScript: Warning: Accessed None trying to read (real) property CallFunc_GetComponentByClass_ReturnValue in not an UClass
+    AC_CombatManager_C /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Character_C_0.AC_CombatManager
+    Function /Game/SoulslikeFramework/Blueprints/Components/AC_CombatManager.AC_CombatManager_C:ExecuteUbergraph_AC_CombatManager:0B0E
+PIE: Error: Blueprint Runtime Error: "Accessed None trying to read (real) property CallFunc_GetComponentByClass_ReturnValue in not an UClass". Node:  Outputs Graph:  INITIALIZATION Function:  Execute Ubergraph AC Combat Manager Blueprint:  AC_CombatManager
+LogScript: Warning: Accessed None trying to read (real) property CallFunc_GetStat_Found_Stat_1 in not an UClass
+    AC_CombatManager_C /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Character_C_0.AC_CombatManager
+    Function /Game/SoulslikeFramework/Blueprints/Components/AC_CombatManager.AC_CombatManager_C:ExecuteUbergraph_AC_CombatManager:0B61
+PIE: Error: Blueprint Runtime Error: "Accessed None trying to read (real) property CallFunc_GetStat_Found_Stat_1 in not an UClass". Node:  Outputs Graph:  INITIALIZATION Function:  Execute Ubergraph AC Combat Manager Blueprint:  AC_CombatManager
+LogScript: Warning: Accessed None trying to read (real) property CallFunc_GetComponentByClass_ReturnValue in not an UClass
+    AC_CombatManager_C /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Character_C_0.AC_CombatManager
+    Function /Game/SoulslikeFramework/Blueprints/Components/AC_CombatManager.AC_CombatManager_C:ExecuteUbergraph_AC_CombatManager:0BE8
+PIE: Error: Blueprint Runtime Error: "Accessed None trying to read (real) property CallFunc_GetComponentByClass_ReturnValue in not an UClass". Node:  Outputs Graph:  INITIALIZATION Function:  Execute Ubergraph AC Combat Manager Blueprint:  AC_CombatManager
+LogScript: Warning: Accessed None trying to read (real) property CallFunc_GetStat_Found_Stat in not an UClass
+    AC_CombatManager_C /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Character_C_0.AC_CombatManager
+    Function /Game/SoulslikeFramework/Blueprints/Components/AC_CombatManager.AC_CombatManager_C:ExecuteUbergraph_AC_CombatManager:0C3B
+PIE: Error: Blueprint Runtime Error: "Accessed None trying to read (real) property CallFunc_GetStat_Found_Stat in not an UClass". Node:  Outputs Graph:  INITIALIZATION Function:  Execute Ubergraph AC Combat Manager Blueprint:  AC_CombatManager
+LogTemp: [BaseCharacter] BeginPlay: B_Soulslike_Character_C_0
+LogTemp: Warning: ███████████████████████████████████████████████████████████████
+LogTemp: Warning: [SoulslikeCharacter] BeginPlay: B_Soulslike_Character_C_0
+LogTemp: Warning: [SoulslikeCharacter] Class: B_Soulslike_Character_C
+LogTemp: Warning: [SoulslikeCharacter] Controller: PC_SoulslikeFramework_C_0
+LogTemp: Warning: [SoulslikeCharacter] Has 27 components:
+LogTemp: Warning: [SoulslikeCharacter]   - CollisionCylinder (CapsuleComponent)
+LogTemp: Warning: [SoulslikeCharacter]   - Arrow (ArrowComponent)
+LogTemp: Warning: [SoulslikeCharacter]   - CharMoveComp (CharacterMovementComponent)
+LogTemp: Warning: [SoulslikeCharacter]   - CharacterMesh0 (SkeletalMeshComponent)
+LogTemp: Warning: [SoulslikeCharacter]   - CameraBoom (SpringArmComponent)
+LogTemp: Warning: [SoulslikeCharacter]   - FollowCamera (CameraComponent)
+LogTemp: Warning: [SoulslikeCharacter]   - CameraProxyMeshComponent_0 (CameraProxyMeshComponent)
+LogTemp: Warning: [SoulslikeCharacter]   - DrawFrustumComponent_0 (DrawFrustumComponent)
+LogTemp: Warning: [SoulslikeCharacter]   - AC_InteractionManager (AC_InteractionManager_C)
+LogTemp: Warning: [SoulslikeCharacter]   - AC_CombatManager (AC_CombatManager_C)
+LogTemp: Warning: [SoulslikeCharacter]   - TargetSwapTracer (BillboardComponent)
+LogTemp: Warning: [SoulslikeCharacter]   - AC_InputBuffer (AC_InputBuffer_C)
+LogTemp: Warning: [SoulslikeCharacter]   - Head (SkeletalMeshComponent)
+LogTemp: Warning: [SoulslikeCharacter]   - UpperBody (SkeletalMeshComponent)
+LogTemp: Warning: [SoulslikeCharacter]   - LowerBody (SkeletalMeshComponent)
+LogTemp: Warning: [SoulslikeCharacter]   - Arms (SkeletalMeshComponent)
+LogTemp: Warning: [SoulslikeCharacter]   - AC_ActionManager (AC_ActionManager_C)
+LogTemp: Warning: [SoulslikeCharacter]   - NPC LookAt Point (SphereComponent)
+LogTemp: Warning: [SoulslikeCharacter]   - LookAtPoint (BillboardComponent)
+LogTemp: Warning: [SoulslikeCharacter]   - ChaosForceField (ChildActorComponent)
+LogTemp: Warning: [SoulslikeCharacter]   - AC_LadderManager (AC_LadderManager_C)
+LogTemp: Warning: [SoulslikeCharacter]   - ControlRotationArrow (ArrowComponent)
+LogTemp: Warning: [SoulslikeCharacter]   - AC_DebugCentral (AC_DebugCentral_C)
+LogTemp: Warning: [SoulslikeCharacter]   - TL_ResetCamera (TimelineComponent)
+LogTemp: Warning: [SoulslikeCharacter]   - TL_DialogZoom (TimelineComponent)
+LogTemp: Warning: [SoulslikeCharacter]   - TL_IK_HitReact (TimelineComponent)
+LogTemp: Warning: [SoulslikeCharacter]   - PawnInputComponent0 (EnhancedInputComponent)
+LogTemp: Warning: [SoulslikeCharacter] Setting up Enhanced Input...
+LogTemp: Warning: [SoulslikeCharacter] Added MappingContext successfully
+LogTemp: Warning: ███████████████████████████████████████████████████████████████
+LogGameState: Match State Changed from WaitingToStart to InProgress
+PIE: Server logged in
+PIE: Play in editor total start time 0.734 seconds.
+LogScript: Warning: Accessed None trying to read (real) property CallFunc_GetComponentByClass_ReturnValue_5 in not an UClass
+    AC_AI_CombatManager_C /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Enemy_Guard_C_0.AC_AI_CombatManager
+    Function /Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager.AC_AI_CombatManager_C:ExecuteUbergraph_AC_AI_CombatManager:1A86
+PIE: Error: Blueprint Runtime Error: "Accessed None trying to read (real) property CallFunc_GetComponentByClass_ReturnValue_5 in not an UClass". Function:  Execute Ubergraph AC AI Combat Manager Blueprint:  AC_AI_CombatManager
+LogScript: Warning: Accessed None trying to read (real) property CallFunc_GetComponentByClass_ReturnValue_5 in not an UClass
+    AC_AI_CombatManager_C /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Enemy_Demo_C_1.AC_AI_CombatManager
+    Function /Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager.AC_AI_CombatManager_C:ExecuteUbergraph_AC_AI_CombatManager:1A86
+PIE: Error: Blueprint Runtime Error: "Accessed None trying to read (real) property CallFunc_GetComponentByClass_ReturnValue_5 in not an UClass". Function:  Execute Ubergraph AC AI Combat Manager Blueprint:  AC_AI_CombatManager
+LogScript: Warning: Accessed None trying to read (real) property CallFunc_GetComponentByClass_ReturnValue in not an UClass
+    AC_AI_Boss_C /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2.AC_AI_Boss
+    Function /Game/SoulslikeFramework/Blueprints/Components/AC_AI_Boss.AC_AI_Boss_C:ExecuteUbergraph_AC_AI_Boss:00F9
+PIE: Error: Blueprint Runtime Error: "Accessed None trying to read (real) property CallFunc_GetComponentByClass_ReturnValue in not an UClass". Node:  Outputs Graph:  TRY PLAY PHASE MONTAGE Function:  Execute Ubergraph AC AI Boss Blueprint:  AC_AI_Boss
+LogScript: Warning: Accessed None trying to read (real) property CallFunc_GetComponentByClass_ReturnValue_2 in not an UClass
+    AC_AI_Boss_C /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2.AC_AI_Boss
+    Function /Game/SoulslikeFramework/Blueprints/Components/AC_AI_Boss.AC_AI_Boss_C:ExecuteUbergraph_AC_AI_Boss:0347
+PIE: Error: Blueprint Runtime Error: "Accessed None trying to read (real) property CallFunc_GetComponentByClass_ReturnValue_2 in not an UClass". Node:  Outputs Graph:  TRY PLAY PHASE MONTAGE Function:  Execute Ubergraph AC AI Boss Blueprint:  AC_AI_Boss
+LogRenderer: Recreating Persistent SBTs due to initializer changes: 
+        NumShaderSlotsPerGeometrySegment changed: current: 1 - new: 2
+        NumGeometrySegments changed: current: 0 - new: 512
+LogSlate: Took 0.009120 seconds to synchronously load lazily loaded font '../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf' (3848K)
+LogScript: Warning: Attempted to access missing property 'none'. If this is a packaged/cooked build, are you attempting to use an editor-only property?
+    L_Demo_Showcase_C /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.L_Demo_Showcase_C_0
+    Function /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase_C:ExecuteUbergraph_L_Demo_Showcase:0096
+PIE: Error: Blueprint Runtime Error: "Attempted to access missing property 'none'. If this is a packaged/cooked build, are you attempting to use an editor-only property?". Node:  Branch Graph:  EventGraph Function:  Execute Ubergraph L Demo Showcase Blueprint:  L_Demo_Showcase
+LogRenderer: Recreating Persistent SBTs due to initializer changes: 
+        NumGeometrySegments changed: current: 512 - new: 768
+LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Data\Actions\ActionLogic\B_Action_UseEquippedTool.uasset: [Compiler] GetItemAtSlot  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Data\Actions\ActionLogic\B_Action_UseEquippedTool.uasset: [Compiler] In use pin  Item  no longer exists on node  UseItemFromInventory . Please refresh node or break links to remove pin.
+LogEnum: Warning: EnumRedirect for enum ESLFOverlayState maps 'E_OverlayState::NewEnumerator0' to invalid value 'ESLFOverlayState::NewEnumerator0'!
+LogEnum: Warning: EnumRedirect for enum ESLFWeaponAbilityHandle maps 'E_WeaponAbilityHandle::NewEnumerator0' to invalid value 'ESLFWeaponAbilityHandle::NewEnumerator0'!
+LogEnum: Warning: EnumRedirect for enum ESLFOverlayState maps 'E_OverlayState::NewEnumerator0' to invalid value 'ESLFOverlayState::NewEnumerator0'!
+LogEnum: Warning: EnumRedirect for enum ESLFOverlayState maps 'E_OverlayState::NewEnumerator0' to invalid value 'ESLFOverlayState::NewEnumerator0'!
+LogClass: Warning: SerializeFromMismatchedTag failed: Type mismatch in Categories - Previous (StructProperty(FInventoryCategory(/Game/SoulslikeFramework/Structures/Items/FInventoryCategory),e1923e08-46b5-5424-3258-54a112e7f8bd)) Current(StructProperty(GameplayTag(/Script/GameplayTags))) in package: FObjectReader
+LogClass: Warning: Array Inner Type mismatch in Categories - Previous (StructProperty(FInventoryCategory(/Game/SoulslikeFramework/Structures/Items/FInventoryCategory),e1923e08-46b5-5424-3258-54a112e7f8bd)) Current(StructProperty(GameplayTag(/Script/GameplayTags))) in package: FObjectReader
+LogTemp: [EquipmentManager] BeginPlay on PC_SoulslikeFramework_C_0
+LogTemp: [InventoryManager] BeginPlay on PC_SoulslikeFramework_C_0
+LogTemp: [InventoryManager] BeginPlay on PC_SoulslikeFramework_C_0
+LogTemp: [EquipmentManager] BeginPlay on PC_SoulslikeFramework_C_0
+LogBlueprintUserMessages: [AC_ProgressManager] Progress: SoulslikeFramework.Chapters.Demo | State: NotStarted
+LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Data\Actions\ActionLogic\B_Action_ScrollWheel_RightHand.uasset: [Compiler] Could not find a variable named "W_HUD" in '/Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework.PC_SoulslikeFramework_C'.
+Make sure '/Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework.PC_SoulslikeFramework_C' has been compiled for  Get
+LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Data\Actions\ActionLogic\B_Action_ScrollWheel_RightHand.uasset: [Compiler] The property associated with  W HUD  could not be found in '/Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework.PC_SoulslikeFramework_C'
+LogClass: Warning: Type mismatch in ComboSection of AC_CombatManager_C - Previous (NameProperty) Current(IntProperty) in package: FObjectReader
+LogClass: Warning: Potential data loss during conversion of integer property PerfectGuardDuration of FObjectReader - was (0.100000) now (0.100000) - for package: FObjectReader
+LogStreaming: Display: FlushAsyncLoading(426): 1 QueuedPackages, 1 AsyncPackages
+LogStreaming: Display: Flushing package /Game/SoulslikeFramework/VFX/Systems/NS_DirectionalBlood (state: WaitingForIo) recursively from another package /Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_ScrollWheel_RightHand (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+LogStreaming: Display: Package /Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_ScrollWheel_RightHand is adding a dynamic import to package /Game/SoulslikeFramework/VFX/Systems/NS_DirectionalBlood because of a recursive sync load
+LogStreaming: Display: Flushing package /Game/SoulslikeFramework/VFX/Systems/NS_DirectionalBlood (state: DeferredPostLoad) recursively from another package /Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_ScrollWheel_RightHand (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.10.dll
+LogEnum: Warning: EnumRedirect for enum ESLFHitReactType maps 'E_HitReactType::NewEnumerator3' to invalid value 'ESLFHitReactType::NewEnumerator3'!
+LogClass: Warning: Type mismatch in ComboSection of AC_CombatManager_C - Previous (NameProperty) Current(IntProperty) in package: FObjectReader
+LogTemp: Warning: ═══════════════════════════════════════════════════════════════
+LogTemp: Warning: [CombatManager] BeginPlay on B_Soulslike_Character_C_0
+LogTemp: Warning: [CombatManager] Component: AC_CombatManager
+LogTemp: Warning: [CombatManager] Class: AC_CombatManager_C
+LogTemp: Warning: [CombatManager] Found Mesh: CharacterMesh0
+LogTemp: Warning: [CombatManager] Owner has 27 components:
+LogTemp: Warning: [CombatManager]   - CollisionCylinder (CapsuleComponent)
+LogTemp: Warning: [CombatManager]   - Arrow (ArrowComponent)
+LogTemp: Warning: [CombatManager]   - CharMoveComp (CharacterMovementComponent)
+LogTemp: Warning: [CombatManager]   - CharacterMesh0 (SkeletalMeshComponent)
+LogTemp: Warning: [CombatManager]   - CameraBoom (SpringArmComponent)
+LogTemp: Warning: [CombatManager]   - FollowCamera (CameraComponent)
+LogTemp: Warning: [CombatManager]   - CameraProxyMeshComponent_0 (CameraProxyMeshComponent)
+LogTemp: Warning: [CombatManager]   - DrawFrustumComponent_0 (DrawFrustumComponent)
+LogTemp: Warning: [CombatManager]   - AC_InteractionManager (AC_InteractionManager_C)
+LogTemp: Warning: [CombatManager]   - TargetSwapTracer (BillboardComponent)
+LogTemp: Warning: [CombatManager]   - AC_InputBuffer (AC_InputBuffer_C)
+LogTemp: Warning: [CombatManager]   - Head (SkeletalMeshComponent)
+LogTemp: Warning: [CombatManager]   - UpperBody (SkeletalMeshComponent)
+LogTemp: Warning: [CombatManager]   - LowerBody (SkeletalMeshComponent)
+LogTemp: Warning: [CombatManager]   - Arms (SkeletalMeshComponent)
+LogTemp: Warning: [CombatManager]   - AC_ActionManager (AC_ActionManager_C)
+LogTemp: Warning: [CombatManager]   - NPC LookAt Point (SphereComponent)
+LogTemp: Warning: [CombatManager]   - LookAtPoint (BillboardComponent)
+LogTemp: Warning: [CombatManager]   - ChaosForceField (ChildActorComponent)
+LogTemp: Warning: [CombatManager]   - AC_LadderManager (AC_LadderManager_C)
+LogTemp: Warning: [CombatManager]   - ControlRotationArrow (ArrowComponent)
+LogTemp: Warning: [CombatManager]   - AC_DebugCentral (AC_DebugCentral_C)
+LogTemp: Warning: [CombatManager]   - TL_ResetCamera (TimelineComponent)
+LogTemp: Warning: [CombatManager]   - TL_DialogZoom (TimelineComponent)
+LogTemp: Warning: [CombatManager]   - TL_IK_HitReact (TimelineComponent)
+LogTemp: Warning: [CombatManager]   - PawnInputComponent0 (EnhancedInputComponent)
+LogTemp: Warning: [CombatManager]   - AC_CombatManager (AC_CombatManager_C)
+LogTemp: Warning: ═══════════════════════════════════════════════════════════════
+LogTemp: Warning: ═══════════════════════════════════════════════════════════════
+LogTemp: Warning: [CombatManager] BeginPlay on B_Soulslike_Character_C_0
+LogTemp: Warning: [CombatManager] Component: AC_CombatManager
+LogTemp: Warning: [CombatManager] Class: AC_CombatManager_C
+LogTemp: Warning: [CombatManager] Found Mesh: CharacterMesh0
+LogTemp: Warning: [CombatManager] Owner has 27 components:
+LogTemp: Warning: [CombatManager]   - CollisionCylinder (CapsuleComponent)
+LogTemp: Warning: [CombatManager]   - Arrow (ArrowComponent)
+LogTemp: Warning: [CombatManager]   - CharMoveComp (CharacterMovementComponent)
+LogTemp: Warning: [CombatManager]   - CharacterMesh0 (SkeletalMeshComponent)
+LogTemp: Warning: [CombatManager]   - PawnInputComponent0 (EnhancedInputComponent)
+LogTemp: Warning: [CombatManager]   - CameraBoom (SpringArmComponent)
+LogTemp: Warning: [CombatManager]   - FollowCamera (CameraComponent)
+LogTemp: Warning: [CombatManager]   - CameraProxyMeshComponent_1 (CameraProxyMeshComponent)
+LogTemp: Warning: [CombatManager]   - DrawFrustumComponent_1 (DrawFrustumComponent)
+LogTemp: Warning: [CombatManager]   - AC_InteractionManager (AC_InteractionManager_C)
+LogTemp: Warning: [CombatManager]   - AC_CombatManager (AC_CombatManager_C)
+LogTemp: Warning: [CombatManager]   - TargetSwapTracer (BillboardComponent)
+LogTemp: Warning: [CombatManager]   - AC_InputBuffer (AC_InputBuffer_C)
+LogTemp: Warning: [CombatManager]   - Head (SkeletalMeshComponent)
+LogTemp: Warning: [CombatManager]   - UpperBody (SkeletalMeshComponent)
+LogTemp: Warning: [CombatManager]   - LowerBody (SkeletalMeshComponent)
+LogTemp: Warning: [CombatManager]   - Arms (SkeletalMeshComponent)
+LogTemp: Warning: [CombatManager]   - AC_ActionManager (AC_ActionManager_C)
+LogTemp: Warning: [CombatManager]   - NPC LookAt Point (SphereComponent)
+LogTemp: Warning: [CombatManager]   - LookAtPoint (BillboardComponent)
+LogTemp: Warning: [CombatManager]   - ChaosForceField (ChildActorComponent)
+LogTemp: Warning: [CombatManager]   - AC_LadderManager (AC_LadderManager_C)
+LogTemp: Warning: [CombatManager]   - ControlRotationArrow (ArrowComponent)
+LogTemp: Warning: [CombatManager]   - AC_DebugCentral (AC_DebugCentral_C)
+LogTemp: Warning: [CombatManager]   - TL_ResetCamera (TimelineComponent)
+LogTemp: Warning: [CombatManager]   - TL_DialogZoom (TimelineComponent)
+LogTemp: Warning: [CombatManager]   - TL_IK_HitReact (TimelineComponent)
+LogTemp: Warning: ═══════════════════════════════════════════════════════════════
+LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Data\Actions\ActionLogic\B_Action_ScrollWheel_LeftHand.uasset: [Compiler] Could not find a variable named "W_HUD" in '/Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework.PC_SoulslikeFramework_C'.
+Make sure '/Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework.PC_SoulslikeFramework_C' has been compiled for  Get
+LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Data\Actions\ActionLogic\B_Action_ScrollWheel_LeftHand.uasset: [Compiler] The property associated with  W HUD  could not be found in '/Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework.PC_SoulslikeFramework_C'
+LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Data\Actions\ActionLogic\B_Action_ScrollWheel_Tools.uasset: [Compiler] Could not find a variable named "W_HUD" in '/Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework.PC_SoulslikeFramework_C'.
+Make sure '/Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework.PC_SoulslikeFramework_C' has been compiled for  Get
+LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Data\Actions\ActionLogic\B_Action_ScrollWheel_Tools.uasset: [Compiler] The property associated with  W HUD  could not be found in '/Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework.PC_SoulslikeFramework_C'
+LogSlate: Updating window title bar state: overlay mode, drag disabled, window buttons hidden, title bar hidden
+LogWorld: BeginTearingDown for /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase
+LogCrowdFollowing: Warning: Unable to find RecastNavMesh instance while trying to create UCrowdManager instance
+LogWorld: UWorld::CleanupWorld for L_Demo_Showcase, bSessionEnded=true, bCleanupResources=true
+LogSlate: InvalidateAllWidgets triggered.  All widgets were invalidated
+LogPlayLevel: Display: Shutting down PIE online subsystems
+LogSlate: InvalidateAllWidgets triggered.  All widgets were invalidated
+LogSlate: Updating window title bar state: overlay mode, drag disabled, window buttons hidden, title bar hidden
+LogAudioMixer: Deinitializing Audio Bus Subsystem for audio device with ID 3
+LogAudioMixer: Display: FMixerPlatformXAudio2::StopAudioStream() called. InstanceID=3, StreamState=4
+LogAudioMixer: Display: FMixerPlatformXAudio2::StopAudioStream() called. InstanceID=3, StreamState=2
+LogUObjectHash: Compacting FUObjectHashTables data took   1.35ms
+LogPlayLevel: Display: Destroying online subsystem :Context_6
+LogSlate: Window 'Message Log' being destroyed
+LogSlate: Window 'Message Log' being destroyed
+LogDerivedDataCache: C:/Users/james/AppData/Local/UnrealEngine/Common/DerivedDataCache: Maintenance finished in +00:00:00.000 and deleted 0 files with total size 0 MiB and 0 empty folders. Scanned 0 files in 1 folders with total size 0 MiB.
+LogDebuggerCommands: Repeating last play command: Selected Viewport
+LogCameraSystemEditor: No camera objects needed building (inspected 0 objects)
+LogPlayLevel: PlayLevel: No blueprints needed recompiling
+BlueprintLog: Warning: Blueprint failed to compile:  B_Action_UseEquippedTool
+BlueprintLog: Warning: Blueprint failed to compile:  B_Action_ScrollWheel_RightHand
+BlueprintLog: Warning: Blueprint failed to compile:  B_Action_ScrollWheel_LeftHand
+BlueprintLog: Warning: Blueprint failed to compile:  B_Action_ScrollWheel_Tools
+LogAssetEditorSubsystem: Opening Asset editor for Blueprint /Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_UseEquippedTool.B_Action_UseEquippedTool
+LogStreaming: Display: FlushAsyncLoading(431): 1 QueuedPackages, 0 AsyncPackages
+LogAssetEditorSubsystem: Opening Asset editor for Blueprint /Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_ScrollWheel_RightHand.B_Action_ScrollWheel_RightHand
+LogAssetEditorSubsystem: Opening Asset editor for Blueprint /Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_ScrollWheel_LeftHand.B_Action_ScrollWheel_LeftHand
+LogAssetEditorSubsystem: Opening Asset editor for Blueprint /Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_ScrollWheel_Tools.B_Action_ScrollWheel_Tools
+LogSlate: Window 'Blueprint Compilation Errors' being destroyed
+LogSlate: Took 0.000135 seconds to synchronously load lazily loaded font '../../../Engine/Content/Slate/Fonts/Roboto-BoldCondensed.ttf' (158K)
+LogAutomationController: Ignoring very large delta of 6.10 seconds in calls to FAutomationControllerManager::Tick() and not penalizing unresponsive tests
+LogSlate: Window 'Message Log' being destroyed
+LogSlate: Window 'Message Log' being destroyed
+LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Data\Actions\ActionLogic\B_Action_UseEquippedTool.uasset: [Compiler] GetItemAtSlot  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Data\Actions\ActionLogic\B_Action_UseEquippedTool.uasset: [Compiler] In use pin  Item  no longer exists on node  UseItemFromInventory . Please refresh node or break links to remove pin.
+LogUObjectHash: Compacting FUObjectHashTables data took   1.00ms
+LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Data\Actions\ActionLogic\B_Action_ScrollWheel_RightHand.uasset: [Compiler] Could not find a variable named "W_HUD" in '/Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework.PC_SoulslikeFramework_C'.
+Make sure '/Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework.PC_SoulslikeFramework_C' has been compiled for  Get
+LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Data\Actions\ActionLogic\B_Action_ScrollWheel_RightHand.uasset: [Compiler] The property associated with  W HUD  could not be found in '/Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework.PC_SoulslikeFramework_C'
+LogUObjectHash: Compacting FUObjectHashTables data took   1.08ms
+LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Data\Actions\ActionLogic\B_Action_ScrollWheel_LeftHand.uasset: [Compiler] Could not find a variable named "W_HUD" in '/Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework.PC_SoulslikeFramework_C'.
+Make sure '/Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework.PC_SoulslikeFramework_C' has been compiled for  Get
+LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Data\Actions\ActionLogic\B_Action_ScrollWheel_LeftHand.uasset: [Compiler] The property associated with  W HUD  could not be found in '/Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework.PC_SoulslikeFramework_C'
+LogUObjectHash: Compacting FUObjectHashTables data took   1.17ms
+LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Data\Actions\ActionLogic\B_Action_ScrollWheel_Tools.uasset: [Compiler] Could not find a variable named "W_HUD" in '/Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework.PC_SoulslikeFramework_C'.
+Make sure '/Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework.PC_SoulslikeFramework_C' has been compiled for  Get
+LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Data\Actions\ActionLogic\B_Action_ScrollWheel_Tools.uasset: [Compiler] The property associated with  W HUD  could not be found in '/Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework.PC_SoulslikeFramework_C'
+LogUObjectHash: Compacting FUObjectHashTables data took   1.00ms

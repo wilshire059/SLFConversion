@@ -1,0 +1,98 @@
+// Logic implementations for AC_RadarManager
+// Generated from AC_RadarManager.json
+
+// ═══ SetupPlayerIcon ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_RadarManager::SetupPlayerIcon called"));
+
+	RadarWidget->SetPlayerIcon(/*Icon*/ PlayerIcon, /*Scale*/ IconSize, /*Tint*/ IconTint);
+
+// ═══ SetupCardinals ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_RadarManager::SetupCardinals called"));
+
+	Map_Values(/*TargetMap*/ CardinalData);
+	// Macro: ForEachLoop
+
+// ═══ GetDelta ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_RadarManager::GetDelta called"));
+
+	LOCAL_A = Percent_FloatFloatResult.ReturnValue;
+	LOCAL_B = Percent_FloatFloatResult.ReturnValue;
+	// Macro: CompareFloat
+
+// ═══ ConvertToCircleDegrees ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_RadarManager::ConvertToCircleDegrees called"));
+
+	// Set output: ReturnValue = SelectFloatResult.ReturnValue
+	return;
+
+// ═══ ConvertToTranslation ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_RadarManager::ConvertToTranslation called"));
+
+
+// ═══ ToggleUpdateState ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_RadarManager::ToggleUpdateState called"));
+
+	ShouldUpdate? = ShouldUpdate?;
+	if (/* Set ShouldUpdate?.Output_Get */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	if (Visible?)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	K2_UnPauseTimerHandle(/*Handle*/ Timer, /*WorldContextObject*/ nullptr);
+	K2_PauseTimerHandle(/*Handle*/ Timer, /*WorldContextObject*/ nullptr);
+
+// ═══ RefreshCardinals ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_RadarManager::RefreshCardinals called"));
+
+	Map_Values(/*TargetMap*/ CardinalData);
+	LOCAL_CardinalData = Map_ValuesResult.Values;
+	// Macro: ForEachLoop
+
+// ═══ StartTrackElement ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_RadarManager::StartTrackElement called"));
+
+	if (Not_PreBoolResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	// TODO: Handle K2Node_CallArrayFunction - Add
+	RadarWidget->AddTrackedElement(/*Icon*/ Icon, /*IconSize*/ IconSize, /*IconTint*/ IconTint);
+	// Set output: TrackedElementWidget = AddTrackedElementResult.TrackedElementWidget
+	return;
+	// Output TrackedElementWidget uses default value
+	return;
+
+// ═══ RefreshTrackedElements ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_RadarManager::RefreshTrackedElements called"));
+
+	// Macro: ForEachLoop
+
+// ═══ StopTrackElement ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_RadarManager::StopTrackElement called"));
+
+	if (/* Contains Item.ReturnValue */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	// TODO: Handle K2Node_CallArrayFunction - Remove Item
+	RadarWidget->RemoveTrackedElement(/*Element*/ MarkerWidget);
+

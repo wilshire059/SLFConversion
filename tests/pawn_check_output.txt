@@ -1,0 +1,6 @@
+GM Blueprint loaded: GM_SoulslikeFramework
+Generated Class: /Game/SoulslikeFramework/Blueprints/Global/GM_SoulslikeFramework.GM_SoulslikeFramework_C
+CDO: Default__GM_SoulslikeFramework_C
+DefaultPawnClass: /Game/SoulslikeFramework/Blueprints/_Characters/B_Soulslike_Character.B_Soulslike_Character_C
+
+Character Blueprint exists: /Game/SoulslikeFramework/Blueprints/_Characters/B_Soulslike_Character

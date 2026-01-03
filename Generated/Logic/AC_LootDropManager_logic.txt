@@ -1,0 +1,17 @@
+// Logic implementations for AC_LootDropManager
+// Generated from AC_LootDropManager.json
+
+// ═══ GetRandomItemFromTable ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_LootDropManager::GetRandomItemFromTable called"));
+
+	if (IsValid(LootTable))
+	{
+		// Is Valid branch
+	}
+
+// ═══ IsOverrideItemValid? ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_LootDropManager::IsOverrideItemValid? called"));
+
+	// Set output: ReturnValue = IsValidResult.ReturnValue
+	return;
+

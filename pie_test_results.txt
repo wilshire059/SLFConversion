@@ -1,0 +1,23 @@
+============================================================
+PIE TEST - Verifying B_Soulslike_Character Setup
+============================================================
+[SUCCESS] LOADED: B_Soulslike_Character
+[SUCCESS] Generated Class: B_Soulslike_Character_C
+============================================================
+Verifying GameMode Configuration
+============================================================
+[SUCCESS] GameMode loaded: GM_SoulslikeFramework
+[INFO] DefaultPawnClass: B_Soulslike_Character_C
+[SUCCESS] GameMode uses B_Soulslike_Character
+============================================================
+Verifying Demo Map
+============================================================
+[SUCCESS] Demo map loaded: L_Demo_Showcase
+============================================================
+PIE TEST COMPLETE
+============================================================
+Key assets loaded successfully.
+The migration is working if you see [SUCCESS] messages above.
+
+To test gameplay, run in standalone game mode:
+  "C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor.exe" "C:/scripts/SLFConversion/SLFConversion.uproject" -game

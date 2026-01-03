@@ -1,0 +1,47 @@
+
+======================================================================
+CLEARING WEAPON BLUEPRINT GRAPHS
+======================================================================
+This will remove graph logic while preserving SCS components
+  B_Item: Graphs cleared (keep vars)
+  B_Item_Weapon: Graphs cleared (keep vars)
+  B_Item_AI_Weapon: Graphs cleared (keep vars)
+  B_Item_AI_Weapon_BossMace: Graphs cleared (keep vars)
+  B_Item_AI_Weapon_Greatsword: Graphs cleared (keep vars)
+  B_Item_AI_Weapon_Sword: Graphs cleared (keep vars)
+  B_Item_Weapon_BossMace: Graphs cleared (keep vars)
+  B_Item_Weapon_Greatsword: Graphs cleared (keep vars)
+  B_Item_Weapon_Katana: Graphs cleared (keep vars)
+  B_Item_Weapon_PoisonSword: Graphs cleared (keep vars)
+  B_Item_Weapon_Shield: Graphs cleared (keep vars)
+  B_Item_Weapon_SwordExample01: Graphs cleared (keep vars)
+  B_Item_Weapon_SwordExample02: Graphs cleared (keep vars)
+  B_Item_Lantern: Graphs cleared (keep vars)
+
+======================================================================
+SAVING BLUEPRINTS
+======================================================================
+  B_Item: Saved
+  B_Item_Weapon: Saved
+  B_Item_AI_Weapon: Saved
+  B_Item_AI_Weapon_BossMace: Saved
+  B_Item_AI_Weapon_Greatsword: Saved
+  B_Item_AI_Weapon_Sword: Saved
+  B_Item_Weapon_BossMace: Saved
+  B_Item_Weapon_Greatsword: Saved
+  B_Item_Weapon_Katana: Saved
+  B_Item_Weapon_PoisonSword: Saved
+  B_Item_Weapon_Shield: Saved
+  B_Item_Weapon_SwordExample01: Saved
+  B_Item_Weapon_SwordExample02: Saved
+  B_Item_Lantern: Saved
+
+======================================================================
+SUMMARY
+======================================================================
+Cleared: 14
+Saved: 14
+Errors: 0
+
+The SCS components (StaticMesh, Trail, etc.) should be preserved.
+The graph logic (which had type errors) has been removed.

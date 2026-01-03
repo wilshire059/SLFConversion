@@ -1,0 +1,74 @@
+// Logic implementations for AC_SaveLoadManager
+// Generated from AC_SaveLoadManager.json
+
+// ═══ RefreshData ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_SaveLoadManager::RefreshData called"));
+
+	// TODO: Handle K2Node_SetFieldsInStruct - Set members in FSave Game Info
+	Data = /* Set members in FSave Game Info.StructOut */;
+
+// ═══ GetDataByTag ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_SaveLoadManager::GetDataByTag called"));
+
+	if (Map_FindResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	// Set output: Data = Map_FindResult.Value
+	return;
+
+// ═══ SerializeAllDataForSaving ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_SaveLoadManager::SerializeAllDataForSaving called"));
+
+	// TODO: Handle K2Node_ExecutionSequence - Sequence
+
+// ═══ SerializeDataForSaving ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_SaveLoadManager::SerializeDataForSaving called"));
+
+	// TODO: Handle GameplayTagsK2Node_SwitchGameplayTag - Switch on Gameplay Tag
+
+// ═══ SerializeLevelData ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_SaveLoadManager::SerializeLevelData called"));
+
+	// TODO: Handle K2Node_Message - Get Pawn from Controller
+Target is BPI Controller
+	GetCurrentLevelName(/*WorldContextObject*/ nullptr, /*bRemovePrefixString*/ true);
+	// TODO: Handle K2Node_InstancedStruct - Make Instanced Struct
+	Event UpdateSaveData(/*SaveData*/ /* Make Array.Array */, /*SaveGameTag*/ (TagName="SoulslikeFramework.Saving.LevelData"));
+
+// ═══ SerializeClassData ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_SaveLoadManager::SerializeClassData called"));
+
+	// TODO: Handle K2Node_Message - Get Selected Class
+Target is BPI Game Instance
+	// TODO: Handle K2Node_InstancedStruct - Make Instanced Struct
+	Event UpdateSaveData(/*SaveData*/ /* Make Array.Array */, /*SaveGameTag*/ (TagName="SoulslikeFramework.Saving.ClassData"));
+
+// ═══ GetSavedLevelName ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_SaveLoadManager::GetSavedLevelName called"));
+
+	GetDataByTag(/*SaveGameTag*/ (TagName="SoulslikeFramework.Saving.LevelData"));
+	// Macro: IsDataValid
+
+// ═══ GetSavedClass ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_SaveLoadManager::GetSavedClass called"));
+
+	GetDataByTag(/*SaveGameTag*/ (TagName="SoulslikeFramework.Saving.ClassData"));
+	// Macro: IsDataValid
+
+// ═══ SerializeInteractableStates ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_SaveLoadManager::SerializeInteractableStates called"));
+
+	GetAllActorsOfClass(/*ActorClass*/ /* default */, /*WorldContextObject*/ nullptr);
+	// Macro: FastForEachLoop
+
+// ═══ SerializeVendorData ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_SaveLoadManager::SerializeVendorData called"));
+
+	GetAllActorsOfClass(/*ActorClass*/ /* default */, /*WorldContextObject*/ nullptr);
+	// Macro: FastForEachLoop
+

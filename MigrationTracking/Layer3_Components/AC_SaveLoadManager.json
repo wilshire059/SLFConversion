@@ -1,0 +1,3986 @@
+{
+  "blueprint_name": "AC_SaveLoadManager",
+  "blueprint_path": "/Game/SoulslikeFramework/Blueprints/Components/AC_SaveLoadManager.AC_SaveLoadManager",
+  "json_export_path": "C:\\scripts\\SLFConversion\\Exports\\BlueprintDNA_v2\\Component\\AC_SaveLoadManager.json",
+  "cpp_header": "SaveLoadManagerComponent.h",
+  "cpp_source": "SaveLoadManagerComponent.cpp",
+  "parent_class": "UActorComponent",
+  "parent_class_raw": "ActorComponent",
+  "implemented_interfaces": [],
+  "migration_status": {
+    "pass1_complete": false,
+    "pass2_validated": false,
+    "pass3_complete": false,
+    "overall_status": "not_started"
+  },
+  "summary": {
+    "variable_count": 15,
+    "function_count": 24,
+    "event_dispatcher_count": 2,
+    "graph_count": 15,
+    "total_items": 56
+  },
+  "variables": [
+    {
+      "name": "CurrentSaveSlot",
+      "type": "FString",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "string",
+        "SubCategory": "None"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "Data",
+      "type": "FSLFSaveGameInfo",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "struct",
+        "SubCategory": "None",
+        "SubCategoryObject": "FSaveGameInfo",
+        "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Saving/FSaveGameInfo.FSaveGameInfo"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "StatManager",
+      "type": "UObject* /* AC_StatManager_C */",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "object",
+        "SubCategory": "None",
+        "SubCategoryObject": "AC_StatManager_C",
+        "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_StatManager.AC_StatManager_C"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "InventoryManager",
+      "type": "UObject* /* AC_InventoryManager_C */",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "object",
+        "SubCategory": "None",
+        "SubCategoryObject": "AC_InventoryManager_C",
+        "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_InventoryManager.AC_InventoryManager_C"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "EquipmentManager",
+      "type": "UObject* /* AC_EquipmentManager_C */",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "object",
+        "SubCategory": "None",
+        "SubCategoryObject": "AC_EquipmentManager_C",
+        "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_EquipmentManager.AC_EquipmentManager_C"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "ProgressManager",
+      "type": "UObject* /* AC_ProgressManager_C */",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "object",
+        "SubCategory": "None",
+        "SubCategoryObject": "AC_ProgressManager_C",
+        "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_ProgressManager.AC_ProgressManager_C"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "SGO_Character",
+      "type": "UObject* /* SG_SoulslikeFramework_C */",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "object",
+        "SubCategory": "None",
+        "SubCategoryObject": "SG_SoulslikeFramework_C",
+        "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Saving/SG_SoulslikeFramework.SG_SoulslikeFramework_C"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "SGO Slots",
+      "type": "UObject* /* SG_SaveSlots_C */",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "object",
+        "SubCategory": "None",
+        "SubCategoryObject": "SG_SaveSlots_C",
+        "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Saving/SG_SaveSlots.SG_SaveSlots_C"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "AutoSaveNeeded?",
+      "type": "bool",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "bool",
+        "SubCategory": "None"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "CanResave?",
+      "type": "bool",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "bool",
+        "SubCategory": "None"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "AutosaveTimer",
+      "type": "float",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "real",
+        "SubCategory": "float"
+      },
+      "category": "Config",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "AutosaveTimerHandle",
+      "type": "FTimerHandle",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "struct",
+        "SubCategory": "None",
+        "SubCategoryObject": "TimerHandle",
+        "SubCategoryObjectPath": "/Script/Engine.TimerHandle"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "OnSaveCompleted",
+      "type": "/* UNKNOWN: mcdelegate/None/OnSaveCompleted__DelegateSignature */",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "mcdelegate",
+        "SubCategory": "None",
+        "SubCategoryObject": "OnSaveCompleted__DelegateSignature"
+      },
+      "category": "Dispatchers",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "DataCache",
+      "type": "TArray<FInstancedStruct>",
+      "type_raw": {
+        "IsArray": true,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "struct",
+        "SubCategory": "None",
+        "SubCategoryObject": "InstancedStruct",
+        "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "OnDataLoaded",
+      "type": "/* UNKNOWN: mcdelegate/None/OnDataLoaded__DelegateSignature */",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "mcdelegate",
+        "SubCategory": "None",
+        "SubCategoryObject": "OnDataLoaded__DelegateSignature"
+      },
+      "category": "Dispatchers",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    }
+  ],
+  "functions": [
+    {
+      "name": "SerializeVendorData",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "LOCAL_VendorAssets",
+          "type": "TArray<FInstancedStruct>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        },
+        {
+          "name": "Temp_int_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_Array_Index_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Add_IntInt_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_ArrayLength_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Less_IntInt_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Parse_StringToGuid_OutGuid",
+          "type": "FGuid",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Guid",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Guid"
+          }
+        },
+        {
+          "name": "CallFunc_Parse_StringToGuid_Success",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetAllActorsOfClass_OutActors",
+          "type": "TArray<UObject* /* B_Soulslike_NPC_C */>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Soulslike_NPC_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC.B_Soulslike_NPC_C"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Length_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_NotEqual_GuidGuid_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_MakeStruct_FNpcVendorSaveInfo",
+          "type": "FSLFNpcVendorSaveInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FNpcVendorSaveInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Saving/FNpcVendorSaveInfo.FNpcVendorSaveInfo"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_MakeInstancedStruct_ReturnValue",
+          "type": "FInstancedStruct",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Add_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "Setters|Serialization",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [
+        "LOCAL_VendorAssets"
+      ],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "SerializeInteractableStates",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "LOCAL_InteractableStates",
+          "type": "TArray<FInstancedStruct>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        },
+        {
+          "name": "Temp_int_Array_Index_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Add_IntInt_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_ArrayLength_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Less_IntInt_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Parse_StringToGuid_OutGuid",
+          "type": "FGuid",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Guid",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Guid"
+          }
+        },
+        {
+          "name": "CallFunc_Parse_StringToGuid_Success",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetAllActorsOfClass_OutActors",
+          "type": "TArray<UObject* /* B_Interactable_C */>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_Interactable_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Interactable.B_Interactable_C"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Length_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_NotEqual_GuidGuid_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_MakeStruct_FInteractableStateSaveInfo",
+          "type": "FSLFInteractableStateSaveInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FInteractableStateSaveInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Saving/FInteractableStateSaveInfo.FInteractableStateSaveInfo"
+          }
+        },
+        {
+          "name": "CallFunc_MakeInstancedStruct_ReturnValue",
+          "type": "FInstancedStruct",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Add_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "Setters|Serialization",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [
+        "LOCAL_InteractableStates"
+      ],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "GetSavedClass",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "CallFunc_GetDataByTag_Data",
+          "type": "FSLFSaveData",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FSaveData",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Saving/FSaveData.FSaveData"
+          }
+        },
+        {
+          "name": "CallFunc_Array_IsEmpty_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Get_Item",
+          "type": "FInstancedStruct",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_ExecResult",
+          "type": "uint8",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "EStructUtilsResult",
+            "SubCategoryObjectPath": "/Script/Engine.EStructUtilsResult"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_Value",
+          "type": "FSLFClassSaveInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FClassSaveInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Saving/FClassSaveInfo.FClassSaveInfo"
+          }
+        },
+        {
+          "name": "K2Node_SwitchEnum_CmpSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "Getters",
+      "access_specifier": "Public",
+      "is_pure": true,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": true,
+      "is_blueprint_callable": true,
+      "has_exec_pins": false,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "GetSavedLevelName",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "CallFunc_GetDataByTag_Data",
+          "type": "FSLFSaveData",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FSaveData",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Saving/FSaveData.FSaveData"
+          }
+        },
+        {
+          "name": "CallFunc_Array_IsEmpty_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Get_Item",
+          "type": "FInstancedStruct",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_ExecResult",
+          "type": "uint8",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "EStructUtilsResult",
+            "SubCategoryObjectPath": "/Script/Engine.EStructUtilsResult"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_Value",
+          "type": "FSLFWorldSaveInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FWorldSaveInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Saving/FWorldSaveInfo.FWorldSaveInfo"
+          }
+        },
+        {
+          "name": "K2Node_SwitchEnum_CmpSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "Getters",
+      "access_specifier": "Public",
+      "is_pure": true,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": true,
+      "is_blueprint_callable": true,
+      "has_exec_pins": false,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "SerializeClassData",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "CallFunc_GetGameInstance_ReturnValue",
+          "type": "UObject* /* GameInstance */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameInstance",
+            "SubCategoryObjectPath": "/Script/Engine.GameInstance"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsBPI_Game_Instance",
+          "type": "/* UNKNOWN: interface/None/BPI_GameInstance_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "interface",
+            "SubCategory": "None",
+            "SubCategoryObject": "BPI_GameInstance_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Interfaces/BPI_GameInstance.BPI_GameInstance_C"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetSelectedClass_SelectedBaseCharacterClass",
+          "type": "UObject* /* PDA_BaseCharacterInfo_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "PDA_BaseCharacterInfo_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Data/PDA_BaseCharacterInfo.PDA_BaseCharacterInfo_C"
+          }
+        },
+        {
+          "name": "K2Node_MakeStruct_FClassSaveInfo",
+          "type": "FSLFClassSaveInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FClassSaveInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Saving/FClassSaveInfo.FClassSaveInfo"
+          }
+        },
+        {
+          "name": "CallFunc_MakeInstancedStruct_ReturnValue",
+          "type": "FInstancedStruct",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        },
+        {
+          "name": "K2Node_MakeArray_Array",
+          "type": "TArray<FInstancedStruct>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        }
+      ],
+      "category": "Setters|Serialization",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "SerializeLevelData",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "CallFunc_GetCurrentLevelName_ReturnValue",
+          "type": "FString",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "string",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_Conv_StringToName_ReturnValue",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsBPI_Controller",
+          "type": "/* UNKNOWN: interface/None/BPI_Controller_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "interface",
+            "SubCategory": "None",
+            "SubCategoryObject": "BPI_Controller_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Controller.BPI_Controller_C"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetPawnFromController_Pawn",
+          "type": "UObject* /* Pawn */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Pawn",
+            "SubCategoryObjectPath": "/Script/Engine.Pawn"
+          }
+        },
+        {
+          "name": "CallFunc_GetTransform_ReturnValue",
+          "type": "FTransform",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Transform",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Transform"
+          }
+        },
+        {
+          "name": "CallFunc_GetControlRotation_ReturnValue",
+          "type": "FRotator",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Rotator",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Rotator"
+          }
+        },
+        {
+          "name": "K2Node_MakeStruct_FWorldSaveInfo",
+          "type": "FSLFWorldSaveInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FWorldSaveInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Saving/FWorldSaveInfo.FWorldSaveInfo"
+          }
+        },
+        {
+          "name": "CallFunc_MakeInstancedStruct_ReturnValue",
+          "type": "FInstancedStruct",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        },
+        {
+          "name": "K2Node_MakeArray_Array",
+          "type": "TArray<FInstancedStruct>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        }
+      ],
+      "category": "Setters|Serialization",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "SerializeDataForSaving",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "SaveTag",
+          "type": "FGameplayTag",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+          }
+        },
+        {
+          "name": "GameplayTagsK2Node_SwitchGameplayTag_CmpSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue",
+          "type": "UObject* /* AC_ProgressManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_ProgressManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_ProgressManager.AC_ProgressManager_C"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_1",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue_1",
+          "type": "UObject* /* AC_EquipmentManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_EquipmentManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_EquipmentManager.AC_EquipmentManager_C"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_2",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue_2",
+          "type": "UObject* /* AC_InventoryManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_InventoryManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_InventoryManager.AC_InventoryManager_C"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_2",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_3",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsBPI_Controller",
+          "type": "/* UNKNOWN: interface/None/BPI_Controller_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "interface",
+            "SubCategory": "None",
+            "SubCategoryObject": "BPI_Controller_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Controller.BPI_Controller_C"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetPawnFromController_Pawn",
+          "type": "UObject* /* Pawn */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Pawn",
+            "SubCategoryObjectPath": "/Script/Engine.Pawn"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue_3",
+          "type": "UObject* /* AC_StatManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_StatManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_StatManager.AC_StatManager_C"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_4",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsBPI_Controller_1",
+          "type": "/* UNKNOWN: interface/None/BPI_Controller_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "interface",
+            "SubCategory": "None",
+            "SubCategoryObject": "BPI_Controller_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Controller.BPI_Controller_C"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_3",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetPlayerHUD_W_HUD",
+          "type": "UObject* /* W_HUD_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "W_HUD_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Widgets/HUD/W_HUD.W_HUD_C"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_4",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "Setters|Serialization",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "SerializeAllDataForSaving",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "CallFunc_GetOwner_ReturnValue",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue",
+          "type": "UObject* /* AC_ProgressManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_ProgressManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_ProgressManager.AC_ProgressManager_C"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_1",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue_1",
+          "type": "UObject* /* AC_EquipmentManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_EquipmentManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_EquipmentManager.AC_EquipmentManager_C"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_2",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue_2",
+          "type": "UObject* /* AC_InventoryManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_InventoryManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_InventoryManager.AC_InventoryManager_C"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_2",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_3",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsBPI_Controller",
+          "type": "/* UNKNOWN: interface/None/BPI_Controller_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "interface",
+            "SubCategory": "None",
+            "SubCategoryObject": "BPI_Controller_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Controller.BPI_Controller_C"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetPawnFromController_Pawn",
+          "type": "UObject* /* Pawn */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Pawn",
+            "SubCategoryObjectPath": "/Script/Engine.Pawn"
+          }
+        },
+        {
+          "name": "CallFunc_GetComponentByClass_ReturnValue_3",
+          "type": "UObject* /* AC_StatManager_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AC_StatManager_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Components/AC_StatManager.AC_StatManager_C"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue_4",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsBPI_Controller_1",
+          "type": "/* UNKNOWN: interface/None/BPI_Controller_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "interface",
+            "SubCategory": "None",
+            "SubCategoryObject": "BPI_Controller_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Controller.BPI_Controller_C"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_3",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetPlayerHUD_W_HUD",
+          "type": "UObject* /* W_HUD_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "W_HUD_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Widgets/HUD/W_HUD.W_HUD_C"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_4",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "Setters|Serialization",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "GetDataByTag",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "SaveGameTag",
+          "type": "FGameplayTag",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+          }
+        },
+        {
+          "name": "CallFunc_Map_Find_Value",
+          "type": "FSLFSaveData",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FSaveData",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Saving/FSaveData.FSaveData"
+          }
+        },
+        {
+          "name": "CallFunc_Map_Find_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "Getters",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "RefreshData",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "Setters",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Completed_32B3AD3F432B4F0984E6FF8932318F0D",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "SaveGame",
+          "type": "UObject* /* SaveGame */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "SaveGame",
+            "SubCategoryObjectPath": "/Script/Engine.SaveGame"
+          }
+        },
+        {
+          "name": "bSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Completed_752F5BC148C3CFEB019C329F63C358A7",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "SaveGame",
+          "type": "UObject* /* SaveGame */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "SaveGame",
+            "SubCategoryObjectPath": "/Script/Engine.SaveGame"
+          }
+        },
+        {
+          "name": "bSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Completed_3BEB31F24FC67F4199C9428D43797F7F",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "SaveGame",
+          "type": "UObject* /* SaveGame */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "SaveGame",
+            "SubCategoryObjectPath": "/Script/Engine.SaveGame"
+          }
+        },
+        {
+          "name": "bSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event RemoveSpawnedActorFromSaveData",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Guid",
+          "type": "FGuid",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Guid",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Guid"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event UpdateSaveData",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "SaveGameTag",
+          "type": "FGameplayTag",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event AddToSaveData",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "SaveGameTag",
+          "type": "FGameplayTag",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event AttemptAutosave",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event StartAutosaveTimer",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event TryPreloadData",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event SetLoadedData",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event SaveData",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "Event UpdateActiveSlot",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "ReceiveBeginPlay",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "ExecuteUbergraph_AC_SaveLoadManager",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "EntryPoint",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_SaveGame",
+          "type": "UObject* /* SaveGame */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "SaveGame",
+            "SubCategoryObjectPath": "/Script/Engine.SaveGame"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_bSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate",
+          "type": "/* UNKNOWN: delegate/None/OnAsyncHandleSaveGame__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnAsyncHandleSaveGame__DelegateSignature"
+          }
+        },
+        {
+          "name": "Temp_bool_Variable",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_object_Variable",
+          "type": "UObject* /* SaveGame */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "SaveGame",
+            "SubCategoryObjectPath": "/Script/Engine.SaveGame"
+          }
+        },
+        {
+          "name": "Temp_int_Array_Index_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_object_Variable_1",
+          "type": "UObject* /* SaveGame */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "SaveGame",
+            "SubCategoryObjectPath": "/Script/Engine.SaveGame"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Get_Item",
+          "type": "FInstancedStruct",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsSG_Soulslike_Framework",
+          "type": "UObject* /* SG_SoulslikeFramework_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "SG_SoulslikeFramework_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Saving/SG_SoulslikeFramework.SG_SoulslikeFramework_C"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_ExecResult",
+          "type": "uint8",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "EStructUtilsResult",
+            "SubCategoryObjectPath": "/Script/Engine.EStructUtilsResult"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_Value",
+          "type": "FSLFSpawnedActorSaveInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FSpawnedActorSaveInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Saving/FSpawnedActorSaveInfo.FSpawnedActorSaveInfo"
+          }
+        },
+        {
+          "name": "K2Node_SwitchEnum_CmpSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Length_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_bool_Variable_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_SaveGame_1",
+          "type": "UObject* /* SaveGame */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "SaveGame",
+            "SubCategoryObjectPath": "/Script/Engine.SaveGame"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_bSuccess_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_1",
+          "type": "/* UNKNOWN: delegate/None/OnAsyncHandleSaveGame__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnAsyncHandleSaveGame__DelegateSignature"
+          }
+        },
+        {
+          "name": "CallFunc_DoesSaveGameExist_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_AsyncLoadGameFromSlot_ReturnValue",
+          "type": "UObject* /* AsyncActionHandleSaveGame */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AsyncActionHandleSaveGame",
+            "SubCategoryObjectPath": "/Script/Engine.AsyncActionHandleSaveGame"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetSavedData_Data",
+          "type": "FSLFSaveGameInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FSaveGameInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Saving/FSaveGameInfo.FSaveGameInfo"
+          }
+        },
+        {
+          "name": "CallFunc_Array_RemoveItem_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetDataByTag_Data",
+          "type": "FSLFSaveData",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FSaveData",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Saving/FSaveData.FSaveData"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_Guid",
+          "type": "FGuid",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "Guid",
+            "SubCategoryObjectPath": "/Script/CoreUObject.Guid"
+          }
+        },
+        {
+          "name": "CallFunc_EqualEqual_GuidGuid_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Array_IsEmpty_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_int_Loop_Counter_Variable",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_SaveGameTag_1",
+          "type": "FGameplayTag",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_SaveData",
+          "type": "TArray<FInstancedStruct>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        },
+        {
+          "name": "K2Node_MakeStruct_FSaveData",
+          "type": "FSLFSaveData",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FSaveData",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Saving/FSaveData.FSaveData"
+          }
+        },
+        {
+          "name": "CallFunc_Less_IntInt_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Add_IntInt_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_SaveGameTag",
+          "type": "FGameplayTag",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameplayTag",
+            "SubCategoryObjectPath": "/Script/GameplayTags.GameplayTag"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_DataToSave",
+          "type": "FInstancedStruct",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        },
+        {
+          "name": "CallFunc_Array_Add_ReturnValue",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Map_Find_Value",
+          "type": "FSLFSaveData",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FSaveData",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Saving/FSaveData.FSaveData"
+          }
+        },
+        {
+          "name": "CallFunc_Map_Find_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_MakeArray_Array",
+          "type": "TArray<FInstancedStruct>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        },
+        {
+          "name": "Temp_object_Variable_2",
+          "type": "UObject* /* SaveGame */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "SaveGame",
+            "SubCategoryObjectPath": "/Script/Engine.SaveGame"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsSG_Soulslike_Framework_1",
+          "type": "UObject* /* SG_SoulslikeFramework_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "SG_SoulslikeFramework_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Saving/SG_SoulslikeFramework.SG_SoulslikeFramework_C"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Temp_bool_Variable_2",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_BooleanAND_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_RandomFloatInRange_ReturnValue",
+          "type": "double",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "double"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsBPI_Controller",
+          "type": "/* UNKNOWN: interface/None/BPI_Controller_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "interface",
+            "SubCategory": "None",
+            "SubCategoryObject": "BPI_Controller_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Controller.BPI_Controller_C"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess_2",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetGameInstance_ReturnValue",
+          "type": "UObject* /* GameInstance */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameInstance",
+            "SubCategoryObjectPath": "/Script/Engine.GameInstance"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsBPI_Game_Instance",
+          "type": "/* UNKNOWN: interface/None/BPI_GameInstance_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "interface",
+            "SubCategory": "None",
+            "SubCategoryObject": "BPI_GameInstance_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Interfaces/BPI_GameInstance.BPI_GameInstance_C"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess_3",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_DoesSaveGameExist_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Conv_StringToText_ReturnValue",
+          "type": "FText",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "text",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_AsyncSaveGameToSlot_ReturnValue",
+          "type": "UObject* /* AsyncActionHandleSaveGame */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AsyncActionHandleSaveGame",
+            "SubCategoryObjectPath": "/Script/Engine.AsyncActionHandleSaveGame"
+          }
+        },
+        {
+          "name": "K2Node_MakeStruct_FormatArgumentData",
+          "type": "FFormatArgumentData",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FormatArgumentData",
+            "SubCategoryObjectPath": "/Script/Engine.FormatArgumentData"
+          }
+        },
+        {
+          "name": "K2Node_MakeArray_Array_1",
+          "type": "TArray<FFormatArgumentData>",
+          "type_raw": {
+            "IsArray": true,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FormatArgumentData",
+            "SubCategoryObjectPath": "/Script/Engine.FormatArgumentData"
+          }
+        },
+        {
+          "name": "CallFunc_Format_ReturnValue",
+          "type": "FText",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "text",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_2",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_CreateSaveGameObject_ReturnValue",
+          "type": "UObject* /* SG_SoulslikeFramework_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "SG_SoulslikeFramework_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Saving/SG_SoulslikeFramework.SG_SoulslikeFramework_C"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_SaveGame_2",
+          "type": "UObject* /* SaveGame */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "SaveGame",
+            "SubCategoryObjectPath": "/Script/Engine.SaveGame"
+          }
+        },
+        {
+          "name": "K2Node_CustomEvent_bSuccess_2",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_AsyncLoadGameFromSlot_ReturnValue_1",
+          "type": "UObject* /* AsyncActionHandleSaveGame */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AsyncActionHandleSaveGame",
+            "SubCategoryObjectPath": "/Script/Engine.AsyncActionHandleSaveGame"
+          }
+        },
+        {
+          "name": "CallFunc_IsEmpty_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_Not_PreBool_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_3",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetSavedData_Data_1",
+          "type": "FSLFSaveGameInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FSaveGameInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Saving/FSaveGameInfo.FSaveGameInfo"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_2",
+          "type": "/* UNKNOWN: delegate/None/TimerDynamicDelegate__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "TimerDynamicDelegate__DelegateSignature"
+          }
+        },
+        {
+          "name": "CallFunc_K2_SetTimerDelegate_ReturnValue",
+          "type": "FTimerHandle",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "TimerHandle",
+            "SubCategoryObjectPath": "/Script/Engine.TimerHandle"
+          }
+        },
+        {
+          "name": "K2Node_CreateDelegate_OutputDelegate_3",
+          "type": "/* UNKNOWN: delegate/None/OnAsyncHandleSaveGame__DelegateSignature */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "delegate",
+            "SubCategory": "None",
+            "SubCategoryObject": "OnAsyncHandleSaveGame__DelegateSignature"
+          }
+        },
+        {
+          "name": "CallFunc_GetGameInstance_ReturnValue_1",
+          "type": "UObject* /* GameInstance */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "GameInstance",
+            "SubCategoryObjectPath": "/Script/Engine.GameInstance"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsBPI_Game_Instance_1",
+          "type": "/* UNKNOWN: interface/None/BPI_GameInstance_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "interface",
+            "SubCategory": "None",
+            "SubCategoryObject": "BPI_GameInstance_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Interfaces/BPI_GameInstance.BPI_GameInstance_C"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess_4",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetActiveSlotName_ActiveSlotName",
+          "type": "FString",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "string",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    }
+  ],
+  "event_dispatchers": [
+    {
+      "name": "OnSaveCompleted",
+      "parameters": [],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "OnDataLoaded",
+      "parameters": [
+        {
+          "name": "LoadedData",
+          "type": "FSLFSaveGameInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FSaveGameInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/Saving/FSaveGameInfo.FSaveGameInfo"
+          }
+        }
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    }
+  ],
+  "graphs": [
+    {
+      "name": "EventGraph",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 6,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": true,
+      "function_calls": [],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "RefreshData",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 7,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "GetDataByTag",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 7,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "Map_Find"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "SerializeAllDataForSaving",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 35,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "SerializeInventoryStorageCurrencyData",
+        "SerializeLevelData",
+        "SerializeClassData",
+        "GetOwner",
+        "SerializeItemWheelData",
+        "SerializeInteractableStates",
+        "GetOwner",
+        "GetComponentByClass",
+        "SerializeStatsData",
+        "GetOwner",
+        "GetComponentByClass",
+        "GetOwner",
+        "GetComponentByClass",
+        "SerializeEquipmentData",
+        "GetOwner",
+        "GetComponentByClass",
+        "SerializeProgressData",
+        "SerializeVendorData"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "SerializeDataForSaving",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 35,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "SerializeInventoryStorageCurrencyData",
+        "SerializeLevelData",
+        "SerializeClassData",
+        "GetOwner",
+        "SerializeItemWheelData",
+        "SerializeInteractableStates",
+        "GetOwner",
+        "GetComponentByClass",
+        "SerializeStatsData",
+        "GetOwner",
+        "GetComponentByClass",
+        "GetOwner",
+        "GetComponentByClass",
+        "SerializeEquipmentData",
+        "GetOwner",
+        "GetComponentByClass",
+        "SerializeProgressData",
+        "SerializeVendorData"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "SerializeLevelData",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 12,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "Event UpdateSaveData",
+        "GetOwner",
+        "GetTransform",
+        "GetCurrentLevelName",
+        "Conv_StringToName",
+        "GetControlRotation"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "SerializeClassData",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 8,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "Event UpdateSaveData",
+        "GetGameInstance"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "GetSavedLevelName",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 9,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "GetDataByTag"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "GetSavedClass",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 10,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "GetDataByTag"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "SerializeInteractableStates",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 18,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "Event UpdateSaveData",
+        "GetAllActorsOfClass",
+        "Parse_StringToGuid"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "SerializeVendorData",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 17,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "Event UpdateSaveData",
+        "GetAllActorsOfClass",
+        "Parse_StringToGuid"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "IsDataValid",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 5,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "LoadDataAsync",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 19,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "DoesSaveGameExist",
+        "GetSavedData"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "OnSaveCompleted",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 1,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "OnDataLoaded",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 1,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    }
+  ],
+  "collapsed_graphs": [],
+  "dependencies": {
+    "structs": [
+      "InstancedStruct",
+      "FSaveGameInfo"
+    ],
+    "enums": [],
+    "interfaces": [],
+    "components": [],
+    "blueprints": [],
+    "data_assets": []
+  },
+  "final_summary": "",
+  "known_issues": [],
+  "debug_notes": [],
+  "test_results": []
+}

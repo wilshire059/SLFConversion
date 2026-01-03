@@ -1,0 +1,54 @@
+// Logic implementations for AC_InteractionManager
+// Generated from AC_InteractionManager.json
+
+// ═══ RemoveFromNearbyInteractables ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InteractionManager::RemoveFromNearbyInteractables called"));
+
+	// TODO: Handle K2Node_CallArrayFunction - Remove Item
+
+// ═══ TargetLockTrace ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InteractionManager::TargetLockTrace called"));
+
+	SphereTraceMultiForObjects(/*ActorsToIgnore*/ /* Make Array.Array */, /*DrawDebugType*/ TargetLockDebugDrawType, /*DrawTime*/ 5.000000, /*End*/ /* vector + vector.ReturnValue */, /*ObjectTypes*/ TargetLockTraceObjectTypes, /*Radius*/ TargetLockTraceRadius, /*Start*/ K2_GetComponentLocationResult.ReturnValue, /*TraceColor*/ (R=1.000000,G=0.000000,B=0.000000,A=1.000000), /*TraceHitColor*/ (R=0.000000,G=1.000000,B=0.000000,A=1.000000), /*WorldContextObject*/ nullptr, /*bIgnoreSelf*/ true, /*bTraceComplex*/ false);
+	// Set output: OutHits = SphereTraceMultiForObjectsResult.OutHits
+	return;
+
+// ═══ LockOnTarget ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InteractionManager::LockOnTarget called"));
+
+	if (IsValid(LockOnTarget))
+	{
+		// Is Valid branch
+	}
+
+// ═══ ResetLockOn ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InteractionManager::ResetLockOn called"));
+
+	TargetLocked = /* value */;
+	// TODO: Handle K2Node_Message - On Target Locked
+Target is BPI Player
+	// TODO: Handle K2Node_Message - Toggle Lockon Widget
+Target is BPI Generic Character
+	LockedOnTarget = /* value */;
+	LockedOnComponent = /* value */;
+	K2_ClearAndInvalidateTimerHandle(/*Handle*/ TargetLockDistanceTimer, /*WorldContextObject*/ nullptr);
+
+// ═══ IsTargetLocked? ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InteractionManager::IsTargetLocked? called"));
+
+	// Set output: ReturnValue = TargetLocked
+	return;
+
+// ═══ CheckTargetDistance ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InteractionManager::CheckTargetDistance called"));
+
+	if (/* float > float.ReturnValue */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	ResetLockOn();
+

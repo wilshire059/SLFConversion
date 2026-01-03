@@ -1,0 +1,610 @@
+LogInit: Display: Running engine for game: SLFConversion
+LogCore: Display: Requested channels: 'cpu,gpu,frame,log,bookmark,screenshot,region'
+LogTrace: Display: Control listening on port 1985
+LogCsvProfiler: Display: Metadata set : platform="Windows"
+LogCsvProfiler: Display: Metadata set : config="Development"
+LogCsvProfiler: Display: Metadata set : buildversion="++UE5+Release-5.7-CL-48512491"
+LogCsvProfiler: Display: Metadata set : engineversion="5.7.1-48512491+++UE5+Release-5.7"
+LogCsvProfiler: Display: Metadata set : enginereleaseversion="5.7.1"
+LogCsvProfiler: Display: Metadata set : os="Windows 11 (25H2) [10.0.26200.7462] "
+LogCsvProfiler: Display: Metadata set : cpu="GenuineIntel|Intel(R) Core(TM) 9 270H"
+LogCsvProfiler: Display: Metadata set : pgoenabled="0"
+LogCsvProfiler: Display: Metadata set : pgoprofilingenabled="0"
+LogCsvProfiler: Display: Metadata set : ltoenabled="0"
+LogCsvProfiler: Display: Metadata set : asan="0"
+LogCsvProfiler: Display: Metadata set : mergedmodules="0"
+LogCsvProfiler: Display: Metadata set : commandline="" C:/scripts/SLFConversion/SLFConversion.uproject -run=pythonscript -script=C:/scripts/SLFConversion/tests/run_all_tests.py -stdout -unattended -nosplash""
+LogCsvProfiler: Display: Metadata set : loginid="d995c8d241966abb5189efb7e08079c5"
+LogCsvProfiler: Display: Metadata set : llm="0"
+LogCsvProfiler: Display: Metadata set : systemresolution.resx="1280"
+LogCsvProfiler: Display: Metadata set : systemresolution.resy="720"
+LogAudio: Display: Audio Device Manager not initializing due to all audio being disabled. If this is not intentional, please check command line arguments for "-nosound".
+LogConfig: Display: Loading IOS ini files took 0.04 seconds
+LogConfig: Display: Loading Android ini files took 0.04 seconds
+LogConfig: Display: Loading VulkanPC ini files took 0.05 seconds
+LogConfig: Display: Loading Mac ini files took 0.05 seconds
+LogConfig: Display: Loading Unix ini files took 0.05 seconds
+LogConfig: Display: Loading TVOS ini files took 0.05 seconds
+LogConfig: Display: Loading VisionOS ini files took 0.05 seconds
+LogConfig: Display: Loading Windows ini files took 0.06 seconds
+LogConfig: Display: Loading Linux ini files took 0.06 seconds
+LogPluginManager: Display: The Plugin StructUtils has been marked deprecated for 5.5 and will be removed soon. Please update your dependencies.
+RenderDocPlugin: Display: RenderDoc plugin will not be loaded. Use '-AttachRenderDoc' on the cmd line or enable 'renderdoc.AutoAttach' in the plugin settings.
+[2026.01.02-16.13.20:810][  0]LogHAL: Display: Platform has ~ 32 GB [34032443392 / 34359738368 / 32], which maps to Largest [LargestMinGB=32, LargerMinGB=12, DefaultMinGB=8, SmallerMinGB=6, SmallestMinGB=0)
+[2026.01.02-16.13.20:810][  0]LogCsvProfiler: Display: Metadata set : extradevelopmentmemorymb="0"
+[2026.01.02-16.13.21:100][  0]LogObj: Display: Attempting to load config data for Default__SlateThemeManager before the Class has been constructed/registered/linked (likely during module loading or early startup). This will result in the load silently failing and should be fixed.
+[2026.01.02-16.13.21:189][  0]LogCsvProfiler: Display: Metadata set : verbatimrhiname="Null"
+[2026.01.02-16.13.21:189][  0]LogCsvProfiler: Display: Metadata set : rhiname="Null"
+[2026.01.02-16.13.21:189][  0]LogCsvProfiler: Display: Metadata set : rhifeaturelevel="SM6"
+[2026.01.02-16.13.21:189][  0]LogCsvProfiler: Display: Metadata set : shaderplatform="PCD3D_SM6"
+[2026.01.02-16.13.21:195][  0]LogTextureFormatASTC: Display: ASTCEnc version 5.0.1 library loaded
+[2026.01.02-16.13.21:195][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatASTC
+[2026.01.02-16.13.21:195][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatDXT
+[2026.01.02-16.13.21:195][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatETC2
+[2026.01.02-16.13.21:195][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatIntelISPCTexComp
+[2026.01.02-16.13.21:195][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatUncompressed
+[2026.01.02-16.13.21:195][  0]LogTextureFormatOodle: Display: Oodle Texture TFO init; latest sdk version = 2.9.14
+[2026.01.02-16.13.21:195][  0]LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.14.dll
+[2026.01.02-16.13.21:196][  0]LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.5.dll
+[2026.01.02-16.13.21:196][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatOodle
+[2026.01.02-16.13.21:216][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android'
+[2026.01.02-16.13.21:217][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ASTC'
+[2026.01.02-16.13.21:217][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_DXT'
+[2026.01.02-16.13.21:217][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ETC2'
+[2026.01.02-16.13.21:217][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_OpenXR'
+[2026.01.02-16.13.21:217][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'AndroidClient'
+[2026.01.02-16.13.21:217][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ASTCClient'
+[2026.01.02-16.13.21:217][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_DXTClient'
+[2026.01.02-16.13.21:217][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ETC2Client'
+[2026.01.02-16.13.21:217][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_OpenXRClient'
+[2026.01.02-16.13.21:217][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_Multi'
+[2026.01.02-16.13.21:217][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_MultiClient'
+[2026.01.02-16.13.21:226][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'IOS'
+[2026.01.02-16.13.21:226][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'IOSClient'
+[2026.01.02-16.13.21:236][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Linux'
+[2026.01.02-16.13.21:236][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'LinuxEditor'
+[2026.01.02-16.13.21:236][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'LinuxServer'
+[2026.01.02-16.13.21:236][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'LinuxClient'
+[2026.01.02-16.13.21:245][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Mac'
+[2026.01.02-16.13.21:245][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'MacEditor'
+[2026.01.02-16.13.21:245][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'MacServer'
+[2026.01.02-16.13.21:245][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'MacClient'
+[2026.01.02-16.13.21:254][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'TVOS'
+[2026.01.02-16.13.21:254][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'TVOSClient'
+[2026.01.02-16.13.21:263][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Windows'
+[2026.01.02-16.13.21:263][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsEditor'
+[2026.01.02-16.13.21:263][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsServer'
+[2026.01.02-16.13.21:263][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsClient'
+[2026.01.02-16.13.21:263][  0]LogTargetPlatformManager: Display: Building Assets For WindowsEditor
+[2026.01.02-16.13.21:266][  0]LogAudioDebug: Display: Lib vorbis DLL was dynamically loaded.
+[2026.01.02-16.13.21:304][  0]LogDerivedDataCache: Display: Memory: Max Cache Size: -1 MB
+[2026.01.02-16.13.21:545][  0]LogDerivedDataCache: Display: ../../../Engine/DerivedDataCache/Compressed.ddp: Opened pak cache for reading. (1732 MiB)
+[2026.01.02-16.13.21:546][  0]LogZenServiceInstance: Display: Launching zen utility 'C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/zen.exe service status'.
+[2026.01.02-16.13.21:851][  0]LogZenServiceInstance: Display: Launching zen utility 'C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/zen.exe service status'.
+[2026.01.02-16.13.22:056][  0]LogZenServiceInstance: Display: Read zen version cache file from 'C:/Users/james/AppData/Local/UnrealEngine/5.7/Saved/Zen/zen.version', version: '5.7.6-202510061608-windows-x64-release-9a1ebb9'
+[2026.01.02-16.13.22:057][  0]LogZenServiceInstance: Display: Read zen version cache file from 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Install/zen.version', version: '5.7.6-202510061608-windows-x64-release-9a1ebb9'
+[2026.01.02-16.13.22:057][  0]LogZenServiceInstance: Display: Installed service at 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe' is up to date
+[2026.01.02-16.13.22:057][  0]LogZenServiceInstance: Display: Launching executable 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe', working dir 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Install', data dir 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Data', args '--port 8558 --data-dir C:\Users\james\AppData\Local\UnrealEngine\Common\Zen\Data --http asio --gc-cache-duration-seconds 1209600 --gc-interval-seconds 21600 --gc-low-diskspace-threshold 2147483648 --cache-bucket-limit-overwrites --quiet --http-forceloopback --owner-pid 36300  --child-id Zen_36300_Startup'
+[2026.01.02-16.13.22:137][  0]LogZenServiceInstance: Display: Unreal Zen Storage Server HTTP service at http://[::1]:8558 status: OK!.
+[2026.01.02-16.13.22:149][  0]LogDerivedDataCache: Display: ZenLocal: Using ZenServer HTTP service at [::1] with namespace ue.ddc status: OK!.
+[2026.01.02-16.13.22:154][  0]LogDerivedDataCache: Display: C:/Users/james/AppData/Local/UnrealEngine/Common/DerivedDataCache: Performance: Latency=0.02ms. RandomReadSpeed=1326.80MBs, RandomWriteSpeed=187.81MBs. Assigned SpeedClass 'Local'
+[2026.01.02-16.13.22:171][  0]LogUbaHorde: Display: UBA/Horde Configuration [Uba.Provider.Horde]: Not Enabled
+[2026.01.02-16.13.22:180][  0]LogXGEController: Display: Initialized XGE controller. XGE tasks will be spawned on this machine.
+[2026.01.02-16.13.22:180][  0]LogShaderCompilers: Display: Using XGE Controller for shader compilation
+[2026.01.02-16.13.22:181][  0]LogShaderCompilers: Display: Compiling shader autogen file: ../../../../../../scripts/SLFConversion/Intermediate/ShaderAutogen/PCD3D_SM6/AutogenShaderHeaders.ush
+[2026.01.02-16.13.22:181][  0]LogShaderCompilers: Display: Autogen file is unchanged, skipping write.
+[2026.01.02-16.13.22:580][  0]LogEditorDomain: Display: EditorDomain is Disabled
+[2026.01.02-16.13.22:770][  0]LogDeviceProfileManager: Display: Deviceprofile LinuxArm64Editor not found.
+[2026.01.02-16.13.22:770][  0]LogDeviceProfileManager: Display: Deviceprofile LinuxArm64 not found.
+[2026.01.02-16.13.22:805][  0]LogCsvProfiler: Display: Metadata set : deviceprofile="WindowsEditor"
+[2026.01.02-16.13.22:807][  0]LogStreaming: Display: FlushAsyncLoading(1): 1 QueuedPackages, 0 AsyncPackages
+[2026.01.02-16.13.22:816][  0]LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-16.13.22:816][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultTextMaterialOpaque is adding a dynamic import to package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness because of a recursive sync load
+[2026.01.02-16.13.22:816][  0]LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-16.13.22:817][  0]LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-16.13.22:817][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultTextMaterialOpaque is adding a dynamic import to package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec because of a recursive sync load
+[2026.01.02-16.13.22:817][  0]LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-16.13.22:817][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/WorldGridMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-16.13.22:819][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/WorldGridMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-16.13.22:819][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-16.13.22:820][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultPostProcessMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-16.13.22:821][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultLightFunctionMaterial is adding a dynamic import to package /Engine/EngineMaterials/DefaultPostProcessMaterial because of a recursive sync load
+[2026.01.02-16.13.22:821][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultPostProcessMaterial (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-16.13.22:821][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultDeferredDecalMaterial is adding a dynamic import to package /Engine/EngineMaterials/DefaultLightFunctionMaterial because of a recursive sync load
+[2026.01.02-16.13.22:821][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-16.13.22:821][  0]LogStreaming: Display: Package /Engine/EngineMaterials/WorldGridMaterial is adding a dynamic import to package /Engine/EngineMaterials/DefaultDeferredDecalMaterial because of a recursive sync load
+[2026.01.02-16.13.22:821][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/WorldGridMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-16.13.22:822][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultTextMaterialOpaque is adding a dynamic import to package /Engine/EngineMaterials/WorldGridMaterial because of a recursive sync load
+[2026.01.02-16.13.22:822][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/WorldGridMaterial (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-16.13.22:823][  0]LogTextureEncodingSettings: Display: Texture Encode Speed: Final (cook).
+[2026.01.02-16.13.22:823][  0]LogTextureEncodingSettings: Display: Oodle Texture Encode Speed settings: Fast: RDO Off Lambda=0, Effort=Normal Final: RDO Off Lambda=0, Effort=Normal
+[2026.01.02-16.13.22:823][  0]LogTextureEncodingSettings: Display: Shared linear texture encoding: Disabled
+[2026.01.02-16.13.22:839][  0]LogMeshReduction: Display: Using QuadricMeshReduction for automatic static mesh reduction
+[2026.01.02-16.13.22:839][  0]LogMeshReduction: Display: Using SkeletalMeshReduction for automatic skeletal mesh reduction
+[2026.01.02-16.13.22:839][  0]LogMeshReduction: Display: Using ProxyLODMeshReduction for automatic mesh merging
+[2026.01.02-16.13.22:839][  0]LogMeshReduction: Display: No distributed automatic mesh merging module available
+[2026.01.02-16.13.22:959][  0]LogShaderCompilers: Display: Compiling shader autogen file: ../../../../../../scripts/SLFConversion/Intermediate/ShaderAutogen/PCD3D_SM5/AutogenShaderHeaders.ush
+[2026.01.02-16.13.22:959][  0]LogShaderCompilers: Display: Autogen file is unchanged, skipping write.
+[2026.01.02-16.13.22:959][  0]LogVirtualization: Display: VirtualizationSystem name found in ini file: None
+[2026.01.02-16.13.22:959][  0]LogVirtualization: Display: FNullVirtualizationSystem mounted, virtualization will be disabled
+[2026.01.02-16.13.23:017][  0]LogWorldPartition: Display: FWorldPartitionClassDescRegistry::Initialize started...
+[2026.01.02-16.13.23:019][  0]LogWorldPartition: Display: FWorldPartitionClassDescRegistry::Initialize took 1.765 ms
+[2026.01.02-16.13.23:157][  0]LogMetaSound: Display: MetaSound Page Target Initialized to 'Default'
+[2026.01.02-16.13.23:157][  0]LogAudio: Display: Registering Engine Module Parameter Interfaces...
+[2026.01.02-16.13.23:858][  0]LogAudioCaptureCore: Display: No Audio Capture implementations found. Audio input will be silent.
+[2026.01.02-16.13.23:858][  0]LogAudioCaptureCore: Display: No Audio Capture implementations found. Audio input will be silent.
+[2026.01.02-16.13.24:143][  0]LogAssetRegistry: Display: Asset registry cache read as 75.2 MiB from ../../../../../../scripts/SLFConversion/Intermediate/CachedAssetRegistry_0.bin.
+[2026.01.02-16.13.24:144][  0]LogAssetRegistry: Display: AssetDataGatherer spent 0.040s loading caches ../../../../../../scripts/SLFConversion/Intermediate/CachedAssetRegistry_*.bin.
+[2026.01.02-16.13.24:200][  0]LogAssetManager: Display: Ignoring PrimaryAssetType PDA_CombatReactionAnimData_C - Conflicts with PDA_CombatReactionAnimData_Player_C - Asset: DA_ExamplePlayerReactionAnimset
+[2026.01.02-16.13.24:268][  0]LogCsvProfiler: Display: Metadata set : largeworldcoordinates="1"
+[2026.01.02-16.13.24:295][  0]LogPython: Display: No pip-enabled plugins with python dependencies found, skipping
+[2026.01.02-16.13.24:615][  0]LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.7/Engine/Plugins/Animation/IKRig/Content/Python/init_unreal.py... started...
+[2026.01.02-16.13.24:630][  0]LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.7/Engine/Plugins/Animation/IKRig/Content/Python/init_unreal.py... took 14.936 ms
+[2026.01.02-16.13.24:630][  0]LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.7/Engine/Plugins/Animation/ControlRig/Content/Python/init_unreal.py... started...
+[2026.01.02-16.13.24:645][  0]LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.7/Engine/Plugins/Animation/ControlRig/Content/Python/init_unreal.py... took 14.679 ms (total: 29.616 ms)
+[2026.01.02-16.13.24:645][  0]LogPythonScriptCommandlet: Display: Running Python script: C:/scripts/SLFConversion/tests/run_all_tests.py
+[2026.01.02-16.13.25:922][  0]LogUObjectGlobals: Warning: Failed to find object 'Class /Script/SLFConversion.AC_AI_SenseManager'
+[2026.01.02-16.13.27:373][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\_Animations\Locomotion\AnimBP\ABP_SoulslikeCharacter_Additive.uasset: [Compiler] Invalid field 'IsGuarding?' found in property path for  Property Access
+[2026.01.02-16.13.27:490][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] Unable to find function with name GetPlayerHUD for Message node  Invalid Message Node .
+[2026.01.02-16.13.27:490][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] In use pin  <Unnamed>  no longer exists on node  Invalid Message Node . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.27:491][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] In use pin  <Unnamed>  no longer exists on node  Invalid Message Node . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.27:491][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] In use pin  Target  no longer exists on node  Invalid Message Node . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.27:491][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] In use pin  W HUD  no longer exists on node  Invalid Message Node . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.27:491][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] Could not find a function named "GetPlayerHUD" in 'BPI_Controller_C'.
+Make sure 'BPI_Controller_C' has been compiled for  Invalid Message Node
+[2026.01.02-16.13.27:491][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] In use pin  <Unnamed>  no longer exists on node  Event Send Interaction Error Message . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.27:492][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] In use pin  Target  no longer exists on node  Event Send Interaction Error Message . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.27:492][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] In use pin  Message  no longer exists on node  Event Send Interaction Error Message . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.27:492][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] In use pin  Time  no longer exists on node  Event Send Interaction Error Message . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.27:492][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] Could not find a function named "Event SendInteractionErrorMessage" in 'W_HUD_C'.
+Make sure 'W_HUD_C' has been compiled for  Event Send Interaction Error Message
+[2026.01.02-16.13.27:493][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] GetStat  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-16.13.27:493][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] GetStat  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-16.13.27:496][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] Unable to find function with name GetPlayerHUD for Message node  Invalid Message Node .
+[2026.01.02-16.13.27:496][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] In use pin  <Unnamed>  no longer exists on node  Invalid Message Node . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.27:496][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] In use pin  <Unnamed>  no longer exists on node  Invalid Message Node . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.27:496][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] In use pin  Target  no longer exists on node  Invalid Message Node . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.27:496][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] In use pin  W HUD  no longer exists on node  Invalid Message Node . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.27:497][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] Could not find a function named "GetPlayerHUD" in 'BPI_Controller_C'.
+Make sure 'BPI_Controller_C' has been compiled for  Invalid Message Node
+[2026.01.02-16.13.27:500][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] Could not find a variable named "LocationTag" in '/Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_LocationActor.B_LocationActor_C'.
+Make sure '/Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_LocationActor.B_LocationActor_C' has been compiled for  Get LocationTag
+[2026.01.02-16.13.27:503][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] No input structure to break for  FStat Info
+[2026.01.02-16.13.27:504][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] The property associated with  Location Tag  could not be found in '/Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_LocationActor.B_LocationActor_C'
+[2026.01.02-16.13.27:546][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_Characters\B_Soulslike_Character.uasset: [Compiler] Could not find a variable named "AllowTargetSwap?" in '/Game/SoulslikeFramework/Blueprints/Components/AC_InteractionManager.AC_InteractionManager_C'.
+Make sure '/Game/SoulslikeFramework/Blueprints/Components/AC_InteractionManager.AC_InteractionManager_C' has been compiled for  Get AllowTargetSwap?
+[2026.01.02-16.13.27:547][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_Characters\B_Soulslike_Character.uasset: [Compiler] In use pin  <Unnamed>  no longer exists on node  Event Lockon . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.27:547][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_Characters\B_Soulslike_Character.uasset: [Compiler] In use pin  Target  no longer exists on node  Event Lockon . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.27:547][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_Characters\B_Soulslike_Character.uasset: [Compiler] Could not find a function named "Event Lockon" in 'AC_InteractionManager_C'.
+Make sure 'AC_InteractionManager_C' has been compiled for  Event Lockon
+[2026.01.02-16.13.27:547][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_Characters\B_Soulslike_Character.uasset: [Compiler] Input pin  Rotate Towards?  specifying non-default value no longer exists on node  LockOnTarget . Please refresh node or reset pin to default value to remove pin.
+[2026.01.02-16.13.29:743][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Inventory/W_Equipment (0xC88D73171A354473) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:743][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Inventory/W_Equipment'
+[2026.01.02-16.13.29:743][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Inventory/W_EquipmentSlot (0x6C809B899672569F) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:743][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Inventory/W_EquipmentSlot'
+[2026.01.02-16.13.29:747][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Inventory/W_StatBlock (0x2AB6128D6053A1EB) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:747][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Inventory/W_StatBlock'
+[2026.01.02-16.13.29:747][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Equipment/W_StatBlock (0x5E2A1DE43E6C44DB) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:748][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Equipment/W_StatBlock'
+[2026.01.02-16.13.29:748][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Inventory/W_StatEntry (0x3F3ADC62824F7372) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:748][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Inventory/W_StatEntry'
+[2026.01.02-16.13.29:748][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Equipment/W_StatEntry (0xEFDA7C7E379795CE) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:748][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Equipment/W_StatEntry'
+[2026.01.02-16.13.29:751][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Inventory/W_LevelUp (0x5334A52C8DF2C742) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:751][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Inventory/W_LevelUp'
+[2026.01.02-16.13.29:751][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Equipment/W_LevelUp (0xA2A66F965D710F84) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:751][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Equipment/W_LevelUp'
+[2026.01.02-16.13.29:751][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Stats/W_LevelUp (0x6144093AF77C1DC0) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:751][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Stats/W_LevelUp'
+[2026.01.02-16.13.29:751][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/RestMenu/W_LevelUp (0x72BB303B2DCE99CA) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:751][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/RestMenu/W_LevelUp'
+[2026.01.02-16.13.29:752][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Crafting/W_LevelUp (0x645DB92EA46326F8) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:752][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Crafting/W_LevelUp'
+[2026.01.02-16.13.29:752][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/W_LevelUp (0x87D4859C2974DF16) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:752][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/W_LevelUp'
+[2026.01.02-16.13.29:752][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Inventory/W_RestMenu (0xA2DFA092492DFD72) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:752][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Inventory/W_RestMenu'
+[2026.01.02-16.13.29:752][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Equipment/W_RestMenu (0x77735546C3C93BBB) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:752][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Equipment/W_RestMenu'
+[2026.01.02-16.13.29:753][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Stats/W_RestMenu (0xB1806C0A3C32E66) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:753][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Stats/W_RestMenu'
+[2026.01.02-16.13.29:753][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Inventory/W_Crafting (0x8574A668DE4064CD) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:753][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Inventory/W_Crafting'
+[2026.01.02-16.13.29:753][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Equipment/W_Crafting (0x2AF29BFFCBC72884) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:753][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Equipment/W_Crafting'
+[2026.01.02-16.13.29:753][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Stats/W_Crafting (0xAFAED50F1523132C) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:753][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Stats/W_Crafting'
+[2026.01.02-16.13.29:753][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/RestMenu/W_Crafting (0x2B293FE0BE24B087) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:754][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/RestMenu/W_Crafting'
+[2026.01.02-16.13.29:754][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Inventory/W_CraftingAction (0xD1BF2D65E4FEDD45) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:754][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Inventory/W_CraftingAction'
+[2026.01.02-16.13.29:754][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Equipment/W_CraftingAction (0xA1816A30184301AD) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:754][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Equipment/W_CraftingAction'
+[2026.01.02-16.13.29:754][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Stats/W_CraftingAction (0x5BEBC646AA62C544) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:754][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Stats/W_CraftingAction'
+[2026.01.02-16.13.29:754][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/RestMenu/W_CraftingAction (0x4D337F7211F74C3B) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:755][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/RestMenu/W_CraftingAction'
+[2026.01.02-16.13.29:793][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/NPC/W_NPC_Window (0x549BD9C7D6E8ED9E) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:793][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/NPC/W_NPC_Window'
+[2026.01.02-16.13.29:794][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/NPC/W_NPC_Window_Vendor (0x1626CCD72D9C090F) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:794][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/NPC/W_NPC_Window_Vendor'
+[2026.01.02-16.13.29:794][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/NPC/W_VendorSlot (0x7EAF79EEF9486D20) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:794][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/NPC/W_VendorSlot'
+[2026.01.02-16.13.29:798][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/NPC/W_VendorAction (0xDC51374650C94997) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.29:798][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/NPC/W_VendorAction'
+[2026.01.02-16.13.30:253][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/HUD/W_DamageNumber (0x9B7DDF763C2891F6) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.30:253][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/HUD/W_DamageNumber'
+[2026.01.02-16.13.30:253][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Combat/W_DamageNumber (0x8118BA42D73DA961) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.30:253][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Combat/W_DamageNumber'
+[2026.01.02-16.13.30:253][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/W_DamageNumber (0xCEE7CEF3BC4BE43C) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.30:254][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/W_DamageNumber'
+[2026.01.02-16.13.30:813][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_GetStrafePoint (0x92EF5DA62CE4D000) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.30:813][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_GetStrafePoint'
+[2026.01.02-16.13.30:813][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_GetStrafePoint'
+[2026.01.02-16.13.30:813][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_GetPatrolPoint (0x56F316CEC75AF0F0) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.30:813][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_GetPatrolPoint'
+[2026.01.02-16.13.30:814][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_GetPatrolPoint'
+[2026.01.02-16.13.30:814][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_ExecuteAction (0x730DB35F69328AAB) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.30:814][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_ExecuteAction'
+[2026.01.02-16.13.30:814][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_ExecuteAction'
+[2026.01.02-16.13.30:814][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_SelectAction (0x2EB133038D5078D9) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.30:814][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_SelectAction'
+[2026.01.02-16.13.30:814][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_SelectAction'
+[2026.01.02-16.13.30:814][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_FaceTarget (0x6136E5908EB331C9) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.30:815][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_FaceTarget'
+[2026.01.02-16.13.30:815][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_FaceTarget'
+[2026.01.02-16.13.30:815][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_MoveToTarget (0x61DB1B792EBB5497) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.30:815][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_MoveToTarget'
+[2026.01.02-16.13.30:815][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_MoveToTarget'
+[2026.01.02-16.13.30:815][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_Wait (0x4DE419E6959472EB) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.30:815][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_Wait'
+[2026.01.02-16.13.30:815][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_Wait'
+[2026.01.02-16.13.30:815][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_SetState (0x3B50E106879CF70B) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.30:816][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_SetState'
+[2026.01.02-16.13.30:816][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_SetState'
+[2026.01.02-16.13.30:856][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_GetStrafePoint'
+[2026.01.02-16.13.30:856][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_GetStrafePoint'
+[2026.01.02-16.13.30:998][  0]LogEnum: Warning: EnumRedirect for enum ESLFAIStates maps 'E_AI_States::NewEnumerator7' to invalid value 'ESLFAIStates::NewEnumerator7'!
+[2026.01.02-16.13.30:998][  0]LogEnum: Warning: EnumRedirect for enum ESLFCompareOperation maps 'ECompareOperation1Enum::Dataflow_Compare_SmallerOrEqual' to invalid value 'ESLFCompareOperation::Dataflow_Compare_SmallerOrEqual'!
+[2026.01.02-16.13.31:152][  0]LogClass: Warning: Type mismatch in StrafeMethods of AC_AI_BehaviorManager_C - Previous (SetProperty) Current(ArrayProperty) in package: /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss
+[2026.01.02-16.13.31:152][  0]LogEnum: Warning: EnumRedirect for enum ESLFAIBossEncounterType maps 'E_AI_BossEncounterType::NewEnumerator1' to invalid value 'ESLFAIBossEncounterType::NewEnumerator1'!
+[2026.01.02-16.13.31:152][  0]LogProperty: Warning: Serialized BlueprintGeneratedClass /Game/SoulslikeFramework/Data/_AnimationData/PDA_PoiseBreakAnimData.PDA_PoiseBreakAnimData_C for a property of Class /Script/SLFConversion.PDA_PoiseBreakAnimData. Reference will be nulled.
+    ReferencingObject = AC_AI_CombatManager_C /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss.B_Soulslike_Boss_C:AC_AI_CombatManager1_GEN_VARIABLE
+    Property = ObjectProperty /Script/SLFConversion.AC_AI_CombatManager:PoiseBreakAsset
+    Item = PDA_PoiseBreakAnimData_C /Game/SoulslikeFramework/Data/_AnimationData/DA_ExamplePoiseBreak_Boss.DA_ExamplePoiseBreak_Boss
+[2026.01.02-16.13.31:152][  0]LogClass: Warning: Struct Property StatOverrides has a struct type mismatch (tag FStatOverride(/Script/SLFConversion) != prop StatOverride(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-16.13.31:153][  0]LogClass: Warning: Map Element Type mismatch in StatOverrides - Previous (StructProperty(GameplayTag(/Script/GameplayTags)) to StructProperty(FStatOverride(/Script/SLFConversion),66cd1379-4600-6a8a-51fb-76a3df1f1fe6)) Current (StructProperty(GameplayTag(/Script/GameplayTags)) to StructProperty(StatOverride(/Script/SLFConversion))) for package: /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss
+[2026.01.02-16.13.31:598][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/DataAssets/Animsets/DA_LadderAnimset (0xE280B5C9B8E54565) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.31:598][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/DataAssets/Animsets/DA_LadderAnimset'
+[2026.01.02-16.13.31:598][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/DataAssets/DA_LadderAnimset (0x6DAA83734F6DA477) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.31:598][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/DataAssets/DA_LadderAnimset'
+[2026.01.02-16.13.32:124][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/Actors/B_EnemySpawnPoint (0x1A0054EFA801EBDE) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.32:124][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/Actors/B_EnemySpawnPoint'
+[2026.01.02-16.13.32:124][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/Actors/B_EnemySpawnPoint'
+[2026.01.02-16.13.32:223][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/Actors/B_TriggerVolume (0xED888C688E2DA335) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.32:223][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/Actors/B_TriggerVolume'
+[2026.01.02-16.13.32:223][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/Actors/B_TriggerVolume'
+[2026.01.02-16.13.32:608][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/DataAssets/Crafting (0xD742A6FF091FB2C9) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.32:608][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/DataAssets/Crafting'
+[2026.01.02-16.13.32:608][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/DataAssets/DA_CraftingRecipe (0x6640865B3E52A9FF) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.32:608][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/DataAssets/DA_CraftingRecipe'
+[2026.01.02-16.13.32:799][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/Actors/B_TimeOfDay (0x6ADA8A56688A237F) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.32:799][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/Actors/B_TimeOfDay'
+[2026.01.02-16.13.32:799][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/Actors/B_TimeOfDay'
+[2026.01.02-16.13.32:799][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/World/B_TimeOfDay (0xDB6F6E7C7173A6D9) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.32:799][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/World/B_TimeOfDay'
+[2026.01.02-16.13.32:799][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/World/B_TimeOfDay'
+[2026.01.02-16.13.32:879][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/SaveGame/BP_SettingsSave (0x7FAC557F8CDEE5C5) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.32:879][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/SaveGame/BP_SettingsSave'
+[2026.01.02-16.13.32:879][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/SaveGame/BP_SettingsSave'
+[2026.01.02-16.13.33:033][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/DataAssets/Items (0xBF676DACC4B92E99) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:033][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/DataAssets/Items'
+[2026.01.02-16.13.33:033][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/DataAssets/Items (0x533044CF2E7DA82A) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:033][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/DataAssets/Items'
+[2026.01.02-16.13.33:075][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Input/IMC_Default (0xD145950DCB4C9CBD) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:075][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Input/IMC_Default'
+[2026.01.02-16.13.33:075][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Input/IMC_Soulslike (0xB238C03FEE07F34E) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:075][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Input/IMC_Soulslike'
+[2026.01.02-16.13.33:075][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/Input/IMC_Default (0x25A0BE91150FE7FE) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:075][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/Input/IMC_Default'
+[2026.01.02-16.13.33:098][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Input/Actions (0x13C224CB9947170B) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:098][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Input/Actions'
+[2026.01.02-16.13.33:098][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Input (0x8B1C8178FA1F92F2) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:098][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Input'
+[2026.01.02-16.13.33:213][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_Player (0x9304DA89249D5D3D) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:214][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_Player'
+[2026.01.02-16.13.33:214][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/AnimationRelated/ABP_Player (0xF12C1E87B1448480) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:214][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/ABP_Player'
+[2026.01.02-16.13.33:214][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Characters/Animations/ABP_Player (0xAE181993FD4AE380) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:214][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Characters/Animations/ABP_Player'
+[2026.01.02-16.13.33:214][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_Enemy (0xE65A94ADD8CFDE0) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:214][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_Enemy'
+[2026.01.02-16.13.33:214][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/AnimationRelated/ABP_Enemy (0x4BCEBE68E8E3D1D) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:215][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/ABP_Enemy'
+[2026.01.02-16.13.33:215][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Characters/Animations/ABP_Enemy (0x217F75C7580AD2C1) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:215][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Characters/Animations/ABP_Enemy'
+[2026.01.02-16.13.33:215][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_NPC (0x5B74DB1A430063E) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:215][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_NPC'
+[2026.01.02-16.13.33:215][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/AnimationRelated/ABP_NPC (0xF502DFBA8DF31F48) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:215][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/ABP_NPC'
+[2026.01.02-16.13.33:215][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Characters/Animations/ABP_NPC (0x20113F1A3A68A02D) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:216][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Characters/Animations/ABP_NPC'
+[2026.01.02-16.13.33:311][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_EnableWeaponCollision (0x3ED3F3FC40003287) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:312][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_EnableWeaponCollision'
+[2026.01.02-16.13.33:312][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_EnableWeaponCollision'
+[2026.01.02-16.13.33:312][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_EnableWeaponCollision'
+[2026.01.02-16.13.33:312][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_EnableWeaponCollision'
+[2026.01.02-16.13.33:312][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_DisableWeaponCollision (0x8449AC4ADE64DB79) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:312][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_DisableWeaponCollision'
+[2026.01.02-16.13.33:312][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_DisableWeaponCollision'
+[2026.01.02-16.13.33:312][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_DisableWeaponCollision'
+[2026.01.02-16.13.33:312][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_DisableWeaponCollision'
+[2026.01.02-16.13.33:313][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_EnableRootMotion (0x6FA096D81F8A8FFE) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:313][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_EnableRootMotion'
+[2026.01.02-16.13.33:313][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_EnableRootMotion'
+[2026.01.02-16.13.33:313][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_EnableRootMotion'
+[2026.01.02-16.13.33:313][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_EnableRootMotion'
+[2026.01.02-16.13.33:313][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_DisableRootMotion (0xBEE73EC10A6E66CE) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:313][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_DisableRootMotion'
+[2026.01.02-16.13.33:313][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_DisableRootMotion'
+[2026.01.02-16.13.33:314][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_DisableRootMotion'
+[2026.01.02-16.13.33:314][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_DisableRootMotion'
+[2026.01.02-16.13.33:314][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_PlaySound (0xE6C8F02FD271AB9) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:314][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_PlaySound'
+[2026.01.02-16.13.33:314][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_PlaySound'
+[2026.01.02-16.13.33:314][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_PlaySound'
+[2026.01.02-16.13.33:314][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_PlaySound'
+[2026.01.02-16.13.33:314][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_SpawnParticle (0x782B39BEC8F46090) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:315][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_SpawnParticle'
+[2026.01.02-16.13.33:315][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_SpawnParticle'
+[2026.01.02-16.13.33:315][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_SpawnParticle'
+[2026.01.02-16.13.33:315][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_SpawnParticle'
+[2026.01.02-16.13.33:315][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_SetActionState (0xE286C20878D5E881) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:315][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_SetActionState'
+[2026.01.02-16.13.33:315][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_SetActionState'
+[2026.01.02-16.13.33:315][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_SetActionState'
+[2026.01.02-16.13.33:315][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_SetActionState'
+[2026.01.02-16.13.33:315][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_ConsumeStamina (0xE8B9A484EDF078FB) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:316][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_ConsumeStamina'
+[2026.01.02-16.13.33:316][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_ConsumeStamina'
+[2026.01.02-16.13.33:316][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_ConsumeStamina'
+[2026.01.02-16.13.33:316][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_ConsumeStamina'
+[2026.01.02-16.13.33:316][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_ApplyDamage (0x49ED1800030DA786) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:316][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_ApplyDamage'
+[2026.01.02-16.13.33:316][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_ApplyDamage'
+[2026.01.02-16.13.33:316][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_ApplyDamage'
+[2026.01.02-16.13.33:316][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_ApplyDamage'
+[2026.01.02-16.13.33:372][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] GetSpawnedItemAtSlot  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-16.13.33:372][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] Invalid pin connection from ' Return Value ' to ' Target '. You may have changed the type after the connections were made.
+[2026.01.02-16.13.33:372][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] In use pin  <Unnamed>  no longer exists on node  Event Toggle Trace . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.33:373][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] In use pin  <Unnamed>  no longer exists on node  Event Toggle Trace . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.33:373][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] In use pin  Target  no longer exists on node  Event Toggle Trace . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.33:373][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] Input pin  Enabled?  specifying non-default value no longer exists on node  Event Toggle Trace . Please refresh node or reset pin to default value to remove pin.
+[2026.01.02-16.13.33:373][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] Could not find a function named "Event ToggleTrace" in 'AC_CollisionManager_C'.
+Make sure 'AC_CollisionManager_C' has been compiled for  Event Toggle Trace
+[2026.01.02-16.13.33:373][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] Invalid pin connection from ' Return Value ' to ' Target '. You may have changed the type after the connections were made.
+[2026.01.02-16.13.33:374][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] In use pin  <Unnamed>  no longer exists on node  Event Toggle Trace . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.33:374][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] In use pin  <Unnamed>  no longer exists on node  Event Toggle Trace . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.33:374][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] In use pin  Target  no longer exists on node  Event Toggle Trace . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.33:374][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] Input pin  Enabled?  specifying non-default value no longer exists on node  Event Toggle Trace . Please refresh node or reset pin to default value to remove pin.
+[2026.01.02-16.13.33:374][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] Could not find a function named "Event ToggleTrace" in 'AC_CollisionManager_C'.
+Make sure 'AC_CollisionManager_C' has been compiled for  Event Toggle Trace
+[2026.01.02-16.13.33:375][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] In use pin  Damage Multiplier  no longer exists on node  SetMultipliers . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.33:375][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] In use pin  Damage Multiplier  no longer exists on node  SetMultipliers . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.33:375][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] GetSpawnedItemAtSlot  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-16.13.33:375][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] Invalid pin connection from ' Return Value ' to ' Target '. You may have changed the type after the connections were made.
+[2026.01.02-16.13.33:375][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] In use pin  <Unnamed>  no longer exists on node  Event Toggle Trace . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.33:376][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] In use pin  <Unnamed>  no longer exists on node  Event Toggle Trace . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.33:376][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] In use pin  Target  no longer exists on node  Event Toggle Trace . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.33:376][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] Could not find a function named "Event ToggleTrace" in 'AC_CollisionManager_C'.
+Make sure 'AC_CollisionManager_C' has been compiled for  Event Toggle Trace
+[2026.01.02-16.13.33:376][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] Invalid pin connection from ' Return Value ' to ' Target '. You may have changed the type after the connections were made.
+[2026.01.02-16.13.33:376][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] In use pin  <Unnamed>  no longer exists on node  Event Toggle Trace . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.33:377][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] In use pin  <Unnamed>  no longer exists on node  Event Toggle Trace . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.33:377][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] In use pin  Target  no longer exists on node  Event Toggle Trace . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.33:377][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] Could not find a function named "Event ToggleTrace" in 'AC_CollisionManager_C'.
+Make sure 'AC_CollisionManager_C' has been compiled for  Event Toggle Trace
+[2026.01.02-16.13.33:431][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_Invincibility (0x5507CECB6CFD298D) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:431][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_Invincibility'
+[2026.01.02-16.13.33:431][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_Invincibility'
+[2026.01.02-16.13.33:431][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_Invincibility'
+[2026.01.02-16.13.33:432][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_Invincibility'
+[2026.01.02-16.13.33:432][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_SuperArmor (0x7BD74EB59132F68) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:432][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_SuperArmor'
+[2026.01.02-16.13.33:432][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_SuperArmor'
+[2026.01.02-16.13.33:432][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_SuperArmor'
+[2026.01.02-16.13.33:433][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_SuperArmor'
+[2026.01.02-16.13.33:433][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_RotateToTarget (0xEB4FB2AA0278820E) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:433][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_RotateToTarget'
+[2026.01.02-16.13.33:433][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_RotateToTarget'
+[2026.01.02-16.13.33:433][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_RotateToTarget'
+[2026.01.02-16.13.33:433][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_RotateToTarget'
+[2026.01.02-16.13.33:434][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_BlockInput (0x1BE1B22DE7580738) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:434][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_BlockInput'
+[2026.01.02-16.13.33:434][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_BlockInput'
+[2026.01.02-16.13.33:434][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_BlockInput'
+[2026.01.02-16.13.33:434][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_BlockInput'
+[2026.01.02-16.13.33:530][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/DataAssets/Animsets/DA_PlayerAnimset (0x841835708A705E35) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:530][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/DataAssets/Animsets/DA_PlayerAnimset'
+[2026.01.02-16.13.33:530][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/DataAssets/DA_PlayerAnimset (0x8E21CE8AC727911C) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:531][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/DataAssets/DA_PlayerAnimset'
+[2026.01.02-16.13.33:531][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Animations/Animsets/DA_PlayerAnimset (0x3FCF56C2837ED77E) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:531][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Animations/Animsets/DA_PlayerAnimset'
+[2026.01.02-16.13.33:531][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/DataAssets/Animsets/DA_EnemyAnimset (0x9BC1CE742DBA4D43) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:531][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/DataAssets/Animsets/DA_EnemyAnimset'
+[2026.01.02-16.13.33:531][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/DataAssets/DA_EnemyAnimset (0x4CEC49869D481C1C) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:531][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/DataAssets/DA_EnemyAnimset'
+[2026.01.02-16.13.33:531][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Animations/Animsets/DA_EnemyAnimset (0x38464CF44D2FBC9) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:531][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Animations/Animsets/DA_EnemyAnimset'
+[2026.01.02-16.13.33:532][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/DataAssets/Animsets/DA_LadderAnimset'
+[2026.01.02-16.13.33:532][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/DataAssets/DA_LadderAnimset'
+[2026.01.02-16.13.33:532][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Animations/Animsets/DA_LadderAnimset (0x754A0202A27DD7DD) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:532][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Animations/Animsets/DA_LadderAnimset'
+[2026.01.02-16.13.33:573][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/DataAssets/Animsets/Weapons (0x38381EA0DC581FAA) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:573][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/DataAssets/Animsets/Weapons'
+[2026.01.02-16.13.33:573][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/DataAssets/WeaponAnimsets (0x3EBD90C754B277A7) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:573][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/DataAssets/WeaponAnimsets'
+[2026.01.02-16.13.33:617][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Animations/Montages/Attacks (0x8BD0F45AE0D08CD6) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:617][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Animations/Montages/Attacks'
+[2026.01.02-16.13.33:617][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Animations/Attacks (0x8212018705953597) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:617][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Animations/Attacks'
+[2026.01.02-16.13.33:617][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Animations/Montages/Dodges (0xCDD2D09AC3318634) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:617][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Animations/Montages/Dodges'
+[2026.01.02-16.13.33:618][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Animations/Dodges (0x660073AA94EFB93A) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:618][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Animations/Dodges'
+[2026.01.02-16.13.33:618][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Animations/Montages/Guards (0xF59F3ADDA0B715D0) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:618][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Animations/Montages/Guards'
+[2026.01.02-16.13.33:618][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Animations/Guards (0x91BE40F06C7E5C5F) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:618][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Animations/Guards'
+[2026.01.02-16.13.33:618][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Animations/Montages/Deaths (0x6F58E55E1F8FC1D8) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:618][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Animations/Montages/Deaths'
+[2026.01.02-16.13.33:618][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Animations/Deaths (0x4F7141CABA41B96F) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:618][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Animations/Deaths'
+[2026.01.02-16.13.33:620][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Animations/Montages/Interactions (0xDEBCD4CBDEF8C25E) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:620][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Animations/Montages/Interactions'
+[2026.01.02-16.13.33:620][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Animations/Interactions (0xBBF4D3047CE2802D) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:620][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Animations/Interactions'
+[2026.01.02-16.13.33:662][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Animations/Montages/Attacks/Combo (0xAA9A433EAAB53048) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:662][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Animations/Montages/Attacks/Combo'
+[2026.01.02-16.13.33:662][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Animations/Attacks'
+[2026.01.02-16.13.33:733][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Animations/HitReactions (0x67F08EDACD1D631B) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:733][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Animations/HitReactions'
+[2026.01.02-16.13.33:733][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Animations/Additive/HitReactions (0x6C1116B261B156CA) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:733][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Animations/Additive/HitReactions'
+[2026.01.02-16.13.33:776][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Animations/BlendSpaces/BS_Locomotion (0x478A31438E99D7EB) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:776][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Animations/BlendSpaces/BS_Locomotion'
+[2026.01.02-16.13.33:776][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Animations/BS_Locomotion (0x7348DFA5F9D23DDD) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:777][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Animations/BS_Locomotion'
+[2026.01.02-16.13.33:798][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Animations/BlendSpaces/BS_Strafe (0x206ADF2F38D7F842) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:798][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Animations/BlendSpaces/BS_Strafe'
+[2026.01.02-16.13.33:798][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Animations/BS_Strafe (0xC05F499434FF4DDF) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:799][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Animations/BS_Strafe'
+[2026.01.02-16.13.33:842][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Characters/Player/SK_Player (0x5CE7BC79C3F96565) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:842][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Characters/Player/SK_Player'
+[2026.01.02-16.13.33:842][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Characters/SK_Player (0x39A401E84040F8F9) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:842][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Characters/SK_Player'
+[2026.01.02-16.13.33:863][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Characters/Enemies/SK_Enemy (0xDF0C77458D9BA110) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:863][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Characters/Enemies/SK_Enemy'
+[2026.01.02-16.13.33:863][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Characters/SK_Enemy (0xB2EB56189D2AFDBA) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:863][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Characters/SK_Enemy'
+[2026.01.02-16.13.33:973][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Damageable (0xA94BCD0DE17744A0) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:973][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Damageable'
+[2026.01.02-16.13.33:973][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Damageable'
+[2026.01.02-16.13.33:973][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Targetable (0x85E5BDB1645666D3) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:974][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Targetable'
+[2026.01.02-16.13.33:974][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Targetable'
+[2026.01.02-16.13.33:974][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Saveable (0x4DD707EA91C7874E) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:974][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Saveable'
+[2026.01.02-16.13.33:974][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Saveable'
+[2026.01.02-16.13.33:974][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Equipment (0x3C4C229E262FF5E1) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:974][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Equipment'
+[2026.01.02-16.13.33:974][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Equipment'
+[2026.01.02-16.13.33:974][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Action (0xDC08291A4C50A440) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:975][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Action'
+[2026.01.02-16.13.33:975][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Action'
+[2026.01.02-16.13.33:975][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Buff (0xC395F885B6041CA0) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:975][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Buff'
+[2026.01.02-16.13.33:975][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Buff'
+[2026.01.02-16.13.33:975][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/Interfaces/BPI_StatusEffect (0xC36E50F83C2EAEC0) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:975][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/Interfaces/BPI_StatusEffect'
+[2026.01.02-16.13.33:975][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/Interfaces/BPI_StatusEffect'
+[2026.01.02-16.13.33:976][  0]LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Blueprints/Interfaces/BPI_AI (0xBF5DF7AED7AB32BD) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.33:976][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/Interfaces/BPI_AI'
+[2026.01.02-16.13.33:976][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/Interfaces/BPI_AI'
+[2026.01.02-16.13.34:127][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Damageable'
+[2026.01.02-16.13.34:127][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Damageable'
+[2026.01.02-16.13.34:205][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Targetable'
+[2026.01.02-16.13.34:205][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Targetable'
+[2026.01.02-16.13.34:282][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Saveable'
+[2026.01.02-16.13.34:282][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Saveable'
+[2026.01.02-16.13.34:304][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Equipment'
+[2026.01.02-16.13.34:304][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Equipment'
+[2026.01.02-16.13.34:326][  0]LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Blueprints/Interfaces/BPI_AI'
+[2026.01.02-16.13.34:326][  0]LogUObjectGlobals: Warning: Failed to find object 'Class None./Game/SoulslikeFramework/Blueprints/Interfaces/BPI_AI'
+[2026.01.02-16.13.39:361][  0]LogPythonScriptCommandlet: Display: Python script executed successfully
+[2026.01.02-16.13.39:361][  0]LogInit: Display: 
+[2026.01.02-16.13.39:361][  0]LogInit: Display: Warning/Error Summary (Unique only)
+[2026.01.02-16.13.39:361][  0]LogInit: Display: -----------------------------------
+[2026.01.02-16.13.39:362][  0]LogInit: Display: LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] Unable to find function with name GetPlayerHUD for Message node  Invalid Message Node .
+[2026.01.02-16.13.39:362][  0]LogInit: Display: LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] In use pin  <Unnamed>  no longer exists on node  Invalid Message Node . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.39:362][  0]LogInit: Display: LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] In use pin  Target  no longer exists on node  Invalid Message Node . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.39:362][  0]LogInit: Display: LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] In use pin  W HUD  no longer exists on node  Invalid Message Node . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.39:362][  0]LogInit: Display: LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] Could not find a function named "GetPlayerHUD" in 'BPI_Controller_C'.
+Make sure 'BPI_Controller_C' has been compiled for  Invalid Message Node
+[2026.01.02-16.13.39:363][  0]LogInit: Display: LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] In use pin  <Unnamed>  no longer exists on node  Event Send Interaction Error Message . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.39:363][  0]LogInit: Display: LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] In use pin  Target  no longer exists on node  Event Send Interaction Error Message . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.39:363][  0]LogInit: Display: LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] In use pin  Message  no longer exists on node  Event Send Interaction Error Message . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.39:363][  0]LogInit: Display: LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] In use pin  Time  no longer exists on node  Event Send Interaction Error Message . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.39:363][  0]LogInit: Display: LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] Could not find a function named "Event SendInteractionErrorMessage" in 'W_HUD_C'.
+Make sure 'W_HUD_C' has been compiled for  Event Send Interaction Error Message
+[2026.01.02-16.13.39:364][  0]LogInit: Display: LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] No input structure to break for  FStat Info
+[2026.01.02-16.13.39:364][  0]LogInit: Display: LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] The property associated with  Location Tag  could not be found in '/Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_LocationActor.B_LocationActor_C'
+[2026.01.02-16.13.39:364][  0]LogInit: Display: LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_Characters\B_Soulslike_Character.uasset: [Compiler] In use pin  <Unnamed>  no longer exists on node  Event Lockon . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.39:364][  0]LogInit: Display: LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_Characters\B_Soulslike_Character.uasset: [Compiler] In use pin  Target  no longer exists on node  Event Lockon . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.39:364][  0]LogInit: Display: LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_Characters\B_Soulslike_Character.uasset: [Compiler] Could not find a function named "Event Lockon" in 'AC_InteractionManager_C'.
+Make sure 'AC_InteractionManager_C' has been compiled for  Event Lockon
+[2026.01.02-16.13.39:365][  0]LogInit: Display: LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] Invalid pin connection from ' Return Value ' to ' Target '. You may have changed the type after the connections were made.
+[2026.01.02-16.13.39:365][  0]LogInit: Display: LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] In use pin  <Unnamed>  no longer exists on node  Event Toggle Trace . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.39:365][  0]LogInit: Display: LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] In use pin  Target  no longer exists on node  Event Toggle Trace . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.39:365][  0]LogInit: Display: LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] Could not find a function named "Event ToggleTrace" in 'AC_CollisionManager_C'.
+Make sure 'AC_CollisionManager_C' has been compiled for  Event Toggle Trace
+[2026.01.02-16.13.39:365][  0]LogInit: Display: LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\AnimationRelated\Notifies\ANS_WeaponTrace.uasset: [Compiler] In use pin  Damage Multiplier  no longer exists on node  SetMultipliers . Please refresh node or break links to remove pin.
+[2026.01.02-16.13.39:366][  0]LogInit: Display: LogUObjectGlobals: Warning: Failed to find object 'Class /Script/SLFConversion.AC_AI_SenseManager'
+[2026.01.02-16.13.39:366][  0]LogInit: Display: LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\_Animations\Locomotion\AnimBP\ABP_SoulslikeCharacter_Additive.uasset: [Compiler] Invalid field 'IsGuarding?' found in property path for  Property Access
+[2026.01.02-16.13.39:366][  0]LogInit: Display: LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] GetStat  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.02-16.13.39:366][  0]LogInit: Display: LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\BFL_Helper.uasset: [Compiler] Could not find a variable named "LocationTag" in '/Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_LocationActor.B_LocationActor_C'.
+Make sure '/Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_LocationActor.B_LocationActor_C' has been compiled for  Get LocationTag
+[2026.01.02-16.13.39:366][  0]LogInit: Display: LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_Characters\B_Soulslike_Character.uasset: [Compiler] Could not find a variable named "AllowTargetSwap?" in '/Game/SoulslikeFramework/Blueprints/Components/AC_InteractionManager.AC_InteractionManager_C'.
+Make sure '/Game/SoulslikeFramework/Blueprints/Components/AC_InteractionManager.AC_InteractionManager_C' has been compiled for  Get AllowTargetSwap?
+[2026.01.02-16.13.39:367][  0]LogInit: Display: LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_Characters\B_Soulslike_Character.uasset: [Compiler] Input pin  Rotate Towards?  specifying non-default value no longer exists on node  LockOnTarget . Please refresh node or reset pin to default value to remove pin.
+[2026.01.02-16.13.39:367][  0]LogInit: Display: LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Inventory/W_Equipment (0xC88D73171A354473) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.39:367][  0]LogInit: Display: LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Inventory/W_Equipment'
+[2026.01.02-16.13.39:367][  0]LogInit: Display: LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Inventory/W_EquipmentSlot (0x6C809B899672569F) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.39:367][  0]LogInit: Display: LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Inventory/W_EquipmentSlot'
+[2026.01.02-16.13.39:367][  0]LogInit: Display: LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Inventory/W_StatBlock (0x2AB6128D6053A1EB) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.39:367][  0]LogInit: Display: LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Inventory/W_StatBlock'
+[2026.01.02-16.13.39:368][  0]LogInit: Display: LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Equipment/W_StatBlock (0x5E2A1DE43E6C44DB) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.39:368][  0]LogInit: Display: LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Equipment/W_StatBlock'
+[2026.01.02-16.13.39:368][  0]LogInit: Display: LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Inventory/W_StatEntry (0x3F3ADC62824F7372) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.39:368][  0]LogInit: Display: LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Inventory/W_StatEntry'
+[2026.01.02-16.13.39:368][  0]LogInit: Display: LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Equipment/W_StatEntry (0xEFDA7C7E379795CE) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.39:368][  0]LogInit: Display: LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Equipment/W_StatEntry'
+[2026.01.02-16.13.39:368][  0]LogInit: Display: LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Inventory/W_LevelUp (0x5334A52C8DF2C742) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.39:368][  0]LogInit: Display: LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Inventory/W_LevelUp'
+[2026.01.02-16.13.39:369][  0]LogInit: Display: LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Equipment/W_LevelUp (0xA2A66F965D710F84) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.39:369][  0]LogInit: Display: LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Equipment/W_LevelUp'
+[2026.01.02-16.13.39:369][  0]LogInit: Display: LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Stats/W_LevelUp (0x6144093AF77C1DC0) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.39:369][  0]LogInit: Display: LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Stats/W_LevelUp'
+[2026.01.02-16.13.39:369][  0]LogInit: Display: LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/RestMenu/W_LevelUp (0x72BB303B2DCE99CA) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.39:369][  0]LogInit: Display: LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/RestMenu/W_LevelUp'
+[2026.01.02-16.13.39:369][  0]LogInit: Display: LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Crafting/W_LevelUp (0x645DB92EA46326F8) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.39:369][  0]LogInit: Display: LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Crafting/W_LevelUp'
+[2026.01.02-16.13.39:369][  0]LogInit: Display: LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/W_LevelUp (0x87D4859C2974DF16) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.39:370][  0]LogInit: Display: LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/W_LevelUp'
+[2026.01.02-16.13.39:370][  0]LogInit: Display: LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Inventory/W_RestMenu (0xA2DFA092492DFD72) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.39:370][  0]LogInit: Display: LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Inventory/W_RestMenu'
+[2026.01.02-16.13.39:370][  0]LogInit: Display: LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Equipment/W_RestMenu (0x77735546C3C93BBB) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.39:370][  0]LogInit: Display: LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Equipment/W_RestMenu'
+[2026.01.02-16.13.39:370][  0]LogInit: Display: LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Stats/W_RestMenu (0xB1806C0A3C32E66) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.39:370][  0]LogInit: Display: LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Stats/W_RestMenu'
+[2026.01.02-16.13.39:370][  0]LogInit: Display: LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Inventory/W_Crafting (0x8574A668DE4064CD) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.39:370][  0]LogInit: Display: LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Inventory/W_Crafting'
+[2026.01.02-16.13.39:371][  0]LogInit: Display: LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Equipment/W_Crafting (0x2AF29BFFCBC72884) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.39:371][  0]LogInit: Display: LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Equipment/W_Crafting'
+[2026.01.02-16.13.39:371][  0]LogInit: Display: LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Stats/W_Crafting (0xAFAED50F1523132C) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.39:371][  0]LogInit: Display: LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Stats/W_Crafting'
+[2026.01.02-16.13.39:371][  0]LogInit: Display: LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/RestMenu/W_Crafting (0x2B293FE0BE24B087) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.39:371][  0]LogInit: Display: LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/RestMenu/W_Crafting'
+[2026.01.02-16.13.39:371][  0]LogInit: Display: LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Inventory/W_CraftingAction (0xD1BF2D65E4FEDD45) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.39:371][  0]LogInit: Display: LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Inventory/W_CraftingAction'
+[2026.01.02-16.13.39:372][  0]LogInit: Display: LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Equipment/W_CraftingAction (0xA1816A30184301AD) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.39:372][  0]LogInit: Display: LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Equipment/W_CraftingAction'
+[2026.01.02-16.13.39:372][  0]LogInit: Display: LogStreaming: Warning: LoadPackage: SkipPackage: /Game/SoulslikeFramework/Widgets/Stats/W_CraftingAction (0x5BEBC646AA62C544) - The package to load does not exist on disk or in the loader
+[2026.01.02-16.13.39:372][  0]LogInit: Display: LogUObjectGlobals: Warning: Failed to find object 'Object None./Game/SoulslikeFramework/Widgets/Stats/W_CraftingAction'
+[2026.01.02-16.13.39:372][  0]LogInit: Display: NOTE: Only first 50 warnings displayed.
+[2026.01.02-16.13.39:372][  0]LogInit: Display: 
+[2026.01.02-16.13.39:372][  0]LogInit: Display: Failure - 44 error(s), 321 warning(s)
+[2026.01.02-16.13.39:372][  0]LogInit: Display: 
+Execution of commandlet took:  14.75 seconds
+[2026.01.02-16.13.39:437][  0]LogPython: Display: Object '/ControlRig/Python/RigHierarchy/add_controls_for_selected_PY.ControlOutputFormat' was externally referenced when shutting down Python. Forcibly releasing its Python resources!
+[2026.01.02-16.13.39:604][  0]LogShaderCompilers: Display: Shaders left to compile 0

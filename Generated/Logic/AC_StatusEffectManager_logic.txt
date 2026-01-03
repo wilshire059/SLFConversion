@@ -1,0 +1,41 @@
+// Logic implementations for AC_StatusEffectManager
+// Generated from AC_StatusEffectManager.json
+
+// ═══ StartBuildup ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_StatusEffectManager::StartBuildup called"));
+
+	if (IsValid(StatusEffect))
+	{
+		// Is Valid branch
+	}
+
+// ═══ StopBuildup ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_StatusEffectManager::StopBuildup called"));
+
+	if (IsValid(StatusEffect))
+	{
+		// Is Valid branch
+	}
+
+// ═══ AddOneShotBuildup ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_StatusEffectManager::AddOneShotBuildup called"));
+
+	if (IsValid(StatusEffect))
+	{
+		// Is Valid branch
+	}
+
+// ═══ IsStatusEffectActive? ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_StatusEffectManager::IsStatusEffectActive? called"));
+
+	if (Map_FindResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	// Set output: ReturnValue = IsTriggered?
+	return;
+

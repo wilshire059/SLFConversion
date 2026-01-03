@@ -1,0 +1,328 @@
+---
+name: slf-migration
+description: Migrate SoulslikeFramework Blueprints to C++ with 20-pass validation. Use when migrating Blueprint components, interfaces, or classes to C++. Triggers on "migrate", "migration", "Blueprint to C++", "write C++ for", or any SLF component name. (project)
+---
+
+# SoulslikeFramework Blueprint-to-C++ Migration
+
+## CURRENT STATUS (Updated 2026-01-02)
+
+| Metric | Value |
+|--------|-------|
+| **Blueprints Reparented** | 306 |
+| **AnimBPs Migrated** | 3 (ABP_SoulslikeNPC, ABP_SoulslikeEnemy, ABP_SoulslikeBossNew) |
+| **NPC Characters Migrated** | 3 (B_Soulslike_NPC, ShowcaseGuide, ShowcaseVendor) |
+| **Widgets Migrated** | 100+ |
+| **Components Migrated** | 20+ |
+| **Migration Script** | `run_migration.py` with multi-phase support |
+
+---
+
+## ABSOLUTE REQUIREMENTS - NO EXCEPTIONS
+
+1. **ALL LOGIC MOVES TO C++** - Blueprints become empty shells
+2. **20-PASS VALIDATION** - Every variable, function, graph, macro, interface function
+3. **NO SHORTCUTS** - Complete all passes, no skipping
+4. **NO ASSUMPTIONS** - Always verify from JSON exports
+5. **NO STUB IMPLEMENTATIONS** - Full logic required
+
+**Reference:** `C:\scripts\SLFConversion\DEFINITION_OF_DONE.md`
+
+---
+
+## MULTI-PHASE MIGRATION (CRITICAL)
+
+The migration script uses multi-phase processing to handle cascade loading issues. Assets must be processed in a specific order to avoid compilation errors during loading.
+
+### The Problem: Cascade Loading
+When loading a Blueprint, the engine loads all its dependencies and tries to compile them. If a dependency has pin mismatches (e.g., calling a function with changed signature), the entire load fails.
+
+### The Solution: Multi-Phase Processing
+
+```
+Phase 0A: Clear Priority AnimNotifyStates FIRST
+  - ANS_InputBuffer, ANS_RegisterAttackSequence
+  - ANS_InvincibilityFrame, ANS_HyperArmor
+  - These call functions with "?" suffix pins
+  - Must be cleared BEFORE anything else loads them
+
+Phase 0A2: Save Priority AnimNotifyStates
+  - Persist changes immediately
+
+Phase 0B: Clear AnimBlueprints
+  - ABP_SoulslikeNPC, ABP_SoulslikeEnemy, ABP_SoulslikeBossNew
+  - Keep variables (for AnimGraph compatibility)
+  - Clear EventGraph only
+
+Phase 0B2: Save AnimBlueprints
+
+Phase 0C: Clear NPC Characters
+  - B_Soulslike_NPC, ShowcaseGuide, ShowcaseVendor
+  - Now safe because AnimBPs are already cleared
+
+Phase 1+: Process all other Blueprints normally
+```
+
+### Why This Order?
+1. AnimNotifyStates call C++ functions with "?" suffix pins (e.g., "Buffer Open?", "Is Invincible?")
+2. C++ cannot use "?" in identifiers
+3. UPARAM(DisplayName) changes display but NOT the FName used for pin matching
+4. By clearing these assets FIRST and saving them, when AnimBPs load later they get the cleared versions
+5. No pin mismatch errors because the function calls are gone
+
+---
+
+## KNOWN PIN NAMING ISSUES
+
+### "?" Suffix Problem
+Blueprint pins can have names like "Buffer Open?" or "Is Invincible?" but C++ parameters cannot contain "?".
+
+**WRONG - Trying to match with DisplayName:**
+```cpp
+// UPARAM(DisplayName) changes display but NOT FName for pin matching
+void ToggleBuffer(UPARAM(DisplayName = "Buffer Open?") bool BufferOpen);
+// Pin matching still uses "BufferOpen", not "Buffer Open?"
+```
+
+**RIGHT - Clear the calling Blueprint's logic:**
+The solution is to clear the logic from Blueprints that call these functions, not to try to match the pin names in C++.
+
+### Solutions Applied
+1. **Phase 0A Priority Processing** - Clear AnimNotifyStates before they're loaded
+2. **Immediate Saves** - Persist cleared assets before processing dependencies
+3. **MIGRATION_MAP ordering** - Critical assets processed first
+
+---
+
+## CRITICAL FILES
+
+| Location | Purpose |
+|----------|---------|
+| `C:/scripts/SLFConversion/run_migration.py` | Multi-phase migration script |
+| `C:/scripts/SLFConversion/Exports/BlueprintDNA_v2/` | Blueprint JSON Exports (SOURCE OF TRUTH) |
+| `C:/scripts/SLFConversion/MASTER_MIGRATION_TRACKER.md` | Progress tracking |
+| `C:/scripts/SLFConversion/DEFINITION_OF_DONE.md` | Definition of Done + Example |
+| `C:/scripts/SLFConversion/Source/SLFConversion/` | C++ Source |
+| `C:/scripts/SLFConversion_Migration/Backups/blueprint_only/` | Clean backup content |
+
+### Key Sections in run_migration.py
+
+```python
+# Priority AnimNotifyStates - must be cleared FIRST
+PRIORITY_ANIM_NOTIFY_STATES = {
+    "ANS_InputBuffer": "/Script/SLFConversion.SLFAnimNotifyStateInputBuffer",
+    "ANS_RegisterAttackSequence": "/Script/SLFConversion.SLFAnimNotifyStateInputBuffer",
+    "ANS_InvincibilityFrame": "/Script/SLFConversion.SLFAnimNotifyStateInvincibility",
+    "ANS_HyperArmor": "/Script/SLFConversion.SLFAnimNotifyStateHyperArmor",
+}
+
+# AnimBlueprints - clear EventGraph, keep variables for AnimGraph
+ANIM_BP_MAP = {
+    "ABP_SoulslikeNPC": "/Script/SLFConversion.SLFNPCAnimInstance",
+    "ABP_SoulslikeEnemy": "/Script/SLFConversion.SLFEnemyAnimInstance",
+    "ABP_SoulslikeBossNew": "/Script/SLFConversion.SLFBossAnimInstance",
+}
+
+# NPC Characters - must be processed AFTER AnimBPs
+NPC_CHARACTER_MAP = {
+    "B_Soulslike_NPC": "/Script/SLFConversion.SLFSoulslikeNPC",
+    "B_Soulslike_NPC_ShowcaseGuide": "/Script/SLFConversion.SLFNPCShowcaseGuide",
+    "B_Soulslike_NPC_ShowcaseVendor": "/Script/SLFConversion.SLFNPCShowcaseVendor",
+}
+```
+
+---
+
+## RUNNING THE MIGRATION
+
+### Fresh Migration (Recommended)
+```bash
+# Restore backup and run migration
+powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Recurse -Force; Copy-Item -Path 'C:\scripts\SLFConversion_Migration\Backups\blueprint_only\Content\*' -Destination 'C:\scripts\SLFConversion\Content\' -Recurse -Force"
+
+# Run migration
+"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
+  "C:/scripts/SLFConversion/SLFConversion.uproject" ^
+  -run=pythonscript -script="C:/scripts/SLFConversion/run_migration.py" ^
+  -stdout -unattended -nosplash 2>&1
+```
+
+### Build C++ First
+```bash
+"C:\Program Files\Epic Games\UE_5.7\Engine\Build\BatchFiles\Build.bat" ^
+  SLFConversionEditor Win64 Development ^
+  -Project="C:\scripts\SLFConversion\SLFConversion.uproject" ^
+  -WaitMutex -FromMsBuild
+```
+
+### Expected Output
+- 465 pre-existing errors at startup (from backup content)
+- "Successfully reparented X to Y" messages for each Blueprint
+- ~306 successful reparents total
+- Migration completes in ~15 seconds
+
+---
+
+## WIDGET BINDWIDGET ISSUES
+
+Some widgets have `UPROPERTY(meta = (BindWidget))` for variables that were actually runtime-set in the original Blueprint.
+
+### The Problem
+```cpp
+// BindWidget expects a designer-placed widget in the UMG hierarchy
+UPROPERTY(meta = (BindWidget))
+UW_GenericButton* ActiveQuitButton;
+// ERROR: "A required widget binding 'ActiveQuitButton' was not found"
+```
+
+### The Solution
+Change from BindWidget to regular UPROPERTY:
+```cpp
+// Runtime reference set by Blueprint logic - NOT a BindWidget
+UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+UW_GenericButton* ActiveQuitButton;
+```
+
+### Widgets Fixed
+- `W_Settings.h` - ActiveQuitButton
+- `W_Settings_QuitConfirmation.h` - ActiveBtn
+
+---
+
+## COMPLETE SCOPE - All Item Types
+
+| Item Type | JSON Location | C++ Implementation |
+|-----------|---------------|-------------------|
+| **Variables** | `Variables.List` | `UPROPERTY` declarations |
+| **Functions** | `Functions`, `Graphs` | `UFUNCTION` + `_Implementation` |
+| **Event Dispatchers** | `EventDispatchers.List` | `DECLARE_DYNAMIC_MULTICAST_DELEGATE` |
+| **Interface Functions** | `Interfaces`, `ImplementedInterfaces` | `UINTERFACE` + `I<Name>` class |
+| **Macros** | `MacroGraphs` | Inline C++ or helper functions |
+| **Event Graphs** | `Graphs[EventGraph]` | `BeginPlay`, `Tick`, event handlers |
+| **Function Graphs** | `Graphs[FunctionName]` | `_Implementation` function bodies |
+| **Animation Graphs** | AnimBP `AnimGraph` | C++ AnimInstance with UPROPERTY variables |
+
+---
+
+## The 20-Pass Validation Protocol
+
+### Phase 1: JSON Analysis (Passes 1-5)
+| Pass | Focus |
+|------|-------|
+| 1 | Extract ALL items from JSON |
+| 2 | Document EXACT types (Blueprint names) |
+| 3 | Map ALL dependencies |
+| 4 | Trace logic flow node-by-node |
+| 5 | Identify edge cases |
+
+### Phase 2: Implementation (Passes 6-10)
+| Pass | Focus |
+|------|-------|
+| 6 | Write UPROPERTY declarations |
+| 7 | Write UFUNCTION declarations |
+| 8 | Write function implementations |
+| 9 | Write event dispatchers |
+| 10 | Add debug logging |
+
+### Phase 3: Verification (Passes 11-15)
+| Pass | Focus |
+|------|-------|
+| 11 | Re-read JSON, compare node-by-node |
+| 12 | Verify ALL branches (TRUE/FALSE) |
+| 13 | Verify ALL types |
+| 14 | Verify ALL names |
+| 15 | Verify ALL signatures |
+
+### Phase 4: Testing (Passes 16-20)
+| Pass | Focus |
+|------|-------|
+| 16 | Compile C++ |
+| 17 | Run migration script |
+| 18 | Compile Blueprints |
+| 19 | PIE test |
+| 20 | Final review |
+
+---
+
+## Animation Blueprint Strategy
+
+**For AnimBPs:** Keep variables, clear EventGraph only.
+
+### What Happens
+1. **EventGraph cleared** - All logic nodes removed
+2. **Variables kept** - AnimGraph reads these via property access
+3. **Reparented to C++ AnimInstance** - NativeUpdateAnimation() sets the variables
+4. **AnimGraph unchanged** - Reads from the C++ UPROPERTY variables
+
+### C++ AnimInstance Pattern
+```cpp
+UCLASS()
+class USLFNPCAnimInstance : public UAnimInstance
+{
+    GENERATED_BODY()
+public:
+    // Variables that AnimGraph reads
+    UPROPERTY(BlueprintReadWrite, Category = "Animation")
+    float Speed;
+
+    UPROPERTY(BlueprintReadWrite, Category = "Animation")
+    FVector LookAtLocation;
+
+    // Called every frame - sets the variables
+    virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+};
+```
+
+---
+
+## Failure Modes (MUST CHECK)
+
+### 1. Inverted Logic
+```cpp
+// WRONG
+if (bBufferOpen) { ProcessNow(); }
+// RIGHT
+if (bBufferOpen) { QueueForLater(); }
+else { ProcessNow(); }
+```
+
+### 2. Name Mismatch
+```cpp
+// Blueprint uses "IsSprinting" not "bIsSprinting"
+bool IsSprinting;  // CORRECT
+```
+
+### 3. Cascade Loading Crash
+If migration crashes with "Cast of nullptr to Function failed":
+1. Check SKIP_LIST in run_migration.py
+2. Add problematic Blueprint to skip list
+3. Process it manually later
+
+---
+
+## Non-Negotiable Rules
+
+1. **NO STUB IMPLEMENTATIONS** - `// TODO` is not acceptable
+2. **NO ASSUMPTIONS** - Read JSON again if unsure
+3. **NO SHORTCUTS** - All 20 passes for every item
+4. **NO LEAVING LOGIC IN BLUEPRINT** - Everything moves to C++
+5. **NO GIVING UP** - Find a way, it's always possible
+6. **NEVER REVERT** - Don't fall back to "leave in Blueprint because complex"
+
+---
+
+## CRITICAL: Error Response Mindset
+
+### Pin Errors = Migration Needed
+```
+ERROR: "In use pin 'SomeProperty' no longer exists"
+```
+**RIGHT Response:** "This caller Blueprint needs migration. Clear its logic."
+
+### Function Not Found = Migration Needed
+```
+ERROR: "Cannot find function 'GetSomeValue'"
+```
+**RIGHT Response:** "Clear the calling Blueprint's logic to remove this call."
+
+**THE GOAL IS TO REMOVE ALL BLUEPRINT LOGIC, NOT FIX PINS.**

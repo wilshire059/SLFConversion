@@ -1,0 +1,24 @@
+======================================================================
+CAPTURING COMPONENT STATE - AFTER MIGRATION
+======================================================================
+Blueprint: B_Soulslike_Character
+
+Blueprint-defined components: 0
+
+Inherited components: 4
+  - CharacterMesh0 (SkeletalMeshComponent) - NONE
+  - CollisionCylinder (CapsuleComponent)
+  - CharMoveComp (CharacterMovementComponent)
+  - DefaultSceneRoot (SceneComponent)
+
+======================================================================
+COMPARISON: BEFORE vs AFTER
+======================================================================
+
+[PARENT CHANGES]:
+
+[OK] All Blueprint components preserved!
+
+======================================================================
+COMPARISON COMPLETE
+======================================================================

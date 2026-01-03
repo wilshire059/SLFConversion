@@ -1,0 +1,24 @@
+======================================================================
+DIAGNOSING B_Soulslike_Character
+======================================================================
+[OK] Loaded: B_Soulslike_Character
+[OK] Generated class: B_Soulslike_Character_C
+[OK] CDO: Default__B_Soulslike_Character_C
+
+--- BLUEPRINT COMPONENTS (SimpleConstructionScript) ---
+[ERROR] Reading SCS: Blueprint: Failed to find property 'simple_construction_script' for attribute 'simple_construction_script' on 'Blueprint'
+
+--- C++ PARENT COMPONENTS ---
+[OK] Mesh component exists: CharacterMesh0
+     SkeletalMesh: NONE - NO MESH ASSIGNED!
+     Visible: True
+[OK] Capsule component: CollisionCylinder
+     Radius: 35.0, HalfHeight: 90.0
+[OK] CharacterMovement: CharMoveComp
+
+--- GAMEMODE CHECK ---
+[OK] DefaultPawnClass: B_Soulslike_Character_C
+
+======================================================================
+DIAGNOSIS COMPLETE
+======================================================================

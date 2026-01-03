@@ -1,0 +1,321 @@
+LogInit: Display: Running engine for game: SLFConversion
+LogCore: Display: Requested channels: 'cpu,gpu,frame,log,bookmark,screenshot,region'
+LogTrace: Display: Control listening on port 1985
+LogCsvProfiler: Display: Metadata set : platform="Windows"
+LogCsvProfiler: Display: Metadata set : config="Development"
+LogCsvProfiler: Display: Metadata set : buildversion="++UE5+Release-5.7-CL-48512491"
+LogCsvProfiler: Display: Metadata set : engineversion="5.7.1-48512491+++UE5+Release-5.7"
+LogCsvProfiler: Display: Metadata set : enginereleaseversion="5.7.1"
+LogCsvProfiler: Display: Metadata set : os="Windows 11 (25H2) [10.0.26200.7462] "
+LogCsvProfiler: Display: Metadata set : cpu="GenuineIntel|Intel(R) Core(TM) 9 270H"
+LogCsvProfiler: Display: Metadata set : pgoenabled="0"
+LogCsvProfiler: Display: Metadata set : pgoprofilingenabled="0"
+LogCsvProfiler: Display: Metadata set : ltoenabled="0"
+LogCsvProfiler: Display: Metadata set : asan="0"
+LogCsvProfiler: Display: Metadata set : mergedmodules="0"
+LogCsvProfiler: Display: Metadata set : commandline="" C:/scripts/SLFConversion/SLFConversion.uproject -run=pythonscript -script=C:/scripts/SLFConversion/run_migration.py -stdout -unattended -nosplash""
+LogCsvProfiler: Display: Metadata set : loginid="d995c8d241966abb5189efb7e08079c5"
+LogCsvProfiler: Display: Metadata set : llm="0"
+LogCsvProfiler: Display: Metadata set : systemresolution.resx="1280"
+LogCsvProfiler: Display: Metadata set : systemresolution.resy="720"
+LogAudio: Display: Audio Device Manager not initializing due to all audio being disabled. If this is not intentional, please check command line arguments for "-nosound".
+LogConfig: Display: Loading Mac ini files took 0.06 seconds
+LogConfig: Display: Loading Android ini files took 0.07 seconds
+LogConfig: Display: Loading IOS ini files took 0.07 seconds
+LogConfig: Display: Loading VulkanPC ini files took 0.07 seconds
+LogConfig: Display: Loading TVOS ini files took 0.07 seconds
+LogConfig: Display: Loading Unix ini files took 0.08 seconds
+LogConfig: Display: Loading Windows ini files took 0.08 seconds
+LogConfig: Display: Loading VisionOS ini files took 0.08 seconds
+LogConfig: Display: Loading Linux ini files took 0.09 seconds
+LogPluginManager: Display: The Plugin StructUtils has been marked deprecated for 5.5 and will be removed soon. Please update your dependencies.
+RenderDocPlugin: Display: RenderDoc plugin will not be loaded. Use '-AttachRenderDoc' on the cmd line or enable 'renderdoc.AutoAttach' in the plugin settings.
+[2026.01.03-06.42.09:599][  0]LogHAL: Display: Platform has ~ 32 GB [34032443392 / 34359738368 / 32], which maps to Largest [LargestMinGB=32, LargerMinGB=12, DefaultMinGB=8, SmallerMinGB=6, SmallestMinGB=0)
+[2026.01.03-06.42.09:600][  0]LogCsvProfiler: Display: Metadata set : extradevelopmentmemorymb="0"
+[2026.01.03-06.42.10:076][  0]LogObj: Display: Attempting to load config data for Default__SlateThemeManager before the Class has been constructed/registered/linked (likely during module loading or early startup). This will result in the load silently failing and should be fixed.
+[2026.01.03-06.42.10:199][  0]LogCsvProfiler: Display: Metadata set : verbatimrhiname="Null"
+[2026.01.03-06.42.10:200][  0]LogCsvProfiler: Display: Metadata set : rhiname="Null"
+[2026.01.03-06.42.10:200][  0]LogCsvProfiler: Display: Metadata set : rhifeaturelevel="SM6"
+[2026.01.03-06.42.10:200][  0]LogCsvProfiler: Display: Metadata set : shaderplatform="PCD3D_SM6"
+[2026.01.03-06.42.10:215][  0]LogTextureFormatASTC: Display: ASTCEnc version 5.0.1 library loaded
+[2026.01.03-06.42.10:215][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatASTC
+[2026.01.03-06.42.10:215][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatDXT
+[2026.01.03-06.42.10:215][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatETC2
+[2026.01.03-06.42.10:215][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatIntelISPCTexComp
+[2026.01.03-06.42.10:215][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatUncompressed
+[2026.01.03-06.42.10:215][  0]LogTextureFormatOodle: Display: Oodle Texture TFO init; latest sdk version = 2.9.14
+[2026.01.03-06.42.10:215][  0]LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.14.dll
+[2026.01.03-06.42.10:215][  0]LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.5.dll
+[2026.01.03-06.42.10:216][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatOodle
+[2026.01.03-06.42.10:246][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android'
+[2026.01.03-06.42.10:246][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ASTC'
+[2026.01.03-06.42.10:246][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_DXT'
+[2026.01.03-06.42.10:246][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ETC2'
+[2026.01.03-06.42.10:246][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_OpenXR'
+[2026.01.03-06.42.10:246][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'AndroidClient'
+[2026.01.03-06.42.10:247][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ASTCClient'
+[2026.01.03-06.42.10:247][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_DXTClient'
+[2026.01.03-06.42.10:247][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ETC2Client'
+[2026.01.03-06.42.10:247][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_OpenXRClient'
+[2026.01.03-06.42.10:247][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_Multi'
+[2026.01.03-06.42.10:247][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_MultiClient'
+[2026.01.03-06.42.10:263][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'IOS'
+[2026.01.03-06.42.10:263][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'IOSClient'
+[2026.01.03-06.42.10:276][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Linux'
+[2026.01.03-06.42.10:277][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'LinuxEditor'
+[2026.01.03-06.42.10:277][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'LinuxServer'
+[2026.01.03-06.42.10:277][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'LinuxClient'
+[2026.01.03-06.42.10:289][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Mac'
+[2026.01.03-06.42.10:289][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'MacEditor'
+[2026.01.03-06.42.10:289][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'MacServer'
+[2026.01.03-06.42.10:289][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'MacClient'
+[2026.01.03-06.42.10:300][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'TVOS'
+[2026.01.03-06.42.10:301][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'TVOSClient'
+[2026.01.03-06.42.10:312][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Windows'
+[2026.01.03-06.42.10:312][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsEditor'
+[2026.01.03-06.42.10:312][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsServer'
+[2026.01.03-06.42.10:312][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsClient'
+[2026.01.03-06.42.10:312][  0]LogTargetPlatformManager: Display: Building Assets For WindowsEditor
+[2026.01.03-06.42.10:317][  0]LogAudioDebug: Display: Lib vorbis DLL was dynamically loaded.
+[2026.01.03-06.42.10:378][  0]LogDerivedDataCache: Display: Memory: Max Cache Size: -1 MB
+[2026.01.03-06.42.10:696][  0]LogDerivedDataCache: Display: ../../../Engine/DerivedDataCache/Compressed.ddp: Opened pak cache for reading. (1732 MiB)
+[2026.01.03-06.42.10:697][  0]LogZenServiceInstance: Display: Launching zen utility 'C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/zen.exe service status'.
+[2026.01.03-06.42.11:002][  0]LogZenServiceInstance: Display: Launching zen utility 'C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/zen.exe service status'.
+[2026.01.03-06.42.11:309][  0]LogZenServiceInstance: Display: Read zen version cache file from 'C:/Users/james/AppData/Local/UnrealEngine/5.7/Saved/Zen/zen.version', version: '5.7.6-202510061608-windows-x64-release-9a1ebb9'
+[2026.01.03-06.42.11:310][  0]LogZenServiceInstance: Display: Read zen version cache file from 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Install/zen.version', version: '5.7.6-202510061608-windows-x64-release-9a1ebb9'
+[2026.01.03-06.42.11:310][  0]LogZenServiceInstance: Display: Installed service at 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe' is up to date
+[2026.01.03-06.42.11:310][  0]LogZenServiceInstance: Display: Launching executable 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe', working dir 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Install', data dir 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Data', args '--port 8558 --data-dir C:\Users\james\AppData\Local\UnrealEngine\Common\Zen\Data --http asio --gc-cache-duration-seconds 1209600 --gc-interval-seconds 21600 --gc-low-diskspace-threshold 2147483648 --cache-bucket-limit-overwrites --quiet --http-forceloopback --owner-pid 26764  --child-id Zen_26764_Startup'
+[2026.01.03-06.42.11:423][  0]LogZenServiceInstance: Display: Unreal Zen Storage Server HTTP service at http://[::1]:8558 status: OK!.
+[2026.01.03-06.42.11:424][  0]LogDerivedDataCache: Display: ZenLocal: Using ZenServer HTTP service at [::1] with namespace ue.ddc status: OK!.
+[2026.01.03-06.42.11:438][  0]LogDerivedDataCache: Display: C:/Users/james/AppData/Local/UnrealEngine/Common/DerivedDataCache: Performance: Latency=0.02ms. RandomReadSpeed=1704.29MBs, RandomWriteSpeed=79.65MBs. Assigned SpeedClass 'Local'
+[2026.01.03-06.42.11:451][  0]LogUbaHorde: Display: UBA/Horde Configuration [Uba.Provider.Horde]: Not Enabled
+[2026.01.03-06.42.11:461][  0]LogXGEController: Display: Initialized XGE controller. XGE tasks will be spawned on this machine.
+[2026.01.03-06.42.11:461][  0]LogShaderCompilers: Display: Using XGE Controller for shader compilation
+[2026.01.03-06.42.11:463][  0]LogShaderCompilers: Display: Compiling shader autogen file: ../../../../../../scripts/SLFConversion/Intermediate/ShaderAutogen/PCD3D_SM6/AutogenShaderHeaders.ush
+[2026.01.03-06.42.11:463][  0]LogShaderCompilers: Display: Autogen file is unchanged, skipping write.
+[2026.01.03-06.42.11:924][  0]LogEditorDomain: Display: EditorDomain is Disabled
+[2026.01.03-06.42.12:210][  0]LogDeviceProfileManager: Display: Deviceprofile LinuxArm64Editor not found.
+[2026.01.03-06.42.12:210][  0]LogDeviceProfileManager: Display: Deviceprofile LinuxArm64 not found.
+[2026.01.03-06.42.12:262][  0]LogCsvProfiler: Display: Metadata set : deviceprofile="WindowsEditor"
+[2026.01.03-06.42.12:265][  0]LogStreaming: Display: FlushAsyncLoading(1): 1 QueuedPackages, 0 AsyncPackages
+[2026.01.03-06.42.12:275][  0]LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.03-06.42.12:275][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultTextMaterialOpaque is adding a dynamic import to package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness because of a recursive sync load
+[2026.01.03-06.42.12:275][  0]LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.03-06.42.12:275][  0]LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.03-06.42.12:276][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultTextMaterialOpaque is adding a dynamic import to package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec because of a recursive sync load
+[2026.01.03-06.42.12:276][  0]LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.03-06.42.12:276][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/WorldGridMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.03-06.42.12:278][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/WorldGridMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.03-06.42.12:279][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.03-06.42.12:279][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultPostProcessMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.03-06.42.12:281][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultLightFunctionMaterial is adding a dynamic import to package /Engine/EngineMaterials/DefaultPostProcessMaterial because of a recursive sync load
+[2026.01.03-06.42.12:281][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultPostProcessMaterial (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.03-06.42.12:281][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultDeferredDecalMaterial is adding a dynamic import to package /Engine/EngineMaterials/DefaultLightFunctionMaterial because of a recursive sync load
+[2026.01.03-06.42.12:281][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.03-06.42.12:282][  0]LogStreaming: Display: Package /Engine/EngineMaterials/WorldGridMaterial is adding a dynamic import to package /Engine/EngineMaterials/DefaultDeferredDecalMaterial because of a recursive sync load
+[2026.01.03-06.42.12:282][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/WorldGridMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.03-06.42.12:283][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultTextMaterialOpaque is adding a dynamic import to package /Engine/EngineMaterials/WorldGridMaterial because of a recursive sync load
+[2026.01.03-06.42.12:283][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/WorldGridMaterial (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.03-06.42.12:283][  0]LogTextureEncodingSettings: Display: Texture Encode Speed: Final (cook).
+[2026.01.03-06.42.12:284][  0]LogTextureEncodingSettings: Display: Oodle Texture Encode Speed settings: Fast: RDO Off Lambda=0, Effort=Normal Final: RDO Off Lambda=0, Effort=Normal
+[2026.01.03-06.42.12:284][  0]LogTextureEncodingSettings: Display: Shared linear texture encoding: Disabled
+[2026.01.03-06.42.12:303][  0]LogMeshReduction: Display: Using QuadricMeshReduction for automatic static mesh reduction
+[2026.01.03-06.42.12:303][  0]LogMeshReduction: Display: Using SkeletalMeshReduction for automatic skeletal mesh reduction
+[2026.01.03-06.42.12:303][  0]LogMeshReduction: Display: Using ProxyLODMeshReduction for automatic mesh merging
+[2026.01.03-06.42.12:303][  0]LogMeshReduction: Display: No distributed automatic mesh merging module available
+[2026.01.03-06.42.12:484][  0]LogShaderCompilers: Display: Compiling shader autogen file: ../../../../../../scripts/SLFConversion/Intermediate/ShaderAutogen/PCD3D_SM5/AutogenShaderHeaders.ush
+[2026.01.03-06.42.12:485][  0]LogShaderCompilers: Display: Autogen file is unchanged, skipping write.
+[2026.01.03-06.42.12:485][  0]LogVirtualization: Display: VirtualizationSystem name found in ini file: None
+[2026.01.03-06.42.12:485][  0]LogVirtualization: Display: FNullVirtualizationSystem mounted, virtualization will be disabled
+[2026.01.03-06.42.12:570][  0]LogWorldPartition: Display: FWorldPartitionClassDescRegistry::Initialize started...
+[2026.01.03-06.42.12:572][  0]LogWorldPartition: Display: FWorldPartitionClassDescRegistry::Initialize took 2.243 ms
+[2026.01.03-06.42.13:048][  0]LogMetaSound: Display: MetaSound Page Target Initialized to 'Default'
+[2026.01.03-06.42.13:048][  0]LogAudio: Display: Registering Engine Module Parameter Interfaces...
+[2026.01.03-06.42.14:548][  0]LogTemp: Warning: [SoulslikeCharacter] Constructor: Mesh set to SKM_Manny
+[2026.01.03-06.42.14:751][  0]LogAudioCaptureCore: Display: No Audio Capture implementations found. Audio input will be silent.
+[2026.01.03-06.42.14:751][  0]LogAudioCaptureCore: Display: No Audio Capture implementations found. Audio input will be silent.
+[2026.01.03-06.42.15:767][  0]LogAssetRegistry: Display: Asset registry cache read as 75.1 MiB from ../../../../../../scripts/SLFConversion/Intermediate/CachedAssetRegistry_0.bin.
+[2026.01.03-06.42.15:768][  0]LogAssetRegistry: Display: AssetDataGatherer spent 0.071s loading caches ../../../../../../scripts/SLFConversion/Intermediate/CachedAssetRegistry_*.bin.
+[2026.01.03-06.42.16:437][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: FObjectReader. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:775][  0]LogClass: Warning: Struct Property TimeInfo has a struct type mismatch (tag FDayNightInfo(/Game/SoulslikeFramework/Structures/_Misc/FDayNightInfo) != prop SLFDayNightInfo(/Script/SLFConversion)) in package: FObjectReader. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:811][  0]LogClass: Warning: Struct Property CardinalData has a struct type mismatch (tag FSLFCardinalData(/Script/SLFConversion) != prop SLFCardinalData(/Script/SLFConversion)) in package: FObjectReader. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:815][  0]LogClass: Warning: Struct Property InventoryCategoryData has a struct type mismatch (tag FInventoryCategory(/Game/SoulslikeFramework/Structures/Items/FInventoryCategory) != prop SLFInventoryCategory(/Script/SLFConversion)) in package: FObjectReader. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:820][  0]LogClass: Warning: Struct Property CardinalData has a struct type mismatch (tag FSLFCardinalData(/Script/SLFConversion) != prop SLFCardinalData(/Script/SLFConversion)) in package: FObjectReader. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:820][  0]LogClass: Warning: Map Element Type mismatch in CardinalData - Previous (StructProperty(GameplayTag(/Script/GameplayTags)) to StructProperty(FSLFCardinalData(/Script/SLFConversion),ac2775db-4e4d-11a5-3811-a8ae4ede3167)) Current (StructProperty(GameplayTag(/Script/GameplayTags)) to StructProperty(SLFCardinalData(/Script/SLFConversion))) for package: FObjectReader
+[2026.01.03-06.42.16:829][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Primary/B_Arcane. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:830][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Primary/B_Dexterity. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:832][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Primary/B_Endurance. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:833][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Primary/B_Faith. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:834][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Primary/B_Intelligence. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:836][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Primary/B_Mind. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:837][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Primary/B_Strength. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:838][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Primary/B_Vigor. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:969][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/_Backend/B_IncantationPower. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:970][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/_Backend/B_Poise. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:971][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/_Backend/B_Stance. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:971][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/_Backend/B_StatusEffectBuildup. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:972][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Fire. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:972][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Frost. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:973][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Holy. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:974][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Lightning. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:974][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Magic. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:975][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Physical. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:975][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Focus. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:976][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Immunity. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:976][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Robustness. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:977][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Vitality. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:977][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Misc/B_Discovery. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:978][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Misc/B_Weight. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:979][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Fire. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:980][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Frost. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:981][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Holy. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:982][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Lightning. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:982][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Magic. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:983][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Physical. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:984][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Secondary/B_FP. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:984][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Secondary/B_HP. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.16:985][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Secondary/B_Stamina. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.17:040][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: FObjectReader
+[2026.01.03-06.42.17:040][  0]LogClass: Warning: Type mismatch in UnhoveredColor of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: FObjectReader
+[2026.01.03-06.42.17:041][  0]LogClass: Warning: Type mismatch in HoveredColor of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: FObjectReader
+[2026.01.03-06.42.17:041][  0]LogEnum: Warning: EnumRedirect for enum ESLFSettingEntry maps 'E_SettingEntry::NewEnumerator2' to invalid value 'ESLFSettingEntry::NewEnumerator2'!
+[2026.01.03-06.42.17:081][  0]LogClass: Warning: Type mismatch in UnhoveredColor of W_Settings_KeyMapping_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: FObjectReader
+[2026.01.03-06.42.17:081][  0]LogClass: Warning: Type mismatch in HoveredColor of W_Settings_KeyMapping_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: FObjectReader
+[2026.01.03-06.42.17:082][  0]LogClass: Warning: Type mismatch in Mappings of W_Settings_KeyMapping_Entry_C - Previous (SetProperty) Current(ObjectProperty) in package: FObjectReader
+[2026.01.03-06.42.17:411][  0]LogClass: Warning: Struct Property InventoryCategoryData has a struct type mismatch (tag FInventoryCategory(/Game/SoulslikeFramework/Structures/Items/FInventoryCategory) != prop SLFInventoryCategory(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Widgets/Inventory/W_Inventory. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.17:412][  0]LogClass: Warning: Struct Property InventoryCategoryData has a struct type mismatch (tag FInventoryCategory(/Game/SoulslikeFramework/Structures/Items/FInventoryCategory) != prop SLFInventoryCategory(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Widgets/Inventory/W_Inventory. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.03-06.42.17:493][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:493][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:494][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:494][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:495][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:496][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:497][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:497][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:498][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:499][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:500][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:500][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:501][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:501][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:502][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:502][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:502][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:503][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:503][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:504][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:504][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:504][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:505][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:505][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:506][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:506][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:507][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:507][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:508][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:508][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.03-06.42.17:609][  0]LogOutputDevice: Error: === Handled ensure: ===
+[2026.01.03-06.42.17:610][  0]LogOutputDevice: Error: 
+[2026.01.03-06.42.17:610][  0]LogOutputDevice: Error: Ensure condition failed: QueuedRequests.Num() == 0  [File:D:\build\++UE5\Sync\Engine\Source\Editor\Kismet\Private\BlueprintCompilationManager.cpp] [Line: 352] 
+[2026.01.03-06.42.17:610][  0]LogOutputDevice: Error: 
+[2026.01.03-06.42.17:610][  0]LogOutputDevice: Error: Stack: 
+[2026.01.03-06.42.17:610][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9cd585bba UnrealEditor-Kismet.dll!UnknownFunction []
+[2026.01.03-06.42.17:611][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9cf7634ea UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.03-06.42.17:611][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9cf782e6c UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.03-06.42.17:611][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d1692847 UnrealEditor-Engine.dll!UnknownFunction []
+[2026.01.03-06.42.17:611][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f38f9f40 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.17:612][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f38dba88 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.17:612][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f3bb522e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.17:613][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f3b8faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.17:614][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f3baf89d UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.17:614][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f3b8db40 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.17:615][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f3eabb4c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.17:615][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f3eb35b0 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.17:615][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f3eb743b UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.17:615][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f3eb8958 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.17:616][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f3ec7ccc UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.17:616][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f3ed767c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.17:616][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f3ebaf00 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.17:616][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f39a9379 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.17:617][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f39a905c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.17:617][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f3dd6afd UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.17:617][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f3dd5de5 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.17:617][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f3dd63bd UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.17:618][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f3de68a0 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.17:618][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f3df3dff UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.17:618][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f3df3408 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.17:618][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f3df952e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.17:619][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d15433ee UnrealEditor-Engine.dll!UnknownFunction []
+[2026.01.03-06.42.17:619][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d15919e0 UnrealEditor-Engine.dll!UnknownFunction []
+[2026.01.03-06.42.17:619][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d158b9db UnrealEditor-Engine.dll!UnknownFunction []
+[2026.01.03-06.42.17:619][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d1592a62 UnrealEditor-Engine.dll!UnknownFunction []
+[2026.01.03-06.42.17:619][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d350b101 UnrealEditor-Engine.dll!UnknownFunction []
+[2026.01.03-06.42.17:620][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9cf2b7064 UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.03-06.42.17:620][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d3503adc UnrealEditor-Engine.dll!UnknownFunction []
+[2026.01.03-06.42.17:620][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9cf2b406c UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.03-06.42.17:620][  0]LogOutputDevice: Error: [Callstack] 0x00007ff63853a005 UnrealEditor-Cmd.exe!UnknownFunction []
+[2026.01.03-06.42.17:621][  0]LogOutputDevice: Error: [Callstack] 0x00007ff638530a1b UnrealEditor-Cmd.exe!UnknownFunction []
+[2026.01.03-06.42.17:621][  0]LogOutputDevice: Error: [Callstack] 0x00007ff638530d0a UnrealEditor-Cmd.exe!UnknownFunction []
+[2026.01.03-06.42.17:621][  0]LogOutputDevice: Error: [Callstack] 0x00007ff638534590 UnrealEditor-Cmd.exe!UnknownFunction []
+[2026.01.03-06.42.17:621][  0]LogOutputDevice: Error: [Callstack] 0x00007ff638545bd4 UnrealEditor-Cmd.exe!UnknownFunction []
+[2026.01.03-06.42.17:622][  0]LogOutputDevice: Error: [Callstack] 0x00007ff6385482e6 UnrealEditor-Cmd.exe!UnknownFunction []
+[2026.01.03-06.42.17:622][  0]LogOutputDevice: Error: [Callstack] 0x00007ffac87ee8d7 KERNEL32.DLL!UnknownFunction []
+[2026.01.03-06.42.17:622][  0]LogOutputDevice: Error: [Callstack] 0x00007ffac9aec53c ntdll.dll!UnknownFunction []
+[2026.01.03-06.42.17:622][  0]LogOutputDevice: Error: 
+[2026.01.03-06.42.18:285][  0]LogTemp: Warning: [SoulslikeCharacter] Constructor: Mesh set to SKM_Manny
+[2026.01.03-06.42.18:394][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\_Animations\Locomotion\AnimBP\ABP_SoulslikeNPC.uasset: [Compiler] Found more than one function with the same name AnimGraph; second occurance at  Output Pose
+[2026.01.03-06.42.18:447][  0]LogWindows: Error: appError called: Assertion failed: BpCdo->HasAnyFlags(RF_ClassDefaultObject) && BlueprintClass->HasAnyClassFlags(CLASS_CompiledFromBlueprint) [File:D:\build\++UE5\Sync\Engine\Source\Editor\UnrealEd\Private\Kismet2\Kismet2.cpp] [Line: 812] 
+
+
+[2026.01.03-06.42.21:653][  0]LogWindows: Error: === Critical error: ===
+[2026.01.03-06.42.21:653][  0]LogWindows: Error: 
+[2026.01.03-06.42.21:653][  0]LogWindows: Error: Assertion failed: BpCdo->HasAnyFlags(RF_ClassDefaultObject) && BlueprintClass->HasAnyClassFlags(CLASS_CompiledFromBlueprint) [File:D:\build\++UE5\Sync\Engine\Source\Editor\UnrealEd\Private\Kismet2\Kismet2.cpp] [Line: 812] 
+[2026.01.03-06.42.21:654][  0]LogWindows: Error: 
+[2026.01.03-06.42.21:654][  0]LogWindows: Error: 
+[2026.01.03-06.42.21:655][  0]LogWindows: Error: 
+[2026.01.03-06.42.21:655][  0]LogWindows: Error: [Callstack] 0x00007ff9df957f58 UnrealEditor-Core.dll!UnknownFunction []
+[2026.01.03-06.42.21:655][  0]LogWindows: Error: [Callstack] 0x00007ff9cf7b8b9d UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.03-06.42.21:656][  0]LogWindows: Error: [Callstack] 0x00007ff9cf7b8a9f UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.03-06.42.21:656][  0]LogWindows: Error: [Callstack] 0x00007ff9cd5f3f7a UnrealEditor-Kismet.dll!UnknownFunction []
+[2026.01.03-06.42.21:657][  0]LogWindows: Error: [Callstack] 0x00007ff9cd585dbb UnrealEditor-Kismet.dll!UnknownFunction []
+[2026.01.03-06.42.21:658][  0]LogWindows: Error: [Callstack] 0x00007ff9cf7634ea UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.03-06.42.21:658][  0]LogWindows: Error: [Callstack] 0x00007ff9cf782e6c UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.03-06.42.21:659][  0]LogWindows: Error: [Callstack] 0x00007ff9d1692847 UnrealEditor-Engine.dll!UnknownFunction []
+[2026.01.03-06.42.21:659][  0]LogWindows: Error: [Callstack] 0x00007ff9f38f9f40 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.21:660][  0]LogWindows: Error: [Callstack] 0x00007ff9f38dba88 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.21:660][  0]LogWindows: Error: [Callstack] 0x00007ff9f3bb522e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.21:661][  0]LogWindows: Error: [Callstack] 0x00007ff9f3b8faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.21:661][  0]LogWindows: Error: [Callstack] 0x00007ff9f3baf89d UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.21:662][  0]LogWindows: Error: [Callstack] 0x00007ff9f3b8db40 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.21:662][  0]LogWindows: Error: [Callstack] 0x00007ff9f3eabb4c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.21:663][  0]LogWindows: Error: [Callstack] 0x00007ff9f3eb35b0 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.21:663][  0]LogWindows: Error: [Callstack] 0x00007ff9f3eb743b UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.21:664][  0]LogWindows: Error: [Callstack] 0x00007ff9f3eb8958 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.21:664][  0]LogWindows: Error: [Callstack] 0x00007ff9f3ec7ccc UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.21:665][  0]LogWindows: Error: [Callstack] 0x00007ff9f3ed767c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.21:665][  0]LogWindows: Error: [Callstack] 0x00007ff9f3ebaf00 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.21:665][  0]LogWindows: Error: [Callstack] 0x00007ff9f39a9379 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.21:666][  0]LogWindows: Error: [Callstack] 0x00007ff9f39a905c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.21:666][  0]LogWindows: Error: [Callstack] 0x00007ff9f3dd6afd UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.21:666][  0]LogWindows: Error: [Callstack] 0x00007ff9f3dd5de5 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.21:666][  0]LogWindows: Error: [Callstack] 0x00007ff9f3dd63bd UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.21:667][  0]LogWindows: Error: [Callstack] 0x00007ff9f3de68a0 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.21:667][  0]LogWindows: Error: [Callstack] 0x00007ff9f3df3dff UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.21:667][  0]LogWindows: Error: [Callstack] 0x00007ff9f3df3408 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.21:667][  0]LogWindows: Error: [Callstack] 0x00007ff9f3df952e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.03-06.42.21:668][  0]LogWindows: Error: [Callstack] 0x00007ff9d15433ee UnrealEditor-Engine.dll!UnknownFunction []
+[2026.01.03-06.42.21:668][  0]LogWindows: Error: [Callstack] 0x00007ff9d15919e0 UnrealEditor-Engine.dll!UnknownFunction []
+[2026.01.03-06.42.21:669][  0]LogWindows: Error: [Callstack] 0x00007ff9d158b9db UnrealEditor-Engine.dll!UnknownFunction []
+[2026.01.03-06.42.21:669][  0]LogWindows: Error: [Callstack] 0x00007ff9d1592a62 UnrealEditor-Engine.dll!UnknownFunction []
+[2026.01.03-06.42.21:670][  0]LogWindows: Error: [Callstack] 0x00007ff9d350b101 UnrealEditor-Engine.dll!UnknownFunction []
+[2026.01.03-06.42.21:670][  0]LogWindows: Error: [Callstack] 0x00007ff9cf2b7064 UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.03-06.42.21:671][  0]LogWindows: Error: [Callstack] 0x00007ff9d3503adc UnrealEditor-Engine.dll!UnknownFunction []
+[2026.01.03-06.42.21:671][  0]LogWindows: Error: [Callstack] 0x00007ff9cf2b406c UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.03-06.42.21:671][  0]LogWindows: Error: [Callstack] 0x00007ff63853a005 UnrealEditor-Cmd.exe!UnknownFunction []
+[2026.01.03-06.42.21:672][  0]LogWindows: Error: [Callstack] 0x00007ff638530a1b UnrealEditor-Cmd.exe!UnknownFunction []
+[2026.01.03-06.42.21:672][  0]LogWindows: Error: [Callstack] 0x00007ff638530d0a UnrealEditor-Cmd.exe!UnknownFunction []
+[2026.01.03-06.42.21:672][  0]LogWindows: Error: [Callstack] 0x00007ff638534590 UnrealEditor-Cmd.exe!UnknownFunction []
+[2026.01.03-06.42.21:672][  0]LogWindows: Error: [Callstack] 0x00007ff638545bd4 UnrealEditor-Cmd.exe!UnknownFunction []
+[2026.01.03-06.42.21:673][  0]LogWindows: Error: [Callstack] 0x00007ff6385482e6 UnrealEditor-Cmd.exe!UnknownFunction []
+[2026.01.03-06.42.21:673][  0]LogWindows: Error: [Callstack] 0x00007ffac87ee8d7 KERNEL32.DLL!UnknownFunction []
+[2026.01.03-06.42.21:674][  0]LogWindows: Error: 

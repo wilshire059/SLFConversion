@@ -1,0 +1,102 @@
+
+======================================================================
+ENEMY WEAPON DIAGNOSTIC
+======================================================================
+
+======================================================================
+1. EQUIPMENT MANAGER COMPONENT
+======================================================================
+  Loaded: AC_EquipmentManager
+  Parent: /Script/SLFConversion.AC_EquipmentManager
+
+======================================================================
+2. AI WEAPON BLUEPRINTS
+======================================================================
+  B_Item_AI_Weapon
+    Parent: /Script/SLFConversion.SLFWeaponBase
+  B_Item_AI_Weapon_Sword
+    Parent: /Script/SLFConversion.SLFWeaponBase
+  B_Item_AI_Weapon_Greatsword
+    Parent: /Script/SLFConversion.SLFWeaponBase
+  B_Item_AI_Weapon_BossMace
+    Parent: /Script/SLFConversion.SLFWeaponBase
+
+======================================================================
+3. ENEMY DEFAULT WEAPON CONFIGURATION
+======================================================================
+
+  [B_Soulslike_Enemy_Guard]
+    No Equipment components found
+
+  [B_Soulslike_Enemy_Showcase]
+    No Equipment components found
+
+  [B_Soulslike_Boss_Malgareth]
+    No Equipment components found
+
+======================================================================
+4. ENEMY INSTANCES IN LEVEL - WEAPON CHECK
+======================================================================
+
+  [B_Soulslike_Enemy_Guard_C_0]
+    Child Actors: None
+    Attached Actors: None
+    Skeletal Mesh: SKM_Manny_Simple
+
+  [B_Soulslike_Enemy_Demo_C_1]
+    Child Actors: None
+    Attached Actors: None
+    Skeletal Mesh: SKM_Manny_Simple
+
+  [B_Soulslike_Boss_Malgareth_C_2]
+    Child Actors: None
+    Attached Actors: None
+    Skeletal Mesh: SKM_GruxMolten
+
+======================================================================
+5. EQUIPMENT MANAGER C++ CHECK
+======================================================================
+  Looking for weapon spawn logic in C++...
+    Checking: EquipmentManagerComponent
+    Checking: AC_EquipmentManager
+
+======================================================================
+6. WEAPON DATA ASSETS
+======================================================================
+  DA_Sword01: OK
+  DA_Greatsword: OK
+  DA_BossMace: OK
+
+======================================================================
+7. WEAPON SPAWN MECHANISM
+======================================================================
+  Weapons are typically spawned in BeginPlay by:
+    1. EquipmentManager component reads default weapon config
+    2. SpawnActor creates weapon actor
+    3. Weapon attaches to hand socket
+
+  Possible issues:
+    - Equipment component not initialized
+    - Default weapon not set in Blueprint
+    - Weapon class reference is None/broken
+    - Socket name mismatch
+    - BeginPlay not calling weapon spawn
+
+======================================================================
+DIAGNOSIS
+======================================================================
+
+  The enemies likely aren't holding weapons because:
+
+  1. The Equipment Manager component's BeginPlay logic
+     may have been cleared during migration
+
+  2. The DefaultWeapon/WeaponClass property may be None
+     in the enemy Blueprint defaults
+
+  3. The weapon spawn code in C++ may not be running
+
+  NEXT STEPS:
+    - Check EquipmentManagerComponent.cpp for SpawnWeapon logic
+    - Verify enemy Blueprints have weapon data assigned
+    - Check if BeginPlay spawns weapons

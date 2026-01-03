@@ -1,0 +1,46 @@
+
+======================================================================
+WEAPON SCS DETAILED CHECK
+======================================================================
+
+[B_Item]
+  Parent: /Script/Engine.Actor
+  scs_nodes property: None
+  Trying BlueprintEditorLibrary...
+  GeneratedClass: B_Item_C
+  RootComponent: None
+  ActorComponents on CDO: 0
+
+[B_Item_Weapon]
+  Parent: /Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/B_Item.B_Item_C
+  scs_nodes property: None
+  Trying BlueprintEditorLibrary...
+  GeneratedClass: B_Item_Weapon_C
+  RootComponent: None
+  ActorComponents on CDO: 0
+
+[B_Item_AI_Weapon]
+  Parent: /Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/B_Item_Weapon.B_Item_Weapon_C
+  scs_nodes property: None
+  Trying BlueprintEditorLibrary...
+  GeneratedClass: B_Item_AI_Weapon_C
+  RootComponent: None
+  ActorComponents on CDO: 0
+
+[B_Item_AI_Weapon_Sword]
+  Parent: /Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/B_Item_AI_Weapon.B_Item_AI_Weapon_C
+  scs_nodes property: None
+  Trying BlueprintEditorLibrary...
+  GeneratedClass: B_Item_AI_Weapon_Sword_C
+  RootComponent: None
+  ActorComponents on CDO: 0
+
+======================================================================
+B_Item_Weapon DETAILED CHECK
+======================================================================
+Blueprint: B_Item_Weapon
+  Type: Blueprint
+  Is Dirty: N/A
+
+  Spawning temporary actor to check components...
+  Spawn error: module 'unreal' has no attribute 'SpawnActorParameters'

@@ -1,0 +1,116 @@
+// Logic implementations for AC_AI_Boss
+// Generated from AC_AI_Boss.json
+
+// ═══ SetFightActive ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_Boss::SetFightActive called"));
+
+	FightActive? = FightActive?;
+	if (/* Set FightActive?.Output_Get */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	if (ShowBossBar?)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	TryGetHudForActor(/*Actor*/ GetTargetResult.Target, /*__WorldContext*/ nullptr);
+	if (TryGetHudForActorResult.Success)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	TryGetHudForActorResult.HUD->Event ShowBossBar(/*BossActor*/ GetOwnerResult.ReturnValue, /*BossName*/ Name);
+	if (DebugActive?)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	SetPhase(/*Phase Index*/ DebugPhase);
+	SetPhase(/*Phase Index*/ 0);
+	// TODO: Handle K2Node_ExecutionSequence - Sequence
+
+// ═══ SetPhase ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_Boss::SetPhase called"));
+
+	LOCAL_Phase = /* Get (a copy).Output */;
+	if (/* Not Equal (Integer).ReturnValue */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	ActivePhaseIndex = Phase Index;
+	if (Not_PreBoolResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	EvaluatePhaseRequirement(/*StatRequirement*/ /* Break FAi Boss Phase.RequiredStat_5_B3422E774FE656A2FAE1F0803AFB96FF */);
+	if (EvaluatePhaseRequirementResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	Event HandlePhaseChange(/*Phase*/ LOCAL_Phase);
+
+// ═══ EvaluatePhaseRequirement ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_Boss::EvaluatePhaseRequirement called"));
+
+	if (/* Is Not Empty.ReturnValue */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	if (IsValid(GetStatResult.Found Stat))
+	{
+		// Is Valid branch
+	}
+	// Output ReturnValue uses default value
+	return;
+
+// ═══ TryGetBossDoors ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_Boss::TryGetBossDoors called"));
+
+	// TODO: Handle K2Node_CallArrayFunction - Clear
+	GetAllActorsOfClass(/*ActorClass*/ BossDoorClass, /*WorldContextObject*/ nullptr);
+	// Macro: FastForEachLoop
+
+// ═══ TryUnlockBossDoors ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_Boss::TryUnlockBossDoors called"));
+
+	if (/* Is Not Empty.ReturnValue */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	// TODO: Handle K2Node_Message - Unlock Boss Door
+Target is BPI Boss Door
+

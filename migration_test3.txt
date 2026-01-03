@@ -1,0 +1,1045 @@
+LogInit: Display: Running engine for game: SLFConversion
+LogCore: Display: Requested channels: 'cpu,gpu,frame,log,bookmark,screenshot,region'
+LogTrace: Display: Control listening on port 1985
+LogCsvProfiler: Display: Metadata set : platform="Windows"
+LogCsvProfiler: Display: Metadata set : config="Development"
+LogCsvProfiler: Display: Metadata set : buildversion="++UE5+Release-5.7-CL-48512491"
+LogCsvProfiler: Display: Metadata set : engineversion="5.7.1-48512491+++UE5+Release-5.7"
+LogCsvProfiler: Display: Metadata set : enginereleaseversion="5.7.1"
+LogCsvProfiler: Display: Metadata set : os="Windows 11 (25H2) [10.0.26200.7462] "
+LogCsvProfiler: Display: Metadata set : cpu="GenuineIntel|Intel(R) Core(TM) 9 270H"
+LogCsvProfiler: Display: Metadata set : pgoenabled="0"
+LogCsvProfiler: Display: Metadata set : pgoprofilingenabled="0"
+LogCsvProfiler: Display: Metadata set : ltoenabled="0"
+LogCsvProfiler: Display: Metadata set : asan="0"
+LogCsvProfiler: Display: Metadata set : mergedmodules="0"
+LogCsvProfiler: Display: Metadata set : commandline="" C:/scripts/SLFConversion/SLFConversion.uproject -run=pythonscript -script=C:/scripts/SLFConversion/run_migration.py -stdout -unattended -nosplash""
+LogCsvProfiler: Display: Metadata set : loginid="d995c8d241966abb5189efb7e08079c5"
+LogCsvProfiler: Display: Metadata set : llm="0"
+LogCsvProfiler: Display: Metadata set : systemresolution.resx="1280"
+LogCsvProfiler: Display: Metadata set : systemresolution.resy="720"
+LogAudio: Display: Audio Device Manager not initializing due to all audio being disabled. If this is not intentional, please check command line arguments for "-nosound".
+LogConfig: Display: Loading Mac ini files took 0.06 seconds
+LogConfig: Display: Loading Android ini files took 0.06 seconds
+LogConfig: Display: Loading VulkanPC ini files took 0.06 seconds
+LogConfig: Display: Loading IOS ini files took 0.07 seconds
+LogConfig: Display: Loading Unix ini files took 0.08 seconds
+LogConfig: Display: Loading Windows ini files took 0.08 seconds
+LogConfig: Display: Loading TVOS ini files took 0.08 seconds
+LogConfig: Display: Loading VisionOS ini files took 0.09 seconds
+LogConfig: Display: Loading Linux ini files took 0.09 seconds
+LogPluginManager: Display: The Plugin StructUtils has been marked deprecated for 5.5 and will be removed soon. Please update your dependencies.
+RenderDocPlugin: Display: RenderDoc plugin will not be loaded. Use '-AttachRenderDoc' on the cmd line or enable 'renderdoc.AutoAttach' in the plugin settings.
+[2026.01.02-14.53.36:838][  0]LogHAL: Display: Platform has ~ 32 GB [34032443392 / 34359738368 / 32], which maps to Largest [LargestMinGB=32, LargerMinGB=12, DefaultMinGB=8, SmallerMinGB=6, SmallestMinGB=0)
+[2026.01.02-14.53.36:839][  0]LogCsvProfiler: Display: Metadata set : extradevelopmentmemorymb="0"
+[2026.01.02-14.53.37:136][  0]LogObj: Display: Attempting to load config data for Default__SlateThemeManager before the Class has been constructed/registered/linked (likely during module loading or early startup). This will result in the load silently failing and should be fixed.
+[2026.01.02-14.53.37:221][  0]LogCsvProfiler: Display: Metadata set : verbatimrhiname="Null"
+[2026.01.02-14.53.37:221][  0]LogCsvProfiler: Display: Metadata set : rhiname="Null"
+[2026.01.02-14.53.37:221][  0]LogCsvProfiler: Display: Metadata set : rhifeaturelevel="SM6"
+[2026.01.02-14.53.37:221][  0]LogCsvProfiler: Display: Metadata set : shaderplatform="PCD3D_SM6"
+[2026.01.02-14.53.37:227][  0]LogTextureFormatASTC: Display: ASTCEnc version 5.0.1 library loaded
+[2026.01.02-14.53.37:227][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatASTC
+[2026.01.02-14.53.37:227][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatDXT
+[2026.01.02-14.53.37:227][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatETC2
+[2026.01.02-14.53.37:227][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatIntelISPCTexComp
+[2026.01.02-14.53.37:227][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatUncompressed
+[2026.01.02-14.53.37:227][  0]LogTextureFormatOodle: Display: Oodle Texture TFO init; latest sdk version = 2.9.14
+[2026.01.02-14.53.37:227][  0]LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.14.dll
+[2026.01.02-14.53.37:227][  0]LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.5.dll
+[2026.01.02-14.53.37:228][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatOodle
+[2026.01.02-14.53.37:248][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android'
+[2026.01.02-14.53.37:248][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ASTC'
+[2026.01.02-14.53.37:248][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_DXT'
+[2026.01.02-14.53.37:248][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ETC2'
+[2026.01.02-14.53.37:248][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_OpenXR'
+[2026.01.02-14.53.37:248][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'AndroidClient'
+[2026.01.02-14.53.37:248][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ASTCClient'
+[2026.01.02-14.53.37:248][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_DXTClient'
+[2026.01.02-14.53.37:248][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ETC2Client'
+[2026.01.02-14.53.37:248][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_OpenXRClient'
+[2026.01.02-14.53.37:248][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_Multi'
+[2026.01.02-14.53.37:248][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_MultiClient'
+[2026.01.02-14.53.37:258][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'IOS'
+[2026.01.02-14.53.37:258][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'IOSClient'
+[2026.01.02-14.53.37:267][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Linux'
+[2026.01.02-14.53.37:267][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'LinuxEditor'
+[2026.01.02-14.53.37:267][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'LinuxServer'
+[2026.01.02-14.53.37:267][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'LinuxClient'
+[2026.01.02-14.53.37:276][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Mac'
+[2026.01.02-14.53.37:276][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'MacEditor'
+[2026.01.02-14.53.37:276][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'MacServer'
+[2026.01.02-14.53.37:276][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'MacClient'
+[2026.01.02-14.53.37:285][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'TVOS'
+[2026.01.02-14.53.37:285][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'TVOSClient'
+[2026.01.02-14.53.37:294][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Windows'
+[2026.01.02-14.53.37:294][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsEditor'
+[2026.01.02-14.53.37:294][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsServer'
+[2026.01.02-14.53.37:294][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsClient'
+[2026.01.02-14.53.37:294][  0]LogTargetPlatformManager: Display: Building Assets For WindowsEditor
+[2026.01.02-14.53.37:297][  0]LogAudioDebug: Display: Lib vorbis DLL was dynamically loaded.
+[2026.01.02-14.53.37:335][  0]LogDerivedDataCache: Display: Memory: Max Cache Size: -1 MB
+[2026.01.02-14.53.37:574][  0]LogDerivedDataCache: Display: ../../../Engine/DerivedDataCache/Compressed.ddp: Opened pak cache for reading. (1732 MiB)
+[2026.01.02-14.53.37:575][  0]LogZenServiceInstance: Display: Launching zen utility 'C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/zen.exe service status'.
+[2026.01.02-14.53.37:881][  0]LogZenServiceInstance: Display: Launching zen utility 'C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/zen.exe service status'.
+[2026.01.02-14.53.38:087][  0]LogZenServiceInstance: Display: Read zen version cache file from 'C:/Users/james/AppData/Local/UnrealEngine/5.7/Saved/Zen/zen.version', version: '5.7.6-202510061608-windows-x64-release-9a1ebb9'
+[2026.01.02-14.53.38:087][  0]LogZenServiceInstance: Display: Read zen version cache file from 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Install/zen.version', version: '5.7.6-202510061608-windows-x64-release-9a1ebb9'
+[2026.01.02-14.53.38:087][  0]LogZenServiceInstance: Display: Installed service at 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe' is up to date
+[2026.01.02-14.53.38:088][  0]LogZenServiceInstance: Display: Launching executable 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe', working dir 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Install', data dir 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Data', args '--port 8558 --data-dir C:\Users\james\AppData\Local\UnrealEngine\Common\Zen\Data --http asio --gc-cache-duration-seconds 1209600 --gc-interval-seconds 21600 --gc-low-diskspace-threshold 2147483648 --cache-bucket-limit-overwrites --quiet --http-forceloopback --owner-pid 34192  --child-id Zen_34192_Startup'
+[2026.01.02-14.53.38:163][  0]LogZenServiceInstance: Display: Unreal Zen Storage Server HTTP service at http://[::1]:8558 status: OK!.
+[2026.01.02-14.53.38:165][  0]LogDerivedDataCache: Display: ZenLocal: Using ZenServer HTTP service at [::1] with namespace ue.ddc status: OK!.
+[2026.01.02-14.53.38:172][  0]LogDerivedDataCache: Display: C:/Users/james/AppData/Local/UnrealEngine/Common/DerivedDataCache: Performance: Latency=0.02ms. RandomReadSpeed=1903.54MBs, RandomWriteSpeed=174.73MBs. Assigned SpeedClass 'Local'
+[2026.01.02-14.53.38:186][  0]LogUbaHorde: Display: UBA/Horde Configuration [Uba.Provider.Horde]: Not Enabled
+[2026.01.02-14.53.38:194][  0]LogXGEController: Display: Initialized XGE controller. XGE tasks will be spawned on this machine.
+[2026.01.02-14.53.38:194][  0]LogShaderCompilers: Display: Using XGE Controller for shader compilation
+[2026.01.02-14.53.38:196][  0]LogShaderCompilers: Display: Compiling shader autogen file: ../../../../../../scripts/SLFConversion/Intermediate/ShaderAutogen/PCD3D_SM6/AutogenShaderHeaders.ush
+[2026.01.02-14.53.38:196][  0]LogShaderCompilers: Display: Autogen file is unchanged, skipping write.
+[2026.01.02-14.53.38:636][  0]LogEditorDomain: Display: EditorDomain is Disabled
+[2026.01.02-14.53.38:849][  0]LogDeviceProfileManager: Display: Deviceprofile LinuxArm64Editor not found.
+[2026.01.02-14.53.38:849][  0]LogDeviceProfileManager: Display: Deviceprofile LinuxArm64 not found.
+[2026.01.02-14.53.38:882][  0]LogCsvProfiler: Display: Metadata set : deviceprofile="WindowsEditor"
+[2026.01.02-14.53.38:884][  0]LogStreaming: Display: FlushAsyncLoading(1): 1 QueuedPackages, 0 AsyncPackages
+[2026.01.02-14.53.38:892][  0]LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-14.53.38:893][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultTextMaterialOpaque is adding a dynamic import to package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness because of a recursive sync load
+[2026.01.02-14.53.38:893][  0]LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-14.53.38:893][  0]LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-14.53.38:895][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultTextMaterialOpaque is adding a dynamic import to package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec because of a recursive sync load
+[2026.01.02-14.53.38:895][  0]LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-14.53.38:895][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/WorldGridMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-14.53.38:900][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/WorldGridMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-14.53.38:901][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-14.53.38:901][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultPostProcessMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-14.53.38:902][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultLightFunctionMaterial is adding a dynamic import to package /Engine/EngineMaterials/DefaultPostProcessMaterial because of a recursive sync load
+[2026.01.02-14.53.38:902][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultPostProcessMaterial (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-14.53.38:903][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultDeferredDecalMaterial is adding a dynamic import to package /Engine/EngineMaterials/DefaultLightFunctionMaterial because of a recursive sync load
+[2026.01.02-14.53.38:903][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-14.53.38:904][  0]LogStreaming: Display: Package /Engine/EngineMaterials/WorldGridMaterial is adding a dynamic import to package /Engine/EngineMaterials/DefaultDeferredDecalMaterial because of a recursive sync load
+[2026.01.02-14.53.38:904][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/WorldGridMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-14.53.38:906][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultTextMaterialOpaque is adding a dynamic import to package /Engine/EngineMaterials/WorldGridMaterial because of a recursive sync load
+[2026.01.02-14.53.38:906][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/WorldGridMaterial (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.02-14.53.38:908][  0]LogTextureEncodingSettings: Display: Texture Encode Speed: Final (cook).
+[2026.01.02-14.53.38:908][  0]LogTextureEncodingSettings: Display: Oodle Texture Encode Speed settings: Fast: RDO Off Lambda=0, Effort=Normal Final: RDO Off Lambda=0, Effort=Normal
+[2026.01.02-14.53.38:908][  0]LogTextureEncodingSettings: Display: Shared linear texture encoding: Disabled
+[2026.01.02-14.53.38:927][  0]LogMeshReduction: Display: Using QuadricMeshReduction for automatic static mesh reduction
+[2026.01.02-14.53.38:927][  0]LogMeshReduction: Display: Using SkeletalMeshReduction for automatic skeletal mesh reduction
+[2026.01.02-14.53.38:927][  0]LogMeshReduction: Display: Using ProxyLODMeshReduction for automatic mesh merging
+[2026.01.02-14.53.38:927][  0]LogMeshReduction: Display: No distributed automatic mesh merging module available
+[2026.01.02-14.53.39:052][  0]LogShaderCompilers: Display: Compiling shader autogen file: ../../../../../../scripts/SLFConversion/Intermediate/ShaderAutogen/PCD3D_SM5/AutogenShaderHeaders.ush
+[2026.01.02-14.53.39:052][  0]LogShaderCompilers: Display: Autogen file is unchanged, skipping write.
+[2026.01.02-14.53.39:052][  0]LogVirtualization: Display: VirtualizationSystem name found in ini file: None
+[2026.01.02-14.53.39:052][  0]LogVirtualization: Display: FNullVirtualizationSystem mounted, virtualization will be disabled
+[2026.01.02-14.53.39:113][  0]LogWorldPartition: Display: FWorldPartitionClassDescRegistry::Initialize started...
+[2026.01.02-14.53.39:115][  0]LogWorldPartition: Display: FWorldPartitionClassDescRegistry::Initialize took 1.705 ms
+[2026.01.02-14.53.39:579][  0]LogMetaSound: Display: MetaSound Page Target Initialized to 'Default'
+[2026.01.02-14.53.39:579][  0]LogAudio: Display: Registering Engine Module Parameter Interfaces...
+[2026.01.02-14.53.40:034][  0]LogAudioCaptureCore: Display: No Audio Capture implementations found. Audio input will be silent.
+[2026.01.02-14.53.40:034][  0]LogAudioCaptureCore: Display: No Audio Capture implementations found. Audio input will be silent.
+[2026.01.02-14.53.40:215][  0]LogAssetRegistry: Display: No AssetDiscovery cache present at ../../../../../../scripts/SLFConversion/Intermediate/CachedAssetRegistryDiscovery.bin. AssetRegistry discovery of files will be uncached.
+[2026.01.02-14.53.40:265][  0]LogAssetRegistry: Display: Asset registry cache read as 74.9 MiB from ../../../../../../scripts/SLFConversion/Intermediate/CachedAssetRegistry_0.bin.
+[2026.01.02-14.53.40:266][  0]LogAssetRegistry: Display: AssetDataGatherer spent 0.040s loading caches ../../../../../../scripts/SLFConversion/Intermediate/CachedAssetRegistry_*.bin.
+[2026.01.02-14.53.40:740][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: FObjectReader. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.40:991][  0]LogClass: Warning: Struct Property TimeInfo has a struct type mismatch (tag FDayNightInfo(/Game/SoulslikeFramework/Structures/_Misc/FDayNightInfo) != prop SLFDayNightInfo(/Script/SLFConversion)) in package: FObjectReader. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:016][  0]LogClass: Warning: Struct Property CardinalData has a struct type mismatch (tag FSLFCardinalData(/Script/SLFConversion) != prop SLFCardinalData(/Script/SLFConversion)) in package: FObjectReader. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:018][  0]LogClass: Warning: Struct Property InventoryCategoryData has a struct type mismatch (tag FInventoryCategory(/Game/SoulslikeFramework/Structures/Items/FInventoryCategory) != prop SLFInventoryCategory(/Script/SLFConversion)) in package: FObjectReader. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:021][  0]LogClass: Warning: Struct Property CardinalData has a struct type mismatch (tag FSLFCardinalData(/Script/SLFConversion) != prop SLFCardinalData(/Script/SLFConversion)) in package: FObjectReader. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:022][  0]LogClass: Warning: Map Element Type mismatch in CardinalData - Previous (StructProperty(GameplayTag(/Script/GameplayTags)) to StructProperty(FSLFCardinalData(/Script/SLFConversion),ac2775db-4e4d-11a5-3811-a8ae4ede3167)) Current (StructProperty(GameplayTag(/Script/GameplayTags)) to StructProperty(SLFCardinalData(/Script/SLFConversion))) for package: FObjectReader
+[2026.01.02-14.53.41:027][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Primary/B_Arcane. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:028][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Primary/B_Dexterity. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:028][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Primary/B_Endurance. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:029][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Primary/B_Faith. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:029][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Primary/B_Intelligence. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:030][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Primary/B_Mind. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:030][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Primary/B_Strength. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:031][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Primary/B_Vigor. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:077][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/_Backend/B_IncantationPower. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:078][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/_Backend/B_Poise. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:078][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/_Backend/B_Stance. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:079][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/_Backend/B_StatusEffectBuildup. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:080][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Fire. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:080][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Frost. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:081][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Holy. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:081][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Lightning. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:082][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Magic. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:082][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Physical. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:083][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Focus. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:083][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Immunity. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:084][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Robustness. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:085][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Vitality. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:085][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Misc/B_Discovery. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:086][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Misc/B_Weight. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:086][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Fire. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:087][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Frost. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:087][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Holy. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:088][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Lightning. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:088][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Magic. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:089][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Physical. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:090][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Secondary/B_FP. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:090][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Secondary/B_HP. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:091][  0]LogClass: Warning: Struct Property StatInfo has a struct type mismatch (tag FStatInfo(/Script/SLFConversion) != prop SLFStatInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Stats/Secondary/B_Stamina. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:316][  0]LogEnum: Warning: EnumRedirect for enum ESLFAIStates maps 'E_AI_States::NewEnumerator0' to invalid value 'ESLFAIStates::NewEnumerator0'!
+[2026.01.02-14.53.41:317][  0]LogEnum: Warning: EnumRedirect for enum ESLFAIStates maps 'E_AI_States::NewEnumerator0' to invalid value 'ESLFAIStates::NewEnumerator0'!
+[2026.01.02-14.53.41:317][  0]LogClass: Warning: Type mismatch in StrafeMethods of AC_AI_BehaviorManager_C - Previous (SetProperty) Current(ArrayProperty) in package: FObjectReader
+[2026.01.02-14.53.41:330][  0]LogClass: Warning: Type mismatch in UnhoveredColor of W_Settings_KeyMapping_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: FObjectReader
+[2026.01.02-14.53.41:330][  0]LogClass: Warning: Type mismatch in HoveredColor of W_Settings_KeyMapping_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: FObjectReader
+[2026.01.02-14.53.41:331][  0]LogClass: Warning: Type mismatch in Mappings of W_Settings_KeyMapping_Entry_C - Previous (SetProperty) Current(ObjectProperty) in package: FObjectReader
+[2026.01.02-14.53.41:454][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: FObjectReader
+[2026.01.02-14.53.41:454][  0]LogClass: Warning: Type mismatch in UnhoveredColor of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: FObjectReader
+[2026.01.02-14.53.41:455][  0]LogClass: Warning: Type mismatch in HoveredColor of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: FObjectReader
+[2026.01.02-14.53.41:455][  0]LogEnum: Warning: EnumRedirect for enum ESLFSettingEntry maps 'E_SettingEntry::NewEnumerator2' to invalid value 'ESLFSettingEntry::NewEnumerator2'!
+[2026.01.02-14.53.41:863][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:864][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:865][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:865][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:866][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:866][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:867][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:867][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:867][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:868][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:868][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:869][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:869][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:869][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:870][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:870][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:871][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:871][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:871][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:872][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:872][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:872][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:873][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:873][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:874][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:874][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:875][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:875][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:876][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:876][  0]LogClass: Warning: Type mismatch in SettingTag of W_Settings_Entry_C - Previous (StructProperty) Current(ObjectProperty) in package: /Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings
+[2026.01.02-14.53.41:894][  0]LogClass: Warning: Struct Property InventoryCategoryData has a struct type mismatch (tag FInventoryCategory(/Game/SoulslikeFramework/Structures/Items/FInventoryCategory) != prop SLFInventoryCategory(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Widgets/Inventory/W_Inventory. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:895][  0]LogClass: Warning: Struct Property InventoryCategoryData has a struct type mismatch (tag FInventoryCategory(/Game/SoulslikeFramework/Structures/Items/FInventoryCategory) != prop SLFInventoryCategory(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Widgets/Inventory/W_Inventory. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.41:961][  0]LogOutputDevice: Error: === Handled ensure: ===
+[2026.01.02-14.53.41:961][  0]LogOutputDevice: Error: 
+[2026.01.02-14.53.41:961][  0]LogOutputDevice: Error: Ensure condition failed: QueuedRequests.Num() == 0  [File:D:\build\++UE5\Sync\Engine\Source\Editor\Kismet\Private\BlueprintCompilationManager.cpp] [Line: 352] 
+[2026.01.02-14.53.41:962][  0]LogOutputDevice: Error: 
+[2026.01.02-14.53.41:962][  0]LogOutputDevice: Error: Stack: 
+[2026.01.02-14.53.41:962][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d6f55bba UnrealEditor-Kismet.dll!UnknownFunction []
+[2026.01.02-14.53.41:962][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d96c34ea UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.41:962][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d96e2e6c UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.41:963][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9db5f2847 UnrealEditor-Engine.dll!UnknownFunction []
+[2026.01.02-14.53.41:963][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7ef9f40 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:963][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7edba88 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:963][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b522e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:964][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:964][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:964][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f041a5 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:964][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7edb768 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:965][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b522e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:965][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:965][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:965][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:965][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:966][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:966][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:966][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:966][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:967][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:967][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:967][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:967][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:967][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:968][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:968][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f04b50 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:968][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:968][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:969][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:969][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:969][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:969][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:970][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:970][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:970][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:970][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:970][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:971][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:971][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:971][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:971][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:972][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:972][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:972][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:972][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:973][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:973][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f04a3e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:973][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f04a3e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:973][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:973][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:974][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:974][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:974][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:974][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:975][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:975][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:975][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81afa54 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:975][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818de17 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:975][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:976][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:976][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:976][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:977][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:977][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:977][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81afa54 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:977][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818de17 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:978][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:978][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:978][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:978][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:979][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:979][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:979][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:979][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:979][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:980][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:980][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:980][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:980][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:981][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:981][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:981][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:981][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:982][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:982][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:982][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:982][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:982][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:983][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:983][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f04a3e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:983][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f04a3e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:983][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.41:984][  0]LogOutputDevice: Error: 
+[2026.01.02-14.53.42:590][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\_Animations\Locomotion\AnimBP\ABP_SoulslikeNPC.uasset: [Compiler] Found more than one function with the same name AnimGraph; second occurance at  $$ AnimGraph__AnimFunc $$
+[2026.01.02-14.53.42:702][  0]LogOutputDevice: Error: === Handled ensure: ===
+[2026.01.02-14.53.42:702][  0]LogOutputDevice: Error: 
+[2026.01.02-14.53.42:702][  0]LogOutputDevice: Error: Ensure condition failed: (GetLoaderType() != ELoaderType::ZenLoader) || !HasAnyFlags(RF_NeedLoad)  [File:D:\build\++UE5\Sync\Engine\Source\Runtime\CoreUObject\Private\UObject\Obj.cpp] [Line: 1346] 
+[2026.01.02-14.53.42:703][  0]LogOutputDevice: Error: Object 'InheritableComponentHandler /Engine/Transient.REINST_B_Container_C_0:InheritableComponentHandler' does not have RF_NeedLoad cleared in PostLoad!
+[2026.01.02-14.53.42:703][  0]LogOutputDevice: Error: Stack: 
+[2026.01.02-14.53.42:703][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f85a717d UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:703][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81e57b2 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:704][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f83f0b50 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:704][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f83efab6 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:704][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d973f2dd UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.42:704][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d96fa53f UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.42:705][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d703020a UnrealEditor-Kismet.dll!UnknownFunction []
+[2026.01.02-14.53.42:705][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d6fc46fb UnrealEditor-Kismet.dll!UnknownFunction []
+[2026.01.02-14.53.42:705][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d6f55dbb UnrealEditor-Kismet.dll!UnknownFunction []
+[2026.01.02-14.53.42:705][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d96c34ea UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.42:706][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d96e2e6c UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.42:706][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9db5f2847 UnrealEditor-Engine.dll!UnknownFunction []
+[2026.01.02-14.53.42:706][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7ef9f40 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:706][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7edba88 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:706][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b522e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:707][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:707][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:707][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f041a5 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:707][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7edb768 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:708][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b522e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:708][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:708][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:708][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:709][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:709][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:709][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:709][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:709][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:710][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:710][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:710][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:710][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:711][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:711][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:711][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f04b50 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:711][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:712][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:712][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:712][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:712][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:712][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:713][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:713][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:713][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:713][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:714][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:714][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:714][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:714][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:715][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:715][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:715][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:715][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:716][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:716][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:716][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f04a3e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:716][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f04a3e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:717][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:717][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:717][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:717][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:717][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:718][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:718][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:718][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:719][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81afa54 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:719][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818de17 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:719][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:719][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:719][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:720][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:720][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:720][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:720][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81afa54 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:721][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818de17 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:721][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:721][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:721][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:722][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:722][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:722][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:722][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:723][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:723][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:723][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:723][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:724][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:724][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:724][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:724][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:724][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:725][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.42:725][  0]LogOutputDevice: Error: 
+[2026.01.02-14.53.45:588][  0]LogOutputDevice: Error: === Handled ensure: ===
+[2026.01.02-14.53.45:588][  0]LogOutputDevice: Error: 
+[2026.01.02-14.53.45:588][  0]LogOutputDevice: Error: Ensure condition failed: (GetLoaderType() != ELoaderType::ZenLoader) || !HasAnyFlags(RF_NeedLoad)  [File:D:\build\++UE5\Sync\Engine\Source\Runtime\CoreUObject\Private\UObject\Obj.cpp] [Line: 1346] 
+[2026.01.02-14.53.45:588][  0]LogOutputDevice: Error: Object 'SimpleConstructionScript /Engine/Transient.REINST_B_Container_C_0:SimpleConstructionScript_0' does not have RF_NeedLoad cleared in PostLoad!
+[2026.01.02-14.53.45:589][  0]LogOutputDevice: Error: Stack: 
+[2026.01.02-14.53.45:589][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f85a717d UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:589][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81e57b2 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:589][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f83f0b50 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:590][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f83efab6 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:590][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d973f2dd UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.45:590][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d96fa53f UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.45:590][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d703020a UnrealEditor-Kismet.dll!UnknownFunction []
+[2026.01.02-14.53.45:591][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d6fc46fb UnrealEditor-Kismet.dll!UnknownFunction []
+[2026.01.02-14.53.45:591][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d6f55dbb UnrealEditor-Kismet.dll!UnknownFunction []
+[2026.01.02-14.53.45:591][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d96c34ea UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.45:591][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d96e2e6c UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.45:591][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9db5f2847 UnrealEditor-Engine.dll!UnknownFunction []
+[2026.01.02-14.53.45:592][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7ef9f40 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:592][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7edba88 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:592][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b522e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:592][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:593][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:593][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f041a5 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:593][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7edb768 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:593][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b522e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:594][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:594][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:594][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:594][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:594][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:595][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:595][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:595][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:595][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:596][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:596][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:596][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:596][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:596][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:597][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f04b50 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:597][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:597][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:597][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:598][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:598][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:598][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:598][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:598][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:599][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:599][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:599][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:599][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:600][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:600][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:600][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:600][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:601][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:601][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:601][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:601][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:601][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f04a3e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:602][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f04a3e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:602][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:602][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:602][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:603][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:603][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:604][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:604][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:604][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:604][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81afa54 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:605][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818de17 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:605][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:605][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:605][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:606][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:606][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:606][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:606][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81afa54 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:606][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818de17 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:607][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:607][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:607][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:607][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:608][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:608][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:608][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:608][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:608][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:609][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:609][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:609][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:609][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:610][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:610][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:610][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:610][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.45:610][  0]LogOutputDevice: Error: 
+[2026.01.02-14.53.47:633][  0]LogOutputDevice: Error: === Handled ensure: ===
+[2026.01.02-14.53.47:633][  0]LogOutputDevice: Error: 
+[2026.01.02-14.53.47:633][  0]LogOutputDevice: Error: Ensure condition failed: (GetLoaderType() != ELoaderType::ZenLoader) || !HasAnyFlags(RF_NeedLoad)  [File:D:\build\++UE5\Sync\Engine\Source\Runtime\CoreUObject\Private\UObject\Obj.cpp] [Line: 1346] 
+[2026.01.02-14.53.47:634][  0]LogOutputDevice: Error: Object 'InheritableComponentHandler /Engine/Transient.REINST_B_Soulslike_Character_C_0:InheritableComponentHandler' does not have RF_NeedLoad cleared in PostLoad!
+[2026.01.02-14.53.47:634][  0]LogOutputDevice: Error: Stack: 
+[2026.01.02-14.53.47:634][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f85a717d UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:635][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81e57b2 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:635][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f83f0b50 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:635][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f83efab6 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:635][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d973f2dd UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.47:636][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d96fa53f UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.47:636][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d703020a UnrealEditor-Kismet.dll!UnknownFunction []
+[2026.01.02-14.53.47:636][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d6fc46fb UnrealEditor-Kismet.dll!UnknownFunction []
+[2026.01.02-14.53.47:636][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d6f55dbb UnrealEditor-Kismet.dll!UnknownFunction []
+[2026.01.02-14.53.47:637][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d96c34ea UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.47:637][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d96e2e6c UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.47:637][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9db5f2847 UnrealEditor-Engine.dll!UnknownFunction []
+[2026.01.02-14.53.47:637][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7ef9f40 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:638][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7edba88 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:638][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b522e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:638][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:638][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:639][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f041a5 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:639][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7edb768 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:639][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b522e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:639][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:639][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:640][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:640][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:640][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:640][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:641][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:641][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:641][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:641][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:642][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:642][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:642][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:642][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:643][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f04b50 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:643][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:643][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:643][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:643][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:644][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:644][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:644][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:644][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:645][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:645][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:645][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:645][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:646][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:646][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:646][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:646][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:647][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:647][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:647][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:647][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:647][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f04a3e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:648][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f04a3e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:648][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:648][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:648][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:649][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:649][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:649][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:649][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:649][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:650][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81afa54 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:650][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818de17 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:650][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:650][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:651][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:651][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:651][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:651][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:652][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81afa54 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:652][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818de17 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:652][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:652][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:652][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:653][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:653][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:653][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:653][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:654][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:654][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:654][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:654][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:655][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:655][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:655][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:655][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:655][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:656][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.47:656][  0]LogOutputDevice: Error: 
+[2026.01.02-14.53.49:656][  0]LogOutputDevice: Error: === Handled ensure: ===
+[2026.01.02-14.53.49:656][  0]LogOutputDevice: Error: 
+[2026.01.02-14.53.49:656][  0]LogOutputDevice: Error: Ensure condition failed: (GetLoaderType() != ELoaderType::ZenLoader) || !HasAnyFlags(RF_NeedLoad)  [File:D:\build\++UE5\Sync\Engine\Source\Runtime\CoreUObject\Private\UObject\Obj.cpp] [Line: 1346] 
+[2026.01.02-14.53.49:656][  0]LogOutputDevice: Error: Object 'SimpleConstructionScript /Engine/Transient.REINST_B_Soulslike_Character_C_0:SimpleConstructionScript_0' does not have RF_NeedLoad cleared in PostLoad!
+[2026.01.02-14.53.49:657][  0]LogOutputDevice: Error: Stack: 
+[2026.01.02-14.53.49:657][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f85a717d UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:657][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81e57b2 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:657][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f83f0b50 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:657][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f83efab6 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:658][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d973f2dd UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.49:658][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d96fa53f UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.49:658][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d703020a UnrealEditor-Kismet.dll!UnknownFunction []
+[2026.01.02-14.53.49:658][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d6fc46fb UnrealEditor-Kismet.dll!UnknownFunction []
+[2026.01.02-14.53.49:659][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d6f55dbb UnrealEditor-Kismet.dll!UnknownFunction []
+[2026.01.02-14.53.49:659][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d96c34ea UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.49:659][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d96e2e6c UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.49:659][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9db5f2847 UnrealEditor-Engine.dll!UnknownFunction []
+[2026.01.02-14.53.49:659][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7ef9f40 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:660][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7edba88 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:660][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b522e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:660][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:660][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:661][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f041a5 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:661][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7edb768 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:661][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b522e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:661][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:662][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:662][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:662][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:662][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:663][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:663][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:663][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:663][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:663][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:664][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:664][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:664][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:664][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:665][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f04b50 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:665][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:665][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:665][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:665][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:666][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:666][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:666][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:666][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:667][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:667][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:667][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:667][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:668][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:668][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:668][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:668][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:669][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:669][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:669][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:669][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:670][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f04a3e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:670][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f04a3e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:670][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:670][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:670][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:671][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:671][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:671][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:671][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:672][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:672][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81afa54 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:672][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818de17 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:672][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:673][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:673][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:673][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:673][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:673][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:674][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81afa54 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:674][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818de17 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:674][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:674][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:675][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:675][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:675][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:675][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:676][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:676][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:676][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:676][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:676][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:677][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:677][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:677][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:677][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:678][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:678][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:678][  0]LogOutputDevice: Error: 
+[2026.01.02-14.53.49:722][  0]LogOutputDevice: Error: === Handled ensure: ===
+[2026.01.02-14.53.49:722][  0]LogOutputDevice: Error: 
+[2026.01.02-14.53.49:722][  0]LogOutputDevice: Error: Ensure condition failed: (GetLoaderType() != ELoaderType::ZenLoader) || !HasAnyFlags(RF_NeedLoad)  [File:D:\build\++UE5\Sync\Engine\Source\Runtime\CoreUObject\Private\UObject\Obj.cpp] [Line: 1346] 
+[2026.01.02-14.53.49:722][  0]LogOutputDevice: Error: Object 'InheritableComponentHandler /Engine/Transient.REINST_B_Soulslike_NPC_C_0:InheritableComponentHandler' does not have RF_NeedLoad cleared in PostLoad!
+[2026.01.02-14.53.49:723][  0]LogOutputDevice: Error: Stack: 
+[2026.01.02-14.53.49:723][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f85a717d UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:723][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81e57b2 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:723][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f83f0b50 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:724][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f83efab6 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:724][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d973f2dd UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.49:724][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d96fa53f UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.49:724][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d703020a UnrealEditor-Kismet.dll!UnknownFunction []
+[2026.01.02-14.53.49:724][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d6fc46fb UnrealEditor-Kismet.dll!UnknownFunction []
+[2026.01.02-14.53.49:725][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d6f55dbb UnrealEditor-Kismet.dll!UnknownFunction []
+[2026.01.02-14.53.49:725][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d96c34ea UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.49:725][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d96e2e6c UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.49:725][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9db5f2847 UnrealEditor-Engine.dll!UnknownFunction []
+[2026.01.02-14.53.49:726][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7ef9f40 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:726][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7edba88 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:726][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b522e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:726][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:726][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:727][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f041a5 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:727][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7edb768 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:727][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b522e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:727][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:728][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:728][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:728][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:729][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:729][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:729][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:729][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:730][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:730][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:730][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:730][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:730][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:731][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:731][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f04b50 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:731][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:731][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:732][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:732][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:732][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:732][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:733][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:733][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:733][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:733][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:733][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:734][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:734][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:734][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:734][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:735][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:735][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:735][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:735][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:735][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:736][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f04a3e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:736][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f04a3e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:736][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:736][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:737][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:737][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:737][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:737][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:738][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:738][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:738][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81afa54 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:738][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818de17 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:738][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:739][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:739][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:739][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:739][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:740][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:740][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81afa54 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:740][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818de17 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:740][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:740][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:741][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:741][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:741][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:741][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:742][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:742][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:742][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:742][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:743][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:743][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:743][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:743][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:743][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:744][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:744][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:744][  0]LogOutputDevice: Error: 
+[2026.01.02-14.53.49:789][  0]LogOutputDevice: Error: === Handled ensure: ===
+[2026.01.02-14.53.49:790][  0]LogOutputDevice: Error: 
+[2026.01.02-14.53.49:790][  0]LogOutputDevice: Error: Ensure condition failed: (GetLoaderType() != ELoaderType::ZenLoader) || !HasAnyFlags(RF_NeedLoad)  [File:D:\build\++UE5\Sync\Engine\Source\Runtime\CoreUObject\Private\UObject\Obj.cpp] [Line: 1346] 
+[2026.01.02-14.53.49:790][  0]LogOutputDevice: Error: Object 'SimpleConstructionScript /Engine/Transient.REINST_B_Soulslike_NPC_C_0:SimpleConstructionScript_0' does not have RF_NeedLoad cleared in PostLoad!
+[2026.01.02-14.53.49:790][  0]LogOutputDevice: Error: Stack: 
+[2026.01.02-14.53.49:791][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f85a717d UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:791][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81e57b2 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:791][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f83f0b50 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:791][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f83efab6 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:792][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d973f2dd UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.49:792][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d96fa53f UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.49:792][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d703020a UnrealEditor-Kismet.dll!UnknownFunction []
+[2026.01.02-14.53.49:792][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d6fc46fb UnrealEditor-Kismet.dll!UnknownFunction []
+[2026.01.02-14.53.49:792][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d6f55dbb UnrealEditor-Kismet.dll!UnknownFunction []
+[2026.01.02-14.53.49:793][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d96c34ea UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.49:793][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9d96e2e6c UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.49:793][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9db5f2847 UnrealEditor-Engine.dll!UnknownFunction []
+[2026.01.02-14.53.49:793][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7ef9f40 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:794][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7edba88 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:794][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b522e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:794][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:794][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:795][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f041a5 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:795][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7edb768 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:795][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b522e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:795][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:796][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:796][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:796][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:796][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:797][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:797][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:797][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:797][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:798][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:798][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:798][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:798][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:798][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:799][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f04b50 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:799][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:799][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:799][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:800][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:800][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:800][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:800][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:801][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:801][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:801][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:801][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:801][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:802][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:802][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:802][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:802][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:803][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:803][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:803][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:803][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:803][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f04a3e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:803][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f04a3e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:804][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:804][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:804][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:804][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:805][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:805][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:805][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:805][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:805][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81afa54 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:806][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818de17 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:806][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:806][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:806][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:807][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:807][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:807][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:807][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81afa54 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:807][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818de17 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:807][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:808][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:808][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:808][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:808][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:809][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:809][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:809][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:809][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:810][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:810][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:810][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:810][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:810][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:811][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:811][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:811][  0]LogOutputDevice: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.49:811][  0]LogOutputDevice: Error: 
+[2026.01.02-14.53.49:820][  0]LogClass: Warning: SerializeFromMismatchedTag failed: Type mismatch in AvailableActions - Previous (ObjectProperty) Current(StructProperty(GameplayTag(/Script/GameplayTags))) in package: FObjectReader
+[2026.01.02-14.53.49:820][  0]LogClass: Warning: Map Element Type mismatch in AvailableActions - Previous (StructProperty(GameplayTag(/Script/GameplayTags)) to ObjectProperty) Current (StructProperty(GameplayTag(/Script/GameplayTags)) to StructProperty(GameplayTag(/Script/GameplayTags))) for package: FObjectReader
+[2026.01.02-14.53.49:821][  0]LogEnum: Warning: EnumRedirect for enum ESLFDirection maps 'E_Direction::NewEnumerator8' to invalid value 'ESLFDirection::NewEnumerator8'!
+[2026.01.02-14.53.49:821][  0]LogProperty: Warning: Serialized BlueprintGeneratedClass /Game/SoulslikeFramework/Data/_AnimationData/PDA_PoiseBreakAnimData.PDA_PoiseBreakAnimData_C for a property of Class /Script/SLFConversion.PDA_PoiseBreakAnimData. Reference will be nulled.
+    ReferencingObject = AC_AI_CombatManager_C /Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager.Default__AC_AI_CombatManager_C
+    Property = ObjectProperty /Script/SLFConversion.AC_AI_CombatManager:PoiseBreakAsset
+    Item = PDA_PoiseBreakAnimData_C /Game/SoulslikeFramework/Data/_AnimationData/DA_ExamplePoiseBreak_Enemy_Guard.DA_ExamplePoiseBreak_Enemy_Guard
+[2026.01.02-14.53.49:823][  0]LogEnum: Warning: EnumRedirect for enum ESLFHitReactType maps 'E_HitReactType::NewEnumerator3' to invalid value 'ESLFHitReactType::NewEnumerator3'!
+[2026.01.02-14.53.49:823][  0]LogEnum: Warning: EnumRedirect for enum ESLFDotProductThreshold maps 'E_DotProductThreshold::NewEnumerator1' to invalid value 'ESLFDotProductThreshold::NewEnumerator1'!
+[2026.01.02-14.53.49:824][  0]LogProperty: Warning: Serialized BlueprintGeneratedClass /Game/SoulslikeFramework/Data/_AnimationData/PDA_CombatReactionAnimData_Player.PDA_CombatReactionAnimData_Player_C for a property of Class /Script/SLFConversion.PDA_CombatReactionAnimData_Player. Reference will be nulled.
+    ReferencingObject = AC_CombatManager_C /Game/SoulslikeFramework/Blueprints/Components/AC_CombatManager.Default__AC_CombatManager_C
+    Property = ObjectProperty /Script/SLFConversion.AC_CombatManager:ReactionAnimset
+    Item = PDA_CombatReactionAnimData_Player_C /Game/SoulslikeFramework/Data/_AnimationData/DA_ExamplePlayerReactionAnimset.DA_ExamplePlayerReactionAnimset
+[2026.01.02-14.53.49:826][  0]LogEnum: Warning: EnumRedirect for enum ESLFHitReactType maps 'E_HitReactType::NewEnumerator3' to invalid value 'ESLFHitReactType::NewEnumerator3'!
+[2026.01.02-14.53.49:826][  0]LogEnum: Warning: EnumRedirect for enum ESLFOverlayState maps 'E_OverlayState::NewEnumerator0' to invalid value 'ESLFOverlayState::NewEnumerator0'!
+[2026.01.02-14.53.49:827][  0]LogEnum: Warning: EnumRedirect for enum ESLFWeaponAbilityHandle maps 'E_WeaponAbilityHandle::NewEnumerator0' to invalid value 'ESLFWeaponAbilityHandle::NewEnumerator0'!
+[2026.01.02-14.53.49:827][  0]LogEnum: Warning: EnumRedirect for enum ESLFOverlayState maps 'E_OverlayState::NewEnumerator0' to invalid value 'ESLFOverlayState::NewEnumerator0'!
+[2026.01.02-14.53.49:828][  0]LogEnum: Warning: EnumRedirect for enum ESLFOverlayState maps 'E_OverlayState::NewEnumerator0' to invalid value 'ESLFOverlayState::NewEnumerator0'!
+[2026.01.02-14.53.49:828][  0]LogClass: Warning: SerializeFromMismatchedTag failed: Type mismatch in Categories - Previous (StructProperty(FInventoryCategory(/Game/SoulslikeFramework/Structures/Items/FInventoryCategory),e1923e08-46b5-5424-3258-54a112e7f8bd)) Current(StructProperty(GameplayTag(/Script/GameplayTags))) in package: FObjectReader
+[2026.01.02-14.53.49:830][  0]LogClass: Warning: Array Inner Type mismatch in Categories - Previous (StructProperty(FInventoryCategory(/Game/SoulslikeFramework/Structures/Items/FInventoryCategory),e1923e08-46b5-5424-3258-54a112e7f8bd)) Current(StructProperty(GameplayTag(/Script/GameplayTags))) in package: FObjectReader
+[2026.01.02-14.53.49:831][  0]LogEnum: Warning: EnumRedirect for enum ESLFLadderClimbState maps 'E_LadderClimbState::NewEnumerator0' to invalid value 'ESLFLadderClimbState::NewEnumerator0'!
+[2026.01.02-14.53.49:832][  0]LogEnum: Warning: EnumRedirect for enum ESLFDebugWindowScaleType maps 'E_DebugWindowScaleType::NewEnumerator5' to invalid value 'ESLFDebugWindowScaleType::NewEnumerator5'!
+[2026.01.02-14.53.49:833][  0]LogEnum: Warning: EnumRedirect for enum ESLFInventoryAmountedActionType maps 'E_InventoryAmountedActionType::NewEnumerator0' to invalid value 'ESLFInventoryAmountedActionType::NewEnumerator0'!
+[2026.01.02-14.53.49:834][  0]LogClass: Warning: Struct Property ExtraSlotInfo has a struct type mismatch (tag FItemWheelNextSlotInfo(/Game/SoulslikeFramework/Structures/ItemWheel/FItemWheelNextSlotInfo) != prop SLFItemWheelNextSlotInfo(/Script/SLFConversion)) in package: FObjectReader. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.49:835][  0]LogEnum: Warning: EnumRedirect for enum ESLFVendorType maps 'E_VendorType::NewEnumerator0' to invalid value 'ESLFVendorType::NewEnumerator0'!
+[2026.01.02-14.53.49:835][  0]LogEnum: Warning: EnumRedirect for enum ESLFVendorType maps 'E_VendorType::NewEnumerator0' to invalid value 'ESLFVendorType::NewEnumerator0'!
+[2026.01.02-14.53.49:836][  0]LogEnum: Warning: EnumRedirect for enum ESLFItemCategory maps 'E_ItemCategory::NewEnumerator9' to invalid value 'ESLFItemCategory::NewEnumerator9'!
+[2026.01.02-14.53.49:837][  0]LogEnum: Warning: EnumRedirect for enum ESLFItemCategory maps 'E_ItemCategory::NewEnumerator9' to invalid value 'ESLFItemCategory::NewEnumerator9'!
+[2026.01.02-14.53.49:837][  0]LogEnum: Warning: EnumRedirect for enum ESLFVendorType maps 'E_VendorType::NewEnumerator0' to invalid value 'ESLFVendorType::NewEnumerator0'!
+[2026.01.02-14.53.49:839][  0]LogClass: Warning: Struct Property ItemInfo has a struct type mismatch (tag FSLFItemInfo(/Script/SLFConversion) != prop SLFItemInfo(/Script/SLFConversion)) in package: FObjectReader. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.02-14.53.51:854][  0]LogWindows: Error: === Critical error: ===
+[2026.01.02-14.53.51:854][  0]LogWindows: Error: 
+[2026.01.02-14.53.51:854][  0]LogWindows: Error: Ensure condition failed: (GetLoaderType() != ELoaderType::ZenLoader) || !HasAnyFlags(RF_NeedLoad) [File:D:\build\++UE5\Sync\Engine\Source\Runtime\CoreUObject\Private\UObject\Obj.cpp] [Line: 1346] 
+[2026.01.02-14.53.51:854][  0]LogWindows: Error: Object 'SimpleConstructionScript /Engine/Transient.REINST_B_Soulslike_NPC_C_0:SimpleConstructionScript_0' does not have RF_NeedLoad cleared in PostLoad!
+[2026.01.02-14.53.51:855][  0]LogWindows: Error: 
+[2026.01.02-14.53.51:855][  0]LogWindows: Error: 
+[2026.01.02-14.53.51:855][  0]LogWindows: Error: Unhandled Exception: EXCEPTION_ACCESS_VIOLATION reading address 0x0000000000000160
+[2026.01.02-14.53.51:855][  0]LogWindows: Error: 
+[2026.01.02-14.53.51:855][  0]LogWindows: Error: [Callstack] 0x00007ff9d703886a UnrealEditor-Kismet.dll!UnknownFunction []
+[2026.01.02-14.53.51:855][  0]LogWindows: Error: [Callstack] 0x00007ff9d70310b7 UnrealEditor-Kismet.dll!UnknownFunction []
+[2026.01.02-14.53.51:856][  0]LogWindows: Error: [Callstack] 0x00007ff9d6fc46fb UnrealEditor-Kismet.dll!UnknownFunction []
+[2026.01.02-14.53.51:856][  0]LogWindows: Error: [Callstack] 0x00007ff9d6f55dbb UnrealEditor-Kismet.dll!UnknownFunction []
+[2026.01.02-14.53.51:856][  0]LogWindows: Error: [Callstack] 0x00007ff9d96c34ea UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.51:856][  0]LogWindows: Error: [Callstack] 0x00007ff9d96e2e6c UnrealEditor-UnrealEd.dll!UnknownFunction []
+[2026.01.02-14.53.51:856][  0]LogWindows: Error: [Callstack] 0x00007ff9db5f2847 UnrealEditor-Engine.dll!UnknownFunction []
+[2026.01.02-14.53.51:857][  0]LogWindows: Error: [Callstack] 0x00007ff9f7ef9f40 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:857][  0]LogWindows: Error: [Callstack] 0x00007ff9f7edba88 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:857][  0]LogWindows: Error: [Callstack] 0x00007ff9f81b522e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:857][  0]LogWindows: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:857][  0]LogWindows: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:858][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f041a5 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:858][  0]LogWindows: Error: [Callstack] 0x00007ff9f7edb768 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:858][  0]LogWindows: Error: [Callstack] 0x00007ff9f81b522e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:858][  0]LogWindows: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:859][  0]LogWindows: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:859][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:859][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:859][  0]LogWindows: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:859][  0]LogWindows: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:860][  0]LogWindows: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:860][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:860][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:860][  0]LogWindows: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:861][  0]LogWindows: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:861][  0]LogWindows: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:861][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:861][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:861][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f04b50 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:862][  0]LogWindows: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:862][  0]LogWindows: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:862][  0]LogWindows: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:862][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:863][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:863][  0]LogWindows: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:863][  0]LogWindows: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:863][  0]LogWindows: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:863][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:864][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:864][  0]LogWindows: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:864][  0]LogWindows: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:864][  0]LogWindows: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:864][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:865][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:865][  0]LogWindows: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:865][  0]LogWindows: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:865][  0]LogWindows: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:866][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:866][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:866][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f04a3e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:866][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f04a3e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:866][  0]LogWindows: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:867][  0]LogWindows: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:867][  0]LogWindows: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:867][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:867][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:867][  0]LogWindows: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:868][  0]LogWindows: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:868][  0]LogWindows: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:868][  0]LogWindows: Error: [Callstack] 0x00007ff9f81afa54 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:868][  0]LogWindows: Error: [Callstack] 0x00007ff9f818de17 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:869][  0]LogWindows: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:869][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:869][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:869][  0]LogWindows: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:869][  0]LogWindows: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:870][  0]LogWindows: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:870][  0]LogWindows: Error: [Callstack] 0x00007ff9f81afa54 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:870][  0]LogWindows: Error: [Callstack] 0x00007ff9f818de17 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:870][  0]LogWindows: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:870][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:871][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:871][  0]LogWindows: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:871][  0]LogWindows: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:871][  0]LogWindows: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:872][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:872][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:872][  0]LogWindows: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:872][  0]LogWindows: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:872][  0]LogWindows: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:873][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:873][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:873][  0]LogWindows: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:873][  0]LogWindows: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:874][  0]LogWindows: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:874][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:874][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:874][  0]LogWindows: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:874][  0]LogWindows: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:875][  0]LogWindows: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:875][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:875][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f0493c UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:875][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f04a3e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:876][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f04a3e UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:876][  0]LogWindows: Error: [Callstack] 0x00007ff9f81b521f UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:876][  0]LogWindows: Error: [Callstack] 0x00007ff9f818faa8 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:876][  0]LogWindows: Error: [Callstack] 0x00007ff9f8190c28 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:876][  0]LogWindows: Error: [Callstack] 0x00007ff9f7f05c85 UnrealEditor-CoreUObject.dll!UnknownFunction []
+[2026.01.02-14.53.51:877][  0]LogWindows: Error: 

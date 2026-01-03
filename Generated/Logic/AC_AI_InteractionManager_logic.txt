@@ -1,0 +1,10 @@
+// Logic implementations for AC_AI_InteractionManager
+// Generated from AC_AI_InteractionManager.json
+
+// ═══ GetCurrentDialogEntry ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_InteractionManager::GetCurrentDialogEntry called"));
+
+	// TODO: Handle K2Node_GetDataTableRow - Get Data Table Row
+	// Set output: Out Row = /* Get Data Table Row.ReturnValue */
+	return;
+

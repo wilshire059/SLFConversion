@@ -1,0 +1,535 @@
+// Logic implementations for AC_EquipmentManager
+// Generated from AC_EquipmentManager.json
+
+// ═══ IsSlotOccupied? ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::IsSlotOccupied? called"));
+
+	// Set output: Occupied? = Map_FindResult.ReturnValue
+	return;
+
+// ═══ EquipWeaponToSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::EquipWeaponToSlot called"));
+
+	if (/* Equal (GameplayTag).ReturnValue */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	IsSlotOccupied?(/*SlotTag*/ TargetEquipmentSlot);
+	if (IsSlotOccupied?Result.Occupied?)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	UnequipItemAtSlot(/*SlotTag*/ TargetEquipmentSlot);
+	if (IsValidSoftClassReferenceResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	Event AsyncSpawnAndEquipWeapon(/*TargetItem*/ TargetItem, /*TargetSlot*/ TargetEquipmentSlot);
+	AddGameplayTag(/*Tag*/ /* Break FEquipment Info.WeaponOverlay_125_11920DAE48B57F39FDA57EB28FFB7A94 */, /*TagContainer*/ /* Select.ReturnValue */);
+	UpdateOverlayStates();
+	// Macro: ForEachLoop
+	if (/* Contains Item.ReturnValue */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	// TODO: Handle K2Node_CallDelegate - Call On Weapon Ability Removed
+	// Output Success? uses default value
+	return;
+
+// ═══ EquipArmorToSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::EquipArmorToSlot called"));
+
+	IsSlotOccupied?(/*SlotTag*/ TargetEquipmentSlot);
+	if (IsSlotOccupied?Result.Occupied?)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	UnequipItemAtSlot(/*SlotTag*/ TargetEquipmentSlot);
+	// Macro: ForEachLoop
+
+// ═══ UnequipWeaponAtSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::UnequipWeaponAtSlot called"));
+
+	if (Map_FindResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	LOCAL_Item = Map_FindResult.Value;
+	RemoveGameplayTag(/*Tag*/ /* Break FEquipment Info.WeaponOverlay_125_11920DAE48B57F39FDA57EB28FFB7A94 */, /*TagContainer*/ /* Select.ReturnValue */);
+	UpdateOverlayStates();
+	// Macro: ForEachLoop
+	// TODO: Handle K2Node_CallDelegate - Call On Item Unequipped from Slot
+	Map_Remove(/*Key*/ SlotTag, /*TargetMap*/ HiddenItems);
+	Map_Remove(/*Key*/ SlotTag, /*TargetMap*/ AllEquippedItems);
+
+// ═══ UnequipArmorAtSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::UnequipArmorAtSlot called"));
+
+	if (Map_FindResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	LOCAL_ItemData = /* Break FCurrent Equipment.AssignedItem_2_13A72E96473227F9F59B4EA2EEE0F7E1 */;
+	// Macro: ForEachLoop
+
+// ═══ HideItemAtSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::HideItemAtSlot called"));
+
+	if (Map_FindResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	LOCAL_Item = Map_FindResult.Value;
+	RemoveGameplayTag(/*Tag*/ /* Break FEquipment Info.WeaponOverlay_125_11920DAE48B57F39FDA57EB28FFB7A94 */, /*TagContainer*/ /* Select.ReturnValue */);
+	UpdateOverlayStates();
+	if (Map_IsNotEmptyResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	TryRemoveBuffs(/*Buffs | Ranks*/ /* Break FEquipment Info.GrantedBuffRank_123_40128BF24CBE7E50FF3B3080C7C93E7A */, /*DelayDuration*/ 0.100000);
+	// Macro: ForEachLoop
+
+// ═══ IsItemEquipped? ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::IsItemEquipped? called"));
+
+	// Macro: ForEachLoopWithBreak
+
+// ═══ IsItemEquippedToSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::IsItemEquippedToSlot called"));
+
+	// Macro: ForEachLoopWithBreak
+
+// ═══ GetBuffManager ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::GetBuffManager called"));
+
+	// TODO: Handle K2Node_Message - Get Pawn from Controller
+Target is BPI Controller
+	if (IsValid(GetComponentByClassResult.ReturnValue))
+	{
+		// Is Valid branch
+	}
+
+// ═══ GetSpawnedItemAtSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::GetSpawnedItemAtSlot called"));
+
+	if (Map_FindResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	// Set output: Item = Map_FindResult.Value
+	return;
+	// Output Item uses default value
+	return;
+
+// ═══ GetActiveWeaponSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::GetActiveWeaponSlot called"));
+
+	// Macro: ForEachLoopWithBreak
+
+// ═══ GetActiveToolSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::GetActiveToolSlot called"));
+
+	// Set output: ActiveSlot = ActiveToolSlot
+	return;
+
+// ═══ SetActiveToolSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::SetActiveToolSlot called"));
+
+	ActiveToolSlot = ActiveToolSlot;
+
+// ═══ GetActiveWheelSlotForTool ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::GetActiveWheelSlotForTool called"));
+
+	// TODO: Handle K2Node_Message - Get Player HUD
+Target is BPI Controller
+	LOCAL_EquippedSlot = ActiveSlot;
+	// Set output: ActiveSlot = /* Set LOCAL_EquippedSlot.Output_Get */
+	return;
+
+// ═══ GetActiveWheelSlotForWeapon ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::GetActiveWheelSlotForWeapon called"));
+
+	// TODO: Handle K2Node_Message - Get Player HUD
+Target is BPI Controller
+	LOCAL_EquippedSlot = ActiveSlot;
+	// Set output: ActiveSlot = /* Set LOCAL_EquippedSlot.Output_Get */
+	return;
+
+// ═══ ApplyStatChanges ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::ApplyStatChanges called"));
+
+	Map_Values(/*TargetMap*/ /* Break FEquipment Info.StatChanges_80_72B00A9848F403C4AAC17B8A94EE83A9 */);
+	Map_Keys(/*TargetMap*/ /* Break FEquipment Info.StatChanges_80_72B00A9848F403C4AAC17B8A94EE83A9 */);
+	// TODO: Handle K2Node_Message - Get Pawn from Controller
+Target is BPI Controller
+	// Macro: ForEachLoop
+
+// ═══ GetItemAtSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::GetItemAtSlot called"));
+
+	if (Map_FindResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	// Set output: ItemData = ItemInformation
+	// Set output: ItemAsset = /* Break FCurrent Equipment.AssignedItem_2_13A72E96473227F9F59B4EA2EEE0F7E1 */
+	// Set output: Id = /* Break FCurrent Equipment.Id_5_C117066D4524DB23A754E892EEEA85A7 */
+	return;
+	// Output ItemData uses default value
+	// Output ItemAsset uses default value
+	// Output Id uses default value
+	return;
+
+// ═══ CheckRequiredStats ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::CheckRequiredStats called"));
+
+	if (Map_IsNotEmptyResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	// TODO: Handle K2Node_Message - Get Pawn from Controller
+Target is BPI Controller
+	Map_Values(/*TargetMap*/ ActiveStats);
+	Map_Keys(/*TargetMap*/ ActiveStats);
+	// Macro: ForEachLoopWithBreak
+	// Output CanEquip uses default value
+	return;
+
+// ═══ SerializeEquipmentData ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::SerializeEquipmentData called"));
+
+	Map_Keys(/*TargetMap*/ AllEquippedItems);
+	Map_Values(/*TargetMap*/ AllEquippedItems);
+	// Macro: ForEachLoop
+
+// ═══ EquipItemToSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::EquipItemToSlot called"));
+
+	if (Map_IsNotEmptyResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	TryGrantBuffs(/*Buffs | Ranks*/ /* Break FEquipment Info.GrantedBuffRank_123_40128BF24CBE7E50FF3B3080C7C93E7A */, /*IsLoading?*/ false);
+	// Macro: SwitchOnSlot
+
+// ═══ UnequipItemAtSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::UnequipItemAtSlot called"));
+
+	if (Map_IsNotEmptyResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	TryRemoveBuffs(/*Buffs | Ranks*/ /* Break FEquipment Info.GrantedBuffRank_123_40128BF24CBE7E50FF3B3080C7C93E7A */, /*DelayDuration*/ 0.100000);
+	// Macro: SwitchOnSlot
+
+// ═══ EquipTalismanToSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::EquipTalismanToSlot called"));
+
+	IsSlotOccupied?(/*SlotTag*/ TargetEquipmentSlot);
+	if (IsSlotOccupied?Result.Occupied?)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	UnequipItemAtSlot(/*SlotTag*/ TargetEquipmentSlot);
+	// Macro: ForEachLoop
+
+// ═══ UnequipTalismanAtSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::UnequipTalismanAtSlot called"));
+
+	LOCAL_Item = /* Break FCurrent Equipment.AssignedItem_2_13A72E96473227F9F59B4EA2EEE0F7E1 */;
+	// Macro: ForEachLoop
+
+// ═══ GetAmountOfEquippedItem ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::GetAmountOfEquippedItem called"));
+
+	Map_Values(/*TargetMap*/ AllEquippedItems);
+	// Macro: ForEachLoop
+
+// ═══ EquipToolToSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::EquipToolToSlot called"));
+
+	if (/* Equal (GameplayTag).ReturnValue */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	IsSlotOccupied?(/*SlotTag*/ TargetEquipmentSlot);
+	if (IsSlotOccupied?Result.Occupied?)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	UnequipItemAtSlot(/*SlotTag*/ TargetEquipmentSlot);
+	// Macro: ForEachLoop
+
+// ═══ UnequipToolAtSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::UnequipToolAtSlot called"));
+
+	if (Map_FindResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	LOCAL_Item = Map_FindResult.Value;
+	// Macro: ForEachLoop
+
+// ═══ UpdateOverlayStates ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::UpdateOverlayStates called"));
+
+	// TODO: Handle K2Node_ExecutionSequence - Sequence
+
+// ═══ AreBothWeaponSlotsActive? ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::AreBothWeaponSlotsActive? called"));
+
+	// Set output: ReturnValue = /* AND Boolean.ReturnValue */
+	return;
+
+// ═══ RefreshActiveGuardSequence ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::RefreshActiveGuardSequence called"));
+
+	AreBothWeaponSlotsActive?();
+	if (AreBothWeaponSlotsActive?Result.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	// Macro: GetTwoHandStance
+	if (IsValid(GetItemAtSlotResult.ItemAsset))
+	{
+		// Is Valid branch
+	}
+
+// ═══ DoesEquipmentSupportGuard? ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::DoesEquipmentSupportGuard? called"));
+
+	if (IsValidResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	if (/* OR Boolean.ReturnValue */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	// Output ReturnValue uses default value
+	return;
+	// Output ReturnValue uses default value
+	return;
+	// Output ReturnValue uses default value
+	return;
+
+// ═══ OverrideOverlayStates ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::OverrideOverlayStates called"));
+
+	LeftHandOverlayState = LeftHandOverlayState;
+	RightHandOverlayState = RightHandOverlayState;
+	RefreshActiveGuardSequence();
+
+// ═══ IsDualWieldPossible? ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::IsDualWieldPossible? called"));
+
+	AreBothWeaponSlotsActive?();
+	if (AreBothWeaponSlotsActive?Result.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	// Set output: ReturnValue = /* Equal (Object).ReturnValue */
+	return;
+
+// ═══ WieldItemAtSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::WieldItemAtSlot called"));
+
+	if (Map_FindResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	LOCAL_Item = Map_FindResult.Value;
+	AddGameplayTag(/*Tag*/ /* Break FEquipment Info.WeaponOverlay_125_11920DAE48B57F39FDA57EB28FFB7A94 */, /*TagContainer*/ /* Select.ReturnValue */);
+	UpdateOverlayStates();
+	RefreshActiveGuardSequence();
+	LOCAL_Item->SetActorHiddenInGame(/*bNewHidden*/ false);
+
+// ═══ UnwieldItemAtSlot ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::UnwieldItemAtSlot called"));
+
+	if (Map_FindResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	LOCAL_Item = Map_FindResult.Value;
+	RemoveGameplayTag(/*Tag*/ /* Break FEquipment Info.WeaponOverlay_125_11920DAE48B57F39FDA57EB28FFB7A94 */, /*TagContainer*/ /* Select.ReturnValue */);
+	UpdateOverlayStates();
+	RefreshActiveGuardSequence();
+	LOCAL_Item->SetActorHiddenInGame(/*bNewHidden*/ true);
+
+// ═══ AdjustForTwoHandStance ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::AdjustForTwoHandStance called"));
+
+	// Macro: GetTwoHandStance
+
+// ═══ IsTwoHandStanceActive? ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::IsTwoHandStanceActive? called"));
+
+	if (/* Equal (Enum).ReturnValue */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	// Output LeftHand uses default value
+	// Output RightHand uses default value
+	return;
+	if (/* Equal (Enum).ReturnValue */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	// Output LeftHand uses default value
+	// Output RightHand uses default value
+	return;
+	// Output LeftHand uses default value
+	// Output RightHand uses default value
+	return;
+
+// ═══ ReinitializeMovementWithWeight ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::ReinitializeMovementWithWeight called"));
+
+	// TODO: Handle K2Node_Message - Get Pawn from Controller
+Target is BPI Controller
+	if (IsValid(/* GetPawnFromController.Pawn */))
+	{
+		// Is Valid branch
+	}
+
+// ═══ UnequipToolFromOtherSlots ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::UnequipToolFromOtherSlots called"));
+
+	// TODO: Handle K2Node_SwitchEnum - Switch on E_ItemCategory
+
+// ═══ TryGrantBuffs ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::TryGrantBuffs called"));
+
+	Map_Values(/*TargetMap*/ Buffs | Ranks);
+	Map_Keys(/*TargetMap*/ Buffs | Ranks);
+	// Macro: ForEachLoop
+
+// ═══ TryRemoveBuffs ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::TryRemoveBuffs called"));
+
+	Map_Keys(/*TargetMap*/ Buffs | Ranks);
+	// Macro: ForEachLoop
+
+// ═══ GetGuardHitMontage ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::GetGuardHitMontage called"));
+
+	AreBothWeaponSlotsActive?();
+	if (AreBothWeaponSlotsActive?Result.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	// Macro: GetTwoHandStance
+	if (IsValid(GetItemAtSlotResult.ItemAsset))
+	{
+		// Is Valid branch
+	}
+

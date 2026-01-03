@@ -1,0 +1,125 @@
+// Logic implementations for AC_StatManager
+// Generated from AC_StatManager.json
+
+// ═══ GetStat ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_StatManager::GetStat called"));
+
+	if (Map_FindResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	// Set output: Found Stat = Map_FindResult.Value
+	// Set output: Stat Info = StatInfo
+	return;
+	// Output Found Stat uses default value
+	// Output Stat Info uses default value
+	return;
+
+// ═══ GetAllStats ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_StatManager::GetAllStats called"));
+
+	Map_Values(/*TargetMap*/ ActiveStats);
+	// Set output: StatObjects = Map_ValuesResult.Values
+	// Set output: StatClassesAndCategories = Stats
+	return;
+
+// ═══ ResetStat ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_StatManager::ResetStat called"));
+
+	GetStatResult.Found Stat->AdjustValue(/*Change*/ /* float - float.ReturnValue */, /*Level Up?*/ false, /*TriggerRegen?*/ false, /*ValueType*/ NewEnumerator0);
+
+// ═══ AdjustStat ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_StatManager::AdjustStat called"));
+
+	if (IsValid(GetStatResult.Found Stat))
+	{
+		// Is Valid branch
+	}
+
+// ═══ AdjustAffected ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_StatManager::AdjustAffected called"));
+
+	if (IsValid(GetStatResult.Found Stat))
+	{
+		// Is Valid branch
+	}
+
+// ═══ AdjustAffectedStats ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_StatManager::AdjustAffectedStats called"));
+
+	if (Greater_IntIntResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	Map_Keys(/*TargetMap*/ /* Break FStat Behavior.StatstoAffect_18_5396C90A4B21B7FDF091E985B665D57E */);
+	Map_Values(/*TargetMap*/ /* Break FStat Behavior.StatstoAffect_18_5396C90A4B21B7FDF091E985B665D57E */);
+	// Macro: ForEachLoop
+	return;
+
+// ═══ SerializeStatsData ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_StatManager::SerializeStatsData called"));
+
+	// TODO: Handle K2Node_CallArrayFunction - Clear
+	// Macro: ForEachLoop
+
+// ═══ InitializeLoadedStats ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_StatManager::InitializeLoadedStats called"));
+
+	if (Not_PreBoolResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	// Macro: ForEachLoop
+
+// ═══ GetStatsForCategory ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_StatManager::GetStatsForCategory called"));
+
+	Map_Keys(/*TargetMap*/ Stats);
+	Map_Values(/*TargetMap*/ Stats);
+	// Macro: ForEachLoop
+
+// ═══ AdjustLevel ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_StatManager::AdjustLevel called"));
+
+	if (Not_PreBoolResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	Level = /* int + int.ReturnValue */;
+	// TODO: Handle K2Node_CallDelegate - Call On Level Updated
+
+// ═══ IsStatMoreThan ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_StatManager::IsStatMoreThan called"));
+
+	// Set output: ReturnValue = /* float > float.ReturnValue */
+	return;
+
+// ═══ ToggleRegenForStat ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_StatManager::ToggleRegenForStat called"));
+
+	if (Map_FindResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	Map_FindResult.Value->Event ToggleStatRegen(/*Stop?*/ Stop?);
+

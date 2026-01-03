@@ -1,0 +1,187 @@
+// Logic implementations for AC_CombatManager
+// Generated from AC_CombatManager.json
+
+// ═══ SetGuardState ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager::SetGuardState called"));
+
+	if (Not_PreBoolResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	if (Toggled?)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	IsGuarding? = /* value */;
+	K2_SetTimer(/*FunctionName*/ IncreaseTimeSinceGuard, /*InitialStartDelay*/ 0.000000, /*InitialStartDelayVariance*/ 0.000000, /*Object*/ nullptr, /*Time*/ GetWorldDeltaSecondsResult.ReturnValue, /*bLooping*/ true, /*bMaxOncePerFrame*/ false);
+	GuardTimer = K2_SetTimerResult.ReturnValue;
+	// TODO: Handle K2Node_Message - Set Movement Mode
+Target is BPI Generic Character
+	if (Not_PreBoolResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	IsGuarding? = /* value */;
+	K2_ClearAndInvalidateTimerHandle(/*Handle*/ GuardTimer, /*WorldContextObject*/ nullptr);
+	K2_SetTimer(/*FunctionName*/ GuardGracePeriod, /*InitialStartDelay*/ 0.000000, /*InitialStartDelayVariance*/ 0.000000, /*Object*/ nullptr, /*Time*/ GuardingGracePeriod, /*bLooping*/ false, /*bMaxOncePerFrame*/ false);
+	GuardGracePeriodTimer = K2_SetTimerResult.ReturnValue;
+	IsGuarding? = /* value */;
+	K2_ClearAndInvalidateTimerHandle(/*Handle*/ GuardGracePeriodTimer, /*WorldContextObject*/ nullptr);
+	K2_ClearAndInvalidateTimerHandle(/*Handle*/ GuardTimer, /*WorldContextObject*/ nullptr);
+	TimeSinceGuard = /* value */;
+	// TODO: Handle K2Node_Message - Set Movement Mode
+Target is BPI Generic Character
+
+// ═══ GetIsGuarding ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager::GetIsGuarding called"));
+
+	// Set output: ReturnValue = /* OR Boolean.ReturnValue */
+	return;
+
+// ═══ SetExecutionTarget ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager::SetExecutionTarget called"));
+
+	ExecutionTarget = ExecutionTarget;
+
+// ═══ HandleProjectileDamage ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager::HandleProjectileDamage called"));
+
+	if (IsValid(GetStatResult.Found Stat))
+	{
+		// Is Valid branch
+	}
+
+// ═══ HandleIncomingWeaponDamage ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager::HandleIncomingWeaponDamage called"));
+
+	CurrentHitNormal = BreakHitResultResult.ImpactNormal;
+	if (IsValid(GetComponentByClassResult.ReturnValue))
+	{
+		// Is Valid branch
+	}
+
+// ═══ GetStaminaDrainAmountForDamage ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager::GetStaminaDrainAmountForDamage called"));
+
+	// Set output: StaminaDrain = /* (MaxStamina * (IncomingDamage / MaxHealth)) * ScalingFactor.ReturnValue */
+	return;
+
+// ═══ GetKnockbackAmountForDamage ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager::GetKnockbackAmountForDamage called"));
+
+	// Set output: ReturnValue = /* vector * vector.ReturnValue */
+	return;
+
+// ═══ ProcessHandTrace ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager::ProcessHandTrace called"));
+
+	// Macro: ForEachLoopWithBreak
+
+// ═══ ApplyFistDamage ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager::ApplyFistDamage called"));
+
+	CalculateWeaponDamage(/*Additional Modifier*/ 1.000000, /*AttackPowerStats*/ /* Make FWeapon Attack Power.FWeaponAttackPower */, /*DamagedActor*/ TargetActor, /*ScalingFactor*/ /* Make Map.Map */, /*StatManager*/ GetComponentByClassResult.ReturnValue, /*__WorldContext*/ nullptr);
+	if (IsValid(GetComponentByClassResult.ReturnValue))
+	{
+		// Is Valid branch
+	}
+
+// ═══ SetInvincibility ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager::SetInvincibility called"));
+
+	IsInvincible? = IsInvincible?;
+
+// ═══ IncreaseTimeSinceGuard ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager::IncreaseTimeSinceGuard called"));
+
+	TimeSinceGuard = /* float + float.ReturnValue */;
+
+// ═══ GetTimeSinceGuardActivation ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager::GetTimeSinceGuardActivation called"));
+
+	// Set output: TimeSinceGuard = TimeSinceGuard
+	return;
+
+// ═══ SetHyperArmor ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager::SetHyperArmor called"));
+
+	HyperArmor? = HyperArmor?;
+
+// ═══ GetIsFacingEnemy ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager::GetIsFacingEnemy called"));
+
+	// Set output: ReturnValue = /* float >= float.ReturnValue */
+	return;
+
+// ═══ HandleHitReaction ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager::HandleHitReaction called"));
+
+	if (Not_PreBoolResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	// TODO: Handle K2Node_SwitchEnum - Switch on E_HitReactType
+
+// ═══ HandleDeath ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager::HandleDeath called"));
+
+	if (/* AND Boolean.ReturnValue */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	GetDirectionFromHit(/*HitInfo*/ HitInfo, /*OwnerActor*/ GetOwnerResult.ReturnValue, /*__WorldContext*/ nullptr);
+	Event OnDeath(/*KillingBlowDirection*/ GetDirectionFromHitResult.HitDirection, /*Ragdoll?*/ RagdollOnDeath?);
+
+// ═══ ApplyIncomingStatusEffects ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager::ApplyIncomingStatusEffects called"));
+
+	Map_Keys(/*TargetMap*/ StatusEffects);
+	Map_Values(/*TargetMap*/ StatusEffects);
+	// Macro: ForEachLoop
+
+// ═══ DropCurrency ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager::DropCurrency called"));
+
+	if (IsValid(GetComponentByClassResult.ReturnValue))
+	{
+		// Is Valid branch
+	}
+
+// ═══ GetBossDoorCurrencyDropLocation ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager::GetBossDoorCurrencyDropLocation called"));
+
+	GetAllActorsOfClass(/*ActorClass*/ /* default */, /*WorldContextObject*/ nullptr);
+	if (IsValid(FindNearestActorResult.ReturnValue))
+	{
+		// Is Valid branch
+	}
+
+// ═══ GuardGracePeriod ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager::GuardGracePeriod called"));
+
+	K2_ClearAndInvalidateTimerHandle(/*Handle*/ GuardGracePeriodTimer, /*WorldContextObject*/ nullptr);
+	K2_ClearAndInvalidateTimerHandle(/*Handle*/ GuardTimer, /*WorldContextObject*/ nullptr);
+	TimeSinceGuard = /* value */;
+	// TODO: Handle K2Node_Message - Set Movement Mode
+Target is BPI Generic Character
+

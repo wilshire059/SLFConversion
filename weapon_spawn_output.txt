@@ -1,0 +1,88 @@
+
+======================================================================
+WEAPON SPAWN DIAGNOSTIC
+======================================================================
+Level: L_Demo_Showcase
+
+[B_Soulslike_Enemy_Guard_C_0]
+  Class: B_Soulslike_Enemy_Guard_C
+  ChildActorComponents: 1
+
+    [Weapon]
+      ChildActorClass: B_Item_AI_Weapon_Greatsword_C
+      ChildActorTemplate: Weapon_GEN_VARIABLE_B_Item_AI_Greatsword_C_CAT
+      ChildActor error: 'ChildActorComponent' object has no attribute 'get_child_actor'
+      AttachParent: CharacterMesh0
+      AttachSocket: soulslike_weapon_r
+
+[B_Soulslike_Enemy_Demo_C_1]
+  Class: B_Soulslike_Enemy_Showcase_C
+  ChildActorComponents: 1
+
+    [Weapon]
+      ChildActorClass: B_Item_AI_Weapon_Sword_C
+      ChildActorTemplate: ChildActor_GEN_VARIABLE_B_Item_AI_Sword01_C_CAT
+      ChildActor error: 'ChildActorComponent' object has no attribute 'get_child_actor'
+      AttachParent: CharacterMesh0
+      AttachSocket: soulslike_weapon_r
+
+[B_Soulslike_Boss_Malgareth_C_2]
+  Class: B_Soulslike_Boss_Malgareth_C
+  ChildActorComponents: 2
+
+    [Weapon_L]
+      ChildActorClass: B_Item_AI_Weapon_BossMace_C
+      ChildActorTemplate: Weapon_L_GEN_VARIABLE_B_Item_AI_BossMace_C_CAT
+      ChildActor error: 'ChildActorComponent' object has no attribute 'get_child_actor'
+      AttachParent: CharacterMesh0
+      AttachSocket: weapon_l
+
+    [Weapon_R]
+      ChildActorClass: B_Item_AI_Weapon_BossMace_C
+      ChildActorTemplate: Weapon_L1_GEN_VARIABLE_B_Item_AI_BossMace_C_CAT
+      ChildActor error: 'ChildActorComponent' object has no attribute 'get_child_actor'
+      AttachParent: CharacterMesh0
+      AttachSocket: weapon_r
+
+======================================================================
+WEAPON BLUEPRINT STATUS
+======================================================================
+
+[B_Item_AI_Weapon]
+  Parent: /Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/B_Item_Weapon.B_Item_Weapon_C
+  GeneratedClass: B_Item_AI_Weapon_C
+  CDO: OK
+  StaticMeshComponents: 0
+
+[B_Item_AI_Weapon_Sword]
+  Parent: /Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/B_Item_AI_Weapon.B_Item_AI_Weapon_C
+  GeneratedClass: B_Item_AI_Weapon_Sword_C
+  CDO: OK
+  StaticMeshComponents: 0
+
+[B_Item_AI_Weapon_Greatsword]
+  Parent: /Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/B_Item_AI_Weapon.B_Item_AI_Weapon_C
+  GeneratedClass: B_Item_AI_Weapon_Greatsword_C
+  CDO: OK
+  StaticMeshComponents: 0
+
+[B_Item_AI_Weapon_BossMace]
+  Parent: /Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/B_Item_AI_Weapon.B_Item_AI_Weapon_C
+  GeneratedClass: B_Item_AI_Weapon_BossMace_C
+  CDO: OK
+  StaticMeshComponents: 0
+
+======================================================================
+ANALYSIS
+======================================================================
+
+ChildActorComponents in editor do not spawn their child actors
+until runtime (PIE). In the editor, only the template exists.
+
+SOLUTION: Test in PIE (Play In Editor) to see if weapons spawn.
+
+If weapons still don't appear in PIE, possible issues:
+  1. Weapon Blueprint has compilation errors
+  2. Weapon mesh is not assigned
+  3. Weapon is hidden or has scale 0
+  4. Attachment socket doesn't exist on skeleton

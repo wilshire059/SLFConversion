@@ -1,0 +1,35 @@
+// Logic implementations for AC_InputBuffer
+// Generated from AC_InputBuffer.json
+
+// ═══ QueueAction ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InputBuffer::QueueAction called"));
+
+	IncomingActionTag = QueuedActionTag;
+	if (BufferOpen?)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	Event QueueNext(/*ActionTag*/ /* Set IncomingActionTag.Output_Get */);
+	ConsumeInputBuffer();
+
+// ═══ ConsumeInputBuffer ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InputBuffer::ConsumeInputBuffer called"));
+
+	// TODO: Handle K2Node_CallDelegate - Call On Input Buffer Consumed
+	IncomingActionTag = /* value */;
+
+// ═══ ToggleBuffer ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InputBuffer::ToggleBuffer called"));
+
+	BufferOpen? = BufferOpen?;
+
+// ═══ ExecuteActionImmediately ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_InputBuffer::ExecuteActionImmediately called"));
+
+	IncomingActionTag = Action;
+	ConsumeInputBuffer();
+

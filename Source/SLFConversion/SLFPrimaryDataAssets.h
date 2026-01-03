@@ -7,6 +7,7 @@
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "GameplayTagContainer.h"
+#include "InstancedStruct.h"
 #include "SLFGameTypes.h"
 #include "SLFPrimaryDataAssets.generated.h"
 
@@ -60,6 +61,18 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action")
 	bool bCanBeInterrupted = true;
+
+	/** Generic data container for action-specific data (e.g., FMontage for pickup actions) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action")
+	FInstancedStruct RelevantData;
+
+	/** Required stat tag that must meet RequiredStatAmount to execute */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action")
+	FGameplayTag RequiredStatTag;
+
+	/** Required stat amount for RequiredStatTag */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action")
+	double RequiredStatAmount = 0.0;
 };
 
 //////////////////////////////////////////////////////////////////////////

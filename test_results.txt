@@ -1,0 +1,76 @@
+======================================================================
+ENEMY SYSTEM TEST
+======================================================================
+
+======================================================================
+TEST 1: Loading Enemy Character Blueprints
+======================================================================
+  [OK] B_Soulslike_Enemy
+       Generated: B_Soulslike_Enemy_C
+  [OK] B_Soulslike_Boss
+       Generated: B_Soulslike_Boss_C
+  [OK] B_Soulslike_Character
+       Generated: B_Soulslike_Character_C
+
+======================================================================
+TEST 2: Loading AI Components
+======================================================================
+  [OK] AC_AI_BehaviorManager
+  [OK] AC_AI_CombatManager
+  [OK] AC_AI_Boss
+  [OK] AC_AI_InteractionManager
+  [OK] AC_LootDropManager
+
+======================================================================
+TEST 3: Loading AI Controller and BT Assets
+======================================================================
+  [OK] AIC_SoulslikeFramework
+  [OK] B_PatrolPath
+
+======================================================================
+TEST 4: Loading Behavior Tree Tasks & Services
+======================================================================
+  [OK] BTT_ClearKey
+  [OK] BTT_GetRandomPoint
+  [OK] BTT_SimpleMoveTo
+  [OK] BTT_TryExecuteAbility
+  [OK] BTT_SwitchState
+  [OK] BTS_DistanceCheck
+  [OK] BTS_IsTargetDead
+  [OK] BTS_TryGetAbility
+
+======================================================================
+TEST 5: Loading Enemy Animation Blueprints
+======================================================================
+  [OK] ABP_SoulslikeEnemy
+       Generated: ABP_SoulslikeEnemy_C
+  [OK] ABP_SoulslikeBossNew
+       Generated: ABP_SoulslikeBossNew_C
+  [OK] ABP_SoulslikeNPC
+       Generated: ABP_SoulslikeNPC_C
+
+======================================================================
+TEST 6: Checking Enemy Interfaces
+======================================================================
+  [OK] BPI_Enemy
+  [OK] BPI_AIC
+
+======================================================================
+TEST 7: Checking C++ Enemy Classes
+======================================================================
+  [INFO] USLFSoulslikeEnemy - not exposed (normal)
+  [INFO] USLFEnemyAnimInstance - not exposed (normal)
+  [INFO] USLF_AI_BehaviorManager - not exposed (normal)
+
+======================================================================
+SUMMARY
+======================================================================
+  Enemy Characters: 3/3
+  AI Components: 5/5
+  BT Assets: 8/8
+
+[SUCCESS] Enemy system assets loaded correctly!
+
+======================================================================
+TEST COMPLETE
+======================================================================

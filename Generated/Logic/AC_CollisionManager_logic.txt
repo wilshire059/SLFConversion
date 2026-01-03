@@ -1,0 +1,39 @@
+// Logic implementations for AC_CollisionManager
+// Generated from AC_CollisionManager.json
+
+// ═══ GetTraceLocations ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_CollisionManager::GetTraceLocations called"));
+
+	LOCAL_StartLoc = GetSocketLocationResult.ReturnValue;
+	LOCAL_EndLoc = GetSocketLocationResult.ReturnValue;
+	// Set output: Trace Start Location = LOCAL_StartLoc
+	// Set output: Trace End Location = LOCAL_EndLoc
+	return;
+
+// ═══ SubsteppedTrace ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_CollisionManager::SubsteppedTrace called"));
+
+	LOCAL_CurrentStartPosition = GetTraceLocationsResult.Trace Start Location;
+	LOCAL_CurrentEndPosition = GetTraceLocationsResult.Trace End Location;
+	LOCAL_Distance = Vector_DistanceResult.ReturnValue;
+	LOCAL_Substeps = /* Max (Integer).ReturnValue */;
+	// Macro: ForLoop
+
+// ═══ ProcessTrace ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_CollisionManager::ProcessTrace called"));
+
+	// Macro: ForEachLoopWithBreak
+
+// ═══ GetMultipliers ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_CollisionManager::GetMultipliers called"));
+
+	// Set output: DamageMultiplier = DamageMultiplier
+	// Set output: TraceSizeMultiplier = TraceSizeMultiplier
+	return;
+
+// ═══ SetMultipliers ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_CollisionManager::SetMultipliers called"));
+
+	DamageMultiplier = DamageMultiplier;
+	TraceSizeMultiplier = TraceSizeMultiplier;
+

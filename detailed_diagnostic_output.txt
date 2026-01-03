@@ -1,0 +1,151 @@
+
+======================================================================
+DETAILED CHARACTER DIAGNOSTIC
+======================================================================
+Testing all systems required for character movement in PIE
+
+======================================================================
+1. CHARACTER BLUEPRINT ANALYSIS
+======================================================================
+  Loaded: B_Soulslike_Character
+  Generated Class: B_Soulslike_Character_C
+  Parent Class: /Script/SLFConversion.SLFSoulslikeCharacter
+  OK: Correctly parented to C++ SLFSoulslikeCharacter
+
+======================================================================
+2. INPUT ACTION CONFIGURATION
+======================================================================
+  OK: PlayerMappingContext = IMC_Gameplay
+  OK: IA_Move = IA_Move
+  OK: IA_Look = IA_Look
+  OK: IA_Jump = IA_Jump
+  OK: IA_Sprint = IA_Sprint_Dodge
+  OK: IA_Dodge = IA_Sprint_Dodge
+  OK: IA_Attack = IA_RightHandAttack
+  OK: IA_Guard = IA_Guard_LeftHandAttack_DualWieldAttack
+  OK: IA_Interact = IA_Interact
+  OK: IA_TargetLock = IA_TargetLock
+
+======================================================================
+3. COMPONENT ANALYSIS
+======================================================================
+  Total Components: 5
+
+  [Movement Components]
+    - CharMoveComp (CharacterMovementComponent)
+
+  [Input/Buffer Components]
+    None found - may be in parent Blueprint
+
+  [Combat Components]
+    None found - may be in parent Blueprint
+
+  [Camera Components]
+    None found - camera may not work
+
+  [Mesh Components]
+    - CharacterMesh0 (SkeletalMeshComponent)
+
+  [Other Components]
+    - CollisionCylinder (CapsuleComponent)
+    - Arrow (ArrowComponent)
+    - DefaultSceneRoot (SceneComponent)
+
+======================================================================
+4. BASE CHARACTER CHECK
+======================================================================
+  Loaded: B_BaseCharacter
+  Parent Class: /Script/SLFConversion.SLFBaseCharacter
+  OK: Correctly parented to C++ SLFBaseCharacter
+  Components in B_BaseCharacter: 5
+    - CollisionCylinder (CapsuleComponent)
+    - Arrow (ArrowComponent)
+    - CharMoveComp (CharacterMovementComponent)
+    - CharacterMesh0 (SkeletalMeshComponent)
+    - DefaultSceneRoot (SceneComponent)
+
+======================================================================
+5. GAME MODE CONFIGURATION
+======================================================================
+  Loaded: GM_SoulslikeFramework
+  DefaultPawnClass: B_Soulslike_Character_C
+  PlayerControllerClass: PC_SoulslikeFramework_C
+  HUDClass: None
+  PlayerStateClass: PS_SoulslikeFramework_C
+  GameStateClass: GS_SoulslikeFramework_C
+
+======================================================================
+6. PLAYER CONTROLLER CONFIGURATION
+======================================================================
+  Loaded: PC_SoulslikeFramework
+  Parent Class: /Script/SLFConversion.PC_SoulslikeFramework
+  GameplayMappingContext: IMC_Gameplay
+
+======================================================================
+7. ANIMATION BLUEPRINT CHECK
+======================================================================
+  SkeletalMesh Component: CharacterMesh0
+  Skeletal Mesh Asset: None
+  Animation Blueprint: ABP_SoulslikeCharacter_Additive_C
+
+======================================================================
+8. INPUT MAPPING CONTEXT ANALYSIS
+======================================================================
+  Loaded: IMC_Gameplay
+  Class: InputMappingContext
+
+======================================================================
+9. AVAILABLE LEVELS
+======================================================================
+  Searching for levels...
+    /Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_DeathTrigger.B_DeathTrigger
+    /Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_DeathTrigger.B_DeathTrigger_C
+    /Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_Destructible.B_Destructible
+    /Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_Destructible.B_Destructible_C
+    /Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_LocationActor.B_LocationActor
+    /Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_LocationActor.B_LocationActor_C
+    /Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_Torch.B_Torch
+    /Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_Torch.B_Torch_C
+    /Game/SoulslikeFramework/Data/_Curves/CF_LevelUpCosts.CF_LevelUpCosts
+    /Game/SoulslikeFramework/Data/_Datatables/DT_KeyMappingCorrelation.DT_KeyMappingCorrelation
+
+======================================================================
+10. C++ CLASS VERIFICATION
+======================================================================
+  Checking: SLFBaseCharacter
+  Checking: SLFSoulslikeCharacter
+  Checking: InputBufferComponent
+  Checking: ActionManagerComponent
+  Checking: CombatManagerComponent
+  Checking: StatManagerComponent
+
+======================================================================
+DIAGNOSTIC SUMMARY
+======================================================================
+
+Errors: 0
+Warnings: 3
+
+WARNINGS (may affect gameplay):
+  ! No InputBuffer component found in hierarchy
+  ! No camera components found
+  ! No skeletal mesh assigned
+
+======================================================================
+VERDICT: READY FOR PIE TESTING
+======================================================================
+
+The character should be able to:
+  - Spawn in the level
+  - Move with WASD (via C++ HandleMove)
+  - Look with mouse (via C++ HandleLook)
+  - Jump with Space (via C++ HandleJump)
+  - Sprint with Shift (via C++ HandleSprintStarted/Completed)
+  - Attack with left mouse (via C++ HandleAttack)
+  - Guard with right mouse (via C++ HandleGuardStarted/Completed)
+
+To test:
+  1. Open the project in Unreal Editor
+  2. Open L_Showcase or similar level
+  3. Press Play (Alt+P)
+  4. Test WASD movement and mouse look

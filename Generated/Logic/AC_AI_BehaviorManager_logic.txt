@@ -1,0 +1,48 @@
+// Logic implementations for AC_AI_BehaviorManager
+// Generated from AC_AI_BehaviorManager.json
+
+// ═══ GetBlackboard ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_BehaviorManager::GetBlackboard called"));
+
+	if (IsValid(GetBlackboardResult.ReturnValue))
+	{
+		// Is Valid branch
+	}
+
+// ═══ SetKeyValue ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_BehaviorManager::SetKeyValue called"));
+
+	// TODO: Handle K2Node_InstancedStruct - Get Instanced Struct Value
+
+// ═══ SetState ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_BehaviorManager::SetState called"));
+
+	if (IsValid(GetBlackboardResult.ReturnValue))
+	{
+		// Is Valid branch
+	}
+
+// ═══ SetTarget ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_BehaviorManager::SetTarget called"));
+
+	CurrentTarget = Target;
+	// TODO: Handle K2Node_InstancedStruct - Make Instanced Struct
+	SetKeyValue(/*Data*/ /* Make Instanced Struct.ReturnValue */, /*KeyName*/ Target);
+
+// ═══ GetTarget ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_BehaviorManager::GetTarget called"));
+
+	// Set output: Target = CurrentTarget
+	return;
+
+// ═══ GetState ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_BehaviorManager::GetState called"));
+
+	// Set output: State = /* Select.ReturnValue */
+	return;
+
+// ═══ SetPatrolPath ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_BehaviorManager::SetPatrolPath called"));
+
+	PatrolPath = PatrolPath;
+

@@ -1,0 +1,46 @@
+
+======================================================================
+WEAPON BLUEPRINT SCS DIAGNOSTIC
+======================================================================
+
+[B_Item]
+  Parent: /Script/SLFConversion.SLFItemBase
+  SCS Error: Blueprint: Failed to find property 'simple_construction_script' for attribute 'simple_construction_script' on 'Blueprint'
+
+[B_Item_Weapon]
+  Parent: /Script/SLFConversion.SLFItemWeapon
+  SCS Error: Blueprint: Failed to find property 'simple_construction_script' for attribute 'simple_construction_script' on 'Blueprint'
+
+[B_Item_AI_Weapon]
+  Parent: /Script/SLFConversion.SLFItemBase
+  SCS Error: Blueprint: Failed to find property 'simple_construction_script' for attribute 'simple_construction_script' on 'Blueprint'
+
+[B_Item_AI_Weapon_Sword]
+  Parent: /Script/SLFConversion.SLFItemBase
+  SCS Error: Blueprint: Failed to find property 'simple_construction_script' for attribute 'simple_construction_script' on 'Blueprint'
+
+======================================================================
+INHERITED COMPONENTS (from C++ parent)
+======================================================================
+
+[B_Item]
+  Total Components on CDO: 0
+
+[B_Item_Weapon]
+  Total Components on CDO: 0
+
+======================================================================
+DIAGNOSIS
+======================================================================
+
+If SCS shows no components or 'StaticMesh' is missing:
+  -> The migration cleared the Blueprint's component hierarchy
+
+SOLUTIONS:
+  1. Restore weapon Blueprints from backup:
+     C:\scripts\SLFConversion_Migration\Backups\blueprint_only\
+
+  2. Add weapons to KEEP_VARS_MAP in run_migration.py
+     This preserves Blueprint components during migration
+
+  3. Add StaticMeshComponent to C++ SLFItemBase parent class

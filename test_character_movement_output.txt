@@ -1,0 +1,45 @@
+======================================================================
+CHARACTER MOVEMENT TEST - Post Migration
+======================================================================
+
+[TEST 1] Loading B_Soulslike_Character...
+  OK: B_Soulslike_Character loaded
+  Class: B_Soulslike_Character_C
+  Parent: /Script/SLFConversion.SLFSoulslikeCharacter
+  OK: Parent is C++ class
+
+[TEST 2] Checking Input Action configuration...
+  OK: IA_Move = /Game/SoulslikeFramework/Input/Actions/IA_Move.IA_Move
+  OK: IA_Look = /Game/SoulslikeFramework/Input/Actions/IA_Look.IA_Look
+  OK: PlayerMappingContext = /Game/SoulslikeFramework/Input/IMC_Gameplay.IMC_Gameplay
+
+[TEST 3] Checking CharacterMovementComponent...
+  ISSUE: Could not check movement component: 'SLFSoulslikeCharacter' object has no attribute 'get_character_movement'
+
+[TEST 4] Checking GameMode default pawn class...
+  OK: GM_SoulslikeFramework loaded
+  DefaultPawnClass: B_Soulslike_Character_C
+
+[TEST 5] Checking PlayerController configuration...
+  OK: PC_SoulslikeFramework loaded
+  GameplayMappingContext: /Game/SoulslikeFramework/Input/IMC_Gameplay.IMC_Gameplay
+
+[TEST 6] Checking B_BaseCharacter parent class...
+  OK: B_BaseCharacter loaded
+  Parent: /Script/SLFConversion.SLFBaseCharacter
+  OK: Parent is C++ class
+
+[TEST 7] Checking component configuration...
+  Total components: 5
+  OK: Has SkeletalMeshComponent
+
+======================================================================
+SUMMARY
+======================================================================
+For character movement to work in PIE:
+1. B_Soulslike_Character must have C++ parent (SLFSoulslikeCharacter)
+2. PlayerMappingContext and Input Actions must be configured in Blueprint
+3. CharacterMovementComponent must exist with valid MaxWalkSpeed
+4. GameMode must spawn the correct character class
+
+NOTE: If Input Actions are None, configure them in the Blueprint defaults!

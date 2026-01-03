@@ -1,0 +1,40 @@
+// Logic implementations for AC_BuffManager
+// Generated from AC_BuffManager.json
+
+// ═══ RemoveBuffOfType ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_BuffManager::RemoveBuffOfType called"));
+
+	// Macro: ForEachLoopWithBreak
+
+// ═══ RemoveAllBuffsOfType ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_BuffManager::RemoveAllBuffsOfType called"));
+
+	// Macro: ForEachLoopWithBreak
+
+// ═══ RemoveBuffWithTag ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_BuffManager::RemoveBuffWithTag called"));
+
+	GetBuffsWithTag(/*Tag*/ Tag);
+	if (/* Is Not Empty.ReturnValue */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	/* Get (a copy).Output */->Event OnRemoved();
+	// TODO: Handle K2Node_CallArrayFunction - Remove Item
+	// TODO: Handle K2Node_CallDelegate - Call On Buff Detected
+
+// ═══ RemoveAllBuffsWithTag ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_BuffManager::RemoveAllBuffsWithTag called"));
+
+	GetBuffsWithTag(/*Tag*/ Tag);
+	// Macro: ForEachLoop
+
+// ═══ GetBuffsWithTag ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_BuffManager::GetBuffsWithTag called"));
+
+	// Macro: ForEachLoop
+

@@ -1,0 +1,98 @@
+# Migration Plan for W_LevelUp
+# Generated from JSON export
+# Compare with original Blueprint to verify
+
+blueprint: W_LevelUp
+path: /Game/SoulslikeFramework/Widgets/RestMenu/LevelUpMenu/W_LevelUp.W_LevelUp
+parent_class: W_Navigable_InputReader_C
+
+# ============================================================
+# VARIABLES REQUIRING MIGRATION
+# ============================================================
+variables:
+  # No variable migrations needed
+
+# ============================================================
+# NODES REQUIRING MIGRATION (Break/Make/Switch)
+# ============================================================
+nodes:
+  # No node migrations needed
+
+# ============================================================
+# PIN VALUES REQUIRING MIGRATION
+# ============================================================
+pin_values:
+  - node_guid: "36E82A5947429857C8B9C3A3ACA748BB"
+    graph: "EventGraph/ENTRY RELATED"
+    node_title: "Make FLevel Change Data"
+    pin_name: "ValueType_6_DD5AF4FE43302E61E614B9B7135A155B"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "5CD98B4044740B6E19DFC283132A7187"
+    graph: "EventGraph/ENTRY RELATED"
+    node_title: "Select"
+    pin_name: "Option 0"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "5CD98B4044740B6E19DFC283132A7187"
+    graph: "EventGraph/ENTRY RELATED"
+    node_title: "Select"
+    pin_name: "Option 1"
+    original_value: "NewEnumerator1"
+    new_value: "MaxValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator1 -> MaxValue"
+
+  - node_guid: "95D5C7C240FF59DC1993A58D4CFB9EBD"
+    graph: "EventGraph/APPLY/DISREGARD CHANGES"
+    node_title: "Adjust Value
+Target is Stat/Attribute Object"
+    pin_name: "ValueType"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "142826914746E1FD53EFCC8DAC2D95B4"
+    graph: "EventGraph/APPLY/DISREGARD CHANGES"
+    node_title: "Adjust Value
+Target is Stat/Attribute Object"
+    pin_name: "ValueType"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "E6177C4647895041B7DA38870AD73E2D"
+    graph: "HandleStatChanges"
+    node_title: "Select"
+    pin_name: "Option 0"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "E6177C4647895041B7DA38870AD73E2D"
+    graph: "HandleStatChanges"
+    node_title: "Select"
+    pin_name: "Option 1"
+    original_value: "NewEnumerator1"
+    new_value: "MaxValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator1 -> MaxValue"
+
+  - node_guid: "65067C8449B927620D7E33A4DCA0624C"
+    graph: "HandleStatChanges"
+    node_title: "Adjust Value
+Target is Stat/Attribute Object"
+    pin_name: "ValueType"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "EEED9A294BFE2DE75B89C196D9EF72A1"
+    graph: "HandleStatChanges"
+    node_title: "Make FLevel Change Data"
+    pin_name: "ValueType_6_DD5AF4FE43302E61E614B9B7135A155B"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"

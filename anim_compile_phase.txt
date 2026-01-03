@@ -1,0 +1,22 @@
+    # =========================================================================
+    # PHASE 3.5: FORCE COMPILE ANIM BPs
+    # AnimBPs need explicit compilation after reparenting to fix AnimGraph issues
+    # =========================================================================
+    print("")
+    print("=" * 60)
+    print("PHASE 3.5: FORCE COMPILE ANIM BPs")
+    print("=" * 60)
+    anim_compile_ok = 0
+    anim_compile_fail = 0
+    for bp, name, cpp, bp_type in all_bps:
+        if bp_type == "anim_bp":
+            try:
+                # Force compile the AnimBP to resolve AnimGraph duplicate issues
+                unreal.BlueprintEditorLibrary.compile_blueprint(bp)
+                anim_compile_ok += 1
+                print("  " + name + ": compiled")
+            except Exception as e:
+                anim_compile_fail += 1
+                print("  " + name + ": compile error - " + str(e))
+    print("AnimBP Compile: " + str(anim_compile_ok) + " ok, " + str(anim_compile_fail) + " failed")
+

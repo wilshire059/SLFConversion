@@ -1,0 +1,82 @@
+======================================================================
+LEVEL LOAD TEST - L_Demo_Showcase
+======================================================================
+
+[1] Loading level...
+  OK: Level loaded successfully
+
+[2] Checking world...
+  World: L_Demo_Showcase
+
+[3] Checking PlayerStart actors...
+  PlayerStart count: 1
+    - PlayerStart_3 at (740, 0, 92)
+
+[4] Checking existing characters in level...
+  Character count: 5
+    - B_Soulslike_Enemy_Guard_C_0 (B_Soulslike_Enemy_Guard_C)
+    - B_Soulslike_Enemy_Demo_C_1 (B_Soulslike_Enemy_Showcase_C)
+    - B_Soulslike_NPC_ShowcaseGuide_C_1 (B_Soulslike_NPC_ShowcaseGuide_C)
+    - B_Soulslike_NPC_ShowcaseVendor_C_1 (B_Soulslike_NPC_ShowcaseVendor_C)
+    - B_Soulslike_Boss_Malgareth_C_2 (B_Soulslike_Boss_Malgareth_C)
+
+[5] Checking enemy actors...
+  Enemy-type actors: 8
+    - B_ShowcaseEnemy_ExitCombat_C_1
+    - B_ShowcaseEnemy_StatDisplay_C_1
+    - B_Door_Boss_C_3
+    - B_Soulslike_Enemy_Guard_C_0
+    - B_Soulslike_Enemy_Demo_C_1
+    ... and 3 more
+
+[6] Checking level GameMode...
+  GameMode Override: None (will use project default)
+
+[7] Character spawn test...
+  Character class loaded: B_Soulslike_Character_C
+  CDO valid - class can be instantiated
+  CharacterMovementComponent: CharMoveComp
+    MaxWalkSpeed: 500.0
+    JumpZVelocity: 700.0
+    GravityScale: 1.75
+
+[8] Enhanced Input System check...
+  OK: All input actions configured
+    IA_Move: IA_Move
+    IA_Look: IA_Look
+    Context: IMC_Gameplay
+
+[9] C++ Movement Handler verification...
+  The following C++ functions handle movement:
+    - ASLFSoulslikeCharacter::HandleMove() -> AddMovementInput()
+    - ASLFSoulslikeCharacter::HandleLook() -> AddControllerYaw/PitchInput()
+    - ASLFSoulslikeCharacter::SetupPlayerInputComponent() binds IA_Move/IA_Look
+  These are bound in BeginPlay via EnhancedInputComponent
+
+======================================================================
+TEST SUMMARY
+======================================================================
+
+STATUS: ALL TESTS PASSED
+
+The character movement system is correctly configured:
+  1. Level loads successfully
+  2. PlayerStart exists for spawning
+  3. Character class is valid
+  4. Input actions are configured
+  5. C++ movement handlers are in place
+
+MOVEMENT FLOW:
+  Player presses WASD
+    -> Enhanced Input triggers IA_Move
+    -> HandleMove(FInputActionValue) called
+    -> GetControlRotation() for camera-relative direction
+    -> AddMovementInput(ForwardDir, RightDir)
+    -> CharacterMovementComponent processes input
+    -> Character moves!
+
+To test manually:
+  1. Open Unreal Editor
+  2. Open L_Demo_Showcase
+  3. Press Play (Alt+P)
+  4. WASD to move, Mouse to look

@@ -1,0 +1,2 @@
+Blueprint: B_Soulslike_Character
+No simple_construction_script attribute

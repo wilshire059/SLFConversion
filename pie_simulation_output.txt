@@ -1,0 +1,42 @@
+======================================================================
+PIE SIMULATION TEST - Checking all prerequisites
+======================================================================
+
+[1] GAME MODE CHECK
+  DefaultPawnClass: B_Soulslike_Character_C
+  PlayerControllerClass: PC_SoulslikeFramework_C
+  OK: GameMode has DefaultPawnClass
+
+[2] CHARACTER CHECK
+  Parent: /Script/SLFConversion.SLFSoulslikeCharacter
+  OK: Parent is C++ class
+  IA_Move: IA_Move
+  PlayerMappingContext: IMC_Gameplay
+
+[3] PLAYER CONTROLLER CHECK
+  GameplayMappingContext: IMC_Gameplay
+
+[4] LEVEL CHECK
+  Current level: Untitled
+  PlayerStart actors: 0
+
+[5] ANIMATION CHECK
+  AnimBlueprint: ABP_SoulslikeCharacter_Additive_C
+
+======================================================================
+RESULT SUMMARY
+======================================================================
+STATUS: READY FOR PIE
+
+All critical checks passed. The game should be able to start.
+Character movement should work with WASD (via IA_Move).
+Camera should work with mouse (via IA_Look).
+
+WARNINGS (may affect gameplay):
+  ! No PlayerStart actor found in level
+
+To test in PIE:
+1. Open Unreal Editor
+2. Open a level with PlayerStart
+3. Press Play
+4. Use WASD to move, mouse to look

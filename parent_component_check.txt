@@ -1,0 +1,33 @@
+======================================================================
+CHECKING PARENT COMPONENT HIERARCHY
+======================================================================
+
+--- B_Soulslike_Character ---
+[OK] Loaded: B_Soulslike_Character
+[WARNING] Could not read parent_class: Blueprint: Failed to find property 'parent_class' for attribute 'parent_class' on 'Blueprint'
+[WARNING] Could not read SCS: Blueprint: Failed to find property 'simple_construction_script' for attribute 'simple_construction_script' on 'Blueprint'
+DefaultSceneRoot: DefaultSceneRoot
+Mesh: CharacterMesh0, SkeletalMesh: NONE
+
+--- B_BaseCharacter ---
+[OK] Loaded: B_BaseCharacter
+[WARNING] Could not read parent_class: Blueprint: Failed to find property 'parent_class' for attribute 'parent_class' on 'Blueprint'
+[WARNING] Could not read SCS: Blueprint: Failed to find property 'simple_construction_script' for attribute 'simple_construction_script' on 'Blueprint'
+DefaultSceneRoot: DefaultSceneRoot
+Mesh: CharacterMesh0, SkeletalMesh: SKM_Manny
+
+--- B_Interactable ---
+[OK] Loaded: B_Interactable
+[WARNING] Could not read parent_class: Blueprint: Failed to find property 'parent_class' for attribute 'parent_class' on 'Blueprint'
+[WARNING] Could not read SCS: Blueprint: Failed to find property 'simple_construction_script' for attribute 'simple_construction_script' on 'Blueprint'
+DefaultSceneRoot: Not found
+
+--- B_Door ---
+[OK] Loaded: B_Door
+[WARNING] Could not read parent_class: Blueprint: Failed to find property 'parent_class' for attribute 'parent_class' on 'Blueprint'
+[WARNING] Could not read SCS: Blueprint: Failed to find property 'simple_construction_script' for attribute 'simple_construction_script' on 'Blueprint'
+DefaultSceneRoot: None
+
+======================================================================
+CHECK COMPLETE
+======================================================================

@@ -1,0 +1,40 @@
+{
+  "blueprint_name": "BPI_NPC",
+  "blueprint_path": "/Game/SoulslikeFramework/Blueprints/Interfaces/BPI_NPC.BPI_NPC",
+  "json_export_path": "C:\\scripts\\SLFConversion\\Exports\\BlueprintDNA_v2\\Interface\\BPI_NPC.json",
+  "cpp_header": "SLFNPC.h",
+  "cpp_source": "SLFNPC.cpp",
+  "parent_class": "UObject",
+  "parent_class_raw": "Interface",
+  "implemented_interfaces": [],
+  "migration_status": {
+    "pass1_complete": false,
+    "pass2_validated": false,
+    "pass3_complete": false,
+    "overall_status": "not_started"
+  },
+  "summary": {
+    "variable_count": 0,
+    "function_count": 0,
+    "event_dispatcher_count": 0,
+    "graph_count": 0,
+    "total_items": 0
+  },
+  "variables": [],
+  "functions": [],
+  "event_dispatchers": [],
+  "graphs": [],
+  "collapsed_graphs": [],
+  "dependencies": {
+    "structs": [],
+    "enums": [],
+    "interfaces": [],
+    "components": [],
+    "blueprints": [],
+    "data_assets": []
+  },
+  "final_summary": "",
+  "known_issues": [],
+  "debug_notes": [],
+  "test_results": []
+}

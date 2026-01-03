@@ -1,0 +1,232 @@
+# Migration Plan for B_Stat
+# Generated from JSON export
+# Compare with original Blueprint to verify
+
+blueprint: B_Stat
+path: /Game/SoulslikeFramework/Data/Stats/B_Stat.B_Stat
+parent_class: Object
+
+# ============================================================
+# VARIABLES REQUIRING MIGRATION
+# ============================================================
+variables:
+  # No variable migrations needed
+
+# ============================================================
+# NODES REQUIRING MIGRATION (Break/Make/Switch)
+# ============================================================
+nodes:
+  - node_guid: "3C0ECC4C437F30474B672E84502CB6C0"
+    graph: "AdjustValue"
+    node_class: "K2Node_SwitchEnum"
+    node_title: "Switch on E_ValueType"
+    original:
+      enum: "E_ValueType"
+    migration:
+      new_enum: "ESLFValueType"
+    pins:
+      - name: "execute"
+        direction: "Input"
+        linked_to:
+          - node: "AdjustValue"
+            pin: "then"
+      - name: "Selection"
+        direction: "Input"
+        linked_to:
+          - node: "AdjustValue"
+            pin: "ValueType"
+      - name: "NotEqual_ByteByte"
+        direction: "Input"
+      - name: "NewEnumerator0"
+        direction: "Output"
+        linked_to:
+          - node: "Reroute Node"
+            pin: "InputPin"
+      - name: "NewEnumerator1"
+        direction: "Output"
+        linked_to:
+          - node: "Reroute Node"
+            pin: "InputPin"
+    action: "Recreate Switch node with C++ enum ESLFValueType"
+
+  - node_guid: "307ECCDE40BEFDAC8600388D1F1FB5A9"
+    graph: "AdjustAffectedValue"
+    node_class: "K2Node_SwitchEnum"
+    node_title: "Switch on E_ValueType"
+    original:
+      enum: "E_ValueType"
+    migration:
+      new_enum: "ESLFValueType"
+    pins:
+      - name: "execute"
+        direction: "Input"
+        linked_to:
+          - node: "AdjustAffectedValue"
+            pin: "then"
+      - name: "Selection"
+        direction: "Input"
+        linked_to:
+          - node: "AdjustAffectedValue"
+            pin: "ValueType"
+      - name: "NotEqual_ByteByte"
+        direction: "Input"
+      - name: "NewEnumerator0"
+        direction: "Output"
+        linked_to:
+          - node: "Reroute Node"
+            pin: "InputPin"
+      - name: "NewEnumerator1"
+        direction: "Output"
+        linked_to:
+          - node: "Reroute Node"
+            pin: "InputPin"
+    action: "Recreate Switch node with C++ enum ESLFValueType"
+
+# ============================================================
+# PIN VALUES REQUIRING MIGRATION
+# ============================================================
+pin_values:
+  - node_guid: "64D4E26E466D1C74505A038BBE48510A"
+    graph: "EventGraph"
+    node_title: "Call On Stat Updated"
+    pin_name: "ValueType"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "0987086C408F82E4D6972393E4691CC4"
+    graph: "EventGraph"
+    node_title: "Call On Stat Updated"
+    pin_name: "ValueType"
+    original_value: "NewEnumerator1"
+    new_value: "MaxValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator1 -> MaxValue"
+
+  - node_guid: "63AFA1B54454A8A64F15F6909C4124FB"
+    graph: "AdjustValue"
+    node_title: "AdjustValue"
+    pin_name: "ValueType"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "3C0ECC4C437F30474B672E84502CB6C0"
+    graph: "AdjustValue"
+    node_title: "Switch on E_ValueType"
+    pin_name: "Selection"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "B6BE92F34506D91737250D8F22CAB579"
+    graph: "AdjustValue"
+    node_title: "Call On Stat Updated"
+    pin_name: "ValueType"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "7F917D18443CDF6ED686A1B2982B9849"
+    graph: "AdjustValue"
+    node_title: "Call On Stat Updated"
+    pin_name: "ValueType"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "8EC69694402EA8A2272571A33BC8CCDA"
+    graph: "AdjustValue"
+    node_title: "Get ValueType"
+    pin_name: "ValueType"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "A6DAB42842032018388D68AF5C85C165"
+    graph: "AdjustValue"
+    node_title: "Get ValueType"
+    pin_name: "ValueType"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "DDA1439E4160178BF1FC25812170F825"
+    graph: "AdjustAffectedValue"
+    node_title: "AdjustAffectedValue"
+    pin_name: "ValueType"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "307ECCDE40BEFDAC8600388D1F1FB5A9"
+    graph: "AdjustAffectedValue"
+    node_title: "Switch on E_ValueType"
+    pin_name: "Selection"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "B4ED9162461860523C50F6A6EB16760D"
+    graph: "AdjustAffectedValue"
+    node_title: "Call On Stat Updated"
+    pin_name: "ValueType"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "6878357A46D8EAD202B132ACEECCB97C"
+    graph: "AdjustAffectedValue"
+    node_title: "Call On Stat Updated"
+    pin_name: "ValueType"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "CBC75F104A13538CF76178A2EA71F6D0"
+    graph: "AdjustAffectedValue"
+    node_title: "Get ValueType"
+    pin_name: "ValueType"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "6A14611C4FF622DAC3680C89BB17C97F"
+    graph: "AdjustAffectedValue"
+    node_title: "Get ValueType"
+    pin_name: "ValueType"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "311160B94D6D402BBDDB9783F8FCEC03"
+    graph: "UpdateStatInfo"
+    node_title: "Call On Stat Updated"
+    pin_name: "ValueType"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "FA2FD5814C25CD3F825F65B3B3ADD414"
+    graph: "UpdateStatInfo"
+    node_title: "Call On Stat Updated"
+    pin_name: "ValueType"
+    original_value: "NewEnumerator1"
+    new_value: "MaxValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator1 -> MaxValue"
+
+  - node_guid: "9ACBFF69471BB050CF6B82A1F99EC02B"
+    graph: "InitializeBaseClassValue"
+    node_title: "Adjust Value
+Target is Stat/Attribute Object"
+    pin_name: "ValueType"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"
+
+  - node_guid: "EBA5C0AD477A5437832DE69BC5DCB3D7"
+    graph: "OnStatUpdated"
+    node_title: "OnStatUpdated"
+    pin_name: "ValueType"
+    original_value: "NewEnumerator0"
+    new_value: "CurrentValue"
+    action: "Change pin type to ESLFValueType, value: NewEnumerator0 -> CurrentValue"

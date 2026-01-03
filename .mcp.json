@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "gitbook": {
+      "type": "http",
+      "url": "https://soulslike-framework.isik.vip/~gitbook/mcp"
+    }
+  }
+}

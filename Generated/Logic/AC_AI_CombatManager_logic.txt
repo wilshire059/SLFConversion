@@ -1,0 +1,119 @@
+// Logic implementations for AC_AI_CombatManager
+// Generated from AC_AI_CombatManager.json
+
+// ═══ TryGetAbility ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_CombatManager::TryGetAbility called"));
+
+	// Macro: ForEachLoop
+
+// ═══ EvaluateAbilityRule ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_CombatManager::EvaluateAbilityRule called"));
+
+	// TODO: Handle K2Node_ExecutionSequence - Sequence
+
+// ═══ HandleDeath ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_CombatManager::HandleDeath called"));
+
+	if (/* float <= float.ReturnValue */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	GetDirectionFromHit(/*HitInfo*/ HitInfo, /*OwnerActor*/ GetOwnerResult.ReturnValue, /*__WorldContext*/ nullptr);
+	Event OnDeath(/*KillingBlowDirection*/ GetDirectionFromHitResult.HitDirection, /*Ragdoll*/ RagdollOnDeath?);
+
+// ═══ HandleHitReaction ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_CombatManager::HandleHitReaction called"));
+
+	if (Not_PreBoolResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	// TODO: Handle K2Node_SwitchEnum - Switch on E_HitReactType
+
+// ═══ GetRelevantExecutedMontage ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_CombatManager::GetRelevantExecutedMontage called"));
+
+	GetDataTableRowNames(/*Table*/ ExecutedMontages);
+	// Macro: ForEachLoopWithBreak
+
+// ═══ SetHyperArmor ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_CombatManager::SetHyperArmor called"));
+
+	HyperArmor? = HyperArmor?;
+
+// ═══ HandleIncomingWeaponDamage_AI ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_CombatManager::HandleIncomingWeaponDamage_AI called"));
+
+	DamagingActor = WeaponOwnerActor;
+	if (/* AND Boolean.ReturnValue */)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	CurrentHitNormal = BreakHitResultResult.ImpactNormal;
+	if (IsValid(GetComponentByClassResult.ReturnValue))
+	{
+		// Is Valid branch
+	}
+
+// ═══ HandleProjectileDamage_AI ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_CombatManager::HandleProjectileDamage_AI called"));
+
+	if (IsValid(GetStatResult.Found Stat))
+	{
+		// Is Valid branch
+	}
+
+// ═══ ApplyIncomingStatusEffects ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_CombatManager::ApplyIncomingStatusEffects called"));
+
+	Map_Keys(/*TargetMap*/ StatusEffects);
+	Map_Values(/*TargetMap*/ StatusEffects);
+	// Macro: ForEachLoop
+
+// ═══ ApplyFistDamage ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_CombatManager::ApplyFistDamage called"));
+
+	CalculateWeaponDamage(/*Additional Modifier*/ 1.000000, /*AttackPowerStats*/ /* Make FWeapon Attack Power.FWeaponAttackPower */, /*DamagedActor*/ TargetActor, /*ScalingFactor*/ /* Make Map.Map */, /*StatManager*/ GetComponentByClassResult.ReturnValue, /*__WorldContext*/ nullptr);
+	GetComponentByClassResult.ReturnValue->HandleIncomingWeaponDamage(/*Guard Sound*/ nullptr, /*HitInfo*/ Hit, /*IncomingDamage*/ CalculateWeaponDamageResult.Damage, /*IncomingPoiseDamage*/ RandomFloatInRangeResult.ReturnValue, /*IncomingStatusEffect*/ /* Make Map.Map */, /*Perfect Guard Sound*/ nullptr, /*WeaponOwnerActor*/ GetOwnerResult.ReturnValue);
+
+// ═══ ProcessHandTrace ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_CombatManager::ProcessHandTrace called"));
+
+	// Macro: ForEachLoopWithBreak
+
+// ═══ GetSelectedAbility ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_CombatManager::GetSelectedAbility called"));
+
+	// Set output: SelectedAbility = SelectedAbility
+	return;
+
+// ═══ SetInvincibility ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_CombatManager::SetInvincibility called"));
+
+	Invincible? = IsInvincible?;
+
+// ═══ GetKnockbackAmountForDamage ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_CombatManager::GetKnockbackAmountForDamage called"));
+
+	// Set output: ReturnValue = /* vector * vector.ReturnValue */
+	return;
+
+// ═══ OverrideAbilities ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_CombatManager::OverrideAbilities called"));
+
+	Abilities = Abilities;
+	Event FinishPoiseBreak(/*SetState?*/ false);
+	GetComponentByClassResult.ReturnValue->SetState(/*Data*/ FGameplayTag(), /*NewState*/ NewEnumerator7);
+

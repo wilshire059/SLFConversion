@@ -1,0 +1,66 @@
+
+======================================================================
+WEAPON CHILDACTORCOMPONENT DIAGNOSTIC
+======================================================================
+
+[B_Soulslike_Enemy_Guard]
+  ChildActorComponents: 0
+
+[B_Soulslike_Enemy_Showcase]
+  ChildActorComponents: 0
+
+[B_Soulslike_Boss_Malgareth]
+  ChildActorComponents: 0
+
+======================================================================
+AI WEAPON BLUEPRINTS
+======================================================================
+  B_Item_AI_Weapon
+    Parent: /Script/SLFConversion.SLFItemBase
+    Class loadable: YES
+  B_Item_AI_Weapon_Sword
+    Parent: /Script/SLFConversion.SLFItemBase
+    Class loadable: YES
+  B_Item_AI_Weapon_Greatsword
+    Parent: /Script/SLFConversion.SLFItemBase
+    Class loadable: YES
+  B_Item_AI_Weapon_BossMace
+    Parent: /Script/SLFConversion.SLFItemBase
+    Class loadable: YES
+
+======================================================================
+LEVEL ENEMY INSTANCES
+======================================================================
+
+[B_Soulslike_Enemy_Guard_C_0]
+  Class: B_Soulslike_Enemy_Guard_C
+  ChildActorComponents: 1
+    - Weapon
+        ChildActorClass: B_Item_AI_Weapon_Greatsword_C
+
+[B_Soulslike_Enemy_Demo_C_1]
+  Class: B_Soulslike_Enemy_Showcase_C
+  ChildActorComponents: 1
+    - Weapon
+        ChildActorClass: B_Item_AI_Weapon_Sword_C
+
+[B_Soulslike_Boss_Malgareth_C_2]
+  Class: B_Soulslike_Boss_Malgareth_C
+  ChildActorComponents: 2
+    - Weapon_L
+        ChildActorClass: B_Item_AI_Weapon_BossMace_C
+    - Weapon_R
+        ChildActorClass: B_Item_AI_Weapon_BossMace_C
+
+======================================================================
+DIAGNOSIS
+======================================================================
+
+If ChildActorClass is None, the weapon class reference was likely
+cleared during the migration process when Blueprint logic was removed.
+
+FIX: Set the ChildActorClass on each enemy's Weapon component:
+  - B_Soulslike_Enemy_Guard -> B_Item_AI_Weapon_Sword
+  - B_Soulslike_Boss_Malgareth -> B_Item_AI_Weapon_BossMace
+
+This can be done via Python script or in the Blueprint editor.

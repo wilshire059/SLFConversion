@@ -1,0 +1,65 @@
+// Logic implementations for AC_ActionManager
+// Generated from AC_ActionManager.json
+
+// ═══ GetStatManager ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_ActionManager::GetStatManager called"));
+
+	// Set output: StatManager = GetComponentByClassResult.ReturnValue
+	return;
+
+// ═══ GetInteractionManager ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_ActionManager::GetInteractionManager called"));
+
+	// Set output: InteractionManager = GetComponentByClassResult.ReturnValue
+	return;
+
+// ═══ GetCombatManager ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_ActionManager::GetCombatManager called"));
+
+	// Set output: CombatManager = GetComponentByClassResult.ReturnValue
+	return;
+
+// ═══ SetMoveDir ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_ActionManager::SetMoveDir called"));
+
+	MovementVector = IA_Move;
+	if (Not_PreBoolResult.ReturnValue)
+	{
+		// TRUE branch - see linked nodes
+	}
+	else
+	{
+		// FALSE branch - see linked nodes
+	}
+	LOCAL_Degrees = DegAtan2Result.ReturnValue;
+	// TODO: Handle K2Node_ExecutionSequence - Sequence
+	SRV_SetDirection(/*MovementDirection*/ NewEnumerator8);
+
+// ═══ GetDirectionalDodge ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_ActionManager::GetDirectionalDodge called"));
+
+	// TODO: Handle K2Node_SwitchEnum - Switch on E_Direction
+
+// ═══ SetIsResting ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_ActionManager::SetIsResting called"));
+
+	IsResting = Value;
+
+// ═══ SetIsSprinting ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_ActionManager::SetIsSprinting called"));
+
+	IsSprinting = Value;
+
+// ═══ ToggleCrouch ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_ActionManager::ToggleCrouch called"));
+
+	IsCrouched = Not_PreBoolResult.ReturnValue;
+	// TODO: Handle K2Node_Message - Set Movement Mode
+Target is BPI Generic Character
+
+// ═══ GetIsCrouched ═══
+	UE_LOG(LogTemp, Log, TEXT("UAC_ActionManager::GetIsCrouched called"));
+
+	// Set output: IsCrouched = IsCrouched
+	return;
+

@@ -1,0 +1,2073 @@
+{
+  "blueprint_name": "AC_AI_BehaviorManager",
+  "blueprint_path": "/Game/SoulslikeFramework/Blueprints/Components/AC_AI_BehaviorManager.AC_AI_BehaviorManager",
+  "json_export_path": "C:\\scripts\\SLFConversion\\Exports\\BlueprintDNA_v2\\Component\\AC_AI_BehaviorManager.json",
+  "cpp_header": "AI_BehaviorManagerComponent.h",
+  "cpp_source": "AI_BehaviorManagerComponent.cpp",
+  "parent_class": "UActorComponent",
+  "parent_class_raw": "ActorComponent",
+  "implemented_interfaces": [],
+  "migration_status": {
+    "pass1_complete": false,
+    "pass2_validated": false,
+    "pass3_complete": false,
+    "overall_status": "not_started"
+  },
+  "summary": {
+    "variable_count": 11,
+    "function_count": 9,
+    "event_dispatcher_count": 0,
+    "graph_count": 8,
+    "total_items": 28
+  },
+  "variables": [
+    {
+      "name": "Behavior",
+      "type": "UObject* /* BehaviorTree */",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "object",
+        "SubCategory": "None",
+        "SubCategoryObject": "BehaviorTree",
+        "SubCategoryObjectPath": "/Script/AIModule.BehaviorTree"
+      },
+      "category": "AI Config",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": false,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "CurrentState",
+      "type": "ESLFAIStates",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "byte",
+        "SubCategory": "None",
+        "SubCategoryObject": "E_AI_States",
+        "SubCategoryObjectPath": "/Game/SoulslikeFramework/Enums/E_AI_States.E_AI_States"
+      },
+      "category": "AI Config",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": false,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "PatrolPath",
+      "type": "UObject* /* B_PatrolPath_C */",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "object",
+        "SubCategory": "None",
+        "SubCategoryObject": "B_PatrolPath_C",
+        "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/_AI/Misc/B_PatrolPath.B_PatrolPath_C"
+      },
+      "category": "AI Config",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": false,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "PreviousState",
+      "type": "ESLFAIStates",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "byte",
+        "SubCategory": "None",
+        "SubCategoryObject": "E_AI_States",
+        "SubCategoryObjectPath": "/Game/SoulslikeFramework/Enums/E_AI_States.E_AI_States"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "CurrentTarget",
+      "type": "AActor*",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "object",
+        "SubCategory": "None",
+        "SubCategoryObject": "Actor",
+        "SubCategoryObjectPath": "/Script/Engine.Actor"
+      },
+      "category": "Runtime",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "MaxChaseDistanceThreshold",
+      "type": "double",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "real",
+        "SubCategory": "double"
+      },
+      "category": "Combat Related",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "AttackDistanceThreshold",
+      "type": "double",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "real",
+        "SubCategory": "double"
+      },
+      "category": "Combat Related",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "StrafeDistanceThreshold",
+      "type": "double",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "real",
+        "SubCategory": "double"
+      },
+      "category": "Combat Related",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "SpeedAdjustDistanceThreshold",
+      "type": "double",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "real",
+        "SubCategory": "double"
+      },
+      "category": "Combat Related",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "MinimumStrafePointDistanceThreshold",
+      "type": "double",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "real",
+        "SubCategory": "double"
+      },
+      "category": "Combat Related",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    },
+    {
+      "name": "StrafeMethods",
+      "type": "TSet<FSLFAiStrafeInfo>",
+      "type_raw": {
+        "IsArray": false,
+        "IsSet": true,
+        "IsMap": false,
+        "IsReference": false,
+        "IsConst": false,
+        "Category": "struct",
+        "SubCategory": "None",
+        "SubCategoryObject": "FAiStrafeInfo",
+        "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/AI/FAiStrafeInfo.FAiStrafeInfo"
+      },
+      "category": "Combat Related",
+      "default_value": "",
+      "is_instance_editable": true,
+      "blueprint_read_only": false,
+      "blueprint_read_write": true,
+      "is_expose_on_spawn": false,
+      "is_private": true,
+      "is_replicated": false,
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "notes": ""
+    }
+  ],
+  "functions": [
+    {
+      "name": "SetPatrolPath",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "PatrolPath",
+          "type": "UObject* /* B_PatrolPath_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "B_PatrolPath_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/_AI/Misc/B_PatrolPath.B_PatrolPath_C"
+          }
+        },
+        {
+          "name": "LOCAL_CurrentState",
+          "type": "ESLFAIStates",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "E_AI_States",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Enums/E_AI_States.E_AI_States"
+          }
+        }
+      ],
+      "category": "Setters",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [
+        "LOCAL_CurrentState"
+      ],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "GetState",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Handle",
+          "type": "ESLFAIStateHandle",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "E_AI_StateHandle",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Enums/E_AI_StateHandle.E_AI_StateHandle"
+          }
+        },
+        {
+          "name": "Temp_byte_Variable",
+          "type": "ESLFAIStateHandle",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "E_AI_StateHandle",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Enums/E_AI_StateHandle.E_AI_StateHandle"
+          }
+        },
+        {
+          "name": "K2Node_Select_Default",
+          "type": "ESLFAIStates",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "E_AI_States",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Enums/E_AI_States.E_AI_States"
+          }
+        }
+      ],
+      "category": "Getters",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "GetTarget",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "LOCAL_CurrentState",
+          "type": "ESLFAIStates",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "E_AI_States",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Enums/E_AI_States.E_AI_States"
+          }
+        }
+      ],
+      "category": "Getters",
+      "access_specifier": "Public",
+      "is_pure": true,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": true,
+      "is_blueprint_callable": true,
+      "has_exec_pins": false,
+      "local_variables": [
+        "LOCAL_CurrentState"
+      ],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "SetTarget",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "Target",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "LOCAL_CurrentState",
+          "type": "ESLFAIStates",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "E_AI_States",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Enums/E_AI_States.E_AI_States"
+          }
+        },
+        {
+          "name": "K2Node_MakeStruct_FObject",
+          "type": "FFObject",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FObject",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/_Misc/FObject.FObject"
+          }
+        },
+        {
+          "name": "CallFunc_MakeInstancedStruct_ReturnValue",
+          "type": "FInstancedStruct",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        }
+      ],
+      "category": "Setters",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [
+        "LOCAL_CurrentState"
+      ],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "SetState",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "NewState",
+          "type": "ESLFAIStates",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "E_AI_States",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Enums/E_AI_States.E_AI_States"
+          }
+        },
+        {
+          "name": "Data",
+          "type": "FInstancedStruct",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        },
+        {
+          "name": "CallFunc_GetBlackboard_ReturnValue",
+          "type": "UObject* /* BlackboardComponent */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "BlackboardComponent",
+            "SubCategoryObjectPath": "/Script/AIModule.BlackboardComponent"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_ExecResult",
+          "type": "uint8",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "EStructUtilsResult",
+            "SubCategoryObjectPath": "/Script/Engine.EStructUtilsResult"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_Value",
+          "type": "FSLFAiPatrolPathInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FAiPatrolPathInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/AI/FAiPatrolPathInfo.FAiPatrolPathInfo"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_ExecResult_1",
+          "type": "uint8",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "EStructUtilsResult",
+            "SubCategoryObjectPath": "/Script/Engine.EStructUtilsResult"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_Value_1",
+          "type": "FSLFAiSenseTargetInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FAiSenseTargetInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/AI/FAiSenseTargetInfo.FAiSenseTargetInfo"
+          }
+        },
+        {
+          "name": "K2Node_SwitchEnum_CmpSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_SwitchEnum_CmpSuccess_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_ExecResult_2",
+          "type": "uint8",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "EStructUtilsResult",
+            "SubCategoryObjectPath": "/Script/Engine.EStructUtilsResult"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_Value_2",
+          "type": "FSLFAiSenseLocationInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FAiSenseLocationInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/AI/FAiSenseLocationInfo.FAiSenseLocationInfo"
+          }
+        },
+        {
+          "name": "CallFunc_IsInstancedStructValid_ReturnValue",
+          "type": "uint8",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "EStructUtilsResult",
+            "SubCategoryObjectPath": "/Script/Engine.EStructUtilsResult"
+          }
+        },
+        {
+          "name": "K2Node_SwitchEnum_CmpSuccess_2",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_MakeStruct_FVector",
+          "type": "FFVector",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FVector",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/_Misc/FVector.FVector"
+          }
+        },
+        {
+          "name": "K2Node_SwitchEnum_CmpSuccess_3",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_MakeInstancedStruct_ReturnValue",
+          "type": "FInstancedStruct",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        },
+        {
+          "name": "CallFunc_GetBlackboard_ReturnValue_1",
+          "type": "UObject* /* BlackboardComponent */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "BlackboardComponent",
+            "SubCategoryObjectPath": "/Script/AIModule.BlackboardComponent"
+          }
+        },
+        {
+          "name": "CallFunc_MakeLiteralName_ReturnValue",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "Setters",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "SetKeyValue",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "KeyName",
+          "type": "FName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "name",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "Data",
+          "type": "FInstancedStruct",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        },
+        {
+          "name": "CallFunc_GetBlackboard_ReturnValue",
+          "type": "UObject* /* BlackboardComponent */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "BlackboardComponent",
+            "SubCategoryObjectPath": "/Script/AIModule.BlackboardComponent"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_ExecResult",
+          "type": "uint8",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "EStructUtilsResult",
+            "SubCategoryObjectPath": "/Script/Engine.EStructUtilsResult"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_Value",
+          "type": "FFVector",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FVector",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/_Misc/FVector.FVector"
+          }
+        },
+        {
+          "name": "CallFunc_GetBlackboard_ReturnValue_1",
+          "type": "UObject* /* BlackboardComponent */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "BlackboardComponent",
+            "SubCategoryObjectPath": "/Script/AIModule.BlackboardComponent"
+          }
+        },
+        {
+          "name": "K2Node_SwitchEnum_CmpSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_ExecResult_1",
+          "type": "uint8",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "EStructUtilsResult",
+            "SubCategoryObjectPath": "/Script/Engine.EStructUtilsResult"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_Value_1",
+          "type": "FFString",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FString",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/_Misc/FString.FString"
+          }
+        },
+        {
+          "name": "CallFunc_GetBlackboard_ReturnValue_2",
+          "type": "UObject* /* BlackboardComponent */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "BlackboardComponent",
+            "SubCategoryObjectPath": "/Script/AIModule.BlackboardComponent"
+          }
+        },
+        {
+          "name": "K2Node_SwitchEnum_CmpSuccess_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_ExecResult_2",
+          "type": "uint8",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "EStructUtilsResult",
+            "SubCategoryObjectPath": "/Script/Engine.EStructUtilsResult"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_Value_2",
+          "type": "FFRotator",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FRotator",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/_Misc/FRotator.FRotator"
+          }
+        },
+        {
+          "name": "CallFunc_GetBlackboard_ReturnValue_3",
+          "type": "UObject* /* BlackboardComponent */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "BlackboardComponent",
+            "SubCategoryObjectPath": "/Script/AIModule.BlackboardComponent"
+          }
+        },
+        {
+          "name": "K2Node_SwitchEnum_CmpSuccess_2",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_ExecResult_3",
+          "type": "uint8",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "EStructUtilsResult",
+            "SubCategoryObjectPath": "/Script/Engine.EStructUtilsResult"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_Value_3",
+          "type": "FFObject",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FObject",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/_Misc/FObject.FObject"
+          }
+        },
+        {
+          "name": "CallFunc_GetBlackboard_ReturnValue_4",
+          "type": "UObject* /* BlackboardComponent */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "BlackboardComponent",
+            "SubCategoryObjectPath": "/Script/AIModule.BlackboardComponent"
+          }
+        },
+        {
+          "name": "K2Node_SwitchEnum_CmpSuccess_3",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_ExecResult_4",
+          "type": "uint8",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "EStructUtilsResult",
+            "SubCategoryObjectPath": "/Script/Engine.EStructUtilsResult"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_Value_4",
+          "type": "FFName",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FName",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/_Misc/FName.FName"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_ExecResult_5",
+          "type": "uint8",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "EStructUtilsResult",
+            "SubCategoryObjectPath": "/Script/Engine.EStructUtilsResult"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_Value_5",
+          "type": "FFInt",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FInt",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/_Misc/FInt.FInt"
+          }
+        },
+        {
+          "name": "K2Node_SwitchEnum_CmpSuccess_4",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_SwitchEnum_CmpSuccess_5",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_ExecResult_6",
+          "type": "uint8",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "EStructUtilsResult",
+            "SubCategoryObjectPath": "/Script/Engine.EStructUtilsResult"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_Value_6",
+          "type": "FFFloat",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FFloat",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/_Misc/FFloat.FFloat"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_ExecResult_7",
+          "type": "uint8",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "EStructUtilsResult",
+            "SubCategoryObjectPath": "/Script/Engine.EStructUtilsResult"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_Value_7",
+          "type": "FFEnumByte",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FEnumByte",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/_Misc/FEnumByte.FEnumByte"
+          }
+        },
+        {
+          "name": "K2Node_SwitchEnum_CmpSuccess_6",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_SwitchEnum_CmpSuccess_7",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_ExecResult_8",
+          "type": "uint8",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "EStructUtilsResult",
+            "SubCategoryObjectPath": "/Script/Engine.EStructUtilsResult"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_Value_8",
+          "type": "FFClass",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FClass",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/_Misc/FClass.FClass"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_ExecResult_9",
+          "type": "uint8",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "byte",
+            "SubCategory": "None",
+            "SubCategoryObject": "EStructUtilsResult",
+            "SubCategoryObjectPath": "/Script/Engine.EStructUtilsResult"
+          }
+        },
+        {
+          "name": "CallFunc_GetInstancedStructValue_Value_9",
+          "type": "FFBool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": true,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FBool",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/_Misc/FBool.FBool"
+          }
+        },
+        {
+          "name": "K2Node_SwitchEnum_CmpSuccess_8",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_SwitchEnum_CmpSuccess_9",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_GetBlackboard_ReturnValue_5",
+          "type": "UObject* /* BlackboardComponent */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "BlackboardComponent",
+            "SubCategoryObjectPath": "/Script/AIModule.BlackboardComponent"
+          }
+        },
+        {
+          "name": "CallFunc_GetBlackboard_ReturnValue_6",
+          "type": "UObject* /* BlackboardComponent */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "BlackboardComponent",
+            "SubCategoryObjectPath": "/Script/AIModule.BlackboardComponent"
+          }
+        },
+        {
+          "name": "CallFunc_GetBlackboard_ReturnValue_7",
+          "type": "UObject* /* BlackboardComponent */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "BlackboardComponent",
+            "SubCategoryObjectPath": "/Script/AIModule.BlackboardComponent"
+          }
+        },
+        {
+          "name": "CallFunc_GetBlackboard_ReturnValue_8",
+          "type": "UObject* /* BlackboardComponent */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "BlackboardComponent",
+            "SubCategoryObjectPath": "/Script/AIModule.BlackboardComponent"
+          }
+        },
+        {
+          "name": "CallFunc_GetBlackboard_ReturnValue_9",
+          "type": "UObject* /* BlackboardComponent */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "BlackboardComponent",
+            "SubCategoryObjectPath": "/Script/AIModule.BlackboardComponent"
+          }
+        },
+        {
+          "name": "CallFunc_SetValueAsFloat_FloatValue_ImplicitCast",
+          "type": "float",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "real",
+            "SubCategory": "float"
+          }
+        }
+      ],
+      "category": "Setters",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "GetBlackboard",
+      "return_type": "UObject* /* BlackboardComponent */",
+      "return_type_raw": {
+        "IsArray": false,
+        "IsSet": false,
+        "IsMap": false,
+        "IsReference": true,
+        "IsConst": false,
+        "Category": "object",
+        "SubCategory": "None",
+        "SubCategoryObject": "BlackboardComponent",
+        "SubCategoryObjectPath": "/Script/AIModule.BlackboardComponent"
+      },
+      "parameters": [
+        {
+          "name": "CallFunc_GetOwner_ReturnValue",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "CallFunc_GetAIController_ReturnValue",
+          "type": "UObject* /* AIController */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AIController",
+            "SubCategoryObjectPath": "/Script/AIModule.AIController"
+          }
+        },
+        {
+          "name": "CallFunc_GetBlackboard_ReturnValue",
+          "type": "UObject* /* BlackboardComponent */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "BlackboardComponent",
+            "SubCategoryObjectPath": "/Script/AIModule.BlackboardComponent"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        }
+      ],
+      "category": "Getters",
+      "access_specifier": "Public",
+      "is_pure": true,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": true,
+      "is_blueprint_callable": true,
+      "has_exec_pins": false,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "ReceiveBeginPlay",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    },
+    {
+      "name": "ExecuteUbergraph_AC_AI_BehaviorManager",
+      "return_type": "void",
+      "return_type_raw": {},
+      "parameters": [
+        {
+          "name": "EntryPoint",
+          "type": "int32",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "int",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "CallFunc_IsValid_ReturnValue_1",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_MakeStruct_FAiPatrolPathInfo",
+          "type": "FSLFAiPatrolPathInfo",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FAiPatrolPathInfo",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/AI/FAiPatrolPathInfo.FAiPatrolPathInfo"
+          }
+        },
+        {
+          "name": "CallFunc_MakeInstancedStruct_ReturnValue",
+          "type": "FInstancedStruct",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        },
+        {
+          "name": "CallFunc_GetOwner_ReturnValue",
+          "type": "AActor*",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "Actor",
+            "SubCategoryObjectPath": "/Script/Engine.Actor"
+          }
+        },
+        {
+          "name": "K2Node_MakeStruct_FFloat",
+          "type": "FFFloat",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FFloat",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/_Misc/FFloat.FFloat"
+          }
+        },
+        {
+          "name": "CallFunc_GetAIController_ReturnValue",
+          "type": "UObject* /* AIController */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "object",
+            "SubCategory": "None",
+            "SubCategoryObject": "AIController",
+            "SubCategoryObjectPath": "/Script/AIModule.AIController"
+          }
+        },
+        {
+          "name": "CallFunc_MakeInstancedStruct_ReturnValue_1",
+          "type": "FInstancedStruct",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_AsBPI_AIC",
+          "type": "/* UNKNOWN: interface/None/BPI_AIC_C */",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "interface",
+            "SubCategory": "None",
+            "SubCategoryObject": "BPI_AIC_C",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Blueprints/Interfaces/BPI_AIC.BPI_AIC_C"
+          }
+        },
+        {
+          "name": "K2Node_DynamicCast_bSuccess",
+          "type": "bool",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "bool",
+            "SubCategory": "None"
+          }
+        },
+        {
+          "name": "K2Node_MakeStruct_FFloat_1",
+          "type": "FFFloat",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FFloat",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/_Misc/FFloat.FFloat"
+          }
+        },
+        {
+          "name": "K2Node_MakeStruct_FFloat_2",
+          "type": "FFFloat",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FFloat",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/_Misc/FFloat.FFloat"
+          }
+        },
+        {
+          "name": "CallFunc_MakeInstancedStruct_ReturnValue_2",
+          "type": "FInstancedStruct",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        },
+        {
+          "name": "CallFunc_MakeInstancedStruct_ReturnValue_3",
+          "type": "FInstancedStruct",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        },
+        {
+          "name": "K2Node_MakeStruct_FFloat_3",
+          "type": "FFFloat",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "FFloat",
+            "SubCategoryObjectPath": "/Game/SoulslikeFramework/Structures/_Misc/FFloat.FFloat"
+          }
+        },
+        {
+          "name": "CallFunc_MakeInstancedStruct_ReturnValue_4",
+          "type": "FInstancedStruct",
+          "type_raw": {
+            "IsArray": false,
+            "IsSet": false,
+            "IsMap": false,
+            "IsReference": false,
+            "IsConst": false,
+            "Category": "struct",
+            "SubCategory": "None",
+            "SubCategoryObject": "InstancedStruct",
+            "SubCategoryObjectPath": "/Script/CoreUObject.InstancedStruct"
+          }
+        }
+      ],
+      "category": "",
+      "access_specifier": "Public",
+      "is_pure": false,
+      "is_const": false,
+      "is_static": false,
+      "is_blueprint_native_event": false,
+      "is_blueprint_pure": false,
+      "is_blueprint_callable": true,
+      "has_exec_pins": true,
+      "local_variables": [],
+      "graph_node_count": 0,
+      "graph_summary": "",
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": "",
+      "validation_notes": ""
+    }
+  ],
+  "event_dispatchers": [],
+  "graphs": [
+    {
+      "name": "EventGraph",
+      "type": "edgraphschema_k2",
+      "entry_points": [
+        "ReceiveBeginPlay"
+      ],
+      "node_count": 36,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "GetAIController",
+        "GetOwner",
+        "SetState",
+        "SetState",
+        "SetKeyValue",
+        "SetKeyValue",
+        "SetKeyValue",
+        "SetKeyValue"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "GetBlackboard",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 9,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "GetAIController",
+        "GetOwner",
+        "GetBlackboard"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "SetKeyValue",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 62,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "GetBlackboard",
+        "SetValueAsBool",
+        "GetBlackboard",
+        "GetBlackboard",
+        "GetBlackboard",
+        "GetBlackboard",
+        "SetValueAsClass",
+        "SetValueAsEnum",
+        "SetValueAsFloat",
+        "SetValueAsInt",
+        "GetBlackboard",
+        "SetValueAsName",
+        "GetBlackboard",
+        "SetValueAsObject",
+        "GetBlackboard",
+        "SetValueAsRotator",
+        "GetBlackboard",
+        "SetValueAsString",
+        "GetBlackboard",
+        "SetValueAsVector"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "SetState",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 32,
+      "has_branches": true,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "SetValueAsEnum",
+        "MakeLiteralName",
+        "GetBlackboard",
+        "IsInstancedStructValid",
+        "SetTarget",
+        "SetPatrolPath",
+        "SetKeyValue",
+        "GetBlackboard"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "SetTarget",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 6,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [
+        "SetKeyValue"
+      ],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "GetTarget",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 4,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "GetState",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 6,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    },
+    {
+      "name": "SetPatrolPath",
+      "type": "edgraphschema_k2",
+      "entry_points": [],
+      "node_count": 3,
+      "has_branches": false,
+      "has_loops": false,
+      "has_timers": false,
+      "function_calls": [],
+      "pass1_complete": false,
+      "pass2_validated": false,
+      "pass3_complete": false,
+      "implementation_summary": ""
+    }
+  ],
+  "collapsed_graphs": [],
+  "dependencies": {
+    "structs": [
+      "FAiStrafeInfo"
+    ],
+    "enums": [
+      "E_AI_States"
+    ],
+    "interfaces": [],
+    "components": [],
+    "blueprints": [],
+    "data_assets": []
+  },
+  "final_summary": "",
+  "known_issues": [],
+  "debug_notes": [],
+  "test_results": []
+}

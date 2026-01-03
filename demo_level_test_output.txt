@@ -1,0 +1,42 @@
+============================================================
+DEMO LEVEL LOAD TEST
+============================================================
+[PASS] UnrealEditorSubsystem available
+[PASS] LevelEditorSubsystem available
+[PASS] Demo level exists
+[PASS] Demo level loaded
+[PASS] World available after load
+    World name: L_Demo_Showcase
+
+Testing Key Blueprints:
+[PASS] B_Soulslike_Character loads
+[PASS] B_Soulslike_Enemy loads
+[PASS] B_Soulslike_Boss loads
+[PASS] B_Soulslike_NPC loads
+
+Testing Component Blueprints:
+[PASS] AC_StatManager loads
+[PASS] AC_ActionManager loads
+[PASS] AC_CombatManager loads
+[PASS] AC_EquipmentManager loads
+[PASS] AC_InventoryManager loads
+
+Testing AnimBPs:
+[PASS] ABP_SoulslikeNPC loads
+[PASS] ABP_SoulslikeEnemy loads
+[PASS] ABP_SoulslikeBossNew loads
+
+Testing Widgets:
+[PASS] W_HUD loads
+[PASS] W_Inventory loads
+[PASS] W_Equipment loads
+
+============================================================
+SUMMARY
+============================================================
+Passed: 20
+Failed: 0
+Total:  20
+
+RESULT: PASSED
+============================================================
