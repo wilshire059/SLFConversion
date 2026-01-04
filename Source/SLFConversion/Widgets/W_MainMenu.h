@@ -1,38 +1,26 @@
 // W_MainMenu.h
 // C++ Widget class for W_MainMenu
 //
-// 20-PASS VALIDATION: 2026-01-01 Autonomous Session
+// 20-PASS VALIDATION: 2026-01-03
 // Source: BlueprintDNA/WidgetBlueprint/W_MainMenu.json
 // Parent: UW_Navigable
-// Variables: 6 | Functions: 2 | Dispatchers: 0
+// Variables: 6 | Functions: 5 | Dispatchers: 0
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Widgets/W_Navigable.h"
 #include "GameplayTagContainer.h"
-#include "SLFEnums.h"
-#include "SLFGameTypes.h"
-#include "SLFPrimaryDataAssets.h"
-#include "InputMappingContext.h"
-#include "GameFramework/InputSettings.h"
-#include "GenericPlatform/GenericWindow.h"
+#include "Animation/WidgetAnimation.h"
+#include "Components/VerticalBox.h"
 #include "MediaPlayer.h"
-
 
 #include "W_MainMenu.generated.h"
 
-// Forward declarations for widget types
+// Forward declarations
 class UW_LoadingScreen;
-
-// Forward declarations for Blueprint types
-
-
-// Forward declarations for SaveGame types
-
-
-// Event Dispatchers
-
+class UW_MainMenu_Button;
+class UPrimaryDataAsset;
 
 UCLASS()
 class SLFCONVERSION_API UW_MainMenu : public UW_Navigable
@@ -52,36 +40,81 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	UMediaPlayer* MediaPlayer;
-	UPROPERTY(meta = (BindWidget), BlueprintReadOnly, Category = "Default")
+
+	// Buttons array - populated from ButtonsBox children at construct
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	TArray<UWidget*> Buttons;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
 	bool CanContinueGame;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	UW_LoadingScreen* LoadingScreen;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
 	UPrimaryDataAsset* MainMenuAsset;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	int32 NavigationIndex;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// BIND WIDGETS (UMG Designer References)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadOnly, Category = "Widgets")
+	UVerticalBox* ButtonsBox;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UW_MainMenu_Button* BtnContinue;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UW_MainMenu_Button* BtnNewGame;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UW_MainMenu_Button* BtnLoadGame;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UW_MainMenu_Button* BtnSettings;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UW_MainMenu_Button* BtnCredits;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UW_MainMenu_Button* BtnQuitGame;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// ANIMATIONS (UMG Designer References)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim), BlueprintReadOnly, Category = "Animations")
+	UWidgetAnimation* Fade;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim), BlueprintReadOnly, Category = "Animations")
+	UWidgetAnimation* FadeMenuOnly;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (0)
 	// ═══════════════════════════════════════════════════════════════════════
 
 
-
 	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (2)
+	// FUNCTIONS
 	// ═══════════════════════════════════════════════════════════════════════
 
+	// Called when a button is selected - updates all button states
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_MainMenu")
 	void OnButtonSelected(UW_MainMenu_Button* Button);
 	virtual void OnButtonSelected_Implementation(UW_MainMenu_Button* Button);
 
+	// Check if navigation is allowed (not loading, visible, etc.)
+	UFUNCTION(BlueprintNativeEvent, BlueprintPure, Category = "W_MainMenu")
+	bool CanNavigate();
+	virtual bool CanNavigate_Implementation();
 
 	// Event Handlers (4 events)
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_MainMenu")
-	void EventFadeInMenu(double PlaybackSpeed);
-	virtual void EventFadeInMenu_Implementation(double PlaybackSpeed);
+	void EventFadeInMenu(float PlaybackSpeed = 1.0f);
+	virtual void EventFadeInMenu_Implementation(float PlaybackSpeed);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_MainMenu")
 	void EventNavigateDown();
@@ -96,6 +129,12 @@ public:
 	virtual void EventNavigateUp_Implementation();
 
 protected:
-	// Cache references
-	void CacheWidgetReferences();
+	// Initialize buttons from ButtonsBox
+	void InitializeButtons();
+
+	// Update button selection based on NavigationIndex
+	void UpdateButtonSelection();
+
+	// Bind button events
+	void BindButtonEvents();
 };

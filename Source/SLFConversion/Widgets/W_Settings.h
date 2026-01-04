@@ -1,10 +1,9 @@
 // W_Settings.h
 // C++ Widget class for W_Settings
 //
-// 20-PASS VALIDATION: 2026-01-01 Autonomous Session
+// 20-PASS VALIDATION: 2026-01-03
 // Source: BlueprintDNA/WidgetBlueprint/W_Settings.json
 // Parent: UW_Navigable_InputReader
-// Variables: 7 | Functions: 4 | Dispatchers: 2
 
 #pragma once
 
@@ -12,13 +11,10 @@
 #include "Widgets/W_Navigable_InputReader.h"
 #include "GameplayTagContainer.h"
 #include "SLFEnums.h"
-#include "SLFGameTypes.h"
-#include "SLFPrimaryDataAssets.h"
-#include "InputMappingContext.h"
-#include "GameFramework/InputSettings.h"
-#include "GenericPlatform/GenericWindow.h"
-#include "MediaPlayer.h"
-#include "Components/Button.h"
+#include "Components/HorizontalBox.h"
+#include "Components/WidgetSwitcher.h"
+#include "Components/ScrollBox.h"
+#include "Components/VerticalBox.h"
 
 #include "W_Settings.generated.h"
 
@@ -50,23 +46,39 @@ public:
 	virtual void NativeDestruct() override;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// VARIABLES (7)
+	// BIND WIDGETS
 	// ═══════════════════════════════════════════════════════════════════════
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UHorizontalBox* CategoriesBox;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UWidgetSwitcher* CategorySwitcher;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// VARIABLES
+	// ═══════════════════════════════════════════════════════════════════════
+
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	TArray<UW_Settings_CategoryEntry*> CategoryEntries;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
 	TArray<FGameplayTag> CategoriesToHide;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	TArray<UW_Settings_Entry*> SettingEntries;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	int32 CategoryNavigationIndex;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	int32 EntryNavigationIndex;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	bool QuitToDesktop;
-	// Note: This is NOT a BindWidget - it's a runtime reference set by Blueprint logic
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+
+	// Runtime reference - NOT a BindWidget
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	UW_GenericButton* ActiveQuitButton;
 
 	// ═══════════════════════════════════════════════════════════════════════
@@ -147,6 +159,23 @@ public:
 	virtual void EventOnVisibilityChanged_Implementation(uint8 InVisibility);
 
 protected:
-	// Cache references
-	void CacheWidgetReferences();
+	// Update category selection visual state
+	void UpdateCategorySelection();
+
+	// Update entry selection visual state
+	void UpdateEntrySelection();
+
+	// Get active scroll box for current category
+	UScrollBox* GetActiveScrollBox() const;
+
+	// Get settings entries for active category
+	void GetEntriesForActiveCategory(TArray<UW_Settings_Entry*>& OutEntries) const;
+
+	// Handler for category entry OnSelected event
+	UFUNCTION()
+	void HandleCategorySelected(UW_Settings_CategoryEntry* CategoryEntry, int32 Index);
+
+	// Handler for settings entry OnEntrySelected event
+	UFUNCTION()
+	void HandleEntrySelected(UW_Settings_Entry* Entry);
 };

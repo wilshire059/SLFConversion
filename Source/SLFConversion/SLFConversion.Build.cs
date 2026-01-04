@@ -23,7 +23,8 @@ public class SLFConversion : ModuleRules
 			System.IO.Path.Combine(ModuleDirectory, "Blueprints", "Projectiles"),
 			System.IO.Path.Combine(ModuleDirectory, "Components"),
 			System.IO.Path.Combine(ModuleDirectory, "Framework"),
-			System.IO.Path.Combine(ModuleDirectory, "Interfaces")
+			System.IO.Path.Combine(ModuleDirectory, "Interfaces"),
+			System.IO.Path.Combine(ModuleDirectory, "Testing")
 		});
 
 		PublicDependencyModuleNames.AddRange(new string[] {

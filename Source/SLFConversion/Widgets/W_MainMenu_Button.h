@@ -1,35 +1,21 @@
 // W_MainMenu_Button.h
 // C++ Widget class for W_MainMenu_Button
 //
-// 20-PASS VALIDATION: 2026-01-01 Autonomous Session
+// 20-PASS VALIDATION: 2026-01-03
 // Source: BlueprintDNA/WidgetBlueprint/W_MainMenu_Button.json
-// Parent: UUserWidget
-// Variables: 2 | Functions: 0 | Dispatchers: 2
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "GameplayTagContainer.h"
-#include "SLFEnums.h"
-#include "SLFGameTypes.h"
-#include "SLFPrimaryDataAssets.h"
-#include "InputMappingContext.h"
-#include "GameFramework/InputSettings.h"
-#include "GenericPlatform/GenericWindow.h"
-#include "MediaPlayer.h"
-
 #include "Interfaces/SLFMainMenuInterface.h"
 #include "W_MainMenu_Button.generated.h"
 
-// Forward declarations for widget types
-
-
-// Forward declarations for Blueprint types
-
-
-// Forward declarations for SaveGame types
-
+// Forward declarations
+class USizeBox;
+class UBorder;
+class UButton;
+class UWidgetAnimation;
 
 // Event Dispatchers
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FW_MainMenu_Button_OnSelected);
@@ -44,33 +30,63 @@ public:
 	UW_MainMenu_Button(const FObjectInitializer& ObjectInitializer);
 
 	// Widget lifecycle
+	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// VARIABLES (2)
+	// VARIABLES
 	// ═══════════════════════════════════════════════════════════════════════
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
-	double Width;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
+	float Width;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	bool Selected;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// EVENT DISPATCHERS (2)
+	// WIDGET BINDINGS
+	// ═══════════════════════════════════════════════════════════════════════
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadOnly, Category = "Widgets")
+	USizeBox* Sizer;
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadOnly, Category = "Widgets")
+	UBorder* SelectedBorder;
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadOnly, Category = "Widgets")
+	UButton* Button;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// ANIMATIONS
+	// ═══════════════════════════════════════════════════════════════════════
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim), BlueprintReadOnly, Category = "Animations")
+	UWidgetAnimation* Loadup;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// EVENT DISPATCHERS
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FW_MainMenu_Button_OnSelected OnSelected;
+
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FW_MainMenu_Button_OnButtonClicked OnButtonClicked;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (0)
+	// INTERFACE IMPLEMENTATIONS (ISLFMainMenuInterface)
 	// ═══════════════════════════════════════════════════════════════════════
 
+	virtual void SetMenuButtonSelected_Implementation(bool Selected) override;
+	virtual void PlayButtonInitAnimation_Implementation(double StartTime, int32 Loops, EUMGSequencePlayMode::Type Mode, double PlayRate) override;
+	virtual void OnMenuButtonPressed_Implementation() override;
 
 protected:
-	// Cache references
-	void CacheWidgetReferences();
+	// Button event handlers
+	UFUNCTION()
+	void OnButtonHovered();
+
+	UFUNCTION()
+	void OnButtonClicked_Internal();
 };

@@ -1,10 +1,10 @@
 // PC_Menu_SoulslikeFramework.h
 // C++ Game Framework class for PC_Menu_SoulslikeFramework
 //
-// 20-PASS VALIDATION: 2026-01-01 Autonomous Session
+// 20-PASS VALIDATION: 2026-01-03
 // Source: BlueprintDNA/GameFramework/PC_Menu_SoulslikeFramework.json
 // Parent: APlayerController
-// Variables: 3 | Functions: 1 | Dispatchers: 0
+// Variables: 3 | Functions: BeginPlay + Interface implementations
 
 #pragma once
 
@@ -16,9 +16,9 @@
 
 // Forward declarations
 class UW_MainMenu;
-
-// Event Dispatchers
-
+class UInputMappingContext;
+class UInputAction;
+struct FInputActionValue;
 
 UCLASS()
 class SLFCONVERSION_API APC_Menu_SoulslikeFramework : public APlayerController, public ISLFControllerInterface
@@ -28,25 +28,80 @@ class SLFCONVERSION_API APC_Menu_SoulslikeFramework : public APlayerController, 
 public:
 	APC_Menu_SoulslikeFramework();
 
+	virtual void BeginPlay() override;
+
 	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (3)
 	// ═══════════════════════════════════════════════════════════════════════
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
+	// Reference to the main menu widget
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	UW_MainMenu* W_MainMenu;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
+
+	// Whether a save game exists (can continue)
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	bool SaveGameExists;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
+
+	// Tag of the currently active navigable widget
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	FGameplayTag NavigableWidgetTag;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// EVENT DISPATCHERS (0)
+	// CONFIGURATION
 	// ═══════════════════════════════════════════════════════════════════════
 
+	// Widget class to create for main menu
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Config")
+	TSubclassOf<UW_MainMenu> MainMenuWidgetClass;
 
+	// Input mapping context for menu navigation
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Config")
+	UInputMappingContext* MenuInputMappingContext;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (1)
+	// INPUT ACTIONS
 	// ═══════════════════════════════════════════════════════════════════════
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+	UInputAction* IA_NavigableMenu_Up;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+	UInputAction* IA_NavigableMenu_Down;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+	UInputAction* IA_NavigableMenu_Ok;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+	UInputAction* IA_NavigableMenu_Back;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// INTERFACE IMPLEMENTATIONS (ISLFControllerInterface)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	// SetActiveWidgetForNavigation - sets the navigable widget tag
+	virtual void SetActiveWidgetForNavigation_Implementation(const FGameplayTag& NavigableWidgetTag) override;
+
+	virtual void SetupInputComponent() override;
+
+protected:
+	// Create and display the main menu widget
+	void CreateMainMenuWidget();
+
+	// Setup input for menu navigation
+	void SetupMenuInput();
+
+	// Check if any save game exists
+	bool CheckSaveGameExists();
+
+	// Load input actions
+	void LoadInputActions();
+
+	// Bind input actions after loading them
+	void BindInputActions();
+
+	// Input handlers
+	void OnNavigateUp(const FInputActionValue& Value);
+	void OnNavigateDown(const FInputActionValue& Value);
+	void OnNavigateOk(const FInputActionValue& Value);
+	void OnNavigateBack(const FInputActionValue& Value);
 };

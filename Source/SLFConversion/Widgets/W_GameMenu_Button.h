@@ -1,35 +1,21 @@
 // W_GameMenu_Button.h
 // C++ Widget class for W_GameMenu_Button
 //
-// 20-PASS VALIDATION: 2026-01-01 Autonomous Session
+// 20-PASS VALIDATION: 2026-01-03
 // Source: BlueprintDNA/WidgetBlueprint/W_GameMenu_Button.json
-// Parent: UUserWidget
-// Variables: 9 | Functions: 1 | Dispatchers: 2
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "GameplayTagContainer.h"
-#include "SLFEnums.h"
-#include "SLFGameTypes.h"
-#include "SLFPrimaryDataAssets.h"
-#include "InputMappingContext.h"
-#include "GameFramework/InputSettings.h"
-#include "GenericPlatform/GenericWindow.h"
-#include "MediaPlayer.h"
-
-
 #include "W_GameMenu_Button.generated.h"
 
-// Forward declarations for widget types
-
-
-// Forward declarations for Blueprint types
-
-
-// Forward declarations for SaveGame types
-
+// Forward declarations
+class UButton;
+class UBorder;
+class UImage;
+class UTextBlock;
 
 // Event Dispatchers
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FW_GameMenu_Button_OnGameMenuButtonPressed, FGameplayTag, WidgetTag);
@@ -44,56 +30,91 @@ public:
 	UW_GameMenu_Button(const FObjectInitializer& ObjectInitializer);
 
 	// Widget lifecycle
+	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// VARIABLES (9)
+	// CONFIGURATION VARIABLES
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
 	FGameplayTag TargetWidgetTag;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
 	FText ButtonText;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
 	TSoftObjectPtr<UTexture2D> ButtonImage;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Colors")
 	FLinearColor ImageColor;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Colors")
 	FLinearColor SelectedImageColor;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Colors")
 	FLinearColor ImageBorderColor;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
-	bool Selected;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Colors")
 	FLinearColor SelectedImageBorderColor;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Colors")
-	FLinearColor HightlightColor;
+	FLinearColor HighlightColor;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// EVENT DISPATCHERS (2)
+	// STATE VARIABLES
+	// ═══════════════════════════════════════════════════════════════════════
+
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
+	bool Selected;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// WIDGET BINDINGS
+	// ═══════════════════════════════════════════════════════════════════════
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadOnly, Category = "Widgets")
+	UButton* EscMenuButton;
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadOnly, Category = "Widgets")
+	UBorder* SelectedBorder;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UImage* ButtonIcon;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UTextBlock* ButtonLabel;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// EVENT DISPATCHERS
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FW_GameMenu_Button_OnGameMenuButtonPressed OnGameMenuButtonPressed;
+
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FW_GameMenu_Button_OnGameMenuButtonSelected OnGameMenuButtonSelected;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (1)
+	// FUNCTIONS
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_GameMenu_Button")
 	void SetGameMenuButtonSelected(bool InSelected);
 	virtual void SetGameMenuButtonSelected_Implementation(bool InSelected);
 
-
-	// Event Handlers (1 events)
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_GameMenu_Button")
 	void EventOnGameMenuButtonPressed();
 	virtual void EventOnGameMenuButtonPressed_Implementation();
 
 protected:
-	// Cache references
-	void CacheWidgetReferences();
+	// Button event handlers
+	UFUNCTION()
+	void OnButtonHovered();
+
+	UFUNCTION()
+	void OnButtonPressed();
+
+	// Apply visual configuration
+	void ApplyVisualConfig();
 };

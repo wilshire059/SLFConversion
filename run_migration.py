@@ -30,12 +30,12 @@ MIGRATION_MAP = {
     # "AC_EquipmentManager": "/Script/SLFConversion.AC_EquipmentManager",
     # "AC_InteractionManager": "/Script/SLFConversion.AC_InteractionManager",
     # "AC_TargetManager": "/Script/SLFConversion.AC_TargetManager",
-    # Game Framework (5) - Menu classes commented out (don't exist yet)
+    # Game Framework (5)
     "GM_SoulslikeFramework": "/Script/SLFConversion.GM_SoulslikeFramework",
-    # "GM_Menu_SoulslikeFramework": "/Script/SLFConversion.SLFMenuGameMode",  # TODO: Create this class
+    "GM_Menu_SoulslikeFramework": "/Script/SLFConversion.GM_Menu_SoulslikeFramework",
     "GI_SoulslikeFramework": "/Script/SLFConversion.SLFGameInstance",
     "PC_SoulslikeFramework": "/Script/SLFConversion.PC_SoulslikeFramework",
-    # "PC_Menu_SoulslikeFramework": "/Script/SLFConversion.SLFMenuPlayerController",  # TODO: Create this class
+    "PC_Menu_SoulslikeFramework": "/Script/SLFConversion.PC_Menu_SoulslikeFramework",
     "GS_SoulslikeFramework": "/Script/SLFConversion.GS_SoulslikeFramework",
     "PS_SoulslikeFramework": "/Script/SLFConversion.PS_SoulslikeFramework",
     # AI Controller
