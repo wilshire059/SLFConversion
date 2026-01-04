@@ -1,0 +1,23 @@
+{
+  "DA_Apple": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple",
+  "DA_BossMace": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+  "DA_CrimsonEverbloom": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple",
+  "DA_Cube": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple",
+  "DA_ExampleArmor": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+  "DA_ExampleArmor02": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+  "DA_ExampleBracers": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+  "DA_ExampleGreaves": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+  "DA_ExampleHat": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+  "DA_ExampleHelmet": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+  "DA_ExampleTalisman": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+  "DA_Greatsword": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+  "DA_HealthFlask": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+  "DA_Katana": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+  "DA_Lantern": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple",
+  "DA_PoisonSword": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+  "DA_PrisonKey": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple",
+  "DA_Shield01": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+  "DA_Sword01": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+  "DA_Sword02": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+  "DA_ThrowingKnife": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple"
+}

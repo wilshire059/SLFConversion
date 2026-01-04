@@ -164,6 +164,63 @@ If migration crashes with "Cast of nullptr to Function failed":
 1. Add Blueprint to SKIP_LIST in run_migration.py
 2. Or add to priority processing (PRIORITY_ANIM_NOTIFY_STATES)
 
+### 4. Blueprint Struct Property Access
+**NEVER use reflection to access Blueprint struct properties with GUID-suffixed names.**
+
+**ALWAYS use C++ property migration instead:**
+1. Add equivalent UPROPERTY to C++ parent class
+2. Reparent Blueprint to C++ class
+3. Migrate data from Blueprint to C++ properties
+4. Access via direct Cast<>
+
+See: `.claude/skills/cpp-property-migration.md` for complete workflow.
+
+---
+
+## C++ PROPERTY MIGRATION (CRITICAL PATTERN)
+
+When C++ code needs data from Blueprint struct properties (e.g., `ItemInformation.WorldNiagaraSystem`):
+
+### ❌ WRONG: Reflection (DO NOT USE)
+```cpp
+// NEVER DO THIS - Complex, fragile, slow
+FProperty* Prop = Class->FindPropertyByName(TEXT("ItemInformation"));
+// ...150 lines of nested struct traversal with GUID matching...
+```
+
+### ✅ RIGHT: C++ Property Migration
+```cpp
+// Add UPROPERTY to C++ class
+UPROPERTY(EditAnywhere, BlueprintReadWrite)
+TSoftObjectPtr<UNiagaraSystem> WorldNiagaraSystem;
+
+// Direct access after reparenting + data migration
+if (UPDA_Item* ItemData = Cast<UPDA_Item>(Item))
+{
+    UNiagaraSystem* System = ItemData->WorldNiagaraSystem.LoadSynchronous();
+}
+```
+
+### Migration Workflow
+1. **Extract data** from Blueprint using `export_text()` + regex
+2. **Reparent** Blueprint via `BlueprintEditorLibrary.reparent_blueprint()`
+3. **Apply data** to C++ properties via `set_editor_property()`
+4. **Access directly** via `Cast<CppClass>()`
+
+### Python Naming Conventions
+```python
+# C++ class UPDA_Item → Python path (no U prefix)
+unreal.load_class(None, "/Script/SLFConversion.PDA_Item")
+
+# C++ property WorldNiagaraSystem → Python (snake_case)
+asset.set_editor_property('world_niagara_system', value)
+```
+
+### Verified Working: PDA_Item Migration
+- 21 items migrated from Blueprint `ItemInformation.WorldNiagaraSystem` to C++ `UPDA_Item::WorldNiagaraSystem`
+- Scripts: `extract_niagara_paths.py`, `reparent_pda_item.py`, `apply_niagara_paths.py`
+- Result: Direct C++ access, no reflection fallback
+
 ---
 
 ## THE MISSION
@@ -189,6 +246,7 @@ An item is DONE when:
 - Make assumptions without verifying from JSON exports
 - Write stub implementations with `// TODO`
 - Give up on type compatibility issues
+- **Use reflection to access Blueprint struct properties** - Always migrate to C++ properties instead
 
 ### ALWAYS DO THESE:
 - Read the JSON export BEFORE writing any code
