@@ -61,6 +61,7 @@ public class SLFConversion : ModuleRules
 				"Kismet",
 				"KismetCompiler",
 				"BlueprintGraph",
+				"AnimGraph",        // For AnimGraphNode_Base and property bindings
 				"AssetRegistry",    // For dependency analysis
 				"UMGEditor",        // For WidgetBlueprint access
 				"Json",             // For JSON serialization

@@ -28,6 +28,13 @@
 #include "K2Node_VariableSet.h"
 #include "K2Node_Composite.h"
 #include "K2Node_Tunnel.h"
+#include "AnimGraphNode_Base.h"
+#include "AnimGraphNode_StateMachine.h"
+#include "AnimationStateMachineGraph.h"
+#include "AnimStateNode.h"
+#include "AnimStateTransitionNode.h"
+#include "AnimStateConduitNode.h"
+#include "AnimationGraph.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "Engine/SimpleConstructionScript.h"
 #include "Engine/SCS_Node.h"
@@ -518,6 +525,101 @@ TSharedPtr<FJsonObject> UPythonBridge::SerializeNode(UEdGraphNode* Node)
 		{
 			NodeObj->SetStringField(TEXT("CustomEventName"), CustomEvent->CustomFunctionName.ToString());
 		}
+
+		// *** CRITICAL: Extract PropertyAccess paths from AnimGraph nodes ***
+		if (UAnimGraphNode_Base* AnimGraphNode = Cast<UAnimGraphNode_Base>(Node))
+		{
+			// Access the deprecated PropertyBindings map which contains PropertyPath info
+			// Use reflection to access PropertyBindings_DEPRECATED since it's a UPROPERTY
+			TArray<TSharedPtr<FJsonValue>> BindingsArray;
+			
+			FMapProperty* BindingsMap = CastField<FMapProperty>(
+				UAnimGraphNode_Base::StaticClass()->FindPropertyByName(TEXT("PropertyBindings_DEPRECATED")));
+			if (BindingsMap)
+			{
+				FScriptMapHelper MapHelper(BindingsMap, BindingsMap->ContainerPtrToValuePtr<void>(AnimGraphNode));
+				for (int32 i = 0; i < MapHelper.Num(); ++i)
+				{
+					if (MapHelper.IsValidIndex(i))
+					{
+						// Get the binding struct
+						FAnimGraphNodePropertyBinding* Binding = (FAnimGraphNodePropertyBinding*)MapHelper.GetValuePtr(i);
+						if (Binding && Binding->PropertyPath.Num() > 0)
+						{
+							TSharedPtr<FJsonObject> BindingObj = MakeShareable(new FJsonObject());
+							BindingObj->SetStringField(TEXT("PropertyName"), Binding->PropertyName.ToString());
+							BindingObj->SetStringField(TEXT("PropertyPath"), FString::Join(Binding->PropertyPath, TEXT(".")));
+							BindingObj->SetBoolField(TEXT("IsBound"), Binding->bIsBound);
+							
+							TArray<TSharedPtr<FJsonValue>> PathSegments;
+							for (const FString& Seg : Binding->PropertyPath)
+							{
+								PathSegments.Add(MakeShareable(new FJsonValueString(Seg)));
+							}
+							BindingObj->SetArrayField(TEXT("PathSegments"), PathSegments);
+							
+							BindingsArray.Add(MakeShareable(new FJsonValueObject(BindingObj)));
+						}
+					}
+				}
+			}
+			if (BindingsArray.Num() > 0)
+			{
+				NodeObj->SetArrayField(TEXT("PropertyBindings"), BindingsArray);
+			}
+		}
+		
+		// *** Extract path from K2Node_PropertyAccess via reflection ***
+		// The node class may be K2Node_PropertyAccess but header isn't public
+		FString NodeClassName = Node->GetClass()->GetName();
+		if (NodeClassName.Contains(TEXT("PropertyAccess")))
+		{
+			// Try to find a Path property using reflection
+			for (TFieldIterator<FProperty> PropIt(Node->GetClass()); PropIt; ++PropIt)
+			{
+				FProperty* Prop = *PropIt;
+				FString PropName = Prop->GetName();
+				
+				// Look for path-related properties
+				if (PropName.Contains(TEXT("Path")) || PropName.Contains(TEXT("Resolve")))
+				{
+					// Handle array of strings (typical path representation)
+					if (FArrayProperty* ArrayProp = CastField<FArrayProperty>(Prop))
+					{
+						if (FStrProperty* InnerStrProp = CastField<FStrProperty>(ArrayProp->Inner))
+						{
+							FScriptArrayHelper ArrayHelper(ArrayProp, Prop->ContainerPtrToValuePtr<void>(Node));
+							TArray<TSharedPtr<FJsonValue>> PathArray;
+							for (int32 i = 0; i < ArrayHelper.Num(); ++i)
+							{
+								FString* StrPtr = reinterpret_cast<FString*>(ArrayHelper.GetRawPtr(i));
+								if (StrPtr)
+								{
+									PathArray.Add(MakeShareable(new FJsonValueString(*StrPtr)));
+								}
+							}
+							if (PathArray.Num() > 0)
+							{
+								NodeObj->SetArrayField(TEXT("PropertyAccessPath"), PathArray);
+								NodeObj->SetStringField(TEXT("PropertyAccessPathJoined"), 
+									FString::JoinBy(PathArray, TEXT("."), [](const TSharedPtr<FJsonValue>& Val) {
+										return Val->AsString();
+									}));
+							}
+						}
+					}
+					// Handle single string
+					else if (FStrProperty* StrProp = CastField<FStrProperty>(Prop))
+					{
+						FString Value = StrProp->GetPropertyValue_InContainer(Node);
+						if (!Value.IsEmpty())
+						{
+							NodeObj->SetStringField(FString::Printf(TEXT("PropertyAccess_%s"), *PropName), Value);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	// Collapsed graph (tunnel/composite nodes)
@@ -946,6 +1048,194 @@ FString UPythonBridge::ExportAnimBlueprintDNA(UAnimBlueprint* AnimBlueprint)
 	{
 		RootObj->SetStringField(TEXT("TargetSkeleton"), AnimBlueprint->TargetSkeleton->GetPathName());
 	}
+
+	// *** ENHANCED: Export AnimGraph structure ***
+	TSharedPtr<FJsonObject> AnimGraphObj = MakeShareable(new FJsonObject());
+
+	// Export all animation graphs (includes AnimGraph and state machine graphs)
+	TArray<TSharedPtr<FJsonValue>> AnimGraphsArray;
+	for (UEdGraph* Graph : AnimBlueprint->FunctionGraphs)
+	{
+		if (!Graph) continue;
+
+		TSharedPtr<FJsonObject> GraphInfoObj = MakeShareable(new FJsonObject());
+		GraphInfoObj->SetStringField(TEXT("Name"), Graph->GetName());
+		GraphInfoObj->SetStringField(TEXT("SchemaClass"), Graph->GetSchema() ? Graph->GetSchema()->GetClass()->GetName() : TEXT("Unknown"));
+
+		// Check if this is an animation state machine graph
+		if (UAnimationStateMachineGraph* StateMachineGraph = Cast<UAnimationStateMachineGraph>(Graph))
+		{
+			GraphInfoObj->SetStringField(TEXT("Type"), TEXT("StateMachine"));
+
+			// Export states
+			TArray<TSharedPtr<FJsonValue>> StatesArray;
+			for (UEdGraphNode* Node : Graph->Nodes)
+			{
+				if (UAnimStateNode* StateNode = Cast<UAnimStateNode>(Node))
+				{
+					TSharedPtr<FJsonObject> StateObj = MakeShareable(new FJsonObject());
+					StateObj->SetStringField(TEXT("Name"), StateNode->GetStateName());
+					StateObj->SetStringField(TEXT("NodeClass"), TEXT("AnimStateNode"));
+
+					// If the state has a bound graph (the actual state logic), serialize it
+					if (StateNode->BoundGraph)
+					{
+						// Extract PropertyBindings from AnimGraph nodes in the state graph
+						TArray<TSharedPtr<FJsonValue>> PropertyAccessArray;
+						for (UEdGraphNode* InnerNode : StateNode->BoundGraph->Nodes)
+						{
+							if (UAnimGraphNode_Base* AnimNode = Cast<UAnimGraphNode_Base>(InnerNode))
+							{
+								// Access PropertyBindings_DEPRECATED via reflection
+								FMapProperty* BindingsMap = CastField<FMapProperty>(
+									UAnimGraphNode_Base::StaticClass()->FindPropertyByName(TEXT("PropertyBindings_DEPRECATED")));
+								if (BindingsMap)
+								{
+									FScriptMapHelper MapHelper(BindingsMap, BindingsMap->ContainerPtrToValuePtr<void>(AnimNode));
+									for (int32 i = 0; i < MapHelper.Num(); ++i)
+									{
+										if (MapHelper.IsValidIndex(i))
+										{
+											FAnimGraphNodePropertyBinding* Binding = (FAnimGraphNodePropertyBinding*)MapHelper.GetValuePtr(i);
+											if (Binding && Binding->PropertyPath.Num() > 0)
+											{
+												TSharedPtr<FJsonObject> PropAccessObj = MakeShareable(new FJsonObject());
+												PropAccessObj->SetStringField(TEXT("Path"), FString::Join(Binding->PropertyPath, TEXT(".")));
+												PropertyAccessArray.Add(MakeShareable(new FJsonValueObject(PropAccessObj)));
+											}
+										}
+									}
+								}
+							}
+						}
+						if (PropertyAccessArray.Num() > 0)
+						{
+							StateObj->SetArrayField(TEXT("PropertyAccessNodes"), PropertyAccessArray);
+						}
+					}
+
+					StatesArray.Add(MakeShareable(new FJsonValueObject(StateObj)));
+				}
+				else if (UAnimStateTransitionNode* TransNode = Cast<UAnimStateTransitionNode>(Node))
+				{
+					TSharedPtr<FJsonObject> TransObj = MakeShareable(new FJsonObject());
+					TransObj->SetStringField(TEXT("NodeClass"), TEXT("AnimStateTransitionNode"));
+					if (TransNode->GetPreviousState())
+					{
+						TransObj->SetStringField(TEXT("FromState"), TransNode->GetPreviousState()->GetStateName());
+					}
+					if (TransNode->GetNextState())
+					{
+						TransObj->SetStringField(TEXT("ToState"), TransNode->GetNextState()->GetStateName());
+					}
+					StatesArray.Add(MakeShareable(new FJsonValueObject(TransObj)));
+				}
+			}
+			GraphInfoObj->SetArrayField(TEXT("States"), StatesArray);
+		}
+		else
+		{
+			GraphInfoObj->SetStringField(TEXT("Type"), TEXT("AnimGraph"));
+
+			// Scan for PropertyBindings in AnimGraph nodes
+			TArray<TSharedPtr<FJsonValue>> PropertyAccessArray;
+			for (UEdGraphNode* Node : Graph->Nodes)
+			{
+				if (UAnimGraphNode_Base* AnimNode = Cast<UAnimGraphNode_Base>(Node))
+				{
+					FMapProperty* BindingsMap = CastField<FMapProperty>(
+						UAnimGraphNode_Base::StaticClass()->FindPropertyByName(TEXT("PropertyBindings_DEPRECATED")));
+					if (BindingsMap)
+					{
+						FScriptMapHelper MapHelper(BindingsMap, BindingsMap->ContainerPtrToValuePtr<void>(AnimNode));
+						for (int32 i = 0; i < MapHelper.Num(); ++i)
+						{
+							if (MapHelper.IsValidIndex(i))
+							{
+								FAnimGraphNodePropertyBinding* Binding = (FAnimGraphNodePropertyBinding*)MapHelper.GetValuePtr(i);
+								if (Binding && Binding->PropertyPath.Num() > 0)
+								{
+									TSharedPtr<FJsonObject> PropAccessObj = MakeShareable(new FJsonObject());
+									PropAccessObj->SetStringField(TEXT("Path"), FString::Join(Binding->PropertyPath, TEXT(".")));
+									PropertyAccessArray.Add(MakeShareable(new FJsonValueObject(PropAccessObj)));
+								}
+							}
+						}
+					}
+				}
+			}
+			if (PropertyAccessArray.Num() > 0)
+			{
+				GraphInfoObj->SetArrayField(TEXT("PropertyAccessNodes"), PropertyAccessArray);
+			}
+		}
+
+		AnimGraphsArray.Add(MakeShareable(new FJsonValueObject(GraphInfoObj)));
+	}
+	AnimGraphObj->SetArrayField(TEXT("Graphs"), AnimGraphsArray);
+
+	// *** CRITICAL: Collect ALL PropertyAccess paths from the entire AnimBP ***
+	TArray<TSharedPtr<FJsonValue>> AllPropertyAccessArray;
+	TSet<FString> SeenPaths;  // Deduplicate
+
+	// Helper lambda to extract PropertyBindings from AnimGraph nodes
+	auto ExtractPropertyAccess = [&](UEdGraph* Graph) {
+		if (!Graph) return;
+		for (UEdGraphNode* Node : Graph->Nodes)
+		{
+			if (UAnimGraphNode_Base* AnimNode = Cast<UAnimGraphNode_Base>(Node))
+			{
+				FMapProperty* BindingsMap = CastField<FMapProperty>(
+					UAnimGraphNode_Base::StaticClass()->FindPropertyByName(TEXT("PropertyBindings_DEPRECATED")));
+				if (BindingsMap)
+				{
+					FScriptMapHelper MapHelper(BindingsMap, BindingsMap->ContainerPtrToValuePtr<void>(AnimNode));
+					for (int32 i = 0; i < MapHelper.Num(); ++i)
+					{
+						if (MapHelper.IsValidIndex(i))
+						{
+							FAnimGraphNodePropertyBinding* Binding = (FAnimGraphNodePropertyBinding*)MapHelper.GetValuePtr(i);
+							if (Binding && Binding->PropertyPath.Num() > 0)
+							{
+								FString FullPath = FString::Join(Binding->PropertyPath, TEXT("."));
+								if (!SeenPaths.Contains(FullPath))
+								{
+									SeenPaths.Add(FullPath);
+									TSharedPtr<FJsonObject> PropObj = MakeShareable(new FJsonObject());
+									PropObj->SetStringField(TEXT("Path"), FullPath);
+									PropObj->SetStringField(TEXT("GraphName"), Graph->GetName());
+									PropObj->SetStringField(TEXT("NodeName"), AnimNode->GetNodeTitle(ENodeTitleType::FullTitle).ToString());
+									AllPropertyAccessArray.Add(MakeShareable(new FJsonValueObject(PropObj)));
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	};
+
+	// Scan all graphs
+	for (UEdGraph* Graph : AnimBlueprint->FunctionGraphs)
+	{
+		ExtractPropertyAccess(Graph);
+
+		// Also scan nested graphs (state machine states have their own graphs)
+		for (UEdGraphNode* Node : Graph->Nodes)
+		{
+			if (UAnimStateNode* StateNode = Cast<UAnimStateNode>(Node))
+			{
+				ExtractPropertyAccess(StateNode->BoundGraph);
+			}
+		}
+	}
+	for (UEdGraph* Graph : AnimBlueprint->UbergraphPages)
+	{
+		ExtractPropertyAccess(Graph);
+	}
+
+	AnimGraphObj->SetArrayField(TEXT("AllPropertyAccessPaths"), AllPropertyAccessArray);
+	RootObj->SetObjectField(TEXT("AnimGraphInfo"), AnimGraphObj);
 
 	return JsonObjectToString(RootObj);
 }
