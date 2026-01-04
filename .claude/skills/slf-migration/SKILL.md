@@ -25,8 +25,58 @@ description: Migrate SoulslikeFramework Blueprints to C++ with 20-pass validatio
 3. **NO SHORTCUTS** - Complete all passes, no skipping
 4. **NO ASSUMPTIONS** - Always verify from JSON exports
 5. **NO STUB IMPLEMENTATIONS** - Full logic required
+6. **DATA FLOW ANALYSIS FIRST** - Identify runtime setup and reflection needs BEFORE coding
 
 **Reference:** `C:\scripts\SLFConversion\DEFINITION_OF_DONE.md`
+
+---
+
+## Phase 0: Data Flow Analysis (MANDATORY)
+
+**Perform this analysis BEFORE writing any C++ implementation code.**
+
+See `DATA_FLOW_ANALYSIS.md` for detailed patterns and examples.
+
+### 0A. Component Preservation Check
+
+For each SCS component in the Blueprint:
+- [ ] Is the component a visual element (Mesh, Niagara, Material)?
+- [ ] Is the asset set in component defaults? (design-time)
+- [ ] Is the asset set in EventGraph? (runtime)
+
+**Decision:**
+- Design-time defaults → `MIGRATION_MAP` (clear logic, keep defaults)
+- Runtime setup → `KEEP_VARS_MAP` (preserve SCS) + reproduce in C++ `BeginPlay()`
+
+### 0B. Runtime Setup Detection
+
+Scan EventGraph JSON for these function calls:
+- `SetAsset` (Niagara)
+- `SetStaticMesh`
+- `SetSkeletalMesh`
+- `SetMaterial` / `SetMaterialByName`
+- `SetBrushFromTexture`
+
+For each found:
+- [ ] Document the target component
+- [ ] Trace the data source (where does the asset come from?)
+- [ ] Flag for C++ reproduction
+
+### 0C. Data Asset Dependency Analysis
+
+For each `UDataAsset*` variable:
+- [ ] What data asset class? (C++ `UPDA_*` or Blueprint `PDA_*`?)
+- [ ] What struct properties does it contain?
+- [ ] Are structs C++ (`FSLFItemInfo`) or Blueprint (`FItemInfo`)?
+- [ ] Map the complete property path (Item → Info → SubInfo → Value)
+
+### 0D. Reflection Requirements
+
+If Blueprint structs detected:
+- [ ] Document property names (may have GUID suffixes like `WorldPickupInfo_50_...`)
+- [ ] Identify traversal order (outer → inner)
+- [ ] Note which properties need prefix matching
+- [ ] Reference `BLUEPRINT_STRUCT_EXTRACTION.md` for extraction patterns
 
 ---
 
@@ -218,9 +268,14 @@ UW_GenericButton* ActiveQuitButton;
 |------|-------|
 | 1 | Extract ALL items from JSON |
 | 2 | Document EXACT types (Blueprint names) |
-| 3 | Map ALL dependencies |
-| 4 | Trace logic flow node-by-node |
-| 5 | Identify edge cases |
+| 3 | Map ALL dependencies + **DATA ASSET SOURCES** (see Phase 0C) |
+| 4 | Trace logic flow node-by-node + **IDENTIFY RUNTIME SETUP NODES** (see Phase 0B) |
+| 5 | Identify edge cases + **FLAG REFLECTION REQUIREMENTS** (see Phase 0D) |
+
+**IMPORTANT:** Passes 3-5 now include data flow analysis:
+- Pass 3: For each data asset variable, trace where the data comes from and what struct types are involved
+- Pass 4: Look for `SetAsset`, `SetMesh`, `SetMaterial` calls that indicate runtime component configuration
+- Pass 5: Flag any Blueprint struct access that will require reflection (GUID suffix property names)
 
 ### Phase 2: Implementation (Passes 6-10)
 | Pass | Focus |
@@ -333,3 +388,62 @@ ERROR: "Cannot find function 'GetSomeValue'"
 **RIGHT Response:** "Clear the calling Blueprint's logic to remove this call."
 
 **THE GOAL IS TO REMOVE ALL BLUEPRINT LOGIC, NOT FIX PINS.**
+
+---
+
+## Case Study: B_PickupItem (Data Flow Analysis Example)
+
+This example demonstrates what Phase 0 analysis should have caught BEFORE implementation.
+
+### The Problem
+
+B_PickupItem had a World Niagara component that wasn't showing after migration.
+
+**Initial (Wrong) Approach:**
+1. Assumed `ItemInfo` struct had the Niagara system reference
+2. Wrote C++ that read from empty struct
+3. Niagara component remained unconfigured
+
+**Why It Failed:**
+The `ItemInfo` member variable was a C++ struct (`FSLFItemInfo`), but the actual data was in the `Item` data asset (Blueprint struct `FItemInfo`). These are DIFFERENT types.
+
+### Correct Phase 0 Analysis
+
+**Phase 0A - Component Preservation Check:**
+```
+SCS Component: "World Niagara" (UNiagaraComponent)
+Asset in defaults: NO (null)
+Asset set in EventGraph: YES ("Set Niagara System Asset" node)
+→ Use KEEP_VARS_MAP + reproduce in BeginPlay
+```
+
+**Phase 0B - Runtime Setup Detection:**
+```
+Found: K2Node_CallFunction "SetAsset" targeting Niagara component
+Source traced: Item → ItemInformation → WorldPickupInfo → WorldNiagaraSystem
+```
+
+**Phase 0C - Data Asset Analysis:**
+```
+Variable: Item (UDataAsset*)
+  └─ Class: PDA_Item_C (Blueprint data asset - path has /Game/)
+  └─ Property: ItemInformation
+       └─ Type: FItemInfo (Blueprint struct - not C++ FSLFItemInfo!)
+       └─ Nested: WorldPickupInfo (FWorldMeshInfo)
+            └─ Nested: WorldNiagaraSystem (TSoftObjectPtr<UNiagaraSystem>)
+```
+
+**Phase 0D - Reflection Requirements:**
+```
+⚠️ REFLECTION REQUIRED
+  - PDA_Item is Blueprint-derived
+  - FItemInfo is Blueprint struct (property names have GUID suffixes)
+  - Must use TFieldIterator + prefix matching
+  - Property path: ItemInformation.WorldPickupInfo*.WorldNiagaraSystem*
+```
+
+### The Correct Implementation
+
+See `DATA_FLOW_ANALYSIS.md` for the complete C++ code pattern.
+
+The key insight: **Always trace data to its SOURCE before writing code.**
