@@ -105,6 +105,13 @@ The solution is to clear the logic from Blueprints that call these functions, no
 | `C:/scripts/SLFConversion/Source/SLFConversion/` | C++ Source |
 | `C:/scripts/SLFConversion_Migration/Backups/blueprint_only/` | Clean backup content |
 
+### Skill Guides
+
+| Guide | Purpose |
+|-------|---------|
+| `EXTRACTION_GUIDE.md` | How to extract data from Blueprint JSON exports |
+| `BLUEPRINT_STRUCT_EXTRACTION.md` | How to extract Blueprint struct data from FInstancedStruct at runtime |
+
 ### Key Sections in run_migration.py
 
 ```python
