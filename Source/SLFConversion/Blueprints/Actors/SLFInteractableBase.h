@@ -20,16 +20,9 @@ public:
 	// MIGRATION SUMMARY: B_InteractableBase
 	// Variables: 6 | Functions: 4 | Dispatchers: 1
 	// ============================================================
-
-	// Components
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	USceneComponent* SceneRoot;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UStaticMeshComponent* InteractableMesh;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	class UBoxComponent* InteractionTrigger;
+	// NOTE: Components are defined in Blueprint's SimpleConstructionScript
+	// Do NOT declare component pointers here - they conflict with Blueprint components
+	// Blueprint defines: DefaultSceneRoot, Interactable SM, Interactable SK
 
 	// Interaction Settings
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
@@ -89,4 +82,6 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	// NOTE: Components are defined in Blueprint's SCS, NOT in C++
+	// KEEP_VARS_MAP preserves SCS during migration
 };

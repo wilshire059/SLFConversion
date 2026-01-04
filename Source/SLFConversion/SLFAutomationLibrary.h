@@ -38,6 +38,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Query")
 	static FString GetBlueprintParentClass(UObject* BlueprintAsset);
 
+	/** Gets all SCS (SimpleConstructionScript) component names in a Blueprint. */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Query")
+	static TArray<FString> GetBlueprintSCSComponents(UObject* BlueprintAsset);
+
 	// ========================================================================
 	// REPARENTING
 	// ========================================================================

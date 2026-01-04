@@ -6,6 +6,8 @@
 #if WITH_EDITOR
 #include "Engine/Blueprint.h"
 #include "Engine/BlueprintGeneratedClass.h"
+#include "Engine/SCS_Node.h"
+#include "Engine/SimpleConstructionScript.h"
 #include "Engine/DynamicBlueprintBinding.h"
 #include "Animation/AnimBlueprint.h"
 #include "Kismet2/BlueprintEditorUtils.h"
@@ -112,6 +114,37 @@ FString USLFAutomationLibrary::GetBlueprintParentClass(UObject* BlueprintAsset)
 		return Blueprint->ParentClass->GetPathName();
 	}
 	return TEXT("");
+}
+
+TArray<FString> USLFAutomationLibrary::GetBlueprintSCSComponents(UObject* BlueprintAsset)
+{
+	TArray<FString> ComponentNames;
+
+	UBlueprint* Blueprint = GetBlueprintFromAsset(BlueprintAsset);
+	if (!Blueprint) return ComponentNames;
+
+	USimpleConstructionScript* SCS = Blueprint->SimpleConstructionScript;
+	if (!SCS)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("Blueprint %s has no SimpleConstructionScript"), *Blueprint->GetName());
+		return ComponentNames;
+	}
+
+	TArray<USCS_Node*> AllNodes = SCS->GetAllNodes();
+	for (USCS_Node* Node : AllNodes)
+	{
+		if (Node && Node->ComponentTemplate)
+		{
+			FString Entry = FString::Printf(TEXT("%s (%s)"),
+				*Node->ComponentTemplate->GetName(),
+				*Node->ComponentTemplate->GetClass()->GetName());
+			ComponentNames.Add(Entry);
+			UE_LOG(LogSLFAutomation, Warning, TEXT("  SCS Component: %s"), *Entry);
+		}
+	}
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("Blueprint %s has %d SCS components"), *Blueprint->GetName(), ComponentNames.Num());
+	return ComponentNames;
 }
 
 // ============================================================================
@@ -855,6 +888,28 @@ bool USLFAutomationLibrary::ClearGraphsKeepVariablesNoCompile(UObject* Blueprint
 {
 	UBlueprint* Blueprint = GetBlueprintFromAsset(BlueprintAsset);
 	if (!Blueprint) return false;
+
+	// Check if this is an Animation Blueprint - special handling required
+	UAnimBlueprint* AnimBlueprint = Cast<UAnimBlueprint>(Blueprint);
+	if (AnimBlueprint)
+	{
+		// AnimBPs: ONLY clear EventGraph, keep variables and AnimGraph intact
+		// This is critical - the AnimGraph contains the animation state machine!
+		UE_LOG(LogSLFAutomation, Warning, TEXT("=== CLEARING GRAPHS (KEEPING VARIABLES, NO COMPILE) FROM %s ==="), *Blueprint->GetName());
+
+		UE_LOG(LogSLFAutomation, Warning, TEXT("Clearing %d event graphs in %s"), Blueprint->UbergraphPages.Num(), *Blueprint->GetName());
+		int32 EventNodesCleared = ClearEventGraphs(BlueprintAsset);
+
+		// NOTE: Variables are NOT removed - they remain to satisfy AnimGraph Property Access
+		UE_LOG(LogSLFAutomation, Warning, TEXT("KEEPING %d variables (for AnimBP compatibility)"), Blueprint->NewVariables.Num());
+
+		// Refresh but DO NOT compile
+		FBlueprintEditorUtils::RefreshAllNodes(Blueprint);
+		FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(Blueprint);
+
+		UE_LOG(LogSLFAutomation, Warning, TEXT("=== CLEARED GRAPHS (KEPT VARIABLES, NO COMPILE) FROM %s ==="), *Blueprint->GetName());
+		return true;
+	}
 
 	UE_LOG(LogSLFAutomation, Warning, TEXT("=== CLEARING GRAPHS (KEEPING VARIABLES, NO COMPILE) FROM %s ==="), *Blueprint->GetName());
 

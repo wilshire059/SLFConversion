@@ -29,8 +29,8 @@ class UDataAsset;
 // EVENT DISPATCHERS: 1/1 migrated
 // ═══════════════════════════════════════════════════════════════════════════════
 
-/** [1/1] Called when item is looted by player */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnPickupItemLooted, UDataAsset*, ItemAsset, int32, Count);
+/** [1/1] Called when item is looted by player (no parameters per Blueprint JSON) */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPickupItemLooted);
 
 /**
  * Pickup item actor - lootable item in world
@@ -45,6 +45,9 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+	/** Setup Niagara effect from item data - replaces EventGraph logic */
+	void SetupWorldNiagara();
 
 public:
 	// ═══════════════════════════════════════════════════════════════════
@@ -67,9 +70,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
 	bool bUsePhysics;
 
-	/** [5/5] Trace channel for placement */
+	/** [5/5] Trace channel for placement (EObjectTypeQuery per Blueprint JSON) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
-	TEnumAsByte<ECollisionChannel> PlacementTraceChannel;
+	TEnumAsByte<EObjectTypeQuery> PlacementTraceChannel;
 
 	// ═══════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS: 1/1 migrated

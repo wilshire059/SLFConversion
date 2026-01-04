@@ -62,11 +62,8 @@ MIGRATION_MAP = {
     "B_Action": "/Script/SLFConversion.SLFActionBase",
     "B_Item": "/Script/SLFConversion.SLFItemBase",
     "B_Item_Weapon": "/Script/SLFConversion.SLFWeaponBase",
-    "B_Interactable": "/Script/SLFConversion.SLFInteractableBase",
-    "B_Ladder": "/Script/SLFConversion.SLFLadderBase",
-    "B_Door": "/Script/SLFConversion.SLFDoorBase",
+    # B_Interactable and B_Door: Now in KEEP_VARS_MAP to preserve SCS (DefaultSceneRoot needed by child Blueprints)
     "B_Container": "/Script/SLFConversion.SLFContainer",
-    "B_RestingPoint": "/Script/SLFConversion.SLFRestingPointBase",
     "B_BaseProjectile": "/Script/SLFConversion.SLFProjectileBase",
     "B_AbilityEffectBase": "/Script/SLFConversion.SLFAbilityEffectBase",
     # Stats (19)
@@ -104,28 +101,27 @@ MIGRATION_MAP = {
     "B_DN_Magic": "/Script/SLFConversion.SLFDamageNegationMagic",
     "B_DN_Holy": "/Script/SLFConversion.SLFDamageNegationHoly",
     # Additional Actions (actual Blueprints that exist)
-    "B_Action_Execute": "/Script/SLFConversion.SLFActionBase",
-    "B_Action_GuardStart": "/Script/SLFConversion.SLFActionBase",
-    "B_Action_GuardEnd": "/Script/SLFConversion.SLFActionBase",
-    "B_Action_GuardCancel": "/Script/SLFConversion.SLFActionBase",
-    "B_Action_StartSprinting": "/Script/SLFConversion.SLFActionBase",
-    "B_Action_StopSprinting": "/Script/SLFConversion.SLFActionBase",
-    "B_Action_SprintAttack": "/Script/SLFConversion.SLFActionBase",
-    "B_Action_ThrowProjectile": "/Script/SLFConversion.SLFActionBase",
-    "B_Action_TwoHandedStance_L": "/Script/SLFConversion.SLFActionBase",
-    "B_Action_TwoHandedStance_R": "/Script/SLFConversion.SLFActionBase",
-    "B_Action_UseEquippedTool": "/Script/SLFConversion.SLFActionBase",
-    "B_Action_WeaponAbility": "/Script/SLFConversion.SLFActionBase",
-    "B_Action_PickupItemMontage": "/Script/SLFConversion.SLFActionBase",
-    "B_Action_ScrollWheel_LeftHand": "/Script/SLFConversion.SLFActionBase",
-    "B_Action_ScrollWheel_RightHand": "/Script/SLFConversion.SLFActionBase",
-    "B_Action_ScrollWheel_Tools": "/Script/SLFConversion.SLFActionBase",
+    "B_Action_Execute": "/Script/SLFConversion.SLFActionExecute",
+    "B_Action_GuardStart": "/Script/SLFConversion.SLFActionGuardStart",
+    "B_Action_GuardEnd": "/Script/SLFConversion.SLFActionGuardEnd",
+    "B_Action_GuardCancel": "/Script/SLFConversion.SLFActionGuardCancel",
+    "B_Action_StartSprinting": "/Script/SLFConversion.SLFActionStartSprinting",
+    "B_Action_StopSprinting": "/Script/SLFConversion.SLFActionStopSprinting",
+    "B_Action_SprintAttack": "/Script/SLFConversion.SLFActionSprintAttack",
+    "B_Action_ThrowProjectile": "/Script/SLFConversion.SLFActionThrowProjectile",
+    "B_Action_TwoHandedStance_L": "/Script/SLFConversion.SLFActionTwoHandedStanceL",
+    "B_Action_TwoHandedStance_R": "/Script/SLFConversion.SLFActionTwoHandedStanceR",
+    "B_Action_UseEquippedTool": "/Script/SLFConversion.SLFActionUseEquippedTool",
+    "B_Action_WeaponAbility": "/Script/SLFConversion.SLFActionWeaponAbility",
+    "B_Action_PickupItemMontage": "/Script/SLFConversion.SLFActionPickupItemMontage",
+    "B_Action_ScrollWheel_LeftHand": "/Script/SLFConversion.SLFActionScrollWheelLeftHand",
+    "B_Action_ScrollWheel_RightHand": "/Script/SLFConversion.SLFActionScrollWheelRightHand",
+    "B_Action_ScrollWheel_Tools": "/Script/SLFConversion.SLFActionScrollWheelTools",
     # Additional Interactables
     "B_BossDoor": "/Script/SLFConversion.SLFInteractableBase",
     "B_DeathCurrency": "/Script/SLFConversion.SLFInteractableBase",
     # "B_Door_Demo": "/Script/SLFConversion.SLFDoorBase",  # SKIP: Crashes engine - corrupted function refs
     # Additional Items
-    "B_PickupItem": "/Script/SLFConversion.SLFItemBase",
     "B_Item_Lantern": "/Script/SLFConversion.SLFItemBase",
     "B_Item_AI_Weapon": "/Script/SLFConversion.SLFWeaponBase",
     "B_Item_AI_Weapon_BossMace": "/Script/SLFConversion.SLFWeaponBase",
@@ -464,6 +460,13 @@ KEEP_VARS_MAP = {
     "AC_AI_TargetSortManager": "/Script/SLFConversion.AC_AI_TargetSortManager",
     # Character Blueprints - B_BaseCharacter is critical parent of all characters
     "B_BaseCharacter": "/Script/SLFConversion.SLFBaseCharacter",
+    # Interactables - preserve SCS components (DefaultSceneRoot, World Niagara, mesh components)
+    # B_Interactable's DefaultSceneRoot is needed as parent for child Blueprint SCS components
+    "B_Interactable": "/Script/SLFConversion.SLFInteractableBase",
+    "B_Door": "/Script/SLFConversion.SLFDoorBase",
+    "B_Ladder": "/Script/SLFConversion.SLFLadderBase",
+    "B_RestingPoint": "/Script/SLFConversion.SLFRestingPointBase",
+    "B_PickupItem": "/Script/SLFConversion.SLFPickupItemBase",
 }
 
 # Interface map
@@ -503,9 +506,22 @@ DATA_ASSET_MAP = {
 ANIM_BP_MAP = {
     # Clear EventGraph only (keep variables for AnimGraph)
     # Reparenting to C++ AnimInstance causes crashes - keep original parent
-    # "ABP_SoulslikeNPC": "/Script/SLFConversion.SLFNPCAnimInstance",
-    # "ABP_SoulslikeEnemy": "/Script/SLFConversion.SLFEnemyAnimInstance",
-    # "ABP_SoulslikeBossNew": "/Script/SLFConversion.SLFBossAnimInstance",
+    # The EventGraph contains getter functions that use Property Access to
+    # read from owner and SET local variables, overwriting C++ values.
+    # By clearing the EventGraph, C++ can set these variables directly.
+    "ABP_SoulslikeNPC": None,  # No reparent, just clear EventGraph
+    "ABP_SoulslikeEnemy": None,  # No reparent, just clear EventGraph
+    "ABP_SoulslikeBossNew": None,  # No reparent, just clear EventGraph
+    "ABP_SoulslikeCharacter_Additive": None,  # Player AnimBP - clear EventGraph for IsCrouched/IsResting/IsBlocking
+}
+
+# AnimBlueprints that SHOULD be reparented (player character's AnimBP)
+# NOTE: Reparenting AnimBPs causes CDO assertion crashes - disabled for now
+# These have C++ NativeUpdateAnimation that sets the variables the AnimGraph reads
+ANIM_BP_REPARENT_MAP = {
+    # DISABLED - AnimBPs with Animation Layers cannot be reparented to C++
+    # The Character class uses reflection to set IsCrouched directly on the BP AnimInstance
+    # "ABP_SoulslikeCharacter_Additive": "/Script/SLFConversion.ABP_SoulslikeCharacter_Additive",
 }
 
 # CRITICAL: AnimNotifyStates that call functions with "?" suffix pins
@@ -690,6 +706,8 @@ PATH_OVERRIDES = {
     "ANS_AI_WeaponTrace": "/Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_AI_WeaponTrace",
     "ANS_FistTrace": "/Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_FistTrace",
     "ANS_RegisterAttackSequence": "/Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_RegisterAttackSequence",
+    # AnimBlueprints
+    "ABP_SoulslikeCharacter_Additive": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive",
     # Additional Actions
     "B_Action_Execute": "/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_Execute",
     "B_Action_GuardStart": "/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_GuardStart",
@@ -883,7 +901,7 @@ def run():
         # Skip Blueprints that crash during loading - but NOT B_BaseCharacter
         # B_BaseCharacter is the critical parent of all characters and MUST be migrated
         "B_Container",
-        "B_PickupItem",
+        # B_PickupItem removed - must be reparented for item pickup to work
         "B_Soulslike_Boss_Malgareth",
         "B_Soulslike_Enemy_Guard",
         "B_Soulslike_Enemy_Showcase",
@@ -928,6 +946,23 @@ def run():
             bp = find_bp(name)
             if bp:
                 all_bps.append((bp, name, cpp, "anim_bp"))
+                print("  " + name + ": loaded")
+            else:
+                print("  " + name + ": not found")
+        except Exception as e:
+            print("  " + name + ": load error - " + str(e))
+
+    # 1B2: Load AnimBlueprints that should be reparented (player's AnimBP)
+    print("")
+    print("=== Loading AnimBlueprints (Reparent) ===")
+    for name, cpp in ANIM_BP_REPARENT_MAP.items():
+        if name in LOAD_SKIP_LIST:
+            print("  " + name + ": SKIPPED (crash prevention)")
+            continue
+        try:
+            bp = find_bp(name)
+            if bp:
+                all_bps.append((bp, name, cpp, "anim_bp_reparent"))
                 print("  " + name + ": loaded")
             else:
                 print("  " + name + ": not found")
@@ -1060,15 +1095,16 @@ def run():
     clear_errors = 0
     for bp, name, cpp, bp_type in all_bps:
         try:
-            if bp_type == "anim_bp" or bp_type == "keep_vars":
+            if bp_type == "anim_bp" or bp_type == "anim_bp_reparent" or bp_type == "keep_vars":
                 # Keep variables for AnimBPs and keep_vars types
                 unreal.SLFAutomationLibrary.clear_graphs_keep_variables_no_compile(bp)
             else:
                 # Full clear for everything else
                 unreal.SLFAutomationLibrary.clear_all_blueprint_logic_no_compile(bp)
 
-            # Remove interfaces except for interface Blueprints themselves
-            if bp_type != "interface":
+            # Remove interfaces except for interface Blueprints and AnimBlueprints
+            # AnimBPs use interfaces for animation layers (ALI_OverlayStates, ALI_LocomotionStates)
+            if bp_type != "interface" and bp_type != "anim_bp":
                 unreal.SLFAutomationLibrary.remove_implemented_interfaces(bp)
 
             cleared += 1
@@ -1108,7 +1144,7 @@ def run():
         # Skip Blueprints that crash during reparent - but NOT B_BaseCharacter
         # B_BaseCharacter is the critical parent and MUST be reparented
         "B_Container",
-        "B_PickupItem",
+        # B_PickupItem removed - must be reparented for item pickup to work
     ]
 
     # =========================================================================
@@ -1163,6 +1199,15 @@ def run():
         except Exception as e:
             print("  " + name + ": save error - " + str(e))
     print("Saved: " + str(saved))
+
+    # =========================================================================
+    # PHASE 4B: CLEAR GETTER FUNCTIONS IN PLAYER ANIMBP - SKIPPED
+    # No longer needed - ABP_SoulslikeCharacter_Additive is now in ANIM_BP_MAP
+    # and gets its entire EventGraph cleared in PHASE 2, which removes the
+    # getter functions that use Property Access to overwrite C++ values.
+    # =========================================================================
+    print("")
+    print("=== PHASE 4B: SKIPPED (Player AnimBP now in ANIM_BP_MAP) ===")
 
     # =========================================================================
     # PHASE 5: COMPILE - SKIPPED

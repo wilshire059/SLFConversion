@@ -1,15 +1,16 @@
 // SLFInteractableBase.cpp
 #include "SLFInteractableBase.h"
 #include "Components/BoxComponent.h"
+#include "Components/SceneComponent.h"
 
 ASLFInteractableBase::ASLFInteractableBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-
-
-
-	UE_LOG(LogTemp, Log, TEXT("[InteractableBase] Created"));
+	// NOTE: ALL components (DefaultSceneRoot, Interactable SM, Interactable SK, World Niagara)
+	// are defined in Blueprint's SCS and preserved via KEEP_VARS_MAP.
+	// DO NOT create components here - they would conflict with preserved SCS components.
+	// B_PickupItem's "World Niagara" references B_Interactable's "DefaultSceneRoot" as parent.
 }
 
 void ASLFInteractableBase::BeginPlay()
