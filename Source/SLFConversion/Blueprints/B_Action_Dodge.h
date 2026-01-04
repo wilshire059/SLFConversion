@@ -53,7 +53,13 @@ public:
 
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (0)
+	// FUNCTIONS
 	// ═══════════════════════════════════════════════════════════════════════
 
+	/** Execute the dodge action - plays directional dodge montage */
+	virtual void ExecuteAction_Implementation() override;
+
+protected:
+	/** Get the appropriate dodge montage based on movement input direction */
+	UAnimMontage* GetDirectionalDodgeMontage();
 };

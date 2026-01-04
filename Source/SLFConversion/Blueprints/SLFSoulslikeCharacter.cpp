@@ -441,8 +441,8 @@ void ASLFSoulslikeCharacter::HandleDodge()
 
 void ASLFSoulslikeCharacter::HandleAttack()
 {
-	// From JSON: Queues SoulslikeFramework.Action.ComboLight_R (right hand attack)
-	QueueActionToBuffer(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.ComboLight_R")));
+	// From JSON: Queues SoulslikeFramework.Action.LightAttackRight (right hand attack)
+	QueueActionToBuffer(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.LightAttackRight")));
 }
 
 void ASLFSoulslikeCharacter::HandleGuardStarted()

@@ -9,7 +9,7 @@
 // PASS 11-15: Added RPC functions and async loading
 
 #include "Components/AC_ActionManager.h"
-#include "Blueprints/B_Action.h"
+#include "Blueprints/SLFActionBase.h"
 #include "Components/AC_StatManager.h"
 #include "Components/AC_InteractionManager.h"
 #include "Components/AC_CombatManager.h"
@@ -574,7 +574,7 @@ void UAC_ActionManager::EventPerformAction_Implementation(const FGameplayTag& Ac
 	UE_LOG(LogTemp, Log, TEXT("  Found action class: %s"), *ActionClass->GetName());
 
 	// Create an instance of the action class
-	UB_Action* ActionInstance = NewObject<UB_Action>(this, ActionClass);
+	USLFActionBase* ActionInstance = NewObject<USLFActionBase>(this, ActionClass);
 	if (!ActionInstance)
 	{
 		UE_LOG(LogTemp, Error, TEXT("  Failed to create action instance"));
@@ -584,7 +584,7 @@ void UAC_ActionManager::EventPerformAction_Implementation(const FGameplayTag& Ac
 	// Set the action data asset from Actions map (if available)
 	if (UPrimaryDataAsset** ActionDataPtr = Actions.Find(ActionTag))
 	{
-		// Use reflection to set the Action property if it exists on UB_Action
+		// Use reflection to set the Action property if it exists on USLFActionBase
 		ActionInstance->Action = *ActionDataPtr;
 		UE_LOG(LogTemp, Log, TEXT("  Set action data: %s"), *ActionDataPtr ? *(*ActionDataPtr)->GetName() : TEXT("null"));
 	}
@@ -889,7 +889,7 @@ void UAC_ActionManager::BuildAvailableActionsFromActionsMap()
 					FString ActionClassPath = FString::Printf(
 						TEXT("/Game/SoulslikeFramework/Data/Actions/ActionLogic/%s.%s_C"),
 						*ActionClassName, *ActionClassName);
-					ActionClass = LoadClass<UB_Action>(nullptr, *ActionClassPath);
+					ActionClass = LoadClass<USLFActionBase>(nullptr, *ActionClassPath);
 					if (!ActionClass)
 					{
 						UE_LOG(LogTemp, Warning, TEXT("UAC_ActionManager: Name derivation failed for %s"), *AssetName);

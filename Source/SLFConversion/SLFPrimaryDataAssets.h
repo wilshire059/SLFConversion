@@ -17,7 +17,7 @@ class USoundCue;
 class UAnimMontage;
 class UDataTable;
 class UCurveFloat;
-class UB_Action;
+class USLFActionBase;
 
 //////////////////////////////////////////////////////////////////////////
 // Base Primary Data Asset
@@ -51,7 +51,7 @@ class SLFCONVERSION_API UPDA_Action : public UPDA_Base
 public:
 	/** The action class to instantiate when this action is triggered (soft reference) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action")
-	TSoftClassPtr<UB_Action> ActionClass;
+	TSoftClassPtr<USLFActionBase> ActionClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action")
 	TSoftObjectPtr<UAnimMontage> ActionMontage;

@@ -46,6 +46,7 @@ void UInputBufferComponent::QueueAction_Implementation(FGameplayTag QueuedAction
 	{
 		// Buffer is closed (ready) - execute immediately
 		UE_LOG(LogInputBuffer, Verbose, TEXT("  -> Executing immediately (buffer closed)"));
+		IncomingActionTag = QueuedActionTag;  // Must set before consuming!
 		ConsumeInputBuffer();
 	}
 }

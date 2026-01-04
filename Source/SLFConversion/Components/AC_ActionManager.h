@@ -27,7 +27,7 @@ class UDataTable;
 class UPrimaryDataAsset;
 class UB_Stat;
 class UPDA_Action;
-class UB_Action;
+class USLFActionBase;
 
 // Event Dispatcher Declarations
 
