@@ -12,6 +12,7 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 #include "SLFSoulslikeCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "InputAction.h"
@@ -106,6 +107,13 @@ ASLFSoulslikeCharacter::ASLFSoulslikeCharacter()
 		IA_TargetLock = TargetLockActionFinder.Object;
 	}
 
+	static ConstructorHelpers::FObjectFinder<UInputAction> CrouchActionFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/IA_Crouch.IA_Crouch"));
+	if (CrouchActionFinder.Succeeded())
+	{
+		IA_Crouch = CrouchActionFinder.Object;
+	}
+
 	// Initialize camera config
 	CameraPitchLock = 0.0;
 
@@ -144,6 +152,15 @@ ASLFSoulslikeCharacter::ASLFSoulslikeCharacter()
 	UpperBody = nullptr;
 	LowerBody = nullptr;
 	Arms = nullptr;
+
+	// ═══════════════════════════════════════════════════════════════════
+	// MOVEMENT SETTINGS - Enable crouching on CharacterMovementComponent
+	// ═══════════════════════════════════════════════════════════════════
+	if (UCharacterMovementComponent* MovementComp = GetCharacterMovement())
+	{
+		MovementComp->GetNavAgentPropertiesRef().bCanCrouch = true;
+		MovementComp->bCanWalkOffLedgesWhenCrouching = true;
+	}
 }
 
 void ASLFSoulslikeCharacter::BeginPlay()
@@ -152,8 +169,39 @@ void ASLFSoulslikeCharacter::BeginPlay()
 
 	UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] ===== BeginPlay START: %s (Class: %s) ====="), *GetName(), *GetClass()->GetName());
 
+	// Enable crouching on the CharacterMovementComponent
+	// Must be done in BeginPlay because Blueprint SCS components override constructor settings
+	if (UCharacterMovementComponent* MovementComp = GetCharacterMovement())
+	{
+		MovementComp->GetNavAgentPropertiesRef().bCanCrouch = true;
+		MovementComp->bCanWalkOffLedgesWhenCrouching = true;
+		UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Enabled crouching on CharacterMovement"));
+	}
+
 	// Cache component references from Blueprint SCS
 	CacheComponentReferences();
+
+	// Initialize AnimBP's ActionManager property to point to our CachedActionManager
+	// The AnimBP reads from ActionManager.IsCrouched via Property Access node,
+	// but this variable was never initialized during migration (EventGraph was cleared)
+	if (USkeletalMeshComponent* MeshComp = GetMesh())
+	{
+		if (UAnimInstance* AnimInstance = MeshComp->GetAnimInstance())
+		{
+			FObjectProperty* AMProp = CastField<FObjectProperty>(
+				AnimInstance->GetClass()->FindPropertyByName(TEXT("ActionManager")));
+			if (AMProp && CachedActionManager)
+			{
+				AMProp->SetObjectPropertyValue_InContainer(AnimInstance, CachedActionManager);
+				UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] Initialized AnimBP ActionManager to %p"), CachedActionManager);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] Could not set AnimBP ActionManager - AMProp: %p, CachedActionManager: %p"),
+					AMProp, CachedActionManager);
+			}
+		}
+	}
 
 	// Initialize modular mesh system - merge modular meshes and apply to main skeleton
 	InitializeModularMesh();
@@ -177,6 +225,145 @@ void ASLFSoulslikeCharacter::BeginPlay()
 	{
 		CachedInputBuffer->OnInputBufferConsumed.AddDynamic(this, &ASLFSoulslikeCharacter::OnInputBufferConsumed);
 		UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Bound to InputBuffer OnInputBufferConsumed"));
+	}
+}
+
+void ASLFSoulslikeCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	// Update AnimBP IsCrouched every frame (replaces cleared EventGraph GetIsCrouched logic)
+	// The AnimBP was not reparented to C++ due to Animation Layer Interface conflicts,
+	// so NativeUpdateAnimation() doesn't run. We must set this variable every frame.
+	if (USkeletalMeshComponent* MeshComp = GetMesh())
+	{
+		if (UAnimInstance* AnimInstance = MeshComp->GetAnimInstance())
+		{
+			if (FBoolProperty* Prop = CastField<FBoolProperty>(
+				AnimInstance->GetClass()->FindPropertyByName(TEXT("IsCrouched"))))
+			{
+				Prop->SetPropertyValue_InContainer(AnimInstance, bIsCrouched);
+			}
+		}
+	}
+}
+
+void ASLFSoulslikeCharacter::OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
+{
+	Super::OnStartCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
+	UpdateAnimInstanceCrouchState(true);
+
+	// Update ActionManager's IsCrouched - the AnimBP reads from ActionManager.IsCrouched
+	if (CachedActionManager)
+	{
+		CachedActionManager->IsCrouched = true;
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] OnStartCrouch - Set ActionManager->IsCrouched = true (ptr: %p)"), CachedActionManager);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[SoulslikeCharacter] OnStartCrouch - CachedActionManager is NULL! Cannot set IsCrouched!"));
+	}
+
+	// Initialize AnimBP's ActionManager property if it's NULL
+	// The AnimBP reads from ActionManager.IsCrouched via Property Access node
+	if (USkeletalMeshComponent* MeshComp = GetMesh())
+	{
+		if (UAnimInstance* AnimInst = MeshComp->GetAnimInstance())
+		{
+			FObjectProperty* AMProp = CastField<FObjectProperty>(
+				AnimInst->GetClass()->FindPropertyByName(TEXT("ActionManager")));
+			if (AMProp && CachedActionManager)
+			{
+				UObject* CurrentValue = AMProp->GetObjectPropertyValue_InContainer(AnimInst);
+				if (!CurrentValue)
+				{
+					// AnimBP ActionManager is NULL - set it now
+					AMProp->SetObjectPropertyValue_InContainer(AnimInst, CachedActionManager);
+					UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] OnStartCrouch - Initialized AnimBP ActionManager to %p"), CachedActionManager);
+				}
+				UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] AnimBP ActionManager property: %p (our CachedActionManager: %p)"),
+					AMProp->GetObjectPropertyValue_InContainer(AnimInst), CachedActionManager);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("[SoulslikeCharacter] AnimBP has NO ActionManager property or CachedActionManager is NULL!"));
+			}
+		}
+	}
+
+	// Debug: Verify CharacterMovement state matches
+	if (UCharacterMovementComponent* CMC = GetCharacterMovement())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] OnStartCrouch - CMC->IsCrouching()=%s, bIsCrouched=%s, bWantsToCrouch=%s"),
+			CMC->IsCrouching() ? TEXT("TRUE") : TEXT("FALSE"),
+			bIsCrouched ? TEXT("TRUE") : TEXT("FALSE"),
+			CMC->bWantsToCrouch ? TEXT("TRUE") : TEXT("FALSE"));
+	}
+}
+
+void ASLFSoulslikeCharacter::OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
+{
+	Super::OnEndCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
+	UpdateAnimInstanceCrouchState(false);
+
+	// Update ActionManager's IsCrouched - the AnimBP reads from ActionManager.IsCrouched
+	if (CachedActionManager)
+	{
+		CachedActionManager->IsCrouched = false;
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] OnEndCrouch - Set ActionManager->IsCrouched = false"));
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] OnEndCrouch - Updated AnimInstance IsCrouched=false"));
+}
+
+void ASLFSoulslikeCharacter::UpdateAnimInstanceCrouchState(bool bCrouching)
+{
+	// Get the AnimInstance from the mesh
+	USkeletalMeshComponent* CharMesh = GetMesh();
+	if (!CharMesh)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] UpdateAnimInstanceCrouchState - No mesh!"));
+		return;
+	}
+
+	UAnimInstance* AnimInstance = CharMesh->GetAnimInstance();
+	if (!AnimInstance)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] UpdateAnimInstanceCrouchState - No AnimInstance!"));
+		return;
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] UpdateAnimInstanceCrouchState - AnimInstance class: %s"), *AnimInstance->GetClass()->GetName());
+
+	// Use reflection to set the IsCrouched property on the Blueprint AnimInstance
+	// The Blueprint AnimBP has an "IsCrouched" bool property that the AnimGraph reads
+	FProperty* IsCrouchedProp = AnimInstance->GetClass()->FindPropertyByName(FName("IsCrouched"));
+	if (IsCrouchedProp)
+	{
+		bool* ValuePtr = IsCrouchedProp->ContainerPtrToValuePtr<bool>(AnimInstance);
+		if (ValuePtr)
+		{
+			*ValuePtr = bCrouching;
+			UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Set IsCrouched = %s on %s"), bCrouching ? TEXT("true") : TEXT("false"), *AnimInstance->GetClass()->GetName());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] IsCrouched property found but ValuePtr is null!"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] IsCrouched property NOT FOUND on %s"), *AnimInstance->GetClass()->GetName());
+
+		// List all properties to debug
+		for (TFieldIterator<FProperty> PropIt(AnimInstance->GetClass()); PropIt; ++PropIt)
+		{
+			FProperty* Prop = *PropIt;
+			if (Prop->GetName().Contains(TEXT("Crouch"), ESearchCase::IgnoreCase))
+			{
+				UE_LOG(LogTemp, Log, TEXT("  Found property: %s"), *Prop->GetName());
+			}
+		}
 	}
 }
 
@@ -308,11 +495,12 @@ void ASLFSoulslikeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	}
 
 	// Bind input actions from JSON: MOVEMENT & CAMERA, INPUT & BUFFERING sections
-	UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] Input Actions - Move:%s Look:%s Jump:%s Sprint:%s"),
+	UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] Input Actions - Move:%s Look:%s Jump:%s Sprint:%s Crouch:%s"),
 		IA_Move ? TEXT("OK") : TEXT("NULL"),
 		IA_Look ? TEXT("OK") : TEXT("NULL"),
 		IA_Jump ? TEXT("OK") : TEXT("NULL"),
-		IA_Sprint ? TEXT("OK") : TEXT("NULL"));
+		IA_Sprint ? TEXT("OK") : TEXT("NULL"),
+		IA_Crouch ? TEXT("OK") : TEXT("NULL"));
 
 	if (IA_Move)
 	{
@@ -357,6 +545,15 @@ void ASLFSoulslikeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	if (IA_TargetLock)
 	{
 		EnhancedInput->BindAction(IA_TargetLock, ETriggerEvent::Started, this, &ASLFSoulslikeCharacter::HandleTargetLockInput);
+	}
+	if (IA_Crouch)
+	{
+		EnhancedInput->BindAction(IA_Crouch, ETriggerEvent::Started, this, &ASLFSoulslikeCharacter::HandleCrouch);
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] *** IA_Crouch BOUND to HandleCrouch - Press C to crouch ***"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[SoulslikeCharacter] !!! IA_Crouch is NULL - Crouch input will NOT work !!!"));
 	}
 
 	UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Enhanced input bindings set up"));
@@ -493,6 +690,39 @@ void ASLFSoulslikeCharacter::HandleTargetLockInput()
 {
 	// From JSON: TARGET LOCKING section
 	HandleTargetLock();
+}
+
+void ASLFSoulslikeCharacter::HandleCrouch()
+{
+	UE_LOG(LogTemp, Warning, TEXT(""));
+	UE_LOG(LogTemp, Warning, TEXT("========== CROUCH DEBUG =========="));
+	UE_LOG(LogTemp, Warning, TEXT("[HandleCrouch] CALLED! bIsCrouched = %s"), bIsCrouched ? TEXT("TRUE") : TEXT("FALSE"));
+	UE_LOG(LogTemp, Warning, TEXT("==================================="));
+
+	// Try direct crouch toggle first (bypass action system)
+	if (bIsCrouched)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[HandleCrouch] Calling UnCrouch()..."));
+		UnCrouch();
+		UE_LOG(LogTemp, Warning, TEXT("[HandleCrouch] After UnCrouch() - bIsCrouched = %s"), bIsCrouched ? TEXT("TRUE") : TEXT("FALSE"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[HandleCrouch] Calling Crouch()..."));
+		Crouch();
+		UE_LOG(LogTemp, Warning, TEXT("[HandleCrouch] After Crouch() - bIsCrouched = %s"), bIsCrouched ? TEXT("TRUE") : TEXT("FALSE"));
+
+		// Check if CanCrouch failed
+		if (!bIsCrouched)
+		{
+			UE_LOG(LogTemp, Error, TEXT("[HandleCrouch] Crouch() did NOT change bIsCrouched! CanCrouch() may have failed!"));
+			if (UCharacterMovementComponent* CMC = GetCharacterMovement())
+			{
+				UE_LOG(LogTemp, Error, TEXT("[HandleCrouch] CMC->CanEverCrouch() = %s"), CMC->CanEverCrouch() ? TEXT("TRUE") : TEXT("FALSE"));
+				UE_LOG(LogTemp, Error, TEXT("[HandleCrouch] CMC->IsCrouching() = %s"), CMC->IsCrouching() ? TEXT("TRUE") : TEXT("FALSE"));
+			}
+		}
+	}
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════

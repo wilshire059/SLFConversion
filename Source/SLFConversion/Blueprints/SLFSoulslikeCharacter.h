@@ -82,6 +82,14 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+
+	// Crouch state change handlers - update AnimInstance
+	virtual void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
+	virtual void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
+
+	// Helper to update AnimInstance crouch state
+	void UpdateAnimInstanceCrouchState(bool bCrouching);
 
 public:
 	// ═══════════════════════════════════════════════════════════════════
@@ -235,6 +243,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character|Input")
 	UInputAction* IA_TargetLock;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character|Input")
+	UInputAction* IA_Crouch;
+
 	// ═══════════════════════════════════════════════════════════════════
 	// COMPONENT CACHE (populated in BeginPlay)
 	// ═══════════════════════════════════════════════════════════════════
@@ -353,6 +364,7 @@ protected:
 	void HandleInteractStarted();
 	void HandleInteractCompleted();
 	void HandleTargetLockInput();
+	void HandleCrouch();
 
 	/** Queue action to input buffer (checks buffer state) */
 	void QueueActionToBuffer(const FGameplayTag& ActionTag);
