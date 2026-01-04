@@ -355,6 +355,55 @@ if (/* value from VAR001 */) {
 
 ---
 
+## Extracting PropertyAccess Paths (AnimBPs)
+
+AnimBlueprints use Property Access nodes to read data from components. These are **critical** for understanding what data the AnimGraph needs.
+
+### From JSON (K2Node_PropertyAccess):
+
+```json
+{
+  "NodeClass": "K2Node_PropertyAccess",
+  "NodeTitle": "Property Access",
+  "PropertyAccessPath": ["ActionManager", "IsCrouched"],
+  "PropertyAccessPathJoined": "ActionManager.IsCrouched",
+  "Pins": [
+    {
+      "Name": "Value",
+      "Direction": "Output",
+      "Type": {"Category": "bool"}
+    }
+  ]
+}
+```
+
+### Common PropertyAccess Paths
+
+| Path | What it Reads | C++ Implementation |
+|------|--------------|-------------------|
+| `ActionManager.IsCrouched` | Crouch state | Set via `CachedActionManager->IsCrouched = bIsCrouched;` |
+| `CombatManager.IsGuarding?` | Guard state | Set via `CachedCombatManager->IsGuarding = bIsGuarding;` |
+| `EquipmentManager.GrantedTags` | Equipment tags | Set via component property |
+| `GetCharacterMovementComponent.Velocity` | Movement velocity | Automatically available |
+| `GetCharacterMovementComponent.IsFalling` | In-air state | Automatically available |
+
+### Why This Matters
+
+When an AnimBP's EventGraph is cleared during migration:
+1. The AnimGraph still reads from these Property Access paths
+2. If the component reference (e.g., `ActionManager`) is NULL, it returns default values
+3. The C++ code must ensure these component references are set on the AnimInstance
+
+### Checklist for AnimBP Migration
+
+- [ ] List ALL PropertyAccess paths from the export
+- [ ] Identify which component each path references
+- [ ] Ensure component references are initialized in C++ (via reflection if needed)
+- [ ] Update component properties when state changes
+- [ ] Test that AnimGraph receives correct values
+
+---
+
 ## Extracting Dependencies
 
 ### Struct Dependencies
