@@ -26,7 +26,7 @@ class UAnimMontage;
 class UDataTable;
 class UPrimaryDataAsset;
 class UB_Stat;
-class UPDA_Action;
+class UPDA_ActionBase;
 class USLFActionBase;
 
 // Event Dispatcher Declarations

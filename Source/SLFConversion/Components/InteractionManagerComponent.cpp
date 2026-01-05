@@ -15,6 +15,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/PlayerController.h"
 #include "Net/UnrealNetwork.h"
+#include "Interfaces/BPI_Interactable.h"
 
 UInteractionManagerComponent::UInteractionManagerComponent()
 {
@@ -106,7 +107,13 @@ void UInteractionManagerComponent::TryInteract_Implementation()
 	if (NearestInteractable)
 	{
 		UE_LOG(LogTemp, Log, TEXT("[InteractionManager] TryInteract with %s"), *NearestInteractable->GetName());
-		// TODO: Call OnInteract via interface
+
+		// Call OnInteract via interface
+		if (NearestInteractable->GetClass()->ImplementsInterface(UBPI_Interactable::StaticClass()))
+		{
+			IBPI_Interactable::Execute_OnInteract(NearestInteractable, GetOwner());
+			UE_LOG(LogTemp, Log, TEXT("[InteractionManager] Called OnInteract on %s"), *NearestInteractable->GetName());
+		}
 	}
 }
 

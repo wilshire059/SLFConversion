@@ -8,7 +8,6 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "SLFPrimaryDataAssets.h"
-#include "StructUtils/InstancedStruct.h"
 
 UB_Action_Dodge::UB_Action_Dodge()
 {
@@ -25,96 +24,34 @@ void UB_Action_Dodge::ExecuteAction_Implementation()
 	if (!Character) return;
 
 	// Extract DodgeMontages from Action data asset's RelevantData (FInstancedStruct)
+	// PDA_ActionBase is now reparented to UPDA_ActionBase, so Cast works directly
 	if (Action)
 	{
 		UE_LOG(LogTemp, Log, TEXT("[ActionDodge] Action class: %s"), *Action->GetClass()->GetName());
 
-		// Try direct cast first (C++ UPDA_Action)
-		if (UPDA_Action* ActionData = Cast<UPDA_Action>(Action))
+		// Cast to UPDA_ActionBase - works because PDA_ActionBase is reparented to C++
+		if (UPDA_ActionBase* ActionData = Cast<UPDA_ActionBase>(Action))
 		{
+			// GetPtr uses Core Redirect to convert Blueprint struct to C++ struct
 			if (const FSLFDodgeMontages* MontageData = ActionData->RelevantData.GetPtr<FSLFDodgeMontages>())
 			{
 				DodgeMontages = *MontageData;
-				UE_LOG(LogTemp, Log, TEXT("[ActionDodge] Loaded DodgeMontages from C++ UPDA_Action"));
+				UE_LOG(LogTemp, Log, TEXT("[ActionDodge] Loaded DodgeMontages: Forward=%s, Backward=%s"),
+					DodgeMontages.Forward ? *DodgeMontages.Forward->GetName() : TEXT("NULL"),
+					DodgeMontages.Backward ? *DodgeMontages.Backward->GetName() : TEXT("NULL"));
 			}
 			else
 			{
-				UE_LOG(LogTemp, Warning, TEXT("[ActionDodge] RelevantData does not contain FSLFDodgeMontages"));
+				// NO REFLECTION FALLBACK - Core Redirect must be applied
+				const UScriptStruct* StoredType = ActionData->RelevantData.GetScriptStruct();
+				UE_LOG(LogTemp, Error, TEXT("[ActionDodge] GetPtr<FSLFDodgeMontages> FAILED! Struct type: %s"),
+					StoredType ? *StoredType->GetPathName() : TEXT("NULL/Empty"));
 			}
 		}
 		else
 		{
-			// Blueprint-derived data asset - use reflection to access RelevantData
-			FProperty* RelevantDataProp = Action->GetClass()->FindPropertyByName(FName("RelevantData"));
-			if (RelevantDataProp)
-			{
-				FStructProperty* StructProp = CastField<FStructProperty>(RelevantDataProp);
-				if (StructProp && StructProp->Struct->GetFName() == FName("InstancedStruct"))
-				{
-					void* PropAddr = RelevantDataProp->ContainerPtrToValuePtr<void>(Action);
-					FInstancedStruct* InstancedStruct = static_cast<FInstancedStruct*>(PropAddr);
-					if (InstancedStruct && InstancedStruct->IsValid())
-					{
-						const UScriptStruct* StoredStructType = InstancedStruct->GetScriptStruct();
-						UE_LOG(LogTemp, Log, TEXT("[ActionDodge] InstancedStruct contains: %s"),
-							StoredStructType ? *StoredStructType->GetName() : TEXT("NULL"));
-
-						// The data is stored as Blueprint struct FDodgeMontages, not C++ FSLFDodgeMontages
-						// Extract properties via reflection from the stored struct
-						if (StoredStructType)
-						{
-							const void* StructData = InstancedStruct->GetMemory();
-
-							// Look for montage properties: Fwd, Bwd, Left, Right
-							auto GetMontageFromProp = [&](const TCHAR* PropName) -> UAnimMontage* {
-								FProperty* MontageProp = StoredStructType->FindPropertyByName(FName(PropName));
-								if (MontageProp)
-								{
-									if (FObjectProperty* ObjProp = CastField<FObjectProperty>(MontageProp))
-									{
-										void* PropValueAddr = MontageProp->ContainerPtrToValuePtr<void>(const_cast<void*>(StructData));
-										UObject* Obj = ObjProp->GetObjectPropertyValue(PropValueAddr);
-										return Cast<UAnimMontage>(Obj);
-									}
-									else if (FSoftObjectProperty* SoftObjProp = CastField<FSoftObjectProperty>(MontageProp))
-									{
-										void* PropValueAddr = MontageProp->ContainerPtrToValuePtr<void>(const_cast<void*>(StructData));
-										TSoftObjectPtr<UObject>* SoftPtr = static_cast<TSoftObjectPtr<UObject>*>(PropValueAddr);
-										if (SoftPtr)
-										{
-											return Cast<UAnimMontage>(SoftPtr->LoadSynchronous());
-										}
-									}
-								}
-								return nullptr;
-							};
-
-							DodgeMontages.Fwd = GetMontageFromProp(TEXT("Fwd"));
-							DodgeMontages.Bwd = GetMontageFromProp(TEXT("Bwd"));
-							DodgeMontages.Left = GetMontageFromProp(TEXT("Left"));
-							DodgeMontages.Right = GetMontageFromProp(TEXT("Right"));
-
-							UE_LOG(LogTemp, Log, TEXT("[ActionDodge] Extracted montages: Fwd=%s, Bwd=%s, Left=%s, Right=%s"),
-								DodgeMontages.Fwd ? *DodgeMontages.Fwd->GetName() : TEXT("NULL"),
-								DodgeMontages.Bwd ? *DodgeMontages.Bwd->GetName() : TEXT("NULL"),
-								DodgeMontages.Left ? *DodgeMontages.Left->GetName() : TEXT("NULL"),
-								DodgeMontages.Right ? *DodgeMontages.Right->GetName() : TEXT("NULL"));
-						}
-					}
-					else
-					{
-						UE_LOG(LogTemp, Warning, TEXT("[ActionDodge] InstancedStruct is empty or invalid"));
-					}
-				}
-				else
-				{
-					UE_LOG(LogTemp, Warning, TEXT("[ActionDodge] RelevantData property found but not FInstancedStruct"));
-				}
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("[ActionDodge] No RelevantData property found on %s"), *Action->GetClass()->GetName());
-			}
+			UE_LOG(LogTemp, Error, TEXT("[ActionDodge] Cast<UPDA_ActionBase> FAILED! Class: %s"),
+				*Action->GetClass()->GetPathName());
 		}
 	}
 	else
@@ -136,17 +73,17 @@ void UB_Action_Dodge::ExecuteAction_Implementation()
 
 UAnimMontage* UB_Action_Dodge::GetDirectionalDodgeMontage()
 {
-	if (!OwnerActor) return DodgeMontages.Fwd;
+	if (!OwnerActor) return DodgeMontages.Forward;
 
 	ACharacter* Character = Cast<ACharacter>(OwnerActor);
-	if (!Character) return DodgeMontages.Fwd;
+	if (!Character) return DodgeMontages.Forward;
 
 	// Get movement input direction
 	FVector InputVector = Character->GetCharacterMovement()->GetLastInputVector();
 
 	if (InputVector.IsNearlyZero())
 	{
-		return DodgeMontages.Bwd;  // Default to backstep
+		return DodgeMontages.Backstep;  // Default to backstep
 	}
 
 	// Transform to local space
@@ -156,11 +93,10 @@ UAnimMontage* UB_Action_Dodge::GetDirectionalDodgeMontage()
 	// Determine direction
 	if (FMath::Abs(LocalInput.X) > FMath::Abs(LocalInput.Y))
 	{
-		return LocalInput.X > 0 ? DodgeMontages.Fwd : DodgeMontages.Bwd;
+		return LocalInput.X > 0 ? DodgeMontages.Forward : DodgeMontages.Backward;
 	}
 	else
 	{
 		return LocalInput.Y > 0 ? DodgeMontages.Right : DodgeMontages.Left;
 	}
 }
-

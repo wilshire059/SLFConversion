@@ -33,6 +33,8 @@
 #include "UObject/ConstructorHelpers.h"
 #include "SLFGameTypes.h"  // For FSLFSkeletalMeshData reflection access
 #include "SLFPrimaryDataAssets.h"
+#include "SLFPickupItemBase.h"
+#include "Components/InventoryManagerComponent.h"
 
 ASLFSoulslikeCharacter::ASLFSoulslikeCharacter()
 {
@@ -1531,8 +1533,8 @@ void ASLFSoulslikeCharacter::OnTargetLocked_Implementation(bool bTargetLocked, b
 
 void ASLFSoulslikeCharacter::OnLootItem_Implementation(AActor* Item)
 {
-	// From JSON: Loot item, called from B_PickupItem when it has been interacted with
-	// Logic: LootItemToInventory → QueueAction for PickupItemMontage action
+	// From JSON: Called from B_PickupItem::OnInteract via BPI_Player interface
+	// Logic: Add item to inventory → Queue PickupItemMontage action
 	UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] OnLootItem: %s"), Item ? *Item->GetName() : TEXT("null"));
 
 	if (!IsValid(Item))
@@ -1540,9 +1542,19 @@ void ASLFSoulslikeCharacter::OnLootItem_Implementation(AActor* Item)
 		return;
 	}
 
-	// Get the item's data and add to inventory via InventoryManager
-	// In full implementation, this calls LootItemToInventory on InventoryManager
-	// which extracts item data from the pickup actor
+	// Cast to pickup item to get item data and add to inventory
+	if (ASLFPickupItemBase* PickupItem = Cast<ASLFPickupItemBase>(Item))
+	{
+		if (UInventoryManagerComponent* InvMgr = FindComponentByClass<UInventoryManagerComponent>())
+		{
+			if (PickupItem->Item)
+			{
+				InvMgr->AddItem(PickupItem->Item, PickupItem->Count, true);
+				UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Added %s x%d to inventory"),
+					*PickupItem->Item->GetName(), PickupItem->Count);
+			}
+		}
+	}
 
 	// Queue the pickup item montage action
 	if (CachedInputBuffer)
@@ -1550,8 +1562,6 @@ void ASLFSoulslikeCharacter::OnLootItem_Implementation(AActor* Item)
 		CachedInputBuffer->QueueAction(
 			FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.PickupItemMontage")));
 	}
-
-	UE_LOG(LogTemp, Log, TEXT("  Item looted - queued pickup montage"));
 }
 
 void ASLFSoulslikeCharacter::OnInteractableTraced_Implementation(AActor* Interactable)

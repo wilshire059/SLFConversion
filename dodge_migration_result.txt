@@ -1,0 +1,28 @@
+=== Dodge Montages Migration ===
+
+Loading /Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_Dodge...
+  Loaded: <Object '/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_Dodge.DA_Action_Dodge' (0x0000023B6038D500) Class 'PDA_Action_C'>
+  Class: PDA_Action_C
+
+Current DodgeMontages: <class 'SLFDodgeMontages'>
+
+Setting montage properties...
+  Forward: AM_SLF_Dodge_F
+  ForwardLeft: AM_SLF_Dodge_FL
+  ForwardRight: AM_SLF_Dodge_FR
+  Left: AM_SLF_Dodge_L
+  Right: AM_SLF_Dodge_R
+  Backward: AM_SLF_Dodge_B
+  BackwardLeft: AM_SLF_Dodge_BL
+  BackwardRight: AM_SLF_Dodge_BR
+  Backstep: AM_SLF_Backstep
+
+Applied DodgeMontages to asset
+
+Saving asset...
+  Save result: True
+
+Verifying...
+  Forward montage: AM_SLF_Dodge_F
+
+*** SUCCESS: Dodge montages migrated! ***

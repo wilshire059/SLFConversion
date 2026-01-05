@@ -1,7 +1,8 @@
 // SLFActionStopSprinting.cpp
+// Logic: SetMovementMode(Walking), StopStaminaLoss, SetIsSprinting(false)
 #include "SLFActionStopSprinting.h"
-#include "GameFramework/Character.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "Interfaces/BPI_GenericCharacter.h"
+#include "ActionManagerComponent.h"
 
 USLFActionStopSprinting::USLFActionStopSprinting()
 {
@@ -12,12 +13,20 @@ void USLFActionStopSprinting::ExecuteAction_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("[ActionStopSprinting] ExecuteAction"));
 
-	if (ACharacter* Character = Cast<ACharacter>(OwnerActor))
+	if (!OwnerActor) return;
+
+	// Set movement mode to walking via interface
+	if (OwnerActor->GetClass()->ImplementsInterface(UBPI_GenericCharacter::StaticClass()))
 	{
-		if (UCharacterMovementComponent* Movement = Character->GetCharacterMovement())
-		{
-			Movement->MaxWalkSpeed = 400.0f;  // Normal walk speed
-			UE_LOG(LogTemp, Log, TEXT("[ActionStopSprinting] Walk speed set to %.0f"), Movement->MaxWalkSpeed);
-		}
+		IBPI_GenericCharacter::Execute_SetMovementMode(OwnerActor, ESLFMovementType::Walk);
+		UE_LOG(LogTemp, Log, TEXT("[ActionStopSprinting] MovementMode set to Walk"));
+	}
+
+	// Stop stamina loss via ActionManager
+	if (UActionManagerComponent* ActionMgr = GetActionManager())
+	{
+		ActionMgr->StopStaminaLoss();
+		ActionMgr->SetIsSprinting(false);
+		UE_LOG(LogTemp, Log, TEXT("[ActionStopSprinting] Stamina loss stopped, IsSprinting = false"));
 	}
 }

@@ -44,7 +44,7 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 UCLASS(Blueprintable, BlueprintType)
-class SLFCONVERSION_API UPDA_Action : public UPDA_Base
+class SLFCONVERSION_API UPDA_ActionBase : public UPDA_Base
 {
 	GENERATED_BODY()
 
@@ -73,6 +73,10 @@ public:
 	/** Required stat amount for RequiredStatTag */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action")
 	double RequiredStatAmount = 0.0;
+
+	/** Dodge montages - migrated from FInstancedStruct<FDodgeMontages> for direct C++ access */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action|Dodge")
+	FSLFDodgeMontages DodgeMontages;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -93,6 +97,18 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	bool bIsConsumable = false;
+
+	/** World pickup Niagara effect - copied from Blueprint ItemInformation.WorldPickupInfo.WorldNiagaraSystem */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item|WorldPickup")
+	TSoftObjectPtr<UNiagaraSystem> WorldNiagaraSystem;
+
+	/** World pickup static mesh - copied from Blueprint ItemInformation.WorldPickupInfo.WorldStaticMesh */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item|WorldPickup")
+	TSoftObjectPtr<UStaticMesh> WorldStaticMesh;
+
+	/** World pickup skeletal mesh - copied from Blueprint ItemInformation.WorldPickupInfo.WorldSkeletalMesh */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item|WorldPickup")
+	TSoftObjectPtr<USkeletalMesh> WorldSkeletalMesh;
 };
 
 //////////////////////////////////////////////////////////////////////////

@@ -1,5 +1,7 @@
 // SLFActionTwoHandedStanceR.cpp
+// Logic: Toggle two-handed stance for right hand weapon
 #include "SLFActionTwoHandedStanceR.h"
+#include "Components/EquipmentManagerComponent.h"
 
 USLFActionTwoHandedStanceR::USLFActionTwoHandedStanceR()
 {
@@ -9,5 +11,18 @@ USLFActionTwoHandedStanceR::USLFActionTwoHandedStanceR()
 void USLFActionTwoHandedStanceR::ExecuteAction_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("[ActionTwoHandedStanceR] ExecuteAction - Two-hand right weapon"));
-	// TODO: Toggle two-handed mode for right hand weapon via EquipmentManager
+
+	if (!OwnerActor) return;
+
+	// Get equipment manager
+	UEquipmentManagerComponent* EquipMgr = GetEquipmentManager();
+	if (!EquipMgr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[ActionTwoHandedStanceR] No equipment manager"));
+		return;
+	}
+
+	// Adjust stance for right hand (bRightHand = true)
+	EquipMgr->AdjustForTwoHandStance(true);
+	UE_LOG(LogTemp, Log, TEXT("[ActionTwoHandedStanceR] Adjusted for two-hand stance (right)"));
 }

@@ -14,9 +14,7 @@
 
 ASLFRestingPointBase::ASLFRestingPointBase()
 {
-	// Create DefaultSceneRoot for Blueprint components
-	DefaultSceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("DefaultSceneRoot"));
-	RootComponent = DefaultSceneRoot;
+	// DefaultSceneRoot is created by parent SLFInteractableBase
 
 	// Initialize point settings
 	LocationName = FText::FromString(TEXT("Resting Point"));

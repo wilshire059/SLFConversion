@@ -29,7 +29,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<USceneComponent> DefaultSceneRoot;
 
-public:
 	ASLFDoorBase();
 
 	// ============================================================

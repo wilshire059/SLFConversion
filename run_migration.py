@@ -58,7 +58,9 @@ MIGRATION_MAP = {
     "B_Buff": "/Script/SLFConversion.SLFBuffBase",
     # Primary Data Assets - DO NOT REPARENT PDA_Action!
     # Reparenting loses Blueprint variable values in child data assets (DA_Action_*)
-    # "PDA_Action": "/Script/SLFConversion.UPDA_Action",  # SKIP - would break ActionClass data
+    "PDA_Action": "/Script/SLFConversion.PDA_ActionBase",  # Now safe to reparent
+    # EXPERIMENT: Reparent PDA_Item to add C++ WorldNiagaraSystem property
+    "PDA_Item": "/Script/SLFConversion.UPDA_Item",
     "B_Action": "/Script/SLFConversion.SLFActionBase",
     "B_Item": "/Script/SLFConversion.SLFItemBase",
     "B_Item_Weapon": "/Script/SLFConversion.SLFWeaponBase",
@@ -653,7 +655,9 @@ PATH_OVERRIDES = {
     "B_Buff": "/Game/SoulslikeFramework/Data/Buffs/Logic/B_Buff",
     "B_Buff_AttackPower": "/Game/SoulslikeFramework/Data/Buffs/Logic/B_Buff_AttackPower",
     # Primary Data Assets - PDA_Action excluded (reparenting loses ActionClass data in child DA_* assets)
-    # "PDA_Action": "/Game/SoulslikeFramework/Data/Actions/ActionData/PDA_Action",
+    "PDA_Action": "/Game/SoulslikeFramework/Data/Actions/ActionData/PDA_Action",
+    # EXPERIMENT: PDA_Item reparent
+    "PDA_Item": "/Game/SoulslikeFramework/Data/PDA_Item",
     # Actions
     "B_Action": "/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action",
     "B_Action_Backstab": "/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_Backstab",

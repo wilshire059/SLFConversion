@@ -25,7 +25,7 @@
 #include "SLFGameTypes.generated.h"
 
 // Forward declarations for Blueprint classes (will be replaced during migration)
-class UPDA_Action_C;
+class UPDA_ActionBase_C;
 class UPDA_Item_C;
 class UPDA_WeaponAbility_C;
 class UPDA_WeaponAnimset_C;
@@ -184,7 +184,7 @@ struct SLFCONVERSION_API FSLFActionsData : public FTableRowBase
 	FGameplayTag Tag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Actions")
-	UObject* ActionAsset = nullptr; // UPDA_Action_C* in Blueprint
+	UObject* ActionAsset = nullptr; // UPDA_ActionBase_C* in Blueprint
 
 	FSLFActionsData() {}
 };
@@ -196,13 +196,13 @@ struct SLFCONVERSION_API FSLFDodgeMontages
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dodge")
-	UAnimMontage* Fwd = nullptr;
+	UAnimMontage* Forward = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dodge")
-	UAnimMontage* FwdLeft = nullptr;
+	UAnimMontage* ForwardLeft = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dodge")
-	UAnimMontage* FwdRight = nullptr;
+	UAnimMontage* ForwardRight = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dodge")
 	UAnimMontage* Left = nullptr;
@@ -211,13 +211,13 @@ struct SLFCONVERSION_API FSLFDodgeMontages
 	UAnimMontage* Right = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dodge")
-	UAnimMontage* Bwd = nullptr;
+	UAnimMontage* Backward = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dodge")
-	UAnimMontage* BwdLeft = nullptr;
+	UAnimMontage* BackwardLeft = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dodge")
-	UAnimMontage* BwdRight = nullptr;
+	UAnimMontage* BackwardRight = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dodge")
 	UAnimMontage* Backstep = nullptr;
@@ -443,7 +443,7 @@ struct SLFCONVERSION_API FSLFAiBossPhase
 	FSLFAiRuleStat RequiredStat;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-	TArray<UObject*> PhaseAbilities; // TArray<UPDA_Action_C*>
+	TArray<UObject*> PhaseAbilities; // TArray<UPDA_ActionBase_C*>
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	TSoftObjectPtr<ULevelSequence> PhaseStartSequence;

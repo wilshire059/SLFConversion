@@ -23,7 +23,7 @@ void USLFActionPickupItemMontage::ExecuteAction_Implementation()
 	UE_LOG(LogTemp, Log, TEXT("[ActionPickupItemMontage] ExecuteAction - Play item pickup animation"));
 
 	// 1. Get the Action data asset
-	UPDA_Action* ActionData = Cast<UPDA_Action>(Action);
+	UPDA_ActionBase* ActionData = Cast<UPDA_ActionBase>(Action);
 	if (!ActionData)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[ActionPickupItemMontage] Action data asset is null or wrong type"));

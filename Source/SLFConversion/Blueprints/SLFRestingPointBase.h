@@ -62,11 +62,8 @@ class SLFCONVERSION_API ASLFRestingPointBase : public ASLFInteractableBase
 	GENERATED_BODY()
 
 public:
-	/** Default scene root for Blueprint components */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	TObjectPtr<USceneComponent> DefaultSceneRoot;
+	// DefaultSceneRoot is inherited from SLFInteractableBase
 
-public:
 	ASLFRestingPointBase();
 
 protected:

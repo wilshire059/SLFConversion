@@ -16,6 +16,7 @@
 #include "NiagaraSystem.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Interfaces/BPI_Player.h"
+#include "SLFPrimaryDataAssets.h"
 
 ASLFPickupItemBase::ASLFPickupItemBase()
 {
@@ -90,6 +91,38 @@ void ASLFPickupItemBase::SetupWorldNiagara()
 		return;
 	}
 
+	// EXPERIMENT: Try direct cast to UPDA_Item (C++ class with WorldNiagaraSystem property)
+	// This only works if PDA_Item has been reparented to UPDA_Item and data was migrated
+	if (UPDA_Item* ItemData = Cast<UPDA_Item>(Item))
+	{
+		UE_LOG(LogTemp, Log, TEXT("[PickupItem] Using C++ UPDA_Item direct access"));
+
+		// Check if WorldNiagaraSystem is set
+		if (!ItemData->WorldNiagaraSystem.IsNull())
+		{
+			UNiagaraSystem* NiagaraSystem = ItemData->WorldNiagaraSystem.LoadSynchronous();
+			if (NiagaraSystem)
+			{
+				NiagaraComp->SetAsset(NiagaraSystem);
+				NiagaraComp->Activate(true);
+				UE_LOG(LogTemp, Log, TEXT("[PickupItem] Set Niagara System (C++ direct): %s"), *NiagaraSystem->GetName());
+				return;
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("[PickupItem] No WorldNiagaraSystem set in C++ property"));
+		}
+	}
+
+	// FALLBACK: Use reflection to access Blueprint ItemInformation property
+	// This handles cases where the data hasn't been migrated yet
+	UE_LOG(LogTemp, Log, TEXT("[PickupItem] Falling back to reflection-based access"));
+	SetupWorldNiagaraViaReflection(NiagaraComp);
+}
+
+void ASLFPickupItemBase::SetupWorldNiagaraViaReflection(UNiagaraComponent* NiagaraComp)
+{
 	// The Item is a Blueprint data asset (PDA_Item_C) with an "ItemInformation" property
 	// We need to use reflection to access ItemInformation.WorldPickupInfo.WorldNiagaraSystem
 	UClass* ItemClass = Item->GetClass();

@@ -206,13 +206,13 @@ void UAC_ActionManager::GetDirectionalDodge_Implementation(const FSLFDodgeMontag
 	switch (MovementDirection)
 	{
 	case ESLFDirection::Fwd:
-		OutMontage = MontageData.Fwd;
+		OutMontage = MontageData.Forward;
 		break;
 	case ESLFDirection::FwdLeft:
-		OutMontage = MontageData.FwdLeft;
+		OutMontage = MontageData.ForwardLeft;
 		break;
 	case ESLFDirection::FwdRight:
-		OutMontage = MontageData.FwdRight;
+		OutMontage = MontageData.ForwardRight;
 		break;
 	case ESLFDirection::Left:
 		OutMontage = MontageData.Left;
@@ -221,17 +221,17 @@ void UAC_ActionManager::GetDirectionalDodge_Implementation(const FSLFDodgeMontag
 		OutMontage = MontageData.Right;
 		break;
 	case ESLFDirection::Bwd:
-		OutMontage = MontageData.Bwd;
+		OutMontage = MontageData.Backward;
 		break;
 	case ESLFDirection::BwdLeft:
-		OutMontage = MontageData.BwdLeft;
+		OutMontage = MontageData.BackwardLeft;
 		break;
 	case ESLFDirection::BwdRight:
-		OutMontage = MontageData.BwdRight;
+		OutMontage = MontageData.BackwardRight;
 		break;
 	default:
 		// Idle or unhandled - use forward as default
-		OutMontage = MontageData.Fwd;
+		OutMontage = MontageData.Forward;
 		break;
 	}
 
@@ -849,7 +849,7 @@ void UAC_ActionManager::BuildAvailableActionsFromActionsMap()
 		// If reflection didn't work, try the C++ property (for future C++-based assets)
 		if (!ActionClass)
 		{
-			if (UPDA_Action* ActionAsset = Cast<UPDA_Action>(ActionData))
+			if (UPDA_ActionBase* ActionAsset = Cast<UPDA_ActionBase>(ActionData))
 			{
 				if (!ActionAsset->ActionClass.IsNull())
 				{

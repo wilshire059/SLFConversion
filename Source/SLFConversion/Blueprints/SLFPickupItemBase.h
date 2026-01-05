@@ -49,6 +49,9 @@ protected:
 	/** Setup Niagara effect from item data - replaces EventGraph logic */
 	void SetupWorldNiagara();
 
+	/** Fallback: Setup Niagara via reflection for Blueprint data assets */
+	void SetupWorldNiagaraViaReflection(class UNiagaraComponent* NiagaraComp);
+
 public:
 	// ═══════════════════════════════════════════════════════════════════
 	// VARIABLES: 5/5 migrated

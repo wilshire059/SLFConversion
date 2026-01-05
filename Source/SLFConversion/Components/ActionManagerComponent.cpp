@@ -53,15 +53,15 @@ TSoftObjectPtr<UAnimMontage> UActionManagerComponent::GetDirectionalDodge(const 
 {
 	switch (MovementDirection)
 	{
-	case ESLFDirection::Fwd:      return MontageData.Fwd;
-	case ESLFDirection::FwdLeft:  return MontageData.FwdLeft;
-	case ESLFDirection::FwdRight: return MontageData.FwdRight;
+	case ESLFDirection::Fwd:      return MontageData.Forward;
+	case ESLFDirection::FwdLeft:  return MontageData.ForwardLeft;
+	case ESLFDirection::FwdRight: return MontageData.ForwardRight;
 	case ESLFDirection::Left:     return MontageData.Left;
 	case ESLFDirection::Right:    return MontageData.Right;
-	case ESLFDirection::Bwd:      return MontageData.Bwd;
-	case ESLFDirection::BwdLeft:  return MontageData.BwdLeft;
-	case ESLFDirection::BwdRight: return MontageData.BwdRight;
-	default:                      return MontageData.Bwd; // Default to backward dodge for Idle
+	case ESLFDirection::Bwd:      return MontageData.Backward;
+	case ESLFDirection::BwdLeft:  return MontageData.BackwardLeft;
+	case ESLFDirection::BwdRight: return MontageData.BackwardRight;
+	default:                      return MontageData.Backward; // Default to backward dodge for Idle
 	}
 }
 
