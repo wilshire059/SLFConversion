@@ -1,0 +1,18 @@
+============================================================
+DEBUGGING DA_Lantern - Using export_text()
+============================================================
+Asset: DA_Lantern
+Class: PDA_Item_C
+
+ItemInformation type: StructBase
+
+export_text() result:
+(ItemTag_57_F8BCB87E4BCB8A54C292AF9CB734BD13=(TagName="SoulslikeFramework.Items.Examples.Lantern"),Category_33_E6F8CFF84B621B32A7BE6B9EE1F8EC27=(Category_2_3851C1934036BAA79BB900806D975976=NewEnumerator0,SubCategory_5_04CC1E274AA4A277CAFDA5B247C45DC7=NewEnumerator4),DisplayName_5_64927D1D49A2B6E8C3694B8998989FA0=NSLOCTEXT("[81D5E9A2A302A5A0B0EF2400BDB2C16F]", "F710A2454B4B92C2119BABB0943DB6A0", "Simple Pocket Lantern"),ShortDescription_7_FC918B054EAC0973BB8661B77182F747=NSLOCTEXT("[81D5E9A2A302A5A0B0EF2400BDB2C16F]", "6F12AFDF492981AD0FB656AFD65DA546", "A one-time-use pocket lantern that lasts for 60 seconds."),LongDescription_9_E0D5C60E461CFF34634DD0A47F6C9240=NSLOCTEXT("[81D5E9A2A302A5A0B0EF2400BDB2C16F]", "CF24187745232336991355815BFB9EAA", "This small, convenient lantern can be clipped to a belt or pocket. It provides light for a short duration, making it perfect for brief explorations in the dark. Once activated, it emits a steady glow for 60 seconds before expiring."),DiscoveryDescription_49_83D9801C49EB385BADF315A64FF1D7A6="",Usable?_12_D4015F504328E5CBC2886FADB49CC42F=True,Rechargeable?_56_853B1C43435EFA79AB6FA0A0587ADCF2=False,OnUseDescription_23_B7911A0B4BC4C62EC9F6F88488D2FE32=NSLOCTEXT("[81D5E9A2A302A5A0B0EF2400BDB2C16F]", "E30D29AE4D102DB275E8FEA205114169", "The lantern lights up, casting a warm glow around you for 60 seconds before it fades."),IconSmall_15_10890EC0425463D43713C7ABF47D4B20="/Game/SoulslikeFramework/Textures/Items/T_Lantern.T_Lantern",IconLargeOptional_17_C82B459349CF32DA9D05E09E6FEA59F7="/Game/SoulslikeFramework/Textures/Items/T_Lantern.T_Lantern",MaxAmount_20_8086B5ED4E66A339D9AD8190410B8817=1,ActiontoTrigger_54_177D25B34FD09AF02EB6F2923B4B0D44=(TagName=""),ItemClass_51_2EF1F34F40CCC0991C32B19CDB795E0C="/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Usables/B_Item_Lantern.B_Item_Lantern_C",WorldPickupInfo_50_300352CD4AE37D50CE2608965ABCE9C4=(WorldDisplayStyle_8_8C9A230741B352BF254B26864D511BAB=NewEnumerator1,WorldNiagaraSystem
+
+--- Found 'Niagara' in export ---
+  WorldNiagaraSystem_14_EF222BEA43E8FE509F34329013D17763="/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple"
+
+__str__: <Struct 'FItemInfo' (0x000001B208AD7848) {}>
+
+--- StructBase methods ---
+to_tuple(): ()

@@ -34,11 +34,13 @@ void UW_StatBlock_LevelUp::CacheWidgetReferences()
 
 void UW_StatBlock_LevelUp::SetupStatsByCategory_Implementation(const TArray<UB_Stat*>& StatObjects, const TMap<FGameplayTag, TSubclassOf<UB_Stat>>& StatClassesAndCategories)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Setup level up stat entries organized by category
+	UE_LOG(LogTemp, Log, TEXT("UW_StatBlock_LevelUp::SetupStatsByCategory - %d stats"), StatObjects.Num());
 }
+
 TArray<UW_StatEntry_LevelUp*> UW_StatBlock_LevelUp::GetAllStatsInBlock_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Return all level up stat entry widgets in this block
 	return {};
 }
 void UW_StatBlock_LevelUp::EventStatInitializationComplete_Implementation()

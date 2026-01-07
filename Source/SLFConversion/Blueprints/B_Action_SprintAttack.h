@@ -52,7 +52,9 @@ public:
 
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (0)
+	// FUNCTIONS
 	// ═══════════════════════════════════════════════════════════════════════
 
+	/** Execute sprint attack - get weapon animset, extract SprintAttackMontage, play */
+	virtual void ExecuteAction_Implementation() override;
 };

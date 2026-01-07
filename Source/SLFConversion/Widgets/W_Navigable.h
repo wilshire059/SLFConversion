@@ -65,6 +65,11 @@ public:
 	// FUNCTIONS (1)
 	// ═══════════════════════════════════════════════════════════════════════
 
+	// CanNavigate? - Pure function returning IsVisible()
+	// Note: Blueprint function name is "CanNavigate?" with question mark
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, BlueprintPure, Category = "W_Navigable", meta = (DisplayName = "CanNavigate?"))
+	bool CanNavigate();
+	virtual bool CanNavigate_Implementation();
 
 protected:
 	// Cache references

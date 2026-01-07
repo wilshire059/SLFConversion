@@ -1,0 +1,1237 @@
+LogDebuggerCommands: Repeating last play command: Selected Viewport
+LogCameraSystemEditor: No camera objects needed building (inspected 0 objects)
+LogPlayLevel: [PlayLevel] Compiling L_Demo_Showcase before play...
+LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Maps\L_Demo_Showcase.umap: [Compiler] Input pin  Sequence to Play  specifying non-default value no longer exists on node  SpawnActor B Sequence Actor . Please refresh node or reset pin to default value to remove pin.
+LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Maps\L_Demo_Showcase.umap: [Compiler] In use pin  Settings  no longer exists on node  SpawnActor B Sequence Actor . Please refresh node or break links to remove pin.
+LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Maps\L_Demo_Showcase.umap: [Compiler] Input pin  Active?  specifying non-default value no longer exists on node  EventToggleCinematicMode . Please refresh node or reset pin to default value to remove pin.
+LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Maps\L_Demo_Showcase.umap: [Compiler] In use pin  Target  no longer exists on node  Set . Please refresh node or break links to remove pin.
+LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Maps\L_Demo_Showcase.umap: [Compiler] Could not find a variable named "FirstTimeOnDemoLevel" in '/Game/SoulslikeFramework/Blueprints/Global/GI_SoulslikeFramework.GI_SoulslikeFramework_C'.
+Make sure '/Game/SoulslikeFramework/Blueprints/Global/GI_SoulslikeFramework.GI_SoulslikeFramework_C' has been compiled for  Set
+LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Maps\L_Demo_Showcase.umap: [Compiler] In use pin  First Time on Demo Level?  no longer exists on node  Get FirstTimeOnDemoLevel? . Please refresh node or break links to remove pin.
+LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Maps\L_Demo_Showcase.umap: [Compiler] In use pin  Target  no longer exists on node  Get FirstTimeOnDemoLevel? . Please refresh node or break links to remove pin.
+LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Maps\L_Demo_Showcase.umap: [Compiler] Could not find a variable named "FirstTimeOnDemoLevel" in '/Game/SoulslikeFramework/Blueprints/Global/GI_SoulslikeFramework.GI_SoulslikeFramework_C'.
+Make sure '/Game/SoulslikeFramework/Blueprints/Global/GI_SoulslikeFramework.GI_SoulslikeFramework_C' has been compiled for  Get FirstTimeOnDemoLevel?
+LogUObjectHash: Compacting FUObjectHashTables data took   0.54ms
+LogPlayLevel: PlayLevel: Blueprint regeneration took 89 ms (1 blueprints)
+BlueprintLog: Warning: Blueprint failed to compile:  L_Demo_Showcase
+LogSlate: Window 'Blueprint Compilation Errors' being destroyed
+LogOnline: OSS: Created online subsystem instance for: NULL
+LogOnline: OSS: TryLoadSubsystemAndSetDefault: Loaded subsystem for type [NULL]
+LogPlayLevel: Creating play world package: /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase
+LogTemp: Warning: AB_DemoRoom::Constructor - Components created
+LogTemp: [SkyManager] Created
+LogTemp: [StatusEffectArea] Created
+LogTemp: [StatusEffectArea] Created
+LogTemp: [StatusEffectArea] Created
+LogTemp: [StatusEffectArea] Created
+LogTemp: [StatusEffectArea] Created
+LogTemp: [StatusEffectArea] Created
+LogTemp: [StatusEffectArea] Created
+LogTemp: [StatusEffectOneShot] Created
+LogTemp: [StatusEffectOneShot] Created
+LogTemp: [StatusEffectOneShot] Created
+LogTemp: [StatusEffectOneShot] Created
+LogTemp: [StatusEffectOneShot] Created
+LogTemp: [StatusEffectOneShot] Created
+LogTemp: [StatusEffectOneShot] Created
+LogTemp: [Container] Created
+LogTemp: [Container] Created
+LogTemp: [DoorBase] Created
+LogTemp: [DoorDemo] Created
+LogActor: Root component has changed, relocating new root component to old position SceneComponent /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_DoorDemo_C_1.SceneComponent_0->SceneComponent /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_DoorDemo_C_1.DefaultSceneRoot
+LogActor: --- Attaching old root to new root SceneComponent /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_DoorDemo_C_1.SceneComponent_0->SceneComponent /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_DoorDemo_C_1.DefaultSceneRoot
+LogPlayLevel: PIE: StaticDuplicateObject took: (0.022502s)
+LogPlayLevel: PIE: Created PIE world by copying editor world from /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase to /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase (0.022555s)
+LogUObjectHash: Compacting FUObjectHashTables data took   0.48ms
+LogTemp: [SLFInputSimulator] Subsystem initialized - Input simulation ready
+LogTemp: [SLFPIETestRunner] Test runner initialized
+LogTemp: [SLFPIETestRunner] Console commands available:
+LogTemp:   SLF.Test.Actions - Run action system test
+LogTemp:   SLF.Test.Movement - Run movement test
+LogTemp:   SLF.SimKey <Key> - Simulate key press
+LogTemp:   SLF.SimAttack - Simulate attack
+LogTemp:   SLF.SimDodge - Simulate dodge
+LogTemp:   SLF.SimMove <X> <Y> <Dur> - Simulate movement
+LogTemp:   SLF.SimCrouch - Toggle crouch directly
+LogTemp: [SLFGameInstance] Init
+LogWindows: WindowsPlatformFeatures enabled
+LogStreaming: Display: FlushAsyncLoading(364): 1 QueuedPackages, 0 AsyncPackages
+LogTemp: [SLFGameInstance] Loaded save slots (1 slots)
+LogChaosDD: Creating Chaos Debug Draw Scene for world L_Demo_Showcase
+LogPlayLevel: PIE: World Init took: (0.001620s)
+LogAudio: Display: Creating Audio Device:                 Id: 2, Scope: Unique, Realtime: True
+LogAudioMixer: Display: Audio Mixer Platform Settings:
+LogAudioMixer: Display:     Sample Rate:                          48000
+LogAudioMixer: Display:     Callback Buffer Frame Size Requested: 1024
+LogAudioMixer: Display:     Callback Buffer Frame Size To Use:    1024
+LogAudioMixer: Display:     Number of buffers to queue:           1
+LogAudioMixer: Display:     Max Channels (voices):                32
+LogAudioMixer: Display:     Number of Async Source Workers:       4
+LogAudio: Display: AudioDevice MaxSources: 32
+LogAudio: Display: Audio Spatialization Plugin: None (built-in).
+LogAudio: Display: Audio Reverb Plugin: None (built-in).
+LogAudio: Display: Audio Occlusion Plugin: None (built-in).
+LogAudioMixer: Display: Initializing audio mixer using platform API: 'XAudio2'
+LogAudioEnumeration: Display: FWindowsMMDeviceCache: Default Render Role='Console', Device='Speakers (Realtek(R) Audio)'
+LogAudioEnumeration: Display: FWindowsMMDeviceCache: Default Capture Role='Console', Device='Microphone Array (Intel® Smart Sound Technology for Digital Microphones)'
+LogAudioEnumeration: Display: FWindowsMMDeviceCache: Default Render Role='Multimedia', Device='Speakers (Realtek(R) Audio)'
+LogAudioEnumeration: Display: FWindowsMMDeviceCache: Default Capture Role='Multimedia', Device='Microphone Array (Intel® Smart Sound Technology for Digital Microphones)'
+LogAudioEnumeration: Display: FWindowsMMDeviceCache: Default Render Role='Communications', Device='Speakers (Realtek(R) Audio)'
+LogAudioEnumeration: Display: FWindowsMMDeviceCache: Default Capture Role='Communications', Device='Microphone Array (Intel® Smart Sound Technology for Digital Microphones)'
+LogAudioMixer: Display: Using Audio Hardware Device Speakers (Realtek(R) Audio)
+LogAudioMixer: Display: Initializing Sound Submixes...
+LogAudioMixer: Display: Creating Master Submix 'MasterSubmixDefault'
+LogAudioMixer: Display: Creating Master Submix 'MasterReverbSubmixDefault'
+LogAudioMixer: FMixerPlatformXAudio2::StartAudioStream() called. InstanceID=2
+LogAudioMixer: Display: Output buffers initialized: Frames=1024, Channels=2, Samples=2048, InstanceID=2
+LogAudioMixer: Display: Starting AudioMixerPlatformInterface::RunInternal(), InstanceID=2
+LogAudioMixer: Display: FMixerPlatformXAudio2::SubmitBuffer() called for the first time. InstanceID=2
+LogInit: FAudioDevice initialized with ID 2.
+LogAudio: Display: Audio Device (ID: 2) registered with world 'L_Demo_Showcase'.
+LogAudioMixer: Initializing Audio Bus Subsystem for audio device with ID 2
+LogLoad: Game class is 'GM_SoulslikeFramework_C'
+LogScript: Warning: Accessed None trying to read (real) property PoiseBreakAsset in ABP_SoulslikeEnemy_C
+    ABP_SoulslikeEnemy_C /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Enemy_Guard_C_0.CharacterMesh0.ABP_SoulslikeEnemy_C_0
+    Function /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeEnemy.ABP_SoulslikeEnemy_C:ExecuteUbergraph_ABP_SoulslikeEnemy:0075
+PIE: Error: Blueprint Runtime Error: "Accessed None trying to read (real) property PoiseBreakAsset in ABP_SoulslikeEnemy_C". Node:  Sequence Player Graph:  Start Function:  Execute Ubergraph ABP Soulslike Enemy Blueprint:  ABP_SoulslikeEnemy
+LogTemp: [Item] SetupItem: None - 
+LogTemp: [Weapon] SetupItem - weapon-specific setup
+LogScript: Warning: Accessed None trying to read (real) property PoiseBreakAsset in ABP_SoulslikeEnemy_C
+    ABP_SoulslikeEnemy_C /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Enemy_Demo_C_1.CharacterMesh0.ABP_SoulslikeEnemy_C_0
+    Function /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeEnemy.ABP_SoulslikeEnemy_C:ExecuteUbergraph_ABP_SoulslikeEnemy:0075
+PIE: Error: Blueprint Runtime Error: "Accessed None trying to read (real) property PoiseBreakAsset in ABP_SoulslikeEnemy_C". Node:  Sequence Player Graph:  Start Function:  Execute Ubergraph ABP Soulslike Enemy Blueprint:  ABP_SoulslikeEnemy
+LogTemp: [Item] SetupItem: None - 
+LogTemp: [Weapon] SetupItem - weapon-specific setup
+LogScript: Warning: Accessed None trying to read (real) property AC AI Combat Manager in ABP_SoulslikeBossNew_C
+    ABP_SoulslikeBossNew_C /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2.CharacterMesh0.ABP_SoulslikeBossNew_C_0
+    Function /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeBossNew.ABP_SoulslikeBossNew_C:ExecuteUbergraph_ABP_SoulslikeBossNew:002B
+PIE: Error: Blueprint Runtime Error: "Accessed None trying to read (real) property AC AI Combat Manager in ABP_SoulslikeBossNew_C". Node:  Sequence Player Graph:  Start Function:  Execute Ubergraph ABP Soulslike Boss New Blueprint:  ABP_SoulslikeBossNew
+LogScript: Warning: Accessed None
+    ABP_SoulslikeBossNew_C /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2.CharacterMesh0.ABP_SoulslikeBossNew_C_0
+    Function /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeBossNew.ABP_SoulslikeBossNew_C:ExecuteUbergraph_ABP_SoulslikeBossNew:0040
+PIE: Error: Blueprint Runtime Error: "Accessed None". Node:  Sequence Player Graph:  Start Function:  Execute Ubergraph ABP Soulslike Boss New Blueprint:  ABP_SoulslikeBossNew
+LogTemp: [Item] SetupItem: None - 
+LogTemp: [Weapon] SetupItem - weapon-specific setup
+LogTemp: [Item] SetupItem: None - 
+LogTemp: [Weapon] SetupItem - weapon-specific setup
+LogWorld: Bringing World /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase.L_Demo_Showcase up for play (max tick rate 60) at 2026.01.07-00.23.17
+LogTemp: [SLFAIController] OnPossess: B_Soulslike_NPC_ShowcaseGuide_C_1
+LogTemp: [SLFAIController] OnPossess: B_Soulslike_NPC_ShowcaseVendor_C_1
+LogNiagara: StaticMesh data interface has no valid mesh - NiagaraDataInterfaceStaticMesh /Game/SoulslikeFramework/VFX/Systems/NS_PoisonSword.NS_PoisonSword:Fountain.SpawnScript.NiagaraDataInterfaceStaticMesh_0
+LogNiagara: StaticMesh data interface has no valid mesh - NiagaraDataInterfaceStaticMesh /Game/SoulslikeFramework/VFX/Systems/NS_PoisonSword.NS_PoisonSword:Fountain001_1.SpawnScript.NiagaraDataInterfaceStaticMesh_0
+LogTemp: [SLFAIController] OnPossess: B_Soulslike_Enemy_Guard_C_0
+LogTemp: [SLFAIController] OnPossess: B_Soulslike_Enemy_Demo_C_1
+LogTemp: [SLFAIController] OnPossess: B_Soulslike_Boss_Malgareth_C_2
+LogWorld: Bringing up level for play took: 0.024569
+LogOnline: OSS: Created online subsystem instance for: :Context_1
+LogTemp: [SLFPlayerController] SetupInputComponent
+LogTemp: Warning: [SLFPlayerController] Bound IA_GameMenu to HandleGameMenuInput
+LogEnhancedInput: Enhanced Input local player subsystem has initialized the user settings!
+LogSpawn: Warning: SpawnActor failed because no class was specified
+LogGameMode: Display: Match State Changed from EnteringMap to WaitingToStart
+LogGameState: Match State Changed from EnteringMap to WaitingToStart
+LogGameMode: Display: Match State Changed from WaitingToStart to InProgress
+LogTemp: Warning: [SoulslikeCharacter] Input Actions - Move:OK Look:OK Jump:OK Sprint:OK Crouch:OK
+LogTemp: [SoulslikeCharacter] Bound IA_Move to HandleMove
+LogTemp: Warning: [SoulslikeCharacter] *** IA_Crouch BOUND to HandleCrouch - Press C to crouch ***
+LogTemp: [SoulslikeCharacter] Enhanced input bindings set up
+LogTemp: Warning: AB_DemoRoom::BeginPlay CALLED! Rooms.Num()=6
+LogTemp: Warning: AB_DemoRoom::BeginPlay - Instances already exist (2), skipping Redraw
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [SkyManager] BeginPlay - Time: 12.0, DayLength: 30.0 min
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [StatusEffectArea] BeginPlay - Effect: None, BuildupPerSec: 10.0
+LogTemp: [StatusEffectArea] BeginPlay - Effect: None, BuildupPerSec: 10.0
+LogTemp: [StatusEffectArea] BeginPlay - Effect: None, BuildupPerSec: 10.0
+LogTemp: [StatusEffectArea] BeginPlay - Effect: None, BuildupPerSec: 10.0
+LogTemp: [StatusEffectArea] BeginPlay - Effect: None, BuildupPerSec: 10.0
+LogTemp: [StatusEffectArea] BeginPlay - Effect: None, BuildupPerSec: 10.0
+LogTemp: [StatusEffectArea] BeginPlay - Effect: None, BuildupPerSec: 10.0
+LogTemp: [StatusEffectOneShot] BeginPlay - Effect: None, Buildup: 100.0
+LogTemp: [StatusEffectOneShot] BeginPlay - Effect: None, Buildup: 100.0
+LogTemp: [StatusEffectOneShot] BeginPlay - Effect: None, Buildup: 100.0
+LogTemp: [StatusEffectOneShot] BeginPlay - Effect: None, Buildup: 100.0
+LogTemp: [StatusEffectOneShot] BeginPlay - Effect: None, Buildup: 100.0
+LogTemp: [StatusEffectOneShot] BeginPlay - Effect: None, Buildup: 100.0
+LogTemp: [StatusEffectOneShot] BeginPlay - Effect: None, Buildup: 100.0
+LogTemp: [SLFAIController] BeginPlay
+LogTemp: [SLFAIController] BeginPlay
+LogTemp: [SLFAIController] BeginPlay
+LogTemp: [SLFAIController] BeginPlay
+LogTemp: [SLFAIController] BeginPlay
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [PickupItem] BeginPlay: DA_Lantern x1
+LogTemp: [PickupItem] Using C++ UPDA_Item direct access
+LogTemp: [PickupItem] Set Niagara System (C++ direct): NS_ItemLootSimple
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [PickupItem] BeginPlay: DA_ExampleHelmet x1
+LogTemp: [PickupItem] Using C++ UPDA_Item direct access
+LogTemp: [PickupItem] Set Niagara System (C++ direct): NS_ItemLoot
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [PickupItem] BeginPlay: DA_ExampleTalisman x1
+LogTemp: [PickupItem] Using C++ UPDA_Item direct access
+LogTemp: [PickupItem] Set Niagara System (C++ direct): NS_ItemLoot
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [PickupItem] BeginPlay: DA_Sword02 x1
+LogTemp: [PickupItem] Using C++ UPDA_Item direct access
+LogTemp: [PickupItem] Set Niagara System (C++ direct): NS_ItemLoot
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [PickupItem] BeginPlay: DA_Sword01 x1
+LogTemp: [PickupItem] Using C++ UPDA_Item direct access
+LogTemp: [PickupItem] Set Niagara System (C++ direct): NS_ItemLoot
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [PickupItem] BeginPlay: DA_Greatsword x1
+LogTemp: [PickupItem] Using C++ UPDA_Item direct access
+LogTemp: [PickupItem] Set Niagara System (C++ direct): NS_ItemLoot
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [PickupItem] BeginPlay: DA_ExampleArmor x1
+LogTemp: [PickupItem] Using C++ UPDA_Item direct access
+LogTemp: [PickupItem] Set Niagara System (C++ direct): NS_ItemLoot
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [PickupItem] BeginPlay: DA_ExampleHat x1
+LogTemp: [PickupItem] Using C++ UPDA_Item direct access
+LogTemp: [PickupItem] Set Niagara System (C++ direct): NS_ItemLoot
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [PickupItem] BeginPlay: DA_PrisonKey x1
+LogTemp: [PickupItem] Using C++ UPDA_Item direct access
+LogTemp: [PickupItem] Set Niagara System (C++ direct): NS_ItemLootSimple
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [PickupItem] BeginPlay: DA_Shield01 x1
+LogTemp: [PickupItem] Using C++ UPDA_Item direct access
+LogTemp: [PickupItem] Set Niagara System (C++ direct): NS_ItemLoot
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [PickupItem] BeginPlay: DA_ThrowingKnife x20
+LogTemp: [PickupItem] Using C++ UPDA_Item direct access
+LogTemp: [PickupItem] Set Niagara System (C++ direct): NS_ItemLootSimple
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [PickupItem] BeginPlay: DA_Katana x1
+LogTemp: [PickupItem] Using C++ UPDA_Item direct access
+LogTemp: [PickupItem] Set Niagara System (C++ direct): NS_ItemLoot
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [PickupItem] BeginPlay: DA_PoisonSword x1
+LogTemp: [PickupItem] Using C++ UPDA_Item direct access
+LogTemp: [PickupItem] Set Niagara System (C++ direct): NS_ItemLoot
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [PickupItem] BeginPlay: DA_ExampleArmor02 x1
+LogTemp: [PickupItem] Using C++ UPDA_Item direct access
+LogTemp: [PickupItem] Set Niagara System (C++ direct): NS_ItemLoot
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [PickupItem] BeginPlay: DA_ExampleBracers x1
+LogTemp: [PickupItem] Using C++ UPDA_Item direct access
+LogTemp: [PickupItem] Set Niagara System (C++ direct): NS_ItemLoot
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [PickupItem] BeginPlay: DA_ExampleGreaves x1
+LogTemp: [PickupItem] Using C++ UPDA_Item direct access
+LogTemp: [PickupItem] Set Niagara System (C++ direct): NS_ItemLoot
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [RestingPoint] BeginPlay: Demo Resting Point
+LogTemp: [Item] BeginPlay: B_Item_Lantern_C_1
+LogTemp: [BaseCharacter] BeginPlay: B_Soulslike_NPC_ShowcaseGuide_C_1
+LogTemp: [BaseCharacter] Components cached - StatManager: NULL, StatusEffectManager: NULL, BuffManager: NULL
+LogTemp: [SoulslikeNPC] BeginPlay: B_Soulslike_NPC_ShowcaseGuide_C_1 (ID: C76CD86949C93517B8332095C8ABFC76)
+LogTemp: [NPCShowcaseGuide] BeginPlay: B_Soulslike_NPC_ShowcaseGuide_C_1
+LogTemp: [BaseCharacter] BeginPlay: B_Soulslike_NPC_ShowcaseVendor_C_1
+LogTemp: [BaseCharacter] Components cached - StatManager: NULL, StatusEffectManager: NULL, BuffManager: NULL
+LogTemp: [SoulslikeNPC] BeginPlay: B_Soulslike_NPC_ShowcaseVendor_C_1 (ID: C76CD86949C93517B8332095C8ABFC76)
+LogTemp: [NPCShowcaseVendor] BeginPlay: B_Soulslike_NPC_ShowcaseVendor_C_1
+LogTemp: [Item] BeginPlay: B_Item_Weapon_Greatsword_C_1
+LogTemp: [Weapon] BeginPlay: B_Item_Weapon_Greatsword_C_1
+LogTemp: [Item] BeginPlay: B_Item_Weapon_Katana_C_1
+LogTemp: [Weapon] BeginPlay: B_Item_Weapon_Katana_C_1
+LogTemp: [Item] BeginPlay: B_Item_Weapon_PoisonSword_C_1
+LogTemp: [Weapon] BeginPlay: B_Item_Weapon_PoisonSword_C_1
+LogTemp: [Item] BeginPlay: B_Item_Weapon_SwordExample01_C_0
+LogTemp: [Weapon] BeginPlay: B_Item_Weapon_SwordExample01_C_0
+LogTemp: [Item] BeginPlay: B_Item_Weapon_SwordExample01_C_1
+LogTemp: [Weapon] BeginPlay: B_Item_Weapon_SwordExample01_C_1
+LogTemp: [Item] BeginPlay: B_Item_Weapon_SwordExample02_C_1
+LogTemp: [Weapon] BeginPlay: B_Item_Weapon_SwordExample02_C_1
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [Ladder] BeginPlay - Height: 392.90
+LogTemp: [AICombatManager] BeginPlay on B_Soulslike_Enemy_Guard_C_0
+LogTemp: [AICombatManager] BindStatUpdates
+LogTemp: [AIBehaviorManager] BeginPlay on B_Soulslike_Enemy_Guard_C_0 - Initial state: 0
+LogTemp: [Item] BeginPlay: Weapon_GEN_VARIABLE_B_Item_AI_Greatsword_C_CAT_0
+LogTemp: [Weapon] BeginPlay: Weapon_GEN_VARIABLE_B_Item_AI_Greatsword_C_CAT_0
+LogTemp: [BaseCharacter] BeginPlay: B_Soulslike_Enemy_Guard_C_0
+LogTemp: [BaseCharacter] Components cached - StatManager: NULL, StatusEffectManager: NULL, BuffManager: NULL
+LogTemp: [SoulslikeEnemy] BeginPlay: B_Soulslike_Enemy_Guard_C_0 (ID: 00000000000000000000000000000000)
+LogTemp: [EnemyGuard] BeginPlay: B_Soulslike_Enemy_Guard_C_0
+LogTemp: [AICombatManager] BeginPlay on B_Soulslike_Enemy_Demo_C_1
+LogTemp: [AICombatManager] BindStatUpdates
+LogTemp: [AIBehaviorManager] BeginPlay on B_Soulslike_Enemy_Demo_C_1 - Initial state: 0
+LogTemp: [Item] BeginPlay: ChildActor_GEN_VARIABLE_B_Item_AI_Sword01_C_CAT_0
+LogTemp: [Weapon] BeginPlay: ChildActor_GEN_VARIABLE_B_Item_AI_Sword01_C_CAT_0
+LogTemp: [BaseCharacter] BeginPlay: B_Soulslike_Enemy_Demo_C_1
+LogTemp: [BaseCharacter] Components cached - StatManager: NULL, StatusEffectManager: NULL, BuffManager: NULL
+LogTemp: [SoulslikeEnemy] BeginPlay: B_Soulslike_Enemy_Demo_C_1 (ID: 00000000000000000000000000000000)
+LogTemp: [EnemyShowcase] BeginPlay: B_Soulslike_Enemy_Demo_C_1
+LogTemp: [AICombatManager] BeginPlay on B_Soulslike_Boss_Malgareth_C_2
+LogTemp: [AICombatManager] BindStatUpdates
+LogTemp: [AIBehaviorManager] BeginPlay on B_Soulslike_Boss_Malgareth_C_2 - Initial state: 0
+LogTemp: [AIBoss] BeginPlay on B_Soulslike_Boss_Malgareth_C_2 - Boss: Boss, Phases: 0
+LogTemp: [Item] BeginPlay: Weapon_L_GEN_VARIABLE_B_Item_AI_BossMace_C_CAT_0
+LogTemp: [Weapon] BeginPlay: Weapon_L_GEN_VARIABLE_B_Item_AI_BossMace_C_CAT_0
+LogTemp: [Item] BeginPlay: Weapon_L1_GEN_VARIABLE_B_Item_AI_BossMace_C_CAT_0
+LogTemp: [Weapon] BeginPlay: Weapon_L1_GEN_VARIABLE_B_Item_AI_BossMace_C_CAT_0
+LogTemp: [BaseCharacter] BeginPlay: B_Soulslike_Boss_Malgareth_C_2
+LogTemp: [BaseCharacter] Components cached - StatManager: NULL, StatusEffectManager: NULL, BuffManager: NULL
+LogTemp: [SoulslikeEnemy] BeginPlay: B_Soulslike_Boss_Malgareth_C_2 (ID: 00000000000000000000000000000000)
+LogTemp: [SoulslikeBoss] BeginPlay: B_Soulslike_Boss_Malgareth_C_2
+LogTemp: [BossMalgareth] BeginPlay: B_Soulslike_Boss_Malgareth_C_2
+LogTemp: [Container] BeginPlay - LootEntries: 0, Currency: 0
+LogTemp: [Container] BeginPlay - LootEntries: 0, Currency: 0
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [DoorBase] BeginPlay - Initial rotation: P=0.000000 Y=0.000000 R=0.000000
+LogTemp: [DoorDemo] BeginPlay - Hint: 
+LogTemp: [InventoryManager] BeginPlay on PC_SoulslikeFramework_C_0
+LogTemp: UAC_EquipmentManager::BeginPlay
+LogTemp: [SaveLoadManager] BeginPlay on PC_SoulslikeFramework_C_0
+LogTemp: [SaveLoadManager] Initialize
+LogTemp: [SaveLoadManager] CacheComponentReferences
+LogTemp: [SaveLoadManager] StartAutosaveTimer: 5 seconds
+LogTemp: [RadarManager] BeginPlay on PC_SoulslikeFramework_C_0
+LogTemp: [ProgressManager] BeginPlay on PC_SoulslikeFramework_C_0
+LogTemp: Warning: [SLFPlayerController] BeginPlay - C++ PlayerController active
+LogTemp: Warning: [SLFPlayerController] Native_InitializeHUD - Initializing HUD
+LogViewport: Display: Viewport MouseCaptureMode Changed, CapturePermanently_IncludingInitialMouseDown -> CapturePermanently
+LogTemp: [SLFPlayerController] Native_InitializeHUD - Set InputMode to GameOnly
+LogTemp: [SLFPlayerController] Native_InitializeHUD - Set bShowMouseCursor = false
+LogTemp: Warning: [SLFPlayerController] Native_InitializeHUD - Loaded HUDWidgetClass: W_HUD_C
+LogTemp: Warning: [SLFPlayerController] Native_InitializeHUD - Created W_HUD widget: W_HUD_C_0
+LogTemp: UW_ItemWheelSlot::NativeConstruct
+LogTemp: UW_ItemWheelSlot::NativeConstruct
+LogTemp: UW_ItemWheelSlot::NativeConstruct
+LogTemp: UW_ItemWheelSlot::NativeConstruct
+LogTemp: UW_AbilityDisplay::NativeConstruct
+LogTemp: UW_CurrencyContainer::NativeConstruct
+LogTemp: UW_Radar::NativeConstruct
+LogTemp: [W_GameMenu_Button] Set text to: Inventory
+LogTemp: UW_GameMenu_Button::NativeConstruct
+LogTemp: [W_GameMenu_Button] Button events bound
+LogTemp: [W_GameMenu_Button] SetGameMenuButtonSelected: false
+LogTemp: [W_GameMenu_Button] Set text to: Equipment
+LogTemp: UW_GameMenu_Button::NativeConstruct
+LogTemp: [W_GameMenu_Button] Button events bound
+LogTemp: [W_GameMenu_Button] SetGameMenuButtonSelected: false
+LogTemp: [W_GameMenu_Button] Set text to: Item Crafting
+LogTemp: UW_GameMenu_Button::NativeConstruct
+LogTemp: [W_GameMenu_Button] Button events bound
+LogTemp: [W_GameMenu_Button] SetGameMenuButtonSelected: false
+LogTemp: [W_GameMenu_Button] Set text to: Status
+LogTemp: UW_GameMenu_Button::NativeConstruct
+LogTemp: [W_GameMenu_Button] Button events bound
+LogTemp: [W_GameMenu_Button] SetGameMenuButtonSelected: false
+LogTemp: [W_GameMenu_Button] Set text to: System
+LogTemp: UW_GameMenu_Button::NativeConstruct
+LogTemp: [W_GameMenu_Button] Button events bound
+LogTemp: [W_GameMenu_Button] SetGameMenuButtonSelected: false
+LogTemp: [W_GameMenu] NativePreConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: [W_GameMenu] NativeConstruct - Initializing menu
+LogTemp: [W_GameMenu] Found button: W_GMB_Inventory
+LogTemp: [W_GameMenu] Found button: W_GMB_Equipment
+LogTemp: [W_GameMenu] Found button: W_GMB_Crafting
+LogTemp: [W_GameMenu] Found button: W_GMB_Status
+LogTemp: [W_GameMenu] Found button: W_GMB_System
+LogTemp: [W_GameMenu] Populated 5 menu buttons
+LogTemp: [W_GameMenu_Button] SetGameMenuButtonSelected: true
+LogTemp: [W_GameMenu] EventOnMenuButtonSelected - Button: W_GMB_Inventory
+LogTemp: [W_GameMenu_Button] SetGameMenuButtonSelected: false
+LogTemp: [W_GameMenu_Button] SetGameMenuButtonSelected: false
+LogTemp: [W_GameMenu_Button] SetGameMenuButtonSelected: false
+LogTemp: [W_GameMenu_Button] SetGameMenuButtonSelected: false
+LogTemp: [W_GameMenu] Updated NavigationIndex to 0
+LogTemp: [W_GameMenu_Button] SetGameMenuButtonSelected: false
+LogTemp: [W_GameMenu_Button] SetGameMenuButtonSelected: false
+LogTemp: [W_GameMenu_Button] SetGameMenuButtonSelected: false
+LogTemp: [W_GameMenu_Button] SetGameMenuButtonSelected: false
+LogTemp: [W_GameMenu] Initialized with 5 buttons
+LogTemp: UW_Resources::NativeConstruct
+LogTemp: UW_Boss_Healthbar::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: UW_Interaction::NativeConstruct
+LogTemp: UW_InteractionError::NativeConstruct
+LogTemp: UW_FirstLootNotification::NativeConstruct
+LogTemp: UW_Dialog::NativeConstruct
+LogTemp: UW_StatusEffectNotification::NativeConstruct
+LogTemp: UW_BigScreenMessage::NativeConstruct
+LogTemp: UW_RestMenu_Button::NativeConstruct
+LogTemp: UW_RestMenu_Button::NativeConstruct
+LogTemp: UW_RestMenu_Button::NativeConstruct
+LogTemp: UW_RestMenu_Button::NativeConstruct
+LogTemp: UW_CurrencyContainer::NativeConstruct
+LogTemp: UW_StatEntry_StatName::NativeConstruct
+LogTemp: UW_LevelEntry::NativeConstruct
+LogTemp: UW_StatEntry_StatName::NativeConstruct
+LogTemp: UW_CurrencyEntry::NativeConstruct
+LogTemp: UW_StatBlock::NativeConstruct
+LogTemp: UW_StatBlock::NativeConstruct
+LogTemp: UW_StatBlock::NativeConstruct
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: UW_VendorAction::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: UW_NPC_Window_Vendor::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: UW_NPC_Window::NativeConstruct
+LogTemp: UW_Inventory_CategoryEntry::NativeConstruct
+LogTemp: UW_StatEntry_StatName::NativeConstruct
+LogTemp: UW_LevelEntry::NativeConstruct
+LogTemp: UW_StatEntry_StatName::NativeConstruct
+LogTemp: UW_CurrencyEntry::NativeConstruct
+LogTemp: UW_StatBlock::NativeConstruct
+LogTemp: UW_StatBlock::NativeConstruct
+LogTemp: UW_StatBlock::NativeConstruct
+LogTemp: UW_Inventory_ActionButton::NativeConstruct
+LogTemp: UW_Inventory_ActionButton::NativeConstruct
+LogTemp: UW_Inventory_ActionButton::NativeConstruct
+LogTemp: UW_Inventory_ActionButton::NativeConstruct
+LogTemp: UW_Inventory_ActionButton::NativeConstruct
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: UW_InventoryActionAmount::NativeConstruct
+LogTemp: UW_InventoryAction::NativeConstruct
+LogTemp: UW_Inventory_ActionButton::NativeConstruct
+LogTemp: UW_Inventory_ActionButton::NativeConstruct
+LogTemp: UW_Inventory_ActionButton::NativeConstruct
+LogTemp: UW_Inventory_ActionButton::NativeConstruct
+LogTemp: UW_Inventory_ActionButton::NativeConstruct
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: UW_InventoryActionAmount::NativeConstruct
+LogTemp: UW_InventoryAction::NativeConstruct
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: UW_GenericError::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: UW_Inventory::NativeConstruct
+LogTemp: UW_Equipment_Item_AttackPower::NativeConstruct
+LogTemp: UW_Equipment_Item_RequiredStats::NativeConstruct
+LogTemp: UW_Equipment_Item_StatScaling::NativeConstruct
+LogTemp: UW_Equipment_Item_StatsGranted::NativeConstruct
+LogTemp: UW_Equipment_Item_DamageNegation::NativeConstruct
+LogTemp: UW_Equipment_Item_Resistance::NativeConstruct
+LogTemp: UW_Equipment_Item_ItemEffect::NativeConstruct
+LogTemp: UW_Equipment_Item_OnUseEffect::NativeConstruct
+LogTemp: UW_StatEntry_StatName::NativeConstruct
+LogTemp: UW_LevelEntry::NativeConstruct
+LogTemp: UW_StatEntry_StatName::NativeConstruct
+LogTemp: UW_CurrencyEntry::NativeConstruct
+LogTemp: UW_StatBlock::NativeConstruct
+LogTemp: UW_StatBlock::NativeConstruct
+LogTemp: UW_StatBlock::NativeConstruct
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: UW_GenericError::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: [W_Equipment] NativeConstruct - Getting components
+LogTemp: Warning: [W_Equipment] InventoryComponent not found on PlayerController
+LogTemp: [W_Equipment] Found EquipmentComponent on PlayerController
+LogTemp: [W_Equipment] NativeConstruct complete - 0 equipment slots
+LogTemp: UW_StatEntry_StatName::NativeConstruct
+LogTemp: UW_StatEntry_StatName::NativeConstruct
+LogTemp: UW_StatEntry_StatName::NativeConstruct
+LogTemp: UW_Status_LevelCurrencyBlock::NativeConstruct
+LogTemp: UW_Status_StatBlock::NativeConstruct
+LogTemp: UW_Status_StatBlock::NativeConstruct
+LogTemp: UW_Status_StatBlock::NativeConstruct
+LogTemp: UW_Status_StatBlock::NativeConstruct
+LogTemp: UW_Status_StatBlock::NativeConstruct
+LogTemp: UW_Status_StatBlock::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: Warning: [W_Status] StatManagerComponent not found on pawn
+LogTemp: Warning: [W_Status] InventoryComponent not found on PlayerController
+LogTemp: UW_Status_LevelCurrencyBlock::EventInitializeLevelAndCurrency_Implementation
+LogTemp: [W_Status] InitializeLevelCurrencyBlock - Level=0, Currency=0
+LogTemp: [W_Status] NativeConstruct complete - Direct C++ bindings (NO REFLECTION)
+LogTemp: UW_StatEntry_StatName::NativeConstruct
+LogTemp: UW_LevelEntry::NativeConstruct
+LogTemp: UW_StatEntry_StatName::NativeConstruct
+LogTemp: UW_CurrencyEntry::NativeConstruct
+LogTemp: UW_StatBlock::NativeConstruct
+LogTemp: UW_StatBlock::NativeConstruct
+LogTemp: UW_StatBlock::NativeConstruct
+LogTemp: UW_CraftingEntrySimple::NativeConstruct
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: UW_CraftingAction::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: UW_Crafting::NativeConstruct
+LogTemp: UW_Settings_CategoryEntry::NativeConstruct
+LogTemp: UW_Settings_CategoryEntry::NativeConstruct
+LogTemp: UW_Settings_CategoryEntry::NativeConstruct
+LogTemp: UW_Settings_CategoryEntry::NativeConstruct
+LogTemp: UW_Settings_CategoryEntry::NativeConstruct
+LogTemp: UW_Settings_CategoryEntry::NativeConstruct
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: [W_Settings_Entry] NativeConstruct - Type: 5
+LogTemp: [W_Settings_Entry] SetEntryType: 5
+LogTemp: [W_Settings_Entry] SetEntrySelected: false
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: [W_Settings_Entry] NativeConstruct - Type: 5
+LogTemp: [W_Settings_Entry] SetEntryType: 5
+LogTemp: [W_Settings_Entry] SetEntrySelected: false
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: [W_Settings_Entry] NativeConstruct - Type: 5
+LogTemp: [W_Settings_Entry] SetEntryType: 5
+LogTemp: [W_Settings_Entry] SetEntrySelected: false
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: [W_Settings_Entry] NativeConstruct - Type: 5
+LogTemp: [W_Settings_Entry] SetEntryType: 5
+LogTemp: [W_Settings_Entry] SetEntrySelected: false
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: [W_Settings_Entry] NativeConstruct - Type: 5
+LogTemp: [W_Settings_Entry] SetEntryType: 5
+LogTemp: [W_Settings_Entry] SetEntrySelected: false
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: [W_Settings_Entry] NativeConstruct - Type: 5
+LogTemp: [W_Settings_Entry] SetEntryType: 5
+LogTemp: [W_Settings_Entry] SetEntrySelected: false
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: [W_Settings_Entry] NativeConstruct - Type: 5
+LogTemp: [W_Settings_Entry] SetEntryType: 5
+LogTemp: [W_Settings_Entry] SetEntrySelected: false
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: [W_Settings_Entry] NativeConstruct - Type: 5
+LogTemp: [W_Settings_Entry] SetEntryType: 5
+LogTemp: [W_Settings_Entry] SetEntrySelected: false
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: [W_Settings_Entry] NativeConstruct - Type: 5
+LogTemp: [W_Settings_Entry] SetEntryType: 5
+LogTemp: [W_Settings_Entry] SetEntrySelected: false
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: [W_Settings_Entry] NativeConstruct - Type: 5
+LogTemp: [W_Settings_Entry] SetEntryType: 5
+LogTemp: [W_Settings_Entry] SetEntrySelected: false
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: [W_Settings_Entry] NativeConstruct - Type: 5
+LogTemp: [W_Settings_Entry] SetEntryType: 5
+LogTemp: [W_Settings_Entry] SetEntrySelected: false
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: [W_Settings_Entry] NativeConstruct - Type: 5
+LogTemp: [W_Settings_Entry] SetEntryType: 5
+LogTemp: [W_Settings_Entry] SetEntrySelected: false
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: [W_Settings_Entry] NativeConstruct - Type: 5
+LogTemp: [W_Settings_Entry] SetEntryType: 5
+LogTemp: [W_Settings_Entry] SetEntrySelected: false
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: [W_Settings_Entry] NativeConstruct - Type: 5
+LogTemp: [W_Settings_Entry] SetEntryType: 5
+LogTemp: [W_Settings_Entry] SetEntrySelected: false
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: [W_Settings_Entry] NativeConstruct - Type: 5
+LogTemp: [W_Settings_Entry] SetEntryType: 5
+LogTemp: [W_Settings_Entry] SetEntrySelected: false
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: UW_Settings_ControlEntry::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: UW_Settings_ControlEntry::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: UW_Settings_ControlEntry::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: UW_Settings_ControlEntry::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: UW_Settings_ControlEntry::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: UW_Settings_ControlEntry::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: UW_Settings_ControlEntry::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: UW_Settings_ControlEntry::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: UW_Settings_ControlEntry::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: UW_Settings_ControlEntry::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: UW_Settings_ControlEntry::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: UW_Settings_ControlEntry::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: UW_Settings_ControlEntry::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: UW_Settings_ControlEntry::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: UW_Settings_ControlEntry::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: UW_Settings_ControlEntry::NativeConstruct
+LogTemp: UW_Settings_ControlsDisplay::NativeConstruct
+LogTemp: UW_Settings_PlayerCard::NativeConstruct
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: UW_Settings_QuitConfirmation::NativeConstruct
+LogTemp: UW_Settings_KeyMapping_Category::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_InputKeySelector::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_InputKeySelector::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_KeyMapping_Entry::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_InputKeySelector::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_InputKeySelector::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_KeyMapping_Entry::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_InputKeySelector::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_InputKeySelector::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_KeyMapping_Entry::NativeConstruct
+LogTemp: UW_Settings_KeyMapping_Category::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_InputKeySelector::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_InputKeySelector::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_KeyMapping_Entry::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_InputKeySelector::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_InputKeySelector::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_KeyMapping_Entry::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_InputKeySelector::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_InputKeySelector::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_KeyMapping_Entry::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_InputKeySelector::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_InputKeySelector::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_KeyMapping_Entry::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_InputKeySelector::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_InputKeySelector::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_KeyMapping_Entry::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_InputKeySelector::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_InputKeySelector::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_KeyMapping_Entry::NativeConstruct
+LogTemp: UW_Settings_KeyMapping_Category::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_InputKeySelector::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_InputKeySelector::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_KeyMapping_Entry::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_InputKeySelector::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_InputKeySelector::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_KeyMapping_Entry::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_InputKeySelector::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_InputKeySelector::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_KeyMapping_Entry::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_InputKeySelector::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_InputKeySelector::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Settings_KeyMapping_Entry::NativeConstruct
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: UW_GenericButton::NativeConstruct
+LogTemp: UW_Settings_QuitConfirmation::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: UW_Settings_KeyMapping::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: [W_Settings] NativeConstruct
+LogTemp: [W_Settings] InitializeCategories
+LogTemp: [W_Settings] Added category: W_Settings_CategoryEntry_Display at index 0
+LogTemp: [W_Settings] Added category: W_Settings_CategoryEntry_Camera at index 1
+LogTemp: [W_Settings] Added category: W_Settings_CategoryEntry_Gameplay at index 2
+LogTemp: [W_Settings] Added category: W_Settings_CategoryEntry_Keybinds at index 3
+LogTemp: [W_Settings] Added category: W_Settings_CategoryEntry_Sounds at index 4
+LogTemp: [W_Settings] Added category: W_Settings_CategoryEntry_Quit at index 5
+LogTemp: [W_Settings] Initialized 6 categories
+LogTemp: [W_Settings] InitializeEntries
+LogTemp: [W_Settings] Initialized 11 entries for category 0
+LogTemp: UW_Settings_CategoryEntry::SetCategorySelected - Selected: true
+LogTemp: UW_Settings_CategoryEntry::SetCategorySelected - Selected: false
+LogTemp: UW_Settings_CategoryEntry::SetCategorySelected - Selected: false
+LogTemp: UW_Settings_CategoryEntry::SetCategorySelected - Selected: false
+LogTemp: UW_Settings_CategoryEntry::SetCategorySelected - Selected: false
+LogTemp: UW_Settings_CategoryEntry::SetCategorySelected - Selected: false
+LogTemp: [W_Settings] UpdateCategorySelection: index 0
+LogTemp: [W_Settings_Entry] SetEntrySelected: true
+LogTemp: [W_Settings_Entry] SetEntrySelected: false
+LogTemp: [W_Settings_Entry] SetEntrySelected: false
+LogTemp: [W_Settings_Entry] SetEntrySelected: false
+LogTemp: [W_Settings_Entry] SetEntrySelected: false
+LogTemp: [W_Settings_Entry] SetEntrySelected: false
+LogTemp: [W_Settings_Entry] SetEntrySelected: false
+LogTemp: [W_Settings_Entry] SetEntrySelected: false
+LogTemp: [W_Settings_Entry] SetEntrySelected: false
+LogTemp: [W_Settings_Entry] SetEntrySelected: false
+LogTemp: [W_Settings_Entry] SetEntrySelected: false
+LogTemp: [W_Settings] UpdateEntrySelection: index 0
+LogTemp: UW_RestMenu_Button::NativeConstruct
+LogTemp: UW_RestMenu_Button::NativeConstruct
+LogTemp: UW_RestMenu_Button::NativeConstruct
+LogTemp: UW_RestMenu_Button::NativeConstruct
+LogTemp: UW_TimePass::NativeConstruct
+LogTemp: UW_StatEntry_StatName::NativeConstruct
+LogTemp: UW_StatEntry_StatName::NativeConstruct
+LogTemp: UW_StatEntry_StatName::NativeConstruct
+LogTemp: UW_LevelCurrencyBlock_LevelUp::NativeConstruct
+LogTemp: UW_StatBlock_LevelUp::NativeConstruct
+LogTemp: UW_StatBlock_LevelUp::NativeConstruct
+LogTemp: UW_StatBlock_LevelUp::NativeConstruct
+LogTemp: UW_StatBlock_LevelUp::NativeConstruct
+LogTemp: UW_StatBlock_LevelUp::NativeConstruct
+LogTemp: UW_StatBlock_LevelUp::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: UW_LevelUp::NativeConstruct
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: UW_RestMenu::NativeConstruct
+LogTemp: UW_SkipCinematic::NativePreConstruct - Initializing widget
+LogTemp: UW_SkipCinematic::NativePreConstruct - Set MessageText to: Skip Cinematic
+LogTemp: UW_SkipCinematic::NativePreConstruct - Set IconSizer size to: (32.000000, 32.000000)
+LogTemp: UW_Navigable::NativeConstruct
+LogTemp: UW_Navigable_InputReader::NativeConstruct
+LogTemp: UW_SkipCinematic::CacheWidgetReferences - MessageText=Valid, IconSizer=Valid, KeyIcon=Valid
+LogTemp: UW_SkipCinematic::NativeConstruct - Setting timer for EventInitializeInputIcon
+LogTemp: UW_HUD::NativeConstruct
+LogTemp: Warning: [SLFPlayerController] Native_InitializeHUD - Added W_HUD to viewport
+LogTemp: Warning: [SLFPlayerController] GameMenuWidgetClass is NULL (widget has compile errors?)
+LogTemp: UAC_InteractionManager::BeginPlay
+LogTemp: UAC_CombatManager::BeginPlay
+LogInputBuffer: Warning: ═══════════════════════════════════════════════════════════════
+LogInputBuffer: Warning: [InputBuffer] BeginPlay on B_Soulslike_Character_C_0
+LogInputBuffer: Warning: [InputBuffer] Component: AC_InputBuffer
+LogInputBuffer: Warning: [InputBuffer] Class: AC_InputBuffer_C
+LogInputBuffer: Warning: [InputBuffer] bBufferOpen: false
+LogInputBuffer: Warning: ═══════════════════════════════════════════════════════════════
+LogTemp: [ActionJump] Initialized
+LogTemp: [ActionJump] Initialized
+LogTemp: UAC_ActionManager: Added SoulslikeFramework.Action.Jump -> B_Action_Jump_C (UClass*=0000029B534C0700)
+LogTemp: [ActionDodge] Initialized
+LogTemp: [ActionDodge] Initialized
+LogTemp: UAC_ActionManager: Added SoulslikeFramework.Action.Dodge -> B_Action_Dodge_C (UClass*=0000029B534C1500)
+LogTemp: [ActionCrouch] Initialized
+LogTemp: [ActionCrouch] Initialized
+LogTemp: UAC_ActionManager: Added SoulslikeFramework.Action.Crouch -> B_Action_Crouch_C (UClass*=0000029B534C3800)
+LogTemp: [ActionStartSprinting] Initialized
+LogTemp: [ActionStartSprinting] Initialized
+LogTemp: UAC_ActionManager: Added SoulslikeFramework.Action.StartSprinting -> B_Action_StartSprinting_C (UClass*=0000029B534C3100)
+LogTemp: [ActionStopSprinting] Initialized
+LogTemp: [ActionStopSprinting] Initialized
+LogTemp: UAC_ActionManager: Added SoulslikeFramework.Action.StopSprinting -> B_Action_StopSprinting_C (UClass*=0000029B534C8C00)
+LogTemp: [ActionSprintAttack] Initialized
+LogTemp: [ActionSprintAttack] Initialized
+LogTemp: UAC_ActionManager: Added SoulslikeFramework.Action.SprintAttack -> B_Action_SprintAttack_C (UClass*=0000029B534C7700)
+LogTemp: [ActionComboLightL] Initialized
+LogTemp: [ActionComboLightL] Initialized
+LogTemp: UAC_ActionManager: Added SoulslikeFramework.Action.LightAttackLeft -> B_Action_ComboLight_L_C (UClass*=0000029B534C7000)
+LogTemp: [ActionComboLightR] Initialized
+LogTemp: [ActionComboLightR] Initialized
+LogTemp: UAC_ActionManager: Added SoulslikeFramework.Action.LightAttackRight -> B_Action_ComboLight_R_C (UClass*=0000029B534C9300)
+LogTemp: [ActionComboHeavy] Initialized
+LogTemp: [ActionComboHeavy] Initialized
+LogTemp: UAC_ActionManager: Added SoulslikeFramework.Action.HeavyAttack -> B_Action_ComboHeavy_C (UClass*=0000029B534CB600)
+LogTemp: [ActionGuardStart] Initialized
+LogTemp: [ActionGuardStart] Initialized
+LogTemp: UAC_ActionManager: Added SoulslikeFramework.Action.GuardStart -> B_Action_GuardStart_C (UClass*=0000029B534CAF00)
+LogTemp: [ActionGuardEnd] Initialized
+LogTemp: [ActionGuardEnd] Initialized
+LogTemp: UAC_ActionManager: Added SoulslikeFramework.Action.GuardEnd -> B_Action_GuardEnd_C (UClass*=0000029B534CC400)
+LogTemp: [ActionGuardCancel] Initialized
+LogTemp: [ActionGuardCancel] Initialized
+LogTemp: UAC_ActionManager: Added SoulslikeFramework.Action.GuardCancel -> B_Action_GuardCancel_C (UClass*=0000029B534CD200)
+LogTemp: [ActionJumpAttack] Initialized
+LogTemp: [ActionJumpAttack] Initialized
+LogTemp: UAC_ActionManager: Added SoulslikeFramework.Action.JumpAttack -> B_Action_JumpAttack_C (UClass*=0000029B534CE000)
+LogTemp: [ActionBackstab] Initialized
+LogTemp: [ActionBackstab] Initialized
+LogTemp: UAC_ActionManager: Added SoulslikeFramework.Action.Backstab -> B_Action_Backstab_C (UClass*=0000029B534CEE00)
+LogTemp: [ActionExecute] Initialized
+LogTemp: [ActionExecute] Initialized
+LogTemp: UAC_ActionManager: Added SoulslikeFramework.Action.Execute -> B_Action_Execute_C (UClass*=0000029AC9579A00)
+LogTemp: [ActionDrinkFlaskHP] Initialized
+LogTemp: [ActionDrinkFlaskHP] Initialized
+LogTemp: UAC_ActionManager: Added SoulslikeFramework.Action.DrinkFlask.HP -> B_Action_DrinkFlask_HP_C (UClass*=0000029AC957A800)
+LogTemp: [ActionThrowProjectile] Initialized
+LogTemp: [ActionThrowProjectile] Initialized
+LogTemp: UAC_ActionManager: Added SoulslikeFramework.Action.ThrowKnife -> B_Action_ThrowProjectile_C (UClass*=0000029AC957B600)
+LogTemp: [ActionWeaponAbility] Initialized
+LogTemp: [ActionWeaponAbility] Initialized
+LogTemp: UAC_ActionManager: Added SoulslikeFramework.Action.SpecialAttack -> B_Action_WeaponAbility_C (UClass*=0000029AC957EE00)
+LogTemp: [ActionDualWieldAttack] Initialized
+LogTemp: [ActionDualWieldAttack] Initialized
+LogTemp: UAC_ActionManager: Added SoulslikeFramework.Action.DualWieldAttack -> B_Action_DualWieldAttack_C (UClass*=0000029AC957E000)
+LogTemp: [ActionPickupItemMontage] Initialized
+LogTemp: [ActionPickupItemMontage] Initialized
+LogTemp: UAC_ActionManager: Added SoulslikeFramework.Action.PickupItem -> B_Action_PickupItemMontage_C (UClass*=0000029AC957D200)
+LogTemp: [ActionUseEquippedTool] Initialized
+LogTemp: [ActionUseEquippedTool] Initialized
+LogTemp: UAC_ActionManager: Added SoulslikeFramework.Action.UseEquippedTool -> B_Action_UseEquippedTool_C (UClass*=0000029AC957C400)
+LogTemp: [ActionTwoHandedStanceL] Initialized
+LogTemp: [ActionTwoHandedStanceL] Initialized
+LogTemp: UAC_ActionManager: Added SoulslikeFramework.Action.TwoHandStanceLeft -> B_Action_TwoHandedStance_L_C (UClass*=0000029AC9579300)
+LogTemp: [ActionTwoHandedStanceR] Initialized
+LogTemp: [ActionTwoHandedStanceR] Initialized
+LogTemp: UAC_ActionManager: Added SoulslikeFramework.Action.TwoHandStanceRight -> B_Action_TwoHandedStance_R_C (UClass*=0000029B53133100)
+LogTemp: [ActionScrollWheelLeftHand] Initialized
+LogTemp: [ActionScrollWheelLeftHand] Initialized
+LogTemp: UAC_ActionManager: Added SoulslikeFramework.Action.ScrollWheel.Left -> B_Action_ScrollWheel_LeftHand_C (UClass*=0000029B53132A00)
+LogTemp: [ActionScrollWheelRightHand] Initialized
+LogTemp: [ActionScrollWheelRightHand] Initialized
+LogTemp: UAC_ActionManager: Added SoulslikeFramework.Action.ScrollWheel.Right -> B_Action_ScrollWheel_RightHand_C (UClass*=0000029B53131C00)
+LogTemp: [ActionScrollWheelTools] Initialized
+LogTemp: [ActionScrollWheelTools] Initialized
+LogTemp: UAC_ActionManager: Added SoulslikeFramework.Action.ScrollWheel.Bottom -> B_Action_ScrollWheel_Tools_C (UClass*=0000029B53130E00)
+LogTemp: UAC_ActionManager: Ready with 26 actions (this=0000029A99325280, Owner=B_Soulslike_Character_C_0)
+LogTemp: [InteractableBase] BeginPlay - Prompt: 
+LogTemp: [DebugCentral] Debugging disabled
+LogTemp: [BaseCharacter] BeginPlay: B_Soulslike_Character_C_0
+LogTemp: [BaseCharacter] Components cached - StatManager: NULL, StatusEffectManager: NULL, BuffManager: NULL
+LogTemp: Warning: [SoulslikeCharacter] ===== BeginPlay START: B_Soulslike_Character_C_0 (Class: B_Soulslike_Character_C) =====
+LogTemp: [SoulslikeCharacter] Enabled crouching on CharacterMovement
+LogTemp: [SoulslikeCharacter] Cached components - InputBuffer: OK, ActionManager: OK, CombatManager: OK, InteractionManager: OK, CameraBoom: OK, FollowCamera: OK
+LogTemp: [SoulslikeCharacter] Modular Mesh - Head: OK, UpperBody: OK, LowerBody: OK, Arms: OK
+LogTemp: Warning: [SoulslikeCharacter] ===== InitializeModularMesh START =====
+LogTemp: Warning: [SoulslikeCharacter] DefaultMeshInfo is NULL, attempting to retrieve from GameInstance...
+LogTemp:     GameInstance: GI_SoulslikeFramework_C_0 (Class: GI_SoulslikeFramework_C)
+LogTemp:     SelectedBaseClass via reflection: DA_Quinn
+LogTemp:     Retrieved DefaultMeshInfo from C++ property: DA_QuinnMeshDefault
+LogTemp:   Loading meshes from DefaultMeshInfo: DA_QuinnMeshDefault (Class: PDA_DefaultMeshData_C)
+LogTemp:     Successfully cast to UPDA_DefaultMeshData
+LogTemp:     Loaded Head mesh: SKM_QuinnCape_Head
+LogTemp:     Loaded UpperBody mesh: SKM_Quinn_UpperBody
+LogTemp:     Loaded Arms mesh: SKM_Quinn_Arms
+LogTemp:     Loaded LowerBody mesh: SKM_QuinnCape_LowerBody
+LogTemp:   Head has mesh: SKM_QuinnCape_Head
+LogTemp:   UpperBody has mesh: SKM_Quinn_UpperBody
+LogTemp:   Arms has mesh: SKM_Quinn_Arms
+LogTemp:   LowerBody has mesh: SKM_QuinnCape_LowerBody
+LogTemp: [SoulslikeCharacter] RefreshModularPieces
+LogTemp: [SoulslikeCharacter] MakeModularMeshData - Collecting meshes
+LogTemp:   [0] Head: SKM_QuinnCape_Head
+LogTemp:   [1] UpperBody: SKM_Quinn_UpperBody
+LogTemp:   [2] Arms: SKM_Quinn_Arms
+LogTemp:   [3] LowerBody: SKM_QuinnCape_LowerBody
+LogTemp:   Collected 4 meshes for merging
+LogTemp:   Applied merged mesh to character skeleton!
+LogTemp:   Hidden Head component
+LogTemp:   Hidden UpperBody component
+LogTemp:   Hidden Arms component
+LogTemp:   Hidden LowerBody component
+LogTemp: [SoulslikeCharacter] Added PlayerMappingContext
+LogTemp: [SoulslikeCharacter] Bound to InputBuffer OnInputBufferConsumed
+LogGameState: Match State Changed from WaitingToStart to InProgress
+PIE: Server logged in
+PIE: Play in editor total start time 2.129 seconds.
+LogRenderer: Recreating Persistent SBTs due to initializer changes: 
+        NumShaderSlotsPerGeometrySegment changed: current: 1 - new: 2
+        NumGeometrySegments changed: current: 0 - new: 512
+LogTemp: UW_SkipCinematic::EventInitializeInputIcon_Implementation
+LogTemp: UW_SkipCinematic::OnInputDeviceChanged_Implementation - Starting input icon update
+LogTemp: Warning: UW_SkipCinematic::OnInputDeviceChanged - TargetInputAction is null, cannot get keys
+LogTemp: [RadarManager] LateInitialize
+LogTemp: [RadarManager] InitializeRadar
+LogTemp: [RadarManager] Awaiting radar widget assignment from HUD
+LogTemp: Warning: [SoulslikeCharacter] HandleLook CALLED - Vector: X=-0.25 Y=0.07
+LogTemp: UW_HUD::NativeDestruct
+LogTemp: UW_ItemWheelSlot::NativeDestruct
+LogTemp: UW_ItemWheelSlot::NativeDestruct
+LogTemp: UW_ItemWheelSlot::NativeDestruct
+LogTemp: UW_ItemWheelSlot::NativeDestruct
+LogTemp: UW_AbilityDisplay::NativeDestruct
+LogTemp: UW_CurrencyContainer::NativeDestruct
+LogTemp: UW_Radar::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: [W_GameMenu] NativeDestruct
+LogTemp: UW_GameMenu_Button::NativeDestruct
+LogTemp: UW_GameMenu_Button::NativeDestruct
+LogTemp: UW_GameMenu_Button::NativeDestruct
+LogTemp: UW_GameMenu_Button::NativeDestruct
+LogTemp: UW_GameMenu_Button::NativeDestruct
+LogTemp: UW_Resources::NativeDestruct
+LogTemp: UW_Boss_Healthbar::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_Interaction::NativeDestruct
+LogTemp: UW_InteractionError::NativeDestruct
+LogTemp: UW_FirstLootNotification::NativeDestruct
+LogTemp: UW_Dialog::NativeDestruct
+LogTemp: UW_StatusEffectNotification::NativeDestruct
+LogTemp: UW_BigScreenMessage::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_NPC_Window::NativeDestruct
+LogTemp: UW_RestMenu_Button::NativeDestruct
+LogTemp: UW_RestMenu_Button::NativeDestruct
+LogTemp: UW_RestMenu_Button::NativeDestruct
+LogTemp: UW_RestMenu_Button::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_NPC_Window_Vendor::NativeDestruct
+LogTemp: UW_CurrencyContainer::NativeDestruct
+LogTemp: UW_LevelEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_CurrencyEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatBlock::NativeDestruct
+LogTemp: UW_StatBlock::NativeDestruct
+LogTemp: UW_StatBlock::NativeDestruct
+LogTemp: UW_VendorAction::NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_Inventory::NativeDestruct
+LogTemp: UW_Inventory_CategoryEntry::NativeDestruct
+LogTemp: UW_LevelEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_CurrencyEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatBlock::NativeDestruct
+LogTemp: UW_StatBlock::NativeDestruct
+LogTemp: UW_StatBlock::NativeDestruct
+LogTemp: UW_InventoryAction::NativeDestruct
+LogTemp: UW_Inventory_ActionButton::NativeDestruct
+LogTemp: UW_Inventory_ActionButton::NativeDestruct
+LogTemp: UW_Inventory_ActionButton::NativeDestruct
+LogTemp: UW_Inventory_ActionButton::NativeDestruct
+LogTemp: UW_Inventory_ActionButton::NativeDestruct
+LogTemp: UW_InventoryActionAmount::NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: UW_InventoryAction::NativeDestruct
+LogTemp: UW_Inventory_ActionButton::NativeDestruct
+LogTemp: UW_Inventory_ActionButton::NativeDestruct
+LogTemp: UW_Inventory_ActionButton::NativeDestruct
+LogTemp: UW_Inventory_ActionButton::NativeDestruct
+LogTemp: UW_Inventory_ActionButton::NativeDestruct
+LogTemp: UW_InventoryActionAmount::NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: UW_GenericError::NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: [W_Equipment] NativeDestruct
+LogTemp: UW_Equipment_Item_AttackPower::NativeDestruct
+LogTemp: UW_Equipment_Item_RequiredStats::NativeDestruct
+LogTemp: UW_Equipment_Item_StatScaling::NativeDestruct
+LogTemp: UW_Equipment_Item_StatsGranted::NativeDestruct
+LogTemp: UW_Equipment_Item_DamageNegation::NativeDestruct
+LogTemp: UW_Equipment_Item_Resistance::NativeDestruct
+LogTemp: UW_Equipment_Item_ItemEffect::NativeDestruct
+LogTemp: UW_Equipment_Item_OnUseEffect::NativeDestruct
+LogTemp: UW_LevelEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_CurrencyEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatBlock::NativeDestruct
+LogTemp: UW_StatBlock::NativeDestruct
+LogTemp: UW_StatBlock::NativeDestruct
+LogTemp: UW_GenericError::NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: [W_Status] NativeDestruct
+LogTemp: UW_Status_LevelCurrencyBlock::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_Status_StatBlock::NativeDestruct
+LogTemp: UW_Status_StatBlock::NativeDestruct
+LogTemp: UW_Status_StatBlock::NativeDestruct
+LogTemp: UW_Status_StatBlock::NativeDestruct
+LogTemp: UW_Status_StatBlock::NativeDestruct
+LogTemp: UW_Status_StatBlock::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_Crafting::NativeDestruct
+LogTemp: UW_LevelEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_CurrencyEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatBlock::NativeDestruct
+LogTemp: UW_StatBlock::NativeDestruct
+LogTemp: UW_StatBlock::NativeDestruct
+LogTemp: UW_CraftingAction::NativeDestruct
+LogTemp: UW_CraftingEntrySimple::NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: [W_Settings] NativeDestruct
+LogTemp: UW_Settings_CategoryEntry::NativeDestruct
+LogTemp: UW_Settings_CategoryEntry::NativeDestruct
+LogTemp: UW_Settings_CategoryEntry::NativeDestruct
+LogTemp: UW_Settings_CategoryEntry::NativeDestruct
+LogTemp: UW_Settings_CategoryEntry::NativeDestruct
+LogTemp: UW_Settings_CategoryEntry::NativeDestruct
+LogTemp: [W_Settings_Entry] NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: [W_Settings_Entry] NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: [W_Settings_Entry] NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: [W_Settings_Entry] NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: [W_Settings_Entry] NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: [W_Settings_Entry] NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: [W_Settings_Entry] NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: [W_Settings_Entry] NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: [W_Settings_Entry] NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: [W_Settings_Entry] NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: [W_Settings_Entry] NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: [W_Settings_Entry] NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: [W_Settings_Entry] NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: [W_Settings_Entry] NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: [W_Settings_Entry] NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: UW_Settings_ControlsDisplay::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_Settings_ControlEntry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_Settings_ControlEntry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_Settings_ControlEntry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_Settings_ControlEntry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_Settings_ControlEntry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_Settings_ControlEntry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_Settings_ControlEntry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_Settings_ControlEntry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_Settings_ControlEntry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_Settings_ControlEntry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_Settings_ControlEntry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_Settings_ControlEntry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_Settings_ControlEntry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_Settings_ControlEntry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_Settings_ControlEntry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_Settings_ControlEntry::NativeDestruct
+LogTemp: UW_Settings_PlayerCard::NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: UW_Settings_QuitConfirmation::NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_Settings_KeyMapping::NativeDestruct
+LogTemp: UW_Settings_KeyMapping_Category::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_KeyMapping_Entry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_InputKeySelector::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_InputKeySelector::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_KeyMapping_Entry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_InputKeySelector::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_InputKeySelector::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_KeyMapping_Entry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_InputKeySelector::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_InputKeySelector::NativeDestruct
+LogTemp: UW_Settings_KeyMapping_Category::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_KeyMapping_Entry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_InputKeySelector::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_InputKeySelector::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_KeyMapping_Entry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_InputKeySelector::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_InputKeySelector::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_KeyMapping_Entry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_InputKeySelector::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_InputKeySelector::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_KeyMapping_Entry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_InputKeySelector::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_InputKeySelector::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_KeyMapping_Entry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_InputKeySelector::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_InputKeySelector::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_KeyMapping_Entry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_InputKeySelector::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_InputKeySelector::NativeDestruct
+LogTemp: UW_Settings_KeyMapping_Category::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_KeyMapping_Entry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_InputKeySelector::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_InputKeySelector::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_KeyMapping_Entry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_InputKeySelector::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_InputKeySelector::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_KeyMapping_Entry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_InputKeySelector::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_InputKeySelector::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_KeyMapping_Entry::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_InputKeySelector::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Settings_InputKeySelector::NativeDestruct
+LogTemp: UW_Settings_QuitConfirmation::NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: UW_GenericButton::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_RestMenu::NativeDestruct
+LogTemp: UW_RestMenu_Button::NativeDestruct
+LogTemp: UW_RestMenu_Button::NativeDestruct
+LogTemp: UW_RestMenu_Button::NativeDestruct
+LogTemp: UW_RestMenu_Button::NativeDestruct
+LogTemp: UW_TimePass::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_LevelUp::NativeDestruct
+LogTemp: UW_LevelCurrencyBlock_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatBlock_LevelUp::NativeDestruct
+LogTemp: UW_StatBlock_LevelUp::NativeDestruct
+LogTemp: UW_StatBlock_LevelUp::NativeDestruct
+LogTemp: UW_StatBlock_LevelUp::NativeDestruct
+LogTemp: UW_StatBlock_LevelUp::NativeDestruct
+LogTemp: UW_StatBlock_LevelUp::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_SkipCinematic::NativeDestruct
+LogSlate: Updating window title bar state: overlay mode, drag disabled, window buttons hidden, title bar hidden
+LogWorld: BeginTearingDown for /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase
+LogCrowdFollowing: Warning: Unable to find RecastNavMesh instance while trying to create UCrowdManager instance
+LogTemp: [SLFInputSimulator] Subsystem deinitialized
+LogWorld: UWorld::CleanupWorld for L_Demo_Showcase, bSessionEnded=true, bCleanupResources=true
+LogSlate: InvalidateAllWidgets triggered.  All widgets were invalidated
+LogPlayLevel: Display: Shutting down PIE online subsystems
+LogSlate: InvalidateAllWidgets triggered.  All widgets were invalidated
+LogSlate: Updating window title bar state: overlay mode, drag disabled, window buttons hidden, title bar hidden
+LogAudioMixer: Deinitializing Audio Bus Subsystem for audio device with ID 2
+LogAudioMixer: Display: FMixerPlatformXAudio2::StopAudioStream() called. InstanceID=2, StreamState=4
+LogAudioMixer: Display: FMixerPlatformXAudio2::StopAudioStream() called. InstanceID=2, StreamState=2
+LogUObjectHash: Compacting FUObjectHashTables data took   0.66ms
+LogNiagara: StaticMesh data interface has no valid mesh - NiagaraDataInterfaceStaticMesh /Game/SoulslikeFramework/VFX/Systems/NS_PoisonSword.NS_PoisonSword:Fountain.SpawnScript.NiagaraDataInterfaceStaticMesh_0
+LogNiagara: StaticMesh data interface has no valid mesh - NiagaraDataInterfaceStaticMesh /Game/SoulslikeFramework/VFX/Systems/NS_PoisonSword.NS_PoisonSword:Fountain001_1.SpawnScript.NiagaraDataInterfaceStaticMesh_0
+LogPlayLevel: Display: Destroying online subsystem :Context_1
+LogSlate: Window 'Message Log' being destroyed
+LogSlate: Window 'Message Log' being destroyed
+LogSlate: Took 0.000824 seconds to synchronously load lazily loaded font '../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf' (3848K)

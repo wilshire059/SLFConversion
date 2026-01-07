@@ -34,11 +34,14 @@ void UW_CharacterSelectionCard::CacheWidgetReferences()
 
 void UW_CharacterSelectionCard::SetCardSelected_Implementation(bool InSelected)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Update visual state to reflect selection
+	UE_LOG(LogTemp, Log, TEXT("UW_CharacterSelectionCard::SetCardSelected - Selected: %s"), InSelected ? TEXT("true") : TEXT("false"));
 }
+
 void UW_CharacterSelectionCard::InitializeStatEntries_Implementation(const TMap<FGameplayTag, TSubclassOf<UB_Stat>>& InputPin)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Initialize stat display entries from the provided stat map
+	UE_LOG(LogTemp, Log, TEXT("UW_CharacterSelectionCard::InitializeStatEntries - %d stats"), InputPin.Num());
 }
 void UW_CharacterSelectionCard::EventOnCardPressed_Implementation()
 {

@@ -128,7 +128,7 @@ void UAICombatManagerComponent::HandleIncomingWeaponDamage_AI_Implementation(
 			{
 				// Get current health values for UI update
 				UObject* StatObj = nullptr;
-				FSLFStatInfo StatInfo;
+				FStatInfo StatInfo;
 				if (StatManager->GetStat(HealthTag, StatObj, StatInfo))
 				{
 					IBPI_Enemy::Execute_UpdateEnemyHealth(Owner, StatInfo.CurrentValue, StatInfo.MaxValue, -Damage);

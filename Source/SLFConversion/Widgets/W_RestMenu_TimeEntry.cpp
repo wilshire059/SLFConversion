@@ -34,7 +34,8 @@ void UW_RestMenu_TimeEntry::CacheWidgetReferences()
 
 void UW_RestMenu_TimeEntry::SetTimeEntrySelected_Implementation(bool InSelected)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Update visual state to reflect selection
+	UE_LOG(LogTemp, Log, TEXT("UW_RestMenu_TimeEntry::SetTimeEntrySelected - Selected: %s"), InSelected ? TEXT("true") : TEXT("false"));
 }
 void UW_RestMenu_TimeEntry::EventTimeEntryPressed_Implementation()
 {

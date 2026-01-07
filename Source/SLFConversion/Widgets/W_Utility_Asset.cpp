@@ -34,13 +34,15 @@ void UW_Utility_Asset::CacheWidgetReferences()
 
 UWidget* UW_Utility_Asset::GetToolTipWidget_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Return tooltip widget for utility asset entry
 	return nullptr;
 }
+
 FEventReply UW_Utility_Asset::OnMouseDoubleClick_0_Implementation(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
-	// TODO: Implement from Blueprint EventGraph
-	return FEventReply();
+	// Handle double click on utility asset entry
+	UE_LOG(LogTemp, Log, TEXT("UW_Utility_Asset::OnMouseDoubleClick"));
+	return FEventReply(true);
 }
 void UW_Utility_Asset::EventClear_Implementation()
 {

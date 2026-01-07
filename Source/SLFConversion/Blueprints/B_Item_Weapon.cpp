@@ -36,7 +36,7 @@ FSLFWeaponAttackPower AB_Item_Weapon::GetAttackPowerStats_Implementation()
 
 	// Get stat values for each attack type
 	// JSON shows GetStat calls for Physical, Magic, Lightning, Holy, Frost, Fire
-	FSLFStatInfo StatInfo;
+	FStatInfo StatInfo;
 
 	// Note: The actual stat tags would be defined in gameplay tags
 	// For now, return the base weapon attack power

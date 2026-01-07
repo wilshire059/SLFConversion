@@ -25,6 +25,7 @@
 #include "Interfaces/BPI_GenericCharacter.h"
 #include "Interfaces/BPI_Player.h"
 #include "Interfaces/BPI_Controller.h"
+#include "Widgets/W_HUD.h"
 
 UAC_InteractionManager::UAC_InteractionManager()
 {
@@ -241,14 +242,18 @@ void UAC_InteractionManager::EventOnRest(AActor* RestingPoint)
 	// The actual fade logic depends on the W_HUD widget implementation
 	if (Controller->GetClass()->ImplementsInterface(UBPI_Controller::StaticClass()))
 	{
-		// The Blueprint calls GetPlayerHUD and then EventFade on the result
-		// For now, log that we would trigger the fade
-		UE_LOG(LogTemp, Log, TEXT("  Would trigger HUD fade via BPI_Controller::GetPlayerHUD"));
-
-		// TODO: When W_HUD is migrated, call:
-		// UUserWidget* HUD = nullptr;
-		// IBPI_Controller::Execute_GetPlayerHUD(Controller, HUD);
-		// if (IsValid(HUD)) { HUD->EventFade(ESLFFadeType::FadeToBlack); }
+		// Get HUD from controller via interface and trigger fade
+		UUserWidget* HUDWidget = nullptr;
+		IBPI_Controller::Execute_GetPlayerHUD(Controller, HUDWidget);
+		if (UW_HUD* HUD = Cast<UW_HUD>(HUDWidget))
+		{
+			HUD->EventFade(ESLFFadeTypes::FadeOut, 1.0f);
+			UE_LOG(LogTemp, Log, TEXT("  Triggered HUD fade out"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("  Could not get W_HUD from controller"));
+		}
 	}
 
 	// Bind to resting point's OnReady event
@@ -257,6 +262,75 @@ void UAC_InteractionManager::EventOnRest(AActor* RestingPoint)
 	// This will be handled by the resting point calling back when ready
 
 	UE_LOG(LogTemp, Log, TEXT("  Resting point set, waiting for OnReady callback"));
+}
+
+/**
+ * EventRestInitialized - Called when resting is initialized
+ * This is a stub event called by the resting point when ready to show rest menu
+ */
+void UAC_InteractionManager::EventRestInitialized()
+{
+	UE_LOG(LogTemp, Log, TEXT("UAC_InteractionManager::EventRestInitialized"));
+	// Called by resting point when initialization is complete
+	// Subclasses or Blueprint can override to add custom behavior
+}
+
+/**
+ * EventRestEnded - Called when resting ends
+ * This is a stub event called when player leaves rest menu
+ */
+void UAC_InteractionManager::EventRestEnded()
+{
+	UE_LOG(LogTemp, Log, TEXT("UAC_InteractionManager::EventRestEnded"));
+	// Called when player leaves rest menu
+	// Subclasses or Blueprint can override to add custom behavior
+}
+
+/**
+ * EventReplenishment - Called to replenish resources
+ * This is a stub event called to restore HP/FP/etc at resting points
+ */
+void UAC_InteractionManager::EventReplenishment()
+{
+	UE_LOG(LogTemp, Log, TEXT("UAC_InteractionManager::EventReplenishment"));
+	// Called to replenish player resources (HP, FP, flasks, etc.)
+	// Subclasses or Blueprint can override to add custom behavior
+}
+
+/**
+ * EventReset - Called to reset interaction state
+ * This is a stub event to clear current interaction state
+ */
+void UAC_InteractionManager::EventReset()
+{
+	UE_LOG(LogTemp, Log, TEXT("UAC_InteractionManager::EventReset"));
+	// Reset interaction state
+	NearbyInteractables.Empty();
+	NearestInteractable = nullptr;
+}
+
+/**
+ * EventLockon - Called to trigger lock-on behavior
+ * This is a stub event that triggers the lock-on system
+ */
+void UAC_InteractionManager::EventLockon()
+{
+	UE_LOG(LogTemp, Log, TEXT("UAC_InteractionManager::EventLockon"));
+	// Trigger lock-on trace and lock to nearest valid target
+	TArray<FHitResult> Hits = TargetLockTrace();
+	if (Hits.Num() > 0)
+	{
+		// Find first valid target
+		for (const FHitResult& Hit : Hits)
+		{
+			AActor* HitActor = Hit.GetActor();
+			if (IsValid(HitActor))
+			{
+				LockOnTarget(HitActor, true);
+				break;
+			}
+		}
+	}
 }
 
 

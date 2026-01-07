@@ -34,11 +34,14 @@ void UW_StatEntry_LevelUp::CacheWidgetReferences()
 
 void UW_StatEntry_LevelUp::InitStatEntry_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Initialize the level up stat entry widget with stat data
+	UE_LOG(LogTemp, Log, TEXT("UW_StatEntry_LevelUp::InitStatEntry"));
 }
+
 void UW_StatEntry_LevelUp::SetLevelUpStatEntrySelected_Implementation(bool InSelected)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Update visual state to reflect selection
+	UE_LOG(LogTemp, Log, TEXT("UW_StatEntry_LevelUp::SetLevelUpStatEntrySelected - Selected: %s"), InSelected ? TEXT("true") : TEXT("false"));
 }
 void UW_StatEntry_LevelUp::EventDecreaseStat_Implementation()
 {

@@ -34,5 +34,6 @@ void UW_Settings_CategoryEntry::CacheWidgetReferences()
 
 void UW_Settings_CategoryEntry::SetCategorySelected_Implementation(bool InSelected)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Update visual state to reflect category selection
+	UE_LOG(LogTemp, Log, TEXT("UW_Settings_CategoryEntry::SetCategorySelected - Selected: %s"), InSelected ? TEXT("true") : TEXT("false"));
 }

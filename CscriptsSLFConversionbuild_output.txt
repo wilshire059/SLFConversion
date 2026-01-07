@@ -1,0 +1,9 @@
+Using bundled DotNet SDK version: 8.0.412 win-x64
+Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" SLFConversionEditor Win64 Development -Project=C:\scripts\SLFConversion\SLFConversion.uproject -WaitMutex -FromMsBuild
+Log file: C:\Users\james\AppData\Local\UnrealBuildTool\Log.txt
+Using 'git status' to determine working set for adaptive non-unity build (C:\scripts\SLFConversion).
+Waiting for 'git status' command to complete
+Target is up to date
+
+Result: Succeeded
+Total execution time: 7.56 seconds

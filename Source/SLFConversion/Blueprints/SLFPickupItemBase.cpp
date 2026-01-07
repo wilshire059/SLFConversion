@@ -12,6 +12,7 @@
 #include "SLFPickupItemBase.h"
 #include "Components/InventoryManagerComponent.h"
 #include "Components/SphereComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "NiagaraComponent.h"
 #include "NiagaraSystem.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -273,9 +274,16 @@ void ASLFPickupItemBase::SetupInteractable_Implementation()
 	}
 
 	// Setup physics if enabled
+	// Physics simulation is applied to the mesh component defined in the Blueprint's SCS (Simple Construction Script)
+	// The actual mesh component doesn't exist in this C++ class - it's added in the Blueprint editor
 	if (bUsePhysics)
 	{
-		// TODO: Enable physics simulation
+		// Find the first static mesh component and enable physics
+		if (UStaticMeshComponent* MeshComp = FindComponentByClass<UStaticMeshComponent>())
+		{
+			MeshComp->SetSimulatePhysics(true);
+			MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		}
 	}
 }
 

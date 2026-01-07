@@ -1,0 +1,12 @@
+DA_Action_Dodge loaded
+Class: PDA_Action_C
+DodgeMontages struct found
+  forward: AM_SLF_Dodge_F
+  forward_left: AM_SLF_Dodge_FL
+  forward_right: AM_SLF_Dodge_FR
+  left: AM_SLF_Dodge_L
+  right: AM_SLF_Dodge_R
+  backward: AM_SLF_Dodge_B
+  backward_left: AM_SLF_Dodge_BL
+  backward_right: AM_SLF_Dodge_BR
+  backstep: AM_SLF_Backstep

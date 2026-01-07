@@ -34,7 +34,8 @@ void UW_InventoryAction::CacheWidgetReferences()
 
 bool UW_InventoryAction::AreAllButtonsDisabled_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Check if all action buttons are currently disabled
+	// Returns true if no valid actions are available
 	return false;
 }
 void UW_InventoryAction::EventActionButtonPressed_Implementation()

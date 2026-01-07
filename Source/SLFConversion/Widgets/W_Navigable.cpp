@@ -32,3 +32,9 @@ void UW_Navigable::CacheWidgetReferences()
 	// TODO: Cache any widget references needed for logic
 }
 
+bool UW_Navigable::CanNavigate_Implementation()
+{
+	// By default, can navigate only if widget is visible
+	// Can be overridden in children widgets which inherit from W_Navigable
+	return IsVisible();
+}

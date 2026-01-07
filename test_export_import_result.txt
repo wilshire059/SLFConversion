@@ -1,0 +1,29 @@
+=== Test Export/Import ===
+
+Current struct export_text:
+  (Forward=None,ForwardLeft=None,ForwardRight=None,Left=None,Right=None,Backward=None,BackwardLeft=None,BackwardRight=None,Backstep=None)
+
+Setting montages with setattr...
+  Set forward
+  Set forward_left
+  Set forward_right
+  Set left
+  Set right
+  Set backward
+  Set backward_left
+  Set backward_right
+  Set backstep
+
+After setting, struct export_text:
+  (Forward="/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_F.AM_SLF_Dodge_F'",ForwardLeft="/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_FL.AM_SLF_Dodge_FL'",ForwardRight="/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_FR.AM_SLF_Dodge_FR'",Left="/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_L.AM_SLF_Dodge_L'",Right="/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_R.AM_SLF_Dodge_R'",Backward="/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_B.AM_SLF_Dodge_B'",BackwardLeft="/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_BL.AM_SLF_Dodge_BL'",BackwardRight="/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_BR.AM_SLF_Dodge_BR'",Backstep="/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Backstep.AM_SLF_Backstep'")
+
+Save result: True
+
+After save, re-get and export_text:
+  (Forward="/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_F.AM_SLF_Dodge_F'",ForwardLeft="/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_FL.AM_SLF_Dodge_FL'",ForwardRight="/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_FR.AM_SLF_Dodge_FR'",Left="/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_L.AM_SLF_Dodge_L'",Right="/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_R.AM_SLF_Dodge_R'",Backward="/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_B.AM_SLF_Dodge_B'",BackwardLeft="/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_BL.AM_SLF_Dodge_BL'",BackwardRight="/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_BR.AM_SLF_Dodge_BR'",Backstep="/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Backstep.AM_SLF_Backstep'")
+
+--- Try import_text approach ---
+Import string: (Forward="/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_F.AM_SLF_Dodge_F",ForwardLef...
+import_text result: True
+After import_text, forward: AM_SLF_Dodge_F
+Save result: True

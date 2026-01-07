@@ -1,0 +1,34 @@
+============================================================
+APPLYING NIAGARA PATHS TO C++ PROPERTIES
+============================================================
+
+Loaded 21 Niagara paths from JSON
+  DA_Apple: OK - NS_ItemLootSimple
+  DA_BossMace: OK - NS_ItemLoot
+  DA_CrimsonEverbloom: OK - NS_ItemLootSimple
+  DA_Cube: OK - NS_ItemLootSimple
+  DA_ExampleArmor: OK - NS_ItemLoot
+  DA_ExampleArmor02: OK - NS_ItemLoot
+  DA_ExampleBracers: OK - NS_ItemLoot
+  DA_ExampleGreaves: OK - NS_ItemLoot
+  DA_ExampleHat: OK - NS_ItemLoot
+  DA_ExampleHelmet: OK - NS_ItemLoot
+  DA_ExampleTalisman: OK - NS_ItemLoot
+  DA_Greatsword: OK - NS_ItemLoot
+  DA_HealthFlask: OK - NS_ItemLoot
+  DA_Katana: OK - NS_ItemLoot
+  DA_Lantern: OK - NS_ItemLootSimple
+  DA_PoisonSword: OK - NS_ItemLoot
+  DA_PrisonKey: OK - NS_ItemLootSimple
+  DA_Shield01: OK - NS_ItemLoot
+  DA_Sword01: OK - NS_ItemLoot
+  DA_Sword02: OK - NS_ItemLoot
+  DA_ThrowingKnife: OK - NS_ItemLootSimple
+
+============================================================
+COMPLETE: Applied 21, Failed 0
+============================================================
+
+Verification - DA_Apple:
+  world_niagara_system: <Object '/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple' (0x000001EDB491C400) Class 'NiagaraSystem'>
+  Niagara name: NS_ItemLootSimple

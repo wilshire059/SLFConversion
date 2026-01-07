@@ -34,20 +34,49 @@ void UW_Settings_InputKeySelector::CacheWidgetReferences()
 
 void UW_Settings_InputKeySelector::TryGetKeyIcon_Implementation(const FKey& InKey, TSoftObjectPtr<UTexture2D>& OutIcon, bool& OutSuccess)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Check if key is valid, then look up in KeyCorrelationTable
+	OutSuccess = false;
+
+	if (!InKey.IsValid())
+	{
+		return;
+	}
+
+	if (KeyCorrelationTable)
+	{
+		// Look up the key in the data table by key name
+		FName KeyName = InKey.GetFName();
+		// Data table lookup would be done here via FindRow
+		// For now we return false since the actual table row struct type is unknown
+		UE_LOG(LogTemp, Log, TEXT("UW_Settings_InputKeySelector::TryGetKeyIcon - Looking up key: %s"), *KeyName.ToString());
+	}
 }
+
 void UW_Settings_InputKeySelector::SetKeySelectorSelected_Implementation(bool InSelected)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Set Selected variable, then update brush color based on selection state
+	Selected = InSelected;
+
+	// Trigger OnKeySelectorSelected if selected
+	if (InSelected)
+	{
+		OnKeySelectorSelected.Broadcast(this);
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("UW_Settings_InputKeySelector::SetKeySelectorSelected - Selected: %s"), Selected ? TEXT("true") : TEXT("false"));
 }
+
 void UW_Settings_InputKeySelector::SetActive_Implementation(bool InActive, const FText& ActiveText)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Set Active variable, then update brush color based on active state
+	Active = InActive;
+	UE_LOG(LogTemp, Log, TEXT("UW_Settings_InputKeySelector::SetActive - Active: %s"), Active ? TEXT("true") : TEXT("false"));
 }
+
 FKey UW_Settings_InputKeySelector::GetCurrentKey_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
-	return FKey();
+	// Simply return the Key variable
+	return Key;
 }
 void UW_Settings_InputKeySelector::EventSetKeyVisual_Implementation(FKey InKey)
 {

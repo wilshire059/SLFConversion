@@ -266,4 +266,36 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Save Load")
 	void CacheComponentReferences();
 	virtual void CacheComponentReferences_Implementation();
+
+	// ═══════════════════════════════════════════════════════════════════
+	// ADDITIONAL EVENTS
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** Attempt autosave if needed */
+	UFUNCTION(BlueprintCallable, Category = "Save Load|Autosave")
+	void EventAttemptAutosave();
+
+	/** Check if save data is valid */
+	UFUNCTION(BlueprintPure, Category = "Save Load")
+	bool IsSaveDataValid() const;
+
+	/** Set loaded data from save file */
+	UFUNCTION(BlueprintCallable, Category = "Save Load")
+	void EventSetLoadedData(USaveGame* InSaveGame);
+
+	/** Load data asynchronously */
+	UFUNCTION(BlueprintCallable, Category = "Save Load")
+	void LoadDataAsync(const FString& SlotName);
+
+	/** Try to preload data for a slot */
+	UFUNCTION(BlueprintCallable, Category = "Save Load")
+	void EventTryPreloadData(int32 SlotIndex);
+
+	/** Update the active save slot */
+	UFUNCTION(BlueprintCallable, Category = "Save Load")
+	void EventUpdateActiveSlot(int32 SlotIndex);
+
+	/** Remove a spawned actor from save data */
+	UFUNCTION(BlueprintCallable, Category = "Save Load")
+	void EventRemoveSpawnedActorFromSaveData(AActor* Actor);
 };

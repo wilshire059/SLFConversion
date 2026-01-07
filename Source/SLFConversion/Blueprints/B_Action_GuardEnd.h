@@ -52,7 +52,9 @@ public:
 
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (0)
+	// FUNCTIONS
 	// ═══════════════════════════════════════════════════════════════════════
 
+	/** Execute guard end - toggles guard state off */
+	virtual void ExecuteAction_Implementation() override;
 };

@@ -1,0 +1,18 @@
+=== CROUCH MAPPING FIX LOG ===
+Starting crouch mapping fix...
+Loaded IMC: IMC_Gameplay
+Loaded IA_Crouch: IA_Crouch
+Clearing existing crouch mappings...
+unmap_action error (may be OK): 'InputMappingContext' object has no attribute 'unmap_action'
+Added C key
+Added LeftControl key
+Verifying mappings...
+Total mappings: 1
+  [0] IA_Crouch -> C
+Attempting save...
+Marked asset dirty
+Checked out asset
+Save result: False
+Saved dirty packages
+Script complete
+Test with C or Left Ctrl key in PIE

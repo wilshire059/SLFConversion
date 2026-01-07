@@ -1,0 +1,16 @@
+============================================================
+DEMO ROOM CHECK
+============================================================
+B_DemoRoom loaded: OK
+  Generated class: B_DemoRoom_C
+  Rooms array: 1 entries
+L_Demo_Showcase loaded: OK
+  Type: World
+GM_SoulslikeFramework loaded: OK
+  DefaultPawnClass: B_Soulslike_Character_C
+B_Soulslike_Character loaded: OK
+  Generated class: B_Soulslike_Character_C
+  Mesh: None
+ABP_SoulslikeCharacter_Additive: OK
+
+============================================================

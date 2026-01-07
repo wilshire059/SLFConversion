@@ -1,0 +1,21 @@
+=== Test Dodge Save ===
+
+Step 1: Initial state
+  Class: PDA_Action_C
+  DodgeMontages type: <class 'SLFDodgeMontages'>
+  Initial forward: NULL
+
+Step 2: Setting montages
+  Loaded montage: AM_SLF_Dodge_F
+  After setattr, forward: AM_SLF_Dodge_F
+  Called set_editor_property
+  After set_editor_property, forward: AM_SLF_Dodge_F
+
+Step 3: Saving
+  save_asset result: True
+
+Step 4: Verify (same session)
+  forward: AM_SLF_Dodge_F
+
+Step 5: Force reload
+  ERROR: type object 'EditorAssetLibrary' has no attribute 'unload_asset'

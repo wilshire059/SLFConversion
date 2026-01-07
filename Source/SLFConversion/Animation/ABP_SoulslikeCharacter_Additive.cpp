@@ -33,13 +33,60 @@ void UABP_SoulslikeCharacter_Additive::NativeUpdateAnimation(float DeltaSeconds)
 		if (!OwnerCharacter) return;
 	}
 
-	// TODO: Migrate EventGraph logic here
 	// Update animation variables based on character state
 
-	// Example: Update speed/direction from velocity
-	// FVector Velocity = OwnerCharacter->GetVelocity();
-	// Speed = Velocity.Size();
-	// Direction = CalculateDirection(Velocity, OwnerCharacter->GetActorRotation());
+	// Crouch state
+	IsCrouched = OwnerCharacter->bIsCrouched;
+
+	// Velocity and movement
+	Velocity = OwnerCharacter->GetVelocity();
+	Velocity2D = FVector(Velocity.X, Velocity.Y, 0.0);
+	Speed = Velocity2D.Size();
+	Direction = CalculateDirection(Velocity, OwnerCharacter->GetActorRotation());
+
+	// Location and rotation
+	WorldLocation = OwnerCharacter->GetActorLocation();
+	WorldRotation = OwnerCharacter->GetActorRotation();
+
+	// Falling state
+	if (UCharacterMovementComponent* MovementComp = OwnerCharacter->GetCharacterMovement())
+	{
+		bIsFalling = MovementComp->IsFalling();
+		Acceleration = MovementComp->GetCurrentAcceleration();
+		Acceleration2D = FVector(Acceleration.X, Acceleration.Y, 0.0);
+		bIsAccelerating = Acceleration2D.Size() > 0.1f;
+	}
+
+	// Cache and use CombatManager for blocking state
+	if (!CombatManager)
+	{
+		CombatManager = OwnerCharacter->FindComponentByClass<UAC_CombatManager>();
+	}
+	if (CombatManager)
+	{
+		bIsBlocking = CombatManager->IsGuarding;
+	}
+
+	// Cache and use ActionManager for resting state
+	if (!ActionManager)
+	{
+		ActionManager = OwnerCharacter->FindComponentByClass<UAC_ActionManager>();
+	}
+	if (ActionManager)
+	{
+		IsResting = ActionManager->IsResting;
+	}
+
+	// DEBUG: Log animation state periodically
+	static int32 DebugLogCounter = 0;
+	if (++DebugLogCounter % 60 == 0)  // Log every ~1 second at 60fps
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[AnimBP DEBUG] IsCrouched=%s, Speed=%.1f, bIsFalling=%s, Owner=%s"),
+			IsCrouched ? TEXT("TRUE") : TEXT("FALSE"),
+			Speed,
+			bIsFalling ? TEXT("TRUE") : TEXT("FALSE"),
+			OwnerCharacter ? *OwnerCharacter->GetName() : TEXT("NULL"));
+	}
 }
 
 FVector UABP_SoulslikeCharacter_Additive::GetOwnerVelocity() const
@@ -50,66 +97,4 @@ FVector UABP_SoulslikeCharacter_Additive::GetOwnerVelocity() const
 FRotator UABP_SoulslikeCharacter_Additive::GetOwnerRotation() const
 {
 	return OwnerCharacter ? OwnerCharacter->GetActorRotation() : FRotator::ZeroRotator;
-}
-
-// AnimGraph function removed - conflicts with UE's internal AnimGraph function name
-void UABP_SoulslikeCharacter_Additive::GetCharacterMovementComponent(UCharacterMovementComponent*& OutReturnValue, UCharacterMovementComponent*& OutReturnValue1)
-{
-	// TODO: Implement from Blueprint EventGraph
-}
-void UABP_SoulslikeCharacter_Additive::GetLocationData()
-{
-	// TODO: Implement from Blueprint EventGraph
-}
-void UABP_SoulslikeCharacter_Additive::GetRotationData()
-{
-	// TODO: Implement from Blueprint EventGraph
-}
-void UABP_SoulslikeCharacter_Additive::GetAccelerationData()
-{
-	// TODO: Implement from Blueprint EventGraph
-}
-void UABP_SoulslikeCharacter_Additive::GetVelocityData()
-{
-	// TODO: Implement from Blueprint EventGraph
-}
-void UABP_SoulslikeCharacter_Additive::GetEquipmentComponent(UAC_EquipmentManager*& OutReturnValue, UAC_EquipmentManager*& OutReturnValue1)
-{
-	// TODO: Implement from Blueprint EventGraph
-}
-void UABP_SoulslikeCharacter_Additive::GetGrantedTags()
-{
-	// TODO: Implement from Blueprint EventGraph
-}
-void UABP_SoulslikeCharacter_Additive::GetCombatComponent(UAC_CombatManager*& OutReturnValue, UAC_CombatManager*& OutReturnValue1)
-{
-	// TODO: Implement from Blueprint EventGraph
-}
-void UABP_SoulslikeCharacter_Additive::GetIsBlocking()
-{
-	// TODO: Implement from Blueprint EventGraph
-}
-void UABP_SoulslikeCharacter_Additive::GetIsResting()
-{
-	// TODO: Implement from Blueprint EventGraph
-}
-void UABP_SoulslikeCharacter_Additive::GetOverlayStates()
-{
-	// TODO: Implement from Blueprint EventGraph
-}
-void UABP_SoulslikeCharacter_Additive::GetIsCrouched()
-{
-	// TODO: Implement from Blueprint EventGraph
-}
-void UABP_SoulslikeCharacter_Additive::GetActionComponent(UAC_ActionManager*& OutReturnValue, UAC_ActionManager*& OutReturnValue1)
-{
-	// TODO: Implement from Blueprint EventGraph
-}
-void UABP_SoulslikeCharacter_Additive::GetBlockSequenceForWeapon()
-{
-	// TODO: Implement from Blueprint EventGraph
-}
-void UABP_SoulslikeCharacter_Additive::GetIkHitReactData()
-{
-	// TODO: Implement from Blueprint EventGraph
 }

@@ -45,9 +45,11 @@ public:
 	// INPUT HELPERS
 	// ═══════════════════════════════════════════════════════════════════════
 
-	/** Get all keys mapped to a specific Input Action in an Input Mapping Context */
+	/** Get all keys mapped to a specific Input Action in an Input Mapping Context
+	 *  NOTE: Output parameter named "MappedKeys" to match Blueprint pin name exactly
+	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "BFL_Helper|Input", meta = (WorldContext = "WorldContextObject"))
-	static TArray<FKey> GetKeysForIA(UInputMappingContext* InputMapping, UInputAction* TargetIA, const UObject* WorldContextObject);
+	static void GetKeysForIA(UInputMappingContext* InputMapping, UInputAction* TargetIA, const UObject* WorldContextObject, UPARAM(DisplayName = "Mapped Keys") TArray<FKey>& MappedKeys);
 
 	/** Get the Enhanced Input User Settings */
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "BFL_Helper|Input", meta = (WorldContext = "WorldContextObject"))
@@ -186,4 +188,61 @@ public:
 	/** Unlock craftable items in the progress manager */
 	UFUNCTION(BlueprintCallable, Category = "BFL_Helper|Crafting", meta = (WorldContext = "WorldContextObject"))
 	static void UnlockCraftableItems(const TArray<UPrimaryDataAsset*>& Items, const UObject* WorldContextObject);
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// CLASS CHECKING (replaces BML_HelperMacros)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	/** Check if Target's class is a child of the specified ParentClass
+	 *  Replaces: BML_HelperMacros.IsClassChild (note: BP had typo "IsClassChlid")
+	 */
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "BFL_Helper|Class")
+	static bool IsClassChild(UObject* Target, UClass* ParentClass);
+
+	/** Check if Target's class is exactly equal to the specified Class
+	 *  Replaces: BML_HelperMacros.IsClass
+	 */
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "BFL_Helper|Class")
+	static bool IsClassEqual(UObject* Target, UClass* ClassToCheck);
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// ARRAY HELPERS (replaces BML_HelperMacros)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	/** Check if an array of objects is valid (not empty)
+	 *  Replaces: BML_HelperMacros.IsValidArray
+	 */
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "BFL_Helper|Array")
+	static bool IsValidObjectArray(const TArray<UObject*>& Array);
+
+	/** Check if an array of integers is valid (not empty) */
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "BFL_Helper|Array")
+	static bool IsValidIntArray(const TArray<int32>& Array);
+
+	/** Check if an array of gameplay tags is valid (not empty) */
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "BFL_Helper|Array")
+	static bool IsValidTagArray(const TArray<FGameplayTag>& Array);
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// TIMER/COOLDOWN HELPERS (replaces BML_HelperMacros)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	/** Start a cooldown timer on an object
+	 *  Returns true if cooldown was started, false if already on cooldown
+	 *  Replaces: BML_HelperMacros.DoCooldown
+	 */
+	UFUNCTION(BlueprintCallable, Category = "BFL_Helper|Cooldown", meta = (WorldContext = "WorldContextObject"))
+	static bool StartCooldown(UObject* Object, FName CooldownKey, float Duration, const UObject* WorldContextObject);
+
+	/** Check if an object is currently on cooldown */
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "BFL_Helper|Cooldown", meta = (WorldContext = "WorldContextObject"))
+	static bool IsOnCooldown(UObject* Object, FName CooldownKey, const UObject* WorldContextObject);
+
+	/** Clear a cooldown for an object */
+	UFUNCTION(BlueprintCallable, Category = "BFL_Helper|Cooldown", meta = (WorldContext = "WorldContextObject"))
+	static void ClearCooldown(UObject* Object, FName CooldownKey, const UObject* WorldContextObject);
+
+private:
+	/** Internal cooldown tracking - maps Object+Key to end time */
+	static TMap<TPair<TWeakObjectPtr<UObject>, FName>, double> CooldownMap;
 };

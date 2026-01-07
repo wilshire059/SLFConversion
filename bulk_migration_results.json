@@ -1,0 +1,660 @@
+{
+  "pre_validation": {
+    "items": {
+      "DA_Apple": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_Apple",
+        "exists": true,
+        "cpp_properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple",
+          "world_static_mesh": null,
+          "world_skeletal_mesh": null
+        },
+        "needs_migration": [
+          "world_static_mesh",
+          "world_skeletal_mesh"
+        ]
+      },
+      "DA_BossMace": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_BossMace",
+        "exists": true,
+        "cpp_properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+          "world_static_mesh": null,
+          "world_skeletal_mesh": null
+        },
+        "needs_migration": [
+          "world_static_mesh",
+          "world_skeletal_mesh"
+        ]
+      },
+      "DA_CrimsonEverbloom": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_CrimsonEverbloom",
+        "exists": true,
+        "cpp_properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple",
+          "world_static_mesh": null,
+          "world_skeletal_mesh": null
+        },
+        "needs_migration": [
+          "world_static_mesh",
+          "world_skeletal_mesh"
+        ]
+      },
+      "DA_Cube": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_Cube",
+        "exists": true,
+        "cpp_properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple",
+          "world_static_mesh": null,
+          "world_skeletal_mesh": null
+        },
+        "needs_migration": [
+          "world_static_mesh",
+          "world_skeletal_mesh"
+        ]
+      },
+      "DA_ExampleArmor": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_ExampleArmor",
+        "exists": true,
+        "cpp_properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+          "world_static_mesh": null,
+          "world_skeletal_mesh": null
+        },
+        "needs_migration": [
+          "world_static_mesh",
+          "world_skeletal_mesh"
+        ]
+      },
+      "DA_ExampleArmor02": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_ExampleArmor02",
+        "exists": true,
+        "cpp_properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+          "world_static_mesh": null,
+          "world_skeletal_mesh": null
+        },
+        "needs_migration": [
+          "world_static_mesh",
+          "world_skeletal_mesh"
+        ]
+      },
+      "DA_ExampleBracers": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_ExampleBracers",
+        "exists": true,
+        "cpp_properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+          "world_static_mesh": null,
+          "world_skeletal_mesh": null
+        },
+        "needs_migration": [
+          "world_static_mesh",
+          "world_skeletal_mesh"
+        ]
+      },
+      "DA_ExampleGreaves": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_ExampleGreaves",
+        "exists": true,
+        "cpp_properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+          "world_static_mesh": null,
+          "world_skeletal_mesh": null
+        },
+        "needs_migration": [
+          "world_static_mesh",
+          "world_skeletal_mesh"
+        ]
+      },
+      "DA_ExampleHat": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_ExampleHat",
+        "exists": true,
+        "cpp_properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+          "world_static_mesh": null,
+          "world_skeletal_mesh": null
+        },
+        "needs_migration": [
+          "world_static_mesh",
+          "world_skeletal_mesh"
+        ]
+      },
+      "DA_ExampleHelmet": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_ExampleHelmet",
+        "exists": true,
+        "cpp_properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+          "world_static_mesh": null,
+          "world_skeletal_mesh": null
+        },
+        "needs_migration": [
+          "world_static_mesh",
+          "world_skeletal_mesh"
+        ]
+      },
+      "DA_ExampleTalisman": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_ExampleTalisman",
+        "exists": true,
+        "cpp_properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+          "world_static_mesh": null,
+          "world_skeletal_mesh": null
+        },
+        "needs_migration": [
+          "world_static_mesh",
+          "world_skeletal_mesh"
+        ]
+      },
+      "DA_Greatsword": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_Greatsword",
+        "exists": true,
+        "cpp_properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+          "world_static_mesh": null,
+          "world_skeletal_mesh": null
+        },
+        "needs_migration": [
+          "world_static_mesh",
+          "world_skeletal_mesh"
+        ]
+      },
+      "DA_HealthFlask": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_HealthFlask",
+        "exists": true,
+        "cpp_properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+          "world_static_mesh": null,
+          "world_skeletal_mesh": null
+        },
+        "needs_migration": [
+          "world_static_mesh",
+          "world_skeletal_mesh"
+        ]
+      },
+      "DA_Katana": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_Katana",
+        "exists": true,
+        "cpp_properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+          "world_static_mesh": null,
+          "world_skeletal_mesh": null
+        },
+        "needs_migration": [
+          "world_static_mesh",
+          "world_skeletal_mesh"
+        ]
+      },
+      "DA_Lantern": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_Lantern",
+        "exists": true,
+        "cpp_properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple",
+          "world_static_mesh": null,
+          "world_skeletal_mesh": null
+        },
+        "needs_migration": [
+          "world_static_mesh",
+          "world_skeletal_mesh"
+        ]
+      },
+      "DA_PoisonSword": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_PoisonSword",
+        "exists": true,
+        "cpp_properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+          "world_static_mesh": null,
+          "world_skeletal_mesh": null
+        },
+        "needs_migration": [
+          "world_static_mesh",
+          "world_skeletal_mesh"
+        ]
+      },
+      "DA_PrisonKey": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_PrisonKey",
+        "exists": true,
+        "cpp_properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple",
+          "world_static_mesh": null,
+          "world_skeletal_mesh": null
+        },
+        "needs_migration": [
+          "world_static_mesh",
+          "world_skeletal_mesh"
+        ]
+      },
+      "DA_Shield01": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_Shield01",
+        "exists": true,
+        "cpp_properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+          "world_static_mesh": null,
+          "world_skeletal_mesh": null
+        },
+        "needs_migration": [
+          "world_static_mesh",
+          "world_skeletal_mesh"
+        ]
+      },
+      "DA_Sword01": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_Sword01",
+        "exists": true,
+        "cpp_properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+          "world_static_mesh": null,
+          "world_skeletal_mesh": null
+        },
+        "needs_migration": [
+          "world_static_mesh",
+          "world_skeletal_mesh"
+        ]
+      },
+      "DA_Sword02": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_Sword02",
+        "exists": true,
+        "cpp_properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+          "world_static_mesh": null,
+          "world_skeletal_mesh": null
+        },
+        "needs_migration": [
+          "world_static_mesh",
+          "world_skeletal_mesh"
+        ]
+      },
+      "DA_ThrowingKnife": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_ThrowingKnife",
+        "exists": true,
+        "cpp_properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple",
+          "world_static_mesh": null,
+          "world_skeletal_mesh": null
+        },
+        "needs_migration": [
+          "world_static_mesh",
+          "world_skeletal_mesh"
+        ]
+      }
+    },
+    "mesh_data": {
+      "PDA_DefaultMeshData": {
+        "asset_path": "/Game/SoulslikeFramework/Data/PDA_DefaultMeshData",
+        "exists": true,
+        "cpp_properties": {
+          "head_mesh": "/Game/SoulslikeFramework/Meshes/SKM/SKM_QuinnCape_Head.SKM_QuinnCape_Head",
+          "upper_body_mesh": "/Game/SoulslikeFramework/Meshes/SKM/SKM_Quinn_UpperBody.SKM_Quinn_UpperBody",
+          "arms_mesh": "/Game/SoulslikeFramework/Meshes/SKM/SKM_Quinn_Arms.SKM_Quinn_Arms",
+          "lower_body_mesh": "/Game/SoulslikeFramework/Meshes/SKM/SKM_QuinnCape_LowerBody.SKM_QuinnCape_LowerBody"
+        },
+        "needs_migration": []
+      }
+    }
+  },
+  "migration": {
+    "items": {
+      "DA_Apple": {
+        "migrated": [],
+        "skipped": [
+          "world_niagara_system: already set",
+          "world_static_mesh: no source data (items don't use static meshes)",
+          "world_skeletal_mesh: no source data (items don't use skeletal meshes)"
+        ],
+        "errors": []
+      },
+      "DA_BossMace": {
+        "migrated": [],
+        "skipped": [
+          "world_niagara_system: already set",
+          "world_static_mesh: no source data (items don't use static meshes)",
+          "world_skeletal_mesh: no source data (items don't use skeletal meshes)"
+        ],
+        "errors": []
+      },
+      "DA_CrimsonEverbloom": {
+        "migrated": [],
+        "skipped": [
+          "world_niagara_system: already set",
+          "world_static_mesh: no source data (items don't use static meshes)",
+          "world_skeletal_mesh: no source data (items don't use skeletal meshes)"
+        ],
+        "errors": []
+      },
+      "DA_Cube": {
+        "migrated": [],
+        "skipped": [
+          "world_niagara_system: already set",
+          "world_static_mesh: no source data (items don't use static meshes)",
+          "world_skeletal_mesh: no source data (items don't use skeletal meshes)"
+        ],
+        "errors": []
+      },
+      "DA_ExampleArmor": {
+        "migrated": [],
+        "skipped": [
+          "world_niagara_system: already set",
+          "world_static_mesh: no source data (items don't use static meshes)",
+          "world_skeletal_mesh: no source data (items don't use skeletal meshes)"
+        ],
+        "errors": []
+      },
+      "DA_ExampleArmor02": {
+        "migrated": [],
+        "skipped": [
+          "world_niagara_system: already set",
+          "world_static_mesh: no source data (items don't use static meshes)",
+          "world_skeletal_mesh: no source data (items don't use skeletal meshes)"
+        ],
+        "errors": []
+      },
+      "DA_ExampleBracers": {
+        "migrated": [],
+        "skipped": [
+          "world_niagara_system: already set",
+          "world_static_mesh: no source data (items don't use static meshes)",
+          "world_skeletal_mesh: no source data (items don't use skeletal meshes)"
+        ],
+        "errors": []
+      },
+      "DA_ExampleGreaves": {
+        "migrated": [],
+        "skipped": [
+          "world_niagara_system: already set",
+          "world_static_mesh: no source data (items don't use static meshes)",
+          "world_skeletal_mesh: no source data (items don't use skeletal meshes)"
+        ],
+        "errors": []
+      },
+      "DA_ExampleHat": {
+        "migrated": [],
+        "skipped": [
+          "world_niagara_system: already set",
+          "world_static_mesh: no source data (items don't use static meshes)",
+          "world_skeletal_mesh: no source data (items don't use skeletal meshes)"
+        ],
+        "errors": []
+      },
+      "DA_ExampleHelmet": {
+        "migrated": [],
+        "skipped": [
+          "world_niagara_system: already set",
+          "world_static_mesh: no source data (items don't use static meshes)",
+          "world_skeletal_mesh: no source data (items don't use skeletal meshes)"
+        ],
+        "errors": []
+      },
+      "DA_ExampleTalisman": {
+        "migrated": [],
+        "skipped": [
+          "world_niagara_system: already set",
+          "world_static_mesh: no source data (items don't use static meshes)",
+          "world_skeletal_mesh: no source data (items don't use skeletal meshes)"
+        ],
+        "errors": []
+      },
+      "DA_Greatsword": {
+        "migrated": [],
+        "skipped": [
+          "world_niagara_system: already set",
+          "world_static_mesh: no source data (items don't use static meshes)",
+          "world_skeletal_mesh: no source data (items don't use skeletal meshes)"
+        ],
+        "errors": []
+      },
+      "DA_HealthFlask": {
+        "migrated": [],
+        "skipped": [
+          "world_niagara_system: already set",
+          "world_static_mesh: no source data (items don't use static meshes)",
+          "world_skeletal_mesh: no source data (items don't use skeletal meshes)"
+        ],
+        "errors": []
+      },
+      "DA_Katana": {
+        "migrated": [],
+        "skipped": [
+          "world_niagara_system: already set",
+          "world_static_mesh: no source data (items don't use static meshes)",
+          "world_skeletal_mesh: no source data (items don't use skeletal meshes)"
+        ],
+        "errors": []
+      },
+      "DA_Lantern": {
+        "migrated": [],
+        "skipped": [
+          "world_niagara_system: already set",
+          "world_static_mesh: no source data (items don't use static meshes)",
+          "world_skeletal_mesh: no source data (items don't use skeletal meshes)"
+        ],
+        "errors": []
+      },
+      "DA_PoisonSword": {
+        "migrated": [],
+        "skipped": [
+          "world_niagara_system: already set",
+          "world_static_mesh: no source data (items don't use static meshes)",
+          "world_skeletal_mesh: no source data (items don't use skeletal meshes)"
+        ],
+        "errors": []
+      },
+      "DA_PrisonKey": {
+        "migrated": [],
+        "skipped": [
+          "world_niagara_system: already set",
+          "world_static_mesh: no source data (items don't use static meshes)",
+          "world_skeletal_mesh: no source data (items don't use skeletal meshes)"
+        ],
+        "errors": []
+      },
+      "DA_Shield01": {
+        "migrated": [],
+        "skipped": [
+          "world_niagara_system: already set",
+          "world_static_mesh: no source data (items don't use static meshes)",
+          "world_skeletal_mesh: no source data (items don't use skeletal meshes)"
+        ],
+        "errors": []
+      },
+      "DA_Sword01": {
+        "migrated": [],
+        "skipped": [
+          "world_niagara_system: already set",
+          "world_static_mesh: no source data (items don't use static meshes)",
+          "world_skeletal_mesh: no source data (items don't use skeletal meshes)"
+        ],
+        "errors": []
+      },
+      "DA_Sword02": {
+        "migrated": [],
+        "skipped": [
+          "world_niagara_system: already set",
+          "world_static_mesh: no source data (items don't use static meshes)",
+          "world_skeletal_mesh: no source data (items don't use skeletal meshes)"
+        ],
+        "errors": []
+      },
+      "DA_ThrowingKnife": {
+        "migrated": [],
+        "skipped": [
+          "world_niagara_system: already set",
+          "world_static_mesh: no source data (items don't use static meshes)",
+          "world_skeletal_mesh: no source data (items don't use skeletal meshes)"
+        ],
+        "errors": []
+      }
+    },
+    "mesh_data": {
+      "PDA_DefaultMeshData": {
+        "migrated": [],
+        "skipped": [
+          "head_mesh: already set",
+          "upper_body_mesh: already set",
+          "arms_mesh: already set",
+          "lower_body_mesh: already set"
+        ],
+        "errors": []
+      }
+    }
+  },
+  "post_validation": {
+    "items": {
+      "DA_Apple": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_Apple",
+        "properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple"
+        },
+        "niagara_set": true
+      },
+      "DA_BossMace": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_BossMace",
+        "properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+        },
+        "niagara_set": true
+      },
+      "DA_CrimsonEverbloom": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_CrimsonEverbloom",
+        "properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple"
+        },
+        "niagara_set": true
+      },
+      "DA_Cube": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_Cube",
+        "properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple"
+        },
+        "niagara_set": true
+      },
+      "DA_ExampleArmor": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_ExampleArmor",
+        "properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+        },
+        "niagara_set": true
+      },
+      "DA_ExampleArmor02": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_ExampleArmor02",
+        "properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+        },
+        "niagara_set": true
+      },
+      "DA_ExampleBracers": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_ExampleBracers",
+        "properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+        },
+        "niagara_set": true
+      },
+      "DA_ExampleGreaves": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_ExampleGreaves",
+        "properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+        },
+        "niagara_set": true
+      },
+      "DA_ExampleHat": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_ExampleHat",
+        "properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+        },
+        "niagara_set": true
+      },
+      "DA_ExampleHelmet": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_ExampleHelmet",
+        "properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+        },
+        "niagara_set": true
+      },
+      "DA_ExampleTalisman": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_ExampleTalisman",
+        "properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+        },
+        "niagara_set": true
+      },
+      "DA_Greatsword": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_Greatsword",
+        "properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+        },
+        "niagara_set": true
+      },
+      "DA_HealthFlask": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_HealthFlask",
+        "properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+        },
+        "niagara_set": true
+      },
+      "DA_Katana": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_Katana",
+        "properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+        },
+        "niagara_set": true
+      },
+      "DA_Lantern": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_Lantern",
+        "properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple"
+        },
+        "niagara_set": true
+      },
+      "DA_PoisonSword": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_PoisonSword",
+        "properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+        },
+        "niagara_set": true
+      },
+      "DA_PrisonKey": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_PrisonKey",
+        "properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple"
+        },
+        "niagara_set": true
+      },
+      "DA_Shield01": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_Shield01",
+        "properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+        },
+        "niagara_set": true
+      },
+      "DA_Sword01": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_Sword01",
+        "properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+        },
+        "niagara_set": true
+      },
+      "DA_Sword02": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_Sword02",
+        "properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+        },
+        "niagara_set": true
+      },
+      "DA_ThrowingKnife": {
+        "asset_path": "/Game/SoulslikeFramework/Data/Items/DA_ThrowingKnife",
+        "properties": {
+          "world_niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple"
+        },
+        "niagara_set": true
+      }
+    },
+    "mesh_data": {
+      "PDA_DefaultMeshData": {
+        "asset_path": "/Game/SoulslikeFramework/Data/PDA_DefaultMeshData",
+        "properties": {
+          "head_mesh": "/Game/SoulslikeFramework/Meshes/SKM/SKM_QuinnCape_Head.SKM_QuinnCape_Head",
+          "upper_body_mesh": "/Game/SoulslikeFramework/Meshes/SKM/SKM_Quinn_UpperBody.SKM_Quinn_UpperBody",
+          "arms_mesh": "/Game/SoulslikeFramework/Meshes/SKM/SKM_Quinn_Arms.SKM_Quinn_Arms",
+          "lower_body_mesh": "/Game/SoulslikeFramework/Meshes/SKM/SKM_QuinnCape_LowerBody.SKM_QuinnCape_LowerBody"
+        },
+        "all_set": true
+      }
+    }
+  }
+}

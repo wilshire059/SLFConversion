@@ -2,6 +2,8 @@
 #include "SLFDestructible.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Blueprints/B_PickupItem.h"
+#include "Engine/DataAsset.h"
 
 ASLFDestructible::ASLFDestructible()
 {
@@ -85,8 +87,34 @@ void ASLFDestructible::SpawnLoot_Implementation()
 	{
 		if (ItemClass)
 		{
-			// TODO: Spawn pickup or add to inventory
-			UE_LOG(LogTemp, Log, TEXT("[Destructible] Would spawn loot: %s"), *ItemClass->GetName());
+			// Check if ItemClass is a data asset class
+			UObject* ItemCDO = ItemClass->GetDefaultObject();
+			UDataAsset* ItemAsset = Cast<UDataAsset>(ItemCDO);
+
+			if (ItemAsset)
+			{
+				// Spawn a B_PickupItem with this item data
+				FVector SpawnLocation = GetActorLocation() + FVector(
+					FMath::RandRange(-50.0f, 50.0f),
+					FMath::RandRange(-50.0f, 50.0f),
+					50.0f);
+
+				FActorSpawnParameters SpawnParams;
+				SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+				AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(AB_PickupItem::StaticClass(), SpawnLocation, FRotator::ZeroRotator, SpawnParams);
+				if (AB_PickupItem* PickupItem = Cast<AB_PickupItem>(SpawnedActor))
+				{
+					// Item expects UPrimaryDataAsset*, cast from UDataAsset*
+					PickupItem->Item = Cast<UPrimaryDataAsset>(ItemAsset);
+					PickupItem->Count = 1;
+					UE_LOG(LogTemp, Log, TEXT("[Destructible] Spawned loot: %s"), *ItemAsset->GetName());
+				}
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[Destructible] Item class %s is not a DataAsset"), *ItemClass->GetName());
+			}
 		}
 	}
 }

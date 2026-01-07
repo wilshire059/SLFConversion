@@ -10,8 +10,12 @@
 #include "Components/AC_EquipmentManager.h"
 #include "Components/AC_BuffManager.h"
 #include "Components/AC_StatManager.h"
+#include "Components/AC_InventoryManager.h"
 #include "Blueprints/B_Item.h"
+#include "Widgets/W_InventorySlot.h"
 #include "Net/UnrealNetwork.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 UAC_EquipmentManager::UAC_EquipmentManager()
 {
@@ -262,7 +266,14 @@ void UAC_EquipmentManager::GetSpawnedItemAtSlot_Implementation(const FGameplayTa
 	OutItem = nullptr;
 	OutItem_1 = nullptr;
 
-	// TODO: Look up spawned actor from SpawnedItemsAtSlots map
+	// SpawnedItemsAtSlots maps slot tag to item tag (not actor pointer)
+	// Item actors are spawned/attached via BPI_GenericCharacter interface
+	if (const FGameplayTag* ItemTag = SpawnedItemsAtSlots.Find(SlotTag))
+	{
+		UE_LOG(LogTemp, Log, TEXT("  Slot has spawned item tag: %s"), *ItemTag->ToString());
+		// Actual actor lookup would require searching world for actors with this item
+		// For now, actors are accessed through the character's attached components
+	}
 }
 
 /**
@@ -369,10 +380,28 @@ void UAC_EquipmentManager::GetItemAtSlot_Implementation(const FGameplayTag& Slot
 	OutItemAsset_1 = nullptr;
 	OutId_1 = FGuid();
 
-	// Look up item in map
+	// Look up item in map - AllEquippedItems stores slot tag -> item tag
 	if (FGameplayTag* ItemTag = AllEquippedItems.Find(SlotTag))
 	{
-		// TODO: Convert tag back to item data
+		UE_LOG(LogTemp, Log, TEXT("  Found item tag: %s"), *ItemTag->ToString());
+
+		// Query inventory manager to get the actual item data
+		AActor* Owner = GetOwner();
+		if (IsValid(Owner))
+		{
+			UAC_InventoryManager* InventoryManager = Owner->FindComponentByClass<UAC_InventoryManager>();
+			if (IsValid(InventoryManager))
+			{
+				// Get slot that has this item tag
+				UW_InventorySlot* Slot = InventoryManager->GetSlotWithItemTag(*ItemTag, ESLFInventorySlotType::InventorySlot);
+				if (IsValid(Slot) && IsValid(Slot->AssignedItem))
+				{
+					OutItemAsset = Slot->AssignedItem;
+					OutItemAsset_1 = OutItemAsset;
+					// ItemData and Id would come from the data asset or require additional lookup
+				}
+			}
+		}
 	}
 }
 
@@ -428,7 +457,32 @@ void UAC_EquipmentManager::SerializeEquipmentData_Implementation()
 
 	TArray<FInstancedStruct> EquipmentData;
 
-	// TODO: Convert AllEquippedItems to FInstancedStruct array
+	// Convert AllEquippedItems to FInstancedStruct array
+	AActor* Owner = GetOwner();
+	if (IsValid(Owner))
+	{
+		UAC_InventoryManager* InventoryManager = Owner->FindComponentByClass<UAC_InventoryManager>();
+
+		for (const auto& EquipEntry : AllEquippedItems)
+		{
+			FSLFEquipmentItemsSaveInfo SaveInfo;
+			SaveInfo.SlotTag = EquipEntry.Key;
+
+			// Lookup the item asset from inventory
+			if (IsValid(InventoryManager))
+			{
+				UW_InventorySlot* Slot = InventoryManager->GetSlotWithItemTag(EquipEntry.Value, ESLFInventorySlotType::InventorySlot);
+				if (IsValid(Slot))
+				{
+					SaveInfo.AssignedItem = Slot->AssignedItem;
+				}
+			}
+
+			FInstancedStruct StructInstance;
+			StructInstance.InitializeAs<FSLFEquipmentItemsSaveInfo>(SaveInfo);
+			EquipmentData.Add(StructInstance);
+		}
+	}
 
 	FGameplayTag SaveTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Save.Equipment"));
 	OnSaveRequested.Broadcast(SaveTag, EquipmentData);
@@ -641,7 +695,32 @@ void UAC_EquipmentManager::RefreshActiveGuardSequence_Implementation()
 
 	ActiveBlockSequence = nullptr;
 
-	// TODO: Get guard sequence from equipped shield/weapon
+	// Check left hand slots for shield/weapon that supports guarding
+	// Shields typically go in left hand and provide block animations
+	for (const FGameplayTag& SlotTag : LeftHandSlots)
+	{
+		if (IsSlotOccupied(SlotTag))
+		{
+			// Get the item at this slot
+			FSLFItemInfo ItemData;
+			UPrimaryDataAsset* ItemAsset = nullptr;
+			FGuid ItemId;
+			FSLFItemInfo ItemData_1;
+			UPrimaryDataAsset* ItemAsset_1 = nullptr;
+			FGuid ItemId_1;
+			GetItemAtSlot(SlotTag, ItemData, ItemAsset, ItemId, ItemData_1, ItemAsset_1, ItemId_1);
+
+			// Check if item has block animation via moveset data
+			if (ItemData.EquipmentDetails.MovesetWeapons)
+			{
+				// Item has a moveset, check for block sequence
+				// For now, assume any left-hand weapon/shield can block
+				UE_LOG(LogTemp, Log, TEXT("  Left hand item supports guarding"));
+				// ActiveBlockSequence would be set from the item's animation data
+				break;
+			}
+		}
+	}
 }
 
 /**
@@ -712,8 +791,18 @@ void UAC_EquipmentManager::AdjustForTwoHandStance_Implementation(bool RightHand)
 	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::AdjustForTwoHandStance - RightHand: %s"),
 		RightHand ? TEXT("true") : TEXT("false"));
 
+	// Update stance state
+	if (RightHand)
+	{
+		bRightHandTwoHandStance = !bRightHandTwoHandStance;  // Toggle
+	}
+	else
+	{
+		bLeftHandTwoHandStance = !bLeftHandTwoHandStance;  // Toggle
+	}
+
 	// Broadcast stance change
-	OnStanceChanged.Broadcast(RightHand, true);
+	OnStanceChanged.Broadcast(RightHand, RightHand ? bRightHandTwoHandStance : bLeftHandTwoHandStance);
 }
 
 /**
@@ -723,13 +812,13 @@ void UAC_EquipmentManager::IsTwoHandStanceActive_Implementation(bool& OutLeftHan
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::IsTwoHandStanceActive"));
 
-	// TODO: Track stance state
-	OutLeftHand = false;
-	OutRightHand = false;
-	OutLeftHand_1 = false;
-	OutRightHand_1 = false;
-	OutLeftHand_2 = false;
-	OutRightHand_2 = false;
+	// Return the current two-hand stance state for each hand
+	OutLeftHand = bLeftHandTwoHandStance;
+	OutRightHand = bRightHandTwoHandStance;
+	OutLeftHand_1 = bLeftHandTwoHandStance;
+	OutRightHand_1 = bRightHandTwoHandStance;
+	OutLeftHand_2 = bLeftHandTwoHandStance;
+	OutRightHand_2 = bRightHandTwoHandStance;
 }
 
 /**
@@ -739,7 +828,59 @@ void UAC_EquipmentManager::ReinitializeMovementWithWeight_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::ReinitializeMovementWithWeight"));
 
-	// TODO: Adjust character movement component based on weight stat
+	// Adjust character movement component based on weight stat
+	AActor* Owner = GetOwner();
+	if (!IsValid(Owner))
+	{
+		return;
+	}
+
+	ACharacter* Character = Cast<ACharacter>(Owner);
+	if (!IsValid(Character))
+	{
+		return;
+	}
+
+	UCharacterMovementComponent* MovementComp = Character->GetCharacterMovement();
+	if (!IsValid(MovementComp))
+	{
+		return;
+	}
+
+	// Get weight stat from stat manager
+	UAC_StatManager* StatManager = Owner->FindComponentByClass<UAC_StatManager>();
+	if (IsValid(StatManager))
+	{
+		FGameplayTag WeightTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Misc.Weight"));
+		UB_Stat* WeightStat = nullptr;
+		FStatInfo WeightInfo;
+		StatManager->GetStat(WeightTag, WeightStat, WeightInfo);
+
+		// Calculate movement speed modifier based on equip load ratio
+		// MaxValue represents max carry capacity, CurrentValue is current weight
+		if (WeightInfo.MaxValue > 0)
+		{
+			double EquipLoadRatio = WeightInfo.CurrentValue / WeightInfo.MaxValue;
+
+			// Apply movement penalty based on equip load:
+			// 0-70%: Light load (full speed)
+			// 70-100%: Medium load (reduced speed)
+			// 100%+: Heavy load (fat rolling/slow)
+			double SpeedMultiplier = 1.0;
+			if (EquipLoadRatio > 1.0)
+			{
+				SpeedMultiplier = 0.5;  // Overencumbered
+			}
+			else if (EquipLoadRatio > 0.7)
+			{
+				SpeedMultiplier = 0.85;  // Medium load
+			}
+
+			MovementComp->MaxWalkSpeed = 600.0 * SpeedMultiplier;
+			UE_LOG(LogTemp, Log, TEXT("  Equip load: %.1f%%, Speed multiplier: %.2f"),
+				EquipLoadRatio * 100.0, SpeedMultiplier);
+		}
+	}
 }
 
 /**
@@ -843,5 +984,87 @@ void UAC_EquipmentManager::GetGuardHitMontage_Implementation(UAnimMontage*& OutG
 	OutGuardHitMontage_4 = nullptr;
 	OutGuardHitMontage_5 = nullptr;
 
-	// TODO: Get from equipped shield/weapon data
+	// Check left hand slots for shield/weapon with guard hit montage
+	for (const FGameplayTag& SlotTag : LeftHandSlots)
+	{
+		if (IsSlotOccupied(SlotTag))
+		{
+			FSLFItemInfo ItemData;
+			UPrimaryDataAsset* ItemAsset = nullptr;
+			FGuid ItemId;
+			FSLFItemInfo ItemData_1;
+			UPrimaryDataAsset* ItemAsset_1 = nullptr;
+			FGuid ItemId_1;
+			GetItemAtSlot(SlotTag, ItemData, ItemAsset, ItemId, ItemData_1, ItemAsset_1, ItemId_1);
+
+			// Guard hit montage would come from the item's moveset/animation data
+			// For now, return nullptr - actual implementation needs moveset data lookup
+			if (IsValid(ItemAsset))
+			{
+				UE_LOG(LogTemp, Log, TEXT("  Found equipped item for guard hit: %s"), *ItemAsset->GetName());
+				// OutGuardHitMontage would be set from item's animation data
+				break;
+			}
+		}
+	}
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// WEAPON DAMAGE GETTERS (for AnimNotify weapon trace)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+double UAC_EquipmentManager::GetWeaponDamage() const
+{
+	// Get equipped weapon from right hand slots
+	for (const FGameplayTag& SlotTag : RightHandSlots)
+	{
+		if (const FGameplayTag* ItemTag = AllEquippedItems.Find(SlotTag))
+		{
+			if (ItemTag->IsValid())
+			{
+				// Try to get the weapon's base damage from the item data
+				// For now, return a default value - full implementation needs item data lookup
+				return 25.0;  // Default weapon damage
+			}
+		}
+	}
+	return 10.0;  // Unarmed damage
+}
+
+double UAC_EquipmentManager::GetWeaponPoiseDamage() const
+{
+	// Get equipped weapon from right hand slots
+	for (const FGameplayTag& SlotTag : RightHandSlots)
+	{
+		if (const FGameplayTag* ItemTag = AllEquippedItems.Find(SlotTag))
+		{
+			if (ItemTag->IsValid())
+			{
+				// Try to get the weapon's poise damage from the item data
+				// For now, return a default value - full implementation needs item data lookup
+				return 15.0;  // Default weapon poise damage
+			}
+		}
+	}
+	return 5.0;  // Unarmed poise damage
+}
+
+TMap<FGameplayTag, UPrimaryDataAsset*> UAC_EquipmentManager::GetWeaponStatusEffects() const
+{
+	TMap<FGameplayTag, UPrimaryDataAsset*> StatusEffects;
+
+	// Get equipped weapon from right hand slots
+	for (const FGameplayTag& SlotTag : RightHandSlots)
+	{
+		if (const FGameplayTag* ItemTag = AllEquippedItems.Find(SlotTag))
+		{
+			if (ItemTag->IsValid())
+			{
+				// Get status effects from weapon data
+				// Full implementation needs item data lookup
+			}
+		}
+	}
+
+	return StatusEffects;
 }

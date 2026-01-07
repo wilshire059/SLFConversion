@@ -1,0 +1,25 @@
+============================================================
+TESTING ACTION CAST
+============================================================
+
+1. C++ PDA_ActionBase class:
+   Found: PDA_ActionBase
+   Path: /Script/SLFConversion.PDA_ActionBase
+
+2. DA_Action_Dodge asset:
+   Loaded: DA_Action_Dodge
+   Class: PDA_Action_C
+   Class path: /Game/SoulslikeFramework/Data/Actions/ActionData/PDA_Action.PDA_Action_C
+
+3. Class hierarchy check:
+   0: PDA_Action_C -> /Game/SoulslikeFramework/Data/Actions/ActionData/PDA_Action.PDA_Action_C
+       no get_super_struct method
+
+============================================================
+RESULT: Cast<UPDA_ActionBase>() may FAIL
+(Note: Python API may not expose full hierarchy)
+============================================================
+
+4. Trying to access UPDA_ActionBase properties:
+   ActionClass: <Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_Dodge.B_Action_Dodge_C' (0x000001FF9AD8F500) Class 'BlueprintGeneratedClass'>
+   RelevantData: <Struct 'InstancedStruct' (0x000001FF37A24D28) {}>

@@ -33,13 +33,8 @@ void UABP_Manny_PostProcess::NativeUpdateAnimation(float DeltaSeconds)
 		if (!OwnerCharacter) return;
 	}
 
-	// TODO: Migrate EventGraph logic here
-	// Update animation variables based on character state
-
-	// Example: Update speed/direction from velocity
-	// FVector Velocity = OwnerCharacter->GetVelocity();
-	// Speed = Velocity.Size();
-	// Direction = CalculateDirection(Velocity, OwnerCharacter->GetActorRotation());
+	// PostProcess AnimBP has no EventGraph logic - AnimGraph handles procedural animation directly
+	// The Blueprint EventGraph nodes are disabled with comment: "This node is disabled and will not be called"
 }
 
 FVector UABP_Manny_PostProcess::GetOwnerVelocity() const

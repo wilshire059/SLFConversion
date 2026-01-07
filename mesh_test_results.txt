@@ -1,0 +1,19 @@
+============================================================
+MESH DATA VALIDATION TEST
+============================================================
+Loading: /Game/SoulslikeFramework/Data/PDA_DefaultMeshData
+SUCCESS: Loaded PDA_DefaultMeshData
+Class: Blueprint
+NO mesh data properties found!
+
+============================================================
+CHARACTER MESH CHECK
+============================================================
+Loaded: B_Soulslike_Character
+Got CDO successfully
+Mesh component: <Object '/Game/SoulslikeFramework/Blueprints/_Characters/B_Soulslike_Character.Default__B_Soulslike_Character_C:CharacterMesh0' (0x000001A6AF4AB400) Class 'SkeletalMeshComponent'>
+SKELETAL MESH IS NONE - This is the problem!
+
+============================================================
+TEST COMPLETE
+============================================================

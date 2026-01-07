@@ -23,6 +23,8 @@
 
 // Forward declarations
 class UDataAsset;
+class UAnimMontage;
+class UAnimInstance;
 
 // Types used from SLFEnums.h:
 // - ESLFLadderClimbState
@@ -245,4 +247,27 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Ladder Manager")
 	void ResetLadderState();
 	virtual void ResetLadderState_Implementation();
+
+protected:
+	/** Currently playing climb montage - for stopping */
+	UPROPERTY(Transient)
+	UAnimMontage* CurrentClimbMontage = nullptr;
+
+	/** Helper to get owner character's anim instance */
+	UAnimInstance* GetOwnerAnimInstance() const;
+
+	/** Helper to play a soft montage reference */
+	void PlayLadderMontage(const TSoftObjectPtr<UAnimMontage>& Montage, float PlayRate = 1.0f);
+
+	// ═══════════════════════════════════════════════════════════════════
+	// CLIMB EVENTS
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** Event called when climbing out at top or bottom */
+	UFUNCTION(BlueprintCallable, Category = "Ladder Manager|Events")
+	void EventOnClimbOut();
+
+	/** Event called when starting to climb down from top */
+	UFUNCTION(BlueprintCallable, Category = "Ladder Manager|Events")
+	void EventOnClimbDownFromTop();
 };

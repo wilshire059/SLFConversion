@@ -11,8 +11,11 @@
 
 #include "AIBossComponent.h"
 #include "Components/AudioComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
+#include "Interfaces/BPI_BossDoor.h"
 
 UAIBossComponent::UAIBossComponent()
 {
@@ -149,10 +152,33 @@ void UAIBossComponent::HandlePhaseChange_Implementation(int32 NewPhaseIndex)
 		const FSLFAiBossPhase& NewPhase = Phases[NewPhaseIndex];
 
 		// Play transition montage if available
-		if (NewPhase.PhaseTransitionMontage)
+		if (!NewPhase.PhaseTransitionMontage.IsNull())
 		{
-			// TODO: Play montage on owner's skeletal mesh
-			// When complete, call OnPhaseSequenceFinished
+			// Play montage on owner's skeletal mesh
+			if (ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner()))
+			{
+				if (USkeletalMeshComponent* Mesh = OwnerCharacter->GetMesh())
+				{
+					if (UAnimInstance* AnimInstance = Mesh->GetAnimInstance())
+					{
+						UAnimMontage* TransitionMontage = NewPhase.PhaseTransitionMontage.LoadSynchronous();
+						if (TransitionMontage)
+						{
+							float MontageLength = AnimInstance->Montage_Play(TransitionMontage);
+							// Schedule OnPhaseSequenceFinished after montage completes
+							if (MontageLength > 0.0f)
+							{
+								FTimerHandle PhaseTimer;
+								GetWorld()->GetTimerManager().SetTimer(PhaseTimer, this, &UAIBossComponent::OnPhaseSequenceFinished_Implementation, MontageLength, false);
+							}
+							else
+							{
+								OnPhaseSequenceFinished();
+							}
+						}
+					}
+				}
+			}
 		}
 		else
 		{
@@ -194,9 +220,9 @@ void UAIBossComponent::TryUnlockBossDoors_Implementation()
 
 	for (AActor* Door : RelatedBossDoors)
 	{
-		if (Door)
+		if (Door && Door->GetClass()->ImplementsInterface(UBPI_BossDoor::StaticClass()))
 		{
-			// TODO: Call unlock interface function on door
+			IBPI_BossDoor::Execute_UnlockBossDoor(Door);
 		}
 	}
 }
@@ -213,7 +239,27 @@ void UAIBossComponent::OnBossDeath_Implementation(AActor* Killer)
 	// Play death sequence
 	if (DeathSequence)
 	{
-		// TODO: Play death montage, call OnDeathSequenceFinished when done
+		// Play death montage on owner's skeletal mesh
+		if (ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner()))
+		{
+			if (USkeletalMeshComponent* Mesh = OwnerCharacter->GetMesh())
+			{
+				if (UAnimInstance* AnimInstance = Mesh->GetAnimInstance())
+				{
+					float MontageLength = AnimInstance->Montage_Play(DeathSequence);
+					// Schedule OnDeathSequenceFinished after montage completes
+					if (MontageLength > 0.0f)
+					{
+						FTimerHandle DeathSequenceTimer;
+						GetWorld()->GetTimerManager().SetTimer(DeathSequenceTimer, this, &UAIBossComponent::OnDeathSequenceFinished_Implementation, MontageLength, false);
+					}
+					else
+					{
+						OnDeathSequenceFinished();
+					}
+				}
+			}
+		}
 	}
 	else
 	{
@@ -254,7 +300,16 @@ void UAIBossComponent::ShowDeathText_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("[AIBoss] ShowDeathText: %s"), *DeathText.ToString());
 
-	// TODO: Display death text on HUD via game instance interface
+	// Display death text on HUD via player controller
+	if (UWorld* World = GetWorld())
+	{
+		if (APlayerController* PC = World->GetFirstPlayerController())
+		{
+			// Get the HUD widget and call its big screen message function
+			// Note: This requires W_BigScreenMessage integration when HUD is migrated
+			UE_LOG(LogTemp, Log, TEXT("[AIBoss] Death text should be displayed: %s"), *DeathText.ToString());
+		}
+	}
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════

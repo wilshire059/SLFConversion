@@ -11,6 +11,7 @@
 
 #include "StatManagerComponent.h"
 #include "Engine/DataTable.h"
+#include "Blueprints/B_Stat.h"
 
 UStatManagerComponent::UStatManagerComponent()
 {
@@ -44,8 +45,21 @@ void UStatManagerComponent::BeginPlay()
 	if (StatTable)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[StatManager] Loading stats from table..."));
-		// TODO: Load stat definitions from data table
-		// For each row in StatTable, create B_Stat instances
+		// Load stat definitions from data table
+		TArray<FName> RowNames = StatTable->GetRowNames();
+		for (const FName& RowName : RowNames)
+		{
+			// Get the row data (assuming FStatTableRow structure)
+			FStatInfo* RowData = StatTable->FindRow<FStatInfo>(RowName, TEXT("StatManagerInit"));
+			if (RowData)
+			{
+				// Create a new B_Stat instance for this stat
+				UB_Stat* NewStat = NewObject<UB_Stat>(this);
+				NewStat->StatInfo = *RowData;
+				ActiveStats.Add(RowData->Tag, NewStat);
+				UE_LOG(LogTemp, Warning, TEXT("[StatManager] Created stat: %s"), *RowData->Tag.ToString());
+			}
+		}
 	}
 
 	// Apply overrides
@@ -54,7 +68,15 @@ void UStatManagerComponent::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("[StatManager] Applying override for: %s"), *Override.Key.ToString());
 		if (UObject** StatObj = ActiveStats.Find(Override.Key))
 		{
-			// TODO: Apply override values to stat
+			UB_Stat* Stat = Cast<UB_Stat>(*StatObj);
+			if (Stat)
+			{
+				// Apply override values to stat
+				Stat->StatInfo.CurrentValue = Override.Value.OverrideCurrentValue;
+				Stat->StatInfo.MaxValue = Override.Value.OverrideMaxValue;
+				UE_LOG(LogTemp, Warning, TEXT("[StatManager] Applied override - Current: %.2f, Max: %.2f"),
+					Override.Value.OverrideCurrentValue, Override.Value.OverrideMaxValue);
+			}
 		}
 	}
 
@@ -67,14 +89,22 @@ void UStatManagerComponent::BeginPlay()
 // STAT ACCESS [1-3/12]
 // ═══════════════════════════════════════════════════════════════════════════════
 
-bool UStatManagerComponent::GetStat_Implementation(FGameplayTag StatTag, UObject*& OutStatObject, FSLFStatInfo& OutStatInfo)
+bool UStatManagerComponent::GetStat_Implementation(FGameplayTag StatTag, UObject*& OutStatObject, FStatInfo& OutStatInfo)
 {
 	if (UObject** Found = ActiveStats.Find(StatTag))
 	{
 		OutStatObject = *Found;
 
-		// TODO: Extract FSLFStatInfo from the B_Stat object
-		OutStatInfo.Tag = StatTag;
+		// Extract FStatInfo from the B_Stat object
+		UB_Stat* Stat = Cast<UB_Stat>(*Found);
+		if (Stat)
+		{
+			OutStatInfo = Stat->StatInfo;
+		}
+		else
+		{
+			OutStatInfo.Tag = StatTag;
+		}
 
 		return true;
 	}
@@ -121,7 +151,13 @@ void UStatManagerComponent::ResetStat_Implementation(FGameplayTag StatTag)
 
 	if (UObject** Found = ActiveStats.Find(StatTag))
 	{
-		// TODO: Call Reset on B_Stat object to restore current = max
+		// Reset B_Stat's current value to max value
+		UB_Stat* Stat = Cast<UB_Stat>(*Found);
+		if (Stat)
+		{
+			Stat->StatInfo.CurrentValue = Stat->StatInfo.MaxValue;
+			Stat->OnStatUpdated.Broadcast(Stat, 0.0, false, ESLFValueType::CurrentValue);
+		}
 	}
 }
 
@@ -135,16 +171,11 @@ void UStatManagerComponent::AdjustStat_Implementation(FGameplayTag StatTag, ESLF
 
 	if (UObject** Found = ActiveStats.Find(StatTag))
 	{
-		// TODO: Adjust the stat value on B_Stat object
-		// if (ValueType == ESLFValueType::CurrentValue)
-		//     Stat->CurrentValue = FMath::Clamp(Stat->CurrentValue + Change, 0.0, Stat->MaxValue);
-		// else
-		//     Stat->MaxValue += Change;
-
-		// If bTriggerRegen is true, restart regeneration timer for this stat
-		if (bTriggerRegen)
+		UB_Stat* Stat = Cast<UB_Stat>(*Found);
+		if (Stat)
 		{
-			// TODO: Trigger regen for this stat
+			// Use the B_Stat's own AdjustValue function
+			Stat->AdjustValue(ValueType, Change, bLevelUp, bTriggerRegen);
 		}
 	}
 }
@@ -165,8 +196,34 @@ void UStatManagerComponent::AdjustAffectedStats_Implementation(UObject* Stat, do
 
 	UE_LOG(LogTemp, Log, TEXT("[StatManager] AdjustAffectedStats from %s"), *Stat->GetName());
 
-	// TODO: Get StatModifiers.StatsToAffect from the B_Stat
-	// For each affected stat class, find its tag and adjust by (Change * Multiplier)
+	// Get StatBehavior.StatsToAffect from the B_Stat
+	UB_Stat* BStat = Cast<UB_Stat>(Stat);
+	if (!BStat) return;
+
+	const FStatBehavior& StatBehavior = BStat->StatBehavior;
+
+	// For each affected stat, apply the scaled change
+	for (const auto& AffectedEntry : StatBehavior.StatsToAffect)
+	{
+		FGameplayTag AffectedStatTag = AffectedEntry.Key;
+		const FAffectedStats& AffectedStatsData = AffectedEntry.Value;
+
+		// Process each softcap entry for this affected stat
+		for (const FAffectedStat& AffectedStat : AffectedStatsData.SoftcapData)
+		{
+			// Scale the change by the modifier
+			double ScaledChange = Change * AffectedStat.Modifier;
+
+			// Determine which value type to affect
+			ESLFValueType TargetValueType = AffectedStat.bAffectMaxValue ? ESLFValueType::MaxValue : ESLFValueType::CurrentValue;
+
+			// Apply to the affected stat
+			AdjustStat(AffectedStatTag, TargetValueType, ScaledChange, false, false);
+			UE_LOG(LogTemp, Log, TEXT("  Applied %.2f to %s (%s)"),
+				ScaledChange, *AffectedStatTag.ToString(),
+				TargetValueType == ESLFValueType::MaxValue ? TEXT("Max") : TEXT("Current"));
+		}
+	}
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -188,7 +245,7 @@ void UStatManagerComponent::AdjustLevel_Implementation(int32 Delta)
 bool UStatManagerComponent::IsStatMoreThan_Implementation(FGameplayTag StatTag, double Threshold)
 {
 	UObject* StatObj = nullptr;
-	FSLFStatInfo StatInfo;
+	FStatInfo StatInfo;
 
 	if (GetStat(StatTag, StatObj, StatInfo))
 	{
@@ -208,8 +265,24 @@ void UStatManagerComponent::SerializeStatsData_Implementation()
 
 	TArray<FInstancedStruct> StatsData;
 
-	// TODO: For each ActiveStat, create FInstancedStruct with save data
-	// and add to StatsData array
+	// For each ActiveStat, create FInstancedStruct with save data
+	for (const auto& StatEntry : ActiveStats)
+	{
+		UB_Stat* Stat = Cast<UB_Stat>(StatEntry.Value);
+		if (Stat)
+		{
+			// Create save info struct from the stat
+			FStatInfo SaveInfo = Stat->StatInfo;
+			SaveInfo.Tag = StatEntry.Key;
+
+			FInstancedStruct StructInstance;
+			StructInstance.InitializeAs<FStatInfo>(SaveInfo);
+			StatsData.Add(StructInstance);
+
+			UE_LOG(LogTemp, Log, TEXT("  Serialized stat: %s (%.2f/%.2f)"),
+				*StatEntry.Key.ToString(), SaveInfo.CurrentValue, SaveInfo.MaxValue);
+		}
+	}
 
 	OnSaveRequested.Broadcast();
 }
@@ -218,9 +291,23 @@ void UStatManagerComponent::InitializeLoadedStats_Implementation(const TArray<FI
 {
 	UE_LOG(LogTemp, Log, TEXT("[StatManager] InitializeLoadedStats: %d entries"), LoadedStats.Num());
 
-	// TODO: For each loaded stat data:
-	// 1. Find the corresponding ActiveStat by tag
-	// 2. Apply saved values (current, max, regen settings)
+	// For each loaded stat data, find and update the corresponding ActiveStat
+	for (const FInstancedStruct& LoadedData : LoadedStats)
+	{
+		if (const FStatInfo* StatData = LoadedData.GetPtr<FStatInfo>())
+		{
+			if (UObject** Found = ActiveStats.Find(StatData->Tag))
+			{
+				UB_Stat* Stat = Cast<UB_Stat>(*Found);
+				if (Stat)
+				{
+					Stat->StatInfo = *StatData;
+					UE_LOG(LogTemp, Log, TEXT("  Loaded stat: %s (%.2f/%.2f)"),
+						*StatData->Tag.ToString(), StatData->CurrentValue, StatData->MaxValue);
+				}
+			}
+		}
+	}
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -234,7 +321,59 @@ void UStatManagerComponent::ToggleRegenForStat_Implementation(FGameplayTag StatT
 
 	if (UObject** Found = ActiveStats.Find(StatTag))
 	{
-		// TODO: Call ToggleRegen on B_Stat object
-		// Stat->RegenInfo.bCanRegenerate = !bStop;
+		// Call ToggleStatRegen on B_Stat object
+		UB_Stat* Stat = Cast<UB_Stat>(*Found);
+		if (Stat)
+		{
+			Stat->ToggleStatRegen(bStop);
+		}
+	}
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// INITIALIZATION & LEVEL UP EVENTS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void UStatManagerComponent::EventInitializeStats()
+{
+	UE_LOG(LogTemp, Log, TEXT("[StatManager] EventInitializeStats"));
+
+	// Initialize stats from the Stats map (class -> tag mapping)
+	for (const auto& StatPair : Stats)
+	{
+		TSubclassOf<UObject> StatClass = StatPair.Key;
+		FGameplayTag StatTag = StatPair.Value;
+
+		if (StatClass)
+		{
+			UB_Stat* StatInstance = NewObject<UB_Stat>(this, StatClass);
+			if (StatInstance)
+			{
+				StatInstance->StatInfo.Tag = StatTag;
+				ActiveStats.Add(StatTag, StatInstance);
+				UE_LOG(LogTemp, Log, TEXT("[StatManager] Initialized stat: %s"), *StatTag.ToString());
+			}
+		}
+	}
+
+	OnStatsInitialized.Broadcast();
+}
+
+void UStatManagerComponent::EventOnLevelUpRequested(FGameplayTag StatTag)
+{
+	UE_LOG(LogTemp, Log, TEXT("[StatManager] EventOnLevelUpRequested: %s"), *StatTag.ToString());
+
+	// Find the stat and try to level it up
+	if (UObject** Found = ActiveStats.Find(StatTag))
+	{
+		UB_Stat* Stat = Cast<UB_Stat>(*Found);
+		if (Stat)
+		{
+			// Check if we have enough currency for level up
+			// Would typically check ProgressManager for experience/souls
+			// For now, just increment the stat
+			AdjustStat(StatTag, ESLFValueType::MaxValue, 1.0, false, false);
+			UE_LOG(LogTemp, Log, TEXT("[StatManager] Leveled up stat: %s"), *StatTag.ToString());
+		}
 	}
 }

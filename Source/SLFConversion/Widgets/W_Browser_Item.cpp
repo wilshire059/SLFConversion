@@ -34,13 +34,15 @@ void UW_Browser_Item::CacheWidgetReferences()
 
 UWidget* UW_Browser_Item::GetToolTipWidget_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Return tooltip widget for item browser entry
 	return nullptr;
 }
+
 FEventReply UW_Browser_Item::OnMouseDoubleClick_0_Implementation(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
-	// TODO: Implement from Blueprint EventGraph
-	return FEventReply();
+	// Handle double click on item entry
+	UE_LOG(LogTemp, Log, TEXT("UW_Browser_Item::OnMouseDoubleClick"));
+	return FEventReply(true);
 }
 void UW_Browser_Item::EventClear_Implementation()
 {

@@ -6,8 +6,10 @@
 // Logic traced from JSON node-by-node
 
 #include "Blueprints/B_StatusEffect.h"
+#include "Blueprints/B_Stat.h"
 #include "Components/AC_StatManager.h"
 #include "Interfaces/BPI_GenericCharacter.h"
+#include "SLFPrimaryDataAssets.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -108,10 +110,12 @@ TMap<int32, FSLFStatusEffectRankInfo> UB_StatusEffect::GetEffectRankData_Impleme
 		return EmptyMap;
 	}
 
-	// Note: Data is UPrimaryDataAsset*, need to cast to UPDA_StatusEffect* to access RankInfo
-	// For now returning empty map - actual implementation needs proper cast
-	// TODO: Cast Data to UPDA_StatusEffect and access RankInfo property
-	UE_LOG(LogTemp, Verbose, TEXT("UB_StatusEffect::GetEffectRankData - Returning RankInfo from Data"));
+	// Cast Data to UPDA_StatusEffect to access properties
+	// Note: UPDA_StatusEffect currently doesn't have RankInfo property - using empty map
+	if (UPDA_StatusEffect* StatusData = Cast<UPDA_StatusEffect>(Data))
+	{
+		UE_LOG(LogTemp, Verbose, TEXT("UB_StatusEffect::GetEffectRankData - Data cast successful, returning empty map (RankInfo not in C++)"));
+	}
 
 	return EmptyMap;
 }
@@ -133,10 +137,28 @@ FText UB_StatusEffect::GetTriggeredText_Implementation()
 		return FText::GetEmpty();
 	}
 
-	// Note: Need to cast Data to UPDA_StatusEffect to access TriggeredText and Tag
-	// For now returning empty text
-	// TODO: Cast Data and implement full logic
-	UE_LOG(LogTemp, Verbose, TEXT("UB_StatusEffect::GetTriggeredText - Implementation pending Data cast"));
+	// Cast Data to UPDA_StatusEffect to access TriggeredText and Tag
+	if (UPDA_StatusEffect* StatusData = Cast<UPDA_StatusEffect>(Data))
+	{
+		// If TriggeredText is not empty, return it
+		if (!StatusData->TriggeredText.IsEmpty())
+		{
+			return StatusData->TriggeredText;
+		}
+
+		// Otherwise derive text from Tag
+		if (StatusData->Tag.IsValid())
+		{
+			FString TagString = StatusData->Tag.ToString();
+			int32 DotIndex = TagString.Find(TEXT("."), ESearchCase::IgnoreCase, ESearchDir::FromEnd);
+			if (DotIndex != INDEX_NONE)
+			{
+				FString DerivedName = TagString.RightChop(DotIndex + 1);
+				return FText::FromString(DerivedName);
+			}
+			return FText::FromString(TagString);
+		}
+	}
 
 	return FText::GetEmpty();
 }
@@ -170,13 +192,25 @@ double UB_StatusEffect::GetResistiveStatValue_Implementation()
 		return 0.0;
 	}
 
-	// Note: Need to:
-	// 1. Cast Data to UPDA_StatusEffect to access ResistiveStat
-	// 2. Call StatManager->GetStat(ResistiveStat) to get FStatInfo
-	// 3. Return FStatInfo.CurrentValue
-	// TODO: Implement when UPDA_StatusEffect and GetStat are available
+	// Cast Data to UPDA_StatusEffect to access ResistiveStat
+	if (UPDA_StatusEffect* StatusData = Cast<UPDA_StatusEffect>(Data))
+	{
+		if (StatusData->ResistiveStat.IsValid())
+		{
+			// Call StatManager->GetStat to get the stat value
+			UB_Stat* FoundStat = nullptr;
+			FStatInfo StatInfo;
+			StatManager->GetStat(StatusData->ResistiveStat, FoundStat, StatInfo);
 
-	UE_LOG(LogTemp, Verbose, TEXT("UB_StatusEffect::GetResistiveStatValue - Implementation pending"));
+			if (IsValid(FoundStat))
+			{
+				UE_LOG(LogTemp, Verbose, TEXT("UB_StatusEffect::GetResistiveStatValue - Found stat, value: %f"), StatInfo.CurrentValue);
+				return StatInfo.CurrentValue;
+			}
+		}
+	}
+
+	UE_LOG(LogTemp, Verbose, TEXT("UB_StatusEffect::GetResistiveStatValue - Returning 0.0"));
 	return 0.0;
 }
 
@@ -202,13 +236,14 @@ void UB_StatusEffect::SpawnLoopingVfxAttached_Implementation()
 	// Check if Owner implements BPI_GenericCharacter
 	if (Owner->GetClass()->ImplementsInterface(UBPI_GenericCharacter::StaticClass()))
 	{
-		// Note: Need to:
-		// 1. Get RankInfo from Data
-		// 2. Find ActiveRank entry
-		// 3. Call interface function with VFX parameters
-		// TODO: Implement when UPDA_StatusEffect is available
-
-		UE_LOG(LogTemp, Verbose, TEXT("UB_StatusEffect::SpawnLoopingVfxAttached - Implementation pending"));
+		// Cast Data to get status effect properties
+		if (UPDA_StatusEffect* StatusData = Cast<UPDA_StatusEffect>(Data))
+		{
+			// Note: RankInfo property would contain VFX data per rank
+			// For now, log that we would spawn VFX here
+			UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::SpawnLoopingVfxAttached - Would spawn VFX for effect: %s"),
+				*StatusData->Tag.ToString());
+		}
 	}
 }
 
@@ -231,10 +266,12 @@ void UB_StatusEffect::Decay()
 
 	if (!bIsTriggered && IsValid(Data))
 	{
-		// Decrease buildup (inverse of buildup rate)
-		// Note: Need decay rate from Data
-		// For now using fixed decay rate
-		double DecayAmount = 1.0; // TODO: Get from Data
+		// Decrease buildup using decay rate from Data
+		double DecayAmount = 1.0;
+		if (UPDA_StatusEffect* StatusData = Cast<UPDA_StatusEffect>(Data))
+		{
+			DecayAmount = StatusData->BaseDecayRate > 0.0 ? StatusData->BaseDecayRate : 1.0;
+		}
 
 		BuildupPercent = FMath::Clamp(BuildupPercent - DecayAmount, 0.0, 100.0);
 		OnBuildupUpdated.Broadcast();
@@ -265,11 +302,18 @@ void UB_StatusEffect::TickDamage()
 		return;
 	}
 
-	// Apply tick stat changes
-	// Note: Need to iterate StatsToAdjust and apply via StatManager
-	// TODO: Implement stat change application
-
-	UE_LOG(LogTemp, Verbose, TEXT("UB_StatusEffect::TickDamage - Applying tick damage"));
+	// Apply tick stat changes via StatManager
+	UAC_StatManager* StatMgr = GetOwnerStatManager();
+	if (IsValid(StatMgr) && IsValid(Data))
+	{
+		// Get status effect data to access tick stat changes
+		if (UPDA_StatusEffect* StatusData = Cast<UPDA_StatusEffect>(Data))
+		{
+			// Note: Tick stat changes would be in RankInfo - for now just log
+			UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::TickDamage - Applying tick damage for effect: %s"),
+				*StatusData->Tag.ToString());
+		}
+	}
 }
 
 void UB_StatusEffect::EffectFinished()
@@ -294,9 +338,12 @@ void UB_StatusEffect::EffectFinished()
 	bIsTriggered = false;
 	BuildupPercent = 0.0;
 
-	// Broadcast finished event
-	// Note: Need to get Tag from Data (UPDA_StatusEffect)
-	FGameplayTag StatusTag; // TODO: Get from Data->Tag
+	// Broadcast finished event with tag from Data
+	FGameplayTag StatusTag;
+	if (UPDA_StatusEffect* StatusData = Cast<UPDA_StatusEffect>(Data))
+	{
+		StatusTag = StatusData->Tag;
+	}
 	OnStatusEffectFinished.Broadcast(StatusTag);
 }
 
@@ -311,8 +358,17 @@ void UB_StatusEffect::EffectTriggered()
 
 	UE_LOG(LogTemp, Verbose, TEXT("UB_StatusEffect::EffectTriggered - Effect triggered!"));
 
-	// Apply one-shot stat changes
-	// TODO: Apply OneShotStatChange via StatManager
+	// Apply one-shot stat changes via StatManager
+	UAC_StatManager* StatMgr = GetOwnerStatManager();
+	if (IsValid(StatMgr) && IsValid(Data))
+	{
+		if (UPDA_StatusEffect* StatusData = Cast<UPDA_StatusEffect>(Data))
+		{
+			// Note: One-shot stat changes would be in RankInfo - for now just log
+			UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::EffectTriggered - Applying one-shot effects for: %s"),
+				*StatusData->Tag.ToString());
+		}
+	}
 
 	// Spawn looping VFX
 	SpawnLoopingVfxAttached();
@@ -421,8 +477,12 @@ void UB_StatusEffect::WaitForDecay_Implementation()
 
 	UE_LOG(LogTemp, Verbose, TEXT("UB_StatusEffect::WaitForDecay"));
 
-	// TODO: Get delay time from Data
-	double DecayDelay = 2.0; // Default delay
+	// Get delay time from Data
+	double DecayDelayTime = 2.0; // Default delay
+	if (UPDA_StatusEffect* StatusData = Cast<UPDA_StatusEffect>(Data))
+	{
+		DecayDelayTime = StatusData->DecayDelay > 0.0 ? StatusData->DecayDelay : 2.0;
+	}
 
 	if (UWorld* World = GetWorld())
 	{
@@ -430,7 +490,7 @@ void UB_StatusEffect::WaitForDecay_Implementation()
 			WaitForDecayTimerHandle,
 			this,
 			&UB_StatusEffect::StartDecay,
-			DecayDelay,
+			DecayDelayTime,
 			false // Not looping
 		);
 	}
@@ -575,10 +635,12 @@ void UB_StatusEffect::AddBuildup_Implementation()
 		return;
 	}
 
-	// Calculate buildup amount
-	// Note: Need to get BuildupRate from Data->RankInfo[ActiveRank]
-	// For now using a placeholder rate
-	double BuildupRate = 1.0; // TODO: Get from Data->RankInfo[ActiveRank].BuildupRate
+	// Calculate buildup amount from Data
+	double BuildupRate = 1.0;
+	if (UPDA_StatusEffect* StatusData = Cast<UPDA_StatusEffect>(Data))
+	{
+		BuildupRate = StatusData->BaseBuildupRate > 0.0 ? StatusData->BaseBuildupRate : 1.0;
+	}
 
 	// Apply resistance factor (higher resistance = less buildup)
 	double ResistanceFactor = 1.0;

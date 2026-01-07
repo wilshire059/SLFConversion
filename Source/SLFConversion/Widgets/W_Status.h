@@ -1,10 +1,12 @@
 // W_Status.h
 // C++ Widget class for W_Status
 //
-// 20-PASS VALIDATION: 2026-01-01 Autonomous Session
-// Source: BlueprintDNA/WidgetBlueprint/W_Status.json
+// 20-PASS VALIDATION: 2026-01-05
+// Source: BlueprintDNA_v2/WidgetBlueprint/W_Status.json
 // Parent: UW_Navigable_InputReader
 // Variables: 4 | Functions: 1 | Dispatchers: 1
+//
+// NO REFLECTION - all widgets accessed via BindWidgetOptional
 
 #pragma once
 
@@ -19,18 +21,15 @@
 #include "GenericPlatform/GenericWindow.h"
 #include "MediaPlayer.h"
 
-
 #include "W_Status.generated.h"
 
 // Forward declarations for widget types
-
+class UW_Status_LevelCurrencyBlock;
+class UW_Status_StatBlock;
 
 // Forward declarations for Blueprint types
 class UAC_InventoryManager;
 class UAC_StatManager;
-
-// Forward declarations for SaveGame types
-
 
 // Event Dispatchers
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FW_Status_OnStatusClosed);
@@ -48,16 +47,26 @@ public:
 	virtual void NativeDestruct() override;
 
 	// ═══════════════════════════════════════════════════════════════════════
+	// BIND WIDGETS - Direct access via BindWidgetOptional
+	// ═══════════════════════════════════════════════════════════════════════
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UW_Status_LevelCurrencyBlock* W_Status_LevelCurrencyBlock;
+
+	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (4)
 	// ═══════════════════════════════════════════════════════════════════════
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	UAC_InventoryManager* InventoryComponent;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	int32 CurrentPlayerCurrency;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	UAC_StatManager* StatManagerComponent;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	int32 CurrentPlayerLevel;
 
 	// ═══════════════════════════════════════════════════════════════════════
@@ -87,10 +96,10 @@ public:
 	virtual void EventOnLevelUpdated_Implementation(int32 NewLevel);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Status")
-	void EventOnVisibilityChanged(uint8 InVisibility);
-	virtual void EventOnVisibilityChanged_Implementation(uint8 InVisibility);
+	void EventOnVisibilityChanged(ESlateVisibility InVisibility);
+	virtual void EventOnVisibilityChanged_Implementation(ESlateVisibility InVisibility);
 
 protected:
-	// Cache references
-	void CacheWidgetReferences();
+	// Initialize child widgets with current values
+	void InitializeLevelCurrencyBlock();
 };

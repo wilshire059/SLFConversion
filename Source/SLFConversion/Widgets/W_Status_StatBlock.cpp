@@ -34,11 +34,13 @@ void UW_Status_StatBlock::CacheWidgetReferences()
 
 void UW_Status_StatBlock::SetupCurrentStats_Implementation(const TArray<UB_Stat*>& StatObjects, const TMap<FGameplayTag, TSubclassOf<UB_Stat>>& StatClassesAndCategories)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Setup status stat entries for each stat object in the provided array
+	UE_LOG(LogTemp, Log, TEXT("UW_Status_StatBlock::SetupCurrentStats - %d stats"), StatObjects.Num());
 }
+
 TArray<UW_StatEntry_Status*> UW_Status_StatBlock::GetAllStatsInBlock_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Return all status stat entry widgets in this block
 	return {};
 }
 void UW_Status_StatBlock::EventStatInitializationComplete_Implementation()

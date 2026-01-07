@@ -107,7 +107,8 @@ void UW_Settings_KeyMapping::UpdateInputIconForAction(UInputAction* TargetIA, UI
 
 	// Step 1: Get all keys mapped to this input action
 	// Blueprint: GetKeysForIA(NavigationMapping, TargetIA) -> MappedKeys array
-	TArray<FKey> MappedKeys = UBFL_Helper::GetKeysForIA(NavigationMapping, TargetIA, this);
+	TArray<FKey> MappedKeys;
+	UBFL_Helper::GetKeysForIA(NavigationMapping, TargetIA, this, MappedKeys);
 
 	UE_LOG(LogTemp, Verbose, TEXT("UpdateInputIconForAction: Got %d keys for action %s"),
 		MappedKeys.Num(), *TargetIA->GetName());
@@ -139,7 +140,8 @@ void UW_Settings_KeyMapping::UpdateInputIconForAction(UInputAction* TargetIA, UI
 
 	// Step 4: Get the icon for this key
 	// Blueprint: GetInputIconForKey(SelectedKey) -> Icon (TSoftObjectPtr<UTexture2D>)
-	TSoftObjectPtr<UTexture2D> Icon = GetInputIconForKey(SelectedKey);
+	TSoftObjectPtr<UTexture2D> Icon;
+	GetInputIconForKey(SelectedKey, Icon);
 
 	// Step 5: Check if icon is valid soft reference
 	// Blueprint: IsValidSoftObjectReference(Icon) -> Branch

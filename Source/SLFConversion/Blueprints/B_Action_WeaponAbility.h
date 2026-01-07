@@ -52,7 +52,9 @@ public:
 
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (0)
+	// FUNCTIONS
 	// ═══════════════════════════════════════════════════════════════════════
 
+	/** Execute weapon skill/art from equipped weapon */
+	virtual void ExecuteAction_Implementation() override;
 };

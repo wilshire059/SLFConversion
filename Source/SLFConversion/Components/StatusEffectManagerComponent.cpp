@@ -10,10 +10,151 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 #include "StatusEffectManagerComponent.h"
+#include "SLFPrimaryDataAssets.h"
+#include "TimerManager.h"
+#include "Engine/StreamableManager.h"
+#include "Engine/AssetManager.h"
 
 UStatusEffectManagerComponent::UStatusEffectManagerComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// HELPER FUNCTIONS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+FGameplayTag UStatusEffectManagerComponent::GetTagFromStatusEffectAsset(UDataAsset* StatusEffect) const
+{
+	if (UPDA_StatusEffect* EffectData = Cast<UPDA_StatusEffect>(StatusEffect))
+	{
+		return EffectData->Tag;
+	}
+	return FGameplayTag();
+}
+
+void UStatusEffectManagerComponent::TriggerStatusEffect(const FGameplayTag& EffectTag, int32 Rank)
+{
+	FSLFStatusEffectBuildupState* State = BuildupStates.Find(EffectTag);
+	if (!State || !State->SourceAsset)
+	{
+		return;
+	}
+
+	UPDA_StatusEffect* EffectData = Cast<UPDA_StatusEffect>(State->SourceAsset);
+	if (!EffectData)
+	{
+		return;
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[StatusEffectManager] TriggerStatusEffect: %s at Rank %d"),
+		*EffectTag.ToString(), Rank);
+
+	// Broadcast triggered text
+	if (!EffectData->TriggeredText.IsEmpty())
+	{
+		OnStatusEffectTriggeredEvent(EffectData->TriggeredText);
+	}
+
+	// Load and spawn the effect class
+	if (!EffectData->Effect.IsNull())
+	{
+		TSoftClassPtr<UObject> EffectClass = EffectData->Effect;
+
+		if (EffectClass.IsValid())
+		{
+			// Class already loaded - spawn immediately
+			UClass* LoadedClass = EffectClass.Get();
+			if (LoadedClass)
+			{
+				UObject* NewEffect = NewObject<UObject>(this, LoadedClass);
+				if (NewEffect)
+				{
+					ActiveStatusEffects.Add(EffectTag, NewEffect);
+					OnStatusEffectAdded.Broadcast(NewEffect);
+					UE_LOG(LogTemp, Log, TEXT("[StatusEffectManager] Spawned effect instance: %s"), *NewEffect->GetName());
+				}
+			}
+		}
+		else
+		{
+			// Need to async load the class
+			FString ClassPath = EffectClass.ToString();
+			PendingAsyncLoads.Add(ClassPath, EffectTag);
+
+			FStreamableManager& StreamableManager = UAssetManager::GetStreamableManager();
+			StreamableManager.RequestAsyncLoad(
+				EffectClass.ToSoftObjectPath(),
+				FStreamableDelegate::CreateUObject(this, &UStatusEffectManagerComponent::OnLoaded_185D3AEC4B5162C1F2C50C87BF007D3F, (UClass*)nullptr)
+			);
+		}
+	}
+
+	// Reset buildup after triggering
+	if (!EffectData->bCanRetrigger)
+	{
+		State->CurrentBuildup = 0.0;
+	}
+}
+
+void UStatusEffectManagerComponent::OnBuildupTimerTick(FGameplayTag EffectTag)
+{
+	FSLFStatusEffectBuildupState* State = BuildupStates.Find(EffectTag);
+	if (!State || !State->bIsBuildingUp)
+	{
+		return;
+	}
+
+	UPDA_StatusEffect* EffectData = Cast<UPDA_StatusEffect>(State->SourceAsset);
+	if (!EffectData)
+	{
+		return;
+	}
+
+	// Add buildup based on rate (called every 0.1 seconds)
+	double BuildupAmount = EffectData->BaseBuildupRate * 0.1;
+	State->CurrentBuildup = FMath::Min(State->CurrentBuildup + BuildupAmount, State->MaxBuildup);
+
+	UE_LOG(LogTemp, Verbose, TEXT("[StatusEffectManager] Buildup tick: %s - %.1f/%.1f"),
+		*EffectTag.ToString(), State->CurrentBuildup, State->MaxBuildup);
+
+	// Check if threshold reached
+	if (State->CurrentBuildup >= State->MaxBuildup)
+	{
+		TriggerStatusEffect(EffectTag, State->Rank);
+	}
+}
+
+void UStatusEffectManagerComponent::OnDecayTimerTick(FGameplayTag EffectTag)
+{
+	FSLFStatusEffectBuildupState* State = BuildupStates.Find(EffectTag);
+	if (!State || State->bIsBuildingUp)
+	{
+		return;
+	}
+
+	UPDA_StatusEffect* EffectData = Cast<UPDA_StatusEffect>(State->SourceAsset);
+	if (!EffectData)
+	{
+		return;
+	}
+
+	// Decay buildup based on rate (called every 0.1 seconds)
+	double DecayAmount = EffectData->BaseDecayRate * 0.1;
+	State->CurrentBuildup = FMath::Max(State->CurrentBuildup - DecayAmount, 0.0);
+
+	UE_LOG(LogTemp, Verbose, TEXT("[StatusEffectManager] Decay tick: %s - %.1f/%.1f"),
+		*EffectTag.ToString(), State->CurrentBuildup, State->MaxBuildup);
+
+	// Stop decay timer when buildup reaches zero
+	if (State->CurrentBuildup <= 0.0)
+	{
+		if (UWorld* World = GetWorld())
+		{
+			World->GetTimerManager().ClearTimer(State->DecayTimerHandle);
+		}
+		BuildupStates.Remove(EffectTag);
+	}
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -33,36 +174,125 @@ void UStatusEffectManagerComponent::AddOneShotBuildup_Implementation(UDataAsset*
 {
 	if (!StatusEffect) return;
 
-	UE_LOG(LogTemp, Log, TEXT("[StatusEffectManager] AddOneShotBuildup: %s, Rank %d, Delta %.2f"),
-		*StatusEffect->GetName(), EffectRank, Delta);
+	// Get status effect tag from data asset (IMPLEMENTED - was TODO line 39)
+	FGameplayTag EffectTag = GetTagFromStatusEffectAsset(StatusEffect);
+	if (!EffectTag.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[StatusEffectManager] AddOneShotBuildup: Invalid tag from %s"), *StatusEffect->GetName());
+		return;
+	}
 
-	// TODO: Get status effect tag from data asset
-	// Find or create active status effect instance
-	// Add Delta to buildup
-	// Check if buildup threshold reached -> trigger effect
+	UE_LOG(LogTemp, Log, TEXT("[StatusEffectManager] AddOneShotBuildup: %s, Rank %d, Delta %.2f"),
+		*EffectTag.ToString(), EffectRank, Delta);
+
+	// Find or create buildup state
+	FSLFStatusEffectBuildupState* State = BuildupStates.Find(EffectTag);
+	if (!State)
+	{
+		FSLFStatusEffectBuildupState NewState;
+		NewState.SourceAsset = StatusEffect;
+		NewState.Rank = EffectRank;
+		NewState.MaxBuildup = 100.0; // Default threshold
+		BuildupStates.Add(EffectTag, NewState);
+		State = BuildupStates.Find(EffectTag);
+	}
+
+	// Add delta to buildup
+	State->CurrentBuildup = FMath::Min(State->CurrentBuildup + Delta, State->MaxBuildup);
+
+	UE_LOG(LogTemp, Log, TEXT("[StatusEffectManager] Buildup now: %.1f/%.1f"),
+		State->CurrentBuildup, State->MaxBuildup);
+
+	// Check if threshold reached -> trigger effect
+	if (State->CurrentBuildup >= State->MaxBuildup)
+	{
+		TriggerStatusEffect(EffectTag, EffectRank);
+	}
 }
 
 void UStatusEffectManagerComponent::StartBuildup_Implementation(UDataAsset* StatusEffect, int32 Rank)
 {
 	if (!StatusEffect) return;
 
-	UE_LOG(LogTemp, Log, TEXT("[StatusEffectManager] StartBuildup: %s, Rank %d"),
-		*StatusEffect->GetName(), Rank);
+	FGameplayTag EffectTag = GetTagFromStatusEffectAsset(StatusEffect);
+	if (!EffectTag.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[StatusEffectManager] StartBuildup: Invalid tag from %s"), *StatusEffect->GetName());
+		return;
+	}
 
-	// TODO: Start continuous buildup timer
-	// This is for effects like standing in poison cloud
+	UE_LOG(LogTemp, Log, TEXT("[StatusEffectManager] StartBuildup: %s, Rank %d"),
+		*EffectTag.ToString(), Rank);
+
+	// Find or create buildup state
+	FSLFStatusEffectBuildupState* State = BuildupStates.Find(EffectTag);
+	if (!State)
+	{
+		FSLFStatusEffectBuildupState NewState;
+		NewState.SourceAsset = StatusEffect;
+		NewState.Rank = Rank;
+		NewState.MaxBuildup = 100.0;
+		BuildupStates.Add(EffectTag, NewState);
+		State = BuildupStates.Find(EffectTag);
+	}
+
+	// Start continuous buildup timer (IMPLEMENTED - was TODO line 52)
+	State->bIsBuildingUp = true;
+
+	// Clear any existing decay timer
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(State->DecayTimerHandle);
+
+		// Start buildup timer - ticks every 0.1 seconds
+		FTimerDelegate BuildupDelegate;
+		BuildupDelegate.BindUObject(this, &UStatusEffectManagerComponent::OnBuildupTimerTick, EffectTag);
+		World->GetTimerManager().SetTimer(State->BuildupTimerHandle, BuildupDelegate, 0.1f, true);
+	}
 }
 
 void UStatusEffectManagerComponent::StopBuildup_Implementation(UDataAsset* StatusEffect, bool bApplyDecayDelay)
 {
 	if (!StatusEffect) return;
 
-	UE_LOG(LogTemp, Log, TEXT("[StatusEffectManager] StopBuildup: %s, DecayDelay: %s"),
-		*StatusEffect->GetName(), bApplyDecayDelay ? TEXT("true") : TEXT("false"));
+	FGameplayTag EffectTag = GetTagFromStatusEffectAsset(StatusEffect);
+	if (!EffectTag.IsValid())
+	{
+		return;
+	}
 
-	// TODO: Stop continuous buildup
-	// If bApplyDecayDelay, start decay timer
-	// Otherwise, start immediate decay
+	UE_LOG(LogTemp, Log, TEXT("[StatusEffectManager] StopBuildup: %s, DecayDelay: %s"),
+		*EffectTag.ToString(), bApplyDecayDelay ? TEXT("true") : TEXT("false"));
+
+	FSLFStatusEffectBuildupState* State = BuildupStates.Find(EffectTag);
+	if (!State)
+	{
+		return;
+	}
+
+	// Stop continuous buildup (IMPLEMENTED - was TODO line 63)
+	State->bIsBuildingUp = false;
+
+	UWorld* World = GetWorld();
+	if (!World) return;
+
+	// Clear buildup timer
+	World->GetTimerManager().ClearTimer(State->BuildupTimerHandle);
+
+	// Get decay delay from data asset
+	double DecayDelay = 0.0;
+	if (bApplyDecayDelay)
+	{
+		if (UPDA_StatusEffect* EffectData = Cast<UPDA_StatusEffect>(StatusEffect))
+		{
+			DecayDelay = EffectData->DecayDelay;
+		}
+	}
+
+	// Start decay timer after delay
+	FTimerDelegate DecayDelegate;
+	DecayDelegate.BindUObject(this, &UStatusEffectManagerComponent::OnDecayTimerTick, EffectTag);
+	World->GetTimerManager().SetTimer(State->DecayTimerHandle, DecayDelegate, 0.1f, true, DecayDelay);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -76,20 +306,60 @@ void UStatusEffectManagerComponent::TryAddStatusEffect_Implementation(UDataAsset
 	UE_LOG(LogTemp, Log, TEXT("[StatusEffectManager] TryAddStatusEffect: %s, Rank %d, StartBuildup: %s, StartAmount: %.2f"),
 		*EffectClass->GetName(), Rank, bStartBuildup ? TEXT("true") : TEXT("false"), StartAmount);
 
-	// TODO: Get effect tag from EffectClass (PDA_StatusEffect)
-	FGameplayTag EffectTag; // = GetTagFromAsset(EffectClass);
+	// Get effect tag from EffectClass (PDA_StatusEffect) (IMPLEMENTED - was TODO line 79)
+	FGameplayTag EffectTag = GetTagFromStatusEffectAsset(EffectClass);
+	if (!EffectTag.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[StatusEffectManager] TryAddStatusEffect: Invalid tag from %s"), *EffectClass->GetName());
+		return;
+	}
 
 	// Check if already active
 	if (ActiveStatusEffects.Contains(EffectTag))
 	{
 		UE_LOG(LogTemp, Log, TEXT("[StatusEffectManager] Effect already active, refreshing"));
-		// Refresh existing effect
+		// Could refresh existing effect here if needed
 		return;
 	}
 
-	// Create new status effect instance (B_StatusEffect)
-	// TODO: Spawn UObject from class in data asset
-	UObject* NewEffect = nullptr; // = NewObject<UObject>(this, EffectClass->EffectClass);
+	// Create new status effect instance (B_StatusEffect) (IMPLEMENTED - was TODO line 91)
+	UPDA_StatusEffect* EffectData = Cast<UPDA_StatusEffect>(EffectClass);
+	if (!EffectData)
+	{
+		return;
+	}
+
+	UObject* NewEffect = nullptr;
+	if (!EffectData->Effect.IsNull())
+	{
+		if (EffectData->Effect.IsValid())
+		{
+			// Class already loaded
+			UClass* LoadedClass = EffectData->Effect.Get();
+			if (LoadedClass)
+			{
+				NewEffect = NewObject<UObject>(this, LoadedClass);
+			}
+		}
+		else
+		{
+			// Async load the class
+			FString ClassPath = EffectData->Effect.ToString();
+			PendingAsyncLoads.Add(ClassPath, EffectTag);
+
+			// Store the source asset for later
+			FSLFStatusEffectBuildupState NewState;
+			NewState.SourceAsset = EffectClass;
+			NewState.Rank = Rank;
+			BuildupStates.Add(EffectTag, NewState);
+
+			FStreamableManager& StreamableManager = UAssetManager::GetStreamableManager();
+			StreamableManager.RequestAsyncLoad(
+				EffectData->Effect.ToSoftObjectPath(),
+				FStreamableDelegate::CreateUObject(this, &UStatusEffectManagerComponent::OnLoaded_185D3AEC4B5162C1F2C50C87BF007D3F, (UClass*)nullptr)
+			);
+		}
+	}
 
 	if (NewEffect)
 	{
@@ -116,11 +386,15 @@ void UStatusEffectManagerComponent::OnStatusEffectFinished_Implementation(FGamep
 	{
 		UObject* Effect = *Found;
 
-		// Get data asset from effect for broadcast
-		// TODO: Get source data asset from B_StatusEffect
+		// Get source data asset from buildup state (IMPLEMENTED - was TODO line 120)
 		UDataAsset* SourceAsset = nullptr;
+		if (FSLFStatusEffectBuildupState* State = BuildupStates.Find(StatusEffectTag))
+		{
+			SourceAsset = State->SourceAsset;
+		}
 
 		ActiveStatusEffects.Remove(StatusEffectTag);
+		BuildupStates.Remove(StatusEffectTag);
 		OnStatusEffectRemoved.Broadcast(SourceAsset);
 	}
 }
@@ -140,8 +414,44 @@ void UStatusEffectManagerComponent::OnStatusEffectTriggeredEvent_Implementation(
 void UStatusEffectManagerComponent::OnLoaded_185D3AEC4B5162C1F2C50C87BF007D3F(UClass* Loaded)
 {
 	// Async load callback - status effect class has been loaded
-	UE_LOG(LogTemp, Log, TEXT("[StatusEffectManager] Async class load completed: %s"),
-		Loaded ? *Loaded->GetName() : TEXT("null"));
+	// (IMPLEMENTED - was TODO line 146)
 
-	// TODO: Create instance from loaded class and initialize
+	if (!Loaded)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[StatusEffectManager] Async class load completed but class is null"));
+		return;
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[StatusEffectManager] Async class load completed: %s"), *Loaded->GetName());
+
+	// Find the effect tag for this loaded class
+	FString LoadedClassPath = Loaded->GetPathName();
+	FGameplayTag* FoundTag = nullptr;
+
+	for (auto& Pair : PendingAsyncLoads)
+	{
+		if (LoadedClassPath.Contains(Pair.Key) || Pair.Key.Contains(LoadedClassPath))
+		{
+			FoundTag = &Pair.Value;
+			break;
+		}
+	}
+
+	if (!FoundTag || !FoundTag->IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[StatusEffectManager] Could not find pending load for class: %s"), *LoadedClassPath);
+		return;
+	}
+
+	FGameplayTag EffectTag = *FoundTag;
+	PendingAsyncLoads.Remove(LoadedClassPath);
+
+	// Create instance from loaded class and initialize
+	UObject* NewEffect = NewObject<UObject>(this, Loaded);
+	if (NewEffect)
+	{
+		ActiveStatusEffects.Add(EffectTag, NewEffect);
+		OnStatusEffectAdded.Broadcast(NewEffect);
+		UE_LOG(LogTemp, Log, TEXT("[StatusEffectManager] Created effect instance from async load: %s"), *NewEffect->GetName());
+	}
 }

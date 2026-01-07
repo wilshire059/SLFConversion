@@ -4,6 +4,7 @@
 // 20-PASS VALIDATION: 2026-01-01 Autonomous Session
 
 #include "Widgets/W_Utility_Component.h"
+#include "Widgets/W_Utility_AssetTooltip.h"
 
 UW_Utility_Component::UW_Utility_Component(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -34,11 +35,14 @@ void UW_Utility_Component::CacheWidgetReferences()
 
 UWidget* UW_Utility_Component::GetToolTipWidget_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
-	return nullptr;
+	// Return the tooltip widget (cast to base UWidget)
+	return Cast<UWidget>(Tooltip);
 }
+
 FEventReply UW_Utility_Component::OnMouseDoubleClick_0_Implementation(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
-	// TODO: Implement from Blueprint EventGraph
-	return FEventReply();
+	// Broadcast OnDoubleClick event
+	OnDoubleClick.Broadcast();
+	UE_LOG(LogTemp, Log, TEXT("[W_Utility_Component] OnMouseDoubleClick"));
+	return FEventReply(true);
 }

@@ -442,4 +442,28 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Equipment")
 	void ReinitializeMovementWithWeight();
 	virtual void ReinitializeMovementWithWeight_Implementation();
+
+	// ═══════════════════════════════════════════════════════════════════
+	// ADDITIONAL EVENTS
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** Recursively initialize loaded equipment from save */
+	UFUNCTION(BlueprintCallable, Category = "Equipment|Load")
+	void EventRecursiveInitializeLoadedEquipment();
+
+	/** Switch weapon based on slot */
+	UFUNCTION(BlueprintCallable, Category = "Equipment")
+	void SwitchOnSlot(FGameplayTag SlotTag);
+
+	/** Async spawn and equip weapon */
+	UFUNCTION(BlueprintCallable, Category = "Equipment|Async")
+	void EventAsyncSpawnAndEquipWeapon(UDataAsset* ItemAsset, FGameplayTag SlotTag);
+
+	/** Initialize loaded items from save */
+	UFUNCTION(BlueprintCallable, Category = "Equipment|Load")
+	void EventInitLoadedItems();
+
+	/** Get two-hand stance state (left or right) */
+	UFUNCTION(BlueprintPure, Category = "Equipment")
+	bool GetTwoHandStance(bool& bLeftHand, bool& bRightHand) const;
 };

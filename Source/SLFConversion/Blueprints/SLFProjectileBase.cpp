@@ -13,6 +13,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/DamageEvents.h"
 
 ASLFProjectileBase::ASLFProjectileBase()
 {
@@ -104,13 +105,28 @@ void ASLFProjectileBase::OnProjectileHit_Implementation(AActor* HitActor, const 
 	if (HitActor && HitActor->ActorHasTag(TargetTag))
 	{
 		float Damage = CalculateDamage();
-		// TODO: Apply damage via interface
+		
+		// Apply damage via UE5 damage system
+		FPointDamageEvent DamageEvent;
+		DamageEvent.Damage = Damage;
+		DamageEvent.HitInfo = HitResult;
+		DamageEvent.ShotDirection = GetVelocity().GetSafeNormal();
+		
+		HitActor->TakeDamage(Damage, DamageEvent, GetInstigatorController(), this);
+		
+		UE_LOG(LogTemp, Verbose, TEXT("[Projectile] Applied %.2f damage to %s"), Damage, *HitActor->GetName());
 	}
 
-	// Apply status effects
-	for (const FGameplayTag& EffectTag : StatusEffects)
+	// Apply status effects to target
+	// Note: StatusEffects array contains tags; actual effect application requires data assets
+	// which would be looked up from a data table or registry in a full implementation
+	if (HitActor && StatusEffects.Num() > 0)
 	{
-		// TODO: Apply status effect via StatusEffectManager
+		for (const FGameplayTag& EffectTag : StatusEffects)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[Projectile] Status effect %s would be applied to %s"), 
+				*EffectTag.ToString(), *HitActor->GetName());
+		}
 	}
 
 	// Destroy after delay

@@ -33,13 +33,26 @@ void UABP_SoulslikeBossNew::NativeUpdateAnimation(float DeltaSeconds)
 		if (!OwnerCharacter) return;
 	}
 
-	// TODO: Migrate EventGraph logic here
-	// Update animation variables based on character state
+	// Update SoulslikeBoss reference (owning actor)
+	SoulslikeBoss = OwnerCharacter;
 
-	// Example: Update speed/direction from velocity
-	// FVector Velocity = OwnerCharacter->GetVelocity();
-	// Speed = Velocity.Size();
-	// Direction = CalculateDirection(Velocity, OwnerCharacter->GetActorRotation());
+	// Get movement component reference
+	MovementComponent = OwnerCharacter->GetCharacterMovement();
+
+	// Update velocity from owner
+	Velocity = OwnerCharacter->GetVelocity();
+
+	// Calculate ground speed (2D velocity magnitude)
+	GroundSpeed = Velocity.Size2D();
+
+	// IsFalling from movement component
+	IsFalling = MovementComponent ? MovementComponent->IsFalling() : false;
+
+	// Calculate direction relative to actor rotation
+	Direction = CalculateDirection(Velocity, OwnerCharacter->GetActorRotation());
+
+	// Note: PhysicsWeight, HitLocation, PoiseBroken, ACAICombatManager
+	// are set by the owning character/combat manager, not calculated here
 }
 
 FVector UABP_SoulslikeBossNew::GetOwnerVelocity() const

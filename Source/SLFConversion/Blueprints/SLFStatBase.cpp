@@ -1,109 +1,241 @@
 // SLFStatBase.cpp
-// C++ implementation for B_Stat
-//
-// ═══════════════════════════════════════════════════════════════════════════════
-// IMPLEMENTATION SUMMARY - B_Stat
-// ═══════════════════════════════════════════════════════════════════════════════
-// Variables:         4/4 (initialized in constructor)
-// Functions:         8/8 implemented
-// Event Dispatchers: 2/2 (all assignable)
-// ═══════════════════════════════════════════════════════════════════════════════
+// C++ implementation for B_Stat - Full implementation with regen timer support
 
 #include "SLFStatBase.h"
+#include "Engine/World.h"
+#include "TimerManager.h"
 
 USLFStatBase::USLFStatBase()
+	: MinValue(0.0)
+	, bOnlyMaxValueRelevant(false)
+	, bShowMaxValueOnLevelUp(false)
 {
-	MinValue = 0.0;
-	bOnlyMaxValueRelevant = false;
-	bShowMaxValueOnLevelUp = true;
-
-	// Initialize StatInfo defaults
-	StatInfo.CurrentValue = 100.0;
-	StatInfo.MaxValue = 100.0;
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// VALUE FUNCTIONS [1-2/8]
-// ═══════════════════════════════════════════════════════════════════════════════
-
-void USLFStatBase::AdjustValue_Implementation(double Amount, bool bClamp)
+UWorld* USLFStatBase::GetWorld() const
 {
-	double OldValue = StatInfo.CurrentValue;
-	StatInfo.CurrentValue += Amount;
-
-	if (bClamp)
+	if (UObject* Outer = GetOuter())
 	{
-		StatInfo.CurrentValue = FMath::Clamp(StatInfo.CurrentValue, MinValue, StatInfo.MaxValue);
+		return Outer->GetWorld();
+	}
+	return nullptr;
+}
+
+void USLFStatBase::AdjustValue_Implementation(ESLFValueType ValueType, double Change, bool LevelUp, bool TriggerRegen)
+{
+	UE_LOG(LogTemp, Log, TEXT("[B_Stat] AdjustValue - Tag: %s, ValueType: %s, Change: %.2f"),
+		*StatInfo.Tag.ToString(),
+		ValueType == ESLFValueType::CurrentValue ? TEXT("Current") : TEXT("Max"),
+		Change);
+
+	double OldCurrentValue = StatInfo.CurrentValue;
+	double OldMaxValue = StatInfo.MaxValue;
+
+	if (ValueType == ESLFValueType::CurrentValue)
+	{
+		if (bOnlyMaxValueRelevant)
+		{
+			StatInfo.CurrentValue = StatInfo.MaxValue;
+		}
+		else
+		{
+			StatInfo.CurrentValue = FMath::Clamp(
+				StatInfo.CurrentValue + Change,
+				MinValue,
+				StatInfo.MaxValue
+			);
+		}
+
+		if (Change < 0.0 && TriggerRegen)
+		{
+			ToggleStatRegen(false);
+		}
+	}
+	else
+	{
+		StatInfo.MaxValue = FMath::Max(StatInfo.MaxValue + Change, MinValue);
+
+		if (bOnlyMaxValueRelevant)
+		{
+			StatInfo.CurrentValue = StatInfo.MaxValue;
+		}
+		else
+		{
+			StatInfo.CurrentValue = FMath::Min(StatInfo.CurrentValue, StatInfo.MaxValue);
+		}
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("[Stat] AdjustValue: %s %.2f -> %.2f (delta: %.2f)"),
-		*StatInfo.Tag.ToString(), OldValue, StatInfo.CurrentValue, Amount);
+	OnStatUpdated.Broadcast(this, Change, true, ValueType);
 
-	TriggerOnStatUpdated();
+	if (LevelUp)
+	{
+		int32 LevelDelta = static_cast<int32>(Change);
+		OnLeveledUp.Broadcast(LevelDelta);
+	}
 }
 
-void USLFStatBase::AdjustAffectedValue_Implementation(FGameplayTag AffectingStatTag, double Amount)
+void USLFStatBase::AdjustAffectedValue_Implementation(ESLFValueType ValueType, double Change)
 {
-	UE_LOG(LogTemp, Log, TEXT("[Stat] AdjustAffectedValue: %s affected by %s (%.2f)"),
-		*StatInfo.Tag.ToString(), *AffectingStatTag.ToString(), Amount);
+	UE_LOG(LogTemp, Log, TEXT("[B_Stat] AdjustAffectedValue - Tag: %s, Change: %.2f"),
+		*StatInfo.Tag.ToString(), Change);
 
-	// Adjust max value when affected by another stat (e.g., Vigor affects HP)
-	StatInfo.MaxValue += Amount;
-	if (StatInfo.CurrentValue > StatInfo.MaxValue)
+	if (ValueType == ESLFValueType::CurrentValue)
 	{
-		StatInfo.CurrentValue = StatInfo.MaxValue;
+		if (bOnlyMaxValueRelevant)
+		{
+			StatInfo.CurrentValue = StatInfo.MaxValue;
+		}
+		else
+		{
+			StatInfo.CurrentValue = FMath::Clamp(
+				StatInfo.CurrentValue + Change,
+				MinValue,
+				StatInfo.MaxValue
+			);
+		}
+	}
+	else
+	{
+		StatInfo.MaxValue = FMath::Max(StatInfo.MaxValue + Change, MinValue);
+
+		if (bOnlyMaxValueRelevant)
+		{
+			StatInfo.CurrentValue = StatInfo.MaxValue;
+		}
+		else
+		{
+			StatInfo.CurrentValue = FMath::Min(StatInfo.CurrentValue, StatInfo.MaxValue);
+		}
 	}
 
-	TriggerOnStatUpdated();
+	OnStatUpdated.Broadcast(this, Change, false, ValueType);
 }
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// QUERY FUNCTIONS [3-4/8]
-// ═══════════════════════════════════════════════════════════════════════════════
 
 double USLFStatBase::CalculatePercent_Implementation()
 {
-	if (StatInfo.MaxValue <= 0.0) return 0.0;
-	return StatInfo.CurrentValue / StatInfo.MaxValue;
+	if (StatInfo.MaxValue <= 0.0)
+	{
+		return 0.0;
+	}
+	double Percent = (StatInfo.CurrentValue / StatInfo.MaxValue) * 100.0;
+	return FMath::Clamp(Percent, 0.0, 100.0);
 }
 
-FSLFRegen USLFStatBase::GetRegenInfo_Implementation()
+void USLFStatBase::GetRegenInfo_Implementation(bool& OutCanRegenerate, double& OutRegenInterval)
 {
-	return StatInfo.RegenInfo;
+	OutCanRegenerate = StatInfo.RegenInfo.bCanRegenerate;
+	OutRegenInterval = static_cast<double>(StatInfo.RegenInfo.RegenInterval);
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// UPDATE FUNCTIONS [5-6/8]
-// ═══════════════════════════════════════════════════════════════════════════════
-
-void USLFStatBase::UpdateStatInfo_Implementation(const FSLFStatInfo& NewInfo)
+void USLFStatBase::UpdateStatInfo_Implementation(const FStatInfo& NewStatInfo)
 {
-	StatInfo = NewInfo;
-	UE_LOG(LogTemp, Log, TEXT("[Stat] UpdateStatInfo: %s - Current: %.2f, Max: %.2f"),
-		*StatInfo.Tag.ToString(), StatInfo.CurrentValue, StatInfo.MaxValue);
+	UE_LOG(LogTemp, Log, TEXT("[B_Stat] UpdateStatInfo - Tag: %s"), *StatInfo.Tag.ToString());
+
+	StatInfo.Tag = NewStatInfo.Tag;
+	StatInfo.DisplayName = NewStatInfo.DisplayName;
+	StatInfo.Description = NewStatInfo.Description;
+	StatInfo.bDisplayAsPercent = NewStatInfo.bDisplayAsPercent;
+	StatInfo.CurrentValue = NewStatInfo.CurrentValue;
+	StatInfo.MaxValue = NewStatInfo.MaxValue;
+	StatInfo.bShowMaxValue = NewStatInfo.bShowMaxValue;
+	StatInfo.RegenInfo = NewStatInfo.RegenInfo;
+	StatInfo.StatModifiers = NewStatInfo.StatModifiers;
+
+	OnStatUpdated.Broadcast(this, 0.0, false, ESLFValueType::CurrentValue);
 }
 
-void USLFStatBase::InitializeBaseClassValue_Implementation(double BaseValue)
+void USLFStatBase::InitializeBaseClassValue_Implementation(const TMap<UClass*, double>& BaseValues)
 {
-	StatInfo.MaxValue = BaseValue;
-	StatInfo.CurrentValue = BaseValue;
+	UClass* MyClass = GetClass();
 
-	UE_LOG(LogTemp, Log, TEXT("[Stat] InitializeBaseClassValue: %s = %.2f"),
-		*StatInfo.Tag.ToString(), BaseValue);
+	for (const auto& Pair : BaseValues)
+	{
+		if (Pair.Key && MyClass->IsChildOf(Pair.Key))
+		{
+			double BaseValue = Pair.Value;
+			double Change = BaseValue - StatInfo.MaxValue;
+
+			UE_LOG(LogTemp, Log, TEXT("[B_Stat] Found base value %.2f for class %s"),
+				BaseValue, *Pair.Key->GetName());
+
+			if (!FMath::IsNearlyZero(Change))
+			{
+				AdjustValue(ESLFValueType::MaxValue, Change, false, false);
+			}
+			return;
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[B_Stat] No base value found for stat class %s"), *MyClass->GetName());
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// DISPATCHER TRIGGERS [7-8/8]
-// ═══════════════════════════════════════════════════════════════════════════════
-
-void USLFStatBase::TriggerOnStatUpdated_Implementation()
+void USLFStatBase::ToggleStatRegen_Implementation(bool bStop)
 {
-	OnStatUpdated.Broadcast(StatInfo.Tag, StatInfo.CurrentValue, StatInfo.MaxValue);
+	UE_LOG(LogTemp, Log, TEXT("[B_Stat] ToggleStatRegen - Tag: %s, Stop: %s"),
+		*StatInfo.Tag.ToString(),
+		bStop ? TEXT("true") : TEXT("false"));
+
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return;
+	}
+
+	FTimerManager& TimerManager = World->GetTimerManager();
+
+	if (bStop)
+	{
+		if (TimerManager.IsTimerActive(RegenTimerHandle))
+		{
+			TimerManager.ClearTimer(RegenTimerHandle);
+		}
+	}
+	else
+	{
+		if (!StatInfo.RegenInfo.bCanRegenerate)
+		{
+			return;
+		}
+
+		if (StatInfo.CurrentValue >= StatInfo.MaxValue)
+		{
+			return;
+		}
+
+		if (TimerManager.IsTimerActive(RegenTimerHandle))
+		{
+			TimerManager.ClearTimer(RegenTimerHandle);
+		}
+
+		float Interval = StatInfo.RegenInfo.RegenInterval;
+		if (Interval > 0.0f)
+		{
+			TimerManager.SetTimer(
+				RegenTimerHandle,
+				this,
+				&USLFStatBase::OnRegenTick,
+				Interval,
+				true
+			);
+		}
+	}
 }
 
-void USLFStatBase::TriggerOnLeveledUp_Implementation(int32 NewLevel)
+void USLFStatBase::OnRegenTick()
 {
-	UE_LOG(LogTemp, Log, TEXT("[Stat] TriggerOnLeveledUp: %s level %d"),
-		*StatInfo.Tag.ToString(), NewLevel);
-	OnLeveledUp.Broadcast(StatInfo.Tag, NewLevel);
+	if (StatInfo.CurrentValue >= StatInfo.MaxValue)
+	{
+		ToggleStatRegen(true);
+		return;
+	}
+
+	double RegenAmount = StatInfo.MaxValue * static_cast<double>(StatInfo.RegenInfo.RegenPercent);
+	double OldValue = StatInfo.CurrentValue;
+	StatInfo.CurrentValue = FMath::Min(StatInfo.CurrentValue + RegenAmount, StatInfo.MaxValue);
+	double ActualChange = StatInfo.CurrentValue - OldValue;
+
+	if (!FMath::IsNearlyZero(ActualChange))
+	{
+		OnStatUpdated.Broadcast(this, ActualChange, false, ESLFValueType::CurrentValue);
+	}
 }

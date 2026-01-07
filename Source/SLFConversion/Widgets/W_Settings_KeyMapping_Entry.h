@@ -18,7 +18,7 @@
 #include "GameFramework/InputSettings.h"
 #include "GenericPlatform/GenericWindow.h"
 #include "MediaPlayer.h"
-
+#include "UserSettings/EnhancedInputUserSettings.h"
 
 #include "W_Settings_KeyMapping_Entry.generated.h"
 
@@ -58,9 +58,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
 	FText KeymapName;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
-	UObject* UnhoveredColor;
+	FLinearColor UnhoveredColor;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
-	UObject* HoveredColor;
+	FLinearColor HoveredColor;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	int32 SelectorNavigationIndex;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
@@ -68,7 +68,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	bool SelectingGamepadKey;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
-	UObject* Mappings;
+	TSet<FPlayerKeyMapping> Mappings;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	FKey UpdatedKey;
 

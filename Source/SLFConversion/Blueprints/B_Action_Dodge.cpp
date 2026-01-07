@@ -23,8 +23,8 @@ void UB_Action_Dodge::ExecuteAction_Implementation()
 	ACharacter* Character = Cast<ACharacter>(OwnerActor);
 	if (!Character) return;
 
-	// Extract DodgeMontages from Action data asset's RelevantData (FInstancedStruct)
-	// PDA_ActionBase is now reparented to UPDA_ActionBase, so Cast works directly
+	// Read DodgeMontages directly from the C++ property on UPDA_ActionBase
+	// (Migration script sets this property, not RelevantData)
 	if (Action)
 	{
 		UE_LOG(LogTemp, Log, TEXT("[ActionDodge] Action class: %s"), *Action->GetClass()->GetName());
@@ -32,21 +32,12 @@ void UB_Action_Dodge::ExecuteAction_Implementation()
 		// Cast to UPDA_ActionBase - works because PDA_ActionBase is reparented to C++
 		if (UPDA_ActionBase* ActionData = Cast<UPDA_ActionBase>(Action))
 		{
-			// GetPtr uses Core Redirect to convert Blueprint struct to C++ struct
-			if (const FSLFDodgeMontages* MontageData = ActionData->RelevantData.GetPtr<FSLFDodgeMontages>())
-			{
-				DodgeMontages = *MontageData;
-				UE_LOG(LogTemp, Log, TEXT("[ActionDodge] Loaded DodgeMontages: Forward=%s, Backward=%s"),
-					DodgeMontages.Forward ? *DodgeMontages.Forward->GetName() : TEXT("NULL"),
-					DodgeMontages.Backward ? *DodgeMontages.Backward->GetName() : TEXT("NULL"));
-			}
-			else
-			{
-				// NO REFLECTION FALLBACK - Core Redirect must be applied
-				const UScriptStruct* StoredType = ActionData->RelevantData.GetScriptStruct();
-				UE_LOG(LogTemp, Error, TEXT("[ActionDodge] GetPtr<FSLFDodgeMontages> FAILED! Struct type: %s"),
-					StoredType ? *StoredType->GetPathName() : TEXT("NULL/Empty"));
-			}
+			// Read directly from DodgeMontages property (set by migration script)
+			DodgeMontages = ActionData->DodgeMontages;
+			UE_LOG(LogTemp, Log, TEXT("[ActionDodge] DodgeMontages: Forward=%s, Backward=%s, Backstep=%s"),
+				DodgeMontages.Forward ? *DodgeMontages.Forward->GetName() : TEXT("NULL"),
+				DodgeMontages.Backward ? *DodgeMontages.Backward->GetName() : TEXT("NULL"),
+				DodgeMontages.Backstep ? *DodgeMontages.Backstep->GetName() : TEXT("NULL"));
 		}
 		else
 		{

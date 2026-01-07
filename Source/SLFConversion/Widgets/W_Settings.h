@@ -1,9 +1,11 @@
 // W_Settings.h
 // C++ Widget class for W_Settings
 //
-// 20-PASS VALIDATION: 2026-01-03
-// Source: BlueprintDNA/WidgetBlueprint/W_Settings.json
+// 20-PASS VALIDATION: 2026-01-05
+// Source: BlueprintDNA_v2/WidgetBlueprint/W_Settings.json
 // Parent: UW_Navigable_InputReader
+//
+// NO REFLECTION - all widgets accessed via BindWidgetOptional
 
 #pragma once
 
@@ -155,8 +157,8 @@ public:
 	virtual void EventOnEntrySelected_Implementation(UW_Settings_Entry* InEntry);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Settings")
-	void EventOnVisibilityChanged(uint8 InVisibility);
-	virtual void EventOnVisibilityChanged_Implementation(uint8 InVisibility);
+	void EventOnVisibilityChanged(ESlateVisibility InVisibility);
+	virtual void EventOnVisibilityChanged_Implementation(ESlateVisibility InVisibility);
 
 protected:
 	// Update category selection visual state

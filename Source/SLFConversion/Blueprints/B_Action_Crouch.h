@@ -52,7 +52,9 @@ public:
 
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (0)
+	// FUNCTIONS
 	// ═══════════════════════════════════════════════════════════════════════
 
+	/** Execute crouch action - toggles crouch state via BPI_Player interface */
+	virtual void ExecuteAction_Implementation() override;
 };

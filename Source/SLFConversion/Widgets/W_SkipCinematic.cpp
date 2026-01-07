@@ -144,7 +144,8 @@ void UW_SkipCinematic::OnInputDeviceChanged_Implementation()
 		return;
 	}
 
-	TArray<FKey> MappedKeys = UBFL_Helper::GetKeysForIA(RelatedMapping, TargetInputAction, this);
+	TArray<FKey> MappedKeys;
+	UBFL_Helper::GetKeysForIA(RelatedMapping, TargetInputAction, this, MappedKeys);
 	UE_LOG(LogTemp, Log, TEXT("UW_SkipCinematic::OnInputDeviceChanged - GetKeysForIA returned %d keys"), MappedKeys.Num());
 
 	// Step 2: Branch - check if MappedKeys is not empty
@@ -165,7 +166,8 @@ void UW_SkipCinematic::OnInputDeviceChanged_Implementation()
 
 		// Step 5: Get input icon for the selected key
 		// Calls parent class function: GetInputIconForKey(Key) -> Icon
-		TSoftObjectPtr<UTexture2D> Icon = GetInputIconForKey(SelectedKey);
+		TSoftObjectPtr<UTexture2D> Icon;
+		GetInputIconForKey(SelectedKey, Icon);
 
 		// Step 6: Branch - check if Icon is valid soft object reference
 		// From JSON: IsValidSoftObjectReference(Icon)

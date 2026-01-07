@@ -1,10 +1,10 @@
 // PC_SoulslikeFramework.h
 // C++ Game Framework class for PC_SoulslikeFramework
 //
-// 20-PASS VALIDATION: 2026-01-01 Autonomous Session
+// 20-PASS VALIDATION: 2026-01-06 - Full interface implementation
 // Source: BlueprintDNA/GameFramework/PC_SoulslikeFramework.json
 // Parent: APlayerController
-// Variables: 4 | Functions: 3 | Dispatchers: 2
+// Variables: 6 | Functions: 22 | Dispatchers: 2 | Components: 5
 
 #pragma once
 
@@ -18,10 +18,15 @@
 // Forward declarations
 class UW_HUD;
 class ULevelSequencePlayer;
+class UInventoryManagerComponent;
+class UEquipmentManagerComponent;
+class USaveLoadManagerComponent;
+class URadarManagerComponent;
+class UProgressManagerComponent;
 
 // Event Dispatchers
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPC_SoulslikeFramework_OnInputDetected, bool, IsGamepad);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPC_SoulslikeFramework_OnHudInitialized);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPC_OnInputDetected, bool, bIsGamepad);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPC_OnHudInitialized);
 
 UCLASS()
 class SLFCONVERSION_API APC_SoulslikeFramework : public APlayerController, public IBPI_Controller
@@ -31,34 +36,113 @@ class SLFCONVERSION_API APC_SoulslikeFramework : public APlayerController, publi
 public:
 	APC_SoulslikeFramework();
 
-	// VARIABLES (4)
+protected:
+	virtual void BeginPlay() override;
 
+public:
+	// ═══════════════════════════════════════════════════════════════════════
+	// VARIABLES [6/6]
+	// ═══════════════════════════════════════════════════════════════════════
+
+	/** HUD widget reference */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Runtime")
 	UW_HUD* W_HUD;
+
+	/** Gameplay input mapping context */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
 	UInputMappingContext* GameplayMappingContext;
+
+	/** Active level sequence player for cinematics */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Runtime")
 	ULevelSequencePlayer* ActiveSequencePlayer;
+
+	/** Tag of currently active navigable widget */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Runtime|Navigation")
 	FGameplayTag ActiveWidgetTag;
 
-	// EVENT DISPATCHERS (2)
+	// ═══════════════════════════════════════════════════════════════════════
+	// COMPONENTS [5/5]
+	// ═══════════════════════════════════════════════════════════════════════
 
+	/** Inventory manager component */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UInventoryManagerComponent* AC_InventoryManager;
+
+	/** Equipment manager component */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UEquipmentManagerComponent* AC_EquipmentManager;
+
+	/** Save/Load manager component */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USaveLoadManagerComponent* AC_SaveLoadManager;
+
+	/** Radar manager component */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	URadarManagerComponent* AC_RadarManager;
+
+	/** Progress manager component */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UProgressManagerComponent* AC_ProgressManager;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// EVENT DISPATCHERS [2/2]
+	// ═══════════════════════════════════════════════════════════════════════
+
+	/** Broadcast when input type changes (gamepad vs keyboard/mouse) */
 	UPROPERTY(BlueprintAssignable, Category = "Events")
-	FPC_SoulslikeFramework_OnInputDetected OnInputDetected;
+	FPC_OnInputDetected OnInputDetected;
+
+	/** Broadcast when HUD is initialized */
 	UPROPERTY(BlueprintAssignable, Category = "Events")
-	FPC_SoulslikeFramework_OnHudInitialized OnHudInitialized;
+	FPC_OnHudInitialized OnHudInitialized;
 
-	// FUNCTIONS (3)
+	// ═══════════════════════════════════════════════════════════════════════
+	// LOCAL FUNCTIONS [2/2]
+	// ═══════════════════════════════════════════════════════════════════════
 
+	/** Handle ESC/Start button - toggle game menu or close dialogs */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "PC_SoulslikeFramework")
 	void HandleMainMenuRequest();
 	virtual void HandleMainMenuRequest_Implementation();
+
+	/** Find the nearest resting point to the player */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "PC_SoulslikeFramework")
-	void GetNearestRestingPoint(bool& OutSuccess, AActor*& OutPoint, bool& OutSuccess2, AActor*& OutPoint3);
-	virtual void GetNearestRestingPoint_Implementation(bool& OutSuccess, AActor*& OutPoint, bool& OutSuccess2, AActor*& OutPoint3);
+	void GetNearestRestingPoint(bool& OutSuccess, AActor*& OutPoint);
+	virtual void GetNearestRestingPoint_Implementation(bool& OutSuccess, AActor*& OutPoint);
 
-	// INTERFACE IMPLEMENTATIONS (IBPI_Controller)
+	// ═══════════════════════════════════════════════════════════════════════
+	// BPI_Controller INTERFACE IMPLEMENTATIONS [20/20]
+	// ═══════════════════════════════════════════════════════════════════════
 
+	// --- Save Functions ---
+	virtual void RequestAddToSaveData_Implementation(FGameplayTag SaveTag, const FInstancedStruct& Data) override;
+	virtual void RequestUpdateSaveData_Implementation(FGameplayTag SaveTag, TArray<FInstancedStruct>& Data) override;
+	virtual void SerializeDataForSaving_Implementation(ESLFSaveBehavior Behavior, FGameplayTag SaveTag) override;
+	virtual void SerializeAllDataForSaving_Implementation(ESLFSaveBehavior Behavior) override;
+
+	// --- UI Functions ---
+	virtual void SetActiveWidgetForNavigation_Implementation(FGameplayTag NavigableWidgetTag) override;
+	virtual void SendBigScreenMessage_Implementation(const FText& Text, UMaterialInterface* GradientMaterial, bool bBackdrop, double PlayRate) override;
+	virtual void ShowSavingVisual_Implementation(double Length) override;
+	virtual void ToggleRadarUpdateState_Implementation(bool bUpdateEnabled) override;
 	virtual void GetPlayerHUD_Implementation(UUserWidget*& HUD) override;
+
+	// --- Input Functions ---
+	virtual void SwitchInputContext_Implementation(TArray<UInputMappingContext*>& ContextsToEnable, TArray<UInputMappingContext*>& ContextsToDisable) override;
+	virtual void ToggleInput_Implementation(bool bEnabled) override;
+
+	// --- Getter Functions ---
+	virtual void GetCurrency_Implementation(int32& Currency) override;
+	virtual void GetProgressManager_Implementation(UActorComponent*& ProgressManager) override;
+	virtual void GetSoulslikeController_Implementation(APlayerController*& Controller) override;
+	virtual void GetPawnFromController_Implementation(APawn*& OutPawn) override;
+	virtual void GetInventoryComponent_Implementation(UActorComponent*& Inventory) override;
+
+	// --- Loot Functions ---
+	virtual void AdjustCurrency_Implementation(int32 Delta) override;
+	virtual void LootItemToInventory_Implementation(AActor* Item) override;
+
+	// --- Other Functions ---
+	virtual void StartRespawn_Implementation(double FadeDelay) override;
+	virtual void BlendViewTarget_Implementation(AActor* TargetActor, double BlendTime, double BlendExp, bool bLockOutgoing) override;
 };

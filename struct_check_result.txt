@@ -1,0 +1,7 @@
+Asset: <Object '/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_Dodge.DA_Action_Dodge' (0x000001FF11AB9EC0) Class 'PDA_Action_C'>
+Class: PDA_Action_C
+
+RelevantData: <Struct 'InstancedStruct' (0x000001FF11AB9FA8) {}>
+
+export_text():
+None

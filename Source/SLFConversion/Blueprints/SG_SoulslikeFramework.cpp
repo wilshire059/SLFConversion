@@ -12,10 +12,10 @@ USG_SoulslikeFramework::USG_SoulslikeFramework()
 
 void USG_SoulslikeFramework::SetSavedData_Implementation(const FSLFSaveGameInfo& InSavedData)
 {
-	// TODO: Implement from Blueprint
+	SavedData = InSavedData;
 }
+
 FSLFSaveGameInfo USG_SoulslikeFramework::GetSavedData_Implementation()
 {
-	// TODO: Implement from Blueprint
-	return FSLFSaveGameInfo();
+	return SavedData;
 }

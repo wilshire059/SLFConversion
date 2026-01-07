@@ -11,6 +11,7 @@
 
 #include "ProgressManagerComponent.h"
 #include "TimerManager.h"
+#include "StructUtils/InstancedStruct.h"
 
 UProgressManagerComponent::UProgressManagerComponent()
 {
@@ -91,8 +92,17 @@ void UProgressManagerComponent::ExecuteGameplayEvents_Implementation(const TArra
 
 	for (const FInstancedStruct& Event : Events)
 	{
-		// TODO: Parse and execute each gameplay event struct
-		// Types might include: SetProgress, GiveItem, TeleportPlayer, etc.
+		// Parse and execute each gameplay event struct based on type
+		// Check if it's a progress-related event
+		if (const FSLFProgressSaveInfo* ProgressEvent = Event.GetPtr<FSLFProgressSaveInfo>())
+		{
+			SetProgress(ProgressEvent->ProgressTag, ProgressEvent->State);
+		}
+		else
+		{
+			// Log unknown event type for debugging
+			UE_LOG(LogTemp, Warning, TEXT("[ProgressManager] Unknown event struct type in ExecuteGameplayEvents"));
+		}
 	}
 }
 
@@ -113,7 +123,8 @@ void UProgressManagerComponent::SerializeProgressData_Implementation()
 		SaveInfo.ProgressTag = Pair.Key;
 		SaveInfo.State = Pair.Value;
 
-		// TODO: Create FInstancedStruct from SaveInfo and add to ProgressData
+		// Create FInstancedStruct from SaveInfo and add to ProgressData
+		ProgressData.Add(FInstancedStruct::Make<FSLFProgressSaveInfo>(SaveInfo));
 	}
 
 	// Broadcast for save system
@@ -157,6 +168,19 @@ void UProgressManagerComponent::OnDataLoaded_Implementation(const FSLFSaveGameIn
 {
 	UE_LOG(LogTemp, Log, TEXT("[ProgressManager] OnDataLoaded"));
 
-	// Process the progress data from save
-	// TODO: Extract progress info from LoadedData and call InitializeLoadedProgress
+	// Extract progress info from LoadedData and call InitializeLoadedProgress
+	TArray<FSLFProgressSaveInfo> ProgressEntries;
+
+	for (const FInstancedStruct& Entry : LoadedData.ProgressData)
+	{
+		if (const FSLFProgressSaveInfo* ProgressInfo = Entry.GetPtr<FSLFProgressSaveInfo>())
+		{
+			ProgressEntries.Add(*ProgressInfo);
+		}
+	}
+
+	if (ProgressEntries.Num() > 0)
+	{
+		InitializeLoadedProgress(ProgressEntries);
+	}
 }

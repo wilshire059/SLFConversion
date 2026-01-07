@@ -1,0 +1,14 @@
+============================================================
+DEMO LEVEL FULL TEST
+============================================================
+L_Demo_Showcase: OK
+B_DemoRoom: OK
+  Class: B_DemoRoom_C
+B_Soulslike_Character: OK
+ABP_SoulslikeCharacter_Additive: OK
+GM_SoulslikeFramework: OK
+PC_SoulslikeFramework: OK
+
+============================================================
+No errors found - all assets loaded
+============================================================

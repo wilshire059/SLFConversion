@@ -55,7 +55,7 @@ void UW_Boss_Healthbar::EventLerpHealthPositive_Implementation()
 }
 
 
-void UW_Boss_Healthbar::EventOnBossHealthUpdated_Implementation(UB_Stat* UpdatedStat, double Change, bool UpdateAffectedStats, uint8 ValueType)
+void UW_Boss_Healthbar::EventOnBossHealthUpdated_Implementation(USLFStatBase* UpdatedStat, double Change, bool UpdateAffectedStats, ESLFValueType ValueType)
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_Boss_Healthbar::EventOnBossHealthUpdated_Implementation"));
 }

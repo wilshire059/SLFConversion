@@ -78,10 +78,8 @@ public:
 	bool bIsFalling;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	bool IsResting;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
-	ESLFOverlayState RightHandOverlayState;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
-	ESLFOverlayState LeftHandOverlayState;
+	// NOTE: OverlayState enums removed - they conflict with Blueprint variables when reparenting
+	// The AnimGraph uses the Blueprint versions via Property Access
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	UAC_EquipmentManager* EquipmentManager;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
@@ -95,42 +93,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	FVector ActiveHitNormal;
 
-	// ═══════════════════════════════════════════════════════════════════════
-	// HELPER FUNCTIONS (17)
-	// Migrated from EventGraph
-	// ═══════════════════════════════════════════════════════════════════════
-
-	// AnimGraph function removed - conflicts with UE's internal AnimGraph function name
-	UFUNCTION(BlueprintCallable, Category = "ABP_SoulslikeCharacter_Additive")
-	void GetCharacterMovementComponent(UCharacterMovementComponent*& OutReturnValue, UCharacterMovementComponent*& OutReturnValue1);
-	UFUNCTION(BlueprintCallable, Category = "ABP_SoulslikeCharacter_Additive")
-	void GetLocationData();
-	UFUNCTION(BlueprintCallable, Category = "ABP_SoulslikeCharacter_Additive")
-	void GetRotationData();
-	UFUNCTION(BlueprintCallable, Category = "ABP_SoulslikeCharacter_Additive")
-	void GetAccelerationData();
-	UFUNCTION(BlueprintCallable, Category = "ABP_SoulslikeCharacter_Additive")
-	void GetVelocityData();
-	UFUNCTION(BlueprintCallable, Category = "ABP_SoulslikeCharacter_Additive")
-	void GetEquipmentComponent(UAC_EquipmentManager*& OutReturnValue, UAC_EquipmentManager*& OutReturnValue1);
-	UFUNCTION(BlueprintCallable, Category = "ABP_SoulslikeCharacter_Additive")
-	void GetGrantedTags();
-	UFUNCTION(BlueprintCallable, Category = "ABP_SoulslikeCharacter_Additive")
-	void GetCombatComponent(UAC_CombatManager*& OutReturnValue, UAC_CombatManager*& OutReturnValue1);
-	UFUNCTION(BlueprintCallable, Category = "ABP_SoulslikeCharacter_Additive")
-	void GetIsBlocking();
-	UFUNCTION(BlueprintCallable, Category = "ABP_SoulslikeCharacter_Additive")
-	void GetIsResting();
-	UFUNCTION(BlueprintCallable, Category = "ABP_SoulslikeCharacter_Additive")
-	void GetOverlayStates();
-	UFUNCTION(BlueprintCallable, Category = "ABP_SoulslikeCharacter_Additive")
-	void GetIsCrouched();
-	UFUNCTION(BlueprintCallable, Category = "ABP_SoulslikeCharacter_Additive")
-	void GetActionComponent(UAC_ActionManager*& OutReturnValue, UAC_ActionManager*& OutReturnValue1);
-	UFUNCTION(BlueprintCallable, Category = "ABP_SoulslikeCharacter_Additive")
-	void GetBlockSequenceForWeapon();
-	UFUNCTION(BlueprintCallable, Category = "ABP_SoulslikeCharacter_Additive")
-	void GetIkHitReactData();
+	// NOTE: Getter functions removed - they conflict with Blueprint functions when reparenting
+	// NativeUpdateAnimation() sets all variables directly, so getters are not needed
 
 protected:
 	// Cached owner reference

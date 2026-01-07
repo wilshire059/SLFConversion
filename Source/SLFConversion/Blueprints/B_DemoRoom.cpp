@@ -95,7 +95,46 @@ AB_DemoRoom::AB_DemoRoom()
 		isikdevLogo->SetupAttachment(RootComponent);
 	}
 
-	UE_LOG(LogTemp, Verbose, TEXT("AB_DemoRoom::Constructor - Components created"));
+	UE_LOG(LogTemp, Warning, TEXT("AB_DemoRoom::Constructor - Components created"));
+}
+
+
+void AB_DemoRoom::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+	
+	UE_LOG(LogTemp, Warning, TEXT("AB_DemoRoom::OnConstruction CALLED! Rooms.Num()=%d"), Rooms.Num());
+	
+	// Log room data
+	for (int32 i = 0; i < Rooms.Num(); i++)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  Room[%d]: Width=%d, Height=%d"), i, Rooms[i].Width, Rooms[i].Height);
+	}
+	
+	// Call Redraw to generate room geometry (replaces Blueprint ConstructionScript)
+	Redraw();
+	
+	UE_LOG(LogTemp, Warning, TEXT("AB_DemoRoom::OnConstruction - Room geometry generated"));
+}
+
+void AB_DemoRoom::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	UE_LOG(LogTemp, Warning, TEXT("AB_DemoRoom::BeginPlay CALLED! Rooms.Num()=%d"), Rooms.Num());
+	
+	// Generate room geometry at runtime (OnConstruction only runs in editor)
+	// Check if we need to regenerate - if no instances exist, call Redraw
+	if (_10MWall && _10MWall->GetInstanceCount() == 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AB_DemoRoom::BeginPlay - No instances found, calling Redraw"));
+		Redraw();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AB_DemoRoom::BeginPlay - Instances already exist (%d), skipping Redraw"), 
+			_10MWall ? _10MWall->GetInstanceCount() : 0);
+	}
 }
 
 void AB_DemoRoom::CreateInstances_Implementation()
@@ -103,7 +142,7 @@ void AB_DemoRoom::CreateInstances_Implementation()
 	// Logic from JSON Create Instances graph:
 	// Clear all ISM instances to prepare for new geometry
 
-	UE_LOG(LogTemp, Verbose, TEXT("AB_DemoRoom::CreateInstances - Clearing all instances"));
+	UE_LOG(LogTemp, Warning, TEXT("AB_DemoRoom::CreateInstances - Clearing all instances"));
 
 	// Clear all 34 ISM components
 	if (_10MWall) _10MWall->ClearInstances();
@@ -147,13 +186,12 @@ void AB_DemoRoom::CreateInstances_Implementation()
 
 void AB_DemoRoom::Redraw_Implementation()
 {
-	// Logic from JSON Redraw graph:
-	// 1. Call CreateInstances to clear all
-	// 2. For each room in Rooms array: call CreateRoom
-	// 3. If DrawEndWall: draw end wall
-	// 4. If DrawStartWall: draw start wall
-
-	UE_LOG(LogTemp, Verbose, TEXT("AB_DemoRoom::Redraw - Rebuilding room geometry"));
+	UE_LOG(LogTemp, Warning, TEXT("AB_DemoRoom::Redraw_Implementation CALLED! Rooms.Num()=%d, DrawEndWall=%d, DrawStartWall=%d"), 
+		Rooms.Num(), DrawEndWall ? 1 : 0, DrawStartWall ? 1 : 0);
+	
+	// Check if we have valid ISM components
+	UE_LOG(LogTemp, Warning, TEXT("  ISM Components: _10MWall=%p, Floor_Corner=%p, Floor_Edge=%p"), 
+		_10MWall, Floor_Corner, Floor_Edge);
 
 	CreateInstances();
 
@@ -189,7 +227,7 @@ void AB_DemoRoom::Redraw_Implementation()
 		EndWall(StartWallTransform, FirstRoom.Width, FirstRoom.Height);
 	}
 
-	UE_LOG(LogTemp, Verbose, TEXT("AB_DemoRoom::Redraw - Complete"));
+	UE_LOG(LogTemp, Warning, TEXT("AB_DemoRoom::Redraw - Complete"));
 }
 
 void AB_DemoRoom::CreateRoom_Implementation(const FSLFRoomSettings& RoomParams, double InSegmentCounter)
@@ -203,7 +241,7 @@ void AB_DemoRoom::CreateRoom_Implementation(const FSLFRoomSettings& RoomParams, 
 	// 5. Add lighting
 	// 6. Add spacers
 
-	UE_LOG(LogTemp, Verbose, TEXT("AB_DemoRoom::CreateRoom - SegmentCounter: %f"), InSegmentCounter);
+	UE_LOG(LogTemp, Warning, TEXT("AB_DemoRoom::CreateRoom - SegmentCounter: %f"), InSegmentCounter);
 
 	int32 RoomWidth = RoomParams.Width;
 	int32 RoomHeight = RoomParams.Height;
@@ -258,7 +296,7 @@ void AB_DemoRoom::Floor_Implementation()
 	// Logic from JSON Floor graph:
 	// Creates floor geometry with corner pieces and edge pieces
 
-	UE_LOG(LogTemp, Verbose, TEXT("AB_DemoRoom::Floor"));
+	UE_LOG(LogTemp, Warning, TEXT("AB_DemoRoom::Floor"));
 
 	if (!Floor_Corner || !Floor_Edge)
 	{
@@ -287,7 +325,7 @@ void AB_DemoRoom::EndWall_Implementation(const FTransform& WallPosition, int32 W
 	// Logic from JSON End Wall graph:
 	// Creates end wall at specified position with given dimensions
 
-	UE_LOG(LogTemp, Verbose, TEXT("AB_DemoRoom::EndWall - Width: %d, Height: %d"), Width, Height);
+	UE_LOG(LogTemp, Warning, TEXT("AB_DemoRoom::EndWall - Width: %d, Height: %d"), Width, Height);
 
 	if (!_10MWall)
 	{
@@ -316,7 +354,7 @@ void AB_DemoRoom::MakePillar_Implementation(const FTransform& BasePosition, int3
 	// Logic from JSON Make Pillar graph:
 	// Creates pillar with optional curve at specified position
 
-	UE_LOG(LogTemp, Verbose, TEXT("AB_DemoRoom::MakePillar - Height: %d, Thickness: %f, White: %s"),
+	UE_LOG(LogTemp, Warning, TEXT("AB_DemoRoom::MakePillar - Height: %d, Thickness: %f, White: %s"),
 		Height, PillarThickness, White ? TEXT("true") : TEXT("false"));
 
 	UInstancedStaticMeshComponent* PillarComponent = White ? _10MPillar : _10MPillar_Black;
@@ -358,7 +396,7 @@ void AB_DemoRoom::MakeDoor_Implementation(int32 RoomWidth, int32 RoomHeight, dou
 	// Logic from JSON Make Door graph:
 	// Creates door opening in wall
 
-	UE_LOG(LogTemp, Verbose, TEXT("AB_DemoRoom::MakeDoor - Width: %d, Height: %d, Offset: %f"),
+	UE_LOG(LogTemp, Warning, TEXT("AB_DemoRoom::MakeDoor - Width: %d, Height: %d, Offset: %f"),
 		RoomWidth, RoomHeight, Offset);
 
 	// Door dimensions (standard door)
@@ -400,7 +438,7 @@ void AB_DemoRoom::MakeRoundedEnd_Implementation(const FTransform& BaseTransform,
 	// Logic from JSON Make Rounded End graph:
 	// Creates rounded end cap for room
 
-	UE_LOG(LogTemp, Verbose, TEXT("AB_DemoRoom::MakeRoundedEnd - FloorSegment: %f"), FloorSegment);
+	UE_LOG(LogTemp, Warning, TEXT("AB_DemoRoom::MakeRoundedEnd - FloorSegment: %f"), FloorSegment);
 
 	if (!_10MCurve)
 	{
@@ -423,7 +461,7 @@ void AB_DemoRoom::MakeBackWall_Implementation(const FTransform& BaseTransform, i
 	// Logic from JSON Make Back Wall graph:
 	// Creates back wall with corner and edge pieces
 
-	UE_LOG(LogTemp, Verbose, TEXT("AB_DemoRoom::MakeBackWall - Width: %d, Height: %d"), RoomWidth, RoomHeight);
+	UE_LOG(LogTemp, Warning, TEXT("AB_DemoRoom::MakeBackWall - Width: %d, Height: %d"), RoomWidth, RoomHeight);
 
 	FVector BaseLocation = BaseTransform.GetLocation();
 
@@ -455,7 +493,7 @@ void AB_DemoRoom::AddSpacer_Implementation(double Offset)
 	// Logic from JSON Add Spacer graph:
 	// Adds spacer geometry between rooms
 
-	UE_LOG(LogTemp, Verbose, TEXT("AB_DemoRoom::AddSpacer - Offset: %f"), Offset);
+	UE_LOG(LogTemp, Warning, TEXT("AB_DemoRoom::AddSpacer - Offset: %f"), Offset);
 
 	if (SpacerSize <= 0.0)
 	{
@@ -479,7 +517,7 @@ void AB_DemoRoom::MetalStrip_Implementation(const FTransform& BaseTransform)
 	// Logic from JSON Metal Strip graph:
 	// Adds decorative metal strip
 
-	UE_LOG(LogTemp, Verbose, TEXT("AB_DemoRoom::MetalStrip"));
+	UE_LOG(LogTemp, Warning, TEXT("AB_DemoRoom::MetalStrip"));
 
 	if (!MetalTrim_Straight || !MetalTrim_Corner)
 	{
@@ -517,7 +555,7 @@ void AB_DemoRoom::Lighting_Implementation(const FSLFRoomSettings& RoomParams)
 	// Logic from JSON Lighting graph:
 	// Adds lighting panels to room
 
-	UE_LOG(LogTemp, Verbose, TEXT("AB_DemoRoom::Lighting"));
+	UE_LOG(LogTemp, Warning, TEXT("AB_DemoRoom::Lighting"));
 
 	if (!LightPanel)
 	{

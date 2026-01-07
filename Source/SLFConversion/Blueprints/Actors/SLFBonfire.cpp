@@ -3,6 +3,9 @@
 #include "Components/PointLightComponent.h"
 #include "NiagaraComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/StatManagerComponent.h"
+#include "Components/InventoryManagerComponent.h"
+#include "SLFGameTypes.h"
 
 ASLFBonfire::ASLFBonfire()
 {
@@ -55,7 +58,47 @@ void ASLFBonfire::Rest_Implementation(AActor* Player)
 		UGameplayStatics::PlaySoundAtLocation(this, RestSound, GetActorLocation());
 	}
 
-	// TODO: Restore player health/FP, respawn enemies, etc.
+	// Restore player stats (HP, FP, Stamina)
+	if (UStatManagerComponent* StatManager = Player->FindComponentByClass<UStatManagerComponent>())
+	{
+		// Reset HP to max
+		FGameplayTag HPTag = FGameplayTag::RequestGameplayTag(FName("Stat.HP"), false);
+		if (HPTag.IsValid())
+		{
+			StatManager->ResetStat(HPTag);
+			UE_LOG(LogTemp, Log, TEXT("[Bonfire] Restored HP"));
+		}
+
+		// Reset FP to max
+		FGameplayTag FPTag = FGameplayTag::RequestGameplayTag(FName("Stat.FP"), false);
+		if (FPTag.IsValid())
+		{
+			StatManager->ResetStat(FPTag);
+			UE_LOG(LogTemp, Log, TEXT("[Bonfire] Restored FP"));
+		}
+
+		// Reset Stamina to max
+		FGameplayTag StaminaTag = FGameplayTag::RequestGameplayTag(FName("Stat.Stamina"), false);
+		if (StaminaTag.IsValid())
+		{
+			StatManager->ResetStat(StaminaTag);
+			UE_LOG(LogTemp, Log, TEXT("[Bonfire] Restored Stamina"));
+		}
+	}
+
+	// Replenish consumable items (flasks, etc.)
+	if (UInventoryManagerComponent* InventoryManager = Player->FindComponentByClass<UInventoryManagerComponent>())
+	{
+		// Replenish rechargeable items - iterate through inventory and replenish each
+		// Full implementation would call ReplenishItem for each rechargeable item
+		// For now, log that replenishment would happen
+		UE_LOG(LogTemp, Log, TEXT("[Bonfire] Replenishing items via InventoryManager"));
+		// InventoryManager->ReplenishItem(Item, -1); // -1 = replenish to max
+		// Note: Would need to iterate inventory for all rechargeable items
+	}
+
+	// Note: Enemy respawning would be handled by a game mode or level manager
+	// that listens to OnBonfireRested and respawns enemies in the area
 
 	OnBonfireRested.Broadcast(Player);
 }

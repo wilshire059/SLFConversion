@@ -52,7 +52,9 @@ public:
 
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (0)
+	// FUNCTIONS
 	// ═══════════════════════════════════════════════════════════════════════
 
+	/** Execute dual wield attack - get weapon animset, extract LightDualWieldMontage, play */
+	virtual void ExecuteAction_Implementation() override;
 };

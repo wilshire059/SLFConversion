@@ -2,6 +2,8 @@
 #include "SLFAnimNotifyStateAIRotateToTarget.h"
 #include "AIController.h"
 #include "GameFramework/Character.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 FString USLFAnimNotifyStateAIRotateToTarget::GetNotifyName_Implementation() const
 {
@@ -20,5 +22,24 @@ void USLFAnimNotifyStateAIRotateToTarget::NotifyTick(USkeletalMeshComponent* Mes
 	AAIController* AIController = Cast<AAIController>(Character->GetController());
 	if (!AIController) return;
 
-	// TODO: Get focus actor from blackboard, lerp rotation toward it
+	// Get focus actor from blackboard
+	UBlackboardComponent* Blackboard = AIController->GetBlackboardComponent();
+	if (!Blackboard) return;
+
+	AActor* FocusActor = Cast<AActor>(Blackboard->GetValueAsObject(TEXT("TargetActor")));
+	if (!FocusActor) return;
+
+	// Calculate target rotation toward focus actor
+	FVector CharLocation = Character->GetActorLocation();
+	FVector TargetLocation = FocusActor->GetActorLocation();
+	FRotator CurrentRotation = Character->GetActorRotation();
+	FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(CharLocation, TargetLocation);
+
+	// Only rotate yaw
+	TargetRotation.Pitch = CurrentRotation.Pitch;
+	TargetRotation.Roll = CurrentRotation.Roll;
+
+	// Lerp rotation toward target
+	FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, FrameDeltaTime, RotationSpeed);
+	Character->SetActorRotation(NewRotation);
 }

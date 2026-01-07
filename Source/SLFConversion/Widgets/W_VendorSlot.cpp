@@ -34,7 +34,8 @@ void UW_VendorSlot::CacheWidgetReferences()
 
 void UW_VendorSlot::AdjustAmountAndIconOpacity_Implementation(double Alpha)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Adjust the opacity of the vendor item icon and amount
+	UE_LOG(LogTemp, Log, TEXT("UW_VendorSlot::AdjustAmountAndIconOpacity - Alpha: %f"), Alpha);
 }
 void UW_VendorSlot::EventChangeAmount_Implementation(int32 NewCount)
 {

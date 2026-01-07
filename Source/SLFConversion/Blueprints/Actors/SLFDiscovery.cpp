@@ -2,6 +2,8 @@
 #include "SLFDiscovery.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/ProgressManagerComponent.h"
+#include "SLFEnums.h"
 
 ASLFDiscovery::ASLFDiscovery()
 {
@@ -48,7 +50,19 @@ void ASLFDiscovery::TriggerDiscovery_Implementation(AActor* Discoverer)
 
 		OnAreaDiscovered.Broadcast(AreaName, Discoverer);
 
-		// TODO: Save discovery to save game
+		// Save discovery to progress manager (which persists to save game)
+		if (Discoverer && DiscoveryTag.IsValid())
+		{
+			if (UProgressManagerComponent* ProgressMgr = Discoverer->FindComponentByClass<UProgressManagerComponent>())
+			{
+				ProgressMgr->SetProgress(DiscoveryTag, ESLFProgress::Completed);
+				UE_LOG(LogTemp, Log, TEXT("[Discovery] Saved to ProgressManager: %s = Completed"), *DiscoveryTag.ToString());
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[Discovery] No ProgressManagerComponent found on discoverer"));
+			}
+		}
 	}
 }
 

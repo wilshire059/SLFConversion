@@ -331,4 +331,16 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory|UI")
 	UUserWidget* GetInventoryWidget();
 	virtual UUserWidget* GetInventoryWidget_Implementation();
+
+	// ═══════════════════════════════════════════════════════════════════
+	// ASYNC EVENTS
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** Async add item by tag (loads asset async then adds) */
+	UFUNCTION(BlueprintCallable, Category = "Inventory|Async")
+	void EventAsyncAddItemByTag(FGameplayTag ItemTag, int32 Amount);
+
+	/** Async use item (loads asset async then uses) */
+	UFUNCTION(BlueprintCallable, Category = "Inventory|Async")
+	void EventAsyncUseItem(UDataAsset* ItemAsset);
 };

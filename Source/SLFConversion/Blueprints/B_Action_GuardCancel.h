@@ -52,7 +52,9 @@ public:
 
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (0)
+	// FUNCTIONS
 	// ═══════════════════════════════════════════════════════════════════════
 
+	/** Execute guard cancel - immediately toggles guard off, ignoring grace period */
+	virtual void ExecuteAction_Implementation() override;
 };

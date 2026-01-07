@@ -34,5 +34,6 @@ void UW_Inventory_CategoryEntry::CacheWidgetReferences()
 
 void UW_Inventory_CategoryEntry::SetInventoryCategorySelected_Implementation(bool InSelected)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Update visual state to reflect category selection
+	UE_LOG(LogTemp, Log, TEXT("UW_Inventory_CategoryEntry::SetInventoryCategorySelected - Selected: %s"), InSelected ? TEXT("true") : TEXT("false"));
 }

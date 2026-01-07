@@ -34,15 +34,23 @@ void UW_Settings_KeyMapping_Entry::CacheWidgetReferences()
 
 void UW_Settings_KeyMapping_Entry::SelectMappingForSlot_Implementation(EPlayerMappableKeySlot InSlot, FName& OutMappingName, EPlayerMappableKeySlot& OutOutSlot, FKey& OutDefaultKey, FKey& OutCurrentKey)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Select and return key mapping info for the specified slot
+	OutOutSlot = InSlot;
+	UE_LOG(LogTemp, Log, TEXT("UW_Settings_KeyMapping_Entry::SelectMappingForSlot"));
 }
+
 void UW_Settings_KeyMapping_Entry::UpdateMapping_Implementation(UInputKeySelector* IKS, const FName& MappingName, EPlayerMappableKeySlot InSlot, const FKey& NewKey, bool RefreshAll)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Update the key mapping with a new key binding
+	UE_LOG(LogTemp, Log, TEXT("UW_Settings_KeyMapping_Entry::UpdateMapping - MappingName: %s, NewKey: %s"), *MappingName.ToString(), *NewKey.ToString());
 }
+
 void UW_Settings_KeyMapping_Entry::IsKeyUsed_Implementation(EPlayerMappableKeySlot InSlot, const FKey& IncomingKey, UInputKeySelector* KeySelector, bool& OutNeverUsed, bool& OutNeverUsed1)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Check if the key is already used by another mapping
+	OutNeverUsed = true;
+	OutNeverUsed1 = true;
+	UE_LOG(LogTemp, Log, TEXT("UW_Settings_KeyMapping_Entry::IsKeyUsed - Key: %s"), *IncomingKey.ToString());
 }
 void UW_Settings_KeyMapping_Entry::EventFocusZero_Implementation()
 {

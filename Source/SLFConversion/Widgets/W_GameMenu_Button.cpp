@@ -1,7 +1,23 @@
 // W_GameMenu_Button.cpp
 // C++ Widget implementation for W_GameMenu_Button
 //
-// 20-PASS VALIDATION: 2026-01-03
+// 20-PASS VALIDATION: 2026-01-05
+// Source: BlueprintDNA_v2/WidgetBlueprint/W_GameMenu_Button.json
+//
+// PreConstruct flow from Blueprint:
+//   1. BtnText.SetText(ButtonText)
+//   2. Img.SetBrushFromSoftTexture(ButtonImage, false)
+//   3. Img.SetColorAndOpacity(ImageColor)
+//   4. ImgBorder.SetBrushColor(ImageBorderColor)
+//
+// SetGameMenuButtonSelected flow from Blueprint:
+//   1. Set Selected? = bSelected
+//   2. Branch on Selected?:
+//      TRUE:  Img.SetColorAndOpacity(SelectedImageColor)
+//             ImgBorder.SetBrushColor(SelectedImageBorderColor)
+//             Broadcast OnGameMenuButtonSelected(self)
+//      FALSE: Img.SetColorAndOpacity(ImageColor)
+//             ImgBorder.SetBrushColor(ImageBorderColor)
 
 #include "Widgets/W_GameMenu_Button.h"
 #include "Components/Button.h"
@@ -18,9 +34,9 @@ UW_GameMenu_Button::UW_GameMenu_Button(const FObjectInitializer& ObjectInitializ
 	, HighlightColor(FLinearColor::White)
 	, Selected(false)
 	, EscMenuButton(nullptr)
-	, SelectedBorder(nullptr)
-	, ButtonIcon(nullptr)
-	, ButtonLabel(nullptr)
+	, ImgBorder(nullptr)
+	, Img(nullptr)
+	, BtnText(nullptr)
 {
 }
 
@@ -28,7 +44,8 @@ void UW_GameMenu_Button::NativePreConstruct()
 {
 	Super::NativePreConstruct();
 
-	// Apply visual configuration from exposed properties
+	// PreConstruct: Apply visual configuration from per-instance properties
+	// This matches the Blueprint PreConstruct event graph exactly
 	ApplyVisualConfig();
 }
 
@@ -38,7 +55,7 @@ void UW_GameMenu_Button::NativeConstruct()
 
 	UE_LOG(LogTemp, Log, TEXT("UW_GameMenu_Button::NativeConstruct"));
 
-	// Bind button events
+	// Bind button events (from EventGraph: On Pressed, On Hovered)
 	if (EscMenuButton)
 	{
 		EscMenuButton->OnHovered.AddDynamic(this, &UW_GameMenu_Button::OnButtonHovered);
@@ -66,68 +83,80 @@ void UW_GameMenu_Button::NativeDestruct()
 
 void UW_GameMenu_Button::ApplyVisualConfig()
 {
-	// Set button text if label widget exists
-	if (ButtonLabel)
+	// From Blueprint PreConstruct:
+	// 1. BtnText.SetText(ButtonText)
+	if (BtnText)
 	{
-		ButtonLabel->SetText(ButtonText);
+		BtnText->SetText(ButtonText);
+		UE_LOG(LogTemp, Log, TEXT("[W_GameMenu_Button] Set text to: %s"), *ButtonText.ToString());
 	}
 
-	// Set button image if icon widget exists and texture is valid
-	if (ButtonIcon && !ButtonImage.IsNull())
+	// 2. Img.SetBrushFromSoftTexture(ButtonImage, bMatchSize=false)
+	// 3. Img.SetColorAndOpacity(ImageColor)
+	if (Img)
 	{
-		if (UTexture2D* Texture = ButtonImage.LoadSynchronous())
+		if (!ButtonImage.IsNull())
 		{
-			ButtonIcon->SetBrushFromTexture(Texture);
-			ButtonIcon->SetColorAndOpacity(ImageColor);
+			Img->SetBrushFromSoftTexture(ButtonImage, false);
 		}
+		Img->SetColorAndOpacity(ImageColor);
 	}
 
-	// Set border color
-	if (SelectedBorder)
+	// 4. ImgBorder.SetBrushColor(ImageBorderColor)
+	if (ImgBorder)
 	{
-		SelectedBorder->SetBrushColor(ImageBorderColor);
-		SelectedBorder->SetVisibility(ESlateVisibility::Collapsed);
+		ImgBorder->SetBrushColor(ImageBorderColor);
 	}
 }
 
-void UW_GameMenu_Button::SetGameMenuButtonSelected_Implementation(bool InSelected)
+void UW_GameMenu_Button::SetGameMenuButtonSelected_Implementation(bool bSelected)
 {
-	UE_LOG(LogTemp, Log, TEXT("[W_GameMenu_Button] SetGameMenuButtonSelected: %s"), InSelected ? TEXT("true") : TEXT("false"));
+	UE_LOG(LogTemp, Log, TEXT("[W_GameMenu_Button] SetGameMenuButtonSelected: %s"), bSelected ? TEXT("true") : TEXT("false"));
 
-	// Update selected state
-	Selected = InSelected;
+	// 1. Set Selected? = bSelected
+	Selected = bSelected;
 
-	if (SelectedBorder)
+	// 2. Branch on Selected?
+	if (Selected)
 	{
-		if (Selected)
+		// TRUE branch:
+		// Img.SetColorAndOpacity(SelectedImageColor)
+		if (Img)
 		{
-			// Show selected border with selected color
-			SelectedBorder->SetVisibility(ESlateVisibility::Visible);
-			SelectedBorder->SetBrushColor(SelectedImageBorderColor);
+			Img->SetColorAndOpacity(SelectedImageColor);
 		}
-		else
+
+		// ImgBorder.SetBrushColor(SelectedImageBorderColor)
+		if (ImgBorder)
 		{
-			// Hide selected border
-			SelectedBorder->SetVisibility(ESlateVisibility::Collapsed);
-			SelectedBorder->SetBrushColor(ImageBorderColor);
+			ImgBorder->SetBrushColor(SelectedImageBorderColor);
+		}
+
+		// Broadcast OnGameMenuButtonSelected(self)
+		OnGameMenuButtonSelected.Broadcast(this);
+	}
+	else
+	{
+		// FALSE branch:
+		// Img.SetColorAndOpacity(ImageColor)
+		if (Img)
+		{
+			Img->SetColorAndOpacity(ImageColor);
+		}
+
+		// ImgBorder.SetBrushColor(ImageBorderColor)
+		if (ImgBorder)
+		{
+			ImgBorder->SetBrushColor(ImageBorderColor);
 		}
 	}
-
-	// Update image color if applicable
-	if (ButtonIcon)
-	{
-		ButtonIcon->SetColorAndOpacity(Selected ? SelectedImageColor : ImageColor);
-	}
-
-	// Broadcast selection changed
-	OnGameMenuButtonSelected.Broadcast(this);
 }
 
 void UW_GameMenu_Button::EventOnGameMenuButtonPressed_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("[W_GameMenu_Button] EventOnGameMenuButtonPressed - Tag: %s"), *TargetWidgetTag.ToString());
 
-	// Broadcast the pressed event with the target widget tag
+	// From Blueprint: Broadcast OnGameMenuButtonPressed(TargetWidgetTag)
 	OnGameMenuButtonPressed.Broadcast(TargetWidgetTag);
 }
 
@@ -135,7 +164,7 @@ void UW_GameMenu_Button::OnButtonHovered()
 {
 	UE_LOG(LogTemp, Log, TEXT("[W_GameMenu_Button] OnButtonHovered"));
 
-	// When hovered, set this button as selected
+	// From Blueprint EventGraph: On Hovered (EscMenuButton) -> SetGameMenuButtonSelected(true)
 	SetGameMenuButtonSelected(true);
 }
 
@@ -143,6 +172,6 @@ void UW_GameMenu_Button::OnButtonPressed()
 {
 	UE_LOG(LogTemp, Log, TEXT("[W_GameMenu_Button] OnButtonPressed"));
 
-	// Trigger the button pressed event
+	// From Blueprint EventGraph: On Pressed (EscMenuButton) -> Call OnGameMenuButtonPressed
 	EventOnGameMenuButtonPressed();
 }

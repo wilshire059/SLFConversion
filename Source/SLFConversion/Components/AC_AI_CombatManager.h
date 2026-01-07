@@ -58,7 +58,7 @@ public:
 	bool UseWorldHealthbar;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|UI")
 	double HealthBarDuration;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Poise Break")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Poise Break", meta = (DisplayName = "Poise Break Asset"))
 	UPDA_PoiseBreakAnimData* PoiseBreakAsset;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Poise Break")
 	double BrokenPoiseDuration;

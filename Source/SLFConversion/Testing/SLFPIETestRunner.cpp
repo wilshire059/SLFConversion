@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "HAL/IConsoleManager.h"
 
 // ========== CONSOLE COMMANDS ==========
@@ -115,6 +116,59 @@ static FAutoConsoleCommand CCmdSimMove(
 	})
 );
 
+static FAutoConsoleCommand CCmdSimCrouch(
+	TEXT("SLF.SimCrouch"),
+	TEXT("Toggle crouch on player character (directly calls Crouch/UnCrouch)"),
+	FConsoleCommandDelegate::CreateLambda([]()
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.SimCrouch] Command executed"));
+		if (UWorld* World = GEngine->GetCurrentPlayWorld())
+		{
+			if (APlayerController* PC = World->GetFirstPlayerController())
+			{
+				if (ACharacter* Char = PC->GetCharacter())
+				{
+					UE_LOG(LogTemp, Warning, TEXT("[SLF.SimCrouch] Found character: %s"), *Char->GetClass()->GetName());
+					UE_LOG(LogTemp, Warning, TEXT("[SLF.SimCrouch] Current bIsCrouched = %s"), Char->bIsCrouched ? TEXT("TRUE") : TEXT("FALSE"));
+
+					if (Char->bIsCrouched)
+					{
+						Char->UnCrouch();
+						UE_LOG(LogTemp, Warning, TEXT("[SLF.SimCrouch] Called UnCrouch(), bIsCrouched now = %s"), Char->bIsCrouched ? TEXT("TRUE") : TEXT("FALSE"));
+					}
+					else
+					{
+						Char->Crouch();
+						UE_LOG(LogTemp, Warning, TEXT("[SLF.SimCrouch] Called Crouch(), bIsCrouched now = %s"), Char->bIsCrouched ? TEXT("TRUE") : TEXT("FALSE"));
+
+						if (!Char->bIsCrouched)
+						{
+							if (UCharacterMovementComponent* CMC = Char->GetCharacterMovement())
+							{
+								UE_LOG(LogTemp, Error, TEXT("[SLF.SimCrouch] Crouch FAILED! CMC->CanEverCrouch()=%s, bWantsToCrouch=%s"),
+									CMC->CanEverCrouch() ? TEXT("TRUE") : TEXT("FALSE"),
+									CMC->bWantsToCrouch ? TEXT("TRUE") : TEXT("FALSE"));
+							}
+						}
+					}
+				}
+				else
+				{
+					UE_LOG(LogTemp, Error, TEXT("[SLF.SimCrouch] No character on PlayerController!"));
+				}
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("[SLF.SimCrouch] No PlayerController!"));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("[SLF.SimCrouch] No play world!"));
+		}
+	})
+);
+
 // ========== TEST RUNNER IMPLEMENTATION ==========
 
 void USLFPIETestRunner::Initialize(FSubsystemCollectionBase& Collection)
@@ -128,6 +182,7 @@ void USLFPIETestRunner::Initialize(FSubsystemCollectionBase& Collection)
 	UE_LOG(LogTemp, Log, TEXT("  SLF.SimAttack - Simulate attack"));
 	UE_LOG(LogTemp, Log, TEXT("  SLF.SimDodge - Simulate dodge"));
 	UE_LOG(LogTemp, Log, TEXT("  SLF.SimMove <X> <Y> <Dur> - Simulate movement"));
+	UE_LOG(LogTemp, Log, TEXT("  SLF.SimCrouch - Toggle crouch directly"));
 
 	// Check for auto-test command line argument
 	if (FParse::Param(FCommandLine::Get(), TEXT("SLFAutoTest")))

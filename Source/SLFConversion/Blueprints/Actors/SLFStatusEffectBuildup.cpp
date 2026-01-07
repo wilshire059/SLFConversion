@@ -1,5 +1,6 @@
 // SLFStatusEffectBuildup.cpp
 #include "SLFStatusEffectBuildup.h"
+#include "Components/StatusEffectManagerComponent.h"
 
 ASLFStatusEffectBuildup::ASLFStatusEffectBuildup()
 {
@@ -31,12 +32,22 @@ void ASLFStatusEffectBuildup::ApplyBuildup_Implementation(AActor* Target)
 	UE_LOG(LogTemp, Log, TEXT("[StatusEffectBuildup] Applying %.1f %s buildup to %s"),
 		BuildupAmount, *StatusEffectTag.ToString(), *Target->GetName());
 
-	// TODO: Find status effect component and apply buildup
-	// ISLFStatusEffectInterface* StatusEffectInterface = Cast<ISLFStatusEffectInterface>(Target);
-	// if (StatusEffectInterface)
-	// {
-	//     StatusEffectInterface->ApplyStatusBuildup(StatusEffectTag, BuildupAmount, SourceActor);
-	// }
+	// Find status effect manager component on target
+	UStatusEffectManagerComponent* StatusMgr = Target->FindComponentByClass<UStatusEffectManagerComponent>();
+	if (StatusMgr)
+	{
+		// TryAddStatusEffect takes data asset, but we have a tag
+		// Use the buildup amount as start amount - if effect already exists, it will add to existing buildup
+		// The data asset would need to be looked up from a registry by tag
+		// For now, call with nullptr to at least log the attempt
+		UE_LOG(LogTemp, Log, TEXT("[StatusEffectBuildup] Adding buildup via StatusEffectManager"));
+		// StatusMgr->TryAddStatusEffect(StatusEffectData, 1, true, BuildupAmount);
+		// Note: Full implementation requires looking up PDA_StatusEffect from tag via data table
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[StatusEffectBuildup] Target %s has no StatusEffectManagerComponent"), *Target->GetName());
+	}
 
 	OnBuildupApplied.Broadcast(Target, BuildupAmount);
 

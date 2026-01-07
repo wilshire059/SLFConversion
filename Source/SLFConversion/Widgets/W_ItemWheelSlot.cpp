@@ -34,21 +34,35 @@ void UW_ItemWheelSlot::CacheWidgetReferences()
 
 void UW_ItemWheelSlot::HandleNewItem_Implementation(UPrimaryDataAsset* InItem)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Handle a new item being assigned to this wheel slot
+	ActiveItem = InItem;
+	UE_LOG(LogTemp, Log, TEXT("UW_ItemWheelSlot::HandleNewItem - Item: %s"), InItem ? *InItem->GetName() : TEXT("None"));
 }
+
 FGameplayTag UW_ItemWheelSlot::GetSlotWithIndex_Implementation(int32 InIndex)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Get the slot tag at the given index from SlotsToTrack
+	TArray<FGameplayTag> Tags;
+	SlotsToTrack.GetGameplayTagArray(Tags);
+
+	if (Tags.IsValidIndex(InIndex))
+	{
+		return Tags[InIndex];
+	}
 	return FGameplayTag();
 }
+
 void UW_ItemWheelSlot::RefreshChildSlots_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Refresh the display of all child slot widgets
+	Length = SlotsToTrack.Num();
+	UE_LOG(LogTemp, Log, TEXT("UW_ItemWheelSlot::RefreshChildSlots - Length: %d"), Length);
 }
+
 bool UW_ItemWheelSlot::AreAllSlotsEmpty_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
-	return false;
+	// Check if all tracked slots are empty
+	return TrackedItems.Num() == 0;
 }
 void UW_ItemWheelSlot::EventInitializeFromLoad_Implementation(FSLFItemWheelSaveInfo Info)
 {

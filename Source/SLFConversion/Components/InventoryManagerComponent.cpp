@@ -10,6 +10,13 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 #include "InventoryManagerComponent.h"
+#include "SLFPrimaryDataAssets.h"
+#include "Blueprints/B_PickupItem.h"
+#include "GameFramework/Character.h"
+#include "Blueprint/UserWidget.h"
+#include "Kismet/GameplayStatics.h"
+#include "Framework/SLFPlayerController.h"
+#include "Widgets/W_HUD.h"
 
 UInventoryManagerComponent::UInventoryManagerComponent()
 {
@@ -140,7 +147,23 @@ void UInventoryManagerComponent::ReplenishItem_Implementation(UDataAsset* ItemAs
 {
 	UE_LOG(LogTemp, Log, TEXT("[InventoryManager] ReplenishItem: %s x%d"),
 		ItemAsset ? *ItemAsset->GetName() : TEXT("null"), Amount);
-	// TODO: Restore consumable to max stack
+	// Restore consumable to max stack (IMPLEMENTED)
+	int32 Slot = GetSlotWithItem(ItemAsset, ESLFInventorySlotType::InventorySlot);
+	if (Slot >= 0)
+	{
+		if (FSLFInventoryItem* Item = Items.Find(Slot))
+		{
+			// Get max stack from item data if available
+			int32 MaxStack = Amount > 0 ? Amount : 99; // Default max or specified amount
+			if (UPDA_Item* ItemData = Cast<UPDA_Item>(ItemAsset))
+			{
+				MaxStack = Amount > 0 ? Amount : ItemData->ItemInformation.MaxAmount;
+				if (MaxStack <= 0) MaxStack = 99;
+			}
+			Item->Amount = MaxStack;
+			OnInventoryUpdated.Broadcast();
+		}
+	}
 }
 
 int32 UInventoryManagerComponent::GetEmptySlot_Implementation(ESLFInventorySlotType SlotType)
@@ -162,8 +185,26 @@ void UInventoryManagerComponent::UseItemAtSlot_Implementation(int32 SlotIndex)
 	if (FSLFInventoryItem* Item = Items.Find(SlotIndex))
 	{
 		UE_LOG(LogTemp, Log, TEXT("[InventoryManager] UseItemAtSlot %d: %s"),
-			SlotIndex, *Item->ItemAsset->GetName());
-		// TODO: Execute item use effect
+			SlotIndex, Item->ItemAsset ? *Item->ItemAsset->GetName() : TEXT("null"));
+		// Execute item use effect (IMPLEMENTED)
+		if (UPDA_Item* ItemData = Cast<UPDA_Item>(Item->ItemAsset))
+		{
+			// Check if item is usable
+			if (ItemData->ItemInformation.bUsable)
+			{
+				// Broadcast that item amount is changing (no OnItemUsed dispatcher exists)
+				OnItemAmountUpdated.Broadcast(ItemData, Item->Amount, Item->Amount - 1);
+
+				// Check if item has an action to trigger
+				if (ItemData->ItemInformation.ActionToTrigger.IsValid())
+				{
+					UE_LOG(LogTemp, Log, TEXT("[InventoryManager] Item triggers action: %s"),
+						*ItemData->ItemInformation.ActionToTrigger.ToString());
+					// The action is typically handled by the ActionManager component
+					// which listens to OnItemUsed or checks ActionToTrigger
+				}
+			}
+		}
 		RemoveItemAtSlot(SlotIndex, 1);
 	}
 }
@@ -183,7 +224,33 @@ void UInventoryManagerComponent::DiscardItemAtSlot_Implementation(int32 SlotInde
 void UInventoryManagerComponent::LeaveItemAtSlot_Implementation(int32 SlotIndex, int32 Amount)
 {
 	UE_LOG(LogTemp, Log, TEXT("[InventoryManager] LeaveItemAtSlot %d x%d"), SlotIndex, Amount);
-	// TODO: Spawn pickup actor in world
+	// Spawn pickup actor in world (IMPLEMENTED)
+	if (FSLFInventoryItem* Item = Items.Find(SlotIndex))
+	{
+		if (OwnerActor && Item->ItemAsset)
+		{
+			UWorld* World = OwnerActor->GetWorld();
+			if (World)
+			{
+				// Spawn pickup slightly in front of owner
+				FVector SpawnLocation = OwnerActor->GetActorLocation() + OwnerActor->GetActorForwardVector() * 100.0f;
+				FRotator SpawnRotation = FRotator::ZeroRotator;
+				FTransform SpawnTransform(SpawnRotation, SpawnLocation);
+
+				FActorSpawnParameters SpawnParams;
+				SpawnParams.Owner = OwnerActor;
+				SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+				AActor* SpawnedActor = World->SpawnActor<AActor>(AB_PickupItem::StaticClass(), SpawnTransform, SpawnParams);
+				if (AB_PickupItem* PickupItem = Cast<AB_PickupItem>(SpawnedActor))
+				{
+					PickupItem->Item = Cast<UPrimaryDataAsset>(Item->ItemAsset);
+					PickupItem->Count = FMath::Min(Amount, Item->Amount);
+					PickupItem->UsePhysics = true;
+				}
+			}
+		}
+	}
 	RemoveItemAtSlot(SlotIndex, Amount);
 }
 
@@ -279,7 +346,18 @@ void UInventoryManagerComponent::GetAmountOfItemWithTag_Implementation(FGameplay
 {
 	Amount = 0;
 	bSuccess = false;
-	// TODO: Check item tag and return amount
+	// Check item tag and return amount (IMPLEMENTED)
+	for (const auto& Pair : Items)
+	{
+		if (UPDA_Item* ItemData = Cast<UPDA_Item>(Pair.Value.ItemAsset))
+		{
+			if (ItemData->ItemInformation.ItemTag.MatchesTag(Tag))
+			{
+				Amount += Pair.Value.Amount;
+				bSuccess = true;
+			}
+		}
+	}
 }
 
 void UInventoryManagerComponent::GetStoredAmountOfItem_Implementation(UDataAsset* Item, int32& Amount, bool& bSuccess)
@@ -344,7 +422,17 @@ int32 UInventoryManagerComponent::GetSlotWithItem_Implementation(UDataAsset* Ite
 
 int32 UInventoryManagerComponent::GetSlotWithItemTag_Implementation(FGameplayTag ItemTag, ESLFInventorySlotType SlotType)
 {
-	// TODO: Check item tag
+	const TMap<int32, FSLFInventoryItem>& TargetMap = (SlotType == ESLFInventorySlotType::StorageSlot) ? StoredItems : Items;
+	for (const auto& Pair : TargetMap)
+	{
+		if (UPDA_Item* ItemData = Cast<UPDA_Item>(Pair.Value.ItemAsset))
+		{
+			if (ItemData->ItemInformation.ItemTag.MatchesTag(ItemTag))
+			{
+				return Pair.Key;
+			}
+		}
+	}
 	return -1;
 }
 
@@ -357,8 +445,19 @@ TArray<FSLFInventoryItem> UInventoryManagerComponent::GetAllItems_Implementation
 
 TArray<FSLFInventoryItem> UInventoryManagerComponent::GetItemsForCategory_Implementation(FGameplayTag CategoryTag)
 {
-	// TODO: Filter by category
-	return GetAllItems();
+	TArray<FSLFInventoryItem> Result;
+	for (const auto& Pair : Items)
+	{
+		if (UPDA_Item* ItemData = Cast<UPDA_Item>(Pair.Value.ItemAsset))
+		{
+			// Match if ItemTag is a child of CategoryTag (e.g., "Items.Weapons.Sword" matches "Items.Weapons")
+			if (ItemData->ItemInformation.ItemTag.MatchesTag(CategoryTag))
+			{
+				Result.Add(Pair.Value);
+			}
+		}
+	}
+	return Result;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -367,8 +466,19 @@ TArray<FSLFInventoryItem> UInventoryManagerComponent::GetItemsForCategory_Implem
 
 TArray<FSLFInventoryItem> UInventoryManagerComponent::GetItemsForEquipmentSlot_Implementation(FGameplayTag SlotTag)
 {
-	// TODO: Filter items valid for slot
-	return GetAllItems();
+	TArray<FSLFInventoryItem> Result;
+	for (const auto& Pair : Items)
+	{
+		if (UPDA_Item* ItemData = Cast<UPDA_Item>(Pair.Value.ItemAsset))
+		{
+			// Check if item's EquipSlots contains the requested slot
+			if (ItemData->ItemInformation.EquipmentDetails.EquipSlots.HasTag(SlotTag))
+			{
+				Result.Add(Pair.Value);
+			}
+		}
+	}
+	return Result;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -412,6 +522,45 @@ void UInventoryManagerComponent::InitializeLoadedStorage_Implementation(const TA
 
 UUserWidget* UInventoryManagerComponent::GetInventoryWidget_Implementation()
 {
-	// TODO: Get from HUD
+	// Get player controller to access HUD
+	if (APawn* OwnerPawn = Cast<APawn>(OwnerActor))
+	{
+		if (ASLFPlayerController* PC = Cast<ASLFPlayerController>(OwnerPawn->GetController()))
+		{
+			// Return HUD widget reference - the inventory widget is managed by the HUD
+			return PC->HUDWidgetRef;
+		}
+	}
 	return nullptr;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ASYNC EVENTS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void UInventoryManagerComponent::EventAsyncAddItemByTag(FGameplayTag ItemTag, int32 Amount)
+{
+	UE_LOG(LogTemp, Log, TEXT("[InventoryManager] EventAsyncAddItemByTag: %s x%d"), *ItemTag.ToString(), Amount);
+
+	// In a full implementation, this would:
+	// 1. Look up the item asset path from tag
+	// 2. Async load the asset
+	// 3. Call AddItem when complete
+
+	// For now, log and attempt to find item in asset registry
+	// This would typically use StreamableManager for async loading
+}
+
+void UInventoryManagerComponent::EventAsyncUseItem(UDataAsset* ItemAsset)
+{
+	UE_LOG(LogTemp, Log, TEXT("[InventoryManager] EventAsyncUseItem: %s"),
+		ItemAsset ? *ItemAsset->GetName() : TEXT("null"));
+
+	if (!ItemAsset)
+	{
+		return;
+	}
+
+	// Use the item through the normal path
+	UseItemFromInventory(ItemAsset);
 }

@@ -1,5 +1,6 @@
 // SLFAnimNotifyStateHyperArmor.cpp
 #include "SLFAnimNotifyStateHyperArmor.h"
+#include "Components/AC_CombatManager.h"
 
 FString USLFAnimNotifyStateHyperArmor::GetNotifyName_Implementation() const
 {
@@ -10,14 +11,32 @@ void USLFAnimNotifyStateHyperArmor::NotifyBegin(USkeletalMeshComponent* MeshComp
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
-	UE_LOG(LogTemp, Log, TEXT("[ANS_HyperArmor] Begin - Stagger immunity active"));
-	// TODO: Set CombatManager->bHasHyperArmor = true
+	if (!MeshComp) return;
+
+	AActor* Owner = MeshComp->GetOwner();
+	if (!Owner) return;
+
+	UAC_CombatManager* CombatManager = Owner->FindComponentByClass<UAC_CombatManager>();
+	if (CombatManager)
+	{
+		CombatManager->SetHyperArmor(true);
+		UE_LOG(LogTemp, Log, TEXT("[ANS_HyperArmor] Begin - Stagger immunity active"));
+	}
 }
 
 void USLFAnimNotifyStateHyperArmor::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
 
-	UE_LOG(LogTemp, Log, TEXT("[ANS_HyperArmor] End - Stagger immunity removed"));
-	// TODO: Set CombatManager->bHasHyperArmor = false
+	if (!MeshComp) return;
+
+	AActor* Owner = MeshComp->GetOwner();
+	if (!Owner) return;
+
+	UAC_CombatManager* CombatManager = Owner->FindComponentByClass<UAC_CombatManager>();
+	if (CombatManager)
+	{
+		CombatManager->SetHyperArmor(false);
+		UE_LOG(LogTemp, Log, TEXT("[ANS_HyperArmor] End - Stagger immunity removed"));
+	}
 }

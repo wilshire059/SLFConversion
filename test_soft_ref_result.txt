@@ -1,0 +1,24 @@
+=== Test Soft Reference ===
+
+DodgeMontages type: <class 'SLFDodgeMontages'>
+DodgeMontages dir: ['assign', 'backstep', 'backward', 'backward_left', 'backward_right', 'cast', 'copy', 'export_text', 'forward', 'forward_left', 'forward_right', 'get_editor_property', 'import_text', 'left', 'right', 'set_editor_properties', 'set_editor_property', 'static_struct', 'to_tuple']
+
+Checking 'forward' property:
+  Type: <class 'NoneType'>
+  Value: None
+
+--- Testing different set approaches ---
+
+Approach 1: Direct UAnimMontage object
+  Montage type: <class 'AnimMontage'>
+  After setattr: <Object '/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_F.AM_SLF_Dodge_F' (0x000002BEEB1C4600) Class 'AnimMontage'>
+
+Approach 2: SoftObjectPath
+  SoftObjectPath type: <class 'SoftObjectPath'>
+  SoftObjectPath value: <Struct 'SoftObjectPath' (0x000002BEC69C6480) {}>
+
+Approach 3: Check struct methods
+  Set methods: ['__setattr__', 'set_editor_properties', 'set_editor_property']
+
+Approach 4: set_editor_property on struct
+  After set_editor_property: <Object '/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_F.AM_SLF_Dodge_F' (0x000002BEEB1C4600) Class 'AnimMontage'>

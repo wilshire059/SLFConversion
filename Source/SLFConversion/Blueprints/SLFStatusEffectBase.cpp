@@ -11,6 +11,7 @@
 
 #include "SLFStatusEffectBase.h"
 #include "StatManagerComponent.h"
+#include "SLFPrimaryDataAssets.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -56,14 +57,46 @@ float USLFStatusEffectBase::GetBuildupPercent_Implementation()
 
 float USLFStatusEffectBase::GetResistiveStatValue_Implementation()
 {
-	// TODO: Get from owner's stat manager using Data's ResistiveStatTag
+	// Get from owner's stat manager using Data's ResistiveStat tag
+	if (UPDA_StatusEffect* StatusEffectData = Cast<UPDA_StatusEffect>(Data))
+	{
+		if (StatusEffectData->ResistiveStat.IsValid())
+		{
+			if (UStatManagerComponent* StatMgr = GetOwnerStatManager())
+			{
+				UObject* StatObject = nullptr;
+				FStatInfo StatInfo;
+				if (StatMgr->GetStat(StatusEffectData->ResistiveStat, StatObject, StatInfo))
+				{
+					OwnerResistiveStatValue = StatInfo.CurrentValue;
+					UE_LOG(LogTemp, Verbose, TEXT("[StatusEffect] ResistiveStat %s = %.2f"),
+						*StatusEffectData->ResistiveStat.ToString(), OwnerResistiveStatValue);
+				}
+			}
+		}
+	}
 	return OwnerResistiveStatValue;
 }
 
 FSLFStatusEffectData USLFStatusEffectBase::GetEffectData_Implementation()
 {
-	// TODO: Extract FSLFStatusEffectData from Data asset
-	return FSLFStatusEffectData();
+	FSLFStatusEffectData Result;
+
+	// Extract FSLFStatusEffectData from UPDA_StatusEffect data asset
+	if (UPDA_StatusEffect* StatusEffectData = Cast<UPDA_StatusEffect>(Data))
+	{
+		Result.EffectTag = StatusEffectData->Tag;
+		Result.DisplayName = StatusEffectData->TriggeredText;
+		Result.ResistiveStatTag = StatusEffectData->ResistiveStat;
+		Result.BuildupDecayRate = StatusEffectData->BaseDecayRate;
+
+		// Note: LoopingVFX and RankData would need to be added to UPDA_StatusEffect
+		// if they exist in the Blueprint data structure
+		UE_LOG(LogTemp, Verbose, TEXT("[StatusEffect] GetEffectData: Tag=%s, DisplayName=%s"),
+			*Result.EffectTag.ToString(), *Result.DisplayName.ToString());
+	}
+
+	return Result;
 }
 
 FSLFStatusEffectRankData USLFStatusEffectBase::GetEffectRankData_Implementation(int32 Rank)

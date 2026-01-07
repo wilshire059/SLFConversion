@@ -1,5 +1,6 @@
 // SLFAnimNotifyStateInvincibility.cpp
 #include "SLFAnimNotifyStateInvincibility.h"
+#include "Components/AC_CombatManager.h"
 
 FString USLFAnimNotifyStateInvincibility::GetNotifyName_Implementation() const
 {
@@ -10,14 +11,32 @@ void USLFAnimNotifyStateInvincibility::NotifyBegin(USkeletalMeshComponent* MeshC
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
-	UE_LOG(LogTemp, Log, TEXT("[ANS_Invincibility] Begin - I-frames active"));
-	// TODO: Set CombatManager->bIsInvincible = true
+	if (!MeshComp) return;
+
+	AActor* Owner = MeshComp->GetOwner();
+	if (!Owner) return;
+
+	UAC_CombatManager* CombatManager = Owner->FindComponentByClass<UAC_CombatManager>();
+	if (CombatManager)
+	{
+		CombatManager->SetInvincibility(true);
+		UE_LOG(LogTemp, Log, TEXT("[ANS_Invincibility] Begin - I-frames active"));
+	}
 }
 
 void USLFAnimNotifyStateInvincibility::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
 
-	UE_LOG(LogTemp, Log, TEXT("[ANS_Invincibility] End - I-frames removed"));
-	// TODO: Set CombatManager->bIsInvincible = false
+	if (!MeshComp) return;
+
+	AActor* Owner = MeshComp->GetOwner();
+	if (!Owner) return;
+
+	UAC_CombatManager* CombatManager = Owner->FindComponentByClass<UAC_CombatManager>();
+	if (CombatManager)
+	{
+		CombatManager->SetInvincibility(false);
+		UE_LOG(LogTemp, Log, TEXT("[ANS_Invincibility] End - I-frames removed"));
+	}
 }

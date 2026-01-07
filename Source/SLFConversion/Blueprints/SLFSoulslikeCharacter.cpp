@@ -921,21 +921,16 @@ void ASLFSoulslikeCharacter::InitializeModularMesh()
 
 					if (SelectedClass)
 					{
-						// Use reflection to get DefaultMeshAsset from SelectedClass (PDA_BaseCharacterInfo_C)
-						FObjectProperty* DefaultMeshAssetProp = CastField<FObjectProperty>(
-							SelectedClass->GetClass()->FindPropertyByName(TEXT("DefaultMeshAsset")));
-
-						if (DefaultMeshAssetProp)
+						// Direct cast to C++ class - PDA_BaseCharacterInfo reparented to UPDA_BaseCharacterInfo
+						if (UPDA_BaseCharacterInfo* CharInfo = Cast<UPDA_BaseCharacterInfo>(SelectedClass))
 						{
-							DefaultMeshInfo = Cast<UDataAsset>(
-								DefaultMeshAssetProp->GetObjectPropertyValue_InContainer(SelectedClass));
-
-							UE_LOG(LogTemp, Log, TEXT("    Retrieved DefaultMeshInfo from SelectedClass: %s"),
+							DefaultMeshInfo = CharInfo->DefaultMeshAsset;
+							UE_LOG(LogTemp, Log, TEXT("    Retrieved DefaultMeshInfo from C++ property: %s"),
 								DefaultMeshInfo ? *DefaultMeshInfo->GetName() : TEXT("NULL"));
 						}
 						else
 						{
-							UE_LOG(LogTemp, Warning, TEXT("    DefaultMeshAsset property not found in SelectedClass (Class: %s)"),
+							UE_LOG(LogTemp, Warning, TEXT("    Cast<UPDA_BaseCharacterInfo> failed (Class: %s)"),
 								*SelectedClass->GetClass()->GetName());
 						}
 					}
@@ -957,124 +952,67 @@ void ASLFSoulslikeCharacter::InitializeModularMesh()
 		}
 	}
 
-	// Now load meshes from DefaultMeshInfo if available
-	// DefaultMeshInfo is UDataAsset* for Blueprint compatibility (PDA_DefaultMeshData_C is a Blueprint class)
-	// MeshData is a BLUEPRINT struct (FSkeletalMeshData), not a C++ struct, so we use generic UScriptStruct reflection
+	// Load meshes from DefaultMeshInfo using direct C++ property access (Option B migration)
+	// The Blueprint PDA_DefaultMeshData now inherits from UPDA_DefaultMeshData with direct mesh properties
 	if (DefaultMeshInfo)
 	{
 		UE_LOG(LogTemp, Log, TEXT("  Loading meshes from DefaultMeshInfo: %s (Class: %s)"),
 			*DefaultMeshInfo->GetName(), *DefaultMeshInfo->GetClass()->GetName());
 
-		// Get the MeshData struct property (Blueprint struct, not C++ struct)
-		FStructProperty* MeshDataProp = CastField<FStructProperty>(
-			DefaultMeshInfo->GetClass()->FindPropertyByName(TEXT("MeshData")));
-
-		if (MeshDataProp)
+		// Cast to C++ class to access direct properties (avoids Blueprint struct reflection issues)
+		UPDA_DefaultMeshData* MeshDataAsset = Cast<UPDA_DefaultMeshData>(DefaultMeshInfo);
+		if (MeshDataAsset)
 		{
-			// Get the UScriptStruct that describes this Blueprint struct
-			UScriptStruct* MeshDataStruct = MeshDataProp->Struct;
+			UE_LOG(LogTemp, Log, TEXT("    Successfully cast to UPDA_DefaultMeshData"));
 
-			// Get pointer to the struct data
-			void* MeshDataPtr = MeshDataProp->ContainerPtrToValuePtr<void>(DefaultMeshInfo);
-
-			if (MeshDataPtr && MeshDataStruct)
+			// Load and assign Head mesh
+			if (Head && !Head->GetSkeletalMeshAsset())
 			{
-				UE_LOG(LogTemp, Log, TEXT("    Successfully accessed MeshData via reflection (Struct: %s)"),
-					*MeshDataStruct->GetName());
-
-				// Lambda to load a skeletal mesh from a soft object property within the struct
-			// Blueprint struct properties have GUID suffixes, so we search by prefix
-			// e.g., "HeadMesh" matches "HeadMesh_22_F399850940577F72AF3260952F098F5B"
-				auto LoadMeshFromStructProperty = [&](const TCHAR* PropNamePrefix) -> USkeletalMesh*
+				if (!MeshDataAsset->HeadMesh.IsNull())
 				{
-					// Find property by prefix (Blueprint structs have GUID suffixes on property names)
-					FProperty* FoundProp = nullptr;
-					FString PrefixStr = PropNamePrefix;
-
-					for (TFieldIterator<FProperty> PropIt(MeshDataStruct); PropIt; ++PropIt)
-					{
-						FString PropName = PropIt->GetName();
-						if (PropName.StartsWith(PrefixStr))
-						{
-							FoundProp = *PropIt;
-							UE_LOG(LogTemp, Log, TEXT("      Found property matching '%s': %s"), PropNamePrefix, *PropName);
-							break;
-						}
-					}
-
-					if (!FoundProp)
-					{
-						UE_LOG(LogTemp, Warning, TEXT("      Property starting with '%s' not found in MeshData struct"), PropNamePrefix);
-						return nullptr;
-					}
-
-					// The property could be FSoftObjectProperty (TSoftObjectPtr) or FObjectProperty
-					if (FSoftObjectProperty* SoftObjProp = CastField<FSoftObjectProperty>(FoundProp))
-					{
-						FSoftObjectPtr* SoftPtr = SoftObjProp->GetPropertyValuePtr_InContainer(MeshDataPtr);
-						if (SoftPtr && !SoftPtr->IsNull())
-						{
-							UE_LOG(LogTemp, Log, TEXT("      Loading %s: %s"), PropNamePrefix, *SoftPtr->ToString());
-							return Cast<USkeletalMesh>(SoftPtr->LoadSynchronous());
-						}
-						else
-						{
-							UE_LOG(LogTemp, Warning, TEXT("      %s SoftPtr is null or empty"), PropNamePrefix);
-						}
-					}
-					else if (FObjectProperty* ObjProp = CastField<FObjectProperty>(FoundProp))
-					{
-						UObject* Obj = ObjProp->GetObjectPropertyValue_InContainer(MeshDataPtr);
-						if (Obj)
-						{
-							return Cast<USkeletalMesh>(Obj);
-						}
-					}
-					else
-					{
-						UE_LOG(LogTemp, Warning, TEXT("      Property %s is neither SoftObject nor Object type"), PropNamePrefix);
-					}
-
-					return nullptr;
-				};
-
-				// Load and assign Head mesh
-				if (Head && !Head->GetSkeletalMeshAsset())
-				{
-					USkeletalMesh* LoadedMesh = LoadMeshFromStructProperty(TEXT("HeadMesh"));
+					USkeletalMesh* LoadedMesh = MeshDataAsset->HeadMesh.LoadSynchronous();
 					if (LoadedMesh)
 					{
 						Head->SetSkeletalMesh(LoadedMesh);
 						UE_LOG(LogTemp, Log, TEXT("    Loaded Head mesh: %s"), *LoadedMesh->GetName());
 					}
 				}
+			}
 
-				// Load and assign UpperBody mesh
-				if (UpperBody && !UpperBody->GetSkeletalMeshAsset())
+			// Load and assign UpperBody mesh
+			if (UpperBody && !UpperBody->GetSkeletalMeshAsset())
+			{
+				if (!MeshDataAsset->UpperBodyMesh.IsNull())
 				{
-					USkeletalMesh* LoadedMesh = LoadMeshFromStructProperty(TEXT("UpperBodyMesh"));
+					USkeletalMesh* LoadedMesh = MeshDataAsset->UpperBodyMesh.LoadSynchronous();
 					if (LoadedMesh)
 					{
 						UpperBody->SetSkeletalMesh(LoadedMesh);
 						UE_LOG(LogTemp, Log, TEXT("    Loaded UpperBody mesh: %s"), *LoadedMesh->GetName());
 					}
 				}
+			}
 
-				// Load and assign Arms mesh
-				if (Arms && !Arms->GetSkeletalMeshAsset())
+			// Load and assign Arms mesh
+			if (Arms && !Arms->GetSkeletalMeshAsset())
+			{
+				if (!MeshDataAsset->ArmsMesh.IsNull())
 				{
-					USkeletalMesh* LoadedMesh = LoadMeshFromStructProperty(TEXT("ArmsMesh"));
+					USkeletalMesh* LoadedMesh = MeshDataAsset->ArmsMesh.LoadSynchronous();
 					if (LoadedMesh)
 					{
 						Arms->SetSkeletalMesh(LoadedMesh);
 						UE_LOG(LogTemp, Log, TEXT("    Loaded Arms mesh: %s"), *LoadedMesh->GetName());
 					}
 				}
+			}
 
-				// Load and assign LowerBody mesh
-				if (LowerBody && !LowerBody->GetSkeletalMeshAsset())
+			// Load and assign LowerBody mesh
+			if (LowerBody && !LowerBody->GetSkeletalMeshAsset())
+			{
+				if (!MeshDataAsset->LowerBodyMesh.IsNull())
 				{
-					USkeletalMesh* LoadedMesh = LoadMeshFromStructProperty(TEXT("LowerBodyMesh"));
+					USkeletalMesh* LoadedMesh = MeshDataAsset->LowerBodyMesh.LoadSynchronous();
 					if (LoadedMesh)
 					{
 						LowerBody->SetSkeletalMesh(LoadedMesh);
@@ -1082,14 +1020,10 @@ void ASLFSoulslikeCharacter::InitializeModularMesh()
 					}
 				}
 			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("    MeshData pointer or struct is null"));
-			}
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("    Could not find MeshData property via reflection"));
+			UE_LOG(LogTemp, Warning, TEXT("    Cast to UPDA_DefaultMeshData failed - class hierarchy may not be correct"));
 		}
 	}
 	else

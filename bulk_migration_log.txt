@@ -1,0 +1,177 @@
+[23:19:09] [INFO] ======================================================================
+[23:19:09] [INFO] BULK STRUCT MIGRATION v3
+[23:19:09] [INFO] ======================================================================
+[23:19:09] [INFO] Started at 2026-01-06T23:19:09.154693
+[23:19:09] [INFO] Loaded 21 pre-extracted niagara paths
+[23:19:09] [INFO] 
+======================================================================
+[23:19:09] [INFO] PHASE 1: PRE-VALIDATION
+[23:19:09] [INFO] ======================================================================
+[23:19:09] [INFO] ======================================================================
+[23:19:09] [INFO] PHASE 1A: Pre-Validation - Item Assets
+[23:19:09] [INFO] ======================================================================
+[23:19:09] [INFO] Checking DA_Apple...
+[23:19:09] [INFO]   DA_Apple: Needs migration for ['world_static_mesh', 'world_skeletal_mesh']
+[23:19:09] [INFO] Checking DA_BossMace...
+[23:19:09] [INFO]   DA_BossMace: Needs migration for ['world_static_mesh', 'world_skeletal_mesh']
+[23:19:09] [INFO] Checking DA_CrimsonEverbloom...
+[23:19:09] [INFO]   DA_CrimsonEverbloom: Needs migration for ['world_static_mesh', 'world_skeletal_mesh']
+[23:19:09] [INFO] Checking DA_Cube...
+[23:19:09] [INFO]   DA_Cube: Needs migration for ['world_static_mesh', 'world_skeletal_mesh']
+[23:19:09] [INFO] Checking DA_ExampleArmor...
+[23:19:09] [INFO]   DA_ExampleArmor: Needs migration for ['world_static_mesh', 'world_skeletal_mesh']
+[23:19:09] [INFO] Checking DA_ExampleArmor02...
+[23:19:09] [INFO]   DA_ExampleArmor02: Needs migration for ['world_static_mesh', 'world_skeletal_mesh']
+[23:19:09] [INFO] Checking DA_ExampleBracers...
+[23:19:09] [INFO]   DA_ExampleBracers: Needs migration for ['world_static_mesh', 'world_skeletal_mesh']
+[23:19:09] [INFO] Checking DA_ExampleGreaves...
+[23:19:09] [INFO]   DA_ExampleGreaves: Needs migration for ['world_static_mesh', 'world_skeletal_mesh']
+[23:19:09] [INFO] Checking DA_ExampleHat...
+[23:19:09] [INFO]   DA_ExampleHat: Needs migration for ['world_static_mesh', 'world_skeletal_mesh']
+[23:19:09] [INFO] Checking DA_ExampleHelmet...
+[23:19:09] [INFO]   DA_ExampleHelmet: Needs migration for ['world_static_mesh', 'world_skeletal_mesh']
+[23:19:09] [INFO] Checking DA_ExampleTalisman...
+[23:19:09] [INFO]   DA_ExampleTalisman: Needs migration for ['world_static_mesh', 'world_skeletal_mesh']
+[23:19:09] [INFO] Checking DA_Greatsword...
+[23:19:09] [INFO]   DA_Greatsword: Needs migration for ['world_static_mesh', 'world_skeletal_mesh']
+[23:19:09] [INFO] Checking DA_HealthFlask...
+[23:19:09] [INFO]   DA_HealthFlask: Needs migration for ['world_static_mesh', 'world_skeletal_mesh']
+[23:19:09] [INFO] Checking DA_Katana...
+[23:19:09] [INFO]   DA_Katana: Needs migration for ['world_static_mesh', 'world_skeletal_mesh']
+[23:19:09] [INFO] Checking DA_Lantern...
+[23:19:09] [INFO]   DA_Lantern: Needs migration for ['world_static_mesh', 'world_skeletal_mesh']
+[23:19:09] [INFO] Checking DA_PoisonSword...
+[23:19:09] [INFO]   DA_PoisonSword: Needs migration for ['world_static_mesh', 'world_skeletal_mesh']
+[23:19:09] [INFO] Checking DA_PrisonKey...
+[23:19:09] [INFO]   DA_PrisonKey: Needs migration for ['world_static_mesh', 'world_skeletal_mesh']
+[23:19:09] [INFO] Checking DA_Shield01...
+[23:19:09] [INFO]   DA_Shield01: Needs migration for ['world_static_mesh', 'world_skeletal_mesh']
+[23:19:09] [INFO] Checking DA_Sword01...
+[23:19:09] [INFO]   DA_Sword01: Needs migration for ['world_static_mesh', 'world_skeletal_mesh']
+[23:19:09] [INFO] Checking DA_Sword02...
+[23:19:09] [INFO]   DA_Sword02: Needs migration for ['world_static_mesh', 'world_skeletal_mesh']
+[23:19:09] [INFO] Checking DA_ThrowingKnife...
+[23:19:09] [INFO]   DA_ThrowingKnife: Needs migration for ['world_static_mesh', 'world_skeletal_mesh']
+[23:19:09] [INFO] ======================================================================
+[23:19:09] [INFO] PHASE 1B: Pre-Validation - Mesh Data Assets
+[23:19:09] [INFO] ======================================================================
+[23:19:09] [INFO] Checking PDA_DefaultMeshData...
+[23:19:09] [INFO]   PDA_DefaultMeshData: All properties already set
+[23:19:09] [INFO] 
+======================================================================
+[23:19:09] [INFO] PHASE 2: MIGRATION
+[23:19:09] [INFO] ======================================================================
+[23:19:09] [INFO] ======================================================================
+[23:19:09] [INFO] PHASE 2A: Migration - Item Assets
+[23:19:09] [INFO] ======================================================================
+[23:19:09] [INFO] Migrating DA_Apple...
+[23:19:09] [INFO]   Saved DA_Apple
+[23:19:09] [INFO] Migrating DA_BossMace...
+[23:19:09] [INFO]   Saved DA_BossMace
+[23:19:09] [INFO] Migrating DA_CrimsonEverbloom...
+[23:19:09] [INFO]   Saved DA_CrimsonEverbloom
+[23:19:09] [INFO] Migrating DA_Cube...
+[23:19:09] [INFO]   Saved DA_Cube
+[23:19:09] [INFO] Migrating DA_ExampleArmor...
+[23:19:09] [INFO]   Saved DA_ExampleArmor
+[23:19:09] [INFO] Migrating DA_ExampleArmor02...
+[23:19:09] [INFO]   Saved DA_ExampleArmor02
+[23:19:09] [INFO] Migrating DA_ExampleBracers...
+[23:19:09] [INFO]   Saved DA_ExampleBracers
+[23:19:09] [INFO] Migrating DA_ExampleGreaves...
+[23:19:09] [INFO]   Saved DA_ExampleGreaves
+[23:19:09] [INFO] Migrating DA_ExampleHat...
+[23:19:09] [INFO]   Saved DA_ExampleHat
+[23:19:09] [INFO] Migrating DA_ExampleHelmet...
+[23:19:09] [INFO]   Saved DA_ExampleHelmet
+[23:19:09] [INFO] Migrating DA_ExampleTalisman...
+[23:19:09] [INFO]   Saved DA_ExampleTalisman
+[23:19:09] [INFO] Migrating DA_Greatsword...
+[23:19:09] [INFO]   Saved DA_Greatsword
+[23:19:09] [INFO] Migrating DA_HealthFlask...
+[23:19:09] [INFO]   Saved DA_HealthFlask
+[23:19:09] [INFO] Migrating DA_Katana...
+[23:19:09] [INFO]   Saved DA_Katana
+[23:19:09] [INFO] Migrating DA_Lantern...
+[23:19:09] [INFO]   Saved DA_Lantern
+[23:19:09] [INFO] Migrating DA_PoisonSword...
+[23:19:09] [INFO]   Saved DA_PoisonSword
+[23:19:09] [INFO] Migrating DA_PrisonKey...
+[23:19:09] [INFO]   Saved DA_PrisonKey
+[23:19:09] [INFO] Migrating DA_Shield01...
+[23:19:09] [INFO]   Saved DA_Shield01
+[23:19:09] [INFO] Migrating DA_Sword01...
+[23:19:09] [INFO]   Saved DA_Sword01
+[23:19:09] [INFO] Migrating DA_Sword02...
+[23:19:09] [INFO]   Saved DA_Sword02
+[23:19:09] [INFO] Migrating DA_ThrowingKnife...
+[23:19:09] [INFO]   Saved DA_ThrowingKnife
+[23:19:09] [INFO] ======================================================================
+[23:19:09] [INFO] PHASE 2B: Migration - Mesh Data Assets
+[23:19:09] [INFO] ======================================================================
+[23:19:09] [INFO] Migrating PDA_DefaultMeshData...
+[23:19:09] [INFO]   Saved PDA_DefaultMeshData
+[23:19:09] [INFO] 
+======================================================================
+[23:19:09] [INFO] PHASE 3: POST-VALIDATION
+[23:19:09] [INFO] ======================================================================
+[23:19:09] [INFO] ======================================================================
+[23:19:09] [INFO] PHASE 3A: Post-Validation - Item Assets
+[23:19:09] [INFO] ======================================================================
+[23:19:09] [INFO]   DA_Apple: OK
+[23:19:09] [INFO]     world_niagara_system: /Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple
+[23:19:09] [INFO]   DA_BossMace: OK
+[23:19:09] [INFO]     world_niagara_system: /Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot
+[23:19:09] [INFO]   DA_CrimsonEverbloom: OK
+[23:19:09] [INFO]     world_niagara_system: /Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple
+[23:19:09] [INFO]   DA_Cube: OK
+[23:19:09] [INFO]     world_niagara_system: /Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple
+[23:19:09] [INFO]   DA_ExampleArmor: OK
+[23:19:09] [INFO]     world_niagara_system: /Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot
+[23:19:09] [INFO]   DA_ExampleArmor02: OK
+[23:19:09] [INFO]     world_niagara_system: /Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot
+[23:19:09] [INFO]   DA_ExampleBracers: OK
+[23:19:09] [INFO]     world_niagara_system: /Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot
+[23:19:09] [INFO]   DA_ExampleGreaves: OK
+[23:19:09] [INFO]     world_niagara_system: /Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot
+[23:19:09] [INFO]   DA_ExampleHat: OK
+[23:19:09] [INFO]     world_niagara_system: /Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot
+[23:19:09] [INFO]   DA_ExampleHelmet: OK
+[23:19:09] [INFO]     world_niagara_system: /Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot
+[23:19:09] [INFO]   DA_ExampleTalisman: OK
+[23:19:09] [INFO]     world_niagara_system: /Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot
+[23:19:09] [INFO]   DA_Greatsword: OK
+[23:19:09] [INFO]     world_niagara_system: /Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot
+[23:19:09] [INFO]   DA_HealthFlask: OK
+[23:19:09] [INFO]     world_niagara_system: /Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot
+[23:19:09] [INFO]   DA_Katana: OK
+[23:19:09] [INFO]     world_niagara_system: /Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot
+[23:19:09] [INFO]   DA_Lantern: OK
+[23:19:09] [INFO]     world_niagara_system: /Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple
+[23:19:09] [INFO]   DA_PoisonSword: OK
+[23:19:09] [INFO]     world_niagara_system: /Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot
+[23:19:09] [INFO]   DA_PrisonKey: OK
+[23:19:09] [INFO]     world_niagara_system: /Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple
+[23:19:09] [INFO]   DA_Shield01: OK
+[23:19:09] [INFO]     world_niagara_system: /Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot
+[23:19:09] [INFO]   DA_Sword01: OK
+[23:19:09] [INFO]     world_niagara_system: /Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot
+[23:19:09] [INFO]   DA_Sword02: OK
+[23:19:09] [INFO]     world_niagara_system: /Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot
+[23:19:09] [INFO]   DA_ThrowingKnife: OK
+[23:19:09] [INFO]     world_niagara_system: /Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple
+[23:19:09] [INFO] Items with niagara: 21/21
+[23:19:09] [INFO] ======================================================================
+[23:19:09] [INFO] PHASE 3B: Post-Validation - Mesh Data Assets
+[23:19:09] [INFO] ======================================================================
+[23:19:09] [INFO]   PDA_DefaultMeshData: OK
+[23:19:09] [INFO]     head_mesh: /Game/SoulslikeFramework/Meshes/SKM/SKM_QuinnCape_Head.SKM_QuinnCape_Head
+[23:19:09] [INFO]     upper_body_mesh: /Game/SoulslikeFramework/Meshes/SKM/SKM_Quinn_UpperBody.SKM_Quinn_UpperBody
+[23:19:09] [INFO]     arms_mesh: /Game/SoulslikeFramework/Meshes/SKM/SKM_Quinn_Arms.SKM_Quinn_Arms
+[23:19:09] [INFO]     lower_body_mesh: /Game/SoulslikeFramework/Meshes/SKM/SKM_QuinnCape_LowerBody.SKM_QuinnCape_LowerBody
+[23:19:09] [INFO] ======================================================================
+[23:19:09] [INFO] PHASE 4: SUMMARY
+[23:19:09] [INFO] ======================================================================
+[23:19:09] [INFO] Items with niagara set: 21/21
+[23:19:09] [INFO] Mesh data complete: 1/1
+[23:19:09] [INFO] Results saved to C:/scripts/slfconversion/bulk_migration_results.json

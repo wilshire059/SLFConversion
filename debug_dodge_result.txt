@@ -1,0 +1,63 @@
+============================================================
+DEBUG: Dodge Migration
+============================================================
+
+Step 1: Checking montage assets...
+  Forward: EXISTS
+  ForwardLeft: EXISTS
+  ForwardRight: EXISTS
+  Left: EXISTS
+  Right: EXISTS
+  Backward: EXISTS
+  BackwardLeft: EXISTS
+  BackwardRight: EXISTS
+  Backstep: EXISTS
+
+Step 2: Loading montage assets...
+  Forward: LOADED - <class 'AnimMontage'>
+  ForwardLeft: LOADED - <class 'AnimMontage'>
+  ForwardRight: LOADED - <class 'AnimMontage'>
+  Left: LOADED - <class 'AnimMontage'>
+  Right: LOADED - <class 'AnimMontage'>
+  Backward: LOADED - <class 'AnimMontage'>
+  BackwardLeft: LOADED - <class 'AnimMontage'>
+  BackwardRight: LOADED - <class 'AnimMontage'>
+  Backstep: LOADED - <class 'AnimMontage'>
+
+Step 3: Loading DA_Action_Dodge...
+  Class: PDA_Action_C
+
+Step 4: Getting DodgeMontages struct...
+  Type: <class 'SLFDodgeMontages'>
+
+Step 5: Setting montages on struct...
+  forward: SET and VERIFIED
+  forward_left: SET and VERIFIED
+  forward_right: SET and VERIFIED
+  left: SET and VERIFIED
+  right: SET and VERIFIED
+  backward: SET and VERIFIED
+  backward_left: SET and VERIFIED
+  backward_right: SET and VERIFIED
+  backstep: SET and VERIFIED
+
+Step 6: Writing struct back to asset...
+  set_editor_property: SUCCESS
+
+Step 7: Saving asset...
+  save_asset: True
+
+Step 8: Verifying by re-loading...
+  forward: AM_SLF_Dodge_F
+  forward_left: AM_SLF_Dodge_FL
+  forward_right: AM_SLF_Dodge_FR
+  left: AM_SLF_Dodge_L
+  right: AM_SLF_Dodge_R
+  backward: AM_SLF_Dodge_B
+  backward_left: AM_SLF_Dodge_BL
+  backward_right: AM_SLF_Dodge_BR
+  backstep: AM_SLF_Backstep
+
+============================================================
+DEBUG COMPLETE
+============================================================

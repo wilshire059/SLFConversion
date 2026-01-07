@@ -34,13 +34,15 @@ void UW_Browser_WeaponAbility::CacheWidgetReferences()
 
 UWidget* UW_Browser_WeaponAbility::GetToolTipWidget_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Return tooltip widget for weapon ability browser entry
 	return nullptr;
 }
+
 FEventReply UW_Browser_WeaponAbility::OnMouseDoubleClick_0_Implementation(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
-	// TODO: Implement from Blueprint EventGraph
-	return FEventReply();
+	// Handle double click on weapon ability entry
+	UE_LOG(LogTemp, Log, TEXT("UW_Browser_WeaponAbility::OnMouseDoubleClick"));
+	return FEventReply(true);
 }
 void UW_Browser_WeaponAbility::EventClear_Implementation()
 {

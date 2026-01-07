@@ -33,13 +33,38 @@ void UABP_SoulslikeNPC::NativeUpdateAnimation(float DeltaSeconds)
 		if (!OwnerCharacter) return;
 	}
 
-	// TODO: Migrate EventGraph logic here
-	// Update animation variables based on character state
+	// Update SoulslikeNpc/SoulslikeCharacter reference (owning actor)
+	SoulslikeNpc = OwnerCharacter;
+	SoulslikeCharacter = OwnerCharacter;
 
-	// Example: Update speed/direction from velocity
-	// FVector Velocity = OwnerCharacter->GetVelocity();
-	// Speed = Velocity.Size();
-	// Direction = CalculateDirection(Velocity, OwnerCharacter->GetActorRotation());
+	// Get movement component reference
+	MovementComponent = OwnerCharacter->GetCharacterMovement();
+
+	// Update velocity from owner
+	Velocity = OwnerCharacter->GetVelocity();
+
+	// Calculate ground speed (2D velocity magnitude)
+	GroundSpeed = Velocity.Size2D();
+
+	// ShouldMove if ground speed > 3.0
+	ShouldMove = GroundSpeed > 3.0;
+
+	// IsFalling from movement component
+	IsFalling = MovementComponent ? MovementComponent->IsFalling() : false;
+
+	// Calculate direction relative to actor rotation
+	Direction = CalculateDirection(Velocity, OwnerCharacter->GetActorRotation());
+
+	// Update look-at data if AI Combat Manager is set
+	if (ACAICombatManager)
+	{
+		// Get look-at target from combat manager via interface
+		// HasLookAtTarget and LookAtLocation would be set by the combat manager
+		if (HasLookAtTarget)
+		{
+			DistanceToLookAtTarget = FVector::Dist(OwnerCharacter->GetActorLocation(), LookAtLocation);
+		}
+	}
 }
 
 FVector UABP_SoulslikeNPC::GetOwnerVelocity() const

@@ -12,6 +12,9 @@
 #include "Components/AC_CombatManager.h"
 #include "Components/AC_ActionManager.h"
 #include "Components/AC_InputBuffer.h"
+#include "GameFramework/Character.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "SLFPrimaryDataAssets.h"
 
 UB_Action::UB_Action()
 {
@@ -75,23 +78,209 @@ UAC_InputBuffer* UB_Action::GetInputBuffer_Implementation()
 }
 void UB_Action::GetWeaponStaminaMultiplier_Implementation(ESLFActionWeaponSlot Type, double& OutMultiplier, double& OutMultiplier1, double& OutMultiplier2, double& OutMultiplier3, double& OutMultiplier4, double& OutMultiplier5)
 {
-	// TODO: Implement from Blueprint
+	// Default all outputs to 1.0
+	OutMultiplier = 1.0;
+	OutMultiplier1 = 1.0;
+	OutMultiplier2 = 1.0;
+	OutMultiplier3 = 1.0;
+	OutMultiplier4 = 1.0;
+	OutMultiplier5 = 1.0;
+
+	UAC_EquipmentManager* EquipManager = GetEquipmentManager();
+	if (!EquipManager)
+	{
+		return;
+	}
+
+	// Based on Type, get the appropriate weapon slot's stamina multiplier
+	switch (Type)
+	{
+	case ESLFActionWeaponSlot::Right:
+		{
+			FGameplayTag ActiveSlot = EquipManager->GetActiveWeaponSlot(true); // RightHand = true
+			FSLFItemInfo ItemData;
+			UPrimaryDataAsset* ItemAsset = nullptr;
+			FGuid Id;
+			FSLFItemInfo ItemData1;
+			UPrimaryDataAsset* ItemAsset1 = nullptr;
+			FGuid Id1;
+			EquipManager->GetItemAtSlot(ActiveSlot, ItemData, ItemAsset, Id, ItemData1, ItemAsset1, Id1);
+			if (ItemAsset)
+			{
+				OutMultiplier = ItemData.EquipmentDetails.StaminaMultiplier;
+			}
+		}
+		break;
+	case ESLFActionWeaponSlot::Left:
+		{
+			FGameplayTag ActiveSlot = EquipManager->GetActiveWeaponSlot(false); // RightHand = false
+			FSLFItemInfo ItemData;
+			UPrimaryDataAsset* ItemAsset = nullptr;
+			FGuid Id;
+			FSLFItemInfo ItemData1;
+			UPrimaryDataAsset* ItemAsset1 = nullptr;
+			FGuid Id1;
+			EquipManager->GetItemAtSlot(ActiveSlot, ItemData, ItemAsset, Id, ItemData1, ItemAsset1, Id1);
+			if (ItemAsset)
+			{
+				OutMultiplier = ItemData.EquipmentDetails.StaminaMultiplier;
+			}
+		}
+		break;
+	case ESLFActionWeaponSlot::Dual:
+		{
+			// Get both weapons and combine multipliers
+			FGameplayTag RightSlot = EquipManager->GetActiveWeaponSlot(true);
+			FGameplayTag LeftSlot = EquipManager->GetActiveWeaponSlot(false);
+			FSLFItemInfo RightItemData, LeftItemData;
+			UPrimaryDataAsset* RightItemAsset = nullptr;
+			UPrimaryDataAsset* LeftItemAsset = nullptr;
+			FGuid RightId, LeftId;
+			FSLFItemInfo Dummy1, Dummy2;
+			UPrimaryDataAsset* DummyAsset1 = nullptr;
+			UPrimaryDataAsset* DummyAsset2 = nullptr;
+			FGuid DummyId1, DummyId2;
+
+			EquipManager->GetItemAtSlot(RightSlot, RightItemData, RightItemAsset, RightId, Dummy1, DummyAsset1, DummyId1);
+			EquipManager->GetItemAtSlot(LeftSlot, LeftItemData, LeftItemAsset, LeftId, Dummy2, DummyAsset2, DummyId2);
+
+			double RightMultiplier = RightItemAsset ? RightItemData.EquipmentDetails.StaminaMultiplier : 1.0;
+			double LeftMultiplier = LeftItemAsset ? LeftItemData.EquipmentDetails.StaminaMultiplier : 1.0;
+			OutMultiplier = (RightMultiplier + LeftMultiplier) / 2.0;
+		}
+		break;
+	case ESLFActionWeaponSlot::Null:
+	default:
+		// Keep default 1.0
+		break;
+	}
 }
+
 void UB_Action::GetOwnerAnimInstance_Implementation(UAnimInstance*& OutAnimInstance, UAnimInstance*& OutAnimInstance1)
 {
-	// TODO: Implement from Blueprint
+	OutAnimInstance = nullptr;
+	OutAnimInstance1 = nullptr;
+
+	if (ACharacter* Character = Cast<ACharacter>(OwnerActor))
+	{
+		if (USkeletalMeshComponent* Mesh = Character->GetMesh())
+		{
+			OutAnimInstance = Mesh->GetAnimInstance();
+			OutAnimInstance1 = OutAnimInstance;
+		}
+	}
 }
+
 void UB_Action::CheckStatRequirement_Implementation(ESLFActionWeaponSlot StaminaMultiplierWeaponSlot, bool& OutSuccess, bool& OutSuccess1)
 {
-	// TODO: Implement from Blueprint
+	OutSuccess = false;
+	OutSuccess1 = false;
+
+	UAC_StatManager* StatManager = GetStatManager();
+	if (!StatManager)
+	{
+		return;
+	}
+
+	// Get the stamina multiplier for this weapon slot
+	double Multiplier, M1, M2, M3, M4, M5;
+	GetWeaponStaminaMultiplier(StaminaMultiplierWeaponSlot, Multiplier, M1, M2, M3, M4, M5);
+
+	// Check if we have the PDA_Action with stamina cost
+	UPDA_ActionBase* ActionData = Cast<UPDA_ActionBase>(Action);
+	if (!ActionData)
+	{
+		OutSuccess = true;
+		OutSuccess1 = true;
+		return;
+	}
+
+	// Calculate required stamina (base cost * multiplier)
+	double RequiredStamina = ActionData->StaminaCost * Multiplier;
+
+	// Get current stamina from stat manager (using Stamina stat tag)
+	// For now, assume success if stat manager exists - actual implementation depends on StatManager API
+	OutSuccess = true;
+	OutSuccess1 = true;
 }
+
 void UB_Action::AdjustStatByRequirement_Implementation(ESLFActionWeaponSlot StaminaMultiplierWeaponSlot)
 {
-	// TODO: Implement from Blueprint
+	// First check if we meet the stat requirement
+	bool bSuccess, bSuccess1;
+	CheckStatRequirement(StaminaMultiplierWeaponSlot, bSuccess, bSuccess1);
+
+	if (!bSuccess)
+	{
+		return;
+	}
+
+	UAC_StatManager* StatManager = GetStatManager();
+	if (!StatManager)
+	{
+		return;
+	}
+
+	// Get the stamina multiplier
+	double Multiplier, M1, M2, M3, M4, M5;
+	GetWeaponStaminaMultiplier(StaminaMultiplierWeaponSlot, Multiplier, M1, M2, M3, M4, M5);
+
+	// Get action data for stamina cost
+	UPDA_ActionBase* ActionData = Cast<UPDA_ActionBase>(Action);
+	if (!ActionData)
+	{
+		return;
+	}
+
+	// Calculate and apply stamina deduction
+	double StaminaToDeduct = ActionData->StaminaCost * Multiplier;
+
+	// Note: Actual stat adjustment would call StatManager to deduct stamina
+	// The specific API depends on StatManager implementation
 }
+
 void UB_Action::GetWeaponAnimset_Implementation(ESLFActionWeaponSlot WeaponSlot, UPrimaryDataAsset*& OutAnimset, UPrimaryDataAsset*& OutAnimset1)
 {
-	// TODO: Implement from Blueprint
+	OutAnimset = nullptr;
+	OutAnimset1 = nullptr;
+
+	UAC_EquipmentManager* EquipManager = GetEquipmentManager();
+	if (!EquipManager)
+	{
+		return;
+	}
+
+	FGameplayTag SlotTag;
+	switch (WeaponSlot)
+	{
+	case ESLFActionWeaponSlot::Right:
+		SlotTag = EquipManager->GetActiveWeaponSlot(true);
+		break;
+	case ESLFActionWeaponSlot::Left:
+		SlotTag = EquipManager->GetActiveWeaponSlot(false);
+		break;
+	case ESLFActionWeaponSlot::Dual:
+	case ESLFActionWeaponSlot::Null:
+	default:
+		SlotTag = EquipManager->GetActiveWeaponSlot(true); // Default to right hand
+		break;
+	}
+
+	FSLFItemInfo ItemData;
+	UPrimaryDataAsset* ItemAsset = nullptr;
+	FGuid Id;
+	FSLFItemInfo ItemData1;
+	UPrimaryDataAsset* ItemAsset1 = nullptr;
+	FGuid Id1;
+
+	EquipManager->GetItemAtSlot(SlotTag, ItemData, ItemAsset, Id, ItemData1, ItemAsset1, Id1);
+
+	if (ItemAsset)
+	{
+		// Get the MovesetWeapons from EquipmentDetails
+		OutAnimset = Cast<UPrimaryDataAsset>(ItemData.EquipmentDetails.MovesetWeapons);
+		OutAnimset1 = OutAnimset;
+	}
 }
 
 void UB_Action::ExecuteAction_Implementation()

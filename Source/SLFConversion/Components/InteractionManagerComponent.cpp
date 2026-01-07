@@ -93,8 +93,11 @@ void UInteractionManagerComponent::TraceForInteractables_Implementation()
 		{
 			if (AActor* HitActor = Hit.GetActor())
 			{
-				// TODO: Check if implements interactable interface
-				NearbyInteractables.AddUnique(HitActor);
+				// Only add actors that implement the interactable interface
+				if (HitActor->GetClass()->ImplementsInterface(UBPI_Interactable::StaticClass()))
+				{
+					NearbyInteractables.AddUnique(HitActor);
+				}
 			}
 		}
 	}

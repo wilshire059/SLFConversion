@@ -11,6 +11,8 @@
 
 #include "SLFRestingPointBase.h"
 #include "Components/SceneComponent.h"
+#include "Components/StatManagerComponent.h"
+#include "Components/InventoryManagerComponent.h"
 
 ASLFRestingPointBase::ASLFRestingPointBase()
 {
@@ -69,10 +71,33 @@ void ASLFRestingPointBase::OnInteract_Implementation(AActor* Interactor)
 	// Replenish stats
 	FSLFReplenishData ReplenishData = GetReplenishData();
 
-	// TODO: Replenish stats via StatManager
-	// TODO: Replenish items via InventoryManager
-	// TODO: Setup camera for resting view
-	// TODO: Open resting menu
+	// Replenish stats via StatManager - restore to max for each stat tag
+	if (UStatManagerComponent* StatManager = Interactor->FindComponentByClass<UStatManagerComponent>())
+	{
+		for (const FGameplayTag& StatTag : ReplenishData.StatsToReplenish)
+		{
+			// Fully restore the stat (set current = max)
+			StatManager->ResetStat(StatTag);
+			UE_LOG(LogTemp, Verbose, TEXT("[RestingPoint] Replenished stat: %s"), *StatTag.ToString());
+		}
+	}
+
+	// Replenish items via InventoryManager
+	if (UInventoryManagerComponent* InventoryManager = Interactor->FindComponentByClass<UInventoryManagerComponent>())
+	{
+		for (UDataAsset* Item : ReplenishData.ItemsToReplenish)
+		{
+			if (Item)
+			{
+				// Replenish rechargeable items to max count
+				InventoryManager->ReplenishItem(Item, -1); // -1 means replenish to max
+				UE_LOG(LogTemp, Verbose, TEXT("[RestingPoint] Replenished item: %s"), *Item->GetName());
+			}
+		}
+	}
+
+	// Camera setup and menu opening are handled by player controller response to OnReady
+	// The player controller should bind to OnReady and handle UI/camera transitions
 
 	OnReady.Broadcast();
 }

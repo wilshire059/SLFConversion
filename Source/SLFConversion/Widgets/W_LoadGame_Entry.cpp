@@ -34,7 +34,8 @@ void UW_LoadGame_Entry::CacheWidgetReferences()
 
 void UW_LoadGame_Entry::SetSaveSlotSelected_Implementation(bool InSelected)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Update visual state to reflect selection
+	UE_LOG(LogTemp, Log, TEXT("UW_LoadGame_Entry::SetSaveSlotSelected - Selected: %s"), InSelected ? TEXT("true") : TEXT("false"));
 }
 void UW_LoadGame_Entry::EventOnLoadEntryPressed_Implementation()
 {

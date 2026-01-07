@@ -30,13 +30,13 @@
 // INPUT HELPERS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-TArray<FKey> UBFL_Helper::GetKeysForIA(UInputMappingContext* InputMapping, UInputAction* TargetIA, const UObject* WorldContextObject)
+void UBFL_Helper::GetKeysForIA(UInputMappingContext* InputMapping, UInputAction* TargetIA, const UObject* WorldContextObject, TArray<FKey>& MappedKeys)
 {
-	TArray<FKey> Keys;
+	MappedKeys.Empty();
 
 	if (!InputMapping || !TargetIA)
 	{
-		return Keys;
+		return;
 	}
 
 	// Get all mappings in the context
@@ -45,11 +45,9 @@ TArray<FKey> UBFL_Helper::GetKeysForIA(UInputMappingContext* InputMapping, UInpu
 	{
 		if (Mapping.Action == TargetIA)
 		{
-			Keys.Add(Mapping.Key);
+			MappedKeys.Add(Mapping.Key);
 		}
 	}
-
-	return Keys;
 }
 
 UEnhancedInputUserSettings* UBFL_Helper::GetInputUserSettings(const UObject* WorldContextObject)
@@ -634,4 +632,140 @@ void UBFL_Helper::UnlockCraftableItems(const TArray<UPrimaryDataAsset*>& Items, 
 			// This would typically be: ProgressManager->UnlockCraftableItem(Item);
 		}
 	}
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CLASS CHECKING (replaces BML_HelperMacros)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+bool UBFL_Helper::IsClassChild(UObject* Target, UClass* ParentClass)
+{
+	if (!Target || !ParentClass)
+	{
+		return false;
+	}
+
+	return Target->GetClass()->IsChildOf(ParentClass);
+}
+
+bool UBFL_Helper::IsClassEqual(UObject* Target, UClass* ClassToCheck)
+{
+	if (!Target || !ClassToCheck)
+	{
+		return false;
+	}
+
+	return Target->GetClass() == ClassToCheck;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ARRAY HELPERS (replaces BML_HelperMacros)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+bool UBFL_Helper::IsValidObjectArray(const TArray<UObject*>& Array)
+{
+	return Array.Num() > 0;
+}
+
+bool UBFL_Helper::IsValidIntArray(const TArray<int32>& Array)
+{
+	return Array.Num() > 0;
+}
+
+bool UBFL_Helper::IsValidTagArray(const TArray<FGameplayTag>& Array)
+{
+	return Array.Num() > 0;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TIMER/COOLDOWN HELPERS (replaces BML_HelperMacros)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// Static cooldown map definition
+TMap<TPair<TWeakObjectPtr<UObject>, FName>, double> UBFL_Helper::CooldownMap;
+
+bool UBFL_Helper::StartCooldown(UObject* Object, FName CooldownKey, float Duration, const UObject* WorldContextObject)
+{
+	if (!Object || Duration <= 0.0f)
+	{
+		return false;
+	}
+
+	// Check if already on cooldown
+	if (IsOnCooldown(Object, CooldownKey, WorldContextObject))
+	{
+		return false;
+	}
+
+	// Get current world time
+	UWorld* World = nullptr;
+	if (WorldContextObject)
+	{
+		World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
+	}
+
+	if (!World)
+	{
+		return false;
+	}
+
+	double CurrentTime = World->GetTimeSeconds();
+	double EndTime = CurrentTime + Duration;
+
+	// Store cooldown end time
+	TPair<TWeakObjectPtr<UObject>, FName> Key = MakeTuple(TWeakObjectPtr<UObject>(Object), CooldownKey);
+	CooldownMap.Add(Key, EndTime);
+
+	return true;
+}
+
+bool UBFL_Helper::IsOnCooldown(UObject* Object, FName CooldownKey, const UObject* WorldContextObject)
+{
+	if (!Object)
+	{
+		return false;
+	}
+
+	TPair<TWeakObjectPtr<UObject>, FName> Key = MakeTuple(TWeakObjectPtr<UObject>(Object), CooldownKey);
+	double* EndTime = CooldownMap.Find(Key);
+
+	if (!EndTime)
+	{
+		return false;
+	}
+
+	// Get current world time
+	UWorld* World = nullptr;
+	if (WorldContextObject)
+	{
+		World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
+	}
+
+	if (!World)
+	{
+		return false;
+	}
+
+	double CurrentTime = World->GetTimeSeconds();
+
+	// Check if cooldown has expired
+	if (CurrentTime >= *EndTime)
+	{
+		// Clean up expired cooldown
+		CooldownMap.Remove(Key);
+		return false;
+	}
+
+	return true;
+}
+
+void UBFL_Helper::ClearCooldown(UObject* Object, FName CooldownKey, const UObject* WorldContextObject)
+{
+	if (!Object)
+	{
+		return;
+	}
+
+	TPair<TWeakObjectPtr<UObject>, FName> Key = MakeTuple(TWeakObjectPtr<UObject>(Object), CooldownKey);
+	CooldownMap.Remove(Key);
 }

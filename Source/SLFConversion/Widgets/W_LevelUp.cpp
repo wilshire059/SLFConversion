@@ -4,6 +4,7 @@
 // 20-PASS VALIDATION: 2026-01-01 Autonomous Session
 
 #include "Widgets/W_LevelUp.h"
+#include "Blueprints/B_Stat.h"
 
 UW_LevelUp::UW_LevelUp(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -34,11 +35,15 @@ void UW_LevelUp::CacheWidgetReferences()
 
 void UW_LevelUp::HandleStatChanges_Implementation(UB_Stat* StatObject, bool Increase)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Handle stat increase/decrease preview in level up screen
+	UE_LOG(LogTemp, Log, TEXT("UW_LevelUp::HandleStatChanges - Stat: %s, Increase: %s"),
+		StatObject ? *StatObject->GetName() : TEXT("None"), Increase ? TEXT("true") : TEXT("false"));
 }
+
 void UW_LevelUp::SetAllStatEntries_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Initialize all stat entry widgets with current stat values
+	UE_LOG(LogTemp, Log, TEXT("UW_LevelUp::SetAllStatEntries"));
 }
 void UW_LevelUp::EventApplyNewStats_Implementation()
 {

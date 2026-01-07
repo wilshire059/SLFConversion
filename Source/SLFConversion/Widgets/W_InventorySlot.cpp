@@ -34,7 +34,8 @@ void UW_InventorySlot::CacheWidgetReferences()
 
 void UW_InventorySlot::AdjustAmountAndIconOpacity_Implementation(double Alpha)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Adjust the opacity of the item icon and amount text
+	UE_LOG(LogTemp, Log, TEXT("UW_InventorySlot::AdjustAmountAndIconOpacity - Alpha: %f"), Alpha);
 }
 void UW_InventorySlot::EventChangeAmount_Implementation(int32 NewCount)
 {

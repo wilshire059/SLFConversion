@@ -64,7 +64,7 @@ public:
 	class ADirectionalLight* SunLight;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sky")
-	class ASkyAtmosphere* SkyAtmosphere;
+	class ASkyAtmosphere* SkyAtmosphereActor;
 
 	// Event Dispatchers
 	UPROPERTY(BlueprintAssignable, Category = "Sky|Events")

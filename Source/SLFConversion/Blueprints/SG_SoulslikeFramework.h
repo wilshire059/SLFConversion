@@ -9,18 +9,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CoreMinimal.h"
-#include "GameplayTagContainer.h"
-#include "SLFEnums.h"
+#include "GameFramework/SaveGame.h"
 #include "SLFGameTypes.h"
-#include "SLFPrimaryDataAssets.h"
-#include "InputMappingContext.h"
-#include "LevelSequence.h"
-#include "LevelSequencePlayer.h"
-#include "MovieSceneSequencePlaybackSettings.h"
-#include "SkeletalMergingLibrary.h"
-#include "GeometryCollection/GeometryCollectionObject.h"
-#include "Field/FieldSystemObjects.h"
 #include "SG_SoulslikeFramework.generated.h"
 
 // Forward declarations
@@ -32,7 +22,7 @@ class UDataTable;
 
 
 UCLASS(Blueprintable, BlueprintType)
-class SLFCONVERSION_API USG_SoulslikeFramework : public UObject
+class SLFCONVERSION_API USG_SoulslikeFramework : public USaveGame
 {
 	GENERATED_BODY()
 

@@ -39,6 +39,14 @@ class SLFCONVERSION_API AB_DemoRoom : public AActor
 public:
 	AB_DemoRoom();
 
+	// BeginPlay - called when game starts
+	// Generate room geometry at runtime since OnConstruction only runs in editor
+	virtual void BeginPlay() override;
+
+	// OnConstruction - called when actor is placed or properties change in editor
+	// This replaces the Blueprint ConstructionScript
+	virtual void OnConstruction(const FTransform& Transform) override;
+
 	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (39)
 	// ═══════════════════════════════════════════════════════════════════════

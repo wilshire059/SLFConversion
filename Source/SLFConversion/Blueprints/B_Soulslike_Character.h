@@ -100,4 +100,48 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "B_Soulslike_Character")
 	bool GetMeshInitialized();
 	virtual bool GetMeshInitialized_Implementation();
+
+	// ═══════════════════════════════════════════════════════════════════
+	// MOVEMENT FINALIZATION EVENTS
+	// ═══════════════════════════════════════════════════════════════════
+
+	// Called when container interaction move-to completes
+	UFUNCTION(BlueprintCallable, Category = "B_Soulslike_Character|Events")
+	void EventFinalizeContainerMoveTo();
+
+	// Called when ladder top move-to completes
+	UFUNCTION(BlueprintCallable, Category = "B_Soulslike_Character|Events")
+	void EventFinalizeLadderTopMoveTo();
+
+	// Called when ladder bottom move-to completes
+	UFUNCTION(BlueprintCallable, Category = "B_Soulslike_Character|Events")
+	void EventFinalizeLadderBottomMoveTo();
+
+	// Called when door move-to completes
+	UFUNCTION(BlueprintCallable, Category = "B_Soulslike_Character|Events")
+	void EventFinalizeDoorMoveTo();
+
+	// Called when target lock rotation ends
+	UFUNCTION(BlueprintCallable, Category = "B_Soulslike_Character|Events")
+	void EventOnTargetLockRotationEnd();
+
+	// Called when mesh is initialized
+	UFUNCTION(BlueprintCallable, Category = "B_Soulslike_Character|Events")
+	void EventOnMeshInitialized();
+
+	// Called when dialog exits
+	UFUNCTION(BlueprintCallable, Category = "B_Soulslike_Character|Events")
+	void EventOnDialogExit();
+
+	// Set movement direction
+	UFUNCTION(BlueprintCallable, Category = "B_Soulslike_Character|Events")
+	void EventSetDirection(FVector Direction);
+
+	// Set soft skeletal mesh asset
+	UFUNCTION(BlueprintCallable, Category = "B_Soulslike_Character|Events")
+	void EventSetSoftSkeletalMeshAsset(TSoftObjectPtr<USkeletalMesh> MeshAsset);
+
+	// Refresh mesh components
+	UFUNCTION(BlueprintCallable, Category = "B_Soulslike_Character|Events")
+	void EventRefreshMesh();
 };

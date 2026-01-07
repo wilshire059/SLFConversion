@@ -91,6 +91,10 @@ public:
 	bool IsAsyncWeaponBusy;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Runtime")
 	TArray<FSLFEquipmentItemsSaveInfo> Cached_LoadedEquipment;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Runtime")
+	bool bLeftHandTwoHandStance;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Runtime")
+	bool bRightHandTwoHandStance;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (9)
@@ -242,4 +246,20 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_EquipmentManager")
 	void GetGuardHitMontage(UAnimMontage*& OutGuardHitMontage, UAnimMontage*& OutGuardHitMontage_1, UAnimMontage*& OutGuardHitMontage_2, UAnimMontage*& OutGuardHitMontage_3, UAnimMontage*& OutGuardHitMontage_4, UAnimMontage*& OutGuardHitMontage_5);
 	virtual void GetGuardHitMontage_Implementation(UAnimMontage*& OutGuardHitMontage, UAnimMontage*& OutGuardHitMontage_1, UAnimMontage*& OutGuardHitMontage_2, UAnimMontage*& OutGuardHitMontage_3, UAnimMontage*& OutGuardHitMontage_4, UAnimMontage*& OutGuardHitMontage_5);
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// WEAPON DAMAGE GETTERS (for AnimNotify weapon trace)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	/** Get the total damage from currently equipped weapon */
+	UFUNCTION(BlueprintCallable, Category = "AC_EquipmentManager|Combat")
+	double GetWeaponDamage() const;
+
+	/** Get the poise damage from currently equipped weapon */
+	UFUNCTION(BlueprintCallable, Category = "AC_EquipmentManager|Combat")
+	double GetWeaponPoiseDamage() const;
+
+	/** Get status effects from currently equipped weapon */
+	UFUNCTION(BlueprintCallable, Category = "AC_EquipmentManager|Combat")
+	TMap<FGameplayTag, UPrimaryDataAsset*> GetWeaponStatusEffects() const;
 };

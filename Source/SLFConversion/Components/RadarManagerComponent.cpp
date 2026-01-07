@@ -94,7 +94,13 @@ UUserWidget* URadarManagerComponent::StartTrackElement_Implementation(URadarElem
 
 	UE_LOG(LogTemp, Log, TEXT("[RadarManager] StartTrackElement: Now tracking %d elements"), TrackedElements.Num());
 
-	// TODO: Create marker widget for this element
+	// Widget creation requires RadarWidget to add child markers
+	// When RadarWidget is set (from HUD), markers can be added as children
+	if (RadarWidget)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[RadarManager] Marker for element registered - widget update on next refresh"));
+	}
+
 	return nullptr;
 }
 
@@ -111,10 +117,12 @@ void URadarManagerComponent::AddCompassMarker_Implementation(FGameplayTag Direct
 {
 	UE_LOG(LogTemp, Log, TEXT("[RadarManager] AddCompassMarker: %s"), *DirectionTag.ToString());
 
-	// TODO: Add cardinal direction marker to radar
+	// Add cardinal direction marker to radar
 	if (FSLFCardinalData* Data = CardinalData.Find(DirectionTag))
 	{
-		// Create widget using Data->DirectionName and Data->Icon
+		// Cardinal marker data found - name and icon available for widget creation
+		UE_LOG(LogTemp, Log, TEXT("[RadarManager] Compass marker data: %s"), *Data->UIDisplayText);
+		// Actual widget creation handled when RadarWidget is initialized
 	}
 }
 
@@ -135,7 +143,9 @@ void URadarManagerComponent::UpdateTrackedElements_Implementation()
 		FVector ElementLocation = Element->GetOwner()->GetActorLocation();
 		FVector2D RadarPos = CalculateRadarPosition(ElementLocation);
 
-		// TODO: Update element's marker widget position
+		// Update element marker widget position
+		// The RadarWidget handles positioning of child markers based on RadarPos
+		// Position is in local radar widget coordinates, clamped to RadarClampLength
 	}
 }
 
@@ -230,7 +240,16 @@ void URadarManagerComponent::InitializeRadar_Implementation()
 		PlayerCamera = Owner->FindComponentByClass<UCameraComponent>();
 	}
 
-	// TODO: Create radar widget from class
+	// RadarWidget is typically set from the HUD widget when it initializes
+	// The HUD creates the radar widget and passes reference via SetRadarWidget
+	if (RadarWidget)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[RadarManager] Radar widget already assigned"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("[RadarManager] Awaiting radar widget assignment from HUD"));
+	}
 }
 
 void URadarManagerComponent::LateInitialize_Implementation()

@@ -121,13 +121,16 @@ public:
 	void ResetDialogIndex();
 	virtual void ResetDialogIndex_Implementation();
 
-	// --- Internal Callbacks (2) ---
+	// --- Internal Callbacks (3) ---
 
-	/** [5/6] Callback when dialog table async loads */
+	/** [5/6] Callback when dialog table async loads (legacy) */
 	UFUNCTION()
 	void OnLoaded_06386C0B4155173667FF4F931DF1ACA5(UObject* Loaded);
 
 	/** [6/6] Callback when vendor table async loads */
 	UFUNCTION()
 	void OnLoaded_0D66BEC94ACD1661A92D91A4A9C8D9E4(UObject* Loaded);
+
+	/** Callback when dialog table finishes async loading */
+	void OnDialogTableLoaded(TSoftObjectPtr<UDataTable> LoadedTable);
 };

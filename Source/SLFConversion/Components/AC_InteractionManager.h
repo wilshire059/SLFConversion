@@ -104,6 +104,31 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AC_InteractionManager|Events")
 	void EventOnRest(AActor* RestingPoint);
 
+	// --- Custom Event: Event RestInitialized ---
+	// Called when resting is initialized (ready to show rest menu)
+	UFUNCTION(BlueprintCallable, Category = "AC_InteractionManager|Events")
+	void EventRestInitialized();
+
+	// --- Custom Event: Event RestEnded ---
+	// Called when resting ends (player leaves rest menu)
+	UFUNCTION(BlueprintCallable, Category = "AC_InteractionManager|Events")
+	void EventRestEnded();
+
+	// --- Custom Event: Event Replenishment ---
+	// Called to replenish resources at resting point
+	UFUNCTION(BlueprintCallable, Category = "AC_InteractionManager|Events")
+	void EventReplenishment();
+
+	// --- Custom Event: Event Reset ---
+	// Called to reset interaction state
+	UFUNCTION(BlueprintCallable, Category = "AC_InteractionManager|Events")
+	void EventReset();
+
+	// --- Custom Event: Event Lockon ---
+	// Called to trigger lock-on behavior
+	UFUNCTION(BlueprintCallable, Category = "AC_InteractionManager|Events")
+	void EventLockon();
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_InteractionManager")
 	void RemoveFromNearbyInteractables(AActor* Item);
 	virtual void RemoveFromNearbyInteractables_Implementation(AActor* Item);

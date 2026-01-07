@@ -9,18 +9,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CoreMinimal.h"
-#include "GameplayTagContainer.h"
-#include "SLFEnums.h"
-#include "SLFGameTypes.h"
-#include "SLFPrimaryDataAssets.h"
-#include "InputMappingContext.h"
-#include "LevelSequence.h"
-#include "LevelSequencePlayer.h"
-#include "MovieSceneSequencePlaybackSettings.h"
-#include "SkeletalMergingLibrary.h"
-#include "GeometryCollection/GeometryCollectionObject.h"
-#include "Field/FieldSystemObjects.h"
+#include "GameFramework/SaveGame.h"
 #include "SG_SaveSlots.generated.h"
 
 // Forward declarations
@@ -32,7 +21,7 @@ class UDataTable;
 
 
 UCLASS(Blueprintable, BlueprintType)
-class SLFCONVERSION_API USG_SaveSlots : public UObject
+class SLFCONVERSION_API USG_SaveSlots : public USaveGame
 {
 	GENERATED_BODY()
 

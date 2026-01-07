@@ -52,7 +52,9 @@ public:
 
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (0)
+	// FUNCTIONS
 	// ═══════════════════════════════════════════════════════════════════════
 
+	/** Execute use equipped tool - gets active tool slot and uses the item from inventory */
+	virtual void ExecuteAction_Implementation() override;
 };

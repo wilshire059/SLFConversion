@@ -34,7 +34,8 @@ void UW_Inventory_ActionButton::CacheWidgetReferences()
 
 void UW_Inventory_ActionButton::SetActionButtonSelected_Implementation(bool InSelected)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Update visual state to reflect selection
+	UE_LOG(LogTemp, Log, TEXT("UW_Inventory_ActionButton::SetActionButtonSelected - Selected: %s"), InSelected ? TEXT("true") : TEXT("false"));
 }
 void UW_Inventory_ActionButton::EventActionPressed_Implementation()
 {

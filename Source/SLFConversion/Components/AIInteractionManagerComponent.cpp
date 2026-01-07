@@ -11,7 +11,10 @@
 
 #include "AIInteractionManagerComponent.h"
 #include "ProgressManagerComponent.h"
+#include "SLFPrimaryDataAssets.h"
 #include "Engine/DataTable.h"
+#include "Engine/StreamableManager.h"
+#include "Engine/AssetManager.h"
 #include "Blueprint/UserWidget.h"
 
 UAIInteractionManagerComponent::UAIInteractionManagerComponent()
@@ -74,10 +77,35 @@ void UAIInteractionManagerComponent::BeginDialog_Implementation(
 	ProgressManager = InProgressManager;
 
 	// Load dialog table from asset
-	if (DialogAsset)
+	if (UPDA_Dialog* Dialog = Cast<UPDA_Dialog>(DialogAsset))
 	{
-		// TODO: Get dialog table from data asset and async load
-		// When loaded, call OnLoaded_06386C0B4155173667FF4F931DF1ACA5
+		// Get dialog table based on player's progress
+		TSoftObjectPtr<UDataTable> DialogTable;
+		Dialog->GetDialogTableBasedOnProgress(ProgressManager, DialogTable);
+
+		// If no progress-based table, use default
+		if (DialogTable.IsNull())
+		{
+			DialogTable = Dialog->DefaultDialogTable;
+		}
+
+		// Async load the dialog table
+		if (!DialogTable.IsNull())
+		{
+			FStreamableManager& Streamable = UAssetManager::GetStreamableManager();
+			Streamable.RequestAsyncLoad(DialogTable.ToSoftObjectPath(),
+				FStreamableDelegate::CreateUObject(this, &UAIInteractionManagerComponent::OnDialogTableLoaded, DialogTable));
+			UE_LOG(LogTemp, Log, TEXT("[AIInteractionManager] Async loading dialog table: %s"),
+				*DialogTable.ToSoftObjectPath().ToString());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[AIInteractionManager] No dialog table available"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[AIInteractionManager] DialogAsset is not a UPDA_Dialog"));
 	}
 }
 
@@ -120,5 +148,28 @@ void UAIInteractionManagerComponent::OnLoaded_0D66BEC94ACD1661A92D91A4A9C8D9E4(U
 	UE_LOG(LogTemp, Log, TEXT("[AIInteractionManager] Vendor table loaded: %s"),
 		Loaded ? *Loaded->GetName() : TEXT("null"));
 
-	// TODO: Initialize vendor inventory from loaded table
+	// Vendor inventory is typically pre-configured in UPDA_Vendor::Items
+	// This callback can be used for additional setup if needed
+	if (UPDA_Vendor* Vendor = Cast<UPDA_Vendor>(VendorAsset))
+	{
+		UE_LOG(LogTemp, Log, TEXT("[AIInteractionManager] Vendor has %d items configured"),
+			Vendor->Items.Num());
+	}
+}
+
+void UAIInteractionManagerComponent::OnDialogTableLoaded(TSoftObjectPtr<UDataTable> LoadedTable)
+{
+	UE_LOG(LogTemp, Log, TEXT("[AIInteractionManager] Dialog table async load complete"));
+
+	if (UDataTable* Table = LoadedTable.Get())
+	{
+		ActiveTable = Table;
+		MaxIndex = FMath::Max(0, Table->GetRowNames().Num() - 1);
+		UE_LOG(LogTemp, Log, TEXT("[AIInteractionManager] Dialog table initialized with %d entries (MaxIndex: %d)"),
+			Table->GetRowNames().Num(), MaxIndex);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[AIInteractionManager] Failed to resolve dialog table"));
+	}
 }

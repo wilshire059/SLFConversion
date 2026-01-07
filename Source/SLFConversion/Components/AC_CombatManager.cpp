@@ -12,6 +12,7 @@
 #include "Components/AC_StatManager.h"
 #include "Components/AC_EquipmentManager.h"
 #include "Components/AC_StatusEffectManager.h"
+#include "Blueprints/B_DeathCurrency.h"
 #include "GameFramework/Character.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -727,8 +728,20 @@ void UAC_CombatManager::HandleHitReaction_Implementation(const FHitResult& HitIn
 			1000.0f);
 	}
 
-	// TODO: Play hit reaction animation based on direction
-	// This would involve getting the reaction animset and playing appropriate montage
+	// Play hit reaction animation based on direction
+	if (IsValid(ReactionAnimset) && IsValid(Mesh))
+	{
+		UAnimMontage* ReactionMontage = ReactionAnimset->ReactionMontage.LoadSynchronous();
+		if (IsValid(ReactionMontage))
+		{
+			UAnimInstance* AnimInstance = Mesh->GetAnimInstance();
+			if (IsValid(AnimInstance))
+			{
+				AnimInstance->Montage_Play(ReactionMontage);
+				UE_LOG(LogTemp, Log, TEXT("  Playing hit reaction montage: %s"), *ReactionMontage->GetName());
+			}
+		}
+	}
 }
 
 /**
@@ -810,9 +823,9 @@ void UAC_CombatManager::ApplyIncomingStatusEffects_Implementation(const TMap<FGa
 
 		if (IsValid(EffectData))
 		{
-			// TODO: Call status effect manager to apply effect
-			// StatusEffectManager->ApplyStatusEffect(EffectData, Multiplier);
-			UE_LOG(LogTemp, Log, TEXT("  Would apply effect: %s"), *EffectTag.ToString());
+			// Apply one-shot buildup with multiplier
+			StatusEffectManager->AddOneShotBuildup(EffectData, 1, Multiplier);
+			UE_LOG(LogTemp, Log, TEXT("  Applied status effect: %s with multiplier: %f"), *EffectTag.ToString(), Multiplier);
 		}
 	}
 }
@@ -856,8 +869,26 @@ void UAC_CombatManager::DropCurrency_Implementation()
 		FVector DropLocation2;
 		GetBossDoorCurrencyDropLocation(DropLocation, DropLocation2);
 
-		// TODO: Spawn currency pickup actor at DropLocation
-		UE_LOG(LogTemp, Log, TEXT("  Would drop %f currency at %s"), CurrencyAmount, *DropLocation.ToString());
+		// Spawn currency pickup actor at DropLocation
+		UWorld* World = GetWorld();
+		if (IsValid(World))
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+			AB_DeathCurrency* CurrencyPickup = World->SpawnActor<AB_DeathCurrency>(
+				AB_DeathCurrency::StaticClass(),
+				DropLocation,
+				FRotator::ZeroRotator,
+				SpawnParams
+			);
+
+			if (IsValid(CurrencyPickup))
+			{
+				CurrencyPickup->CurrencyAmount = FMath::RoundToInt(CurrencyAmount);
+				UE_LOG(LogTemp, Log, TEXT("  Spawned currency pickup with %d at %s"), CurrencyPickup->CurrencyAmount, *DropLocation.ToString());
+			}
+		}
 	}
 }
 
@@ -1267,7 +1298,21 @@ void UAC_CombatManager::EventOnPoiseChanged(UB_Stat* UpdatedStat, double Change,
 				PoiseBroken = true;
 				UE_LOG(LogTemp, Log, TEXT("  POISE BROKEN!"));
 
-				// TODO: Play poise break animation via interface call
+				// Play poise break animation using reaction animset as fallback
+				// (Player typically uses hit reaction for poise break stagger)
+				if (IsValid(ReactionAnimset) && IsValid(Mesh))
+				{
+					UAnimMontage* ReactionMontage = ReactionAnimset->ReactionMontage.LoadSynchronous();
+					if (IsValid(ReactionMontage))
+					{
+						UAnimInstance* AnimInstance = Mesh->GetAnimInstance();
+						if (IsValid(AnimInstance))
+						{
+							AnimInstance->Montage_Play(ReactionMontage, 1.0f);
+							UE_LOG(LogTemp, Log, TEXT("  Playing poise break reaction"));
+						}
+					}
+				}
 			}
 		}
 	}

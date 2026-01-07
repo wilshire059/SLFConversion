@@ -25,16 +25,16 @@ MIGRATION_MAP = {
     "AC_AI_SenseManager": "/Script/SLFConversion.AC_AI_SenseManager",
     "AC_AI_TargetSortManager": "/Script/SLFConversion.AC_AI_TargetSortManager",
     # REMOVED from MIGRATION_MAP - These are in KEEP_VARS_MAP (preserve vars for AnimBP)
-    # "AC_ActionManager": "/Script/SLFConversion.AC_ActionManager",
-    # "AC_CombatManager": "/Script/SLFConversion.AC_CombatManager",
-    # "AC_EquipmentManager": "/Script/SLFConversion.AC_EquipmentManager",
-    # "AC_InteractionManager": "/Script/SLFConversion.AC_InteractionManager",
-    # "AC_TargetManager": "/Script/SLFConversion.AC_TargetManager",
+    "AC_ActionManager": "/Script/SLFConversion.AC_ActionManager",  # C++ implementation complete - migrate fully
+    "AC_CombatManager": "/Script/SLFConversion.AC_CombatManager",  # C++ implementation complete - migrate fully
+    "AC_EquipmentManager": "/Script/SLFConversion.AC_EquipmentManager",  # C++ implementation complete - migrate fully
+    "AC_InteractionManager": "/Script/SLFConversion.AC_InteractionManager",  # C++ implementation complete - migrate fully
+    # "AC_TargetManager" - doesn't exist in content
     # Game Framework (5)
-    "GM_SoulslikeFramework": "/Script/SLFConversion.GM_SoulslikeFramework",
+    # "GM_SoulslikeFramework": "/Script/SLFConversion.GM_SoulslikeFramework",  # Keep Blueprint logic
     "GM_Menu_SoulslikeFramework": "/Script/SLFConversion.GM_Menu_SoulslikeFramework",
-    "GI_SoulslikeFramework": "/Script/SLFConversion.SLFGameInstance",
-    "PC_SoulslikeFramework": "/Script/SLFConversion.PC_SoulslikeFramework",
+    "GI_SoulslikeFramework": "/Script/SLFConversion.SLFGameInstance",  # Clear EventGraph - GetAllSlots signature changed
+    "PC_SoulslikeFramework": "/Script/SLFConversion.SLFPlayerController",  # Clear EventGraph - C++ handles HUD/input
     "PC_Menu_SoulslikeFramework": "/Script/SLFConversion.PC_Menu_SoulslikeFramework",
     "GS_SoulslikeFramework": "/Script/SLFConversion.GS_SoulslikeFramework",
     "PS_SoulslikeFramework": "/Script/SLFConversion.PS_SoulslikeFramework",
@@ -60,14 +60,47 @@ MIGRATION_MAP = {
     # Reparenting loses Blueprint variable values in child data assets (DA_Action_*)
     "PDA_Action": "/Script/SLFConversion.PDA_ActionBase",  # Now safe to reparent
     # EXPERIMENT: Reparent PDA_Item to add C++ WorldNiagaraSystem property
-    "PDA_Item": "/Script/SLFConversion.UPDA_Item",
+    "PDA_Item": "/Script/SLFConversion.PDA_Item",
+    # PDA_AI_Ability - migrated with Montage, Score, Cooldown, AiRules, SetupData()
+    "PDA_AI_Ability": "/Script/SLFConversion.PDA_AI_Ability",
+    # PDA_Buff - migrated with BuffTag, BuffIcon, Class, Duration, RankMultiplierCurve
+    "PDA_Buff": "/Script/SLFConversion.PDA_Buff",
+    # PDA_Calculations - migrated with CalculationType, Calculate()
+    "PDA_Calculations": "/Script/SLFConversion.PDA_Calculations",
+    # PDA_Dialog - migrated with Requirement, DefaultDialogTable, GetDialogTableBasedOnProgress()
+    "PDA_Dialog": "/Script/SLFConversion.PDA_Dialog",
+    # PDA_WeaponAbility - migrated with Icon, Name, AffectedStat, Cost, Montage, AdditionalEffectClass, SetupData()
+    "PDA_WeaponAbility": "/Script/SLFConversion.PDA_WeaponAbility",
+    # PDA_Vendor - migrated with Items, DefaultSlotCount, DefaultSlotsPerRow, CachedItems, OnItemStockUpdated, ReduceItemStock()
+    "PDA_Vendor": "/Script/SLFConversion.PDA_Vendor",
+    # PDA_MainMenuData - migrated with LoadingScreenAsset, AdditionalWaitMin/Max, bRemoveOnFinish, DefaultLevelToLoad
+    "PDA_MainMenuData": "/Script/SLFConversion.PDA_MainMenuData",
+    "PDA_StatusEffect": "/Script/SLFConversion.PDA_StatusEffect",
+    "PDA_Credits": "/Script/SLFConversion.PDA_Credits",
+    "PDA_LoadingScreens": "/Script/SLFConversion.PDA_LoadingScreens",
+    "PDA_DayNight": "/Script/SLFConversion.PDA_DayNight",
+    "PDA_AnimData": "/Script/SLFConversion.PDA_AnimData",
+    "PDA_CombatReactionAnimData": "/Script/SLFConversion.PDA_CombatReactionAnimData",
+    "PDA_CombatReactionAnimData_Player": "/Script/SLFConversion.PDA_CombatReactionAnimData_Player",
+    "PDA_LadderAnimData": "/Script/SLFConversion.PDA_LadderAnimData",
+    "PDA_PoiseBreakAnimData": "/Script/SLFConversion.PDA_PoiseBreakAnimData",
+    "PDA_WeaponAnimset": "/Script/SLFConversion.PDA_WeaponAnimset",
+    "PDA_BaseCharacterInfo": "/Script/SLFConversion.PDA_BaseCharacterInfo",
+    "PDA_CustomSettings": "/Script/SLFConversion.PDA_CustomSettings",
+    "PDA_MovementSpeedData": "/Script/SLFConversion.PDA_MovementSpeedData",
+    "PDA_LadderAnimData": "/Script/SLFConversion.PDA_LadderAnimData",
+    "PDA_ExecutionAnimData": "/Script/SLFConversion.PDA_ExecutionAnimData",
     "B_Action": "/Script/SLFConversion.SLFActionBase",
     "B_Item": "/Script/SLFConversion.SLFItemBase",
     "B_Item_Weapon": "/Script/SLFConversion.SLFWeaponBase",
     # B_Interactable and B_Door: Now in KEEP_VARS_MAP to preserve SCS (DefaultSceneRoot needed by child Blueprints)
     "B_Container": "/Script/SLFConversion.SLFContainer",
     "B_BaseProjectile": "/Script/SLFConversion.SLFProjectileBase",
+    "B_SkyManager": "/Script/SLFConversion.SLFSkyManager",
     "B_AbilityEffectBase": "/Script/SLFConversion.SLFAbilityEffectBase",
+    # SaveGame classes
+    "SG_SoulslikeFramework": "/Script/SLFConversion.SG_SoulslikeFramework",
+    "SG_SaveSlots": "/Script/SLFConversion.SG_SaveSlots",
     # Stats (19)
     "B_HP": "/Script/SLFConversion.SLFStatHP",
     "B_FP": "/Script/SLFConversion.SLFStatFP",
@@ -122,7 +155,7 @@ MIGRATION_MAP = {
     # Additional Interactables
     "B_BossDoor": "/Script/SLFConversion.SLFInteractableBase",
     "B_DeathCurrency": "/Script/SLFConversion.SLFInteractableBase",
-    # "B_Door_Demo": "/Script/SLFConversion.SLFDoorBase",  # SKIP: Crashes engine - corrupted function refs
+    "B_Door_Demo": "/Script/SLFConversion.SLFDoorDemo",  # Inherits B_Door (KEEP_VARS) - reparent may fail but logic is cleared
     # Additional Items
     "B_Item_Lantern": "/Script/SLFConversion.SLFItemBase",
     "B_Item_AI_Weapon": "/Script/SLFConversion.SLFWeaponBase",
@@ -137,7 +170,7 @@ MIGRATION_MAP = {
     "B_Item_Weapon_SwordExample02": "/Script/SLFConversion.SLFWeaponBase",
     # Additional World Actors
     "B_Chaos_ForceField": "/Script/SLFConversion.SLFInteractableBase",
-    "B_SequenceActor": "/Script/SLFConversion.SLFInteractableBase",
+    "B_SequenceActor": "/Script/SLFConversion.SLFSequenceActor",
     # Blueprint Function Library
     "BFL_Helper": "/Script/SLFConversion.BFL_Helper",
     "B_DeathTrigger": "/Script/SLFConversion.SLFInteractableBase",
@@ -327,8 +360,8 @@ MIGRATION_MAP = {
     "ANS_FootIKDisable": "/Script/SLFConversion.SLFAnimNotifyStateInputBuffer",
     # Widgets (122)
     "W_AbilityDisplay": "/Script/SLFConversion.W_AbilityDisplay",
-    "W_BigScreenMessage": "/Script/SLFConversion.W_BigScreenMessage",
-    "W_Boss_Healthbar": "/Script/SLFConversion.W_Boss_Healthbar",
+    # "W_BigScreenMessage": "/Script/SLFConversion.W_BigScreenMessage",  # REPARENT_ONLY: W_HUD calls custom events
+    "W_Boss_Healthbar": "/Script/SLFConversion.W_Boss_Healthbar",  # Clear EventGraph - C++ has BlueprintNativeEvent functions
     "W_BrowserFilterEntry": "/Script/SLFConversion.W_BrowserFilterEntry",
     "W_Browser_Action": "/Script/SLFConversion.W_Browser_Action",
     "W_Browser_Action_Tooltip": "/Script/SLFConversion.W_Browser_Action_Tooltip",
@@ -363,7 +396,7 @@ MIGRATION_MAP = {
     "W_Debug_ComponentSlot": "/Script/SLFConversion.W_Debug_ComponentSlot",
     "W_Debug_ComponentTooltip": "/Script/SLFConversion.W_Debug_ComponentTooltip",
     "W_Debug_HUD": "/Script/SLFConversion.W_Debug_HUD",
-    "W_Dialog": "/Script/SLFConversion.W_Dialog",
+    # "W_Dialog": "/Script/SLFConversion.W_Dialog",  # REPARENT_ONLY: W_HUD calls custom events
     "W_EnemyHealthbar": "/Script/SLFConversion.W_EnemyHealthbar",
     "W_Equipment": "/Script/SLFConversion.W_Equipment",
     "W_EquipmentSlot": "/Script/SLFConversion.W_EquipmentSlot",
@@ -377,13 +410,13 @@ MIGRATION_MAP = {
     "W_Equipment_Item_StatsGranted": "/Script/SLFConversion.W_Equipment_Item_StatsGranted",
     "W_Error": "/Script/SLFConversion.W_Error",
     "W_FirstLootNotification": "/Script/SLFConversion.W_FirstLootNotification",
-    "W_GameMenu": "/Script/SLFConversion.W_GameMenu",
+    "W_GameMenu": "/Script/SLFConversion.W_GameMenu",  # Full C++ implementation (moved from REPARENT_ONLY)
     "W_GameMenu_Button": "/Script/SLFConversion.W_GameMenu_Button",
     "W_GenericButton": "/Script/SLFConversion.W_GenericButton",
     "W_GenericError": "/Script/SLFConversion.W_GenericError",
-    "W_HUD": "/Script/SLFConversion.W_HUD",
-    "W_Interaction": "/Script/SLFConversion.W_Interaction",
-    "W_InteractionError": "/Script/SLFConversion.W_InteractionError",
+    "W_HUD": "/Script/SLFConversion.W_HUD",  # Clear EventGraph - C++ has BlueprintNativeEvent functions
+    # "W_Interaction": "/Script/SLFConversion.W_Interaction",  # REPARENT_ONLY: W_HUD calls custom events
+    # "W_InteractionError": "/Script/SLFConversion.W_InteractionError",  # REPARENT_ONLY: W_HUD calls custom events
     "W_Inventory": "/Script/SLFConversion.W_Inventory",
     "W_InventoryAction": "/Script/SLFConversion.W_InventoryAction",
     "W_InventoryActionAmount": "/Script/SLFConversion.W_InventoryActionAmount",
@@ -407,13 +440,13 @@ MIGRATION_MAP = {
     "W_MainMenu_Button": "/Script/SLFConversion.W_MainMenu_Button",
     "W_Navigable": "/Script/SLFConversion.W_Navigable",
     "W_Navigable_InputReader": "/Script/SLFConversion.W_Navigable_InputReader",
-    "W_NPC_Window": "/Script/SLFConversion.W_NPC_Window",
+    "W_NPC_Window": "/Script/SLFConversion.W_NPC_Window",  # Clear EventGraph - C++ has BlueprintNativeEvent functions
     "W_NPC_Window_Vendor": "/Script/SLFConversion.W_NPC_Window_Vendor",
     "W_Radar": "/Script/SLFConversion.W_Radar",
     "W_Radar_Cardinal": "/Script/SLFConversion.W_Radar_Cardinal",
     "W_Radar_TrackedElement": "/Script/SLFConversion.W_Radar_TrackedElement",
     "W_Resources": "/Script/SLFConversion.W_Resources",
-    "W_RestMenu": "/Script/SLFConversion.W_RestMenu",
+    "W_RestMenu": "/Script/SLFConversion.W_RestMenu",  # Clear EventGraph - C++ has BlueprintNativeEvent functions
     "W_RestMenu_Button": "/Script/SLFConversion.W_RestMenu_Button",
     "W_RestMenu_TimeEntry": "/Script/SLFConversion.W_RestMenu_TimeEntry",
     "W_Settings": "/Script/SLFConversion.W_Settings",
@@ -452,14 +485,14 @@ MIGRATION_MAP = {
 
 # Keep vars map - components referenced by AnimBPs (must match parent classes)
 KEEP_VARS_MAP = {
-    "AC_ActionManager": "/Script/SLFConversion.AC_ActionManager",
-    "AC_CombatManager": "/Script/SLFConversion.AC_CombatManager",
-    "AC_EquipmentManager": "/Script/SLFConversion.AC_EquipmentManager",
-    "AC_InteractionManager": "/Script/SLFConversion.AC_InteractionManager",
-    "AC_TargetManager": "/Script/SLFConversion.AC_TargetManager",
-    "AC_AI_CombatManager": "/Script/SLFConversion.AC_AI_CombatManager",
-    "AC_AI_SenseManager": "/Script/SLFConversion.AC_AI_SenseManager",
-    "AC_AI_TargetSortManager": "/Script/SLFConversion.AC_AI_TargetSortManager",
+    # "AC_ActionManager" moved to MIGRATION_MAP - C++ implementation complete
+    # "AC_CombatManager" moved to MIGRATION_MAP - C++ implementation complete
+    # "AC_EquipmentManager" moved to MIGRATION_MAP - C++ implementation complete
+    # "AC_InteractionManager" moved to MIGRATION_MAP - C++ implementation complete
+    # "AC_TargetManager" - doesn't exist in content
+    # "AC_AI_CombatManager" already in MIGRATION_MAP
+    # "AC_AI_SenseManager" already in MIGRATION_MAP
+    # "AC_AI_TargetSortManager" already in MIGRATION_MAP
     # Character Blueprints - B_BaseCharacter is critical parent of all characters
     "B_BaseCharacter": "/Script/SLFConversion.SLFBaseCharacter",
     # Interactables - preserve SCS components (DefaultSceneRoot, World Niagara, mesh components)
@@ -495,12 +528,17 @@ INTERFACE_MAP = {
     "BPI_GenericCharacter": "/Script/SLFConversion.BPI_GenericCharacter",
     "BPI_Enemy": "/Script/SLFConversion.BPI_Enemy",
     "BPI_GameInstance": "/Script/SLFConversion.BPI_GameInstance",
+    "BPI_BossDoor": "/Script/SLFConversion.BPI_BossDoor",
+    "BPI_DestructibleHelper": "/Script/SLFConversion.BPI_DestructibleHelper",
+    "BPI_Executable": "/Script/SLFConversion.BPI_Executable",
+    "BPI_ExecutionIndicator": "/Script/SLFConversion.BPI_ExecutionIndicator",
+    "BPI_EnemyHealthbar": "/Script/SLFConversion.BPI_EnemyHealthbar",
 }
 
 # Data Assets - add to migration to clear logic
 DATA_ASSET_MAP = {
     "PDA_Dialog": "/Script/SLFConversion.PDA_Dialog",
-    "PDA_DefaultMeshData": "/Script/SLFConversion.UPDA_DefaultMeshData",
+    "PDA_DefaultMeshData": "/Script/SLFConversion.PDA_DefaultMeshData",
 }
 
 # AnimBlueprints - special handling: clear EventGraph ONLY
@@ -513,8 +551,10 @@ ANIM_BP_MAP = {
     # By clearing the EventGraph, C++ can set these variables directly.
     "ABP_SoulslikeNPC": None,  # No reparent, just clear EventGraph
     "ABP_SoulslikeEnemy": None,  # No reparent, just clear EventGraph
-    "ABP_SoulslikeBossNew": None,  # No reparent, just clear EventGraph
+    "ABP_SoulslikeBossNew": None,  # No reparent, just clear EventGraph - C++ SLFBossAnimInstance has variables
     "ABP_SoulslikeCharacter_Additive": None,  # Player AnimBP - clear EventGraph for IsCrouched/IsResting/IsBlocking
+    "ABP_Manny_PostProcess": "/Script/SLFConversion.ABP_Manny_PostProcess",  # Post-process AnimBP
+    "ABP_Quinn_PostProcess": "/Script/SLFConversion.ABP_Quinn_PostProcess",  # Post-process AnimBP
 }
 
 # AnimBlueprints that SHOULD be reparented (player character's AnimBP)
@@ -560,6 +600,25 @@ PRIORITY_CHARACTER_MAP = {
     "B_Soulslike_Boss": "/Script/SLFConversion.SLFSoulslikeBoss",
 }
 
+# REPARENT ONLY: Blueprints that should inherit C++ parent but KEEP their EventGraph
+# Use case: External callers (Level Blueprints) call custom events with space in names
+# e.g., "Event ToggleCinematicMode" - C++ cannot expose functions with spaces
+# Also: W_HUD calls child widgets via custom events like "Event ShowMessage"
+REPARENT_ONLY_MAP = {
+    # "W_HUD": "/Script/SLFConversion.W_HUD",  # MOVED to MIGRATION_MAP (EventGraph refs old B_Stat_C)
+    # Child widgets that W_HUD calls via custom Blueprint events:
+    "W_Interaction": "/Script/SLFConversion.W_Interaction",  # "Event OnItemOverlap", "Event Hide", "Event OnInteractableOverlap"
+    "W_InteractionError": "/Script/SLFConversion.W_InteractionError",  # "Event ShowMessage"
+    "W_BigScreenMessage": "/Script/SLFConversion.W_BigScreenMessage",  # "Event ShowMessage"
+    # "W_Boss_Healthbar": "/Script/SLFConversion.W_Boss_Healthbar",  # MOVED to MIGRATION_MAP (EventGraph refs old B_Stat_C)
+    # "W_RestMenu": "/Script/SLFConversion.W_RestMenu",  # MOVED to MIGRATION_MAP
+    "W_Dialog": "/Script/SLFConversion.W_Dialog",  # "Event InitializeDialog", "Event CloseDialog"
+    # "W_NPC_Window": "/Script/SLFConversion.W_NPC_Window",  # MOVED to MIGRATION_MAP
+    # Menu widgets:
+    # W_GameMenu - MOVED to MIGRATION_MAP (full C++ implementation complete)
+    # Player Controller - reparent to C++ for input handling, keep Blueprint logic
+}
+
 # Path overrides - CORRECT paths from actual filesystem discovery
 PATH_OVERRIDES = {
     # Components
@@ -585,14 +644,17 @@ PATH_OVERRIDES = {
     "AC_StatManager": "/Game/SoulslikeFramework/Blueprints/Components/AC_StatManager",
     "AC_StatusEffectManager": "/Game/SoulslikeFramework/Blueprints/Components/AC_StatusEffectManager",
     # Game Framework
-    "GI_SoulslikeFramework": "/Game/SoulslikeFramework/Blueprints/Global/GI_SoulslikeFramework",
+    # "GI_SoulslikeFramework": "/Game/SoulslikeFramework/Blueprints/Global/GI_SoulslikeFramework",  # Keep Blueprint logic
     "GM_Menu_SoulslikeFramework": "/Game/SoulslikeFramework/Blueprints/Global/MainMenu/GM_Menu_SoulslikeFramework",
-    "GM_SoulslikeFramework": "/Game/SoulslikeFramework/Blueprints/Global/GM_SoulslikeFramework",
+    # "GM_SoulslikeFramework": "/Game/SoulslikeFramework/Blueprints/Global/GM_SoulslikeFramework",  # Keep Blueprint logic
     "GS_SoulslikeFramework": "/Game/SoulslikeFramework/Blueprints/Global/GS_SoulslikeFramework",
     "PC_Menu_SoulslikeFramework": "/Game/SoulslikeFramework/Blueprints/Global/MainMenu/PC_Menu_SoulslikeFramework",
-    "PC_SoulslikeFramework": "/Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework",
+    "PC_SoulslikeFramework": "/Game/SoulslikeFramework/Blueprints/Global/PC_SoulslikeFramework",  # Reparent only - C++ handles input
     "PS_SoulslikeFramework": "/Game/SoulslikeFramework/Blueprints/Global/PS_SoulslikeFramework",
     "AIC_SoulslikeFramework": "/Game/SoulslikeFramework/Blueprints/_AI/Misc/AIC_SoulslikeFramework",
+    # SaveGames
+    "SG_SoulslikeFramework": "/Game/SoulslikeFramework/Blueprints/Saving/SG_SoulslikeFramework",
+    "SG_SaveSlots": "/Game/SoulslikeFramework/Blueprints/Saving/SG_SaveSlots",
     # Characters
     "B_BaseCharacter": "/Game/SoulslikeFramework/Blueprints/_Characters/B_BaseCharacter",
     "B_Soulslike_Character": "/Game/SoulslikeFramework/Blueprints/_Characters/B_Soulslike_Character",
@@ -658,6 +720,28 @@ PATH_OVERRIDES = {
     "PDA_Action": "/Game/SoulslikeFramework/Data/Actions/ActionData/PDA_Action",
     # EXPERIMENT: PDA_Item reparent
     "PDA_Item": "/Game/SoulslikeFramework/Data/PDA_Item",
+    "PDA_AI_Ability": "/Game/SoulslikeFramework/Data/AI_Abilities/PDA_AI_Ability",
+    "PDA_Buff": "/Game/SoulslikeFramework/Data/Buffs/PDA_Buff",
+    "PDA_Calculations": "/Game/SoulslikeFramework/Data/Calculators/PDA_Calculations",
+    "PDA_Dialog": "/Game/SoulslikeFramework/Data/Dialog/PDA_Dialog",
+    "PDA_WeaponAbility": "/Game/SoulslikeFramework/Data/WeaponAbilities/PDA_WeaponAbility",
+    "PDA_Vendor": "/Game/SoulslikeFramework/Data/Vendor/PDA_Vendor",
+    "PDA_MainMenuData": "/Game/SoulslikeFramework/Data/MainMenu/PDA_MainMenuData",
+    "PDA_StatusEffect": "/Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/PDA_StatusEffect",
+    "PDA_Credits": "/Game/SoulslikeFramework/Data/PDA_Credits",
+    "PDA_LoadingScreens": "/Game/SoulslikeFramework/Data/PDA_LoadingScreens",
+    "PDA_DayNight": "/Game/SoulslikeFramework/Data/PDA_DayNight",
+    "PDA_AnimData": "/Game/SoulslikeFramework/Data/_AnimationData/PDA_AnimData",
+    "PDA_CombatReactionAnimData": "/Game/SoulslikeFramework/Data/_AnimationData/PDA_CombatReactionAnimData",
+    "PDA_CombatReactionAnimData_Player": "/Game/SoulslikeFramework/Data/_AnimationData/PDA_CombatReactionAnimData_Player",
+    "PDA_LadderAnimData": "/Game/SoulslikeFramework/Data/_AnimationData/PDA_LadderAnimData",
+    "PDA_PoiseBreakAnimData": "/Game/SoulslikeFramework/Data/_AnimationData/PDA_PoiseBreakAnimData",
+    "PDA_WeaponAnimset": "/Game/SoulslikeFramework/Data/WeaponAnimsets/PDA_WeaponAnimset",
+    "PDA_BaseCharacterInfo": "/Game/SoulslikeFramework/Data/PDA_BaseCharacterInfo",
+    "PDA_CustomSettings": "/Game/SoulslikeFramework/Data/PDA_CustomSettings",
+    "PDA_MovementSpeedData": "/Game/SoulslikeFramework/Data/PDA_MovementSpeedData",
+    "PDA_LadderAnimData": "/Game/SoulslikeFramework/Data/_AnimationData/PDA_LadderAnimData",
+    "PDA_ExecutionAnimData": "/Game/SoulslikeFramework/Data/_AnimationData/Executions/PDA_ExecutionAnimData",
     # Actions
     "B_Action": "/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action",
     "B_Action_Backstab": "/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_Backstab",
@@ -684,6 +768,7 @@ PATH_OVERRIDES = {
     "B_BaseProjectile": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Projectiles/B_BaseProjectile",
     # Ability Effects
     "B_AbilityEffectBase": "/Game/SoulslikeFramework/Data/WeaponAbilities/AbilityEffects/B_AbilityEffectBase",
+    "B_SkyManager": "/Game/SoulslikeFramework/Blueprints/Sky/B_SkyManager",
     # Animation Notifies - CORRECT PATH
     "AN_FootstepTrace": "/Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_FootstepTrace",
     "AN_CameraShake": "/Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_CameraShake",
@@ -732,7 +817,7 @@ PATH_OVERRIDES = {
     # Additional Interactables
     "B_BossDoor": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_BossDoor",
     "B_DeathCurrency": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_DeathCurrency",
-    # "B_Door_Demo" - SKIPPED: Crashes engine
+    "B_Door_Demo": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Door_Demo",
     # Additional Items
     "B_PickupItem": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/B_PickupItem",
     "B_Item_Lantern": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Usables/B_Item_Lantern",
@@ -754,6 +839,8 @@ PATH_OVERRIDES = {
     "B_Destructible": "/Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_Destructible",
     "B_LocationActor": "/Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_LocationActor",
     "B_Torch": "/Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_Torch",
+    "ABP_Manny_PostProcess": "/Game/SoulslikeFramework/Demo/SKM/Mannequins/Rigs/ABP_Manny_PostProcess",
+    "ABP_Quinn_PostProcess": "/Game/SoulslikeFramework/Demo/SKM/Mannequins/Rigs/ABP_Quinn_PostProcess",
     "B_Projectile_Boss_Fireball": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Projectiles/B_Projectile_Boss_Fireball",
     "B_Projectile_ThrowingKnife": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Projectiles/B_Projectile_ThrowingKnife",
     # AI Tasks
@@ -791,6 +878,11 @@ PATH_OVERRIDES = {
     "BPI_GenericCharacter": "/Game/SoulslikeFramework/Blueprints/Interfaces/BPI_GenericCharacter",
     "BPI_Enemy": "/Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Enemy",
     "BPI_GameInstance": "/Game/SoulslikeFramework/Blueprints/Interfaces/BPI_GameInstance",
+    "BPI_BossDoor": "/Game/SoulslikeFramework/Blueprints/Interfaces/BPI_BossDoor",
+    "BPI_DestructibleHelper": "/Game/SoulslikeFramework/Blueprints/Interfaces/BPI_DestructibleHelper",
+    "BPI_Executable": "/Game/SoulslikeFramework/Blueprints/Interfaces/BPI_Executable",
+    "BPI_ExecutionIndicator": "/Game/SoulslikeFramework/Blueprints/Interfaces/BPI_ExecutionIndicator",
+    "BPI_EnemyHealthbar": "/Game/SoulslikeFramework/Blueprints/Interfaces/BPI_EnemyHealthbar",
     # AnimBlueprints - CORRECT PATHS
     "ABP_SoulslikeNPC": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeNPC",
     "ABP_SoulslikeEnemy": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeEnemy",
@@ -837,10 +929,14 @@ SEARCH_PATHS = [
     "/Game/SoulslikeFramework/Widgets/_Generic",
 ]
 
-# Skip list - Demo/showcase Blueprints that have no C++ class
+# Skip list - Blueprints to keep in Blueprint (not migrate to C++)
+# Demo/showcase Blueprints are editor-time tools, not gameplay code
 SKIP_LIST = {
-    "B_Demo_TimeSlider",
-    "B_ShowcaseEnemy_StatDisplay",
+    "B_DemoRoom",           # Procedural room generation - editor tool
+    "B_DemoDisplay",        # Demo display setup - editor tool  
+    "B_Demo_TimeSlider",    # Time slider widget - demo only
+    "B_ShowcaseEnemy_ExitCombat",   # Demo showcase helper
+    "B_ShowcaseEnemy_StatDisplay",  # Demo showcase helper
 }
 
 def find_bp(name):
@@ -902,13 +998,11 @@ def run():
     # Only skip truly problematic Blueprints
     # Priority characters moved to PRIORITY_CHARACTER_MAP for explicit processing
     LOAD_SKIP_LIST = [
-        # Skip Blueprints that crash during loading - but NOT B_BaseCharacter
-        # B_BaseCharacter is the critical parent of all characters and MUST be migrated
-        "B_Container",
-        # B_PickupItem removed - must be reparented for item pickup to work
-        "B_Soulslike_Boss_Malgareth",
-        "B_Soulslike_Enemy_Guard",
-        "B_Soulslike_Enemy_Showcase",
+        # All Blueprints now have C++ classes - no skipping needed
+        # Previously skipped items now process normally:
+        # - B_Soulslike_Boss_Malgareth -> SLFBossMalgareth
+        # - B_Soulslike_Enemy_Guard -> SLFEnemyGuard
+        # - B_Soulslike_Enemy_Showcase -> SLFEnemyShowcase
     ]
 
     all_bps = []  # (bp, name, cpp_class, bp_type)
@@ -1068,7 +1162,22 @@ def run():
         except Exception as e:
             print("  " + name + ": load error - " + str(e))
 
-    # 1G: Load Interfaces
+    # 1G: Load Reparent-Only Blueprints (keep EventGraph, just reparent)
+    print("")
+    print("=== Loading Reparent-Only Blueprints ===")
+    for name, cpp in REPARENT_ONLY_MAP.items():
+        if name in LOAD_SKIP_LIST:
+            print("  " + name + ": SKIPPED (crash prevention)")
+            continue
+        try:
+            bp = find_bp(name)
+            if bp:
+                all_bps.append((bp, name, cpp, "reparent_only"))
+                print("  " + name + ": loaded")
+        except Exception as e:
+            print("  " + name + ": load error - " + str(e))
+
+    # 1H: Load Interfaces
     print("")
     print("=== Loading Interfaces ===")
     for name, cpp in INTERFACE_MAP.items():
@@ -1097,8 +1206,23 @@ def run():
 
     cleared = 0
     clear_errors = 0
+    skipped_interfaces = 0
+    skipped_reparent_only = 0
     for bp, name, cpp, bp_type in all_bps:
         try:
+            # SKIP Blueprint interfaces entirely - they only contain function signatures
+            # that callers depend on. Clearing them breaks all interface calls.
+            if bp_type == "interface":
+                skipped_interfaces += 1
+                print("  " + name + ": SKIPPED (Blueprint interface - keep signatures)")
+                continue
+
+            # SKIP reparent_only Blueprints - keep EventGraph for external callers
+            if bp_type == "reparent_only":
+                skipped_reparent_only += 1
+                print("  " + name + ": SKIPPED (reparent_only - keep EventGraph for external callers)")
+                continue
+
             if bp_type == "anim_bp" or bp_type == "anim_bp_reparent" or bp_type == "keep_vars":
                 # Keep variables for AnimBPs and keep_vars types
                 unreal.SLFAutomationLibrary.clear_graphs_keep_variables_no_compile(bp)
@@ -1106,9 +1230,9 @@ def run():
                 # Full clear for everything else
                 unreal.SLFAutomationLibrary.clear_all_blueprint_logic_no_compile(bp)
 
-            # Remove interfaces except for interface Blueprints and AnimBlueprints
+            # Remove interfaces except for AnimBlueprints
             # AnimBPs use interfaces for animation layers (ALI_OverlayStates, ALI_LocomotionStates)
-            if bp_type != "interface" and bp_type != "anim_bp":
+            if bp_type != "anim_bp":
                 unreal.SLFAutomationLibrary.remove_implemented_interfaces(bp)
 
             cleared += 1
@@ -1147,7 +1271,7 @@ def run():
     REPARENT_SKIP_LIST = [
         # Skip Blueprints that crash during reparent - but NOT B_BaseCharacter
         # B_BaseCharacter is the critical parent and MUST be reparented
-        "B_Container",
+        # "B_Container",  # Removed from skip - now processed normally
         # B_PickupItem removed - must be reparented for item pickup to work
     ]
 
@@ -1297,6 +1421,185 @@ def run():
             print("  FAIL: " + component + " - " + msg)
 
     print("Validation: " + str(val_ok) + " OK, " + str(val_fail) + " FAIL")
+
+    # =========================================================================
+    # POST-MIGRATION: Dodge Montages
+    # =========================================================================
+    print("")
+    print("=" * 60)
+    print("POST-MIGRATION: Dodge Montages")
+    print("=" * 60)
+
+    DODGE_MONTAGES = {
+        "forward": "/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_F.AM_SLF_Dodge_F",
+        "forward_left": "/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_FL.AM_SLF_Dodge_FL",
+        "forward_right": "/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_FR.AM_SLF_Dodge_FR",
+        "left": "/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_L.AM_SLF_Dodge_L",
+        "right": "/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_R.AM_SLF_Dodge_R",
+        "backward": "/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_B.AM_SLF_Dodge_B",
+        "backward_left": "/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_BL.AM_SLF_Dodge_BL",
+        "backward_right": "/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_BR.AM_SLF_Dodge_BR",
+        "backstep": "/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Backstep.AM_SLF_Backstep",
+    }
+
+    try:
+        dodge_asset = unreal.EditorAssetLibrary.load_asset("/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_Dodge")
+        if dodge_asset:
+            dodge_montages = dodge_asset.get_editor_property('DodgeMontages')
+            montages_set = 0
+            for prop_name, montage_path in DODGE_MONTAGES.items():
+                montage = unreal.load_object(None, montage_path)
+                if montage:
+                    setattr(dodge_montages, prop_name, montage)
+                    montages_set += 1
+            dodge_asset.set_editor_property('DodgeMontages', dodge_montages)
+            unreal.EditorAssetLibrary.save_asset("/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_Dodge", only_if_is_dirty=False)
+            print("Dodge montages: " + str(montages_set) + "/9 set")
+        else:
+            print("Could not load DA_Action_Dodge")
+    except Exception as e:
+        print("Dodge montages ERROR: " + str(e))
+
+    # =========================================================================
+    # POST-MIGRATION: Item Niagara Systems
+    # =========================================================================
+    print("")
+    print("=" * 60)
+    print("POST-MIGRATION: Item Niagara Systems")
+    print("=" * 60)
+
+    NIAGARA_PATHS = {
+        "DA_Apple": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple",
+        "DA_BossMace": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+        "DA_CrimsonEverbloom": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple",
+        "DA_Cube": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple",
+        "DA_ExampleArmor": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+        "DA_ExampleArmor02": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+        "DA_ExampleBracers": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+        "DA_ExampleGreaves": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+        "DA_ExampleHat": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+        "DA_ExampleHelmet": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+        "DA_ExampleTalisman": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+        "DA_Greatsword": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+        "DA_HealthFlask": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+        "DA_Katana": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+        "DA_Lantern": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple",
+        "DA_PoisonSword": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+        "DA_PrisonKey": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple",
+        "DA_Shield01": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+        "DA_Sword01": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+        "DA_Sword02": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot",
+        "DA_ThrowingKnife": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple",
+    }
+
+    niagara_set = 0
+    niagara_failed = 0
+    for asset_name, niagara_path in NIAGARA_PATHS.items():
+        try:
+            item_asset = unreal.EditorAssetLibrary.load_asset("/Game/SoulslikeFramework/Data/Items/" + asset_name)
+            if item_asset:
+                niagara_asset = unreal.EditorAssetLibrary.load_asset(niagara_path)
+                if niagara_asset:
+                    item_asset.set_editor_property('world_niagara_system', niagara_asset)
+                    unreal.EditorAssetLibrary.save_asset("/Game/SoulslikeFramework/Data/Items/" + asset_name, only_if_is_dirty=False)
+                    niagara_set += 1
+                else:
+                    niagara_failed += 1
+            else:
+                niagara_failed += 1
+        except Exception as e:
+            niagara_failed += 1
+    print("Niagara systems: " + str(niagara_set) + "/" + str(len(NIAGARA_PATHS)) + " set, " + str(niagara_failed) + " failed")
+
+    # =========================================================================
+    # POST-MIGRATION: Character DefaultMeshAsset
+    # =========================================================================
+    print("")
+    print("=" * 60)
+    print("POST-MIGRATION: Character DefaultMeshAsset")
+    print("=" * 60)
+
+    DEFAULT_MESH_ASSETS = {
+        "DA_Manny": "/Game/SoulslikeFramework/Data/BaseCharacters/DA_MannyMeshDefault",
+        "DA_Quinn": "/Game/SoulslikeFramework/Data/BaseCharacters/DA_QuinnMeshDefault",
+    }
+
+    mesh_set = 0
+    mesh_failed = 0
+    for asset_name, mesh_path in DEFAULT_MESH_ASSETS.items():
+        try:
+            char_asset = unreal.EditorAssetLibrary.load_asset("/Game/SoulslikeFramework/Data/BaseCharacters/" + asset_name)
+            if char_asset:
+                mesh_asset = unreal.EditorAssetLibrary.load_asset(mesh_path)
+                if mesh_asset:
+                    char_asset.set_editor_property('default_mesh_asset', mesh_asset)
+                    unreal.EditorAssetLibrary.save_asset("/Game/SoulslikeFramework/Data/BaseCharacters/" + asset_name, only_if_is_dirty=False)
+                    print("  " + asset_name + ": " + mesh_path.split("/")[-1])
+                    mesh_set += 1
+                else:
+                    print("  " + asset_name + ": FAILED - mesh not found")
+                    mesh_failed += 1
+            else:
+                print("  " + asset_name + ": FAILED - asset not found")
+                mesh_failed += 1
+        except Exception as e:
+            print("  " + asset_name + ": ERROR - " + str(e))
+            mesh_failed += 1
+    print("DefaultMeshAsset: " + str(mesh_set) + "/" + str(len(DEFAULT_MESH_ASSETS)) + " set")
+
+    # =========================================================================
+    # POST-MIGRATION: Add Tab Key for Menu
+    # =========================================================================
+    # Add Tab as alternate key for IA_GameMenu (ESC exits PIE by default)
+    # NOTE: UE5.7 uses default_key_mappings instead of deprecated mappings property
+    print("")
+    print("=" * 60)
+    print("POST-MIGRATION: Add Tab Key for Menu")
+    print("=" * 60)
+
+    try:
+        imc = unreal.EditorAssetLibrary.load_asset("/Game/SoulslikeFramework/Input/IMC_Gameplay")
+        ia_game_menu = unreal.EditorAssetLibrary.load_asset("/Game/SoulslikeFramework/Input/Actions/IA_GameMenu")
+
+        if imc and ia_game_menu:
+            # UE5.7 API: use default_key_mappings.mappings
+            key_mappings_data = imc.get_editor_property('default_key_mappings')
+            mappings = key_mappings_data.get_editor_property('mappings')
+            mappings_list = list(mappings)
+
+            # Check if Tab mapping already exists
+            tab_exists = False
+            for m in mappings_list:
+                action = m.get_editor_property('action')
+                if action and action.get_path_name() == ia_game_menu.get_path_name():
+                    key = m.get_editor_property('key')
+                    key_name = key.get_editor_property('key_name')
+                    if "Tab" in str(key_name):
+                        tab_exists = True
+                        break
+
+            if not tab_exists:
+                # Create new mapping for Tab key
+                new_mapping = unreal.EnhancedActionKeyMapping()
+                new_mapping.set_editor_property('action', ia_game_menu)
+
+                # Create Tab key using set_editor_property (UE5.7 API)
+                tab_key = unreal.Key()
+                tab_key.set_editor_property('key_name', 'Tab')
+                new_mapping.set_editor_property('key', tab_key)
+
+                # Add to mappings and save
+                mappings_list.append(new_mapping)
+                key_mappings_data.set_editor_property('mappings', mappings_list)
+                imc.set_editor_property('default_key_mappings', key_mappings_data)
+                unreal.EditorAssetLibrary.save_asset("/Game/SoulslikeFramework/Input/IMC_Gameplay", only_if_is_dirty=False)
+                print("Tab key added to IA_GameMenu")
+            else:
+                print("Tab key already exists for IA_GameMenu")
+        else:
+            print("Could not load IMC_Gameplay or IA_GameMenu")
+    except Exception as e:
+        print("Tab key binding ERROR: " + str(e))
 
     # Summary
     print("")

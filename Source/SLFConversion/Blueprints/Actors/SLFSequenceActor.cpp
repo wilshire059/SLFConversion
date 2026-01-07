@@ -4,6 +4,7 @@
 #include "LevelSequence.h"
 #include "LevelSequenceActor.h"
 #include "LevelSequencePlayer.h"
+#include "MovieSceneSequencePlaybackSettings.h"
 
 ASLFSequenceActor::ASLFSequenceActor()
 {
@@ -47,9 +48,29 @@ void ASLFSequenceActor::PlaySequence_Implementation()
 
 	UE_LOG(LogTemp, Log, TEXT("[SequenceActor] Playing sequence: %s"), *LevelSequence->GetName());
 
-	// TODO: Create and play level sequence actor
-	// FMovieSceneSequencePlaybackSettings Settings;
-	// ALevelSequenceActor::CreateLevelSequencePlayer(...)
+	// Create level sequence player
+	FMovieSceneSequencePlaybackSettings PlaybackSettings;
+	PlaybackSettings.bAutoPlay = true;
+	PlaybackSettings.bPauseAtEnd = false;
+
+	SequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
+		GetWorld(),
+		LevelSequence,
+		PlaybackSettings,
+		SequenceActor);
+
+	if (SequencePlayer)
+	{
+		// Bind to finish event
+		SequencePlayer->OnFinished.AddDynamic(this, &ASLFSequenceActor::OnSequenceComplete);
+		SequencePlayer->Play();
+		UE_LOG(LogTemp, Log, TEXT("[SequenceActor] Started playing"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SequenceActor] Failed to create sequence player"));
+		bIsPlaying = false;
+	}
 
 	OnSequenceStarted.Broadcast();
 }
@@ -61,10 +82,23 @@ void ASLFSequenceActor::StopSequence_Implementation()
 		bIsPlaying = false;
 		UE_LOG(LogTemp, Log, TEXT("[SequenceActor] Stopped sequence"));
 
-		// TODO: Stop the sequence player
+		// Stop the sequence player
+		if (SequencePlayer)
+		{
+			SequencePlayer->Stop();
+			SequencePlayer = nullptr;
+		}
 
 		OnSequenceFinished.Broadcast();
 	}
+}
+
+void ASLFSequenceActor::OnSequenceComplete()
+{
+	UE_LOG(LogTemp, Log, TEXT("[SequenceActor] Sequence completed"));
+	bIsPlaying = false;
+	SequencePlayer = nullptr;
+	OnSequenceFinished.Broadcast();
 }
 
 void ASLFSequenceActor::SkipSequence_Implementation()

@@ -8,5 +8,21 @@
 
 UB_AP_Fire::UB_AP_Fire()
 {
+	// Attack Power - Fire
+	MinValue = 0.0;
+	OnlyMaxValueRelevant = true;
+	ShowMaxValueOnLevelUp = false;
+
+	// Set default stat info
+	StatInfo.Tag = FGameplayTag::RequestGameplayTag(FName("Stat.AttackPower.Fire"), false);
+	StatInfo.DisplayName = FText::FromString(TEXT("Fire Attack"));
+	StatInfo.Description = FText::FromString(TEXT("Fire damage dealt by attacks"));
+	StatInfo.bDisplayAsPercent = false;
+	StatInfo.bShowMaxValue = false;
+	StatInfo.CurrentValue = 0.0;
+	StatInfo.MaxValue = 0.0;
+
+	// Attack power doesn't regenerate
+	StatInfo.RegenInfo.bCanRegenerate = false;
 }
 

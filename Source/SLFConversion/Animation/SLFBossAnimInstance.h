@@ -14,6 +14,7 @@
 class UCharacterMovementComponent;
 class UAICombatManagerComponent;
 class UDataAsset;
+class UPDA_PoiseBreakAnimData;
 class ASLFSoulslikeBoss;
 
 /**
@@ -97,8 +98,8 @@ public:
 	FVector HitLocation;
 
 	/** Poise break animation asset */
-	UPROPERTY(BlueprintReadOnly, Category = "Animation|Combat")
-	UDataAsset* PoiseBreakAsset;
+	UPROPERTY(BlueprintReadOnly, Category = "Animation|Combat", meta = (DisplayName = "Poise Break Asset"))
+	UPDA_PoiseBreakAnimData* PoiseBreakAsset;
 
 	// ═══════════════════════════════════════════════════════════════════
 	// PHYSICS/RAGDOLL

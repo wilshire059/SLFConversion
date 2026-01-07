@@ -4,6 +4,7 @@
 // 20-PASS VALIDATION: 2026-01-01 Autonomous Session
 
 #include "Widgets/W_Browser_Action.h"
+#include "Widgets/W_Browser_Action_Tooltip.h"
 
 UW_Browser_Action::UW_Browser_Action(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -34,13 +35,15 @@ void UW_Browser_Action::CacheWidgetReferences()
 
 UWidget* UW_Browser_Action::GetToolTipWidget_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
-	return nullptr;
+	// Return the Tooltip widget for this action browser entry
+	return Cast<UWidget>(Tooltip);
 }
+
 FEventReply UW_Browser_Action::OnMouseDoubleClick_0_Implementation(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
-	// TODO: Implement from Blueprint EventGraph
-	return FEventReply();
+	// Broadcast selection with double click flag
+	OnSelected.Broadcast(this, true, true);
+	return FEventReply(true);
 }
 void UW_Browser_Action::EventClear_Implementation()
 {

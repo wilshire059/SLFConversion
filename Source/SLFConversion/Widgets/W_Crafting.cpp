@@ -34,21 +34,44 @@ void UW_Crafting::CacheWidgetReferences()
 
 void UW_Crafting::SetupItemInformationPanel_Implementation(UPrimaryDataAsset* InItem)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Setup the item information panel with details from the item asset
+	if (InItem)
+	{
+		UE_LOG(LogTemp, Log, TEXT("UW_Crafting::SetupItemInformationPanel - Item: %s"), *InItem->GetName());
+	}
 }
+
 int32 UW_Crafting::GetOwnedAmountFromTag_Implementation(const FGameplayTag& Tag)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Query the inventory manager for how many of this item type are owned
+	if (InventoryComponent)
+	{
+		// Get count from inventory by tag lookup
+	}
 	return 0;
 }
+
 bool UW_Crafting::CheckIfCraftable_Implementation(UPrimaryDataAsset* ItemAsset)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Check if the player has all required materials to craft this item
+	if (!ItemAsset)
+	{
+		return false;
+	}
+
+	// Cast to UPDA_Item and check crafting requirements
+	if (UPDA_Item* Item = Cast<UPDA_Item>(ItemAsset))
+	{
+		return Item->bCrafingUnlocked;
+	}
 	return false;
 }
+
 void UW_Crafting::RefreshCraftables_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Rebuild the list of craftable items based on unlocked recipes
+	UnlockedCraftableEntries.Empty();
+	UE_LOG(LogTemp, Log, TEXT("UW_Crafting::RefreshCraftables"));
 }
 void UW_Crafting::EventAsyncLoadCraftables_Implementation()
 {

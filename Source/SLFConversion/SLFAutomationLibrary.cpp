@@ -979,6 +979,65 @@ bool USLFAutomationLibrary::ClearGraphsKeepVariablesNoCompile(UObject* Blueprint
 }
 
 // ============================================================================
+// CLEAR CONSTRUCTION SCRIPT
+// Clears only the ConstructionScript so C++ OnConstruction can run
+// ============================================================================
+
+bool USLFAutomationLibrary::ClearConstructionScript(UObject* BlueprintAsset)
+{
+	UBlueprint* Blueprint = GetBlueprintFromAsset(BlueprintAsset);
+	if (!Blueprint) return false;
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("=== CLEARING CONSTRUCTION SCRIPT FROM %s ==="), *Blueprint->GetName());
+
+	// The ConstructionScript is stored as "UserConstructionScript" in FunctionGraphs
+	int32 ConstructionScriptCleared = 0;
+
+	// Make a copy since we might be removing from the array
+	TArray<UEdGraph*> FunctionGraphsCopy = Blueprint->FunctionGraphs;
+
+	for (UEdGraph* Graph : FunctionGraphsCopy)
+	{
+		if (Graph)
+		{
+			FString GraphName = Graph->GetName();
+			UE_LOG(LogSLFAutomation, Warning, TEXT("  Found function graph: %s"), *GraphName);
+
+			// Check for ConstructionScript or UserConstructionScript
+			if (GraphName.Contains(TEXT("Construction")))
+			{
+				UE_LOG(LogSLFAutomation, Warning, TEXT("  >>> Found ConstructionScript: %s - clearing nodes"), *GraphName);
+
+				// Clear all nodes except entry point
+				int32 NodesRemoved = ClearGraphNodes(Graph, true);
+				ConstructionScriptCleared += NodesRemoved;
+
+				UE_LOG(LogSLFAutomation, Warning, TEXT("  >>> Cleared %d nodes from %s"), NodesRemoved, *GraphName);
+			}
+		}
+	}
+
+	if (ConstructionScriptCleared > 0)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("Cleared %d total nodes from ConstructionScript"), ConstructionScriptCleared);
+
+		// Refresh and compile
+		FBlueprintEditorUtils::RefreshAllNodes(Blueprint);
+		FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(Blueprint);
+
+		FKismetEditorUtilities::CompileBlueprint(Blueprint, EBlueprintCompileOptions::SkipGarbageCollection);
+
+		UE_LOG(LogSLFAutomation, Warning, TEXT("=== CLEARED CONSTRUCTION SCRIPT FROM %s ==="), *Blueprint->GetName());
+	}
+	else
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("No ConstructionScript found in %s"), *Blueprint->GetName());
+	}
+
+	return true;
+}
+
+// ============================================================================
 // COMPREHENSIVE MIGRATION
 // ============================================================================
 

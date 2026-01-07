@@ -52,7 +52,9 @@ public:
 
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (0)
+	// FUNCTIONS
 	// ═══════════════════════════════════════════════════════════════════════
 
+	/** Execute jump attack - get weapon animset, extract JumpAttackMontage, play */
+	virtual void ExecuteAction_Implementation() override;
 };

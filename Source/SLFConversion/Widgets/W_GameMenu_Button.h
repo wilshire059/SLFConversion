@@ -70,20 +70,24 @@ public:
 	bool Selected;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// WIDGET BINDINGS
+	// WIDGET BINDINGS - Names must match Blueprint widget hierarchy exactly
 	// ═══════════════════════════════════════════════════════════════════════
 
+	// Button widget - named "EscMenuButton" in Blueprint
 	UPROPERTY(meta = (BindWidget), BlueprintReadOnly, Category = "Widgets")
 	UButton* EscMenuButton;
 
-	UPROPERTY(meta = (BindWidget), BlueprintReadOnly, Category = "Widgets")
-	UBorder* SelectedBorder;
-
+	// Border widget - named "ImgBorder" in Blueprint
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
-	UImage* ButtonIcon;
+	UBorder* ImgBorder;
 
+	// Image widget - named "Img" in Blueprint
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
-	UTextBlock* ButtonLabel;
+	UImage* Img;
+
+	// TextBlock widget - named "BtnText" in Blueprint
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UTextBlock* BtnText;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS
@@ -100,8 +104,8 @@ public:
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_GameMenu_Button")
-	void SetGameMenuButtonSelected(bool InSelected);
-	virtual void SetGameMenuButtonSelected_Implementation(bool InSelected);
+	void SetGameMenuButtonSelected(UPARAM(DisplayName = "Selected?") bool bSelected);
+	virtual void SetGameMenuButtonSelected_Implementation(bool bSelected);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_GameMenu_Button")
 	void EventOnGameMenuButtonPressed();

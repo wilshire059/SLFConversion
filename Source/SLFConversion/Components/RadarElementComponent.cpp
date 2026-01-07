@@ -2,6 +2,7 @@
 // C++ implementation for AC_RadarElement
 
 #include "RadarElementComponent.h"
+#include "RadarManagerComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogRadarElement, Log, All);
@@ -33,18 +34,16 @@ void URadarElementComponent::AddTrackedElement_Implementation()
 		return;
 	}
 
-	// Get radar manager component from controller
-	// Note: In full implementation, this would call AC_RadarManager::StartTrackElement
-	// The Blueprint implementation gets AC_RadarManager via GetComponentByClass
-	// and calls StartTrackElement(this) which returns the marker widget
-
-	UE_LOG(LogRadarElement, Verbose, TEXT("  -> Would register with RadarManager"));
-
-	// TODO: When RadarManagerComponent is migrated, call:
-	// if (URadarManagerComponent* RadarManager = PC->FindComponentByClass<URadarManagerComponent>())
-	// {
-	//     MarkerWidget = RadarManager->StartTrackElement(this);
-	// }
+	// Get radar manager component from controller and register this element
+	if (URadarManagerComponent* RadarManager = PC->FindComponentByClass<URadarManagerComponent>())
+	{
+		MarkerWidget = RadarManager->StartTrackElement(this);
+		UE_LOG(LogRadarElement, Log, TEXT("  -> Registered with RadarManager"));
+	}
+	else
+	{
+		UE_LOG(LogRadarElement, Warning, TEXT("  -> No RadarManagerComponent on controller"));
+	}
 }
 
 void URadarElementComponent::RemoveTrackedElement_Implementation()
@@ -64,14 +63,12 @@ void URadarElementComponent::RemoveTrackedElement_Implementation()
 		return;
 	}
 
-	// Note: In full implementation, this would call AC_RadarManager::StopTrackElement
-	UE_LOG(LogRadarElement, Verbose, TEXT("  -> Would unregister from RadarManager"));
-
-	// TODO: When RadarManagerComponent is migrated, call:
-	// if (URadarManagerComponent* RadarManager = PC->FindComponentByClass<URadarManagerComponent>())
-	// {
-	//     RadarManager->StopTrackElement(this);
-	// }
+	// Unregister from RadarManager
+	if (URadarManagerComponent* RadarManager = PC->FindComponentByClass<URadarManagerComponent>())
+	{
+		RadarManager->StopTrackElement(this);
+		UE_LOG(LogRadarElement, Verbose, TEXT("  -> Unregistered from RadarManager"));
+	}
 
 	MarkerWidget = nullptr;
 }

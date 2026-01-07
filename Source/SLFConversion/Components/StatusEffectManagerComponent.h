@@ -23,6 +23,35 @@
 
 // Forward declarations
 class UDataAsset;
+class UPDA_StatusEffect;
+
+/** Tracks buildup state for a status effect */
+USTRUCT(BlueprintType)
+struct FSLFStatusEffectBuildupState
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, Category = "StatusEffect")
+	double CurrentBuildup = 0.0;
+
+	UPROPERTY(BlueprintReadWrite, Category = "StatusEffect")
+	double MaxBuildup = 100.0;
+
+	UPROPERTY(BlueprintReadWrite, Category = "StatusEffect")
+	int32 Rank = 1;
+
+	UPROPERTY(BlueprintReadWrite, Category = "StatusEffect")
+	UDataAsset* SourceAsset = nullptr;
+
+	UPROPERTY(BlueprintReadWrite, Category = "StatusEffect")
+	bool bIsBuildingUp = false;
+
+	UPROPERTY(BlueprintReadWrite, Category = "StatusEffect")
+	FTimerHandle BuildupTimerHandle;
+
+	UPROPERTY(BlueprintReadWrite, Category = "StatusEffect")
+	FTimerHandle DecayTimerHandle;
+};
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // EVENT DISPATCHERS: 3/3 migrated
@@ -52,6 +81,13 @@ public:
 	/** [1/1] Active status effect instances by tag */
 	UPROPERTY(BlueprintReadWrite, Category = "Runtime")
 	TMap<FGameplayTag, UObject*> ActiveStatusEffects;
+
+	/** Tracks buildup state for each status effect */
+	UPROPERTY(BlueprintReadWrite, Category = "Runtime")
+	TMap<FGameplayTag, FSLFStatusEffectBuildupState> BuildupStates;
+
+	/** Pending async loads - maps class path to effect tag */
+	TMap<FString, FGameplayTag> PendingAsyncLoads;
 
 	// ═══════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS: 3/3 migrated
@@ -140,4 +176,19 @@ public:
 	/** [8/8] Callback when async class load completes */
 	UFUNCTION()
 	void OnLoaded_185D3AEC4B5162C1F2C50C87BF007D3F(UClass* Loaded);
+
+protected:
+	// --- Helper Functions ---
+
+	/** Get status effect tag from a PDA_StatusEffect asset */
+	FGameplayTag GetTagFromStatusEffectAsset(UDataAsset* StatusEffect) const;
+
+	/** Trigger the status effect when buildup is full */
+	void TriggerStatusEffect(const FGameplayTag& EffectTag, int32 Rank);
+
+	/** Called by buildup timer to add continuous buildup */
+	void OnBuildupTimerTick(FGameplayTag EffectTag);
+
+	/** Called by decay timer to reduce buildup */
+	void OnDecayTimerTick(FGameplayTag EffectTag);
 };

@@ -34,7 +34,8 @@ void UW_Resources::CacheWidgetReferences()
 
 void UW_Resources::AdjustBarWidth_Implementation(const FStatInfo& InStat)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Adjust the resource bar width based on stat current/max values
+	UE_LOG(LogTemp, Log, TEXT("UW_Resources::AdjustBarWidth"));
 }
 void UW_Resources::EventAddBuff_Implementation(UPDA_Buff* Buff)
 {

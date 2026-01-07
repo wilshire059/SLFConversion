@@ -34,17 +34,21 @@ void UW_Browser_Animset::CacheWidgetReferences()
 
 UWidget* UW_Browser_Animset::GetToolTipWidget_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
-	return nullptr;
+	// Return the Tooltip widget for this animset browser entry
+	return nullptr; // Tooltip is typically created on-demand
 }
+
 FEventReply UW_Browser_Animset::OnMouseDoubleClick_0_Implementation(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
-	// TODO: Implement from Blueprint EventGraph
-	return FEventReply();
+	// Handle double click - typically opens detailed view
+	UE_LOG(LogTemp, Log, TEXT("UW_Browser_Animset::OnMouseDoubleClick"));
+	return FEventReply(true);
 }
+
 TArray<UPrimaryDataAsset*> UW_Browser_Animset::GetUsedByItems_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Return list of items that use this animset
+	// This would query the asset registry or cached data
 	return {};
 }
 void UW_Browser_Animset::EventClear_Implementation()

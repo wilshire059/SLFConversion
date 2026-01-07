@@ -52,7 +52,9 @@ public:
 
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (0)
+	// FUNCTIONS
 	// ═══════════════════════════════════════════════════════════════════════
 
+	/** Execute stop sprinting - sets movement mode, stops stamina loss, clears sprinting flag */
+	virtual void ExecuteAction_Implementation() override;
 };

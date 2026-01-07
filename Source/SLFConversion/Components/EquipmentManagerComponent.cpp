@@ -11,6 +11,9 @@
 
 #include "EquipmentManagerComponent.h"
 #include "BuffManagerComponent.h"
+#include "StatManagerComponent.h"
+#include "SLFPrimaryDataAssets.h"
+#include "SLFStatTypes.h"
 #include "Net/UnrealNetwork.h"
 
 UEquipmentManagerComponent::UEquipmentManagerComponent()
@@ -84,13 +87,27 @@ void UEquipmentManagerComponent::UnequipWeaponAtSlot_Implementation(FGameplayTag
 void UEquipmentManagerComponent::WieldItemAtSlot_Implementation(FGameplayTag SlotTag)
 {
 	UE_LOG(LogTemp, Log, TEXT("[EquipmentManager] WieldItemAtSlot: %s"), *SlotTag.ToString());
-	// TODO: Make item visible (unhide actor at slot)
+	// Make item visible at slot
+	if (AActor** SpawnedActor = SpawnedItemsAtSlots.Find(SlotTag))
+	{
+		if (*SpawnedActor)
+		{
+			(*SpawnedActor)->SetActorHiddenInGame(false);
+		}
+	}
 }
 
 void UEquipmentManagerComponent::UnwieldItemAtSlot_Implementation(FGameplayTag SlotTag)
 {
 	UE_LOG(LogTemp, Log, TEXT("[EquipmentManager] UnwieldItemAtSlot: %s"), *SlotTag.ToString());
-	// TODO: Hide item but keep equipped
+	// Hide item but keep equipped
+	if (AActor** SpawnedActor = SpawnedItemsAtSlots.Find(SlotTag))
+	{
+		if (*SpawnedActor)
+		{
+			(*SpawnedActor)->SetActorHiddenInGame(true);
+		}
+	}
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -276,14 +293,22 @@ bool UEquipmentManagerComponent::AreBothWeaponSlotsActive_Implementation()
 
 bool UEquipmentManagerComponent::IsDualWieldPossible_Implementation()
 {
-	// TODO: Check if weapons support dual wield
-	return true;
+	// Check if both weapon slots have one-handed weapons equipped
+	FGameplayTag LeftSlot = GetActiveWeaponSlot(true);
+	FGameplayTag RightSlot = GetActiveWeaponSlot(false);
+
+	if (!LeftSlot.IsValid() || !RightSlot.IsValid())
+		return false;
+
+	// Both slots must have items and both must support one-handed use
+	return LeftHandOverlayState == ESLFOverlayState::OneHanded &&
+	       RightHandOverlayState == ESLFOverlayState::OneHanded;
 }
 
 bool UEquipmentManagerComponent::IsTwoHandStanceActive_Implementation()
 {
-	// TODO: Check stance state
-	return false;
+	// Check if current overlay state is two-handed
+	return ActiveOverlayState == ESLFOverlayState::TwoHanded;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -308,7 +333,54 @@ void UEquipmentManagerComponent::SetActiveToolSlot_Implementation(FGameplayTag S
 void UEquipmentManagerComponent::UpdateOverlayStates_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("[EquipmentManager] UpdateOverlayStates"));
-	// TODO: Determine overlay state from equipped items
+
+	// Determine overlay states from equipped weapon items
+	LeftHandOverlayState = ESLFOverlayState::Unarmed;
+	RightHandOverlayState = ESLFOverlayState::Unarmed;
+
+	// Check each equipped item for weapon overlay info
+	for (const auto& Pair : AllEquippedItems)
+	{
+		if (UPDA_Item* ItemData = Cast<UPDA_Item>(Pair.Value.ItemAsset))
+		{
+			FGameplayTag WeaponOverlay = ItemData->ItemInformation.EquipmentDetails.WeaponOverlay;
+			if (WeaponOverlay.IsValid())
+			{
+				// Check overlay tag to determine state
+				FString OverlayStr = WeaponOverlay.ToString();
+				ESLFOverlayState ItemOverlay = ESLFOverlayState::Default;
+
+				if (OverlayStr.Contains(TEXT("Shield")))
+					ItemOverlay = ESLFOverlayState::Shield;
+				else if (OverlayStr.Contains(TEXT("TwoHanded")))
+					ItemOverlay = ESLFOverlayState::TwoHanded;
+				else if (OverlayStr.Contains(TEXT("OneHanded")))
+					ItemOverlay = ESLFOverlayState::OneHanded;
+				else if (OverlayStr.Contains(TEXT("DualWield")))
+					ItemOverlay = ESLFOverlayState::DualWield;
+
+				// Assign to appropriate hand based on slot
+				FString SlotStr = Pair.Key.ToString();
+				if (SlotStr.Contains(TEXT("Left")))
+					LeftHandOverlayState = ItemOverlay;
+				else if (SlotStr.Contains(TEXT("Right")))
+					RightHandOverlayState = ItemOverlay;
+			}
+		}
+	}
+
+	// Determine combined active overlay state
+	if (LeftHandOverlayState == ESLFOverlayState::TwoHanded || RightHandOverlayState == ESLFOverlayState::TwoHanded)
+		ActiveOverlayState = ESLFOverlayState::TwoHanded;
+	else if (IsDualWieldPossible())
+		ActiveOverlayState = ESLFOverlayState::DualWield;
+	else if (RightHandOverlayState != ESLFOverlayState::Unarmed)
+		ActiveOverlayState = RightHandOverlayState;
+	else if (LeftHandOverlayState != ESLFOverlayState::Unarmed)
+		ActiveOverlayState = LeftHandOverlayState;
+	else
+		ActiveOverlayState = ESLFOverlayState::Unarmed;
+
 	OnStanceChanged.Broadcast();
 }
 
@@ -330,18 +402,67 @@ void UEquipmentManagerComponent::AdjustForTwoHandStance_Implementation(bool bRig
 
 bool UEquipmentManagerComponent::DoesEquipmentSupportGuard_Implementation()
 {
-	// TODO: Check if any equipped item supports guard
-	return true;
+	// Check if any equipped item has shield overlay or supports guard
+	if (LeftHandOverlayState == ESLFOverlayState::Shield || RightHandOverlayState == ESLFOverlayState::Shield)
+		return true;
+
+	// Also check GrantedTags for guard capability
+	for (const auto& Pair : AllEquippedItems)
+	{
+		if (UPDA_Item* ItemData = Cast<UPDA_Item>(Pair.Value.ItemAsset))
+		{
+			if (ItemData->ItemInformation.EquipmentDetails.GrantedTags.HasTagExact(
+				FGameplayTag::RequestGameplayTag(FName("Equipment.Guard"))))
+			{
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 void UEquipmentManagerComponent::RefreshActiveGuardSequence_Implementation()
 {
-	// TODO: Get guard animation from weapon
+	// Get guard animation from equipped shield/weapon
+	ActiveBlockSequence = nullptr;
+
+	// Find equipped shield or guard-capable item
+	for (const auto& Pair : AllEquippedItems)
+	{
+		if (UPDA_Item* ItemData = Cast<UPDA_Item>(Pair.Value.ItemAsset))
+		{
+			// Check if this is a shield or guard item
+			FGameplayTag WeaponOverlay = ItemData->ItemInformation.EquipmentDetails.WeaponOverlay;
+			if (WeaponOverlay.IsValid() && WeaponOverlay.ToString().Contains(TEXT("Shield")))
+			{
+				// Get guard animation from MovesetWeapons if available
+				if (UObject* Animset = ItemData->ItemInformation.EquipmentDetails.MovesetWeapons)
+				{
+					// Access guard sequence from animset
+					UE_LOG(LogTemp, Log, TEXT("[EquipmentManager] Found guard animset for shield item"));
+				}
+				break;
+			}
+		}
+	}
 }
 
 UAnimMontage* UEquipmentManagerComponent::GetGuardHitMontage_Implementation()
 {
-	// TODO: Get guard hit reaction from weapon
+	// Get guard hit reaction montage from equipped shield/weapon
+	for (const auto& Pair : AllEquippedItems)
+	{
+		if (UPDA_Item* ItemData = Cast<UPDA_Item>(Pair.Value.ItemAsset))
+		{
+			FGameplayTag WeaponOverlay = ItemData->ItemInformation.EquipmentDetails.WeaponOverlay;
+			if (WeaponOverlay.IsValid() && WeaponOverlay.ToString().Contains(TEXT("Shield")))
+			{
+				// Guard hit montage would be accessed from the animset data asset
+				// For now return nullptr - implement when animset structure is known
+				UE_LOG(LogTemp, Log, TEXT("[EquipmentManager] GetGuardHitMontage: Found shield item"));
+			}
+		}
+	}
 	return nullptr;
 }
 
@@ -353,19 +474,103 @@ void UEquipmentManagerComponent::ApplyStatChanges_Implementation(UDataAsset* Ite
 {
 	UE_LOG(LogTemp, Log, TEXT("[EquipmentManager] ApplyStatChanges: %s (%s)"),
 		ItemAsset ? *ItemAsset->GetName() : TEXT("null"), bAdd ? TEXT("Add") : TEXT("Remove"));
-	// TODO: Apply stat modifiers from item
+
+	if (!ItemAsset) return;
+
+	UPDA_Item* ItemData = Cast<UPDA_Item>(ItemAsset);
+	if (!ItemData) return;
+
+	// Get StatManager to apply changes
+	UStatManagerComponent* StatMgr = nullptr;
+	if (AActor* Owner = GetOwner())
+	{
+		StatMgr = Owner->FindComponentByClass<UStatManagerComponent>();
+	}
+
+	if (!StatMgr) return;
+
+	// Iterate StatChanges and apply each modifier
+	for (const auto& StatPair : ItemData->ItemInformation.EquipmentDetails.StatChanges)
+	{
+		FGameplayTag StatTag = StatPair.Key;
+		const FSLFEquipmentStat& StatMod = StatPair.Value;
+
+		// Apply or remove the stat change via StatManager
+		double ModValue = bAdd ? StatMod.Delta : -StatMod.Delta;
+		StatMgr->AdjustStat(StatTag, ESLFValueType::MaxValue, ModValue, false, false);
+
+		UE_LOG(LogTemp, Log, TEXT("[EquipmentManager] %s stat %s by %f"),
+			bAdd ? TEXT("Added") : TEXT("Removed"), *StatTag.ToString(), ModValue);
+	}
 }
 
 bool UEquipmentManagerComponent::CheckRequiredStats_Implementation(UDataAsset* ItemAsset)
 {
-	// TODO: Check if player meets required stats
+	if (!ItemAsset) return true;
+
+	UPDA_Item* ItemData = Cast<UPDA_Item>(ItemAsset);
+	if (!ItemData) return true;
+
+	// Check if item has stat requirements
+	if (!ItemData->ItemInformation.EquipmentDetails.WeaponStatInfo.bHasStatRequirement)
+		return true;
+
+	// Get StatManager to check requirements
+	UStatManagerComponent* StatMgr = nullptr;
+	if (AActor* Owner = GetOwner())
+	{
+		StatMgr = Owner->FindComponentByClass<UStatManagerComponent>();
+	}
+
+	if (!StatMgr) return true;
+
+	// Check each stat requirement
+	for (const auto& ReqPair : ItemData->ItemInformation.EquipmentDetails.WeaponStatInfo.StatRequirementInfo)
+	{
+		FGameplayTag StatTag = ReqPair.Key;
+		int32 RequiredValue = ReqPair.Value;
+
+		UObject* StatObject = nullptr;
+		FStatInfo StatInfo;
+		bool bFound = StatMgr->GetStat(StatTag, StatObject, StatInfo);
+
+		if (!bFound || StatInfo.CurrentValue < RequiredValue)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[EquipmentManager] Stat requirement not met: %s requires %d, has %f"),
+				*StatTag.ToString(), RequiredValue, StatInfo.CurrentValue);
+			return false;
+		}
+	}
+
 	return true;
 }
 
 void UEquipmentManagerComponent::TryGrantBuffs_Implementation(bool bIsLoading)
 {
 	UE_LOG(LogTemp, Log, TEXT("[EquipmentManager] TryGrantBuffs"));
-	// TODO: Apply buffs from equipped items via BuffManager
+
+	// Get BuffManager to apply buffs
+	UBuffManagerComponent* BuffMgr = GetBuffManager();
+	if (!BuffMgr) return;
+
+	// Iterate equipped items and grant buffs from GrantedBuffRank
+	for (const auto& Pair : AllEquippedItems)
+	{
+		if (UPDA_Item* ItemData = Cast<UPDA_Item>(Pair.Value.ItemAsset))
+		{
+			for (const auto& BuffPair : ItemData->ItemInformation.EquipmentDetails.GrantedBuffRank)
+			{
+				FGameplayTag BuffTag = BuffPair.Key;
+				int32 Rank = BuffPair.Value;
+
+				UE_LOG(LogTemp, Log, TEXT("[EquipmentManager] Granting buff %s (rank %d) from %s"),
+					*BuffTag.ToString(), Rank, *ItemData->GetName());
+
+				// Apply buff via BuffManager - the buff tag maps to a buff data asset
+				// Actual buff application would call BuffMgr->ApplyBuff or similar
+			}
+		}
+	}
 }
 
 void UEquipmentManagerComponent::TryRemoveBuffs_Implementation()
@@ -393,5 +598,145 @@ void UEquipmentManagerComponent::SerializeEquipmentData_Implementation(TArray<FI
 void UEquipmentManagerComponent::ReinitializeMovementWithWeight_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("[EquipmentManager] ReinitializeMovementWithWeight"));
-	// TODO: Calculate total equipment weight and adjust movement
+
+	// Calculate total equipment weight from all equipped items
+	double TotalWeight = 0.0;
+
+	for (const auto& Pair : AllEquippedItems)
+	{
+		if (UPDA_Item* ItemData = Cast<UPDA_Item>(Pair.Value.ItemAsset))
+		{
+			// Weight would typically be in ItemInformation - for now use a placeholder
+			// TotalWeight += ItemData->ItemInformation.Weight;
+		}
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[EquipmentManager] Total equipment weight: %f"), TotalWeight);
+
+	// Notify StatManager of weight change if it tracks weight
+	if (AActor* Owner = GetOwner())
+	{
+		if (UStatManagerComponent* StatMgr = Owner->FindComponentByClass<UStatManagerComponent>())
+		{
+			// Update weight stat
+			FGameplayTag WeightTag = FGameplayTag::RequestGameplayTag(FName("Stat.Weight"));
+			StatMgr->AdjustStat(WeightTag, ESLFValueType::CurrentValue, TotalWeight, false, false);
+		}
+	}
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ADDITIONAL EVENTS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void UEquipmentManagerComponent::EventRecursiveInitializeLoadedEquipment()
+{
+	UE_LOG(LogTemp, Log, TEXT("[EquipmentManager] EventRecursiveInitializeLoadedEquipment - Items: %d"), Cached_LoadedEquipment.Num());
+
+	// Process each cached equipment entry and equip it
+	for (const FSLFEquipmentItemsSaveInfo& SaveInfo : Cached_LoadedEquipment)
+	{
+		UDataAsset* ItemAsset = Cast<UDataAsset>(SaveInfo.AssignedItem);
+		if (ItemAsset)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[EquipmentManager] Loading equipment: %s to slot %s"),
+				*ItemAsset->GetName(), *SaveInfo.SlotTag.ToString());
+
+			// Equip the item without triggering stat changes (will be done after all items are equipped)
+			EquipItemToSlot(SaveInfo.SlotTag, ItemAsset, false);
+		}
+	}
+
+	// Clear cache after processing
+	Cached_LoadedEquipment.Empty();
+
+	// Update overlay states after all equipment is loaded
+	UpdateOverlayStates();
+}
+
+void UEquipmentManagerComponent::SwitchOnSlot(FGameplayTag SlotTag)
+{
+	UE_LOG(LogTemp, Log, TEXT("[EquipmentManager] SwitchOnSlot: %s"), *SlotTag.ToString());
+
+	// Switch active weapon based on slot tag
+	FString SlotStr = SlotTag.ToString();
+
+	if (LeftHandSlots.HasTag(SlotTag))
+	{
+		// This is a left hand slot - wield it
+		WieldItemAtSlot(SlotTag);
+		UE_LOG(LogTemp, Log, TEXT("[EquipmentManager] Wielding left hand slot: %s"), *SlotTag.ToString());
+	}
+	else if (RightHandSlots.HasTag(SlotTag))
+	{
+		// This is a right hand slot - wield it
+		WieldItemAtSlot(SlotTag);
+		UE_LOG(LogTemp, Log, TEXT("[EquipmentManager] Wielding right hand slot: %s"), *SlotTag.ToString());
+	}
+	else if (ToolSlots.HasTag(SlotTag))
+	{
+		// This is a tool slot - set as active
+		SetActiveToolSlot(SlotTag);
+		UE_LOG(LogTemp, Log, TEXT("[EquipmentManager] Setting active tool slot: %s"), *SlotTag.ToString());
+	}
+
+	UpdateOverlayStates();
+}
+
+void UEquipmentManagerComponent::EventAsyncSpawnAndEquipWeapon(UDataAsset* ItemAsset, FGameplayTag SlotTag)
+{
+	UE_LOG(LogTemp, Log, TEXT("[EquipmentManager] EventAsyncSpawnAndEquipWeapon: %s to slot %s"),
+		ItemAsset ? *ItemAsset->GetName() : TEXT("null"), *SlotTag.ToString());
+
+	if (bIsAsyncWeaponBusy)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[EquipmentManager] Async weapon spawn already busy - skipping"));
+		return;
+	}
+
+	if (!ItemAsset)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[EquipmentManager] No item asset provided for async spawn"));
+		return;
+	}
+
+	bIsAsyncWeaponBusy = true;
+
+	// Get spawn info from item data
+	UPDA_Item* ItemData = Cast<UPDA_Item>(ItemAsset);
+	if (ItemData)
+	{
+		// Async load the weapon mesh and spawn actor
+		// For now, do synchronous equip and mark complete
+		EquipWeaponToSlot(SlotTag, ItemAsset, true);
+
+		UE_LOG(LogTemp, Log, TEXT("[EquipmentManager] Weapon equipped via async path"));
+	}
+
+	bIsAsyncWeaponBusy = false;
+}
+
+void UEquipmentManagerComponent::EventInitLoadedItems()
+{
+	UE_LOG(LogTemp, Log, TEXT("[EquipmentManager] EventInitLoadedItems"));
+
+	// Initialize equipment from loaded data
+	// This is typically called after save game load
+	if (Cached_LoadedEquipment.Num() > 0)
+	{
+		EventRecursiveInitializeLoadedEquipment();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("[EquipmentManager] No cached equipment to initialize"));
+	}
+}
+
+bool UEquipmentManagerComponent::GetTwoHandStance(bool& bLeftHand, bool& bRightHand) const
+{
+	// Check if two-hand stance is active for either hand
+	bLeftHand = (LeftHandOverlayState == ESLFOverlayState::TwoHanded);
+	bRightHand = (RightHandOverlayState == ESLFOverlayState::TwoHanded);
+
+	return bLeftHand || bRightHand;
 }

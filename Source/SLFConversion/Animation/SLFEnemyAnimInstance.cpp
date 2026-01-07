@@ -2,6 +2,7 @@
 // C++ AnimInstance implementation for enemy characters
 
 #include "SLFEnemyAnimInstance.h"
+#include "SLFPrimaryDataAssets.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/AICombatManagerComponent.h"
@@ -125,6 +126,6 @@ void USLFEnemyAnimInstance::UpdateAnimationProperties(float DeltaSeconds)
 		PoiseBroken = AC_AI_CombatManager->bPoiseBroken;
 
 		// JSON: Get PoiseBreakAsset -> Set PoiseBreakAsset (done in init, but refresh here too)
-		PoiseBreakAsset = AC_AI_CombatManager->PoiseBreakAsset;
+		PoiseBreakAsset = Cast<UPDA_PoiseBreakAnimData>(AC_AI_CombatManager->PoiseBreakAsset);
 	}
 }

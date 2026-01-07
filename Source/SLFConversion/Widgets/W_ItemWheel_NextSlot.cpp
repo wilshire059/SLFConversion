@@ -34,7 +34,8 @@ void UW_ItemWheel_NextSlot::CacheWidgetReferences()
 
 void UW_ItemWheel_NextSlot::HandleChildItem_Implementation(UPrimaryDataAsset* InItem)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Handle assignment of item to this next slot display
+	UE_LOG(LogTemp, Log, TEXT("UW_ItemWheel_NextSlot::HandleChildItem - Item: %s"), InItem ? *InItem->GetName() : TEXT("None"));
 }
 void UW_ItemWheel_NextSlot::EventOnItemAmountUpdated_Implementation(UPDA_Item* InItem, int32 NewCount)
 {

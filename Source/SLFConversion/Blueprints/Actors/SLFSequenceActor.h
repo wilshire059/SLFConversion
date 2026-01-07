@@ -78,5 +78,12 @@ protected:
 	UPROPERTY()
 	class ALevelSequenceActor* SequenceActor;
 
+	UPROPERTY()
+	class ULevelSequencePlayer* SequencePlayer;
+
 	bool bIsPlaying = false;
+
+	/** Callback when sequence finishes playing */
+	UFUNCTION()
+	void OnSequenceComplete();
 };

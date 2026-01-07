@@ -34,15 +34,19 @@ void UW_RestMenu::CacheWidgetReferences()
 
 void UW_RestMenu::InitializeTimeEntries_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Initialize time selection entries (morning, noon, evening, night)
+	UE_LOG(LogTemp, Log, TEXT("UW_RestMenu::InitializeTimeEntries"));
 }
+
 void UW_RestMenu::InitializeTimePassWidget_Implementation(const FSLFDayNightInfo& TargetTime)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Setup the time pass animation widget with target time
+	UE_LOG(LogTemp, Log, TEXT("UW_RestMenu::InitializeTimePassWidget"));
 }
+
 bool UW_RestMenu::GetLevelUpMenuVisibility_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Check if the level up menu is currently visible
 	return false;
 }
 void UW_RestMenu::EventBackToMain_Implementation()

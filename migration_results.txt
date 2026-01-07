@@ -1,0 +1,45 @@
+======================================================================
+OPTION B: PDA_DefaultMeshData Migration
+======================================================================
+
+[Step 1] Loading assets...
+Loaded Blueprint: PDA_DefaultMeshData
+Current class: Blueprint
+
+[Step 2] Loading C++ parent class...
+C++ class loaded: PDA_DefaultMeshData
+
+[Step 3] Reparenting Blueprint...
+WARNING: Reparent returned false (may already be correct parent)
+
+[Step 4] Applying mesh data to C++ properties...
+Got CDO: <Object '/Game/SoulslikeFramework/Data/PDA_DefaultMeshData.Default__PDA_DefaultMeshData_C' (0x000001FADD8A4C00) Class 'PDA_DefaultMeshData_C'>
+  Setting head_mesh = /Game/SoulslikeFramework/Meshes/SKM/SKM_QuinnCape_Head
+    ERROR setting head_mesh: PDA_DefaultMeshData: Failed to convert type 'SoftObjectPath' to property 'HeadMesh' (SoftObjectProperty) for attribute 'head_mesh' on 'PDA_DefaultMeshData_C'
+  TypeError: NativizeProperty: Cannot nativize 'SoftObjectPath' as 'HeadMesh' (SoftObjectProperty)
+    TypeError: NativizeObject: Cannot nativize 'SoftObjectPath' as 'Object' (allowed Class type: 'SkeletalMesh')
+  Setting upper_body_mesh = /Game/SoulslikeFramework/Meshes/SKM/SKM_Quinn_UpperBody
+    ERROR setting upper_body_mesh: PDA_DefaultMeshData: Failed to convert type 'SoftObjectPath' to property 'UpperBodyMesh' (SoftObjectProperty) for attribute 'upper_body_mesh' on 'PDA_DefaultMeshData_C'
+  TypeError: NativizeProperty: Cannot nativize 'SoftObjectPath' as 'UpperBodyMesh' (SoftObjectProperty)
+    TypeError: NativizeObject: Cannot nativize 'SoftObjectPath' as 'Object' (allowed Class type: 'SkeletalMesh')
+  Setting arms_mesh = /Game/SoulslikeFramework/Meshes/SKM/SKM_Quinn_Arms
+    ERROR setting arms_mesh: PDA_DefaultMeshData: Failed to convert type 'SoftObjectPath' to property 'ArmsMesh' (SoftObjectProperty) for attribute 'arms_mesh' on 'PDA_DefaultMeshData_C'
+  TypeError: NativizeProperty: Cannot nativize 'SoftObjectPath' as 'ArmsMesh' (SoftObjectProperty)
+    TypeError: NativizeObject: Cannot nativize 'SoftObjectPath' as 'Object' (allowed Class type: 'SkeletalMesh')
+  Setting lower_body_mesh = /Game/SoulslikeFramework/Meshes/SKM/SKM_QuinnCape_LowerBody
+    ERROR setting lower_body_mesh: PDA_DefaultMeshData: Failed to convert type 'SoftObjectPath' to property 'LowerBodyMesh' (SoftObjectProperty) for attribute 'lower_body_mesh' on 'PDA_DefaultMeshData_C'
+  TypeError: NativizeProperty: Cannot nativize 'SoftObjectPath' as 'LowerBodyMesh' (SoftObjectProperty)
+    TypeError: NativizeObject: Cannot nativize 'SoftObjectPath' as 'Object' (allowed Class type: 'SkeletalMesh')
+
+[Step 5] Saving asset...
+SUCCESS: Asset saved
+
+[Step 6] Verification...
+  head_mesh: None
+  upper_body_mesh: None
+  arms_mesh: None
+  lower_body_mesh: None
+
+======================================================================
+MIGRATION COMPLETE
+======================================================================

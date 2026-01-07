@@ -12,15 +12,16 @@ USG_SaveSlots::USG_SaveSlots()
 
 void USG_SaveSlots::AddSlot_Implementation(const FString& SlotName)
 {
-	// TODO: Implement from Blueprint
+	Slots.AddUnique(SlotName);
+	LastSavedSlot = SlotName;
 }
+
 FString USG_SaveSlots::GetLastSaveSlot_Implementation()
 {
-	// TODO: Implement from Blueprint
-	return FString();
+	return LastSavedSlot;
 }
+
 TArray<FString> USG_SaveSlots::GetAllSlots_Implementation()
 {
-	// TODO: Implement from Blueprint
-	return {};
+	return Slots;
 }

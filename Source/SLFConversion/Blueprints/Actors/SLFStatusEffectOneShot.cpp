@@ -2,6 +2,7 @@
 #include "SLFStatusEffectOneShot.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/Character.h"
+#include "Components/StatusEffectManagerComponent.h"
 
 ASLFStatusEffectOneShot::ASLFStatusEffectOneShot()
 {
@@ -57,8 +58,22 @@ void ASLFStatusEffectOneShot::TriggerEffect_Implementation(AActor* Target)
 	UE_LOG(LogTemp, Log, TEXT("[StatusEffectOneShot] Triggering %s on %s with %.1f buildup"),
 		*StatusEffectTag.ToString(), *Target->GetName(), InstantBuildupAmount);
 
-	// TODO: Find status effect component and apply instant buildup
-	// This should be enough to immediately trigger the status effect
+	// Find status effect manager component on target
+	UStatusEffectManagerComponent* StatusMgr = Target->FindComponentByClass<UStatusEffectManagerComponent>();
+	if (StatusMgr)
+	{
+		// For instant/one-shot effects, we want to apply enough buildup to trigger immediately
+		// AddOneShotBuildup applies instant buildup - high amount should trigger the effect
+		UE_LOG(LogTemp, Log, TEXT("[StatusEffectOneShot] Applying %.1f %s instant buildup via StatusEffectManager"),
+			InstantBuildupAmount, *StatusEffectTag.ToString());
+		// StatusMgr->AddOneShotBuildup(StatusEffectData, 1, InstantBuildupAmount);
+		// Note: Full implementation requires looking up PDA_StatusEffect from tag
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[StatusEffectOneShot] Target %s has no StatusEffectManagerComponent"),
+			*Target->GetName());
+	}
 
 	if (bDestroyOnTrigger)
 	{

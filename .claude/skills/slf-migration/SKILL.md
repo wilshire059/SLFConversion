@@ -153,7 +153,7 @@ The solution is to clear the logic from Blueprints that call these functions, no
 | `C:/scripts/SLFConversion/MASTER_MIGRATION_TRACKER.md` | Progress tracking |
 | `C:/scripts/SLFConversion/DEFINITION_OF_DONE.md` | Definition of Done + Example |
 | `C:/scripts/SLFConversion/Source/SLFConversion/` | C++ Source |
-| `C:/scripts/SLFConversion_Migration/Backups/blueprint_only/` | Clean backup content |
+| `C:/scripts/bp_only/` | Clean backup content (Blueprint-only, pre-migration) |
 
 ### Skill Guides
 
@@ -195,7 +195,7 @@ NPC_CHARACTER_MAP = {
 ### Fresh Migration (Recommended)
 ```bash
 # Restore backup and run migration
-powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Recurse -Force; Copy-Item -Path 'C:\scripts\SLFConversion_Migration\Backups\blueprint_only\Content\*' -Destination 'C:\scripts\SLFConversion\Content\' -Recurse -Force"
+powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Recurse -Force; Copy-Item -Path 'C:\scripts\bp_only\Content\*' -Destination 'C:\scripts\SLFConversion\Content\' -Recurse -Force"
 
 # Run migration
 "C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^

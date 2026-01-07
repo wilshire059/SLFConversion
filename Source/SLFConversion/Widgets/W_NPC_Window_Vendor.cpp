@@ -4,6 +4,7 @@
 // 20-PASS VALIDATION: 2026-01-01 Autonomous Session
 
 #include "Widgets/W_NPC_Window_Vendor.h"
+#include "Widgets/W_VendorSlot.h"
 
 UW_NPC_Window_Vendor::UW_NPC_Window_Vendor(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -34,17 +35,45 @@ void UW_NPC_Window_Vendor::CacheWidgetReferences()
 
 int32 UW_NPC_Window_Vendor::GetPlayerCurrency_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Get owning player and return their currency (typically from PlayerState or GameInstance)
+	if (APlayerController* PC = GetOwningPlayer())
+	{
+		// Access the player's currency through the game instance or player state
+		// This would typically go through an interface or component
+		UE_LOG(LogTemp, Log, TEXT("UW_NPC_Window_Vendor::GetPlayerCurrency"));
+	}
 	return 0;
 }
+
 UW_VendorSlot* UW_NPC_Window_Vendor::GetEmptySlot_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Iterate VendorSlots and find one that doesn't have an item assigned
+	for (UW_VendorSlot* VendorSlot : VendorSlots)
+	{
+		if (VendorSlot && !OccupiedVendorSlots.Contains(VendorSlot))
+		{
+			return VendorSlot;
+		}
+	}
 	return nullptr;
 }
+
 void UW_NPC_Window_Vendor::AddNewSlots_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Create W_VendorSlot widgets and add to VendorSlots array
+	if (UWorld* World = GetWorld())
+	{
+		UClass* SlotClass = LoadClass<UW_VendorSlot>(nullptr, TEXT("/Game/SoulslikeFramework/Widgets/Vendor/W_VendorSlot.W_VendorSlot_C"));
+		if (SlotClass)
+		{
+			UW_VendorSlot* NewSlot = CreateWidget<UW_VendorSlot>(World, SlotClass);
+			if (NewSlot)
+			{
+				VendorSlots.Add(NewSlot);
+				UE_LOG(LogTemp, Log, TEXT("UW_NPC_Window_Vendor::AddNewSlots - Added new vendor slot"));
+			}
+		}
+	}
 }
 void UW_NPC_Window_Vendor::EventCloseVendorAction_Implementation()
 {

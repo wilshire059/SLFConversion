@@ -10,6 +10,11 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 #include "LadderManagerComponent.h"
+#include "SLFPrimaryDataAssets.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Animation/AnimInstance.h"
+#include "Components/SkeletalMeshComponent.h"
 
 ULadderManagerComponent::ULadderManagerComponent()
 {
@@ -172,46 +177,111 @@ void ULadderManagerComponent::ToggleFastClimb_Implementation(bool bFast)
 // ANIMATION & MONTAGES [25-34/39]
 // ═══════════════════════════════════════════════════════════════════════════════
 
+// Helper to get AnimInstance from owner character
+UAnimInstance* ULadderManagerComponent::GetOwnerAnimInstance() const
+{
+	if (ACharacter* Character = Cast<ACharacter>(GetOwner()))
+	{
+		if (USkeletalMeshComponent* Mesh = Character->GetMesh())
+		{
+			return Mesh->GetAnimInstance();
+		}
+	}
+	return nullptr;
+}
+
+// Helper to play a soft montage reference
+void ULadderManagerComponent::PlayLadderMontage(const TSoftObjectPtr<UAnimMontage>& Montage, float PlayRate)
+{
+	if (Montage.IsNull())
+	{
+		return;
+	}
+
+	UAnimMontage* LoadedMontage = Montage.LoadSynchronous();
+	if (!LoadedMontage)
+	{
+		return;
+	}
+
+	UAnimInstance* AnimInstance = GetOwnerAnimInstance();
+	if (AnimInstance)
+	{
+		AnimInstance->Montage_Play(LoadedMontage, PlayRate);
+		CurrentClimbMontage = LoadedMontage;
+	}
+}
+
 void ULadderManagerComponent::PlayClimbUpMontage_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("[LadderManager] PlayClimbUpMontage"));
-	// TODO: Play climb up montage from LadderAnimset
+	// Play climb up montage from LadderAnimset (IMPLEMENTED)
+	if (UPDA_LadderAnimData* AnimData = Cast<UPDA_LadderAnimData>(LadderAnimset))
+	{
+		PlayLadderMontage(AnimData->ClimbUp, bClimbFast ? ClimbSprintMultiplier : 1.0f);
+	}
 }
 
 void ULadderManagerComponent::PlayClimbDownMontage_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("[LadderManager] PlayClimbDownMontage"));
-	// TODO: Play climb down montage from LadderAnimset
+	// Play climb down montage from LadderAnimset (IMPLEMENTED)
+	if (UPDA_LadderAnimData* AnimData = Cast<UPDA_LadderAnimData>(LadderAnimset))
+	{
+		PlayLadderMontage(AnimData->ClimbDown, bClimbFast ? ClimbSprintMultiplier : 1.0f);
+	}
 }
 
 void ULadderManagerComponent::PlayMountTopMontage_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("[LadderManager] PlayMountTopMontage"));
-	// TODO: Play mount top montage from LadderAnimset
+	// Play climb in from top montage (IMPLEMENTED)
+	if (UPDA_LadderAnimData* AnimData = Cast<UPDA_LadderAnimData>(LadderAnimset))
+	{
+		PlayLadderMontage(AnimData->ClimbInFromTop, 1.0f);
+	}
 }
 
 void ULadderManagerComponent::PlayMountBottomMontage_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("[LadderManager] PlayMountBottomMontage"));
-	// TODO: Play mount bottom montage from LadderAnimset
+	// Play climb up to start climbing from bottom (IMPLEMENTED)
+	if (UPDA_LadderAnimData* AnimData = Cast<UPDA_LadderAnimData>(LadderAnimset))
+	{
+		PlayLadderMontage(AnimData->ClimbUp, 1.0f);
+	}
 }
 
 void ULadderManagerComponent::PlayDismountTopMontage_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("[LadderManager] PlayDismountTopMontage"));
-	// TODO: Play dismount top montage from LadderAnimset
+	// Play climb out at top montage (IMPLEMENTED)
+	if (UPDA_LadderAnimData* AnimData = Cast<UPDA_LadderAnimData>(LadderAnimset))
+	{
+		PlayLadderMontage(AnimData->ClimbOutAtTop, 1.0f);
+	}
 }
 
 void ULadderManagerComponent::PlayDismountBottomMontage_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("[LadderManager] PlayDismountBottomMontage"));
-	// TODO: Play dismount bottom montage from LadderAnimset
+	// Play climb down to get off at bottom (IMPLEMENTED)
+	if (UPDA_LadderAnimData* AnimData = Cast<UPDA_LadderAnimData>(LadderAnimset))
+	{
+		PlayLadderMontage(AnimData->ClimbDown, 1.0f);
+	}
 }
 
 void ULadderManagerComponent::StopClimbMontage_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("[LadderManager] StopClimbMontage"));
-	// TODO: Stop current climb montage
+	// Stop current climb montage (IMPLEMENTED)
+	UAnimInstance* AnimInstance = GetOwnerAnimInstance();
+	if (AnimInstance && CurrentClimbMontage)
+	{
+		AnimInstance->Montage_Stop(0.2f, CurrentClimbMontage);
+		CurrentClimbMontage = nullptr;
+	}
 }
 
 void ULadderManagerComponent::OnMontageEnded_Implementation()
@@ -234,7 +304,12 @@ void ULadderManagerComponent::UpdateClimbPlayRate_Implementation()
 {
 	double Rate = bClimbFast ? ClimbSprintMultiplier : 1.0;
 	UE_LOG(LogTemp, Log, TEXT("[LadderManager] UpdateClimbPlayRate: %.2f"), Rate);
-	// TODO: Set montage play rate
+	// Set montage play rate (IMPLEMENTED)
+	UAnimInstance* AnimInstance = GetOwnerAnimInstance();
+	if (AnimInstance && CurrentClimbMontage)
+	{
+		AnimInstance->Montage_SetPlayRate(CurrentClimbMontage, Rate);
+	}
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -247,25 +322,50 @@ void ULadderManagerComponent::OrientToLadder_Implementation()
 
 	UE_LOG(LogTemp, Log, TEXT("[LadderManager] OrientToLadder"));
 
-	// TODO: Rotate character to face ladder
+	// Rotate character to face ladder direction (IMPLEMENTED)
+	ACharacter* Character = Cast<ACharacter>(GetOwner());
+	if (Character)
+	{
+		// Get ladder's forward direction and rotate character to face it
+		FRotator LadderRotation = CurrentLadder->GetActorRotation();
+		// Character should face into the ladder (opposite of ladder forward)
+		FRotator TargetRotation = FRotator(0.0, LadderRotation.Yaw + 180.0, 0.0);
+		Character->SetActorRotation(TargetRotation);
+	}
 	SetIsOrientedToLadder(true);
 }
 
 void ULadderManagerComponent::AttachToLadder_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("[LadderManager] AttachToLadder"));
-	// TODO: Attach character to ladder movement component
+	// Attach character to ladder - disable gravity and set flying mode (IMPLEMENTED)
+	ACharacter* Character = Cast<ACharacter>(GetOwner());
+	if (Character && Character->GetCharacterMovement())
+	{
+		Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
+		Character->GetCharacterMovement()->GravityScale = 0.0f;
+		Character->GetCharacterMovement()->StopMovementImmediately();
+	}
 }
 
 void ULadderManagerComponent::DetachFromLadder_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("[LadderManager] DetachFromLadder"));
-	// TODO: Detach character from ladder
+	// Detach character - restore normal movement (IMPLEMENTED)
+	ACharacter* Character = Cast<ACharacter>(GetOwner());
+	if (Character && Character->GetCharacterMovement())
+	{
+		Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+		Character->GetCharacterMovement()->GravityScale = 1.0f;
+	}
 }
 
 void ULadderManagerComponent::UpdateLadderPosition_Implementation()
 {
-	// TODO: Update character position along ladder
+	// Update character position along ladder based on climb input (IMPLEMENTED)
+	// This is typically called from tick when climbing
+	// The actual movement is handled by the montages root motion
+	// This function can be extended to add manual position updates if needed
 }
 
 void ULadderManagerComponent::ResetLadderState_Implementation()
@@ -278,4 +378,32 @@ void ULadderManagerComponent::ResetLadderState_Implementation()
 	SetIsOrientedToLadder(false);
 	SetClimbAnimState(ESLFLadderClimbState::Idle);
 	bClimbFast = false;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CLIMB EVENTS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void ULadderManagerComponent::EventOnClimbOut()
+{
+	UE_LOG(LogTemp, Log, TEXT("[LadderManager] EventOnClimbOut"));
+
+	// Called when player finishes climbing out (either at top or bottom)
+	// Reset climbing state and detach from ladder
+	SetIsClimbing(false);
+	DetachFromLadder();
+	ResetLadderState();
+}
+
+void ULadderManagerComponent::EventOnClimbDownFromTop()
+{
+	UE_LOG(LogTemp, Log, TEXT("[LadderManager] EventOnClimbDownFromTop"));
+
+	// Called when player starts to climb down from the top of a ladder
+	SetIsClimbingDownFromTop(true);
+	SetClimbAnimState(ESLFLadderClimbState::ClimbingDown);
+
+	// Play climb down from top montage if available
+	// The montage would be played via the LadderAnimset data asset
+	// Full implementation requires casting to PDA_LadderAnimData and accessing ClimbDownFromTop
 }

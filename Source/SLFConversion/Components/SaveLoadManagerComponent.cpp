@@ -12,6 +12,9 @@
 #include "SaveLoadManagerComponent.h"
 #include "StatManagerComponent.h"
 #include "ProgressManagerComponent.h"
+#include "InventoryManagerComponent.h"
+#include "EquipmentManagerComponent.h"
+#include "Blueprints/SG_SoulslikeFramework.h"
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
 
@@ -108,7 +111,17 @@ void USaveLoadManagerComponent::SerializeAllData_Implementation()
 		SaveData.PlayTime = ProgressManager->PlayTime;
 	}
 
-	// TODO: Serialize inventory and equipment via interfaces
+	// Serialize inventory
+	if (UInventoryManagerComponent* InvMgr = Cast<UInventoryManagerComponent>(InventoryManager))
+	{
+		InvMgr->SerializeInventoryStorageCurrencyData(SaveData.InventoryData);
+	}
+
+	// Serialize equipment
+	if (UEquipmentManagerComponent* EquipMgr = Cast<UEquipmentManagerComponent>(EquipmentManager))
+	{
+		EquipMgr->SerializeEquipmentData(SaveData.EquipmentData);
+	}
 }
 
 void USaveLoadManagerComponent::AddToSaveData_Implementation(FGameplayTag DataTag, const FInstancedStruct& InData)
@@ -122,7 +135,39 @@ void USaveLoadManagerComponent::UpdateSaveData_Implementation(FGameplayTag DataT
 {
 	UE_LOG(LogTemp, Log, TEXT("[SaveLoadManager] UpdateSaveData: %s"), *DataTag.ToString());
 
-	// TODO: Update specific data category in save
+	// Update specific data category based on tag
+	FString TagString = DataTag.ToString();
+
+	if (TagString.Contains(TEXT("Stats")))
+	{
+		if (StatManager)
+		{
+			StatManager->SerializeStatsData();
+			SaveData.Level = StatManager->Level;
+		}
+	}
+	else if (TagString.Contains(TEXT("Inventory")))
+	{
+		if (UInventoryManagerComponent* InvMgr = Cast<UInventoryManagerComponent>(InventoryManager))
+		{
+			InvMgr->SerializeInventoryStorageCurrencyData(SaveData.InventoryData);
+		}
+	}
+	else if (TagString.Contains(TEXT("Equipment")))
+	{
+		if (UEquipmentManagerComponent* EquipMgr = Cast<UEquipmentManagerComponent>(EquipmentManager))
+		{
+			EquipMgr->SerializeEquipmentData(SaveData.EquipmentData);
+		}
+	}
+	else if (TagString.Contains(TEXT("Progress")))
+	{
+		if (ProgressManager)
+		{
+			ProgressManager->SerializeProgressData();
+			SaveData.PlayTime = ProgressManager->PlayTime;
+		}
+	}
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -152,8 +197,12 @@ void USaveLoadManagerComponent::LoadDataFromSave_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("[SaveLoadManager] LoadDataFromSave"));
 
-	// TODO: Extract FSLFSaveGameInfo from SGO_Character
-	// For now, use cached Data
+	// Extract FSLFSaveGameInfo from SGO_Character
+	if (USG_SoulslikeFramework* SaveGame = Cast<USG_SoulslikeFramework>(SGO_Character))
+	{
+		SaveData = SaveGame->GetSavedData();
+		UE_LOG(LogTemp, Log, TEXT("[SaveLoadManager] Loaded save data from slot: %s"), *SaveData.SlotName);
+	}
 
 	InitializeLoadedData();
 }
@@ -205,9 +254,14 @@ void USaveLoadManagerComponent::CreateNewSlot_Implementation(const FString& Slot
 
 	CurrentSaveSlot = SlotName;
 
-	// Create new save game object
-	// TODO: Create from class reference
-	// SGO_Character = UGameplayStatics::CreateSaveGameObject(USaveGame::StaticClass());
+	// Create new save game object using our SG_SoulslikeFramework class
+	SGO_Character = UGameplayStatics::CreateSaveGameObject(USG_SoulslikeFramework::StaticClass());
+
+	if (USG_SoulslikeFramework* SaveGame = Cast<USG_SoulslikeFramework>(SGO_Character))
+	{
+		SaveData.SlotName = SlotName;
+		SaveGame->SetSavedData(SaveData);
+	}
 
 	InitializeNewGame();
 }
@@ -333,4 +387,83 @@ void USaveLoadManagerComponent::CacheComponentReferences_Implementation()
 				EquipmentManager = Comp;
 		}
 	}
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ADDITIONAL EVENTS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void USaveLoadManagerComponent::EventAttemptAutosave()
+{
+	UE_LOG(LogTemp, Log, TEXT("[SaveLoadManager] EventAttemptAutosave"));
+
+	if (bAutoSaveNeeded)
+	{
+		SaveToCheckpoint();
+		bAutoSaveNeeded = false;
+	}
+}
+
+bool USaveLoadManagerComponent::IsSaveDataValid() const
+{
+	// Check if we have valid save data loaded
+	return SGO_Character != nullptr;
+}
+
+void USaveLoadManagerComponent::EventSetLoadedData(USaveGame* InSaveGame)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SaveLoadManager] EventSetLoadedData"));
+
+	SGO_Character = InSaveGame;
+	if (InSaveGame)
+	{
+		// Trigger load events to apply data
+		OnDataLoaded.Broadcast(SaveData);
+	}
+}
+
+void USaveLoadManagerComponent::LoadDataAsync(const FString& SlotName)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SaveLoadManager] LoadDataAsync: %s"), *SlotName);
+
+	// Async load using GameplayStatics
+	FAsyncLoadGameFromSlotDelegate LoadDelegate;
+	LoadDelegate.BindLambda([this](const FString& Slot, const int32 UserIndex, USaveGame* LoadedGame)
+	{
+		if (LoadedGame)
+		{
+			EventSetLoadedData(LoadedGame);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[SaveLoadManager] Failed to async load slot"));
+		}
+	});
+
+	UGameplayStatics::AsyncLoadGameFromSlot(SlotName, 0, LoadDelegate);
+}
+
+void USaveLoadManagerComponent::EventTryPreloadData(int32 SlotIndex)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SaveLoadManager] EventTryPreloadData: Slot %d"), SlotIndex);
+
+	// Construct slot name and preload
+	FString SlotName = FString::Printf(TEXT("SaveSlot_%d"), SlotIndex);
+	LoadDataAsync(SlotName);
+}
+
+void USaveLoadManagerComponent::EventUpdateActiveSlot(int32 SlotIndex)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SaveLoadManager] EventUpdateActiveSlot: %d"), SlotIndex);
+
+	CurrentSaveSlot = FString::Printf(TEXT("SaveSlot_%d"), SlotIndex);
+}
+
+void USaveLoadManagerComponent::EventRemoveSpawnedActorFromSaveData(AActor* Actor)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SaveLoadManager] EventRemoveSpawnedActorFromSaveData: %s"),
+		Actor ? *Actor->GetName() : TEXT("null"));
+
+	// Would remove actor from the SpawnedActorData array
+	// This prevents respawning items that have been picked up, etc.
 }

@@ -1,0 +1,12 @@
+============================================================
+DEMO LEVEL CHECK
+============================================================
+B_DemoRoom loaded: OK
+  Generated class: B_DemoRoom_C
+B_DemoRoom ERROR: 'BlueprintGeneratedClass' object has no attribute 'get_super_class'
+L_Demo_Showcase: FAILED to load
+B_Soulslike_Character: OK
+  Generated class: B_Soulslike_Character_C
+B_Soulslike_Character ERROR: 'BlueprintGeneratedClass' object has no attribute 'get_super_class'
+GM_SoulslikeFramework: OK
+  DefaultPawnClass: B_Soulslike_Character_C

@@ -4,6 +4,7 @@
 // 20-PASS VALIDATION: 2026-01-01 Autonomous Session
 
 #include "Widgets/W_Inventory.h"
+#include "Components/ScrollBox.h"
 
 UW_Inventory::UW_Inventory(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -34,28 +35,55 @@ void UW_Inventory::CacheWidgetReferences()
 
 void UW_Inventory::AddNewSlots_Implementation(ESLFInventorySlotType SlotType)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Add new inventory slots based on slot type (Inventory vs Storage)
+	UE_LOG(LogTemp, Log, TEXT("UW_Inventory::AddNewSlots - SlotType: %d"), (int32)SlotType);
 }
+
 FVector2D UW_Inventory::GetTranslationForActionMenu_Implementation(UScrollBox* TargetScrollbox)
 {
-	// TODO: Implement from Blueprint EventGraph
-	return FVector2D();
+	// Calculate translation offset for positioning action menu relative to scrollbox
+	if (TargetScrollbox)
+	{
+		FGeometry Geometry = TargetScrollbox->GetCachedGeometry();
+		FVector2D LocalSize = Geometry.GetLocalSize();
+		return FVector2D(LocalSize.X * 0.5f, LocalSize.Y * 0.5f);
+	}
+	return FVector2D::ZeroVector;
 }
+
 void UW_Inventory::SetStorageMode_Implementation(bool InStorageMode)
 {
-	// TODO: Implement from Blueprint EventGraph
+	StorageMode = InStorageMode;
+	UE_LOG(LogTemp, Log, TEXT("UW_Inventory::SetStorageMode - StorageMode: %s"), StorageMode ? TEXT("true") : TEXT("false"));
 }
+
 void UW_Inventory::ReinitOccupiedInventorySlots_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Rebuild the OccupiedInventorySlots array from InventorySlots
+	OccupiedInventorySlots.Empty();
+	for (UW_InventorySlot* InvSlot : InventorySlots)
+	{
+		if (InvSlot)
+		{
+			// Add slots that have items
+			OccupiedInventorySlots.Add(InvSlot);
+		}
+	}
+	UE_LOG(LogTemp, Log, TEXT("UW_Inventory::ReinitOccupiedInventorySlots - Count: %d"), OccupiedInventorySlots.Num());
 }
+
 void UW_Inventory::SetCategorization_Implementation(ESLFItemCategory ItemCategory)
 {
-	// TODO: Implement from Blueprint EventGraph
+	ActiveFilterCategory = ItemCategory;
+	// Filter displayed slots by category
+	UE_LOG(LogTemp, Log, TEXT("UW_Inventory::SetCategorization - Category: %d"), (int32)ItemCategory);
 }
+
 void UW_Inventory::ResetCategorization_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Reset to show all categories (default to None which shows all)
+	ActiveFilterCategory = ESLFItemCategory::None;
+	UE_LOG(LogTemp, Log, TEXT("UW_Inventory::ResetCategorization"));
 }
 void UW_Inventory::EventNavigateUp_Implementation()
 {

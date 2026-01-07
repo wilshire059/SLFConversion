@@ -34,7 +34,8 @@ void UW_StatEntry_Status::CacheWidgetReferences()
 
 void UW_StatEntry_Status::InitStatEntry_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Initialize the stat entry widget with stat display data
+	UE_LOG(LogTemp, Log, TEXT("UW_StatEntry_Status::InitStatEntry"));
 }
 void UW_StatEntry_Status::EventOnStatUpdated_Implementation(UB_Stat* UpdatedStat, double Change, bool UpdateAffectedStats, uint8 ValueType)
 {

@@ -1,10 +1,12 @@
 // W_Equipment.h
 // C++ Widget class for W_Equipment
 //
-// 20-PASS VALIDATION: 2026-01-01 Autonomous Session
-// Source: BlueprintDNA/WidgetBlueprint/W_Equipment.json
+// 20-PASS VALIDATION: 2026-01-05
+// Source: BlueprintDNA_v2/WidgetBlueprint/W_Equipment.json
 // Parent: UW_Navigable_InputReader
 // Variables: 10 | Functions: 5 | Dispatchers: 1
+//
+// NO REFLECTION - all widgets accessed via BindWidgetOptional
 
 #pragma once
 
@@ -18,7 +20,11 @@
 #include "GameFramework/InputSettings.h"
 #include "GenericPlatform/GenericWindow.h"
 #include "MediaPlayer.h"
-
+#include "Components/CanvasPanel.h"
+#include "Components/ScrollBox.h"
+#include "Components/UniformGridPanel.h"
+#include "Components/WidgetSwitcher.h"
+#include "Components/TextBlock.h"
 
 #include "W_Equipment.generated.h"
 
@@ -50,29 +56,61 @@ public:
 	virtual void NativeDestruct() override;
 
 	// ═══════════════════════════════════════════════════════════════════════
+	// BIND WIDGETS - Direct access via BindWidgetOptional
+	// ═══════════════════════════════════════════════════════════════════════
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UCanvasPanel* EquipmentCanvas;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UScrollBox* ItemScrollBox;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UUniformGridPanel* ItemGrid;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UWidgetSwitcher* ItemInfoBoxSwitcher;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UTextBlock* SlotNameText;
+
+	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (10)
 	// ═══════════════════════════════════════════════════════════════════════
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	UAC_InventoryManager* InventoryComponent;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	UW_EquipmentSlot* SelectedSlot;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	TArray<UW_EquipmentSlot*> EquipmentSlots;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	TArray<FVector2D> EquipmentSlotsPositions;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	TArray<UW_InventorySlot*> EquipmentInventorySlots;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	UW_EquipmentSlot* ActiveEquipmentSlot;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	UAC_EquipmentManager* EquipmentComponent;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	UW_InventorySlot* ActiveItemSlot;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	int32 EquipmentSlotNavigationIndex;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	int32 ItemNavigationIndex;
+
+	// Slot class for creating inventory slots dynamically
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
+	TSubclassOf<UW_InventorySlot> InventorySlotClass;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (1)
@@ -186,4 +224,20 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Populate equipment slots from widget tree
+	void PopulateEquipmentSlots();
+
+	// Bind equipment slot events
+	void BindEquipmentSlotEvents();
+
+	// Delegate handlers (match delegate signatures, then call refresh functions)
+	UFUNCTION()
+	void HandleItemEquippedToSlot(FSLFCurrentEquipment ItemData, FGameplayTag TargetSlot);
+
+	UFUNCTION()
+	void HandleItemUnequippedFromSlot(UPrimaryDataAsset* Item, FGameplayTag TargetSlot);
+
+	UFUNCTION()
+	void HandleInventoryUpdated();
 };

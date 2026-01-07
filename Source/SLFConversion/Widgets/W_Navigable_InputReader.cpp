@@ -32,10 +32,21 @@ void UW_Navigable_InputReader::CacheWidgetReferences()
 	// TODO: Cache any widget references needed for logic
 }
 
-TSoftObjectPtr<UTexture2D> UW_Navigable_InputReader::GetInputIconForKey_Implementation(const FKey& InKey)
+void UW_Navigable_InputReader::GetInputIconForKey_Implementation(const FKey& Key, TSoftObjectPtr<UTexture2D>& Icon)
 {
-	// TODO: Implement from Blueprint EventGraph
-	return 0;
+	// Default implementation - look up icon in KeyCorrelationTable if available
+	// Child classes can override this to provide custom icon lookup
+	Icon = nullptr;
+	
+	if (!Key.IsValid() || !KeyCorrelationTable)
+	{
+		return;
+	}
+	
+	// Look up the icon in the data table based on key name
+	// The data table should have rows keyed by key name (e.g., "Gamepad_LeftTrigger")
+	// For now, return nullptr - specific implementation depends on table structure
+	UE_LOG(LogTemp, Log, TEXT("GetInputIconForKey: Looking up icon for key %s"), *Key.ToString());
 }
 void UW_Navigable_InputReader::EventInitializeInputDevice_Implementation()
 {

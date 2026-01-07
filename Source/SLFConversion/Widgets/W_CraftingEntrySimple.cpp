@@ -34,7 +34,8 @@ void UW_CraftingEntrySimple::CacheWidgetReferences()
 
 int32 UW_CraftingEntrySimple::GetOwnedAmount_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Return the amount of this item currently owned by the player
+	// This would query the inventory manager
 	return 0;
 }
 void UW_CraftingEntrySimple::EventRefreshAmounts_Implementation()

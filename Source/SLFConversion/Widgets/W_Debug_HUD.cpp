@@ -34,7 +34,8 @@ void UW_Debug_HUD::CacheWidgetReferences()
 
 UW_DebugWindow* UW_Debug_HUD::FindWindowForComponentWithTag_Implementation(const FGameplayTag& Tag)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Find and return the debug window associated with the given component tag
+	UE_LOG(LogTemp, Log, TEXT("UW_Debug_HUD::FindWindowForComponentWithTag - Tag: %s"), *Tag.ToString());
 	return nullptr;
 }
 void UW_Debug_HUD::EventInitializeText_Implementation(const FKey& InKey)

@@ -93,7 +93,7 @@ Phase 1+: Process all other Blueprints normally
 ### Fresh Migration (Recommended)
 ```bash
 # 1. Restore backup
-powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Recurse -Force; Copy-Item -Path 'C:\scripts\SLFConversion_Migration\Backups\blueprint_only\Content\*' -Destination 'C:\scripts\SLFConversion\Content\' -Recurse -Force"
+powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Recurse -Force; Copy-Item -Path 'C:\scripts\bp_only\Content\*' -Destination 'C:\scripts\SLFConversion\Content\' -Recurse -Force"
 
 # 2. Run migration
 "C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
@@ -125,7 +125,7 @@ powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Rec
 | `run_migration.py` | Multi-phase migration script (main entry point) |
 | `Exports/BlueprintDNA_v2/*.json` | Source of truth for Blueprint logic |
 | `Source/SLFConversion/` | C++ implementation |
-| `C:\scripts\SLFConversion_Migration\Backups\blueprint_only\` | Clean backup content |
+| `C:\scripts\bp_only\` | Clean backup content (Blueprint-only, pre-migration) |
 
 ### Key Sections in run_migration.py
 

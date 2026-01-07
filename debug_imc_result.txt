@@ -1,0 +1,24 @@
+============================================================
+IMC_Gameplay Debug
+============================================================
+
+IMC class: <class 'InputMappingContext'>
+
+Available properties:
+  context_description: Text
+  default_key_mappings: InputMappingContextMappingData
+  input_mode_filter_options: MappingContextInputModeFilterOptions
+  input_mode_query_override: GameplayTagQuery
+  mapping_profile_overrides: Map
+  mappings: Array
+  registration_tracking_mode: MappingContextRegistrationTrackingMode
+
+--- Using deprecated 'mappings' API ---
+Total mappings: 0
+
+--- Using 'default_key_mappings' API ---
+Error: 'InputMappingContextMappingData' object is not iterable
+
+--- Finding IA_GameMenu ---
+IA_GameMenu found: IA_GameMenu
+IA_GameMenu path: /Game/SoulslikeFramework/Input/Actions/IA_GameMenu.IA_GameMenu

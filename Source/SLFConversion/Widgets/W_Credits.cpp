@@ -34,16 +34,22 @@ void UW_Credits::CacheWidgetReferences()
 
 void UW_Credits::SetupEntries_Implementation(const TArray<FSLFCreditsEntry>& EntryArray)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Create credit entry widgets for each entry in the array
+	UE_LOG(LogTemp, Log, TEXT("UW_Credits::SetupEntries - %d entries"), EntryArray.Num());
 }
+
 void UW_Credits::SetupExtraData_Implementation(const TArray<FSLFCreditsExtra>& ExtraDataArray)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Create extra data widgets for additional credits info
+	UE_LOG(LogTemp, Log, TEXT("UW_Credits::SetupExtraData - %d items"), ExtraDataArray.Num());
 }
+
 TArray<FSLFCreditsExtra> UW_Credits::SortExtraDataByScore_Implementation(const TArray<FSLFCreditsExtra>& TargetArray)
 {
-	// TODO: Implement from Blueprint EventGraph
-	return {};
+	// Sort the extra data array by score (descending)
+	TArray<FSLFCreditsExtra> SortedArray = TargetArray;
+	// Sorting would be implemented based on FSLFCreditsExtra structure
+	return SortedArray;
 }
 void UW_Credits::EventInitializeCredits_Implementation()
 {

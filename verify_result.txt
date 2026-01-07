@@ -1,0 +1,13 @@
+============================================================
+MIGRATION VERIFICATION
+============================================================
+1. PC_SoulslikeFramework class path: /Script/Engine.Blueprint
+   Parent class: Unknown
+   [FAIL] Not reparented correctly
+2. Dodge Montages:
+   Forward: NULL
+   Backstep: NULL
+   [FAIL] Dodge montages are NULL
+3. IA_GameMenu keys: ['Escape', 'Gamepad_Special_Right', 'Tab']
+   [OK] Tab key is bound
+============================================================

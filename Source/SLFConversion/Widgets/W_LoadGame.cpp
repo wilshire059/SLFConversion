@@ -34,7 +34,8 @@ void UW_LoadGame::CacheWidgetReferences()
 
 void UW_LoadGame::InitializeSaveSlots_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Load and display available save slots
+	UE_LOG(LogTemp, Log, TEXT("UW_LoadGame::InitializeSaveSlots"));
 }
 void UW_LoadGame::EventNavigateCancel_Implementation()
 {

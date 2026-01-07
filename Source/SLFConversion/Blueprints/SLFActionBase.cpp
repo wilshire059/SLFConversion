@@ -19,6 +19,7 @@
 #include "InputBufferComponent.h"
 #include "Animation/AnimInstance.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "SLFPrimaryDataAssets.h"
 
 USLFActionBase::USLFActionBase()
 {
@@ -99,7 +100,20 @@ UInputBufferComponent* USLFActionBase::GetInputBuffer_Implementation()
 
 float USLFActionBase::GetWeaponStaminaMultiplier_Implementation()
 {
-	// TODO: Get from equipped weapon data asset
+	// Get stamina multiplier from equipped weapon
+	if (UEquipmentManagerComponent* EquipmentManager = GetEquipmentManager())
+	{
+		// Get right hand weapon slot
+		FGameplayTag WeaponSlot = EquipmentManager->GetActiveWeaponSlot(true);
+		UDataAsset* ItemAsset = nullptr;
+		FGuid Id;
+		EquipmentManager->GetItemAtSlot(WeaponSlot, ItemAsset, Id);
+		
+		if (UPDA_Item* Item = Cast<UPDA_Item>(ItemAsset))
+		{
+			return Item->ItemInformation.EquipmentDetails.StaminaMultiplier;
+		}
+	}
 	return 1.0f;
 }
 
@@ -117,7 +131,21 @@ UAnimInstance* USLFActionBase::GetOwnerAnimInstance_Implementation()
 
 UDataAsset* USLFActionBase::GetWeaponAnimset_Implementation()
 {
-	// TODO: Get animset from currently equipped weapon
+	// Get animset from equipped weapon
+	if (UEquipmentManagerComponent* EquipmentManager = GetEquipmentManager())
+	{
+		// Get right hand weapon slot
+		FGameplayTag WeaponSlot = EquipmentManager->GetActiveWeaponSlot(true);
+		UDataAsset* ItemAsset = nullptr;
+		FGuid Id;
+		EquipmentManager->GetItemAtSlot(WeaponSlot, ItemAsset, Id);
+		
+		if (UPDA_Item* Item = Cast<UPDA_Item>(ItemAsset))
+		{
+			// MovesetWeapons is UObject* but should be UPDA_WeaponAnimset
+			return Cast<UDataAsset>(Item->ItemInformation.EquipmentDetails.MovesetWeapons);
+		}
+	}
 	return nullptr;
 }
 

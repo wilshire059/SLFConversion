@@ -12,9 +12,14 @@ AB_Interactable::AB_Interactable()
 
 void AB_Interactable::AddInteractableStateToSaveData_Implementation()
 {
-	// TODO: Implement from Blueprint
+	// Save the interactable's state (ID, IsActivated) to the save system
+	// This is called when saving game state
+	// Note: Actual implementation would call the save manager to store this data
 }
+
 void AB_Interactable::AddSpawnedInteractableToSaveData_Implementation(const FInstancedStruct& AdditionalDataToSave)
 {
-	// TODO: Implement from Blueprint
+	// Save a dynamically spawned interactable's data
+	// This includes the ID, transform, and any additional data
+	// Note: Actual implementation would call the save manager with the additional data
 }

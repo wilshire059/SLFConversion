@@ -31,9 +31,12 @@
 class UStatManagerComponent;
 class UStatusEffectManagerComponent;
 class UBuffManagerComponent;
+class ULadderManagerComponent;
+class UAC_CombatManager;
 class UNiagaraSystem;
 class UCameraShakeBase;
 class UAnimMontage;
+class AB_PickupItem;
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // EVENT DISPATCHERS: 3/3 migrated
@@ -142,6 +145,24 @@ public:
 	/** Target rotation for lerp */
 	UPROPERTY(BlueprintReadWrite, Category = "Character|Lerp")
 	FRotator TargetLerpRotation;
+
+	/** Lerp start time */
+	UPROPERTY(BlueprintReadWrite, Category = "Character|Lerp")
+	double LerpStartTime = 0.0;
+
+	/** Lerp duration */
+	UPROPERTY(BlueprintReadWrite, Category = "Character|Lerp")
+	double LerpDuration = 1.0;
+
+	/** Whether lerping both location and rotation together */
+	UPROPERTY(BlueprintReadWrite, Category = "Character|Lerp")
+	bool bLerpingBoth = false;
+
+	/** Timer handle for location lerp */
+	FTimerHandle LocationLerpTimerHandle;
+
+	/** Timer handle for rotation lerp */
+	FTimerHandle RotationLerpTimerHandle;
 
 	// ═══════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS: 3/3 migrated
@@ -296,6 +317,83 @@ public:
 	// Combat
 	virtual void ToggleGuardReplicated_Implementation(bool bToggled, bool bIgnoreGracePeriod) override;
 	virtual void StartHitstop_Implementation(double Duration) override;
+
+	// ═══════════════════════════════════════════════════════════════════
+	// SERVER RPCs: Network replicated spawning and actions
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** Server RPC: Spawn actor on server
+	 *  Called from SpawnActorReplicated when client needs server to spawn
+	 */
+	UFUNCTION(Server, Reliable)
+	void SRV_SpawnActor(
+		UClass* ActorClass,
+		FTransform SpawnTransform,
+		ESpawnActorCollisionHandlingMethod CollisionHandlingOverride,
+		AActor* InOwner,
+		APawn* InInstigator);
+
+	/** Server RPC: Spawn pickup item on server */
+	UFUNCTION(Server, Reliable)
+	void SRV_SpawnPickupItem(
+		UPrimaryDataAsset* ItemAsset,
+		int32 ItemAmount,
+		FTransform SpawnTransform,
+		ESpawnActorCollisionHandlingMethod CollisionHandlingOverride,
+		bool bUsePhysics);
+
+	/** Server RPC: Play montage on server (for replication) */
+	UFUNCTION(Server, Reliable)
+	void SRV_PlayMontage(
+		UAnimMontage* Montage,
+		double PlayRate,
+		double StartPosition,
+		FName StartSection);
+
+	/** Server RPC: Spawn Niagara oneshot at location on server */
+	UFUNCTION(Server, Reliable)
+	void SRV_SpawnNiagaraOneshotLocation(
+		UNiagaraSystem* VFXSystem,
+		FVector Location,
+		FRotator Rotation,
+		bool bAutoDestroy,
+		bool bAutoActivate,
+		bool bPreCullCheck);
+
+	/** Server RPC: Spawn Niagara looping attached on server */
+	UFUNCTION(Server, Reliable)
+	void SRV_SpawnNiagaraLoopingAttached(
+		UNiagaraSystem* VFXSystem,
+		FName AttachSocket,
+		FVector Location,
+		FRotator Rotation,
+		bool bAutoDestroy,
+		bool bAutoActivate,
+		bool bPreCullCheck,
+		double DurationValue);
+
+	/** Server RPC: Spawn Niagara oneshot attached on server */
+	UFUNCTION(Server, Reliable)
+	void SRV_SpawnNiagaraOneshotAttached(
+		UNiagaraSystem* VFXSystem,
+		FName AttachSocket,
+		FVector Location,
+		FRotator Rotation,
+		bool bAutoDestroy,
+		bool bAutoActivate,
+		bool bPreCullCheck);
+
+	/** Server RPC: Destroy actor on server */
+	UFUNCTION(Server, Reliable)
+	void SRV_DestroyActor(AActor* ActorToDestroy);
+
+	/** Server RPC: Jump on server */
+	UFUNCTION(Server, Reliable)
+	void SRV_Jump();
+
+	/** Server RPC: Set movement speed on server */
+	UFUNCTION(Server, Reliable)
+	void SRV_SetSpeed(double NewSpeed);
 
 protected:
 	// Timeline callbacks

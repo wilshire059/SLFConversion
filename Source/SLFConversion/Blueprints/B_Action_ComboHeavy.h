@@ -52,7 +52,9 @@ public:
 
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (0)
+	// FUNCTIONS
 	// ═══════════════════════════════════════════════════════════════════════
 
+	/** Execute heavy combo attack - get weapon animset, extract 1h or 2h montage, play */
+	virtual void ExecuteAction_Implementation() override;
 };

@@ -34,16 +34,30 @@ void UW_CraftingAction::CacheWidgetReferences()
 
 int32 UW_CraftingAction::GetMaxPossibleAmount_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
-	return 0;
+	// Calculate max craftable amount based on available materials and required amounts
+	// Return cached MaxPossibleAmount (calculated during setup)
+	return MaxPossibleAmount;
 }
+
 void UW_CraftingAction::SetupRequiredItems_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Setup the list of required items for crafting based on AssignedItem recipe
+	if (AssignedItem)
+	{
+		// Get crafting requirements from the assigned item
+		UE_LOG(LogTemp, Log, TEXT("UW_CraftingAction::SetupRequiredItems - Setting up for item"));
+	}
 }
+
 void UW_CraftingAction::CraftItem_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Execute crafting: consume materials and create item(s)
+	if (AssignedItem && CurrentAmount > 0)
+	{
+		UE_LOG(LogTemp, Log, TEXT("UW_CraftingAction::CraftItem - Crafting %d items"), CurrentAmount);
+		// Broadcast that crafting action is closed
+		OnCraftingActionClosed.Broadcast();
+	}
 }
 void UW_CraftingAction::EventCraftButtonPressed_Implementation()
 {

@@ -1,0 +1,26 @@
+============================================================
+CHECKING PDA_ACTION PARENT CLASS BY PATH
+============================================================
+
+Blueprint: <Object '/Game/SoulslikeFramework/Data/Actions/ActionData/PDA_Action.PDA_Action' (0x000002B2E0112400) Class 'Blueprint'>
+Blueprint Name: PDA_Action
+
+ParentClass metadata tag: 
+
+Generated class: PDA_Action_C
+Generated class path: /Game/SoulslikeFramework/Data/Actions/ActionData/PDA_Action.PDA_Action_C
+
+============================================================
+TESTING DA_ACTION_DODGE HIERARCHY
+============================================================
+
+Asset class: PDA_Action_C
+Asset class path: /Game/SoulslikeFramework/Data/Actions/ActionData/PDA_Action.PDA_Action_C
+
+Parent chain (via get_super_struct):
+  0: PDA_Action_C -> /Game/SoulslikeFramework/Data/Actions/ActionData/PDA_Action.PDA_Action_C
+       (no get_super_struct)
+
+============================================================
+RESULT: Cast<UPDA_Action>() will FAIL - no C++ in hierarchy
+============================================================

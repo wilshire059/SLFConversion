@@ -1,5 +1,6 @@
 // SLFAnimNotifyStateInputBuffer.cpp
 #include "SLFAnimNotifyStateInputBuffer.h"
+#include "Components/AC_InputBuffer.h"
 
 FString USLFAnimNotifyStateInputBuffer::GetNotifyName_Implementation() const
 {
@@ -12,9 +13,15 @@ void USLFAnimNotifyStateInputBuffer::NotifyBegin(USkeletalMeshComponent* MeshCom
 
 	if (!MeshComp) return;
 
-	UE_LOG(LogTemp, Log, TEXT("[ANS_InputBuffer] Begin - Opening buffer"));
+	AActor* Owner = MeshComp->GetOwner();
+	if (!Owner) return;
 
-	// TODO: Get InputBufferComponent->ToggleBuffer(true)
+	UAC_InputBuffer* InputBuffer = Owner->FindComponentByClass<UAC_InputBuffer>();
+	if (InputBuffer)
+	{
+		InputBuffer->ToggleBuffer(true);
+		UE_LOG(LogTemp, Log, TEXT("[ANS_InputBuffer] Begin - Buffer opened"));
+	}
 }
 
 void USLFAnimNotifyStateInputBuffer::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
@@ -23,7 +30,13 @@ void USLFAnimNotifyStateInputBuffer::NotifyEnd(USkeletalMeshComponent* MeshComp,
 
 	if (!MeshComp) return;
 
-	UE_LOG(LogTemp, Log, TEXT("[ANS_InputBuffer] End - Closing buffer"));
+	AActor* Owner = MeshComp->GetOwner();
+	if (!Owner) return;
 
-	// TODO: Get InputBufferComponent->ToggleBuffer(false)
+	UAC_InputBuffer* InputBuffer = Owner->FindComponentByClass<UAC_InputBuffer>();
+	if (InputBuffer)
+	{
+		InputBuffer->ToggleBuffer(false);
+		UE_LOG(LogTemp, Log, TEXT("[ANS_InputBuffer] End - Buffer closed"));
+	}
 }

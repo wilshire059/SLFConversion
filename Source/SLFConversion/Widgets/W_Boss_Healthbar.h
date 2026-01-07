@@ -20,7 +20,10 @@
 #include "MediaPlayer.h"
 
 
+#include "SLFStatTypes.h"
 #include "W_Boss_Healthbar.generated.h"
+
+class USLFStatBase;
 
 // Forward declarations for widget types
 
@@ -89,8 +92,8 @@ public:
 	virtual void EventLerpHealthPositive_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Boss_Healthbar")
-	void EventOnBossHealthUpdated(UB_Stat* UpdatedStat, double Change, bool UpdateAffectedStats, uint8 ValueType);
-	virtual void EventOnBossHealthUpdated_Implementation(UB_Stat* UpdatedStat, double Change, bool UpdateAffectedStats, uint8 ValueType);
+	void EventOnBossHealthUpdated(USLFStatBase* UpdatedStat, double Change, bool UpdateAffectedStats, ESLFValueType ValueType);
+	virtual void EventOnBossHealthUpdated_Implementation(USLFStatBase* UpdatedStat, double Change, bool UpdateAffectedStats, ESLFValueType ValueType);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Boss_Healthbar")
 	void EventTimerTick();

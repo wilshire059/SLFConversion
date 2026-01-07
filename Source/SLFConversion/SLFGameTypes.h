@@ -159,6 +159,30 @@ struct SLFCONVERSION_API FSLFEnumByte
 };
 
 USTRUCT(BlueprintType)
+struct SLFCONVERSION_API FSLFTimespan
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wrapper")
+	FTimespan Value;
+
+	FSLFTimespan() {}
+	FSLFTimespan(const FTimespan& InValue) : Value(InValue) {}
+};
+
+USTRUCT(BlueprintType)
+struct SLFCONVERSION_API FSLFGuid
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wrapper")
+	FGuid Value;
+
+	FSLFGuid() {}
+	FSLFGuid(const FGuid& InValue) : Value(InValue) {}
+};
+
+USTRUCT(BlueprintType)
 struct SLFCONVERSION_API FSLFActorClass
 {
 	GENERATED_BODY()
@@ -900,6 +924,17 @@ struct SLFCONVERSION_API FSLFVendorItems
 	int32 Price = 0;
 
 	FSLFVendorItems() {}
+
+	// Required for TSet usage
+	bool operator==(const FSLFVendorItems& Other) const
+	{
+		return Item == Other.Item;
+	}
+
+	friend uint32 GetTypeHash(const FSLFVendorItems& VendorItem)
+	{
+		return GetTypeHash(VendorItem.Item);
+	}
 };
 
 // Replaces: /Game/SoulslikeFramework/Structures/ItemWheel/FItemWheelNextSlotInfo
@@ -1004,7 +1039,7 @@ struct SLFCONVERSION_API FSLFSaveData
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
-	TArray<uint8> Data;
+	TArray<FInstancedStruct> Data;
 
 	FSLFSaveData() {}
 };
@@ -1587,3 +1622,15 @@ using FCreditsExtra = FSLFCreditsExtra;
 
 // Radar
 using FCardinalData = FSLFCardinalData;
+
+// Save Info structs (for BFL_StructConversion)
+using FWorldSaveInfo = FSLFWorldSaveInfo;
+using FClassSaveInfo = FSLFClassSaveInfo;
+using FInventoryItemSaveInfo = FSLFInventoryItemsSaveInfo;
+using FEquipmentItemSaveInfo = FSLFEquipmentItemsSaveInfo;
+using FProgressSaveInfo = FSLFProgressSaveInfo;
+using FInteractableStateSaveInfo = FSLFInteractableStateSaveInfo;
+using FSpawnedActorSaveInfo = FSLFSpawnedActorSaveInfo;
+using FNpcSaveInfo = FSLFNpcSaveInfo;
+using FVendorSaveInfo = FSLFNpcVendorSaveInfo;
+using FProgressData = FSLFProgressWrapper;

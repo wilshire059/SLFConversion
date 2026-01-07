@@ -1,0 +1,14 @@
+============================================================
+Adding Tab Key for IA_GameMenu
+============================================================
+
+Total mappings: 36
+  Found IA_GameMenu at index 31: key=Escape
+  Found IA_GameMenu at index 32: key=Gamepad_Special_Right
+
+Adding Tab key binding...
+Save result: True
+
+[OK] Tab key added successfully!
+
+============================================================

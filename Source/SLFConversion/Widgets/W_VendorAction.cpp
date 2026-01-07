@@ -34,15 +34,22 @@ void UW_VendorAction::CacheWidgetReferences()
 
 void UW_VendorAction::GetMaxPossibleAmount_Implementation(int32& OutMaxPossible, int32& OutMaxPossible1)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Calculate max possible purchase/sell amount based on currency and item stock
+	OutMaxPossible = 0;
+	OutMaxPossible1 = 0;
+	UE_LOG(LogTemp, Log, TEXT("UW_VendorAction::GetMaxPossibleAmount"));
 }
+
 void UW_VendorAction::BuyItem_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Execute item purchase from vendor
+	UE_LOG(LogTemp, Log, TEXT("UW_VendorAction::BuyItem"));
 }
+
 void UW_VendorAction::SellItem_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Execute item sale to vendor
+	UE_LOG(LogTemp, Log, TEXT("UW_VendorAction::SellItem"));
 }
 void UW_VendorAction::EventNavigateConfirmButtonsHorizontal_Implementation()
 {

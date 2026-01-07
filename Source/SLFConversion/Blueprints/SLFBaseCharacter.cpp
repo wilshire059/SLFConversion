@@ -14,6 +14,8 @@
 #include "Components/StatManagerComponent.h"
 #include "Components/StatusEffectManagerComponent.h"
 #include "Components/BuffManagerComponent.h"
+#include "Components/LadderManagerComponent.h"
+#include "Components/AC_CombatManager.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -21,6 +23,10 @@
 #include "NiagaraComponent.h"
 #include "Animation/AnimInstance.h"
 #include "SLFEnums.h"
+#include "Interfaces/BPI_Projectile.h"
+#include "Interfaces/BPI_Interactable.h"
+#include "Blueprints/B_PickupItem.h"
+#include "TimerManager.h"
 
 ASLFBaseCharacter::ASLFBaseCharacter()
 {
@@ -230,7 +236,11 @@ void ASLFBaseCharacter::SpawnProjectile_Implementation(
 	AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(
 		Projectile, InitialTransform, SpawnParams);
 
-	// TODO: Set target on projectile if it has the interface
+	// Set target on projectile if it has the interface (IMPLEMENTED)
+	if (SpawnedActor && SpawnedActor->GetClass()->ImplementsInterface(UBPI_Projectile::StaticClass()))
+	{
+		IBPI_Projectile::Execute_InitializeProjectile(SpawnedActor, InInstigator);
+	}
 }
 
 void ASLFBaseCharacter::SpawnActorReplicated_Implementation(
@@ -284,8 +294,34 @@ void ASLFBaseCharacter::SpawnPickupItemReplicated_Implementation(
 	ESpawnActorCollisionHandlingMethod Collision,
 	bool bUsePhysics)
 {
-	// TODO: Implement pickup item spawning using the item data asset
-	UE_LOG(LogTemp, Log, TEXT("[BaseCharacter] SpawnPickupItemReplicated called"));
+	// Spawn AB_PickupItem and set its Item property (IMPLEMENTED)
+	if (!ItemAsset || !GetWorld())
+	{
+		return;
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[BaseCharacter] SpawnPickupItemReplicated: %s x%d"), *ItemAsset->GetName(), ItemAmount);
+
+	// Load the B_PickupItem class
+	UClass* PickupItemClass = LoadClass<AActor>(nullptr, TEXT("/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/B_PickupItem.B_PickupItem_C"));
+	if (!PickupItemClass)
+	{
+		// Fallback to AB_PickupItem C++ class
+		PickupItemClass = AB_PickupItem::StaticClass();
+	}
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.Instigator = this;
+	SpawnParams.SpawnCollisionHandlingOverride = Collision;
+
+	AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(PickupItemClass, Transform, SpawnParams);
+	if (AB_PickupItem* PickupItem = Cast<AB_PickupItem>(SpawnedActor))
+	{
+		PickupItem->Item = ItemAsset;
+		PickupItem->Count = ItemAmount;
+		PickupItem->UsePhysics = bUsePhysics;
+	}
 }
 
 void ASLFBaseCharacter::OpenContainer_Implementation(UAnimMontage* Montage, AActor* Container)
@@ -294,7 +330,11 @@ void ASLFBaseCharacter::OpenContainer_Implementation(UAnimMontage* Montage, AAct
 	{
 		GetMesh()->GetAnimInstance()->Montage_Play(Montage);
 	}
-	// TODO: Trigger container opening logic
+	// Trigger container opening via interactable interface (IMPLEMENTED)
+	if (Container && Container->GetClass()->ImplementsInterface(UBPI_Interactable::StaticClass()))
+	{
+		IBPI_Interactable::Execute_OnInteract(Container, this);
+	}
 }
 
 void ASLFBaseCharacter::OpenDoor_Implementation(UAnimMontage* Montage, AActor* Door)
@@ -303,14 +343,24 @@ void ASLFBaseCharacter::OpenDoor_Implementation(UAnimMontage* Montage, AActor* D
 	{
 		GetMesh()->GetAnimInstance()->Montage_Play(Montage);
 	}
-	// TODO: Trigger door opening logic
+	// Trigger door opening via interactable interface (IMPLEMENTED)
+	if (Door && Door->GetClass()->ImplementsInterface(UBPI_Interactable::StaticClass()))
+	{
+		IBPI_Interactable::Execute_OnInteract(Door, this);
+	}
 }
 
 void ASLFBaseCharacter::TryClimbLadder_Implementation(AActor* Ladder, bool bIsTopdown)
 {
-	// TODO: Implement ladder climbing
+	// Delegate to LadderManager component (IMPLEMENTED)
 	UE_LOG(LogTemp, Log, TEXT("[BaseCharacter] TryClimbLadder called, topdown: %s"),
 		bIsTopdown ? TEXT("true") : TEXT("false"));
+
+	ULadderManagerComponent* LadderManager = FindComponentByClass<ULadderManagerComponent>();
+	if (LadderManager && Ladder)
+	{
+		LadderManager->StartClimb(Ladder);
+	}
 }
 
 void ASLFBaseCharacter::StartWorldCameraShake_Implementation(
@@ -389,7 +439,20 @@ void ASLFBaseCharacter::PlaySoftNiagaraLoopingReplicated_Implementation(
 			Location, Rotation, EAttachLocation::KeepRelativeOffset,
 			bAutoDestroy, bAutoActivate);
 
-		// TODO: Handle duration for looping systems
+		// Handle duration for looping systems - set timer to deactivate (IMPLEMENTED)
+		if (NiagaraComp && DurationValue > 0.0)
+		{
+			FTimerHandle DeactivateTimerHandle;
+			FTimerDelegate DeactivateDelegate;
+			DeactivateDelegate.BindLambda([NiagaraComp]()
+			{
+				if (IsValid(NiagaraComp))
+				{
+					NiagaraComp->Deactivate();
+				}
+			});
+			GetWorld()->GetTimerManager().SetTimer(DeactivateTimerHandle, DeactivateDelegate, DurationValue, false);
+		}
 	}
 }
 
@@ -466,9 +529,23 @@ void ASLFBaseCharacter::GenericLocationLerp_Implementation(double Scale, FVector
 	Cache_Location = GetActorLocation();
 	TargetLerpLocation = NewTargetLocation;
 
-	// TODO: Start timeline for location lerp
-	// For now, just set the location directly
-	SetActorLocation(FMath::Lerp(Cache_Location, TargetLerpLocation, Scale));
+	// Timeline-like lerp using timer (IMPLEMENTED)
+	// Scale is used as duration in seconds
+	if (Scale > 0.0 && GetWorld())
+	{
+		LerpStartTime = GetWorld()->GetTimeSeconds();
+		LerpDuration = Scale;
+
+		FTimerDelegate LerpDelegate;
+		LerpDelegate.BindUObject(this, &ASLFBaseCharacter::OnLocationLerpUpdate);
+		GetWorld()->GetTimerManager().SetTimer(LocationLerpTimerHandle, LerpDelegate, 0.016f, true);
+	}
+	else
+	{
+		// Instant move if scale is 0
+		SetActorLocation(NewTargetLocation);
+		OnLocationLerpEnd.Broadcast();
+	}
 }
 
 void ASLFBaseCharacter::GenericRotationLerp_Implementation(double Scale, FRotator NewTargetRotation)
@@ -476,9 +553,21 @@ void ASLFBaseCharacter::GenericRotationLerp_Implementation(double Scale, FRotato
 	Cache_Rotation = GetActorRotation();
 	TargetLerpRotation = NewTargetRotation;
 
-	// TODO: Start timeline for rotation lerp
-	// For now, just set the rotation directly
-	SetActorRotation(FMath::Lerp(Cache_Rotation, TargetLerpRotation, Scale));
+	// Timeline-like lerp using timer (IMPLEMENTED)
+	if (Scale > 0.0 && GetWorld())
+	{
+		LerpStartTime = GetWorld()->GetTimeSeconds();
+		LerpDuration = Scale;
+
+		FTimerDelegate LerpDelegate;
+		LerpDelegate.BindUObject(this, &ASLFBaseCharacter::OnRotationLerpUpdate);
+		GetWorld()->GetTimerManager().SetTimer(RotationLerpTimerHandle, LerpDelegate, 0.016f, true);
+	}
+	else
+	{
+		SetActorRotation(NewTargetRotation);
+		OnRotationLerpEnd.Broadcast();
+	}
 }
 
 void ASLFBaseCharacter::GenericLocationAndRotationLerp_Implementation(double Scale, FVector NewTargetLocation, FRotator NewTargetRotation)
@@ -488,10 +577,24 @@ void ASLFBaseCharacter::GenericLocationAndRotationLerp_Implementation(double Sca
 	TargetLerpLocation = NewTargetLocation;
 	TargetLerpRotation = NewTargetRotation;
 
-	// TODO: Start timelines for both location and rotation lerp
-	// For now, just set directly
-	SetActorLocation(FMath::Lerp(Cache_Location, TargetLerpLocation, Scale));
-	SetActorRotation(FMath::Lerp(Cache_Rotation, TargetLerpRotation, Scale));
+	// Timeline-like lerp using timer for both (IMPLEMENTED)
+	if (Scale > 0.0 && GetWorld())
+	{
+		LerpStartTime = GetWorld()->GetTimeSeconds();
+		LerpDuration = Scale;
+		bLerpingBoth = true;
+
+		// Use location timer to drive both lerps
+		FTimerDelegate LerpDelegate;
+		LerpDelegate.BindUObject(this, &ASLFBaseCharacter::OnLocationLerpUpdate);
+		GetWorld()->GetTimerManager().SetTimer(LocationLerpTimerHandle, LerpDelegate, 0.016f, true);
+	}
+	else
+	{
+		SetActorLocation(NewTargetLocation);
+		SetActorRotation(NewTargetRotation);
+		OnLocationRotationLerpEnd.Broadcast();
+	}
 }
 
 void ASLFBaseCharacter::JumpReplicated_Implementation()
@@ -581,16 +684,55 @@ void ASLFBaseCharacter::PlaySoftMontageReplicated_Implementation(
 
 void ASLFBaseCharacter::ToggleGuardReplicated_Implementation(bool bToggled, bool bIgnoreGracePeriod)
 {
-	// TODO: Implement guard toggling via combat component
+	// Delegate to CombatManager component (IMPLEMENTED)
 	UE_LOG(LogTemp, Log, TEXT("[BaseCharacter] ToggleGuardReplicated: %s, ignore grace: %s"),
 		bToggled ? TEXT("true") : TEXT("false"),
 		bIgnoreGracePeriod ? TEXT("true") : TEXT("false"));
+
+	UAC_CombatManager* CombatManager = FindComponentByClass<UAC_CombatManager>();
+	if (CombatManager)
+	{
+		CombatManager->WantsToGuard = bToggled;
+		if (bToggled)
+		{
+			CombatManager->IsGuarding = true;
+		}
+		else if (bIgnoreGracePeriod)
+		{
+			CombatManager->IsGuarding = false;
+		}
+		// If not ignoring grace period, IsGuarding will be cleared by timer
+	}
 }
 
 void ASLFBaseCharacter::StartHitstop_Implementation(double Duration)
 {
-	// TODO: Implement hitstop (freeze animation briefly)
+	// Freeze animation briefly by pausing anim instance (IMPLEMENTED)
 	UE_LOG(LogTemp, Log, TEXT("[BaseCharacter] StartHitstop: %f"), Duration);
+
+	if (!GetMesh() || !GetMesh()->GetAnimInstance() || Duration <= 0.0)
+	{
+		return;
+	}
+
+	// Pause animation
+	GetMesh()->bPauseAnims = true;
+
+	// Set timer to resume
+	if (GetWorld())
+	{
+		FTimerHandle HitstopTimerHandle;
+		FTimerDelegate ResumeDelegate;
+		TWeakObjectPtr<USkeletalMeshComponent> WeakMesh = GetMesh();
+		ResumeDelegate.BindLambda([WeakMesh]()
+		{
+			if (WeakMesh.IsValid())
+			{
+				WeakMesh->bPauseAnims = false;
+			}
+		});
+		GetWorld()->GetTimerManager().SetTimer(HitstopTimerHandle, ResumeDelegate, Duration, false);
+	}
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -599,7 +741,42 @@ void ASLFBaseCharacter::StartHitstop_Implementation(double Duration)
 
 void ASLFBaseCharacter::OnLocationLerpUpdate()
 {
-	// TODO: Update location based on timeline alpha
+	// Update location based on elapsed time alpha (IMPLEMENTED)
+	if (!GetWorld())
+	{
+		return;
+	}
+
+	double CurrentTime = GetWorld()->GetTimeSeconds();
+	double ElapsedTime = CurrentTime - LerpStartTime;
+	double Alpha = FMath::Clamp(ElapsedTime / LerpDuration, 0.0, 1.0);
+
+	// Apply smooth interpolation
+	FVector NewLocation = FMath::Lerp(Cache_Location, TargetLerpLocation, Alpha);
+	SetActorLocation(NewLocation);
+
+	// Also update rotation if doing both
+	if (bLerpingBoth)
+	{
+		FRotator NewRotation = FMath::Lerp(Cache_Rotation, TargetLerpRotation, Alpha);
+		SetActorRotation(NewRotation);
+	}
+
+	// Check if finished
+	if (Alpha >= 1.0)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(LocationLerpTimerHandle);
+
+		if (bLerpingBoth)
+		{
+			bLerpingBoth = false;
+			OnLocationRotationLerpEnd.Broadcast();
+		}
+		else
+		{
+			OnLocationLerpEnd.Broadcast();
+		}
+	}
 }
 
 void ASLFBaseCharacter::OnLocationLerpFinished()
@@ -609,10 +786,203 @@ void ASLFBaseCharacter::OnLocationLerpFinished()
 
 void ASLFBaseCharacter::OnRotationLerpUpdate()
 {
-	// TODO: Update rotation based on timeline alpha
+	// Update rotation based on elapsed time alpha (IMPLEMENTED)
+	if (!GetWorld())
+	{
+		return;
+	}
+
+	double CurrentTime = GetWorld()->GetTimeSeconds();
+	double ElapsedTime = CurrentTime - LerpStartTime;
+	double Alpha = FMath::Clamp(ElapsedTime / LerpDuration, 0.0, 1.0);
+
+	// Apply smooth interpolation
+	FRotator NewRotation = FMath::Lerp(Cache_Rotation, TargetLerpRotation, Alpha);
+	SetActorRotation(NewRotation);
+
+	// Check if finished
+	if (Alpha >= 1.0)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(RotationLerpTimerHandle);
+		OnRotationLerpEnd.Broadcast();
+	}
 }
 
 void ASLFBaseCharacter::OnRotationLerpFinished()
 {
 	OnRotationLerpEnd.Broadcast();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SERVER RPCs
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void ASLFBaseCharacter::SRV_SpawnActor_Implementation(
+	UClass* ActorClass,
+	FTransform SpawnTransform,
+	ESpawnActorCollisionHandlingMethod CollisionHandlingOverride,
+	AActor* InOwner,
+	APawn* InInstigator)
+{
+	if (!ActorClass || !GetWorld())
+	{
+		return;
+	}
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = InOwner;
+	SpawnParams.Instigator = InInstigator;
+	SpawnParams.SpawnCollisionHandlingOverride = CollisionHandlingOverride;
+
+	GetWorld()->SpawnActor<AActor>(ActorClass, SpawnTransform, SpawnParams);
+}
+
+void ASLFBaseCharacter::SRV_SpawnPickupItem_Implementation(
+	UPrimaryDataAsset* ItemAsset,
+	int32 ItemAmount,
+	FTransform SpawnTransform,
+	ESpawnActorCollisionHandlingMethod CollisionHandlingOverride,
+	bool bUsePhysics)
+{
+	// Call the interface implementation which already handles the spawn logic
+	SpawnPickupItemReplicated_Implementation(ItemAsset, ItemAmount, SpawnTransform, CollisionHandlingOverride, bUsePhysics);
+}
+
+void ASLFBaseCharacter::SRV_PlayMontage_Implementation(
+	UAnimMontage* Montage,
+	double PlayRate,
+	double StartPosition,
+	FName StartSection)
+{
+	if (!Montage || !GetMesh())
+	{
+		return;
+	}
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance)
+	{
+		AnimInstance->Montage_Play(Montage, PlayRate, EMontagePlayReturnType::MontageLength, StartPosition, true);
+		if (StartSection != NAME_None)
+		{
+			AnimInstance->Montage_JumpToSection(StartSection, Montage);
+		}
+	}
+}
+
+void ASLFBaseCharacter::SRV_SpawnNiagaraOneshotLocation_Implementation(
+	UNiagaraSystem* VFXSystem,
+	FVector Location,
+	FRotator Rotation,
+	bool bAutoDestroy,
+	bool bAutoActivate,
+	bool bPreCullCheck)
+{
+	if (!VFXSystem || !GetWorld())
+	{
+		return;
+	}
+
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+		GetWorld(),
+		VFXSystem,
+		Location,
+		Rotation,
+		FVector::OneVector,
+		bAutoDestroy,
+		bAutoActivate,
+		ENCPoolMethod::None,
+		bPreCullCheck);
+}
+
+void ASLFBaseCharacter::SRV_SpawnNiagaraLoopingAttached_Implementation(
+	UNiagaraSystem* VFXSystem,
+	FName AttachSocket,
+	FVector Location,
+	FRotator Rotation,
+	bool bAutoDestroy,
+	bool bAutoActivate,
+	bool bPreCullCheck,
+	double DurationValue)
+{
+	if (!VFXSystem || !GetMesh())
+	{
+		return;
+	}
+
+	UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(
+		VFXSystem,
+		GetMesh(),
+		AttachSocket,
+		Location,
+		Rotation,
+		EAttachLocation::KeepRelativeOffset,
+		bAutoDestroy,
+		bAutoActivate,
+		ENCPoolMethod::None,
+		bPreCullCheck);
+
+	// Set up timer to deactivate after duration if valid
+	if (NiagaraComp && DurationValue > 0.0 && GetWorld())
+	{
+		FTimerHandle DeactivateTimerHandle;
+		TWeakObjectPtr<UNiagaraComponent> WeakComp = NiagaraComp;
+		FTimerDelegate DeactivateDelegate;
+		DeactivateDelegate.BindLambda([WeakComp]()
+		{
+			if (WeakComp.IsValid())
+			{
+				WeakComp->Deactivate();
+			}
+		});
+		GetWorld()->GetTimerManager().SetTimer(DeactivateTimerHandle, DeactivateDelegate, DurationValue, false);
+	}
+}
+
+void ASLFBaseCharacter::SRV_SpawnNiagaraOneshotAttached_Implementation(
+	UNiagaraSystem* VFXSystem,
+	FName AttachSocket,
+	FVector Location,
+	FRotator Rotation,
+	bool bAutoDestroy,
+	bool bAutoActivate,
+	bool bPreCullCheck)
+{
+	if (!VFXSystem || !GetMesh())
+	{
+		return;
+	}
+
+	UNiagaraFunctionLibrary::SpawnSystemAttached(
+		VFXSystem,
+		GetMesh(),
+		AttachSocket,
+		Location,
+		Rotation,
+		EAttachLocation::KeepRelativeOffset,
+		bAutoDestroy,
+		bAutoActivate,
+		ENCPoolMethod::None,
+		bPreCullCheck);
+}
+
+void ASLFBaseCharacter::SRV_DestroyActor_Implementation(AActor* ActorToDestroy)
+{
+	if (ActorToDestroy && ActorToDestroy->IsValidLowLevel())
+	{
+		ActorToDestroy->Destroy();
+	}
+}
+
+void ASLFBaseCharacter::SRV_Jump_Implementation()
+{
+	Jump();
+}
+
+void ASLFBaseCharacter::SRV_SetSpeed_Implementation(double NewSpeed)
+{
+	if (GetCharacterMovement())
+	{
+		GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
+	}
 }

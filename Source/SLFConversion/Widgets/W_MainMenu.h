@@ -106,10 +106,9 @@ public:
 	void OnButtonSelected(UW_MainMenu_Button* Button);
 	virtual void OnButtonSelected_Implementation(UW_MainMenu_Button* Button);
 
-	// Check if navigation is allowed (not loading, visible, etc.)
-	UFUNCTION(BlueprintNativeEvent, BlueprintPure, Category = "W_MainMenu")
-	bool CanNavigate();
-	virtual bool CanNavigate_Implementation();
+	// Override CanNavigate from W_Navigable - check if navigation is allowed (not loading, visible, etc.)
+	// Note: No UFUNCTION needed - inherited from parent
+	virtual bool CanNavigate_Implementation() override;
 
 	// Event Handlers (4 events)
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_MainMenu")

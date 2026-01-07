@@ -34,7 +34,8 @@ void UW_CharacterSelection::CacheWidgetReferences()
 
 void UW_CharacterSelection::InitializeAndStoreClassAssets_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Load and store available character class assets for selection
+	UE_LOG(LogTemp, Log, TEXT("UW_CharacterSelection::InitializeAndStoreClassAssets"));
 }
 void UW_CharacterSelection::EventNavigateCancel_Implementation()
 {

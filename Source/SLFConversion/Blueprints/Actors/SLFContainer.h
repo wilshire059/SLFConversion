@@ -88,6 +88,18 @@ public:
 	void OpenContainer(AActor* Opener);
 	virtual void OpenContainer_Implementation(AActor* Opener);
 
+	// Event OpenLidAndSpawnItem - Opens lid with animation and optionally spawns item/VFX
+	UFUNCTION(BlueprintCallable, Category = "Container")
+	void EventOpenLidAndSpawnItem(bool bSpawnItem, bool bSpawnVFX);
+
+	// Event OnSpawnedItemLooted - Called when spawned pickup item is looted
+	UFUNCTION(BlueprintCallable, Category = "Container")
+	void EventOnSpawnedItemLooted();
+
+	// Event InitializeLoadedStates - Initialize container from save data
+	UFUNCTION(BlueprintCallable, Category = "Container")
+	void EventInitializeLoadedStates();
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Container")
 	void LootContainer(AActor* Looter);
 	virtual void LootContainer_Implementation(AActor* Looter);

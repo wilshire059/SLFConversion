@@ -12,5 +12,10 @@ AB_RestingPoint::AB_RestingPoint()
 
 void AB_RestingPoint::GetReplenishData_Implementation(TArray<UPrimaryDataAsset*>& OutItemsToReplenish, TArray<FGameplayTag>& OutStatsToReplenish)
 {
-	// TODO: Implement from Blueprint
+	// Return the replenish data configured for this resting point
+	// OutItemsToReplenish - items like health flasks that get refilled
+	// OutStatsToReplenish - stats like HP/FP that get restored to max
+	// Note: The actual data would come from UPROPERTY variables or a data asset
+	OutItemsToReplenish.Empty();
+	OutStatsToReplenish.Empty();
 }

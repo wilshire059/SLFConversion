@@ -34,13 +34,15 @@ void UW_Browser_StatusEffect::CacheWidgetReferences()
 
 UWidget* UW_Browser_StatusEffect::GetToolTipWidget_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Return tooltip widget for status effect browser entry
 	return nullptr;
 }
+
 FEventReply UW_Browser_StatusEffect::OnMouseDoubleClick_0_Implementation(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
-	// TODO: Implement from Blueprint EventGraph
-	return FEventReply();
+	// Handle double click on status effect entry
+	UE_LOG(LogTemp, Log, TEXT("UW_Browser_StatusEffect::OnMouseDoubleClick"));
+	return FEventReply(true);
 }
 void UW_Browser_StatusEffect::EventClear_Implementation()
 {

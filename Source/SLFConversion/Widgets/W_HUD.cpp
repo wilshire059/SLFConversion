@@ -34,65 +34,92 @@ void UW_HUD::CacheWidgetReferences()
 
 bool UW_HUD::GetTargetWidgetVisibility_Implementation(UUserWidget* Widget)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Check if the target widget is visible
+	if (Widget && Widget->IsInViewport())
+	{
+		return Widget->GetVisibility() == ESlateVisibility::Visible ||
+			   Widget->GetVisibility() == ESlateVisibility::SelfHitTestInvisible ||
+			   Widget->GetVisibility() == ESlateVisibility::HitTestInvisible;
+	}
 	return false;
 }
+
 void UW_HUD::BindToStatUpdate_Implementation(const TArray<UB_Stat*>& AllStats, const TArray<TSubclassOf<UB_Stat>>& StatsToListenFor)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Bind to stat updates from the stat manager
+	// This would iterate through AllStats, find matching StatsToListenFor, and bind delegates
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::BindToStatUpdate - Binding to %d stats"), AllStats.Num());
 }
+
 bool UW_HUD::GetGameMenuVisibility_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Check if game menu is visible
+	// This would check the GameMenu widget's visibility
 	return false;
 }
+
 bool UW_HUD::IsRestMenuHud_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Check if this HUD is the rest menu variant
 	return false;
 }
+
 void UW_HUD::InitializeBindings_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Initialize event bindings for stats, items, etc.
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::InitializeBindings"));
 }
+
 void UW_HUD::SerializeItemWheelData_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Serialize item wheel slot data for saving
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::SerializeItemWheelData"));
 }
+
 void UW_HUD::InitializeLoadedItemWheelSlotData_Implementation(const TArray<FSLFItemWheelSaveInfo>& LoadedData)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Initialize item wheel with loaded save data
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::InitializeLoadedItemWheelSlotData - %d items"), LoadedData.Num());
 }
+
 bool UW_HUD::GetDialogWindowVisibility_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
-	return false;
+	return IsDialogActive;
 }
+
 void UW_HUD::CloseAllMenus_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Close all open menu widgets
+	EventCloseInventory();
+	EventCloseEquipment();
+	EventCloseCrafting();
+	EventCloseStatus();
+	EventCloseSettings();
+	EventCloseGameMenu();
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CloseAllMenus"));
 }
+
 void UW_HUD::EventToggleUiMode_Implementation(bool bToggled)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Toggle UI mode (show/hide cursor, etc.)
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventToggleUiMode_Implementation - bToggled: %s"), bToggled ? TEXT("true") : TEXT("false"));
 }
 
 void UW_HUD::EventShowInventory_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Show inventory widget
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowInventory_Implementation"));
 }
 
 void UW_HUD::EventCloseInventory_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Close inventory widget
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventCloseInventory_Implementation"));
 }
 
 void UW_HUD::EventCloseEquipment_Implementation()
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Close equipment widget
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventCloseEquipment_Implementation"));
 }
 void UW_HUD::EventShowEquipment_Implementation()

@@ -65,9 +65,11 @@ public:
 	// FUNCTIONS (2)
 	// ═══════════════════════════════════════════════════════════════════════
 
+	// GetInputIconForKey - looks up icon for a given key
+	// Output param: Icon - the texture icon for this key
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Navigable_InputReader")
-	TSoftObjectPtr<UTexture2D> GetInputIconForKey(const FKey& InKey);
-	virtual TSoftObjectPtr<UTexture2D> GetInputIconForKey_Implementation(const FKey& InKey);
+	void GetInputIconForKey(const FKey& Key, TSoftObjectPtr<UTexture2D>& Icon);
+	virtual void GetInputIconForKey_Implementation(const FKey& Key, TSoftObjectPtr<UTexture2D>& Icon);
 
 
 	// Event Handlers (2 events)

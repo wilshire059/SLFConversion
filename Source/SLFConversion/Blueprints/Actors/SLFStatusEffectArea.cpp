@@ -3,6 +3,8 @@
 #include "Components/BoxComponent.h"
 #include "NiagaraComponent.h"
 #include "GameFramework/Character.h"
+#include "Components/StatusEffectManagerComponent.h"
+#include "Engine/DamageEvents.h"
 
 ASLFStatusEffectArea::ASLFStatusEffectArea()
 {
@@ -72,5 +74,26 @@ void ASLFStatusEffectArea::ApplyEffectTick_Implementation(AActor* TargetActor, f
 	UE_LOG(LogTemp, Verbose, TEXT("[StatusEffectArea] Applying %.2f buildup to %s"),
 		BuildupThisTick, *TargetActor->GetName());
 
-	// TODO: Call status effect component to add buildup
+	// Find status effect manager component on target
+	UStatusEffectManagerComponent* StatusMgr = TargetActor->FindComponentByClass<UStatusEffectManagerComponent>();
+	if (StatusMgr)
+	{
+		// AddOneShotBuildup adds instant buildup amount to an effect
+		// Requires the status effect data asset - for tag-based lookup, would need registry
+		UE_LOG(LogTemp, Verbose, TEXT("[StatusEffectArea] Adding %.2f %s buildup via StatusEffectManager"),
+			BuildupThisTick, *StatusEffectTag.ToString());
+		// StatusMgr->AddOneShotBuildup(StatusEffectData, 1, BuildupThisTick);
+		// Note: Full implementation requires looking up PDA_StatusEffect from tag
+	}
+
+	// Also apply damage over time if configured
+	if (DamagePerSecond > 0.0f)
+	{
+		float DamageThisTick = DamagePerSecond * DeltaTime;
+		// Simple point damage
+		FDamageEvent DamageEvent;
+		TargetActor->TakeDamage(DamageThisTick, DamageEvent, nullptr, this);
+		UE_LOG(LogTemp, Verbose, TEXT("[StatusEffectArea] Applied %.2f damage to %s"),
+			DamageThisTick, *TargetActor->GetName());
+	}
 }

@@ -13,6 +13,7 @@
 #include "Animation/AnimMontage.h"
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
+#include "Interfaces/BPI_GenericCharacter.h"
 
 ASLFContainerBase::ASLFContainerBase()
 {
@@ -45,13 +46,19 @@ void ASLFContainerBase::OnInteract_Implementation(AActor* Interactor)
 
 	UE_LOG(LogTemp, Log, TEXT("[Container] OnInteract - Opening container"));
 
-	// Load and play open montage
+	// Load and play open montage on the interactor
 	if (!OpenMontage.IsNull())
 	{
 		UAnimMontage* LoadedMontage = OpenMontage.LoadSynchronous();
 		if (LoadedMontage && Interactor)
 		{
-			// TODO: Play montage on interactor's anim instance
+			// Play montage on interactor via interface
+			if (Interactor->GetClass()->ImplementsInterface(UBPI_GenericCharacter::StaticClass()))
+			{
+				IBPI_GenericCharacter::Execute_PlayMontageReplicated(
+					Interactor, LoadedMontage, SpeedMultiplier, 0.0, NAME_None);
+				UE_LOG(LogTemp, Log, TEXT("[Container] Playing open montage: %s"), *LoadedMontage->GetName());
+			}
 		}
 	}
 
@@ -66,6 +73,9 @@ void ASLFContainerBase::OnInteract_Implementation(AActor* Interactor)
 		}
 	}
 
-	// TODO: Show loot UI
-	// TODO: Give items to player
+	// Loot handling:
+	// - Show loot UI would be done via player HUD interface
+	// - Give items would be done via InventoryManager->AddItem
+	// This base class doesn't have loot - see SLFContainer for full loot implementation
+	UE_LOG(LogTemp, Log, TEXT("[Container] Container opened - loot handled by derived class if any"));
 }

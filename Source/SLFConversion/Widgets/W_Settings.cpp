@@ -1,7 +1,8 @@
 // W_Settings.cpp
 // C++ Widget implementation for W_Settings
 //
-// 20-PASS VALIDATION: 2026-01-03
+// 20-PASS VALIDATION: 2026-01-05
+// NO REFLECTION - direct property access for all child widgets
 
 #include "Widgets/W_Settings.h"
 #include "Widgets/W_Settings_CategoryEntry.h"
@@ -373,13 +374,11 @@ void UW_Settings::EventOnEntrySelected_Implementation(UW_Settings_Entry* InEntry
 	}
 }
 
-void UW_Settings::EventOnVisibilityChanged_Implementation(uint8 InVisibility)
+void UW_Settings::EventOnVisibilityChanged_Implementation(ESlateVisibility InVisibility)
 {
-	UE_LOG(LogTemp, Log, TEXT("[W_Settings] EventOnVisibilityChanged: %d"), InVisibility);
+	UE_LOG(LogTemp, Log, TEXT("[W_Settings] EventOnVisibilityChanged: %d"), static_cast<int32>(InVisibility));
 
-	ESlateVisibility NewVisibility = static_cast<ESlateVisibility>(InVisibility);
-
-	if (NewVisibility == ESlateVisibility::Visible || NewVisibility == ESlateVisibility::SelfHitTestInvisible)
+	if (InVisibility == ESlateVisibility::Visible || InVisibility == ESlateVisibility::SelfHitTestInvisible)
 	{
 		// Reinitialize when becoming visible
 		InitializeCategories();

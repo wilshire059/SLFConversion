@@ -34,7 +34,8 @@ void UW_GenericButton::CacheWidgetReferences()
 
 void UW_GenericButton::SetButtonSelected_Implementation(bool InSelected)
 {
-	// TODO: Implement from Blueprint EventGraph
+	// Update button visual state based on selection
+	UE_LOG(LogTemp, Log, TEXT("UW_GenericButton::SetButtonSelected - Selected: %s"), InSelected ? TEXT("true") : TEXT("false"));
 }
 void UW_GenericButton::EventPressButton_Implementation()
 {

@@ -1,0 +1,190 @@
+{
+  "DA_Action_Backstab": {
+    "asset_path": "/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_Backstab.DA_Action_Backstab",
+    "class_name": "PDA_Action_C",
+    "ActionClass": "<Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_Backstab.B_Action_Backstab_C' (0x0000017690310E00) Class 'BlueprintGeneratedClass'>",
+    "RequiredStatTag": "<Struct 'GameplayTag' (0x000001762BDEF2A8) {}>",
+    "RelevantData_Export": "/Game/SoulslikeFramework/Structures/_Misc/FExecutionType.FExecutionType(Type_2_6E14F6D54ACD2155E91330A0C79A83EA=NewEnumerator1)"
+  },
+  "DA_Action_ComboHeavy": {
+    "asset_path": "/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_ComboHeavy.DA_Action_ComboHeavy",
+    "class_name": "PDA_Action_C",
+    "ActionClass": "<Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_ComboHeavy.B_Action_ComboHeavy_C' (0x0000017690311C00) Class 'BlueprintGeneratedClass'>",
+    "RequiredStatTag": "<Struct 'GameplayTag' (0x000001762BDE37E8) {}>",
+    "RelevantData_Export": "None"
+  },
+  "DA_Action_ComboLight_L": {
+    "asset_path": "/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_ComboLight_L.DA_Action_ComboLight_L",
+    "class_name": "PDA_Action_C",
+    "ActionClass": "<Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_ComboLight_L.B_Action_ComboLight_L_C' (0x0000017690312A00) Class 'BlueprintGeneratedClass'>",
+    "RequiredStatTag": "<Struct 'GameplayTag' (0x000001762BDE70E8) {}>",
+    "RelevantData_Export": "None"
+  },
+  "DA_Action_ComboLight_R": {
+    "asset_path": "/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_ComboLight_R.DA_Action_ComboLight_R",
+    "class_name": "PDA_Action_C",
+    "ActionClass": "<Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_ComboLight_R.B_Action_ComboLight_R_C' (0x0000017690313800) Class 'BlueprintGeneratedClass'>",
+    "RequiredStatTag": "<Struct 'GameplayTag' (0x000001762BDEE2E8) {}>",
+    "RequiredStatAmount": 5.0,
+    "RelevantData_Export": "None"
+  },
+  "DA_Action_Crouch": {
+    "asset_path": "/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_Crouch.DA_Action_Crouch",
+    "class_name": "PDA_Action_C",
+    "ActionClass": "<Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_Crouch.B_Action_Crouch_C' (0x0000017690314D00) Class 'BlueprintGeneratedClass'>",
+    "RequiredStatTag": "<Struct 'GameplayTag' (0x000001762BEF17A8) {}>",
+    "RelevantData_Export": "None"
+  },
+  "DA_Action_Dodge": {
+    "asset_path": "/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_Dodge.DA_Action_Dodge",
+    "class_name": "PDA_Action_C",
+    "ActionClass": "<Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_Dodge.B_Action_Dodge_C' (0x0000017693D07700) Class 'BlueprintGeneratedClass'>",
+    "RequiredStatTag": "<Struct 'GameplayTag' (0x000001762B5A8528) {}>",
+    "RequiredStatAmount": 5.0,
+    "RelevantData_Export": "/Game/SoulslikeFramework/Structures/Animation/FDodgeMontages.FDodgeMontages(Forward_31_D52898724986107771E21081C6388DEC=\"/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_F.AM_SLF_Dodge_F'\",ForwardLeft_32_0B7FD73045F86899A2831F9149CE8E53=\"/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_FL.AM_SLF_Dodge_FL'\",ForwardRight_33_C039E9B3414AAAD5A6822EA9328D8319=\"/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_FR.AM_SLF_Dodge_FR'\",Left_34_21CB04164886F55C395327B3C30394F4=\"/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_L.AM_SLF_Dodge_L'\",Right_35_772282F84C047ECFFB53D98D91E868F8=\"/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_R.AM_SLF_Dodge_R'\",Backward_36_8617411F4CC086A9DD42818F5CDF26A7=\"/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_B.AM_SLF_Dodge_B'\",BackwardLeft_37_DED58B4D41A6B0CDBEF5DF82BFC7FCF0=\"/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_BL.AM_SLF_Dodge_BL'\",BackwardRight_38_53FC3E5740D85040BD7A8CB268C8ABBB=\"/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Dodge_BR.AM_SLF_Dodge_BR'\",Backstep_39_445171EA492D2774EC7E05B1573B0D28=\"/Script/Engine.AnimMontage'/Game/SoulslikeFramework/Demo/_Animations/Dodges/AM_SLF_Backstep.AM_SLF_Backstep'\")"
+  },
+  "DA_Action_DrinkFlask_HP": {
+    "asset_path": "/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_DrinkFlask_HP.DA_Action_DrinkFlask_HP",
+    "class_name": "PDA_Action_C",
+    "ActionClass": "<Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_DrinkFlask_HP.B_Action_DrinkFlask_HP_C' (0x0000017693D08500) Class 'BlueprintGeneratedClass'>",
+    "RequiredStatTag": "<Struct 'GameplayTag' (0x000001762B5AECA8) {}>",
+    "RelevantData_Export": "/Game/SoulslikeFramework/Structures/Items/FFlaskData.FFlaskData(StatChangesPercent_8_AF5BCA0345DBDAA1C2FE578570E8021E=((StatTag_2_F01E56AA4DFD280EFC5A59817D609156=(TagName=\"SoulslikeFramework.Stat.Secondary.HP\"),PercentChange_16_6D26BA2C419D0C8CF9F247BDE1EE9E3E=40.000000)),DrinkingMontage_2_B9EADCA54DC49032CCF192B9E6211573=\"/Game/SoulslikeFramework/Demo/_Animations/Interaction/Flask/AM_SLF_DrinkFlask.AM_SLF_DrinkFlask\",VFX_11_A65093A540CD8C1A816503AAAC2D0EC2=\"/Game/SoulslikeFramework/VFX/Systems/NS_Flask_HP.NS_Flask_HP\")"
+  },
+  "DA_Action_DualWieldAttack": {
+    "asset_path": "/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_DualWieldAttack.DA_Action_DualWieldAttack",
+    "class_name": "PDA_Action_C",
+    "ActionClass": "<Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_DualWieldAttack.B_Action_DualWieldAttack_C' (0x0000017693D08C00) Class 'BlueprintGeneratedClass'>",
+    "RequiredStatTag": "<Struct 'GameplayTag' (0x000001762B5AE5E8) {}>",
+    "RelevantData_Export": "None"
+  },
+  "DA_Action_Execute": {
+    "asset_path": "/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_Execute.DA_Action_Execute",
+    "class_name": "PDA_Action_C",
+    "ActionClass": "<Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_Execute.B_Action_Execute_C' (0x0000017693D09A00) Class 'BlueprintGeneratedClass'>",
+    "RequiredStatTag": "<Struct 'GameplayTag' (0x00000176333DDDA8) {}>",
+    "RelevantData_Export": "/Game/SoulslikeFramework/Structures/_Misc/FExecutionType.FExecutionType(Type_2_6E14F6D54ACD2155E91330A0C79A83EA=NewEnumerator2)"
+  },
+  "DA_Action_GuardCancel": {
+    "asset_path": "/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_GuardCancel.DA_Action_GuardCancel",
+    "class_name": "PDA_Action_C",
+    "ActionClass": "<Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_GuardCancel.B_Action_GuardCancel_C' (0x0000017693D0A800) Class 'BlueprintGeneratedClass'>",
+    "RequiredStatTag": "<Struct 'GameplayTag' (0x000001762BEF0AE8) {}>",
+    "RelevantData_Export": "None"
+  },
+  "DA_Action_GuardEnd": {
+    "asset_path": "/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_GuardEnd.DA_Action_GuardEnd",
+    "class_name": "PDA_Action_C",
+    "ActionClass": "<Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_GuardEnd.B_Action_GuardEnd_C' (0x0000017693D0BD00) Class 'BlueprintGeneratedClass'>",
+    "RequiredStatTag": "<Struct 'GameplayTag' (0x0000017678D089A8) {}>",
+    "RelevantData_Export": "None"
+  },
+  "DA_Action_GuardStart": {
+    "asset_path": "/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_GuardStart.DA_Action_GuardStart",
+    "class_name": "PDA_Action_C",
+    "ActionClass": "<Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_GuardStart.B_Action_GuardStart_C' (0x0000017693D0CB00) Class 'BlueprintGeneratedClass'>",
+    "RequiredStatTag": "<Struct 'GameplayTag' (0x000001762B5AA4A8) {}>",
+    "RelevantData_Export": "None"
+  },
+  "DA_Action_Jump": {
+    "asset_path": "/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_Jump.DA_Action_Jump",
+    "class_name": "PDA_Action_C",
+    "ActionClass": "<Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_Jump.B_Action_Jump_C' (0x0000017693D0D900) Class 'BlueprintGeneratedClass'>",
+    "RequiredStatTag": "<Struct 'GameplayTag' (0x000001762BDE3A28) {}>",
+    "RequiredStatAmount": 5.0,
+    "RelevantData_Export": "None"
+  },
+  "DA_Action_JumpAttack": {
+    "asset_path": "/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_JumpAttack.DA_Action_JumpAttack",
+    "class_name": "PDA_Action_C",
+    "ActionClass": "<Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_JumpAttack.B_Action_JumpAttack_C' (0x0000017693D0E700) Class 'BlueprintGeneratedClass'>",
+    "RequiredStatTag": "<Struct 'GameplayTag' (0x0000017678D070E8) {}>",
+    "RequiredStatAmount": 20.0,
+    "RelevantData_Export": "None"
+  },
+  "DA_Action_PickupItemMontage": {
+    "asset_path": "/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_PickupItemMontage.DA_Action_PickupItemMontage",
+    "class_name": "PDA_Action_C",
+    "ActionClass": "<Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_PickupItemMontage.B_Action_PickupItemMontage_C' (0x0000017693D0F500) Class 'BlueprintGeneratedClass'>",
+    "RequiredStatTag": "<Struct 'GameplayTag' (0x0000017693E805A8) {}>",
+    "RelevantData_Export": "/Game/SoulslikeFramework/Structures/Animation/FMontage.FMontage(AnimMontage_3_B48455B6457133C3BC7F798BD0CB3493=\"/Game/SoulslikeFramework/Demo/_Animations/Interaction/ItemPickup/AM_SLF_ItemPickup.AM_SLF_ItemPickup\")"
+  },
+  "DA_Action_Projectile": {
+    "asset_path": "/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_Projectile.DA_Action_Projectile",
+    "class_name": "PDA_Action_C",
+    "ActionClass": "<Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_ThrowProjectile.B_Action_ThrowProjectile_C' (0x0000017693E90000) Class 'BlueprintGeneratedClass'>",
+    "RequiredStatTag": "<Struct 'GameplayTag' (0x0000017693E80D28) {}>",
+    "RelevantData_Export": "/Game/SoulslikeFramework/Structures/Animation/FMontage.FMontage(AnimMontage_3_B48455B6457133C3BC7F798BD0CB3493=\"/Game/SoulslikeFramework/Demo/_Animations/Combat/OneHanded/AM_SLF_ThrowProjectile.AM_SLF_ThrowProjectile\")"
+  },
+  "DA_Action_ScrollWheel_LeftHand": {
+    "asset_path": "/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_ScrollWheel_LeftHand.DA_Action_ScrollWheel_LeftHand",
+    "class_name": "PDA_Action_C",
+    "ActionClass": "<Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_ScrollWheel_LeftHand.B_Action_ScrollWheel_LeftHand_C' (0x0000017693E90E00) Class 'BlueprintGeneratedClass'>",
+    "RequiredStatTag": "<Struct 'GameplayTag' (0x0000017693E80A28) {}>",
+    "RelevantData_Export": "None"
+  },
+  "DA_Action_ScrollWheel_RightHand": {
+    "asset_path": "/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_ScrollWheel_RightHand.DA_Action_ScrollWheel_RightHand",
+    "class_name": "PDA_Action_C",
+    "ActionClass": "<Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_ScrollWheel_RightHand.B_Action_ScrollWheel_RightHand_C' (0x0000017693E91C00) Class 'BlueprintGeneratedClass'>",
+    "RequiredStatTag": "<Struct 'GameplayTag' (0x0000017693E81E68) {}>",
+    "RelevantData_Export": "None"
+  },
+  "DA_Action_ScrollWheel_Tools": {
+    "asset_path": "/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_ScrollWheel_Tools.DA_Action_ScrollWheel_Tools",
+    "class_name": "PDA_Action_C",
+    "ActionClass": "<Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_ScrollWheel_Tools.B_Action_ScrollWheel_Tools_C' (0x0000017693E92A00) Class 'BlueprintGeneratedClass'>",
+    "RequiredStatTag": "<Struct 'GameplayTag' (0x0000017693E819E8) {}>",
+    "RelevantData_Export": "None"
+  },
+  "DA_Action_SprintAttack": {
+    "asset_path": "/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_SprintAttack.DA_Action_SprintAttack",
+    "class_name": "PDA_Action_C",
+    "ActionClass": "<Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_SprintAttack.B_Action_SprintAttack_C' (0x0000017693E93800) Class 'BlueprintGeneratedClass'>",
+    "RequiredStatTag": "<Struct 'GameplayTag' (0x0000017693E81328) {}>",
+    "RequiredStatAmount": 10.0,
+    "RelevantData_Export": "None"
+  },
+  "DA_Action_StartSprinting": {
+    "asset_path": "/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_StartSprinting.DA_Action_StartSprinting",
+    "class_name": "PDA_Action_C",
+    "ActionClass": "<Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_StartSprinting.B_Action_StartSprinting_C' (0x0000017693E94600) Class 'BlueprintGeneratedClass'>",
+    "RequiredStatTag": "<Struct 'GameplayTag' (0x0000017693E82228) {}>",
+    "RelevantData_Export": "/Game/SoulslikeFramework/Structures/Stats/FSprintCost.FSprintCost(TickInterval_2_5D01E1CD4ED39896648FDB9157E3F124=0.100000,Change_4_43CEF6584D3BD232D6E851BF07576EED=-1.000000)"
+  },
+  "DA_Action_StopSprinting": {
+    "asset_path": "/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_StopSprinting.DA_Action_StopSprinting",
+    "class_name": "PDA_Action_C",
+    "ActionClass": "<Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_StopSprinting.B_Action_StopSprinting_C' (0x0000017693E95400) Class 'BlueprintGeneratedClass'>",
+    "RequiredStatTag": "<Struct 'GameplayTag' (0x0000017693E82EE8) {}>",
+    "RelevantData_Export": "None"
+  },
+  "DA_Action_TwoHandedStance_L": {
+    "asset_path": "/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_TwoHandedStance_L.DA_Action_TwoHandedStance_L",
+    "class_name": "PDA_Action_C",
+    "ActionClass": "<Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_TwoHandedStance_L.B_Action_TwoHandedStance_L_C' (0x0000017693E96200) Class 'BlueprintGeneratedClass'>",
+    "RequiredStatTag": "<Struct 'GameplayTag' (0x0000017693E82468) {}>",
+    "RelevantData_Export": "None"
+  },
+  "DA_Action_TwoHandedStance_R": {
+    "asset_path": "/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_TwoHandedStance_R.DA_Action_TwoHandedStance_R",
+    "class_name": "PDA_Action_C",
+    "ActionClass": "<Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_TwoHandedStance_R.B_Action_TwoHandedStance_R_C' (0x0000017693E97000) Class 'BlueprintGeneratedClass'>",
+    "RequiredStatTag": "<Struct 'GameplayTag' (0x0000017693E83968) {}>",
+    "RelevantData_Export": "None"
+  },
+  "DA_Action_UseEquippedTool": {
+    "asset_path": "/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_UseEquippedTool.DA_Action_UseEquippedTool",
+    "class_name": "PDA_Action_C",
+    "ActionClass": "<Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_UseEquippedTool.B_Action_UseEquippedTool_C' (0x0000017693E97E00) Class 'BlueprintGeneratedClass'>",
+    "RequiredStatTag": "<Struct 'GameplayTag' (0x0000017693E831E8) {}>",
+    "RelevantData_Export": "None"
+  },
+  "DA_Action_WeaponAbility": {
+    "asset_path": "/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_WeaponAbility.DA_Action_WeaponAbility",
+    "class_name": "PDA_Action_C",
+    "ActionClass": "<Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_WeaponAbility.B_Action_WeaponAbility_C' (0x0000017693E98C00) Class 'BlueprintGeneratedClass'>",
+    "RequiredStatTag": "<Struct 'GameplayTag' (0x0000017693E83C68) {}>",
+    "RequiredStatAmount": 30.0,
+    "RelevantData_Export": "None"
+  }
+}

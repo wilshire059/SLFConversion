@@ -1,0 +1,26 @@
+============================================================
+Key Debug
+============================================================
+
+1. unreal.Key()
+   Created: <Struct 'Key' (0x00000272E5DD0F00) {}>
+   Type: <class 'Key'>
+   Dir: ['assign', 'cast', 'copy', 'export_text', 'get_editor_property', 'import_text', 'set_editor_properties', 'set_editor_property', 'static_struct', 'to_tuple']
+
+2. unreal.Key('Tab')
+   Error: call() takes at most 0 arguments (1 given)
+
+3. unreal.Key(key_name='Tab')
+   Error: call() takes at most 0 arguments (1 given)
+
+4. Check existing mapping key
+   Key type: <class 'Key'>
+   Key value: <Struct 'Key' (0x00000272E58FE1E8) {}>
+   Key dir: ['assign', 'cast', 'copy', 'export_text', 'get_editor_property', 'import_text', 'set_editor_properties', 'set_editor_property', 'static_struct', 'to_tuple']
+   key.key_name: N/A
+   key.name: N/A
+   key.Name: N/A
+   key.get_editor_property('key_name'): SpaceBar
+
+5. Import text approach
+   import_text result: <Struct 'Key' (0x00000272E5DD1180) {}>

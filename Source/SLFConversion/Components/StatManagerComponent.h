@@ -126,8 +126,8 @@ public:
 	 * @return True if stat was found
 	 */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Stat Manager|Access")
-	bool GetStat(FGameplayTag StatTag, UObject*& OutStatObject, FSLFStatInfo& OutStatInfo);
-	virtual bool GetStat_Implementation(FGameplayTag StatTag, UObject*& OutStatObject, FSLFStatInfo& OutStatInfo);
+	bool GetStat(FGameplayTag StatTag, UObject*& OutStatObject, FStatInfo& OutStatInfo);
+	virtual bool GetStat_Implementation(FGameplayTag StatTag, UObject*& OutStatObject, FStatInfo& OutStatInfo);
 
 	/** [2/12] Get all stats
 	 * @param OutStatObjects - Array of all stat objects
@@ -227,4 +227,16 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Stat Manager|Helpers")
 	void ToggleRegenForStat(FGameplayTag StatTag, bool bStop);
 	virtual void ToggleRegenForStat_Implementation(FGameplayTag StatTag, bool bStop);
+
+	// ═══════════════════════════════════════════════════════════════════
+	// INITIALIZATION & LEVEL UP EVENTS
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** Initialize all stats from default data */
+	UFUNCTION(BlueprintCallable, Category = "Stat Manager|Init")
+	void EventInitializeStats();
+
+	/** Handle level up request */
+	UFUNCTION(BlueprintCallable, Category = "Stat Manager|Level")
+	void EventOnLevelUpRequested(FGameplayTag StatTag);
 };
