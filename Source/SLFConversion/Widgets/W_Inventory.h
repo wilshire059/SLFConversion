@@ -28,9 +28,11 @@ class UW_Inventory_CategoryEntry;
 
 // Forward declarations for UMG types
 class UScrollBox;
+class UUniformGridPanel;
+class UWidgetSwitcher;
 
 // Forward declarations for Blueprint types
-class UAC_InventoryManager;
+class UInventoryManagerComponent;
 
 // Forward declarations for SaveGame types
 
@@ -51,12 +53,30 @@ public:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 
+	// Input handling (replaces Blueprint EventGraph input bindings)
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// BIND WIDGETS (Grid panels for slot containers)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UUniformGridPanel* UniformInventoryGrid;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UUniformGridPanel* UniformStorageGrid;
+
+	// ItemInfoBoxSwitcher - Controls which panel is shown on the right side
+	// Index 0 = CharacterStatsOverlay, Index 1 = ItemInfo panel
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UWidgetSwitcher* ItemInfoBoxSwitcher;
+
 	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (10)
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
-	UAC_InventoryManager* InventoryComponent;
+	UInventoryManagerComponent* InventoryComponent;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	TArray<UW_InventorySlot*> InventorySlots;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
@@ -197,4 +217,40 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Create inventory slots dynamically (per Blueprint Construct logic)
+	void CreateInventorySlots();
+
+	// Create storage slots dynamically
+	void CreateStorageSlots();
+
+	// Create category entry widgets dynamically
+	void CreateCategoryEntries();
+
+	// Populate slots with items from InventoryComponent
+	void PopulateSlotsWithItems();
+
+	// Default slot widget class for dynamic creation
+	UPROPERTY(EditDefaultsOnly, Category = "Config")
+	TSubclassOf<UW_InventorySlot> InventorySlotClass;
+
+	// Category entry widget class for dynamic creation
+	UPROPERTY(EditDefaultsOnly, Category = "Config")
+	TSubclassOf<UW_Inventory_CategoryEntry> CategoryEntryClass;
+
+	// Handler for slot OnSelected event
+	UFUNCTION()
+	void HandleSlotSelected(bool bSelected, UW_InventorySlot* InSlot);
+
+	// Handler for slot OnPressed event
+	UFUNCTION()
+	void HandleSlotPressed(UW_InventorySlot* InSlot);
+
+	// Handler for slot OnCleared event
+	UFUNCTION()
+	void HandleSlotCleared(UW_InventorySlot* InSlot, bool bTriggerShift);
+
+	// Handler for slot OnSlotAssigned event
+	UFUNCTION()
+	void HandleSlotAssigned(UW_InventorySlot* InSlot);
 };

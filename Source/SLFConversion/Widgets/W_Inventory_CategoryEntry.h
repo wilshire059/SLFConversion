@@ -1,7 +1,7 @@
 // W_Inventory_CategoryEntry.h
 // C++ Widget class for W_Inventory_CategoryEntry
 //
-// 20-PASS VALIDATION: 2026-01-01 Autonomous Session
+// 20-PASS VALIDATION: 2026-01-08
 // Source: BlueprintDNA/WidgetBlueprint/W_Inventory_CategoryEntry.json
 // Parent: UUserWidget
 // Variables: 3 | Functions: 1 | Dispatchers: 1
@@ -10,26 +10,14 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "GameplayTagContainer.h"
 #include "SLFEnums.h"
 #include "SLFGameTypes.h"
-#include "SLFPrimaryDataAssets.h"
-#include "InputMappingContext.h"
-#include "GameFramework/InputSettings.h"
-#include "GenericPlatform/GenericWindow.h"
-#include "MediaPlayer.h"
-
 
 #include "W_Inventory_CategoryEntry.generated.h"
 
-// Forward declarations for widget types
-
-
-// Forward declarations for Blueprint types
-
-
-// Forward declarations for SaveGame types
-
+// Forward declarations
+class UImage;
+class UButton;
 
 // Event Dispatchers
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FW_Inventory_CategoryEntry_OnSelected, UW_Inventory_CategoryEntry*, CategoryEntry, ESLFItemCategory, SelectedCategory);
@@ -43,6 +31,7 @@ public:
 	UW_Inventory_CategoryEntry(const FObjectInitializer& ObjectInitializer);
 
 	// Widget lifecycle
+	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 
@@ -52,8 +41,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config Override")
 	bool AllCategoriesButton;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config Override")
 	FSLFInventoryCategory InventoryCategoryData;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	bool Selected;
 
@@ -75,4 +66,27 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Set up the category icon from InventoryCategoryData
+	void SetupCategoryIcon();
+
+	// Bind button events
+	void BindButtonEvents();
+
+	// Button event handlers
+	UFUNCTION()
+	void OnButtonClicked();
+
+	UFUNCTION()
+	void OnButtonHovered();
+
+	UFUNCTION()
+	void OnButtonUnhovered();
+
+	// Cached widget references
+	UPROPERTY()
+	UImage* CategoryIconWidget;
+
+	UPROPERTY()
+	UButton* ButtonWidget;
 };
