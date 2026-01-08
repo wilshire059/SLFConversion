@@ -44,14 +44,23 @@ public:
 	// VARIABLES (4)
 	// ═══════════════════════════════════════════════════════════════════════
 
+	/** Current progress states - maps progress tag to progress state */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Runtime")
-	TMap<FGameplayTag, FGameplayTag> CurrentProgress;
+	TMap<FGameplayTag, ESLFProgress> CurrentProgress;
+
+	/** Curve defining level up costs - X=level, Y=currency required */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config")
 	UCurveFloat* LevelUpCosts;
+
+	/** Default progress states to initialize with */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config")
-	TMap<FGameplayTag, FGameplayTag> DefaultsToProgress;
+	TMap<FGameplayTag, ESLFProgress> DefaultsToProgress;
+
+	/** Total play time for this save */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Runtime")
 	FTimespan PlayTime;
+
+	/** Timer handle for play time tracking */
 	UPROPERTY()
 	FTimerHandle PlayTimeTimer;
 
@@ -83,6 +92,19 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_ProgressManager")
 	void SerializeProgressData();
 	virtual void SerializeProgressData_Implementation();
+
+	/** Initialize progress from loaded save data */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_ProgressManager")
+	void InitializeLoadedProgress(const TArray<FSLFProgressSaveInfo>& LoadedProgress);
+	virtual void InitializeLoadedProgress_Implementation(const TArray<FSLFProgressSaveInfo>& LoadedProgress);
+
+	/** Set play time from loaded save */
+	UFUNCTION(BlueprintCallable, Category = "AC_ProgressManager")
+	void SetPlayTime(const FTimespan& NewPlayTime);
+
+	/** Get current play time */
+	UFUNCTION(BlueprintCallable, Category = "AC_ProgressManager")
+	FTimespan GetPlayTime() const { return PlayTime; }
 
 	// Internal helpers
 	void StartPlayTimeTimer();

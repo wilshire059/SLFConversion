@@ -304,15 +304,60 @@ void UB_StatusEffect::TickDamage()
 
 	// Apply tick stat changes via StatManager
 	UAC_StatManager* StatMgr = GetOwnerStatManager();
-	if (IsValid(StatMgr) && IsValid(Data))
+	if (!IsValid(StatMgr))
 	{
-		// Get status effect data to access tick stat changes
+		UE_LOG(LogTemp, Warning, TEXT("UB_StatusEffect::TickDamage - No StatManager available"));
+		return;
+	}
+
+	// Determine which stat changes to apply (prefer combined struct, fallback to TickStatChange)
+	TArray<FStatChange>* StatChangesToApply = nullptr;
+
+	if (TickAndOneShotStatChange.TickingStatAdjustment.Num() > 0)
+	{
+		StatChangesToApply = &TickAndOneShotStatChange.TickingStatAdjustment;
+	}
+	else if (TickStatChange.TickingStatAdjustment.Num() > 0)
+	{
+		StatChangesToApply = &TickStatChange.TickingStatAdjustment;
+	}
+	else if (StatsToAdjust.Num() > 0)
+	{
+		StatChangesToApply = &StatsToAdjust;
+	}
+
+	if (StatChangesToApply && StatChangesToApply->Num() > 0)
+	{
+		FString EffectName = TEXT("Unknown");
 		if (UPDA_StatusEffect* StatusData = Cast<UPDA_StatusEffect>(Data))
 		{
-			// Note: Tick stat changes would be in RankInfo - for now just log
-			UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::TickDamage - Applying tick damage for effect: %s"),
-				*StatusData->Tag.ToString());
+			EffectName = StatusData->Tag.ToString();
 		}
+
+		for (const FStatChange& Change : *StatChangesToApply)
+		{
+			// Calculate actual change amount (random between min and max)
+			double Amount = FMath::RandRange(Change.MinAmount, Change.MaxAmount);
+
+			UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::TickDamage - [%s] Applying %.2f to %s (%s)"),
+				*EffectName,
+				Amount,
+				*Change.StatTag.ToString(),
+				Change.ValueType == ESLFValueType::CurrentValue ? TEXT("Current") : TEXT("Max"));
+
+			// Apply stat change via StatManager
+			StatMgr->AdjustStat(
+				Change.StatTag,
+				Change.ValueType,
+				Amount,
+				false,  // Not a level up
+				Change.bTryActivateRegen
+			);
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Verbose, TEXT("UB_StatusEffect::TickDamage - No tick stat changes configured"));
 	}
 }
 
@@ -356,17 +401,53 @@ void UB_StatusEffect::EffectTriggered()
 	// 3. Start effect duration timer
 	// 4. Spawn looping VFX
 
-	UE_LOG(LogTemp, Verbose, TEXT("UB_StatusEffect::EffectTriggered - Effect triggered!"));
+	UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::EffectTriggered - Effect triggered!"));
 
 	// Apply one-shot stat changes via StatManager
 	UAC_StatManager* StatMgr = GetOwnerStatManager();
-	if (IsValid(StatMgr) && IsValid(Data))
+
+	// Determine which one-shot stat changes to apply
+	TArray<FStatChange>* OneShotChanges = nullptr;
+
+	if (TickAndOneShotStatChange.InstantStatAdjustment.Num() > 0)
 	{
+		OneShotChanges = &TickAndOneShotStatChange.InstantStatAdjustment;
+	}
+	else if (OneShotStatChange.StatChanges.Num() > 0)
+	{
+		OneShotChanges = &OneShotStatChange.StatChanges;
+	}
+
+	if (IsValid(StatMgr) && OneShotChanges && OneShotChanges->Num() > 0)
+	{
+		FString EffectName = TEXT("Unknown");
 		if (UPDA_StatusEffect* StatusData = Cast<UPDA_StatusEffect>(Data))
 		{
-			// Note: One-shot stat changes would be in RankInfo - for now just log
-			UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::EffectTriggered - Applying one-shot effects for: %s"),
-				*StatusData->Tag.ToString());
+			EffectName = StatusData->Tag.ToString();
+		}
+
+		UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::EffectTriggered - [%s] Applying %d one-shot stat changes"),
+			*EffectName, OneShotChanges->Num());
+
+		for (const FStatChange& Change : *OneShotChanges)
+		{
+			// Calculate actual change amount (random between min and max)
+			double Amount = FMath::RandRange(Change.MinAmount, Change.MaxAmount);
+
+			UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::EffectTriggered - [%s] Instant %.2f to %s (%s)"),
+				*EffectName,
+				Amount,
+				*Change.StatTag.ToString(),
+				Change.ValueType == ESLFValueType::CurrentValue ? TEXT("Current") : TEXT("Max"));
+
+			// Apply stat change via StatManager
+			StatMgr->AdjustStat(
+				Change.StatTag,
+				Change.ValueType,
+				Amount,
+				false,  // Not a level up
+				Change.bTryActivateRegen
+			);
 		}
 	}
 
@@ -374,10 +455,27 @@ void UB_StatusEffect::EffectTriggered()
 	SpawnLoopingVfxAttached();
 
 	// Set up tick damage timer if EffectSteps > 0
-	if (EffectSteps > 0.0 && EffectDuration > 0.0)
-	{
-		double TickInterval = EffectDuration / EffectSteps;
+	// Use duration/interval from combined struct or TickStatChange
+	double TickDuration = EffectDuration;
+	double TickInterval = 0.0;
 
+	if (TickAndOneShotStatChange.Duration > 0.0)
+	{
+		TickDuration = TickAndOneShotStatChange.Duration;
+		TickInterval = TickAndOneShotStatChange.Interval;
+	}
+	else if (TickStatChange.Duration > 0.0)
+	{
+		TickDuration = TickStatChange.Duration;
+		TickInterval = TickStatChange.Interval;
+	}
+	else if (EffectSteps > 0.0 && EffectDuration > 0.0)
+	{
+		TickInterval = EffectDuration / EffectSteps;
+	}
+
+	if (TickInterval > 0.0)
+	{
 		if (UWorld* World = GetWorld())
 		{
 			World->GetTimerManager().SetTimer(
@@ -387,11 +485,13 @@ void UB_StatusEffect::EffectTriggered()
 				TickInterval,
 				true // Looping
 			);
+			UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::EffectTriggered - Started tick damage timer (interval: %.2fs)"),
+				TickInterval);
 		}
 	}
 
 	// Set up effect duration timer
-	if (EffectDuration > 0.0)
+	if (TickDuration > 0.0)
 	{
 		if (UWorld* World = GetWorld())
 		{
@@ -399,9 +499,10 @@ void UB_StatusEffect::EffectTriggered()
 				WaitForDecayTimerHandle,
 				this,
 				&UB_StatusEffect::EffectFinished,
-				EffectDuration,
+				TickDuration,
 				false // Not looping
 			);
+			UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::EffectTriggered - Effect will finish in %.2fs"), TickDuration);
 		}
 	}
 }

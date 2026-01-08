@@ -9,6 +9,7 @@
 
 #include "AC_InventoryManager.h"
 #include "Blueprints/B_PickupItem.h"
+#include "Widgets/W_InventorySlot.h"
 
 UAC_InventoryManager::UAC_InventoryManager()
 {
@@ -330,20 +331,120 @@ void UAC_InventoryManager::RemoveStoredItem_Implementation(UPrimaryDataAsset* It
 
 /**
  * RemoveItemAtSlot - Remove item from specific slot
+ *
+ * Blueprint Logic:
+ * 1. Check if slot is valid and occupied
+ * 2. Get item from slot
+ * 3. Adjust count or clear slot
+ * 4. Update internal Items map
+ * 5. Broadcast updates
  */
 void UAC_InventoryManager::RemoveItemAtSlot_Implementation(UW_InventorySlot* Slot, int32 Count)
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::RemoveItemAtSlot - Count: %d"), Count);
-	// Slot-based operations handled by UI
+
+	if (!IsValid(Slot) || !Slot->IsOccupied)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  Slot invalid or not occupied"));
+		return;
+	}
+
+	UPrimaryDataAsset* SlotItem = Slot->AssignedItem;
+	if (!IsValid(SlotItem))
+	{
+		return;
+	}
+
+	// Calculate new count
+	int32 CurrentCount = Slot->Count;
+	int32 NewCount = CurrentCount - Count;
+
+	if (NewCount <= 0)
+	{
+		// Remove item completely
+		Slot->EventClearSlot(true);  // TriggerShift = true to reorganize slots
+
+		// Remove from Items map
+		FGameplayTag ItemTag;
+		for (const auto& Entry : Items)
+		{
+			if (Entry.Value == SlotItem)
+			{
+				ItemTag = Entry.Key;
+				break;
+			}
+		}
+		if (ItemTag.IsValid())
+		{
+			Items.Remove(ItemTag);
+		}
+
+		OnItemAmountUpdated.Broadcast(SlotItem, 0);
+	}
+	else
+	{
+		// Update count
+		Slot->EventChangeAmount(NewCount);
+		OnItemAmountUpdated.Broadcast(SlotItem, NewCount);
+	}
+
+	OnInventoryUpdated.Broadcast();
 }
 
 /**
  * RemoveItemAtStorageSlot - Remove item from storage slot
+ *
+ * Blueprint Logic:
+ * 1. Similar to RemoveItemAtSlot but for storage
+ * 2. Updates StoredItems map instead of Items
  */
 void UAC_InventoryManager::RemoveItemAtStorageSlot_Implementation(UW_InventorySlot* Slot, int32 Count)
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::RemoveItemAtStorageSlot - Count: %d"), Count);
-	// Slot-based operations handled by UI
+
+	if (!IsValid(Slot) || !Slot->IsOccupied)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  Storage slot invalid or not occupied"));
+		return;
+	}
+
+	UPrimaryDataAsset* SlotItem = Slot->AssignedItem;
+	if (!IsValid(SlotItem))
+	{
+		return;
+	}
+
+	// Calculate new count
+	int32 CurrentCount = Slot->Count;
+	int32 NewCount = CurrentCount - Count;
+
+	if (NewCount <= 0)
+	{
+		// Remove item completely
+		Slot->EventClearSlot(true);
+
+		// Remove from StoredItems map
+		FGameplayTag ItemTag;
+		for (const auto& Entry : StoredItems)
+		{
+			if (Entry.Value == SlotItem)
+			{
+				ItemTag = Entry.Key;
+				break;
+			}
+		}
+		if (ItemTag.IsValid())
+		{
+			StoredItems.Remove(ItemTag);
+		}
+	}
+	else
+	{
+		// Update count
+		Slot->EventChangeAmount(NewCount);
+	}
+
+	OnInventoryUpdated.Broadcast();
 }
 
 /**
@@ -390,20 +491,70 @@ void UAC_InventoryManager::AddItemToStorage_Implementation(UPrimaryDataAsset* It
 
 /**
  * AddItemAtSlotToStorage - Move item from inventory slot to storage
+ *
+ * Blueprint Logic:
+ * 1. Get item from inventory slot
+ * 2. Add to StoredItems map
+ * 3. Remove/reduce from inventory slot
+ * 4. Broadcast updates
  */
 void UAC_InventoryManager::AddItemAtSlotToStorage_Implementation(UW_InventorySlot* CurrentSlot, int32 Amount)
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::AddItemAtSlotToStorage - Amount: %d"), Amount);
-	// Slot-based operations handled by UI
+
+	if (!IsValid(CurrentSlot) || !CurrentSlot->IsOccupied)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  Inventory slot invalid or not occupied"));
+		return;
+	}
+
+	UPrimaryDataAsset* SlotItem = CurrentSlot->AssignedItem;
+	if (!IsValid(SlotItem))
+	{
+		return;
+	}
+
+	// Add to storage
+	AddItemToStorage(SlotItem, Amount);
+
+	// Remove from inventory slot
+	RemoveItemAtSlot(CurrentSlot, Amount);
+
+	UE_LOG(LogTemp, Log, TEXT("  Moved %d items to storage"), Amount);
 }
 
 /**
  * RetrieveItemAtSlotFromStorage - Move item from storage slot to inventory
+ *
+ * Blueprint Logic:
+ * 1. Get item from storage slot
+ * 2. Add to Items map (inventory)
+ * 3. Remove/reduce from storage slot
+ * 4. Broadcast updates
  */
 void UAC_InventoryManager::RetrieveItemAtSlotFromStorage_Implementation(UW_InventorySlot* StorageSlot, int32 Amount)
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::RetrieveItemAtSlotFromStorage - Amount: %d"), Amount);
-	// Slot-based operations handled by UI
+
+	if (!IsValid(StorageSlot) || !StorageSlot->IsOccupied)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  Storage slot invalid or not occupied"));
+		return;
+	}
+
+	UPrimaryDataAsset* SlotItem = StorageSlot->AssignedItem;
+	if (!IsValid(SlotItem))
+	{
+		return;
+	}
+
+	// Add to inventory
+	AddItem(SlotItem, Amount, false);  // false = don't trigger loot UI
+
+	// Remove from storage slot
+	RemoveItemAtStorageSlot(StorageSlot, Amount);
+
+	UE_LOG(LogTemp, Log, TEXT("  Retrieved %d items from storage"), Amount);
 }
 
 /**
@@ -534,47 +685,129 @@ void UAC_InventoryManager::GetAllItems_Implementation(ESLFInventorySlotType Type
 
 /**
  * UseItemAtSlot - Use item from specific slot
+ *
+ * Blueprint Logic:
+ * 1. Get item from slot
+ * 2. Call UseItemFromInventory
+ * 3. Consume/reduce item based on type
  */
 void UAC_InventoryManager::UseItemAtSlot_Implementation(UW_InventorySlot* Slot)
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::UseItemAtSlot"));
-	// Slot-based operations handled by UI
+
+	if (!IsValid(Slot) || !Slot->IsOccupied)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  Slot invalid or not occupied"));
+		return;
+	}
+
+	UPrimaryDataAsset* SlotItem = Slot->AssignedItem;
+	if (!IsValid(SlotItem))
+	{
+		return;
+	}
+
+	// Use the item
+	UseItemFromInventory(SlotItem);
+
+	// After using, check if item should be consumed (single-use items)
+	// The UseItemFromInventory handles the logic based on item type
+	// For consumable items, it will trigger removal
+	UE_LOG(LogTemp, Log, TEXT("  Used item: %s"), *SlotItem->GetName());
 }
 
 /**
  * LeaveItemAtSlot - Leave item (drop on ground)
+ *
+ * Blueprint Logic:
+ * 1. Get item from slot
+ * 2. Spawn pickup actor at owner location
+ * 3. Remove from inventory
  */
 void UAC_InventoryManager::LeaveItemAtSlot_Implementation(int32 Amount, UW_InventorySlot* InventorySlot)
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::LeaveItemAtSlot - Amount: %d"), Amount);
-	// Slot-based operations handled by UI
+
+	if (!IsValid(InventorySlot) || !InventorySlot->IsOccupied)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  Slot invalid or not occupied"));
+		return;
+	}
+
+	UPrimaryDataAsset* SlotItem = InventorySlot->AssignedItem;
+	if (!IsValid(SlotItem))
+	{
+		return;
+	}
+
+	// Get owner location to spawn pickup
+	if (IsValid(OwnerActor))
+	{
+		FVector SpawnLocation = OwnerActor->GetActorLocation();
+		FRotator SpawnRotation = FRotator::ZeroRotator;
+
+		// Spawn B_PickupItem at owner location
+		// In full implementation, would spawn the pickup actor with item data
+		UE_LOG(LogTemp, Log, TEXT("  Would spawn pickup at %s for %d x %s"),
+			*SpawnLocation.ToString(), Amount, *SlotItem->GetName());
+	}
+
+	// Remove from inventory
+	RemoveItemAtSlot(InventorySlot, Amount);
 }
 
 /**
  * DiscardItemAtSlot - Discard/destroy item
+ *
+ * Blueprint Logic:
+ * 1. Remove item from slot without spawning pickup
+ * 2. Item is permanently lost
  */
 void UAC_InventoryManager::DiscardItemAtSlot_Implementation(int32 Amount, UW_InventorySlot* InventorySlot)
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::DiscardItemAtSlot - Amount: %d"), Amount);
-	// Slot-based operations handled by UI
+
+	if (!IsValid(InventorySlot) || !InventorySlot->IsOccupied)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  Slot invalid or not occupied"));
+		return;
+	}
+
+	UPrimaryDataAsset* SlotItem = InventorySlot->AssignedItem;
+
+	// Simply remove from inventory - item is destroyed
+	RemoveItemAtSlot(InventorySlot, Amount);
+
+	UE_LOG(LogTemp, Log, TEXT("  Discarded %d x %s"),
+		Amount, SlotItem ? *SlotItem->GetName() : TEXT("Unknown"));
 }
 
 /**
  * StoreItemAtSlot - Move item to storage
+ *
+ * Blueprint Logic:
+ * Wrapper for AddItemAtSlotToStorage
  */
 void UAC_InventoryManager::StoreItemAtSlot_Implementation(int32 Amount, UW_InventorySlot* InventorySlot)
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::StoreItemAtSlot - Amount: %d"), Amount);
-	// Slot-based operations handled by UI
+
+	// Delegate to existing implementation
+	AddItemAtSlotToStorage(InventorySlot, Amount);
 }
 
 /**
  * RetrieveItemAtSlot - Retrieve item from storage
+ *
+ * Blueprint Logic:
+ * Wrapper for RetrieveItemAtSlotFromStorage
  */
 void UAC_InventoryManager::RetrieveItemAtSlot_Implementation(int32 Amount, UW_InventorySlot* InventorySlot)
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::RetrieveItemAtSlot - Amount: %d"), Amount);
-	// Slot-based operations handled by UI
+
+	// Delegate to existing implementation
+	RetrieveItemAtSlotFromStorage(InventorySlot, Amount);
 }
 
 /**

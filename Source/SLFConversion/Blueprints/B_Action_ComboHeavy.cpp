@@ -8,6 +8,7 @@
 #include "Components/AC_EquipmentManager.h"
 #include "Interfaces/BPI_GenericCharacter.h"
 #include "Animation/AnimMontage.h"
+#include "SLFPrimaryDataAssets.h"
 
 UB_Action_ComboHeavy::UB_Action_ComboHeavy()
 {
@@ -52,43 +53,30 @@ void UB_Action_ComboHeavy::ExecuteAction_Implementation()
 		return;
 	}
 
-	// Determine which montage property to extract
-	// 2h_HeavyComboMontage for two-handed, 1h_HeavyComboMontage_R for one-handed
-	const TCHAR* MontagePrefix = bIsTwoHanded ? TEXT("2h_HeavyComboMontage") : TEXT("1h_HeavyComboMontage_R");
-	UE_LOG(LogTemp, Log, TEXT("[ActionComboHeavy] Looking for montage with prefix: %s"), MontagePrefix);
-
-	// Extract montage using reflection
-	UAnimMontage* Montage = nullptr;
-	for (TFieldIterator<FProperty> PropIt(Animset->GetClass()); PropIt; ++PropIt)
+	// Cast to C++ type for direct property access
+	UPDA_WeaponAnimset* WeaponAnimset = Cast<UPDA_WeaponAnimset>(Animset);
+	if (!WeaponAnimset)
 	{
-		FProperty* Prop = *PropIt;
-		FString PropName = Prop->GetName();
-		if (PropName.StartsWith(MontagePrefix))
-		{
-			if (FSoftObjectProperty* SoftObjProp = CastField<FSoftObjectProperty>(Prop))
-			{
-				void* PropValueAddr = Prop->ContainerPtrToValuePtr<void>(Animset);
-				TSoftObjectPtr<UObject>* SoftPtr = static_cast<TSoftObjectPtr<UObject>*>(PropValueAddr);
-				if (SoftPtr)
-				{
-					Montage = Cast<UAnimMontage>(SoftPtr->LoadSynchronous());
-					UE_LOG(LogTemp, Log, TEXT("[ActionComboHeavy] Found montage from property: %s"), *PropName);
-				}
-			}
-			else if (FObjectProperty* ObjProp = CastField<FObjectProperty>(Prop))
-			{
-				void* PropValueAddr = Prop->ContainerPtrToValuePtr<void>(Animset);
-				UObject* Obj = ObjProp->GetObjectPropertyValue(PropValueAddr);
-				Montage = Cast<UAnimMontage>(Obj);
-				UE_LOG(LogTemp, Log, TEXT("[ActionComboHeavy] Found direct montage from property: %s"), *PropName);
-			}
-			break;
-		}
+		UE_LOG(LogTemp, Warning, TEXT("[ActionComboHeavy] Animset is not UPDA_WeaponAnimset"));
+		return;
+	}
+
+	// Direct C++ property access - no reflection needed (heavy attack uses right hand)
+	UAnimMontage* Montage = nullptr;
+	if (bIsTwoHanded)
+	{
+		Montage = WeaponAnimset->TwoH_HeavyComboMontage.LoadSynchronous();
+		UE_LOG(LogTemp, Log, TEXT("[ActionComboHeavy] Using 2h_HeavyComboMontage"));
+	}
+	else
+	{
+		Montage = WeaponAnimset->OneH_HeavyComboMontage_R.LoadSynchronous();
+		UE_LOG(LogTemp, Log, TEXT("[ActionComboHeavy] Using 1h_HeavyComboMontage_R"));
 	}
 
 	if (!Montage)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[ActionComboHeavy] No montage found with prefix: %s"), MontagePrefix);
+		UE_LOG(LogTemp, Warning, TEXT("[ActionComboHeavy] Montage is null (TwoHanded=%s)"), bIsTwoHanded ? TEXT("true") : TEXT("false"));
 		return;
 	}
 

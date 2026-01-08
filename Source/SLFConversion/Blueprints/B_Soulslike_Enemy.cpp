@@ -6,6 +6,9 @@
 
 #include "Blueprints/B_Soulslike_Enemy.h"
 #include "Perception/AIPerceptionComponent.h"
+#include "AIController.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "Components/AIBehaviorManagerComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Components/ArrowComponent.h"
 #include "Components/BillboardComponent.h"
@@ -65,6 +68,27 @@ void AB_Soulslike_Enemy::BeginPlay()
 	Super::BeginPlay();
 
 	UE_LOG(LogTemp, Log, TEXT("[B_Soulslike_Enemy] BeginPlay - %s"), *GetName());
+
+	// Bind to AI Perception Component's OnPerceptionUpdated event
+	// JSON Logic: BeginPlay -> GetAIController -> IsValid -> GetAIPerceptionComponent -> IsValid -> BindEvent OnPerceptionUpdated
+	if (AAIController* AIC = UAIBlueprintHelperLibrary::GetAIController(this))
+	{
+		UE_LOG(LogTemp, Log, TEXT("[B_Soulslike_Enemy] AI Controller found: %s"), *AIC->GetName());
+
+		if (UAIPerceptionComponent* PerceptionComp = AIC->GetAIPerceptionComponent())
+		{
+			UE_LOG(LogTemp, Log, TEXT("[B_Soulslike_Enemy] Binding to OnPerceptionUpdated"));
+			PerceptionComp->OnPerceptionUpdated.AddDynamic(this, &AB_Soulslike_Enemy::OnPerceptionUpdated);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[B_Soulslike_Enemy] No AI Perception Component found!"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[B_Soulslike_Enemy] Enemy of type '%s' does not have a valid AI Controller."), *GetClass()->GetName());
+	}
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -274,5 +298,73 @@ void AB_Soulslike_Enemy::OnBackstabbed_Implementation(FGameplayTag ExecutionTag)
 	if (GetCharacterMovement())
 	{
 		GetCharacterMovement()->DisableMovement();
+	}
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PERCEPTION HANDLING
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void AB_Soulslike_Enemy::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
+{
+	// JSON Logic: For each actor, check sight/hearing, set AI state
+	// Comment from Blueprint: "Generic perception component behavior: based on detected sense, set AI state."
+
+	UE_LOG(LogTemp, Log, TEXT("[B_Soulslike_Enemy] OnPerceptionUpdated - %d actors"), UpdatedActors.Num());
+
+	if (!AC_AI_BehaviorManager)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[B_Soulslike_Enemy] No BehaviorManager!"));
+		return;
+	}
+
+	AAIController* AIC = UAIBlueprintHelperLibrary::GetAIController(this);
+	if (!AIC)
+	{
+		return;
+	}
+
+	UAIPerceptionComponent* PerceptionComp = AIC->GetAIPerceptionComponent();
+	if (!PerceptionComp)
+	{
+		return;
+	}
+
+	for (AActor* Actor : UpdatedActors)
+	{
+		if (!Actor)
+		{
+			continue;
+		}
+
+		// Check if we can see this actor
+		bool bSightResult = false;
+		FAIStimulus SightStimulus;
+		CheckSense(PerceptionComp, Actor, ESLFAISenses::Sight, bSightResult, SightStimulus);
+
+		if (bSightResult)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[B_Soulslike_Enemy] Detected via Sight: %s"), *Actor->GetName());
+
+			// Set target and change to combat state
+			AC_AI_BehaviorManager->SetTarget(Actor);
+			AC_AI_BehaviorManager->SetState(ESLFAIStates::Combat);
+			return; // Found a target, stop searching
+		}
+
+		// Check hearing
+		bool bHearingResult = false;
+		FAIStimulus HearingStimulus;
+		CheckSense(PerceptionComp, Actor, ESLFAISenses::Hearing, bHearingResult, HearingStimulus);
+
+		if (bHearingResult)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[B_Soulslike_Enemy] Detected via Hearing: %s"), *Actor->GetName());
+
+			// Set target and change to investigating state
+			AC_AI_BehaviorManager->SetTarget(Actor);
+			AC_AI_BehaviorManager->SetState(ESLFAIStates::Investigating);
+			return; // Found a target, stop searching
+		}
 	}
 }

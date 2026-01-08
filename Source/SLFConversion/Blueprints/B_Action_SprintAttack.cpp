@@ -7,6 +7,7 @@
 #include "Blueprints/B_Action_SprintAttack.h"
 #include "Interfaces/BPI_GenericCharacter.h"
 #include "Animation/AnimMontage.h"
+#include "SLFPrimaryDataAssets.h"
 
 UB_Action_SprintAttack::UB_Action_SprintAttack()
 {
@@ -32,34 +33,16 @@ void UB_Action_SprintAttack::ExecuteAction_Implementation()
 		return;
 	}
 
-	// Extract SprintAttackMontage using reflection
-	UAnimMontage* Montage = nullptr;
-	for (TFieldIterator<FProperty> PropIt(Animset->GetClass()); PropIt; ++PropIt)
+	// Cast to C++ type for direct property access
+	UPDA_WeaponAnimset* WeaponAnimset = Cast<UPDA_WeaponAnimset>(Animset);
+	if (!WeaponAnimset)
 	{
-		FProperty* Prop = *PropIt;
-		FString PropName = Prop->GetName();
-		if (PropName.StartsWith(TEXT("SprintAttackMontage")))
-		{
-			if (FSoftObjectProperty* SoftObjProp = CastField<FSoftObjectProperty>(Prop))
-			{
-				void* PropValueAddr = Prop->ContainerPtrToValuePtr<void>(Animset);
-				TSoftObjectPtr<UObject>* SoftPtr = static_cast<TSoftObjectPtr<UObject>*>(PropValueAddr);
-				if (SoftPtr)
-				{
-					Montage = Cast<UAnimMontage>(SoftPtr->LoadSynchronous());
-					UE_LOG(LogTemp, Log, TEXT("[ActionSprintAttack] Found montage from property: %s"), *PropName);
-				}
-			}
-			else if (FObjectProperty* ObjProp = CastField<FObjectProperty>(Prop))
-			{
-				void* PropValueAddr = Prop->ContainerPtrToValuePtr<void>(Animset);
-				UObject* Obj = ObjProp->GetObjectPropertyValue(PropValueAddr);
-				Montage = Cast<UAnimMontage>(Obj);
-				UE_LOG(LogTemp, Log, TEXT("[ActionSprintAttack] Found direct montage from property: %s"), *PropName);
-			}
-			break;
-		}
+		UE_LOG(LogTemp, Warning, TEXT("[ActionSprintAttack] Animset is not UPDA_WeaponAnimset"));
+		return;
 	}
+
+	// Direct C++ property access - no reflection needed
+	UAnimMontage* Montage = WeaponAnimset->SprintAttackMontage.LoadSynchronous();
 
 	if (!Montage)
 	{

@@ -2,7 +2,7 @@
 // Logic: Get weapon animset, extract LightDualWieldMontage, play montage
 #include "SLFActionDualWieldAttack.h"
 #include "Interfaces/BPI_GenericCharacter.h"
-#include "UObject/UnrealType.h"
+#include "SLFPrimaryDataAssets.h"
 
 USLFActionDualWieldAttack::USLFActionDualWieldAttack()
 {
@@ -15,44 +15,17 @@ void USLFActionDualWieldAttack::ExecuteAction_Implementation()
 
 	if (!OwnerActor) return;
 
-	// Get weapon animset
+	// Get weapon animset and cast to C++ type for direct property access
 	UDataAsset* Animset = GetWeaponAnimset();
-	if (!Animset)
+	UPDA_WeaponAnimset* WeaponAnimset = Cast<UPDA_WeaponAnimset>(Animset);
+	if (!WeaponAnimset)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[ActionDualWieldAttack] No weapon animset found"));
+		UE_LOG(LogTemp, Warning, TEXT("[ActionDualWieldAttack] No weapon animset found or not UPDA_WeaponAnimset"));
 		return;
 	}
 
-	// Extract LightDualWieldMontage using reflection
-	UAnimMontage* Montage = nullptr;
-	for (TFieldIterator<FProperty> PropIt(Animset->GetClass()); PropIt; ++PropIt)
-	{
-		FProperty* Prop = *PropIt;
-		FString PropName = Prop->GetName();
-		if (PropName.StartsWith(TEXT("LightDualWieldMontage")))
-		{
-			// Handle TSoftObjectPtr<UAnimMontage>
-			if (FSoftObjectProperty* SoftObjProp = CastField<FSoftObjectProperty>(Prop))
-			{
-				void* PropValueAddr = Prop->ContainerPtrToValuePtr<void>(Animset);
-				TSoftObjectPtr<UObject>* SoftPtr = static_cast<TSoftObjectPtr<UObject>*>(PropValueAddr);
-				if (SoftPtr)
-				{
-					Montage = Cast<UAnimMontage>(SoftPtr->LoadSynchronous());
-					UE_LOG(LogTemp, Log, TEXT("[ActionDualWieldAttack] Found montage from property: %s"), *PropName);
-				}
-			}
-			// Handle direct UAnimMontage* reference
-			else if (FObjectProperty* ObjProp = CastField<FObjectProperty>(Prop))
-			{
-				void* PropValueAddr = Prop->ContainerPtrToValuePtr<void>(Animset);
-				UObject* Obj = ObjProp->GetObjectPropertyValue(PropValueAddr);
-				Montage = Cast<UAnimMontage>(Obj);
-				UE_LOG(LogTemp, Log, TEXT("[ActionDualWieldAttack] Found direct montage from property: %s"), *PropName);
-			}
-			break;
-		}
-	}
+	// Direct C++ property access - no reflection needed
+	UAnimMontage* Montage = WeaponAnimset->LightDualWieldMontage.LoadSynchronous();
 
 	if (!Montage)
 	{

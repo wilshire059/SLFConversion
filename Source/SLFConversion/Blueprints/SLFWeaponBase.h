@@ -22,6 +22,7 @@
 #include "SLFItemBase.h"
 #include "GameplayTagContainer.h"
 #include "SLFGameTypes.h"
+#include "Components/CollisionManagerComponent.h"
 #include "SLFWeaponBase.generated.h"
 
 // Forward declarations
@@ -205,4 +206,13 @@ public:
 
 	/** [8/8] Setup weapon (called from construction) */
 	virtual void SetupItem_Implementation() override;
+
+protected:
+	/** Cached reference to collision manager component (from Blueprint SCS) */
+	UPROPERTY()
+	UCollisionManagerComponent* CollisionManager;
+
+	/** Handler for OnActorTraced event from CollisionManager */
+	UFUNCTION()
+	void OnActorTraced(AActor* Actor, FHitResult Hit, double Multiplier);
 };

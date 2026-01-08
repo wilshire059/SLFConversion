@@ -42,11 +42,16 @@ public:
 
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// VARIABLES (1)
+	// VARIABLES
 	// ═══════════════════════════════════════════════════════════════════════
 
+	// Map of status effect tag -> B_StatusEffect instance
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Runtime")
-	TMap<FGameplayTag, FGameplayTag> ActiveStatusEffects;
+	TMap<FGameplayTag, UB_StatusEffect*> ActiveStatusEffects;
+
+	// Legacy map for backwards compatibility (tag -> tag)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Runtime")
+	TMap<FGameplayTag, FGameplayTag> ActiveStatusEffectTags;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (3)
@@ -75,4 +80,22 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_StatusEffectManager")
 	bool IsStatusEffectActive(const FGameplayTag& StatusEffectTag);
 	virtual bool IsStatusEffectActive_Implementation(const FGameplayTag& StatusEffectTag);
+
+	// Get a specific status effect by tag
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_StatusEffectManager")
+	UB_StatusEffect* GetStatusEffect(const FGameplayTag& StatusEffectTag);
+	virtual UB_StatusEffect* GetStatusEffect_Implementation(const FGameplayTag& StatusEffectTag);
+
+	// Get all active status effects
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_StatusEffectManager")
+	TArray<UB_StatusEffect*> GetAllActiveStatusEffects();
+	virtual TArray<UB_StatusEffect*> GetAllActiveStatusEffects_Implementation();
+
+protected:
+	// Internal event handlers for status effect events
+	UFUNCTION()
+	void HandleStatusEffectTriggered(FText TriggeredText);
+
+	UFUNCTION()
+	void HandleStatusEffectFinished(FGameplayTag StatusEffectTag);
 };

@@ -46,11 +46,8 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	/** Setup Niagara effect from item data - replaces EventGraph logic */
+	/** Setup Niagara effect from item data - uses direct C++ property access */
 	void SetupWorldNiagara();
-
-	/** Fallback: Setup Niagara via reflection for Blueprint data assets */
-	void SetupWorldNiagaraViaReflection(class UNiagaraComponent* NiagaraComp);
 
 public:
 	// ═══════════════════════════════════════════════════════════════════

@@ -1,25 +1,24 @@
 // SLFItemBase.h
-// C++ base class for B_Item
+// C++ base class for B_Item_Weapon and other specialized items
 //
 // ═══════════════════════════════════════════════════════════════════════════════
-// MIGRATION SUMMARY - B_Item
+// MIGRATION SUMMARY - B_Item (extended)
 // ═══════════════════════════════════════════════════════════════════════════════
-// Variables:         1/1 migrated
-// Functions:         1/1 migrated (UserConstructionScript)
+// Variables:         Inherited from AB_Item (ItemInfo)
+// Functions:         1/1 migrated (SetupItem)
 // Components:        0/0 (DefaultSceneRoot comes from Blueprint SCS to avoid collision)
 // Event Dispatchers: 0/0
-// Graphs:            2 (logic in functions)
 // ═══════════════════════════════════════════════════════════════════════════════
 //
-// Original Blueprint: /Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/B_Item
+// Hierarchy: AActor → AB_Item → ASLFItemBase → ASLFWeaponBase
 //
-// PURPOSE: Base item actor - spawnable item in world (weapon, armor, tool)
-// CHILDREN: B_Item_Weapon, B_Item_Lantern, etc.
+// PURPOSE: Extended item functionality for specialized items
+// CHILDREN: ASLFWeaponBase (B_Item_Weapon), etc.
 
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "B_Item.h"
 #include "Components/SceneComponent.h"
 #include "GameplayTagContainer.h"
 #include "SLFGameTypes.h"
@@ -28,14 +27,12 @@
 // Forward declarations
 class UDataAsset;
 
-// Types used from SLFGameTypes.h:
-// - FSLFItemInfo
-
 /**
- * Base item actor - spawnable equipment/consumable in world
+ * Extended item actor - base for weapons and specialized equipment
+ * Inherits ItemInfo and ISLFItemInterface from AB_Item
  */
 UCLASS(Blueprintable, BlueprintType)
-class SLFCONVERSION_API ASLFItemBase : public AActor
+class SLFCONVERSION_API ASLFItemBase : public AB_Item
 {
 	GENERATED_BODY()
 
@@ -50,13 +47,7 @@ public:
 	// NOTE: DefaultSceneRoot is defined in B_Item's Blueprint SCS, not in C++
 	// This avoids name collision when B_Item inherits from SLFItemBase
 
-	// ═══════════════════════════════════════════════════════════════════
-	// VARIABLES: 1/1 migrated
-	// ═══════════════════════════════════════════════════════════════════
-
-	/** [1/1] Item info struct with all item data */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
-	FSLFItemInfo ItemInfo;
+	// ItemInfo is inherited from AB_Item
 
 	// ═══════════════════════════════════════════════════════════════════
 	// FUNCTIONS: 1/1 migrated

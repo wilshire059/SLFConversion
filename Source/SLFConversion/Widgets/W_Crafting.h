@@ -61,8 +61,9 @@ public:
 	TArray<UW_InventorySlot*> UnlockedCraftableEntries;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	UW_InventorySlot* ActiveSlot;
+	/** Map of unlocked craftable items - tag to item asset */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
-	TMap<FGameplayTag, FGameplayTag> UnlockedCraftables;
+	TMap<FGameplayTag, UPrimaryDataAsset*> UnlockedCraftables;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	int32 NavigationIndex;
 

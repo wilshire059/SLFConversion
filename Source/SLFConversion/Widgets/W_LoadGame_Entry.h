@@ -69,18 +69,33 @@ public:
 	FW_LoadGame_Entry_OnSaveSlotSelected OnSaveSlotSelected;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (1)
+	// FUNCTIONS
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_LoadGame_Entry")
 	void SetSaveSlotSelected(bool InSelected);
 	virtual void SetSaveSlotSelected_Implementation(bool InSelected);
 
-
-	// Event Handlers (1 events)
+	// Event Handlers
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_LoadGame_Entry")
 	void EventOnLoadEntryPressed();
 	virtual void EventOnLoadEntryPressed_Implementation();
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// HELPER FUNCTIONS
+	// ═══════════════════════════════════════════════════════════════════════
+
+	/** Set the save slot name for this entry */
+	UFUNCTION(BlueprintCallable, Category = "W_LoadGame_Entry")
+	void SetSaveSlotName(const FString& InSlotName);
+
+	/** Get the save slot name for this entry */
+	UFUNCTION(BlueprintCallable, Category = "W_LoadGame_Entry")
+	FString GetSaveSlotName() const { return SaveSlotName; }
+
+	/** Set the selection state and update visuals */
+	UFUNCTION(BlueprintCallable, Category = "W_LoadGame_Entry")
+	void SetSelected(bool bInSelected);
 
 protected:
 	// Cache references

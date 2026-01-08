@@ -261,7 +261,74 @@ void UAC_AI_CombatManager::HandleHitReaction_Implementation(const FHitResult& Hi
 	UE_LOG(LogTemp, Log, TEXT("UAC_AI_CombatManager::HandleHitReaction - Direction: %d"), static_cast<int32>(HitDirection));
 
 	// Play hit reaction based on type and direction
-	// Would trigger animation montage based on HitReactType and HitDirection
+	AActor* Owner = GetOwner();
+	if (!IsValid(Owner))
+	{
+		return;
+	}
+
+	// Get the owner's skeletal mesh component for animation
+	USkeletalMeshComponent* OwnerMesh = Mesh;
+	if (!OwnerMesh)
+	{
+		OwnerMesh = Owner->FindComponentByClass<USkeletalMeshComponent>();
+	}
+
+	if (!IsValid(OwnerMesh))
+	{
+		return;
+	}
+
+	// Get anim instance to play montage
+	UAnimInstance* AnimInstance = OwnerMesh->GetAnimInstance();
+	if (!IsValid(AnimInstance))
+	{
+		return;
+	}
+
+	// Get hit reaction montage from ReactionAnimset if available
+	if (IsValid(ReactionAnimset))
+	{
+		// ReactionAnimset is expected to have montage properties for different hit react types
+		// Try to get the montage via reflection based on the HitReactType
+		FName MontagePropertyName;
+		switch (HitReactType)
+		{
+		case ESLFHitReactType::Light:
+			MontagePropertyName = TEXT("LightHitReaction");
+			break;
+		case ESLFHitReactType::Heavy:
+			MontagePropertyName = TEXT("HeavyHitReaction");
+			break;
+		case ESLFHitReactType::Montage:
+			MontagePropertyName = TEXT("MontageHitReaction");
+			break;
+		case ESLFHitReactType::IK:
+			MontagePropertyName = TEXT("IKHitReaction");
+			break;
+		case ESLFHitReactType::Both:
+			MontagePropertyName = TEXT("BothHitReaction");
+			break;
+		default:
+			MontagePropertyName = TEXT("DefaultHitReaction");
+			break;
+		}
+
+		// Try to get montage via property access
+		if (FSoftObjectProperty* MontageProperty = CastField<FSoftObjectProperty>(ReactionAnimset->GetClass()->FindPropertyByName(MontagePropertyName)))
+		{
+			TSoftObjectPtr<UAnimMontage>* SoftMontagePtr = MontageProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UAnimMontage>>(ReactionAnimset);
+			if (SoftMontagePtr && !SoftMontagePtr->IsNull())
+			{
+				UAnimMontage* HitReactMontage = SoftMontagePtr->LoadSynchronous();
+				if (IsValid(HitReactMontage))
+				{
+					AnimInstance->Montage_Play(HitReactMontage, 1.0f);
+					UE_LOG(LogTemp, Log, TEXT("  Playing hit react montage: %s"), *HitReactMontage->GetName());
+				}
+			}
+		}
+	}
 }
 
 /**
@@ -277,7 +344,50 @@ TSoftObjectPtr<UAnimMontage> UAC_AI_CombatManager::GetRelevantExecutedMontage_Im
 	if (IsValid(ExecutedMontages))
 	{
 		// Look up montage in data table by tag
-		// Would find row by ExecutionTag and return corresponding montage
+		// ExecutedMontages is expected to have rows with ExecutionTag -> Montage mapping
+		// Try to find row matching the execution tag (row name matches tag last part)
+		FString ContextString;
+		FString TagString = ExecutionTag.ToString();
+
+		// Try exact row name match first
+		FName RowName = FName(*TagString);
+
+		// Generic row lookup - check if row struct has Tag and Montage properties
+		const UScriptStruct* RowStruct = ExecutedMontages->GetRowStruct();
+		if (RowStruct)
+		{
+			FProperty* TagProperty = RowStruct->FindPropertyByName(TEXT("ExecutionTag"));
+			FProperty* MontageProperty = RowStruct->FindPropertyByName(TEXT("Montage"));
+
+			if (TagProperty && MontageProperty)
+			{
+				// Iterate rows to find matching tag
+				TArray<FName> AllRowNames = ExecutedMontages->GetRowNames();
+				for (const FName& RowNameIter : AllRowNames)
+				{
+					uint8* RowData = ExecutedMontages->FindRowUnchecked(RowNameIter);
+					if (RowData)
+					{
+						// Check if this row's tag matches
+						FGameplayTag* RowTag = TagProperty->ContainerPtrToValuePtr<FGameplayTag>(RowData);
+						if (RowTag && RowTag->MatchesTagExact(ExecutionTag))
+						{
+							// Found match - get the montage
+							if (FSoftObjectProperty* SoftProp = CastField<FSoftObjectProperty>(MontageProperty))
+							{
+								TSoftObjectPtr<UAnimMontage>* MontagePtr = SoftProp->ContainerPtrToValuePtr<TSoftObjectPtr<UAnimMontage>>(RowData);
+								if (MontagePtr)
+								{
+									Result = *MontagePtr;
+									UE_LOG(LogTemp, Log, TEXT("  Found montage for tag: %s"), *ExecutionTag.ToString());
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	return Result;

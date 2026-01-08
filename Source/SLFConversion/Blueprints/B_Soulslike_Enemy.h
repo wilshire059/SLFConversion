@@ -135,4 +135,8 @@ public:
 protected:
 	// Timer handle for rotation
 	FTimerHandle RotateToTargetTimerHandle;
+
+	// Perception handling
+	UFUNCTION()
+	void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
 };

@@ -14,21 +14,24 @@
 #include "NiagaraSystem.h"
 #include "NiagaraComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/AC_CombatManager.h"
+#include "Components/AICombatManagerComponent.h"
 #include "SLFEnums.h" // For ESLFStatScaling
 
 ASLFWeaponBase::ASLFWeaponBase()
 {
-	// Create WeaponMesh component 
-	// Named "WeaponMesh" to avoid collision with Blueprint SCS "StaticMesh"
-	// Not attached here - Blueprint SCS will set up hierarchy
-	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
-	RootComponent = WeaponMesh; // Set as root for C++ hierarchy
-
-	// Create TrailComponent Niagara component
-	// Named "TrailComponent" to avoid collision with Blueprint SCS "Trail"
-	TrailComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("TrailComponent"));
-	TrailComponent->SetupAttachment(WeaponMesh);
-	TrailComponent->SetAutoActivate(false); // Trail activates during attacks
+	// NOTE: Component creation moved to Blueprint SCS to preserve child Blueprint configurations
+	// The Blueprint's StaticMesh component holds the configured mesh asset.
+	// Creating components here would conflict with Blueprint hierarchy and lose mesh data.
+	//
+	// Blueprint hierarchy (preserved):
+	//   DefaultSceneRoot (SceneComponent)
+	//     └── StaticMesh (StaticMeshComponent) - contains weapon mesh
+	//     └── Trail (NiagaraComponent) - trail effect
+	//
+	// Access components via FindComponentByClass if needed in C++
+	WeaponMesh = nullptr;
+	TrailComponent = nullptr;
 
 	// Initialize VFX
 	TrailEffect = nullptr;
@@ -44,6 +47,9 @@ ASLFWeaponBase::ASLFWeaponBase()
 
 	// Initialize debug
 	bDebugVisualizeTrace = false;
+
+	// Initialize collision manager cache
+	CollisionManager = nullptr;
 }
 
 void ASLFWeaponBase::BeginPlay()
@@ -52,10 +58,42 @@ void ASLFWeaponBase::BeginPlay()
 
 	UE_LOG(LogTemp, Log, TEXT("[Weapon] BeginPlay: %s"), *GetName());
 
+	// Cache Blueprint components if not already set
+	if (!WeaponMesh)
+	{
+		// Find the Blueprint's StaticMesh component
+		WeaponMesh = FindComponentByClass<UStaticMeshComponent>();
+		if (WeaponMesh)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[Weapon] Found StaticMesh component: %s"), *WeaponMesh->GetName());
+		}
+	}
+
+	if (!TrailComponent)
+	{
+		// Find the Blueprint's Trail Niagara component
+		TrailComponent = FindComponentByClass<UNiagaraComponent>();
+		if (TrailComponent)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[Weapon] Found Trail component: %s"), *TrailComponent->GetName());
+		}
+	}
+
 	// Apply trail effect asset to trail component if set
 	if (TrailComponent && TrailEffect)
 	{
 		TrailComponent->SetAsset(TrailEffect);
+	}
+
+	// Find and bind to CollisionManager for AI weapon trace damage
+	if (!CollisionManager)
+	{
+		CollisionManager = FindComponentByClass<UCollisionManagerComponent>();
+		if (CollisionManager)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[Weapon] Found CollisionManager, binding to OnActorTraced"));
+			CollisionManager->OnActorTraced.AddDynamic(this, &ASLFWeaponBase::OnActorTraced);
+		}
 	}
 }
 
@@ -236,9 +274,103 @@ void ASLFWeaponBase::SetupItem_Implementation()
 
 	UE_LOG(LogTemp, Log, TEXT("[Weapon] SetupItem - weapon-specific setup"));
 
+	// Cache Blueprint components if not already set (OnConstruction runs before BeginPlay)
+	if (!WeaponMesh)
+	{
+		WeaponMesh = FindComponentByClass<UStaticMeshComponent>();
+	}
+	if (!TrailComponent)
+	{
+		TrailComponent = FindComponentByClass<UNiagaraComponent>();
+	}
+
 	// Apply trail effect to trail component if set
 	if (TrailComponent && TrailEffect)
 	{
 		TrailComponent->SetAsset(TrailEffect);
+	}
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// COLLISION MANAGER EVENT HANDLER
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void ASLFWeaponBase::OnActorTraced(AActor* Actor, FHitResult Hit, double Multiplier)
+{
+	if (!Actor)
+	{
+		return;
+	}
+
+	// Get the weapon owner (AI character wielding this weapon)
+	AActor* WeaponOwner = GetOwner();
+	if (!WeaponOwner)
+	{
+		// Weapon may be attached to character mesh, traverse up
+		if (USceneComponent* AttachParent = GetRootComponent()->GetAttachParent())
+		{
+			WeaponOwner = AttachParent->GetOwner();
+		}
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[Weapon] OnActorTraced: %s hit %s with multiplier %.2f"),
+		WeaponOwner ? *WeaponOwner->GetName() : TEXT("Unknown"),
+		*Actor->GetName(),
+		Multiplier);
+
+	// Calculate damage from weapon stats
+	TArray<FSLFWeaponAttackPower> AttackPowers = GetAttackPowerStats();
+	double TotalDamage = 0.0;
+
+	for (const FSLFWeaponAttackPower& AttackPower : AttackPowers)
+	{
+		TotalDamage += AttackPower.Physical + AttackPower.Magic + AttackPower.Lightning
+			+ AttackPower.Holy + AttackPower.Frost + AttackPower.Fire;
+	}
+
+	// Apply the attack multiplier from the collision trace
+	TotalDamage *= Multiplier;
+
+	// Get poise damage
+	float PoiseDamage = GetWeaponPoiseDamage();
+
+	// Status effects from weapon
+	TMap<FGameplayTag, UPrimaryDataAsset*> StatusEffects;
+	TArray<FSLFWeaponStatusEffectData> StatusData = GetWeaponStatusEffectData();
+	// Note: Status effect conversion would require data asset lookup
+
+	// Try player combat manager first (UAC_CombatManager)
+	UAC_CombatManager* TargetCombatManager = Actor->FindComponentByClass<UAC_CombatManager>();
+	if (TargetCombatManager)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[Weapon] Applying damage to player: %.2f damage, %.2f poise"),
+			TotalDamage, PoiseDamage);
+
+		TargetCombatManager->HandleIncomingWeaponDamage(
+			WeaponOwner,
+			GuardSound,
+			PerfectGuardSound,
+			Hit,
+			TotalDamage,
+			PoiseDamage,
+			StatusEffects
+		);
+	}
+	else
+	{
+		// Try AI combat manager (UAICombatManagerComponent)
+		UAICombatManagerComponent* AICombatManager = Actor->FindComponentByClass<UAICombatManagerComponent>();
+		if (AICombatManager)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[Weapon] Applying damage to AI: %.2f damage, %.2f poise"),
+				TotalDamage, PoiseDamage);
+
+			AICombatManager->HandleIncomingWeaponDamage_AI(
+				WeaponOwner,
+				TotalDamage,
+				PoiseDamage,
+				Hit
+			);
+		}
 	}
 }

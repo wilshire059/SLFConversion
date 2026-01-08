@@ -27,6 +27,7 @@
 #include "Components/AC_ActionManager.h"
 #include "Components/AC_CombatManager.h"
 #include "Components/AC_InteractionManager.h"
+#include "Interfaces/SLFInteractableInterface.h"
 #include "LevelSequence.h"
 #include "LevelSequenceActor.h"
 #include "LevelSequencePlayer.h"
@@ -35,6 +36,9 @@
 #include "SLFPrimaryDataAssets.h"
 #include "SLFPickupItemBase.h"
 #include "Components/InventoryManagerComponent.h"
+#include "Framework/SLFPlayerController.h"
+#include "Widgets/W_HUD.h"
+#include "B_Interactable.h"
 
 ASLFSoulslikeCharacter::ASLFSoulslikeCharacter()
 {
@@ -183,27 +187,9 @@ void ASLFSoulslikeCharacter::BeginPlay()
 	// Cache component references from Blueprint SCS
 	CacheComponentReferences();
 
-	// Initialize AnimBP's ActionManager property to point to our CachedActionManager
-	// The AnimBP reads from ActionManager.IsCrouched via Property Access node,
-	// but this variable was never initialized during migration (EventGraph was cleared)
-	if (USkeletalMeshComponent* MeshComp = GetMesh())
-	{
-		if (UAnimInstance* AnimInstance = MeshComp->GetAnimInstance())
-		{
-			FObjectProperty* AMProp = CastField<FObjectProperty>(
-				AnimInstance->GetClass()->FindPropertyByName(TEXT("ActionManager")));
-			if (AMProp && CachedActionManager)
-			{
-				AMProp->SetObjectPropertyValue_InContainer(AnimInstance, CachedActionManager);
-				UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] Initialized AnimBP ActionManager to %p"), CachedActionManager);
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] Could not set AnimBP ActionManager - AMProp: %p, CachedActionManager: %p"),
-					AMProp, CachedActionManager);
-			}
-		}
-	}
+	// NOTE: AnimBP ActionManager is now set via NativeUpdateAnimation in UABP_SoulslikeCharacter_Additive
+	// The C++ AnimInstance uses FindComponentByClass<UAC_ActionManager>() to cache and update
+	// the ActionManager reference automatically every frame - no reflection needed
 
 	// Initialize modular mesh system - merge modular meshes and apply to main skeleton
 	InitializeModularMesh();
@@ -234,139 +220,44 @@ void ASLFSoulslikeCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// Update AnimBP IsCrouched every frame (replaces cleared EventGraph GetIsCrouched logic)
-	// The AnimBP was not reparented to C++ due to Animation Layer Interface conflicts,
-	// so NativeUpdateAnimation() doesn't run. We must set this variable every frame.
-	if (USkeletalMeshComponent* MeshComp = GetMesh())
-	{
-		if (UAnimInstance* AnimInstance = MeshComp->GetAnimInstance())
-		{
-			if (FBoolProperty* Prop = CastField<FBoolProperty>(
-				AnimInstance->GetClass()->FindPropertyByName(TEXT("IsCrouched"))))
-			{
-				Prop->SetPropertyValue_InContainer(AnimInstance, bIsCrouched);
-			}
-		}
-	}
+	// NOTE: AnimBP IsCrouched is now set via NativeUpdateAnimation in UABP_SoulslikeCharacter_Additive
+	// The C++ AnimInstance reads OwnerCharacter->bIsCrouched automatically every frame
 }
 
 void ASLFSoulslikeCharacter::OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
 {
 	Super::OnStartCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
-	UpdateAnimInstanceCrouchState(true);
 
-	// Update ActionManager's IsCrouched - the AnimBP reads from ActionManager.IsCrouched
+	// Update ActionManager's IsCrouched - some gameplay systems may read this
 	if (CachedActionManager)
 	{
 		CachedActionManager->IsCrouched = true;
-		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] OnStartCrouch - Set ActionManager->IsCrouched = true (ptr: %p)"), CachedActionManager);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("[SoulslikeCharacter] OnStartCrouch - CachedActionManager is NULL! Cannot set IsCrouched!"));
 	}
 
-	// Initialize AnimBP's ActionManager property if it's NULL
-	// The AnimBP reads from ActionManager.IsCrouched via Property Access node
-	if (USkeletalMeshComponent* MeshComp = GetMesh())
-	{
-		if (UAnimInstance* AnimInst = MeshComp->GetAnimInstance())
-		{
-			FObjectProperty* AMProp = CastField<FObjectProperty>(
-				AnimInst->GetClass()->FindPropertyByName(TEXT("ActionManager")));
-			if (AMProp && CachedActionManager)
-			{
-				UObject* CurrentValue = AMProp->GetObjectPropertyValue_InContainer(AnimInst);
-				if (!CurrentValue)
-				{
-					// AnimBP ActionManager is NULL - set it now
-					AMProp->SetObjectPropertyValue_InContainer(AnimInst, CachedActionManager);
-					UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] OnStartCrouch - Initialized AnimBP ActionManager to %p"), CachedActionManager);
-				}
-				UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] AnimBP ActionManager property: %p (our CachedActionManager: %p)"),
-					AMProp->GetObjectPropertyValue_InContainer(AnimInst), CachedActionManager);
-			}
-			else
-			{
-				UE_LOG(LogTemp, Error, TEXT("[SoulslikeCharacter] AnimBP has NO ActionManager property or CachedActionManager is NULL!"));
-			}
-		}
-	}
-
-	// Debug: Verify CharacterMovement state matches
-	if (UCharacterMovementComponent* CMC = GetCharacterMovement())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] OnStartCrouch - CMC->IsCrouching()=%s, bIsCrouched=%s, bWantsToCrouch=%s"),
-			CMC->IsCrouching() ? TEXT("TRUE") : TEXT("FALSE"),
-			bIsCrouched ? TEXT("TRUE") : TEXT("FALSE"),
-			CMC->bWantsToCrouch ? TEXT("TRUE") : TEXT("FALSE"));
-	}
+	// NOTE: AnimBP IsCrouched is now handled by NativeUpdateAnimation in UABP_SoulslikeCharacter_Additive
+	// It reads OwnerCharacter->bIsCrouched automatically, and the ActionManager is found via FindComponentByClass
+	UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] OnStartCrouch"));
 }
 
 void ASLFSoulslikeCharacter::OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
 {
 	Super::OnEndCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
-	UpdateAnimInstanceCrouchState(false);
 
-	// Update ActionManager's IsCrouched - the AnimBP reads from ActionManager.IsCrouched
+	// Update ActionManager's IsCrouched - some gameplay systems may read this
 	if (CachedActionManager)
 	{
 		CachedActionManager->IsCrouched = false;
-		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] OnEndCrouch - Set ActionManager->IsCrouched = false"));
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] OnEndCrouch - Updated AnimInstance IsCrouched=false"));
+	// NOTE: AnimBP IsCrouched is now handled by NativeUpdateAnimation in UABP_SoulslikeCharacter_Additive
+	UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] OnEndCrouch"));
 }
 
 void ASLFSoulslikeCharacter::UpdateAnimInstanceCrouchState(bool bCrouching)
 {
-	// Get the AnimInstance from the mesh
-	USkeletalMeshComponent* CharMesh = GetMesh();
-	if (!CharMesh)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] UpdateAnimInstanceCrouchState - No mesh!"));
-		return;
-	}
-
-	UAnimInstance* AnimInstance = CharMesh->GetAnimInstance();
-	if (!AnimInstance)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] UpdateAnimInstanceCrouchState - No AnimInstance!"));
-		return;
-	}
-
-	UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] UpdateAnimInstanceCrouchState - AnimInstance class: %s"), *AnimInstance->GetClass()->GetName());
-
-	// Use reflection to set the IsCrouched property on the Blueprint AnimInstance
-	// The Blueprint AnimBP has an "IsCrouched" bool property that the AnimGraph reads
-	FProperty* IsCrouchedProp = AnimInstance->GetClass()->FindPropertyByName(FName("IsCrouched"));
-	if (IsCrouchedProp)
-	{
-		bool* ValuePtr = IsCrouchedProp->ContainerPtrToValuePtr<bool>(AnimInstance);
-		if (ValuePtr)
-		{
-			*ValuePtr = bCrouching;
-			UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Set IsCrouched = %s on %s"), bCrouching ? TEXT("true") : TEXT("false"), *AnimInstance->GetClass()->GetName());
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] IsCrouched property found but ValuePtr is null!"));
-		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] IsCrouched property NOT FOUND on %s"), *AnimInstance->GetClass()->GetName());
-
-		// List all properties to debug
-		for (TFieldIterator<FProperty> PropIt(AnimInstance->GetClass()); PropIt; ++PropIt)
-		{
-			FProperty* Prop = *PropIt;
-			if (Prop->GetName().Contains(TEXT("Crouch"), ESearchCase::IgnoreCase))
-			{
-				UE_LOG(LogTemp, Log, TEXT("  Found property: %s"), *Prop->GetName());
-			}
-		}
-	}
+	// NOTE: AnimBP IsCrouched is now handled by NativeUpdateAnimation in UABP_SoulslikeCharacter_Additive
+	// The C++ AnimInstance reads OwnerCharacter->bIsCrouched automatically every frame
+	// This function is kept for API compatibility but is no longer needed
 }
 
 void ASLFSoulslikeCharacter::CacheComponentReferences()
@@ -666,14 +557,17 @@ void ASLFSoulslikeCharacter::HandleInteractStarted()
 	// When interact is pressed, we call the interactable's interface method
 	if (CachedInteractionManager && CachedInteractionManager->NearestInteractable)
 	{
-		// Call BPI_Interactable::Interact on the nearest interactable
-		// This is done via interface call in the actual interaction system
-		UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Interacting with: %s"),
-			*CachedInteractionManager->NearestInteractable->GetName());
+		AActor* Interactable = CachedInteractionManager->NearestInteractable;
+		
+		UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Interacting with: %s"), *Interactable->GetName());
 
-		// The actual interaction call happens via BPI_Interactable interface
-		// which is implemented by interactable actors (doors, items, NPCs, etc.)
-		// For now, queue the interaction action - the ActionManager handles it
+		// Call the OnInteract interface method on the interactable
+		if (Interactable->GetClass()->ImplementsInterface(USLFInteractableInterface::StaticClass()))
+		{
+			ISLFInteractableInterface::Execute_OnInteract(Interactable, this);
+		}
+		
+		// Also queue the interaction action for animation handling
 		QueueActionToBuffer(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.Interact")));
 	}
 	else
@@ -1500,28 +1394,33 @@ void ASLFSoulslikeCharacter::OnLootItem_Implementation(AActor* Item)
 
 void ASLFSoulslikeCharacter::OnInteractableTraced_Implementation(AActor* Interactable)
 {
-	// From JSON: GetPlayerHUD → Is Valid Interactable → Show/Hide interaction prompt
-	// Similar to OnNpcTraced but for general interactables (doors, items, etc.)
+	// From JSON: GetPlayerHUD -> Show/Hide interaction prompt
 	UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] OnInteractableTraced: %s"), Interactable ? *Interactable->GetName() : TEXT("null"));
 
-	// Get player controller and HUD via interface
-	APlayerController* PC = Cast<APlayerController>(GetController());
-	if (!PC)
+	// Get player controller to access HUD
+	ASLFPlayerController* PC = Cast<ASLFPlayerController>(GetController());
+	if (!PC || !PC->HUDWidgetRef)
 	{
 		return;
 	}
 
+	UW_HUD* HUD = PC->HUDWidgetRef;
+
 	// Show/hide interaction prompt based on whether Interactable is valid
-	// The actual HUD widget visibility is handled by the HUD class via interface
 	if (IsValid(Interactable))
 	{
-		// Interactable is valid - show interaction prompt
-		// In full implementation, would get interaction text from BPI_Interactable interface
-		UE_LOG(LogTemp, Log, TEXT("  Interactable traced - showing prompt"));
+		// Cast to AB_Interactable to pass to HUD
+		AB_Interactable* InteractableActor = Cast<AB_Interactable>(Interactable);
+		if (InteractableActor)
+		{
+			HUD->EventShowInteractableWidget(InteractableActor);
+			UE_LOG(LogTemp, Log, TEXT("  Showing interaction widget for: %s"), *Interactable->GetName());
+		}
 	}
 	else
 	{
-		// Interactable is null - hide interaction prompt
-		UE_LOG(LogTemp, Log, TEXT("  Interactable untraced - hiding prompt"));
+		// Hide interaction prompt
+		HUD->EventHideInteractionWidget();
+		UE_LOG(LogTemp, Log, TEXT("  Hiding interaction widget"));
 	}
 }

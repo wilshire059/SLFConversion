@@ -238,6 +238,8 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 // Weapon Animset Primary Data Asset
+// Migrated from PDA_WeaponAnimset Blueprint - property names use DisplayName
+// to match Blueprint names since C++ identifiers can't start with numbers
 //////////////////////////////////////////////////////////////////////////
 
 UCLASS(Blueprintable, BlueprintType)
@@ -246,11 +248,88 @@ class SLFCONVERSION_API UPDA_WeaponAnimset : public UPDA_Base
 	GENERATED_BODY()
 
 public:
+	// ═══════════════════════════════════════════════════════════════════
+	// COMBO MONTAGES - Light attacks
+	// ═══════════════════════════════════════════════════════════════════
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combo Montages", meta = (DisplayName = "1h_LightComboMontage_R"))
+	TSoftObjectPtr<UAnimMontage> OneH_LightComboMontage_R;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combo Montages", meta = (DisplayName = "1h_LightComboMontage_L"))
+	TSoftObjectPtr<UAnimMontage> OneH_LightComboMontage_L;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combo Montages", meta = (DisplayName = "2h_LightComboMontage"))
+	TSoftObjectPtr<UAnimMontage> TwoH_LightComboMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combo Montages")
+	TSoftObjectPtr<UAnimMontage> LightDualWieldMontage;
+
+	// ═══════════════════════════════════════════════════════════════════
+	// COMBO MONTAGES - Heavy attacks
+	// ═══════════════════════════════════════════════════════════════════
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combo Montages", meta = (DisplayName = "1h_HeavyComboMontage_R"))
+	TSoftObjectPtr<UAnimMontage> OneH_HeavyComboMontage_R;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combo Montages", meta = (DisplayName = "1h_HeavyComboMontage_L"))
+	TSoftObjectPtr<UAnimMontage> OneH_HeavyComboMontage_L;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combo Montages", meta = (DisplayName = "2h_HeavyComboMontage"))
+	TSoftObjectPtr<UAnimMontage> TwoH_HeavyComboMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combo Montages")
+	TSoftObjectPtr<UAnimMontage> HeavyDualWieldMontage;
+
+	// ═══════════════════════════════════════════════════════════════════
+	// COMBO MONTAGES - Special attacks
+	// ═══════════════════════════════════════════════════════════════════
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combo Montages")
+	TSoftObjectPtr<UAnimMontage> JumpAttackMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combo Montages")
+	TSoftObjectPtr<UAnimMontage> SprintAttackMontage;
+
+	// ═══════════════════════════════════════════════════════════════════
+	// GUARDING
+	// ═══════════════════════════════════════════════════════════════════
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guarding")
+	UAnimSequenceBase* Guard_R;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guarding")
+	UAnimMontage* Guard_R_Hit;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guarding")
+	UAnimSequenceBase* Guard_L;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Guarding")
+	UAnimMontage* Guard_L_Hit;
+
+	// ═══════════════════════════════════════════════════════════════════
+	// BACKSTAB & EXECUTION
+	// ═══════════════════════════════════════════════════════════════════
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Backstab & Execution")
+	UPrimaryDataAsset* ExecutionAsset;
+
+	// ═══════════════════════════════════════════════════════════════════
+	// LEGACY - for backwards compatibility
+	// ═══════════════════════════════════════════════════════════════════
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponAnimset")
 	TArray<TSoftObjectPtr<UAnimMontage>> AttackMontages;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponAnimset")
 	TSoftObjectPtr<UAnimMontage> HeavyAttackMontage;
+
+	UPDA_WeaponAnimset()
+		: Guard_R(nullptr)
+		, Guard_R_Hit(nullptr)
+		, Guard_L(nullptr)
+		, Guard_L_Hit(nullptr)
+		, ExecutionAsset(nullptr)
+	{}
 };
 
 //////////////////////////////////////////////////////////////////////////

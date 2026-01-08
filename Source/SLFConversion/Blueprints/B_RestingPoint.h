@@ -1,10 +1,10 @@
 // B_RestingPoint.h
 // C++ class for Blueprint B_RestingPoint
 //
-// 20-PASS VALIDATION: 2026-01-01 Autonomous Session
+// 20-PASS VALIDATION: 2026-01-07
 // Source: BlueprintDNA/Blueprint/B_RestingPoint.json
 // Parent: B_Interactable_C -> AB_Interactable
-// Variables: 10 | Functions: 2 | Dispatchers: 2
+// Variables: 10 | Functions: 2 | Dispatchers: 2 | Interface: ISLFRestingPointInterface
 
 #pragma once
 
@@ -14,20 +14,18 @@
 #include "SLFEnums.h"
 #include "SLFGameTypes.h"
 #include "SLFPrimaryDataAssets.h"
-#include "InputMappingContext.h"
-#include "LevelSequence.h"
-#include "LevelSequencePlayer.h"
-#include "MovieSceneSequencePlaybackSettings.h"
-#include "SkeletalMergingLibrary.h"
-#include "GeometryCollection/GeometryCollectionObject.h"
-#include "Field/FieldSystemObjects.h"
 #include "Interfaces/SLFRestingPointInterface.h"
+#include "Components/BillboardComponent.h"
+#include "Components/SceneComponent.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "NiagaraComponent.h"
+#include "Components/PointLightComponent.h"
 #include "B_RestingPoint.generated.h"
 
 // Forward declarations
 class UAnimMontage;
 class UDataTable;
-
 
 // Event Dispatchers
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FB_RestingPoint_OnReady);
@@ -41,28 +39,80 @@ class SLFCONVERSION_API AB_RestingPoint : public AB_Interactable, public ISLFRes
 public:
 	AB_RestingPoint();
 
+protected:
+	virtual void BeginPlay() override;
+
+public:
+	// ═══════════════════════════════════════════════════════════════════════
+	// COMPONENTS (from SCS)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	/** Billboard component that defines the sitting zone position */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UBillboardComponent* SittingZone;
+
+	/** Scene component for spawn position */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USceneComponent* Scene;
+
+	/** Camera arm for rest view */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USpringArmComponent* CameraArm;
+
+	/** Lookat camera for rest view */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UCameraComponent* LookatCamera;
+
+	/** Unlock effect (Niagara) */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UNiagaraComponent* UnlockEffect;
+
+	/** Active effect (Niagara) */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UNiagaraComponent* Effect;
+
+	/** Point light for effect */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UPointLightComponent* EffectLight;
+
+	/** Environment point light */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UPointLightComponent* EnvironmentLight;
+
 	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (10)
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Point Settings")
 	FText LocationName;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
 	TSoftObjectPtr<UAnimMontage> DiscoverInteractionMontage;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|View Settings")
 	double SittingAngle;
+
+	/** The actor currently sitting at this resting point (usually the player) */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	AActor* SittingActor;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|View Settings")
 	bool ForceFaceSittingActor;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|View Settings")
 	double CameraDistance;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|View Settings")
 	FVector CameraOffset;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|View Settings")
 	FRotator CameraRotation;
+
+	/** Set of items to replenish when resting (e.g., health flasks) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Replenish Settings")
-	UPrimaryDataAsset* ItemsToReplenish;
+	TSet<UPrimaryDataAsset*> ItemsToReplenish;
+
+	/** Tags of stats to replenish when resting (e.g., HP, FP) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Replenish Settings")
 	FGameplayTagContainer StatsToReplenish;
 
@@ -72,14 +122,23 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FB_RestingPoint_OnReady OnReady;
+
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FB_RestingPoint_OnExited OnExited;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (2)
+	// FUNCTIONS
 	// ═══════════════════════════════════════════════════════════════════════
 
+	/** Get the items and stats to replenish when resting */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "B_RestingPoint")
 	void GetReplenishData(TArray<UPrimaryDataAsset*>& OutItemsToReplenish, TArray<FGameplayTag>& OutStatsToReplenish);
 	virtual void GetReplenishData_Implementation(TArray<UPrimaryDataAsset*>& OutItemsToReplenish, TArray<FGameplayTag>& OutStatsToReplenish);
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// INTERFACE: ISLFRestingPointInterface
+	// ═══════════════════════════════════════════════════════════════════════
+
+	/** Get spawn position for respawning at this resting point */
+	virtual void GetRestingPointSpawnPosition_Implementation(bool& OutSuccess, FVector& OutLocation, FRotator& OutRotation) override;
 };

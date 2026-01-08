@@ -34,10 +34,37 @@ void UW_LoadGame_Entry::CacheWidgetReferences()
 
 void UW_LoadGame_Entry::SetSaveSlotSelected_Implementation(bool InSelected)
 {
-	// Update visual state to reflect selection
 	UE_LOG(LogTemp, Log, TEXT("UW_LoadGame_Entry::SetSaveSlotSelected - Selected: %s"), InSelected ? TEXT("true") : TEXT("false"));
+
+	// Update selection state
+	Selected = InSelected;
+
+	// Visual update would happen in Blueprint or through additional logic
 }
+
 void UW_LoadGame_Entry::EventOnLoadEntryPressed_Implementation()
 {
-	UE_LOG(LogTemp, Log, TEXT("UW_LoadGame_Entry::EventOnLoadEntryPressed_Implementation"));
+	UE_LOG(LogTemp, Log, TEXT("UW_LoadGame_Entry::EventOnLoadEntryPressed - Slot: %s"), *SaveSlotName);
+
+	// Broadcast selection event
+	OnSaveSlotSelected.Broadcast(this);
+}
+
+void UW_LoadGame_Entry::SetSaveSlotName(const FString& InSlotName)
+{
+	UE_LOG(LogTemp, Log, TEXT("UW_LoadGame_Entry::SetSaveSlotName - %s"), *InSlotName);
+
+	SaveSlotName = InSlotName;
+
+	// Would update display text here if there was a text widget
+}
+
+void UW_LoadGame_Entry::SetSelected(bool bInSelected)
+{
+	UE_LOG(LogTemp, Log, TEXT("UW_LoadGame_Entry::SetSelected - %s"), bInSelected ? TEXT("true") : TEXT("false"));
+
+	Selected = bInSelected;
+
+	// Call the BlueprintNativeEvent version for any Blueprint overrides
+	SetSaveSlotSelected(bInSelected);
 }

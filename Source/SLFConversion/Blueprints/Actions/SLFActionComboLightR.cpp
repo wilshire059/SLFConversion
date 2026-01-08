@@ -4,7 +4,7 @@
 #include "GameFramework/Character.h"
 #include "Interfaces/BPI_GenericCharacter.h"
 #include "Components/EquipmentManagerComponent.h"
-#include "UObject/UnrealType.h"
+#include "SLFPrimaryDataAssets.h"
 
 USLFActionComboLightR::USLFActionComboLightR()
 {
@@ -21,52 +21,31 @@ void USLFActionComboLightR::ExecuteAction_Implementation()
 	UEquipmentManagerComponent* EquipMgr = GetEquipmentManager();
 	bool bIsTwoHanded = EquipMgr ? EquipMgr->IsTwoHandStanceActive() : false;
 
-	// Get weapon animset
+	// Get weapon animset and cast to C++ type for direct property access
 	UDataAsset* Animset = GetWeaponAnimset();
-	if (!Animset)
+	UPDA_WeaponAnimset* WeaponAnimset = Cast<UPDA_WeaponAnimset>(Animset);
+	if (!WeaponAnimset)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[ActionComboLightR] No weapon animset found"));
+		UE_LOG(LogTemp, Warning, TEXT("[ActionComboLightR] No weapon animset found or not UPDA_WeaponAnimset"));
 		return;
 	}
 
-	// Determine which montage property to extract
-	const TCHAR* MontagePrefix = bIsTwoHanded ? TEXT("2h_LightComboMontage") : TEXT("1h_LightComboMontage_R");
-	UE_LOG(LogTemp, Log, TEXT("[ActionComboLightR] Looking for montage with prefix: %s"), MontagePrefix);
-
-	// Extract montage using reflection (Blueprint animset has GUID suffixes on property names)
+	// Direct C++ property access - no reflection needed
 	UAnimMontage* Montage = nullptr;
-	for (TFieldIterator<FProperty> PropIt(Animset->GetClass()); PropIt; ++PropIt)
+	if (bIsTwoHanded)
 	{
-		FProperty* Prop = *PropIt;
-		FString PropName = Prop->GetName();
-		if (PropName.StartsWith(MontagePrefix))
-		{
-			// Handle TSoftObjectPtr<UAnimMontage>
-			if (FSoftObjectProperty* SoftObjProp = CastField<FSoftObjectProperty>(Prop))
-			{
-				void* PropValueAddr = Prop->ContainerPtrToValuePtr<void>(Animset);
-				TSoftObjectPtr<UObject>* SoftPtr = static_cast<TSoftObjectPtr<UObject>*>(PropValueAddr);
-				if (SoftPtr)
-				{
-					Montage = Cast<UAnimMontage>(SoftPtr->LoadSynchronous());
-					UE_LOG(LogTemp, Log, TEXT("[ActionComboLightR] Found montage from property: %s"), *PropName);
-				}
-			}
-			// Handle direct UAnimMontage* reference
-			else if (FObjectProperty* ObjProp = CastField<FObjectProperty>(Prop))
-			{
-				void* PropValueAddr = Prop->ContainerPtrToValuePtr<void>(Animset);
-				UObject* Obj = ObjProp->GetObjectPropertyValue(PropValueAddr);
-				Montage = Cast<UAnimMontage>(Obj);
-				UE_LOG(LogTemp, Log, TEXT("[ActionComboLightR] Found direct montage from property: %s"), *PropName);
-			}
-			break;
-		}
+		Montage = WeaponAnimset->TwoH_LightComboMontage.LoadSynchronous();
+		UE_LOG(LogTemp, Log, TEXT("[ActionComboLightR] Using 2h_LightComboMontage"));
+	}
+	else
+	{
+		Montage = WeaponAnimset->OneH_LightComboMontage_R.LoadSynchronous();
+		UE_LOG(LogTemp, Log, TEXT("[ActionComboLightR] Using 1h_LightComboMontage_R"));
 	}
 
 	if (!Montage)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[ActionComboLightR] No montage found with prefix: %s"), MontagePrefix);
+		UE_LOG(LogTemp, Warning, TEXT("[ActionComboLightR] Montage is null (TwoHanded=%s)"), bIsTwoHanded ? TEXT("true") : TEXT("false"));
 		return;
 	}
 

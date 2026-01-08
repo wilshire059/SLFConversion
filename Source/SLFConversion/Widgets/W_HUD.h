@@ -175,6 +175,11 @@ public:
 	virtual void EventOnExitStorage_Implementation();
 
 	// Stat/Status Events
+
+	/** Internal handler bound to UB_Stat::OnStatUpdated delegates */
+	UFUNCTION()
+	void OnStatUpdatedHandler(UB_Stat* UpdatedStat, double Change, bool bUpdateAffectedStats, ESLFValueType ValueType);
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_HUD|Stats")
 	void EventOnStatUpdated(UB_Stat* UpdatedStat, double Change, bool bUpdateAffectedStats, ESLFValueType ValueType);
 	virtual void EventOnStatUpdated_Implementation(UB_Stat* UpdatedStat, double Change, bool bUpdateAffectedStats, ESLFValueType ValueType);

@@ -12,6 +12,9 @@
 #include "AIBehaviorManagerComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AIController.h"
+#include "Interfaces/BPI_AIC.h"
+
+#include "BehaviorTree/BehaviorTree.h"
 
 UAIBehaviorManagerComponent::UAIBehaviorManagerComponent()
 {
@@ -44,6 +47,34 @@ void UAIBehaviorManagerComponent::BeginPlay()
 
 	UE_LOG(LogTemp, Log, TEXT("[AIBehaviorManager] BeginPlay on %s - Initial state: %d"),
 		*GetOwner()->GetName(), static_cast<int32>(CurrentState));
+
+	// Initialize behavior tree on the AI controller
+	if (APawn* OwnerPawn = Cast<APawn>(GetOwner()))
+	{
+		if (AAIController* AIC = Cast<AAIController>(OwnerPawn->GetController()))
+		{
+			// Check if the controller implements BPI_AIC interface
+			if (Behavior && AIC->GetClass()->ImplementsInterface(UBPI_AIC::StaticClass()))
+			{
+				UE_LOG(LogTemp, Log, TEXT("[AIBehaviorManager] Initializing behavior tree: %s"), *Behavior->GetName());
+				IBPI_AIC::Execute_InitializeBehavior(AIC, Behavior);
+			}
+			else if (Behavior)
+			{
+				// Fallback: directly run behavior tree if interface not implemented
+				UE_LOG(LogTemp, Log, TEXT("[AIBehaviorManager] Running behavior tree directly: %s"), *Behavior->GetName());
+				AIC->RunBehaviorTree(Behavior);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[AIBehaviorManager] No behavior tree assigned!"));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[AIBehaviorManager] Owner has no AI controller!"));
+		}
+	}
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════

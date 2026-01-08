@@ -1,6 +1,7 @@
 // SLFAnimNotifyStateWeaponTrace.cpp
 #include "SLFAnimNotifyStateWeaponTrace.h"
 #include "Components/AC_CombatManager.h"
+#include "Components/AICombatManagerComponent.h"
 #include "Components/AC_EquipmentManager.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Engine/World.h"
@@ -78,25 +79,25 @@ void USLFAnimNotifyStateWeaponTrace::NotifyTick(USkeletalMeshComponent* MeshComp
 			UE_LOG(LogTemp, Log, TEXT("[ANS_WeaponTrace] Hit: %s at %s"),
 				*HitActor->GetName(), *Hit.ImpactPoint.ToString());
 
-			// Get the target's combat manager to apply damage
+			// Get weapon damage info from equipment manager
+			double Damage = 10.0;  // Default damage
+			double PoiseDamage = 5.0;  // Default poise damage
+			TMap<FGameplayTag, UPrimaryDataAsset*> StatusEffects;
+			USoundBase* GuardSound = nullptr;
+			USoundBase* PerfectGuardSound = nullptr;
+
+			if (EquipmentManager)
+			{
+				// Get damage values from equipped weapon
+				Damage = EquipmentManager->GetWeaponDamage();
+				PoiseDamage = EquipmentManager->GetWeaponPoiseDamage();
+			}
+
+			// Try player combat manager first (UAC_CombatManager)
 			UAC_CombatManager* TargetCombatManager = HitActor->FindComponentByClass<UAC_CombatManager>();
 			if (TargetCombatManager)
 			{
-				// Get weapon damage info from equipment manager
-				double Damage = 10.0;  // Default damage
-				double PoiseDamage = 5.0;  // Default poise damage
-				TMap<FGameplayTag, UPrimaryDataAsset*> StatusEffects;
-				USoundBase* GuardSound = nullptr;
-				USoundBase* PerfectGuardSound = nullptr;
-
-				if (EquipmentManager)
-				{
-					// Get damage values from equipped weapon
-					Damage = EquipmentManager->GetWeaponDamage();
-					PoiseDamage = EquipmentManager->GetWeaponPoiseDamage();
-				}
-
-				// Apply damage to target
+				// Apply damage to player target
 				TargetCombatManager->HandleIncomingWeaponDamage(
 					Owner,
 					GuardSound,
@@ -106,6 +107,16 @@ void USLFAnimNotifyStateWeaponTrace::NotifyTick(USkeletalMeshComponent* MeshComp
 					PoiseDamage,
 					StatusEffects
 				);
+			}
+			else
+			{
+				// Try AI combat manager (UAICombatManagerComponent)
+				UAICombatManagerComponent* AICombatManager = HitActor->FindComponentByClass<UAICombatManagerComponent>();
+				if (AICombatManager)
+				{
+					// Apply damage to AI target
+					AICombatManager->HandleIncomingWeaponDamage_AI(Owner, Damage, PoiseDamage, Hit);
+				}
 			}
 		}
 	}

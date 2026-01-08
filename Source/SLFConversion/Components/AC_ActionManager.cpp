@@ -544,6 +544,75 @@ void UAC_ActionManager::EventPerformAction_Implementation(const FGameplayTag& Ac
 		}
 	}
 
+	// ═══════════════════════════════════════════════════════════════════════
+	// STAMINA VALIDATION - Check and consume stamina before action execution
+	// ═══════════════════════════════════════════════════════════════════════
+
+	// Get action data to check stamina cost
+	UPrimaryDataAsset** ActionDataPtr = Actions.Find(ActionTag);
+	if (ActionDataPtr && *ActionDataPtr)
+	{
+		if (UPDA_ActionBase* ActionData = Cast<UPDA_ActionBase>(*ActionDataPtr))
+		{
+			double StaminaCost = ActionData->StaminaCost;
+
+			// Check stamina requirement if there's a cost
+			if (StaminaCost > 0.0)
+			{
+				UAC_StatManager* StatManager = GetStatManager();
+				if (StatManager)
+				{
+					// Get stamina stat
+					FGameplayTag StaminaTag = FGameplayTag::RequestGameplayTag(
+						FName("SoulslikeFramework.Stat.Secondary.Stamina"));
+					UB_Stat* StaminaStat = nullptr;
+					FStatInfo StaminaInfo;
+					StatManager->GetStat(StaminaTag, StaminaStat, StaminaInfo);
+
+					// Check if enough stamina
+					if (StaminaInfo.CurrentValue < StaminaCost)
+					{
+						UE_LOG(LogTemp, Log, TEXT("  NOT ENOUGH STAMINA for action %s (need %.1f, have %.1f)"),
+							*ActionTag.ToString(), StaminaCost, StaminaInfo.CurrentValue);
+						return;  // Block action execution
+					}
+
+					// Consume stamina (trigger regen after)
+					StatManager->AdjustStat(StaminaTag, ESLFValueType::CurrentValue,
+						-StaminaCost, false, true);
+					UE_LOG(LogTemp, Log, TEXT("  Consumed %.1f stamina for action %s"),
+						StaminaCost, *ActionTag.ToString());
+				}
+			}
+
+			// Check additional stat requirements (RequiredStatTag/RequiredStatAmount)
+			if (ActionData->RequiredStatTag.IsValid() && ActionData->RequiredStatAmount > 0.0)
+			{
+				UAC_StatManager* StatManager = GetStatManager();
+				if (StatManager)
+				{
+					UB_Stat* RequiredStat = nullptr;
+					FStatInfo RequiredStatInfo;
+					StatManager->GetStat(ActionData->RequiredStatTag, RequiredStat, RequiredStatInfo);
+
+					if (RequiredStatInfo.CurrentValue < ActionData->RequiredStatAmount)
+					{
+						UE_LOG(LogTemp, Log, TEXT("  STAT REQUIREMENT NOT MET for action %s (need %.1f %s, have %.1f)"),
+							*ActionTag.ToString(),
+							ActionData->RequiredStatAmount,
+							*ActionData->RequiredStatTag.ToString(),
+							RequiredStatInfo.CurrentValue);
+						return;  // Block action execution
+					}
+				}
+			}
+		}
+	}
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// ACTION LOOKUP AND EXECUTION
+	// ═══════════════════════════════════════════════════════════════════════
+
 	// Look up the action class in AvailableActions map
 	// Using UClass* instead of TSubclassOf to avoid parent chain validation issues
 	UClass** ActionClassPtr = AvailableActions.Find(ActionTag);
@@ -582,11 +651,10 @@ void UAC_ActionManager::EventPerformAction_Implementation(const FGameplayTag& Ac
 	}
 
 	// Set the action data asset from Actions map (if available)
-	if (UPrimaryDataAsset** ActionDataPtr = Actions.Find(ActionTag))
+	if (ActionDataPtr && *ActionDataPtr)
 	{
-		// Use reflection to set the Action property if it exists on USLFActionBase
 		ActionInstance->Action = *ActionDataPtr;
-		UE_LOG(LogTemp, Log, TEXT("  Set action data: %s"), *ActionDataPtr ? *(*ActionDataPtr)->GetName() : TEXT("null"));
+		UE_LOG(LogTemp, Log, TEXT("  Set action data: %s"), *(*ActionDataPtr)->GetName());
 	}
 
 	// Set the owner actor
