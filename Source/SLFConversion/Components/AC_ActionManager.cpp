@@ -17,6 +17,7 @@
 #include "Blueprints/B_Stat.h"
 #include "SLFStatTypes.h"
 #include "SLFPrimaryDataAssets.h"
+#include "Interfaces/BPI_GenericCharacter.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "TimerManager.h"
@@ -282,9 +283,9 @@ void UAC_ActionManager::ToggleCrouch_Implementation()
 	// Toggle the crouch state
 	IsCrouched = !IsCrouched;
 
-	// Try to update character movement mode
 	if (AActor* Owner = GetOwner())
 	{
+		// 1. Trigger actual crouch mechanics on character (height adjustment, camera, callbacks)
 		if (ACharacter* Character = Cast<ACharacter>(Owner))
 		{
 			if (IsCrouched)
@@ -295,6 +296,15 @@ void UAC_ActionManager::ToggleCrouch_Implementation()
 			{
 				Character->UnCrouch();
 			}
+		}
+
+		// 2. Call SetMovementMode via BPI_GenericCharacter interface
+		// Blueprint: When crouched -> Walk (slower), when standing -> Run (normal)
+		if (Owner->GetClass()->ImplementsInterface(UBPI_GenericCharacter::StaticClass()))
+		{
+			ESLFMovementType NewMovementType = IsCrouched ? ESLFMovementType::Walk : ESLFMovementType::Run;
+			IBPI_GenericCharacter::Execute_SetMovementMode(Owner, NewMovementType);
+			UE_LOG(LogTemp, Log, TEXT("  SetMovementMode to %s"), IsCrouched ? TEXT("Walk") : TEXT("Run"));
 		}
 	}
 

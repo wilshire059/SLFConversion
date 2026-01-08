@@ -190,21 +190,52 @@ NPC_CHARACTER_MAP = {
 
 ---
 
-## RUNNING THE MIGRATION
+## RUNNING THE MIGRATION (RESILIENT 4-STEP WORKFLOW)
 
-### Fresh Migration (Recommended)
+The migration preserves Blueprint data (icons, Niagara, montages) that would otherwise be lost. **The cache survives restores.**
+
+### Step 1: Extract Data FROM BACKUP (one-time)
+
+Extract BEFORE restoring, while backup has valid data:
+
 ```bash
-# Restore backup and run migration
-powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Recurse -Force; Copy-Item -Path 'C:\scripts\bp_only\Content\*' -Destination 'C:\scripts\SLFConversion\Content\' -Recurse -Force"
+"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
+  "C:/scripts/bp_only/SLFConversion.uproject" ^
+  -run=pythonscript -script="C:/scripts/SLFConversion/extract_item_data.py" ^
+  -stdout -unattended -nosplash 2>&1
+```
 
-# Run migration
+### Step 2: Restore Backup
+
+```bash
+powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Recurse -Force; Copy-Item -Path 'C:\scripts\bp_only\Content\*' -Destination 'C:\scripts\SLFConversion\Content\' -Recurse -Force"
+```
+
+### Step 3: Run Reparenting Migration
+
+```bash
 "C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
   "C:/scripts/SLFConversion/SLFConversion.uproject" ^
   -run=pythonscript -script="C:/scripts/SLFConversion/run_migration.py" ^
   -stdout -unattended -nosplash 2>&1
 ```
 
-### Build C++ First
+### Step 4: Apply Cached Data
+
+```bash
+"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
+  "C:/scripts/SLFConversion/SLFConversion.uproject" ^
+  -run=pythonscript -script="C:/scripts/SLFConversion/apply_icons_fixed.py" ^
+  -stdout -unattended -nosplash 2>&1
+
+"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
+  "C:/scripts/SLFConversion/SLFConversion.uproject" ^
+  -run=pythonscript -script="C:/scripts/SLFConversion/apply_remaining_data.py" ^
+  -stdout -unattended -nosplash 2>&1
+```
+
+### Build C++ First (if needed)
+
 ```bash
 "C:\Program Files\Epic Games\UE_5.7\Engine\Build\BatchFiles\Build.bat" ^
   SLFConversionEditor Win64 Development ^
@@ -213,10 +244,9 @@ powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Rec
 ```
 
 ### Expected Output
-- 465 pre-existing errors at startup (from backup content)
-- "Successfully reparented X to Y" messages for each Blueprint
-- ~306 successful reparents total
-- Migration completes in ~15 seconds
+- Migration: ~306 successful reparents, 0 errors
+- Apply icons: "Applied icons to 21 items"
+- Apply remaining: "Applied Niagara to 21 items", "Saved B_Action_Dodge"
 
 ---
 

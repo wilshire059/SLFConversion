@@ -220,8 +220,9 @@ void ASLFSoulslikeCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// NOTE: AnimBP IsCrouched is now set via NativeUpdateAnimation in UABP_SoulslikeCharacter_Additive
-	// The C++ AnimInstance reads OwnerCharacter->bIsCrouched automatically every frame
+	// NOTE: AnimBP IsCrouched is now handled by the AnimBP's own EventGraph + Property Access.
+	// The EventGraph caches the ActionManager reference in BeginPlay, and AnimGraph functions
+	// use Property Access nodes to read ActionManager.IsCrouched directly - no reflection needed.
 }
 
 void ASLFSoulslikeCharacter::OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
@@ -846,6 +847,27 @@ void ASLFSoulslikeCharacter::InitializeModularMesh()
 		}
 	}
 
+	// FALLBACK: If still no DefaultMeshInfo, try to load the default PDA_DefaultMeshData asset directly
+	// This provides a working character when GameInstance.SelectedBaseClass is not set
+	if (!DefaultMeshInfo)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] Attempting FALLBACK: Loading default PDA_DefaultMeshData directly..."));
+
+		// Try to load the default mesh data asset from the known path
+		static const TCHAR* DefaultMeshDataPath = TEXT("/Game/SoulslikeFramework/Data/PDA_DefaultMeshData.PDA_DefaultMeshData");
+		DefaultMeshInfo = Cast<UDataAsset>(StaticLoadObject(UDataAsset::StaticClass(), nullptr, DefaultMeshDataPath));
+
+		if (DefaultMeshInfo)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("    FALLBACK SUCCESS: Loaded DefaultMeshInfo from: %s"), DefaultMeshDataPath);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("    FALLBACK FAILED: Could not load asset from: %s"), DefaultMeshDataPath);
+			UE_LOG(LogTemp, Error, TEXT("    Character will be INVISIBLE. Please ensure PDA_DefaultMeshData exists or set DefaultMeshInfo manually."));
+		}
+	}
+
 	// Load meshes from DefaultMeshInfo using direct C++ property access (Option B migration)
 	// The Blueprint PDA_DefaultMeshData now inherits from UPDA_DefaultMeshData with direct mesh properties
 	if (DefaultMeshInfo)
@@ -949,6 +971,61 @@ void ASLFSoulslikeCharacter::InitializeModularMesh()
 		UE_LOG(LogTemp, Log, TEXT("  LowerBody has mesh: %s"), *LowerBody->GetSkeletalMeshAsset()->GetName());
 	}
 
+	// ULTIMATE FALLBACK: If still no meshes, load Manny body parts directly
+	if (!bHasMeshes)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  No meshes loaded - attempting ULTIMATE FALLBACK with hard-coded Manny paths"));
+
+		static const TCHAR* MannyHeadPath = TEXT("/Game/SoulslikeFramework/Meshes/SKM/SKM_MannyHead.SKM_MannyHead");
+		static const TCHAR* MannyUpperBodyPath = TEXT("/Game/SoulslikeFramework/Meshes/SKM/SKM_MannyUpperBody.SKM_MannyUpperBody");
+		static const TCHAR* MannyArmsPath = TEXT("/Game/SoulslikeFramework/Meshes/SKM/SKM_MannyArms.SKM_MannyArms");
+		static const TCHAR* MannyLowerBodyPath = TEXT("/Game/SoulslikeFramework/Meshes/SKM/SKM_MannyLowerBody.SKM_MannyLowerBody");
+
+		if (Head && !Head->GetSkeletalMeshAsset())
+		{
+			USkeletalMesh* LoadedMesh = Cast<USkeletalMesh>(StaticLoadObject(USkeletalMesh::StaticClass(), nullptr, MannyHeadPath));
+			if (LoadedMesh)
+			{
+				Head->SetSkeletalMesh(LoadedMesh);
+				bHasMeshes = true;
+				UE_LOG(LogTemp, Warning, TEXT("    FALLBACK: Loaded Head mesh: %s"), *LoadedMesh->GetName());
+			}
+		}
+
+		if (UpperBody && !UpperBody->GetSkeletalMeshAsset())
+		{
+			USkeletalMesh* LoadedMesh = Cast<USkeletalMesh>(StaticLoadObject(USkeletalMesh::StaticClass(), nullptr, MannyUpperBodyPath));
+			if (LoadedMesh)
+			{
+				UpperBody->SetSkeletalMesh(LoadedMesh);
+				bHasMeshes = true;
+				UE_LOG(LogTemp, Warning, TEXT("    FALLBACK: Loaded UpperBody mesh: %s"), *LoadedMesh->GetName());
+			}
+		}
+
+		if (Arms && !Arms->GetSkeletalMeshAsset())
+		{
+			USkeletalMesh* LoadedMesh = Cast<USkeletalMesh>(StaticLoadObject(USkeletalMesh::StaticClass(), nullptr, MannyArmsPath));
+			if (LoadedMesh)
+			{
+				Arms->SetSkeletalMesh(LoadedMesh);
+				bHasMeshes = true;
+				UE_LOG(LogTemp, Warning, TEXT("    FALLBACK: Loaded Arms mesh: %s"), *LoadedMesh->GetName());
+			}
+		}
+
+		if (LowerBody && !LowerBody->GetSkeletalMeshAsset())
+		{
+			USkeletalMesh* LoadedMesh = Cast<USkeletalMesh>(StaticLoadObject(USkeletalMesh::StaticClass(), nullptr, MannyLowerBodyPath));
+			if (LoadedMesh)
+			{
+				LowerBody->SetSkeletalMesh(LoadedMesh);
+				bHasMeshes = true;
+				UE_LOG(LogTemp, Warning, TEXT("    FALLBACK: Loaded LowerBody mesh: %s"), *LoadedMesh->GetName());
+			}
+		}
+	}
+
 	if (bHasMeshes)
 	{
 		// Merge modular meshes and apply to main skeleton
@@ -956,8 +1033,8 @@ void ASLFSoulslikeCharacter::InitializeModularMesh()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("  No modular meshes found - character may be invisible"));
-		UE_LOG(LogTemp, Warning, TEXT("  Ensure DefaultMeshInfo is set or Blueprint SCS has meshes assigned"));
+		UE_LOG(LogTemp, Error, TEXT("  CRITICAL: No modular meshes found after all fallbacks - character WILL be invisible"));
+		UE_LOG(LogTemp, Error, TEXT("  Check that SKM_Manny* meshes exist at /Game/SoulslikeFramework/Meshes/SKM/"));
 	}
 }
 
@@ -1373,7 +1450,14 @@ void ASLFSoulslikeCharacter::OnLootItem_Implementation(AActor* Item)
 	// Cast to pickup item to get item data and add to inventory
 	if (ASLFPickupItemBase* PickupItem = Cast<ASLFPickupItemBase>(Item))
 	{
-		if (UInventoryManagerComponent* InvMgr = FindComponentByClass<UInventoryManagerComponent>())
+		// CRITICAL: InventoryManagerComponent is on PlayerController, NOT on Character!
+		UInventoryManagerComponent* InvMgr = nullptr;
+		if (APlayerController* PC = Cast<APlayerController>(GetController()))
+		{
+			InvMgr = PC->FindComponentByClass<UInventoryManagerComponent>();
+		}
+
+		if (InvMgr)
 		{
 			if (PickupItem->Item)
 			{
@@ -1381,6 +1465,14 @@ void ASLFSoulslikeCharacter::OnLootItem_Implementation(AActor* Item)
 				UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Added %s x%d to inventory"),
 					*PickupItem->Item->GetName(), PickupItem->Count);
 			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] OnLootItem - PickupItem->Item is null!"));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] OnLootItem - InventoryManagerComponent NOT FOUND on PlayerController!"));
 		}
 	}
 
@@ -1401,6 +1493,7 @@ void ASLFSoulslikeCharacter::OnInteractableTraced_Implementation(AActor* Interac
 	ASLFPlayerController* PC = Cast<ASLFPlayerController>(GetController());
 	if (!PC || !PC->HUDWidgetRef)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("  No PC or HUD widget ref!"));
 		return;
 	}
 
@@ -1409,13 +1502,9 @@ void ASLFSoulslikeCharacter::OnInteractableTraced_Implementation(AActor* Interac
 	// Show/hide interaction prompt based on whether Interactable is valid
 	if (IsValid(Interactable))
 	{
-		// Cast to AB_Interactable to pass to HUD
-		AB_Interactable* InteractableActor = Cast<AB_Interactable>(Interactable);
-		if (InteractableActor)
-		{
-			HUD->EventShowInteractableWidget(InteractableActor);
-			UE_LOG(LogTemp, Log, TEXT("  Showing interaction widget for: %s"), *Interactable->GetName());
-		}
+		// Pass the actor directly - HUD now accepts AActor*
+		HUD->EventShowInteractableWidget(Interactable);
+		UE_LOG(LogTemp, Log, TEXT("  Showing interaction widget for: %s"), *Interactable->GetName());
 	}
 	else
 	{

@@ -63,20 +63,39 @@ This performs:
 # Must pass with 0 errors
 ```
 
-### Step 4: Run Migration Script
+### Step 4: Run Migration Script (RESILIENT 4-STEP)
+
+The migration preserves Blueprint data. **Cache survives restores.**
 
 ```bash
-# Restore clean backup first
+# Step 4a: Extract data FROM BACKUP (one-time, if cache doesn't exist)
+"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
+  "C:/scripts/bp_only/SLFConversion.uproject" ^
+  -run=pythonscript -script="C:/scripts/SLFConversion/extract_item_data.py" ^
+  -stdout -unattended -nosplash 2>&1
+
+# Step 4b: Restore clean backup
 powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Recurse -Force; Copy-Item -Path 'C:\scripts\bp_only\Content\*' -Destination 'C:\scripts\SLFConversion\Content\' -Recurse -Force"
 
-# Run migration
+# Step 4c: Run reparenting migration
 "C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
   "C:/scripts/SLFConversion/SLFConversion.uproject" ^
   -run=pythonscript -script="C:/scripts/SLFConversion/run_migration.py" ^
   -stdout -unattended -nosplash 2>&1
+
+# Step 4d: Apply cached data (icons, niagara, montages)
+"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
+  "C:/scripts/SLFConversion/SLFConversion.uproject" ^
+  -run=pythonscript -script="C:/scripts/SLFConversion/apply_icons_fixed.py" ^
+  -stdout -unattended -nosplash 2>&1
+
+"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
+  "C:/scripts/SLFConversion/SLFConversion.uproject" ^
+  -run=pythonscript -script="C:/scripts/SLFConversion/apply_remaining_data.py" ^
+  -stdout -unattended -nosplash 2>&1
 ```
 
-**Expected Result:** 0 errors on second pass
+**Expected Result:** 0 errors, icons/niagara/montages restored
 
 ### Step 5: PIE Test
 

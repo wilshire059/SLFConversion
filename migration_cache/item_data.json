@@ -1,0 +1,107 @@
+{
+  "DA_Apple": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_Apple.T_Apple",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_Apple.T_Apple",
+    "WorldNiagaraSystem": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple"
+  },
+  "DA_BossMace": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_BossMace.T_BossMace",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_BossMace.T_BossMace",
+    "WorldNiagaraSystem": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+  },
+  "DA_CrimsonEverbloom": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_Flower.T_Flower",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_Flower.T_Flower",
+    "WorldNiagaraSystem": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple"
+  },
+  "DA_Cube": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_Cube.T_Cube",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_Cube.T_Cube",
+    "WorldNiagaraSystem": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple"
+  },
+  "DA_ExampleArmor": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_ExampleArmor.T_ExampleArmor",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_ExampleArmor.T_ExampleArmor",
+    "WorldNiagaraSystem": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+  },
+  "DA_ExampleArmor02": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_ExampleArmor02.T_ExampleArmor02",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_ExampleArmor02.T_ExampleArmor02",
+    "WorldNiagaraSystem": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+  },
+  "DA_ExampleBracers": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_ExampleBracers.T_ExampleBracers",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_ExampleBracers.T_ExampleBracers",
+    "WorldNiagaraSystem": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+  },
+  "DA_ExampleGreaves": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_ExampleGreaves.T_ExampleGreaves",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_ExampleGreaves.T_ExampleGreaves",
+    "WorldNiagaraSystem": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+  },
+  "DA_ExampleHat": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_ExampleHat.T_ExampleHat",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_ExampleHat.T_ExampleHat",
+    "WorldNiagaraSystem": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+  },
+  "DA_ExampleHelmet": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_ExampleHelmet.T_ExampleHelmet",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_ExampleHelmet.T_ExampleHelmet",
+    "WorldNiagaraSystem": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+  },
+  "DA_ExampleTalisman": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_ExampleTalisman01.T_ExampleTalisman01",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_ExampleTalisman01.T_ExampleTalisman01",
+    "WorldNiagaraSystem": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+  },
+  "DA_Greatsword": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_Greatsword.T_Greatsword",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_Greatsword.T_Greatsword",
+    "WorldNiagaraSystem": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+  },
+  "DA_HealthFlask": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_HealingFlask.T_HealingFlask",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_HealingFlask.T_HealingFlask",
+    "WorldNiagaraSystem": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+  },
+  "DA_Katana": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_ExampleKatana.T_ExampleKatana",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_ExampleKatana.T_ExampleKatana",
+    "WorldNiagaraSystem": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+  },
+  "DA_Lantern": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_Lantern.T_Lantern",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_Lantern.T_Lantern",
+    "WorldNiagaraSystem": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple"
+  },
+  "DA_PoisonSword": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_ExamplePoisonSword.T_ExamplePoisonSword",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_ExamplePoisonSword.T_ExamplePoisonSword",
+    "WorldNiagaraSystem": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+  },
+  "DA_PrisonKey": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_PrisonKey.T_PrisonKey",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_PrisonKey.T_PrisonKey",
+    "WorldNiagaraSystem": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple"
+  },
+  "DA_Shield01": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_Shield.T_Shield",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_Shield.T_Shield",
+    "WorldNiagaraSystem": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+  },
+  "DA_Sword01": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_ExampleSword01.T_ExampleSword01",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_ExampleSword01.T_ExampleSword01",
+    "WorldNiagaraSystem": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+  },
+  "DA_Sword02": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_ExampleSword02.T_ExampleSword02",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_ExampleSword02.T_ExampleSword02",
+    "WorldNiagaraSystem": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLoot.NS_ItemLoot"
+  },
+  "DA_ThrowingKnife": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_ThrowingKnife.T_ThrowingKnife",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_ThrowingKnife.T_ThrowingKnife",
+    "WorldNiagaraSystem": "/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple"
+  }
+}

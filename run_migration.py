@@ -552,7 +552,9 @@ ANIM_BP_MAP = {
     "ABP_SoulslikeNPC": None,  # No reparent, just clear EventGraph
     "ABP_SoulslikeEnemy": None,  # No reparent, just clear EventGraph
     "ABP_SoulslikeBossNew": None,  # No reparent, just clear EventGraph - C++ SLFBossAnimInstance has variables
-    "ABP_SoulslikeCharacter_Additive": None,  # Player AnimBP - clear EventGraph for IsCrouched/IsResting/IsBlocking
+    # NOTE: ABP_SoulslikeCharacter_Additive is NOT in this list - its EventGraph MUST be preserved
+    # The EventGraph caches component references (ActionManager, CombatManager, EquipmentManager)
+    # which are required for Property Access nodes in AnimGraph to read IsCrouched, etc.
     "ABP_Manny_PostProcess": "/Script/SLFConversion.ABP_Manny_PostProcess",  # Post-process AnimBP
     "ABP_Quinn_PostProcess": "/Script/SLFConversion.ABP_Quinn_PostProcess",  # Post-process AnimBP
 }
@@ -796,7 +798,7 @@ PATH_OVERRIDES = {
     "ANS_FistTrace": "/Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_FistTrace",
     "ANS_RegisterAttackSequence": "/Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_RegisterAttackSequence",
     # AnimBlueprints
-    "ABP_SoulslikeCharacter_Additive": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive",
+    # NOTE: ABP_SoulslikeCharacter_Additive is NOT touched at all - EventGraph is preserved
     # Additional Actions
     "B_Action_Execute": "/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_Execute",
     "B_Action_GuardStart": "/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_GuardStart",
@@ -1330,12 +1332,12 @@ def run():
 
     # =========================================================================
     # PHASE 4B: CLEAR GETTER FUNCTIONS IN PLAYER ANIMBP - SKIPPED
-    # No longer needed - ABP_SoulslikeCharacter_Additive is now in ANIM_BP_MAP
-    # and gets its entire EventGraph cleared in PHASE 2, which removes the
-    # getter functions that use Property Access to overwrite C++ values.
+    # ABP_SoulslikeCharacter_Additive EventGraph is now PRESERVED (not cleared)
+    # Its EventGraph caches component references needed by Property Access nodes
+    # for reading IsCrouched, IsBlocking, etc. from ActionManager.
     # =========================================================================
     print("")
-    print("=== PHASE 4B: SKIPPED (Player AnimBP now in ANIM_BP_MAP) ===")
+    print("=== PHASE 4B: SKIPPED (Player AnimBP EventGraph preserved) ===")
 
     # =========================================================================
     # PHASE 5: COMPILE - SKIPPED

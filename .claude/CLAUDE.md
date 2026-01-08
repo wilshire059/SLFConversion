@@ -88,21 +88,57 @@ Phase 1+: Process all other Blueprints normally
 
 ---
 
-## RUNNING THE MIGRATION
+## RUNNING THE MIGRATION (RESILIENT 4-STEP WORKFLOW)
 
-### Fresh Migration (Recommended)
+The migration process preserves Blueprint data (icons, Niagara effects, montages) that would otherwise be lost during reparenting. **The cache survives restores**, so data only needs to be extracted once.
+
+### Step 1: Extract Data FROM BACKUP (One-time or if data changed)
+
+**IMPORTANT:** Extract BEFORE restoring, while the backup has valid Blueprint data.
+
 ```bash
-# 1. Restore backup
-powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Recurse -Force; Copy-Item -Path 'C:\scripts\bp_only\Content\*' -Destination 'C:\scripts\SLFConversion\Content\' -Recurse -Force"
+# Extract item icons, niagara systems, and other Blueprint data to cache
+"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
+  "C:/scripts/bp_only/SLFConversion.uproject" ^
+  -run=pythonscript -script="C:/scripts/SLFConversion/extract_item_data.py" ^
+  -stdout -unattended -nosplash 2>&1
+```
 
-# 2. Run migration
+Cache location: `C:/scripts/SLFConversion/migration_cache/item_data.json`
+
+### Step 2: Restore Backup
+
+```bash
+powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Recurse -Force; Copy-Item -Path 'C:\scripts\bp_only\Content\*' -Destination 'C:\scripts\SLFConversion\Content\' -Recurse -Force"
+```
+
+### Step 3: Run Reparenting Migration
+
+```bash
 "C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
   "C:/scripts/SLFConversion/SLFConversion.uproject" ^
   -run=pythonscript -script="C:/scripts/SLFConversion/run_migration.py" ^
   -stdout -unattended -nosplash 2>&1
 ```
 
+### Step 4: Apply Cached Data
+
+```bash
+# Apply icons and niagara to items
+"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
+  "C:/scripts/SLFConversion/SLFConversion.uproject" ^
+  -run=pythonscript -script="C:/scripts/SLFConversion/apply_icons_fixed.py" ^
+  -stdout -unattended -nosplash 2>&1
+
+# Apply niagara and dodge montages
+"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
+  "C:/scripts/SLFConversion/SLFConversion.uproject" ^
+  -run=pythonscript -script="C:/scripts/SLFConversion/apply_remaining_data.py" ^
+  -stdout -unattended -nosplash 2>&1
+```
+
 ### Build C++ First (if needed)
+
 ```bash
 "C:\Program Files\Epic Games\UE_5.7\Engine\Build\BatchFiles\Build.bat" ^
   SLFConversionEditor Win64 Development ^
@@ -110,11 +146,30 @@ powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Rec
   -WaitMutex -FromMsBuild
 ```
 
+### Why This Workflow?
+
+| Problem | Solution |
+|---------|----------|
+| Reparenting clears Blueprint struct data | Cache data BEFORE migration |
+| Icons/Niagara lost after restore | Apply from cache AFTER migration |
+| Dodge montages wiped | Apply to CDO AFTER migration |
+| Repeated restores lose data | Cache survives restores (outside Content/) |
+
+### Migration Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `extract_item_data.py` | Extract icons, niagara from backup (run on bp_only) |
+| `run_migration.py` | Multi-phase reparenting |
+| `apply_icons_fixed.py` | Apply item icons from cache |
+| `apply_remaining_data.py` | Apply niagara + dodge montages |
+| `full_migration.py` | All-in-one workflow (extract + migrate + apply) |
+
 ### Expected Output
-- 465 pre-existing errors at startup (from backup content - this is normal)
-- "Successfully reparented X to Y" messages
-- ~306 successful reparents total
-- Migration completes in ~15 seconds
+- Extract: "Saved 21 items to migration_cache/item_data.json"
+- Migration: ~306 successful reparents, 0 errors
+- Apply icons: "Applied icons to 21 items"
+- Apply remaining: "Applied Niagara to 21 items", "Saved B_Action_Dodge"
 
 ---
 
@@ -122,7 +177,10 @@ powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Rec
 
 | File | Purpose |
 |------|---------|
-| `run_migration.py` | Multi-phase migration script (main entry point) |
+| `run_migration.py` | Multi-phase reparenting script |
+| `migration_cache/item_data.json` | Cached icons, niagara, etc. (survives restores) |
+| `apply_icons_fixed.py` | Apply item icons from cache |
+| `apply_remaining_data.py` | Apply niagara + dodge montages |
 | `Exports/BlueprintDNA_v2/*.json` | Source of truth for Blueprint logic |
 | `Source/SLFConversion/` | C++ implementation |
 | `C:\scripts\bp_only\` | Clean backup content (Blueprint-only, pre-migration) |

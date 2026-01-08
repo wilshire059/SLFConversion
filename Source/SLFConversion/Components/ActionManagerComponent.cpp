@@ -106,7 +106,7 @@ void UActionManagerComponent::ToggleCrouch_Implementation()
 	if (Owner && Owner->GetClass()->ImplementsInterface(UBPI_GenericCharacter::StaticClass()))
 	{
 		// Crouched uses Walk movement speed (E_MovementType only has Walk, Run, Sprint)
-		ESLFMovementType NewMovementType = bIsCrouched ? ESLFMovementType::Walk : ESLFMovementType::Walk;
+		ESLFMovementType NewMovementType = bIsCrouched ? ESLFMovementType::Walk : ESLFMovementType::Run;
 		IBPI_GenericCharacter::Execute_SetMovementMode(Owner, NewMovementType);
 	}
 }
