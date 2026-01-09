@@ -31,11 +31,13 @@
 // Forward declarations for widget types
 class UW_EquipmentSlot;
 class UW_InventorySlot;
+class UW_GenericError;
+class UBorder;
 
 // Forward declarations for Blueprint types
 class UAC_EquipmentManager;
 class UPDA_Item;
-class UAC_InventoryManager;
+class UInventoryManagerComponent;
 
 // Forward declarations for SaveGame types
 
@@ -54,6 +56,9 @@ public:
 	// Widget lifecycle
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
+
+	// Input handling (replaces Blueprint EventGraph input bindings)
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// BIND WIDGETS - Direct access via BindWidgetOptional
@@ -74,12 +79,20 @@ public:
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
 	UTextBlock* SlotNameText;
 
+	/** Error display border container */
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UBorder* ErrorBorder;
+
+	/** Error message widget */
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UW_GenericError* W_EquipmentError;
+
 	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (10)
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UPROPERTY(BlueprintReadWrite, Category = "Default")
-	UAC_InventoryManager* InventoryComponent;
+	UInventoryManagerComponent* InventoryComponent;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	UW_EquipmentSlot* SelectedSlot;

@@ -8,11 +8,13 @@
 #include "Widgets/W_Equipment.h"
 #include "Widgets/W_EquipmentSlot.h"
 #include "Widgets/W_InventorySlot.h"
-#include "Components/AC_InventoryManager.h"
+#include "Widgets/W_GenericError.h"
+#include "Components/InventoryManagerComponent.h"
 #include "Components/AC_EquipmentManager.h"
 #include "Components/ScrollBox.h"
 #include "Components/UniformGridPanel.h"
 #include "Components/CanvasPanel.h"
+#include "Components/Border.h"
 #include "Blueprint/WidgetTree.h"
 
 UW_Equipment::UW_Equipment(const FObjectInitializer& ObjectInitializer)
@@ -22,6 +24,8 @@ UW_Equipment::UW_Equipment(const FObjectInitializer& ObjectInitializer)
 	, ItemGrid(nullptr)
 	, ItemInfoBoxSwitcher(nullptr)
 	, SlotNameText(nullptr)
+	, ErrorBorder(nullptr)
+	, W_EquipmentError(nullptr)
 	, InventoryComponent(nullptr)
 	, SelectedSlot(nullptr)
 	, ActiveEquipmentSlot(nullptr)
@@ -38,36 +42,100 @@ void UW_Equipment::NativeConstruct()
 
 	UE_LOG(LogTemp, Log, TEXT("[W_Equipment] NativeConstruct - Getting components"));
 
-	// InventoryComponent and EquipmentComponent are on PLAYERCONTROLLER (not Pawn!)
-	if (APlayerController* PC = GetOwningPlayer())
-	{
-		InventoryComponent = PC->FindComponentByClass<UAC_InventoryManager>();
-		if (InventoryComponent)
-		{
-			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Found InventoryComponent on PlayerController"));
-			InventoryComponent->OnInventoryUpdated.AddDynamic(this, &UW_Equipment::HandleInventoryUpdated);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] InventoryComponent not found on PlayerController"));
-		}
+	// DIAGNOSTIC: Check what actors we have and where components are
+	APlayerController* PC = GetOwningPlayer();
+	APawn* Pawn = GetOwningPlayerPawn();
 
-		EquipmentComponent = PC->FindComponentByClass<UAC_EquipmentManager>();
-		if (EquipmentComponent)
+	UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] DIAGNOSTIC - PC: %s, Pawn: %s"),
+		PC ? *PC->GetName() : TEXT("NULL"),
+		Pawn ? *Pawn->GetName() : TEXT("NULL"));
+
+	// Check PlayerController for components
+	if (PC)
+	{
+		UInventoryManagerComponent* PCInv = PC->FindComponentByClass<UInventoryManagerComponent>();
+		UAC_EquipmentManager* PCEquip = PC->FindComponentByClass<UAC_EquipmentManager>();
+		UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] DIAGNOSTIC - PC has InventoryComp: %s, EquipmentComp: %s"),
+			PCInv ? TEXT("YES") : TEXT("NO"),
+			PCEquip ? TEXT("YES") : TEXT("NO"));
+
+		// List all components on PC
+		TArray<UActorComponent*> PCComps;
+		PC->GetComponents(PCComps);
+		UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] DIAGNOSTIC - PC has %d components:"), PCComps.Num());
+		for (UActorComponent* Comp : PCComps)
 		{
-			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Found EquipmentComponent on PlayerController"));
-			// Bind to equipment change events for refreshing slots
-			EquipmentComponent->OnItemEquippedToSlot.AddDynamic(this, &UW_Equipment::HandleItemEquippedToSlot);
-			EquipmentComponent->OnItemUnequippedFromSlot.AddDynamic(this, &UW_Equipment::HandleItemUnequippedFromSlot);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] EquipmentComponent not found on PlayerController"));
+			UE_LOG(LogTemp, Warning, TEXT("[W_Equipment]   - %s (%s)"), *Comp->GetName(), *Comp->GetClass()->GetName());
 		}
 	}
 
+	// Check Pawn for components
+	if (Pawn)
+	{
+		UInventoryManagerComponent* PawnInv = Pawn->FindComponentByClass<UInventoryManagerComponent>();
+		UAC_EquipmentManager* PawnEquip = Pawn->FindComponentByClass<UAC_EquipmentManager>();
+		UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] DIAGNOSTIC - Pawn has InventoryComp: %s, EquipmentComp: %s"),
+			PawnInv ? TEXT("YES") : TEXT("NO"),
+			PawnEquip ? TEXT("YES") : TEXT("NO"));
+
+		// List all components on Pawn
+		TArray<UActorComponent*> PawnComps;
+		Pawn->GetComponents(PawnComps);
+		UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] DIAGNOSTIC - Pawn has %d components:"), PawnComps.Num());
+		for (UActorComponent* Comp : PawnComps)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[W_Equipment]   - %s (%s)"), *Comp->GetName(), *Comp->GetClass()->GetName());
+		}
+	}
+
+	// Try to get components - first from PC (as Blueprint does), then from Pawn as fallback
+	if (PC)
+	{
+		InventoryComponent = PC->FindComponentByClass<UInventoryManagerComponent>();
+		EquipmentComponent = PC->FindComponentByClass<UAC_EquipmentManager>();
+	}
+
+	// Fallback to Pawn if not found on PC
+	if (!InventoryComponent && Pawn)
+	{
+		InventoryComponent = Pawn->FindComponentByClass<UInventoryManagerComponent>();
+	}
+	if (!EquipmentComponent && Pawn)
+	{
+		EquipmentComponent = Pawn->FindComponentByClass<UAC_EquipmentManager>();
+	}
+
+	if (InventoryComponent)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Found InventoryComponent on %s"),
+			InventoryComponent->GetOwner() ? *InventoryComponent->GetOwner()->GetName() : TEXT("Unknown"));
+		InventoryComponent->OnInventoryUpdated.AddDynamic(this, &UW_Equipment::HandleInventoryUpdated);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] InventoryComponent NOT FOUND on PC or Pawn!"));
+	}
+
+	if (EquipmentComponent)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Found EquipmentComponent on %s"),
+			EquipmentComponent->GetOwner() ? *EquipmentComponent->GetOwner()->GetName() : TEXT("Unknown"));
+		EquipmentComponent->OnItemEquippedToSlot.AddDynamic(this, &UW_Equipment::HandleItemEquippedToSlot);
+		EquipmentComponent->OnItemUnequippedFromSlot.AddDynamic(this, &UW_Equipment::HandleItemUnequippedFromSlot);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] EquipmentComponent NOT FOUND on PC or Pawn!"));
+	}
+
+	// Make focusable for keyboard input
+	SetIsFocusable(true);
+
 	// Bind visibility changed
 	OnVisibilityChanged.AddDynamic(this, &UW_Equipment::EventOnVisibilityChanged);
+
+	// Cache widget references (error widgets, etc.)
+	CacheWidgetReferences();
 
 	// Populate equipment slots from widget tree
 	PopulateEquipmentSlots();
@@ -120,9 +188,93 @@ void UW_Equipment::NativeDestruct()
 	UE_LOG(LogTemp, Log, TEXT("[W_Equipment] NativeDestruct"));
 }
 
+FReply UW_Equipment::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	FKey Key = InKeyEvent.GetKey();
+
+	UE_LOG(LogTemp, Log, TEXT("[W_Equipment] NativeOnKeyDown - Key: %s"), *Key.ToString());
+
+	// Navigate Up: W, Up Arrow, Gamepad DPad Up
+	if (Key == EKeys::W || Key == EKeys::Up || Key == EKeys::Gamepad_DPad_Up || Key == EKeys::Gamepad_LeftStick_Up)
+	{
+		EventNavigateUp();
+		return FReply::Handled();
+	}
+
+	// Navigate Down: S, Down Arrow, Gamepad DPad Down
+	if (Key == EKeys::S || Key == EKeys::Down || Key == EKeys::Gamepad_DPad_Down || Key == EKeys::Gamepad_LeftStick_Down)
+	{
+		EventNavigateDown();
+		return FReply::Handled();
+	}
+
+	// Navigate Left: A, Left Arrow, Gamepad DPad Left
+	if (Key == EKeys::A || Key == EKeys::Left || Key == EKeys::Gamepad_DPad_Left || Key == EKeys::Gamepad_LeftStick_Left)
+	{
+		EventNavigateLeft();
+		return FReply::Handled();
+	}
+
+	// Navigate Right: D, Right Arrow, Gamepad DPad Right
+	if (Key == EKeys::D || Key == EKeys::Right || Key == EKeys::Gamepad_DPad_Right || Key == EKeys::Gamepad_LeftStick_Right)
+	{
+		EventNavigateRight();
+		return FReply::Handled();
+	}
+
+	// Navigate Ok/Confirm: Enter, Space, Gamepad A
+	if (Key == EKeys::Enter || Key == EKeys::SpaceBar || Key == EKeys::Gamepad_FaceButton_Bottom)
+	{
+		EventNavigateOk();
+		return FReply::Handled();
+	}
+
+	// Navigate Cancel/Back: Escape, Gamepad B, Tab
+	if (Key == EKeys::Escape || Key == EKeys::Gamepad_FaceButton_Right || Key == EKeys::Tab)
+	{
+		EventNavigateCancel();
+		return FReply::Handled();
+	}
+
+	// Detailed View: X key or Gamepad X
+	if (Key == EKeys::X || Key == EKeys::Gamepad_FaceButton_Left)
+	{
+		EventNavigateDetailedView();
+		return FReply::Handled();
+	}
+
+	// Unequip: Y key or Gamepad Y
+	if (Key == EKeys::Y || Key == EKeys::Gamepad_FaceButton_Top)
+	{
+		EventNavigateUnequip();
+		return FReply::Handled();
+	}
+
+	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);
+}
+
 void UW_Equipment::CacheWidgetReferences()
 {
-	// BindWidgetOptional handles caching automatically
+	// BindWidgetOptional handles most caching automatically
+	// But we need to find error widgets from the tree if not bound
+	if (!ErrorBorder)
+	{
+		ErrorBorder = Cast<UBorder>(GetWidgetFromName(TEXT("ErrorBorder")));
+		if (ErrorBorder)
+		{
+			ErrorBorder->SetVisibility(ESlateVisibility::Collapsed);
+			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Found ErrorBorder"));
+		}
+	}
+
+	if (!W_EquipmentError)
+	{
+		W_EquipmentError = Cast<UW_GenericError>(GetWidgetFromName(TEXT("W_EquipmentError")));
+		if (W_EquipmentError)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Found W_EquipmentError"));
+		}
+	}
 }
 
 void UW_Equipment::PopulateEquipmentSlots()
@@ -452,7 +604,7 @@ void UW_Equipment::EventOnEquipmentSlotPressed_Implementation(UW_EquipmentSlot* 
 	ActiveEquipmentSlot = InSlot;
 
 	// Get items that can be equipped in this slot
-	TArray<UPrimaryDataAsset*> AvailableItems = InventoryComponent->GetItemsForEquipmentSlot(InSlot->EquipmentSlot);
+	TArray<FSLFInventoryItem> AvailableItems = InventoryComponent->GetItemsForEquipmentSlot(InSlot->EquipmentSlot);
 
 	// Clear and populate item grid
 	EquipmentInventorySlots.Empty();
@@ -464,9 +616,9 @@ void UW_Equipment::EventOnEquipmentSlotPressed_Implementation(UW_EquipmentSlot* 
 		int32 Row = 0;
 		int32 SlotsPerRow = 4;
 
-		for (UPrimaryDataAsset* ItemAsset : AvailableItems)
+		for (const FSLFInventoryItem& InvItem : AvailableItems)
 		{
-			if (UPDA_Item* Item = Cast<UPDA_Item>(ItemAsset))
+			if (UPDA_Item* Item = Cast<UPDA_Item>(InvItem.ItemAsset))
 			{
 				if (InventorySlotClass)
 				{
@@ -475,10 +627,8 @@ void UW_Equipment::EventOnEquipmentSlotPressed_Implementation(UW_EquipmentSlot* 
 					{
 						NewSlot->EquipmentRelated = true;
 
-						// Get item count
-						int32 Amount = 0;
-						bool bSuccess = false;
-						InventoryComponent->GetAmountOfItem(Item, Amount, bSuccess);
+						// Use the amount from the inventory item
+						int32 Amount = InvItem.Amount;
 
 						NewSlot->EventOccupySlot(Item, Amount);
 
@@ -668,16 +818,28 @@ void UW_Equipment::EventShowError_Implementation(const FText& InMessage)
 {
 	UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] EventShowError: %s"), *InMessage.ToString());
 
-	// Error display is handled by Blueprint UMG widget tree
-	// This function is called to notify the widget of an error condition
+	// Show the error border
+	if (ErrorBorder)
+	{
+		ErrorBorder->SetVisibility(ESlateVisibility::Visible);
+	}
+
+	// Set the error message on the error widget
+	if (W_EquipmentError)
+	{
+		W_EquipmentError->EventSetErrorMessage(InMessage);
+	}
 }
 
 void UW_Equipment::EventDismissError_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("[W_Equipment] EventDismissError"));
 
-	// Error display is handled by Blueprint UMG widget tree
-	// This function is called to dismiss any displayed error
+	// Hide the error border
+	if (ErrorBorder)
+	{
+		ErrorBorder->SetVisibility(ESlateVisibility::Collapsed);
+	}
 }
 
 void UW_Equipment::EventOnWeaponStatCheckFailed_Implementation()
