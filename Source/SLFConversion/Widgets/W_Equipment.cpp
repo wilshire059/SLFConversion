@@ -15,6 +15,7 @@
 #include "Components/UniformGridPanel.h"
 #include "Components/CanvasPanel.h"
 #include "Components/Border.h"
+#include "Components/Image.h"
 #include "Blueprint/WidgetTree.h"
 #include "Engine/DataTable.h"
 
@@ -154,6 +155,9 @@ void UW_Equipment::NativeConstruct()
 	// Bind equipment slot events
 	BindEquipmentSlotEvents();
 
+	// Update input icons (hide if no texture to prevent white squares)
+	UpdateInputIcons();
+
 	UE_LOG(LogTemp, Log, TEXT("[W_Equipment] NativeConstruct complete - %d equipment slots"), EquipmentSlots.Num());
 }
 
@@ -284,6 +288,57 @@ void UW_Equipment::CacheWidgetReferences()
 		if (W_EquipmentError)
 		{
 			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Found W_EquipmentError"));
+		}
+	}
+}
+
+void UW_Equipment::UpdateInputIcons()
+{
+	// Define input keys for each icon widget name
+	// These correspond to the typical equipment navigation keys
+	struct FInputIconBinding {
+		FName WidgetName;
+		FKey Key;
+	};
+
+	// Note: These keys should match your Input Action mappings
+	// Widget names must match the UMG designer names exactly
+	TArray<FInputIconBinding> Bindings = {
+		{TEXT("OkInputIcon"), EKeys::Enter},
+		{TEXT("BackInputIcon"), EKeys::Escape},
+		{TEXT("UnequipInputIcon"), EKeys::Y},
+		{TEXT("ScrollLeftInputIcon"), EKeys::A},
+		{TEXT("ScrollRightInputIcon"), EKeys::D},
+		{TEXT("DetailsInputIcon"), EKeys::X}
+	};
+
+	for (const FInputIconBinding& Binding : Bindings)
+	{
+		// Use GetWidgetFromName to find the widget dynamically
+		UWidget* Widget = GetWidgetFromName(Binding.WidgetName);
+		UImage* ImageWidget = Cast<UImage>(Widget);
+
+		if (ImageWidget)
+		{
+			TSoftObjectPtr<UTexture2D> IconTexture;
+			GetInputIconForKey(Binding.Key, IconTexture);
+
+			if (!IconTexture.IsNull())
+			{
+				ImageWidget->SetBrushFromSoftTexture(IconTexture, false);
+				ImageWidget->SetVisibility(ESlateVisibility::Visible);
+				UE_LOG(LogTemp, Log, TEXT("[W_Equipment] UpdateInputIcons: Set %s to %s"), *Binding.WidgetName.ToString(), *IconTexture.ToString());
+			}
+			else
+			{
+				// Hide the icon if no texture is available (prevents white squares)
+				ImageWidget->SetVisibility(ESlateVisibility::Collapsed);
+				UE_LOG(LogTemp, Log, TEXT("[W_Equipment] UpdateInputIcons: Hiding %s (no texture for key %s)"), *Binding.WidgetName.ToString(), *Binding.Key.ToString());
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] UpdateInputIcons: Widget '%s' not found"), *Binding.WidgetName.ToString());
 		}
 	}
 }

@@ -250,6 +250,9 @@ protected:
 	// Cache references
 	void CacheWidgetReferences();
 
+	// Update input icons - hide any that don't have valid textures (prevents white squares)
+	void UpdateInputIcons();
+
 	// Populate equipment slots from widget tree
 	void PopulateEquipmentSlots();
 
