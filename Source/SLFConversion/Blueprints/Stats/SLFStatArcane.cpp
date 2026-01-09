@@ -5,7 +5,7 @@ USLFStatArcane::USLFStatArcane()
 {
 	StatInfo.Tag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Primary.Arcane"));
 	StatInfo.DisplayName = FText::FromString(TEXT("Arcane"));
-	StatInfo.CurrentValue = 10.0;
+	StatInfo.CurrentValue = 0.0;
 	StatInfo.MaxValue = 99.0;
 	StatInfo.bShowMaxValue = false;
 	StatInfo.RegenInfo.bCanRegenerate = false;

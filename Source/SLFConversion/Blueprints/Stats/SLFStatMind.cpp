@@ -16,7 +16,7 @@ USLFStatMind::USLFStatMind()
 {
 	StatInfo.Tag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Primary.Mind"));
 	StatInfo.DisplayName = FText::FromString(TEXT("Mind"));
-	StatInfo.CurrentValue = 10.0;
+	StatInfo.CurrentValue = 0.0;
 	StatInfo.MaxValue = 99.0;
 	StatInfo.bShowMaxValue = false;
 

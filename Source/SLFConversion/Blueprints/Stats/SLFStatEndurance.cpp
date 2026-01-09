@@ -5,7 +5,7 @@ USLFStatEndurance::USLFStatEndurance()
 {
 	StatInfo.Tag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Primary.Endurance"));
 	StatInfo.DisplayName = FText::FromString(TEXT("Endurance"));
-	StatInfo.CurrentValue = 10.0;
+	StatInfo.CurrentValue = 0.0;
 	StatInfo.MaxValue = 99.0;
 	StatInfo.bShowMaxValue = false;
 	StatInfo.RegenInfo.bCanRegenerate = false;

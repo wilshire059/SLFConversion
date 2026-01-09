@@ -10,22 +10,64 @@
 
 #include "Components/AC_StatManager.h"
 #include "Blueprints/B_Stat.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Engine/DataTable.h"
 
 UAC_StatManager::UAC_StatManager()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	Level = 1;
 	IsAiComponent = false;
+
+	// Load default StatTable - critical for stats to work
+	static ConstructorHelpers::FObjectFinder<UDataTable> DefaultStatTableFinder(
+		TEXT("/Game/SoulslikeFramework/Data/_Datatables/DT_ExampleStatTable.DT_ExampleStatTable"));
+	if (DefaultStatTableFinder.Succeeded())
+	{
+		StatTable = DefaultStatTableFinder.Object;
+	}
+	else
+	{
+		StatTable = nullptr;
+	}
 }
 
 void UAC_StatManager::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(LogTemp, Log, TEXT("UAC_StatManager::BeginPlay - Initializing stats"));
 
-	// Blueprint EventGraph: BeginPlay -> Event Initialize Stats
-	// This would trigger stat initialization from StatTable and class assets
-	// For now, defer to Blueprint initialization until full migration
+	AActor* Owner = GetOwner();
+	UE_LOG(LogTemp, Warning, TEXT("[StatManager] BeginPlay on %s (AI: %s)"),
+		Owner ? *Owner->GetName() : TEXT("NULL OWNER"), IsAiComponent ? TEXT("true") : TEXT("false"));
+	UE_LOG(LogTemp, Warning, TEXT("[StatManager] Component: %s"), *GetName());
+	UE_LOG(LogTemp, Warning, TEXT("[StatManager] Class: %s"), *GetClass()->GetName());
+
+	// If StatTable is not set, load it at runtime
+	// This handles Blueprint components that don't inherit C++ constructor defaults
+	if (!StatTable)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[StatManager] StatTable is NULL, loading at runtime..."));
+		UObject* LoadedObject = StaticLoadObject(
+			UDataTable::StaticClass(), nullptr,
+			TEXT("/Game/SoulslikeFramework/Data/_Datatables/DT_ExampleStatTable.DT_ExampleStatTable"));
+
+		if (LoadedObject)
+		{
+			StatTable = Cast<UDataTable>(LoadedObject);
+			UE_LOG(LogTemp, Warning, TEXT("[StatManager] Runtime loaded StatTable: %s"), StatTable ? *StatTable->GetName() : TEXT("CAST FAILED"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("[StatManager] FAILED to load StatTable at runtime!"));
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[StatManager] StatTable: %s"), StatTable ? *StatTable->GetName() : TEXT("NULL"));
+	UE_LOG(LogTemp, Warning, TEXT("[StatManager] ActiveStats count: %d"), ActiveStats.Num());
+
+	// Initialize stats from DataTable - this populates Stats and ActiveStats maps
+	// Then broadcasts OnStatsInitialized
+	EventInitializeStats();
 }
 
 void UAC_StatManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -78,7 +120,7 @@ void UAC_StatManager::GetStat_Implementation(const FGameplayTag& StatTag, UB_Sta
  * 1. Map_Values(ActiveStats) -> OutStatObjects
  * 2. Return Stats map as OutStatClassesAndCategories
  */
-void UAC_StatManager::GetAllStats_Implementation(TArray<UB_Stat*>& OutStatObjects, TMap<FGameplayTag, TSubclassOf<UB_Stat>>& OutStatClassesAndCategories)
+void UAC_StatManager::GetAllStats_Implementation(TArray<UB_Stat*>& OutStatObjects, TMap<TSubclassOf<UB_Stat>, FGameplayTag>& OutStatClassesAndCategories)
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_StatManager::GetAllStats"));
 
@@ -325,7 +367,7 @@ FGameplayTagContainer UAC_StatManager::GetStatsForCategory_Implementation(const 
 	FGameplayTagContainer MatchingStats;
 
 	// Iterate over all stat definitions
-	for (const auto& StatEntry : Stats)
+	for (const auto& StatEntry : ActiveStats)
 	{
 		FGameplayTag StatTag = StatEntry.Key;
 
@@ -418,4 +460,138 @@ void UAC_StatManager::ToggleRegenForStat_Implementation(const FGameplayTag& Stat
 	{
 		UE_LOG(LogTemp, Warning, TEXT("  Stat not found for regen toggle"));
 	}
+}
+
+/**
+ * EventInitializeStats - Initialize stats from DataTable
+ *
+ * Blueprint Logic (from JSON):
+ * 1. Clear Stats map
+ * 2. GetDataTableRowNames(StatTable) -> get all row names
+ * 3. ForEachLoop over row names:
+ *    - GetDataTableRow<FSLFStatEntry>(StatTable, RowName)
+ *    - Add to Stats map: Key=StatObject (class), Value=ParentCategory (tag)
+ * 4. Clear ActiveStats map
+ * 5. ForEachLoop over Stats.Keys() (stat classes):
+ *    - ConstructObject from Class (create UB_Stat instance)
+ *    - Get StatInfo.Tag from the new stat
+ *    - Add to ActiveStats: Key=Tag, Value=StatInstance
+ * 6. Broadcast OnStatsInitialized
+ */
+void UAC_StatManager::EventInitializeStats_Implementation()
+{
+	UE_LOG(LogTemp, Warning, TEXT("[StatManager] EventInitializeStats called"));
+
+	// Step 1: Clear Stats map (will be populated from DataTable)
+	Stats.Empty();
+
+	// Step 2-3: Populate Stats map from DataTable
+	if (StatTable)
+	{
+		TArray<FName> RowNames = StatTable->GetRowNames();
+		UE_LOG(LogTemp, Warning, TEXT("[StatManager] Found %d rows in StatTable"), RowNames.Num());
+
+		for (const FName& RowName : RowNames)
+		{
+			// Get the row as FSLFStatEntry
+			FSLFStatEntry* RowData = StatTable->FindRow<FSLFStatEntry>(RowName, TEXT("EventInitializeStats"));
+			if (RowData)
+			{
+				// Add to Stats map: Key=StatObject (class), Value=ParentCategory (tag)
+				if (RowData->StatObject)
+				{
+					TSubclassOf<UB_Stat> StatClass = TSubclassOf<UB_Stat>(RowData->StatObject);
+					if (StatClass)
+					{
+						Stats.Add(StatClass, RowData->ParentCategory);
+						UE_LOG(LogTemp, Log, TEXT("[StatManager] Added stat class: %s with category: %s"),
+							*RowData->StatObject->GetName(), *RowData->ParentCategory.ToString());
+					}
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("[StatManager] Row %s has NULL StatObject"), *RowName.ToString());
+				}
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[StatManager] Failed to find row: %s"), *RowName.ToString());
+			}
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[StatManager] StatTable is NULL - cannot initialize stats!"));
+	}
+
+	// Step 4: Clear ActiveStats map
+	ActiveStats.Empty();
+
+	// Step 5: Create stat instances from Stats map classes
+	AActor* Owner = GetOwner();
+	UE_LOG(LogTemp, Warning, TEXT("[StatManager] Creating %d stat instances"), Stats.Num());
+
+	for (const auto& StatEntry : Stats)
+	{
+		TSubclassOf<UB_Stat> StatClass = StatEntry.Key;
+		const FGameplayTag& ParentCategory = StatEntry.Value;
+
+		if (StatClass)
+		{
+			// Construct the stat object with Owner as outer
+			UB_Stat* NewStat = NewObject<UB_Stat>(Owner, StatClass);
+			if (NewStat)
+			{
+				// FIX: Blueprint CDO overrides C++ constructor defaults
+				// After reparenting, Blueprint CDO has serialized struct values that override
+				// C++ constructor defaults. We MUST copy from C++ parent for Blueprint classes.
+				// Check if this is a Blueprint class (compiled from Blueprint)
+				bool bIsBlueprintClass = StatClass->HasAnyClassFlags(CLASS_CompiledFromBlueprint);
+				
+				if (bIsBlueprintClass)
+				{
+					// Walk up the class hierarchy to find native C++ parent with valid defaults
+					UClass* ParentClass = StatClass->GetSuperClass();
+					while (ParentClass)
+					{
+						// Check if this is a native C++ class (not compiled from Blueprint)
+						if (!ParentClass->HasAnyClassFlags(CLASS_CompiledFromBlueprint))
+						{
+							UB_Stat* ParentCDO = Cast<UB_Stat>(ParentClass->GetDefaultObject());
+							if (ParentCDO && ParentCDO->StatInfo.Tag.IsValid())
+							{
+								// Copy FULL struct from C++ parent (preserves all constructor defaults)
+								NewStat->StatInfo = ParentCDO->StatInfo;
+								UE_LOG(LogTemp, Warning, TEXT("[StatManager] Blueprint class %s: copied StatInfo from C++ parent %s (Curr: %f, Max: %f)"),
+									*StatClass->GetName(), *ParentClass->GetName(), 
+									NewStat->StatInfo.CurrentValue, NewStat->StatInfo.MaxValue);
+								break;
+							}
+						}
+						ParentClass = ParentClass->GetSuperClass();
+					}
+				}
+
+				// Get the stat's tag from its StatInfo
+				FGameplayTag StatTag = NewStat->StatInfo.Tag;
+
+				if (StatTag.IsValid())
+				{
+					// Add to ActiveStats: Key=Tag, Value=StatInstance
+					ActiveStats.Add(StatTag, NewStat);
+					UE_LOG(LogTemp, Log, TEXT("[StatManager] Created stat instance: %s (Tag: %s, Curr: %f, Max: %f)"),
+						*NewStat->GetName(), *StatTag.ToString(), NewStat->StatInfo.CurrentValue, NewStat->StatInfo.MaxValue);
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("[StatManager] Stat %s has invalid tag even after parent lookup"), *NewStat->GetName());
+				}
+			}
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[StatManager] Initialized %d active stats"), ActiveStats.Num());
+
+	// Step 6: Broadcast OnStatsInitialized
+	OnStatsInitialized.Broadcast();
 }

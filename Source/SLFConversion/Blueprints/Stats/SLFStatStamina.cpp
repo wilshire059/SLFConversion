@@ -17,8 +17,8 @@ USLFStatStamina::USLFStatStamina()
 	// Set Stamina tag
 	StatInfo.Tag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Stamina"));
 	StatInfo.DisplayName = FText::FromString(TEXT("Stamina"));
-	StatInfo.CurrentValue = 100.0;
-	StatInfo.MaxValue = 100.0;
+	StatInfo.CurrentValue = 50.0;
+	StatInfo.MaxValue = 50.0;
 	StatInfo.bShowMaxValue = true;
 
 	// Stamina regenerates quickly
