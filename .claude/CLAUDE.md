@@ -21,6 +21,60 @@
 3. **Migrate dependencies first** - Check migration_tracker.md for order
 4. **Preserve ALL defaults** - Mesh assignments, skeleton, component settings
 5. **AnimGraphs are PRESERVED** - Only clear EventGraph in AnimBPs
+6. **SURGICAL MIGRATION ONLY** - See warning below
+
+---
+
+## ⚠️ SURGICAL vs BROAD MIGRATION - CRITICAL ⚠️
+
+**NEVER do a full Content/ restore and migration.** This causes regressions in working Blueprints.
+
+### ❌ WRONG: Broad Migration (DO NOT DO THIS)
+```bash
+# DO NOT restore entire Content folder
+powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Recurse -Force; Copy-Item -Path 'C:\scripts\bp_only\Content\*' ...
+
+# DO NOT run full migration script on everything
+python run_migration.py  # Touches ALL Blueprints
+```
+
+### ✅ RIGHT: Surgical Migration
+```bash
+# 1. Copy ONLY the specific assets you're migrating
+cp "C:/scripts/bp_only/Content/.../DA_ExampleArmor.uasset" "C:/scripts/SLFConversion/Content/.../"
+
+# 2. Run targeted migration script for ONLY those assets
+python migrate_armor_only.py  # Only touches armor data assets
+```
+
+### Surgical Migration Pattern
+
+1. **Make C++ changes** - Add properties, functions, update structs
+2. **Extract data from backup** - Cache mesh/icon/stat data BEFORE restore
+3. **Copy ONLY affected assets** - From backup to working project
+4. **Reparent ONLY those assets** - Targeted Python script
+5. **Apply cached data** - Restore mesh/icon/stat values
+6. **Test the specific feature** - Don't break unrelated features
+
+### Example: Armor Mesh Migration (Surgical)
+
+```bash
+# Step 1: C++ changes (SLFGameTypes.h, AC_EquipmentManager.h/cpp)
+# Step 2: Extract was already done (migration_cache/armor_mesh_data.json)
+
+# Step 3: Copy ONLY armor assets from backup
+cp "C:/scripts/bp_only/Content/SoulslikeFramework/Data/Items/DA_ExampleArmor.uasset" \
+   "C:/scripts/SLFConversion/Content/SoulslikeFramework/Data/Items/"
+# ... repeat for each armor asset
+
+# Step 4-5: Run surgical migration script
+"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
+  "C:/scripts/SLFConversion/SLFConversion.uproject" ^
+  -run=pythonscript -script="C:/scripts/SLFConversion/migrate_armor_only.py" ^
+  -stdout -unattended -nosplash
+```
+
+**Result:** Only armor assets are touched. Widgets, characters, weapons, etc. remain untouched and working.
 
 ---
 
@@ -89,6 +143,10 @@ Phase 1+: Process all other Blueprints normally
 ---
 
 ## RUNNING THE MIGRATION (RESILIENT 4-STEP WORKFLOW)
+
+> **⚠️ WARNING: This section describes the INITIAL FULL migration.**
+> **For ongoing changes, use SURGICAL MIGRATION instead (see above).**
+> **Only use full migration when starting fresh or recovering from major issues.**
 
 The migration process preserves Blueprint data (icons, Niagara effects, montages) that would otherwise be lost during reparenting. **The cache survives restores**, so data only needs to be extracted once.
 
@@ -185,6 +243,12 @@ powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Rec
   "C:/scripts/SLFConversion/SLFConversion.uproject" ^
   -run=pythonscript -script="C:/scripts/SLFConversion/apply_base_stats.py" ^
   -stdout -unattended -nosplash 2>&1
+
+# 4f. Apply armor mesh data (character-keyed skeletal meshes)
+"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
+  "C:/scripts/SLFConversion/SLFConversion.uproject" ^
+  -run=pythonscript -script="C:/scripts/SLFConversion/apply_armor_data.py" ^
+  -stdout -unattended -nosplash 2>&1
 ```
 
 ### Build C++ First (if needed)
@@ -212,12 +276,14 @@ powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Rec
 | `extract_item_data.py` | Extract icons, niagara from backup (run on bp_only) |
 | `extract_base_stats.py` | Extract character class BaseStats (run on bp_only) |
 | `extract_stat_defaults_cpp.py` | Extract stat CDO defaults using C++ (run on bp_only) |
+| `extract_armor_data.py` | Extract armor mesh data per character (run on bp_only) |
 | `run_migration.py` | Multi-phase reparenting |
 | `apply_icons_fixed.py` | Apply item icons from cache |
 | `apply_remaining_data.py` | Apply niagara + dodge montages |
 | `apply_item_data.py` | Apply item descriptions, names, display data |
 | `apply_item_categories.py` | Apply item categories (Weapons, Armor, Tools, etc.) |
 | `apply_base_stats.py` | Apply BaseStats to character class data assets |
+| `apply_armor_data.py` | Apply armor mesh data (character-keyed SkeletalMeshInfo) |
 | `apply_weapon_meshes.py` | Apply weapon mesh assignments to Blueprint CDOs |
 | `full_migration.py` | All-in-one workflow (extract + migrate + apply) |
 
@@ -449,6 +515,75 @@ unreal.EditorAssetLibrary.save_asset(bp_path)
 | B_Item_Weapon_Greatsword | SM_Greatsword |
 | B_Item_Weapon_Katana | SM_Katana |
 | B_Item_Weapon_Shield | SM_Shield |
+
+### 11. Armor Mesh Data Lost During Migration (Character-Keyed Mesh Pattern)
+
+Armor items use a **different pattern than weapons**: Instead of spawning actor components, armor swaps skeletal meshes on character body slots. The mesh data is stored in a TMap keyed by character type.
+
+**Key Differences: Weapons vs Armor**
+
+| Aspect | Weapons | Armor |
+|--------|---------|-------|
+| Blueprint Type | Actor (ASLFWeaponBase) | Data Asset (UPDA_Item) |
+| Mesh Type | StaticMeshComponent | SkeletalMesh (mesh swap) |
+| Display Method | Spawn actor, attach to socket | Swap character mesh components |
+| Storage | `DefaultWeaponMesh` property | `ItemInformation.EquipmentDetails.SkeletalMeshInfo` |
+| Key Type | N/A (single mesh) | Character data asset (DA_Quinn, DA_Manny) |
+
+**Symptom:** Equipped armor has no visual effect - character appearance doesn't change.
+
+**Root Cause:**
+1. Armor data is stored in nested struct `FSLFEquipmentInfo.SkeletalMeshInfo`
+2. This is a `TMap<TSoftObjectPtr<UPrimaryDataAsset>, TSoftObjectPtr<USkeletalMesh>>`
+3. Keys are character info assets (DA_Quinn, DA_Manny) to support different meshes per body type
+4. During Blueprint reparenting, nested struct data is cleared
+
+**Solution: Extract and Restore via Python Scripts**
+
+1. **Extract data FROM BACKUP before restore:**
+```bash
+"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
+  "C:/scripts/bp_only/bp_only.uproject" ^
+  -run=pythonscript -script="C:/scripts/SLFConversion/extract_armor_data.py" ^
+  -stdout -unattended -nosplash
+```
+
+2. **Apply data AFTER migration:**
+```bash
+"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
+  "C:/scripts/SLFConversion/SLFConversion.uproject" ^
+  -run=pythonscript -script="C:/scripts/SLFConversion/apply_armor_data.py" ^
+  -stdout -unattended -nosplash
+```
+
+**Cache Location:** `migration_cache/armor_mesh_data.json`
+
+**How AC_EquipmentManager Uses This Data:**
+```cpp
+// Get character info from GameInstance
+UObject* SelectedClass = GetSelectedBaseClassFromGameInstance();
+TSoftObjectPtr<UPrimaryDataAsset> CharacterInfoKey(Cast<UPrimaryDataAsset>(SelectedClass));
+
+// Look up mesh for this character
+const TMap<TSoftObjectPtr<UPrimaryDataAsset>, TSoftObjectPtr<USkeletalMesh>>& MeshMap =
+    ArmorItem->ItemInformation.EquipmentDetails.SkeletalMeshInfo;
+
+if (const TSoftObjectPtr<USkeletalMesh>* MeshPtr = MeshMap.Find(CharacterInfoKey))
+{
+    // Apply mesh via ISLFPlayerInterface (ChangeArmor, ChangeHeadpiece, etc.)
+    PlayerInterface->ChangeArmor(*MeshPtr);
+}
+```
+
+**Armor Items Updated:**
+| Data Asset | Characters | Meshes |
+|------------|------------|--------|
+| DA_ExampleArmor | Quinn, Manny | SKM_Quinn_Armor01, SKM_MannyArmor_01 |
+| DA_ExampleArmor02 | Quinn, Manny | SKM_Quinn_Armor02, SKM_MannyArmor_02 |
+| DA_ExampleHelmet | Quinn, Manny | SKM_QuinnHelm, SKM_MannyHelmet |
+| DA_ExampleHat | Quinn, Manny | SKM_QuinnHat, SKM_MannyHat |
+| DA_ExampleBracers | Quinn, Manny | SKM_Quinn_Gloves, SKM_MannyGloves |
+| DA_ExampleGreaves | Quinn, Manny | SKM_Quinn_Greaves, SKM_MannyGreaves |
 
 ---
 

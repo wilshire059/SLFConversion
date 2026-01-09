@@ -20,6 +20,7 @@
 #include "NiagaraSystem.h"
 #include "LevelSequence.h"
 #include "Engine/DataTable.h"
+#include "Engine/DataAsset.h"
 #include "SLFEnums.h"
 #include "SLFStatTypes.h"
 #include "SLFGameTypes.generated.h"
@@ -695,8 +696,10 @@ struct SLFCONVERSION_API FSLFEquipmentInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Equipment")
 	TMap<FGameplayTag, FSLFEquipmentStat> StatChanges;
 
+	// Maps character base info (DA_Quinn, DA_Manny) to the appropriate skeletal mesh for that character
+	// Blueprint uses this to support different armor meshes per character body type
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Equipment")
-	TMap<FGameplayTag, TSoftObjectPtr<USkeletalMesh>> SkeletalMeshInfo;
+	TMap<TSoftObjectPtr<UPrimaryDataAsset>, TSoftObjectPtr<USkeletalMesh>> SkeletalMeshInfo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Equipment")
 	FSLFEquipmentSocketInfo AttachmentSockets;

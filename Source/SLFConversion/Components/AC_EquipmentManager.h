@@ -138,6 +138,20 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_EquipmentManager")
 	void UnequipArmorAtSlot(const FGameplayTag& SlotTag);
 	virtual void UnequipArmorAtSlot_Implementation(const FGameplayTag& SlotTag);
+
+	/**
+	 * Apply armor skeletal mesh to character body slot
+	 * Uses existing ItemInformation.EquipmentDetails.SkeletalMeshInfo data
+	 * Calls ISLFPlayerInterface mesh-swap functions (ChangeArmor, ChangeHeadpiece, etc.)
+	 */
+	void ApplyArmorMeshToCharacter(UPDA_Item* ArmorItem, const FGameplayTag& SlotTag);
+
+	/**
+	 * Remove armor mesh from character body slot (revert to default)
+	 * Called from UnequipArmorAtSlot
+	 */
+	void RemoveArmorMeshFromCharacter(const FGameplayTag& SlotTag);
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_EquipmentManager")
 	void HideItemAtSlot(const FGameplayTag& SlotTag);
 	virtual void HideItemAtSlot_Implementation(const FGameplayTag& SlotTag);

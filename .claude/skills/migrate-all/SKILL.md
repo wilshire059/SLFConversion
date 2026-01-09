@@ -5,6 +5,19 @@ description: Iterate through BLUEPRINT_MIGRATION_CHECKLIST.md and migrate every 
 
 # Migrate All Blueprints - Iterative Migration Skill
 
+## ⚠️ SURGICAL MIGRATION REQUIRED ⚠️
+
+**NEVER do a full Content/ restore.** Use surgical migration for each Blueprint:
+
+1. Copy ONLY the specific Blueprint from backup
+2. Reparent ONLY that Blueprint
+3. Apply cached data to ONLY that Blueprint
+4. Test the specific feature
+
+See CLAUDE.md "SURGICAL vs BROAD MIGRATION" section for details.
+
+---
+
 ## PURPOSE
 
 Systematically migrate EVERY Blueprint in the project to C++, one by one, following the established 20-pass validation protocol.
@@ -63,39 +76,27 @@ This performs:
 # Must pass with 0 errors
 ```
 
-### Step 4: Run Migration Script (RESILIENT 4-STEP)
+### Step 4: Run SURGICAL Migration (NOT full restore)
 
-The migration preserves Blueprint data. **Cache survives restores.**
+**⚠️ DO NOT restore entire Content folder. Use surgical approach:**
 
 ```bash
-# Step 4a: Extract data FROM BACKUP (one-time, if cache doesn't exist)
-"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
-  "C:/scripts/bp_only/SLFConversion.uproject" ^
-  -run=pythonscript -script="C:/scripts/SLFConversion/extract_item_data.py" ^
-  -stdout -unattended -nosplash 2>&1
+# Step 4a: Copy ONLY the specific Blueprint being migrated from backup
+cp "C:/scripts/bp_only/Content/[path]/[BLUEPRINT].uasset" \
+   "C:/scripts/SLFConversion/Content/[path]/"
 
-# Step 4b: Restore clean backup
-powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Recurse -Force; Copy-Item -Path 'C:\scripts\bp_only\Content\*' -Destination 'C:\scripts\SLFConversion\Content\' -Recurse -Force"
+# Step 4b: Create a targeted migration script for ONLY this Blueprint
+# Example: migrate_[blueprint]_only.py
+# See migrate_armor_only.py for pattern
 
-# Step 4c: Run reparenting migration
-"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
-  "C:/scripts/SLFConversion/SLFConversion.uproject" ^
-  -run=pythonscript -script="C:/scripts/SLFConversion/run_migration.py" ^
-  -stdout -unattended -nosplash 2>&1
-
-# Step 4d: Apply cached data (icons, niagara, montages)
+# Step 4c: Run the targeted migration script
 "C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
   "C:/scripts/SLFConversion/SLFConversion.uproject" ^
-  -run=pythonscript -script="C:/scripts/SLFConversion/apply_icons_fixed.py" ^
-  -stdout -unattended -nosplash 2>&1
-
-"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
-  "C:/scripts/SLFConversion/SLFConversion.uproject" ^
-  -run=pythonscript -script="C:/scripts/SLFConversion/apply_remaining_data.py" ^
+  -run=pythonscript -script="C:/scripts/SLFConversion/migrate_[blueprint]_only.py" ^
   -stdout -unattended -nosplash 2>&1
 ```
 
-**Expected Result:** 0 errors, icons/niagara/montages restored
+**Expected Result:** Only the specific Blueprint is migrated. All other assets remain untouched.
 
 ### Step 5: PIE Test
 

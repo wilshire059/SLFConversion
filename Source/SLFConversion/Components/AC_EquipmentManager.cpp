@@ -11,6 +11,7 @@
 #include "Components/AC_BuffManager.h"
 #include "Components/StatManagerComponent.h"
 #include "Components/AC_InventoryManager.h"
+#include "Interfaces/SLFPlayerInterface.h"
 #include "Blueprints/B_Item.h"
 #include "Widgets/W_InventorySlot.h"
 #include "Net/UnrealNetwork.h"
@@ -196,6 +197,12 @@ void UAC_EquipmentManager::EquipArmorToSlot_Implementation(UPrimaryDataAsset* Ta
 		}
 	}
 
+	// Apply armor mesh to character
+	if (UPDA_Item* ArmorItem = Cast<UPDA_Item>(TargetItem))
+	{
+		ApplyArmorMeshToCharacter(ArmorItem, TargetEquipmentSlot);
+	}
+
 	// Broadcast event with item data
 	FSLFCurrentEquipment EquipData;
 	EquipData.ItemAsset = TargetItem;
@@ -268,6 +275,9 @@ void UAC_EquipmentManager::UnequipArmorAtSlot_Implementation(const FGameplayTag&
 		{
 			ApplyStatChanges(PDAItem->ItemInformation, false);
 		}
+
+		// Remove armor mesh from character (revert to default)
+		RemoveArmorMeshFromCharacter(SlotTag);
 
 		AllEquippedItems.Remove(SlotTag);
 		OnItemUnequippedFromSlot.Broadcast(Item, SlotTag);
@@ -1281,5 +1291,153 @@ void UAC_EquipmentManager::DestroyEquipmentActor(const FGameplayTag& SlotTag)
 			(*ActorPtr)->Destroy();
 		}
 		SpawnedItemsAtSlots.Remove(SlotTag);
+	}
+}
+
+/**
+ * ApplyArmorMeshToCharacter - Apply armor skeletal mesh to character body slot
+ * Uses existing ItemInformation.EquipmentDetails.SkeletalMeshInfo data (character-keyed TMap)
+ */
+void UAC_EquipmentManager::ApplyArmorMeshToCharacter(UPDA_Item* ArmorItem, const FGameplayTag& SlotTag)
+{
+	if (!ArmorItem || !SlotTag.IsValid())
+	{
+		return;
+	}
+
+	AActor* Owner = GetOwner();
+	if (!Owner)
+	{
+		return;
+	}
+
+	// Get the skeletal mesh map from the armor item
+	const TMap<TSoftObjectPtr<UPrimaryDataAsset>, TSoftObjectPtr<USkeletalMesh>>& MeshMap =
+		ArmorItem->ItemInformation.EquipmentDetails.SkeletalMeshInfo;
+
+	if (MeshMap.Num() == 0)
+	{
+		UE_LOG(LogTemp, Log, TEXT("ApplyArmorMeshToCharacter - No mesh entries for %s"), *ArmorItem->GetName());
+		return;
+	}
+
+	// Get the current character's base info from GameInstance to find the right mesh
+	TSoftObjectPtr<USkeletalMesh> ArmorMesh;
+	UGameInstance* GI = Owner->GetGameInstance();
+	if (GI)
+	{
+		// Try to get SelectedBaseClass property from GameInstance
+		FProperty* Prop = GI->GetClass()->FindPropertyByName(TEXT("SelectedBaseClass"));
+		if (Prop && Prop->IsA<FObjectPropertyBase>())
+		{
+			FObjectPropertyBase* ObjProp = CastField<FObjectPropertyBase>(Prop);
+			UObject* SelectedClass = ObjProp->GetObjectPropertyValue_InContainer(GI);
+			if (SelectedClass)
+			{
+				TSoftObjectPtr<UPrimaryDataAsset> CharacterInfoKey(Cast<UPrimaryDataAsset>(SelectedClass));
+				if (const TSoftObjectPtr<USkeletalMesh>* MeshPtr = MeshMap.Find(CharacterInfoKey))
+				{
+					ArmorMesh = *MeshPtr;
+				}
+			}
+		}
+	}
+
+	// Fallback: use first mesh in map if no character-specific mesh found
+	if (ArmorMesh.IsNull() && MeshMap.Num() > 0)
+	{
+		for (const auto& Pair : MeshMap)
+		{
+			if (!Pair.Value.IsNull())
+			{
+				ArmorMesh = Pair.Value;
+				break;
+			}
+		}
+	}
+
+	if (ArmorMesh.IsNull())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ApplyArmorMeshToCharacter - No valid mesh found for %s"), *ArmorItem->GetName());
+		return;
+	}
+
+	// Call ISLFPlayerInterface mesh swap functions based on slot type
+	if (ISLFPlayerInterface* PlayerInterface = Cast<ISLFPlayerInterface>(Owner))
+	{
+		static const FGameplayTag HeadSlot = FGameplayTag::RequestGameplayTag(FName("Equipment.Slot.Head"));
+		static const FGameplayTag ChestSlot = FGameplayTag::RequestGameplayTag(FName("Equipment.Slot.Chest"));
+		static const FGameplayTag ArmsSlot = FGameplayTag::RequestGameplayTag(FName("Equipment.Slot.Arms"));
+		static const FGameplayTag LegsSlot = FGameplayTag::RequestGameplayTag(FName("Equipment.Slot.Legs"));
+
+		if (SlotTag.MatchesTag(HeadSlot))
+		{
+			PlayerInterface->ChangeHeadpiece(ArmorMesh);
+			UE_LOG(LogTemp, Log, TEXT("ApplyArmorMeshToCharacter - Applied headpiece mesh"));
+		}
+		else if (SlotTag.MatchesTag(ChestSlot))
+		{
+			PlayerInterface->ChangeArmor(ArmorMesh);
+			UE_LOG(LogTemp, Log, TEXT("ApplyArmorMeshToCharacter - Applied chest armor mesh"));
+		}
+		else if (SlotTag.MatchesTag(ArmsSlot))
+		{
+			PlayerInterface->ChangeGloves(ArmorMesh);
+			UE_LOG(LogTemp, Log, TEXT("ApplyArmorMeshToCharacter - Applied gloves mesh"));
+		}
+		else if (SlotTag.MatchesTag(LegsSlot))
+		{
+			PlayerInterface->ChangeGreaves(ArmorMesh);
+			UE_LOG(LogTemp, Log, TEXT("ApplyArmorMeshToCharacter - Applied greaves mesh"));
+		}
+	}
+}
+
+/**
+ * RemoveArmorMeshFromCharacter - Remove armor mesh from character body slot (revert to default)
+ */
+void UAC_EquipmentManager::RemoveArmorMeshFromCharacter(const FGameplayTag& SlotTag)
+{
+	if (!SlotTag.IsValid())
+	{
+		return;
+	}
+
+	AActor* Owner = GetOwner();
+	if (!Owner)
+	{
+		return;
+	}
+
+	// Call ISLFPlayerInterface mesh swap functions with null/default mesh
+	if (ISLFPlayerInterface* PlayerInterface = Cast<ISLFPlayerInterface>(Owner))
+	{
+		static const FGameplayTag HeadSlot = FGameplayTag::RequestGameplayTag(FName("Equipment.Slot.Head"));
+		static const FGameplayTag ChestSlot = FGameplayTag::RequestGameplayTag(FName("Equipment.Slot.Chest"));
+		static const FGameplayTag ArmsSlot = FGameplayTag::RequestGameplayTag(FName("Equipment.Slot.Arms"));
+		static const FGameplayTag LegsSlot = FGameplayTag::RequestGameplayTag(FName("Equipment.Slot.Legs"));
+
+		TSoftObjectPtr<USkeletalMesh> NullMesh;  // Empty/null mesh to revert
+
+		if (SlotTag.MatchesTag(HeadSlot))
+		{
+			PlayerInterface->ChangeHeadpiece(NullMesh);
+			UE_LOG(LogTemp, Log, TEXT("RemoveArmorMeshFromCharacter - Removed headpiece mesh"));
+		}
+		else if (SlotTag.MatchesTag(ChestSlot))
+		{
+			PlayerInterface->ChangeArmor(NullMesh);
+			UE_LOG(LogTemp, Log, TEXT("RemoveArmorMeshFromCharacter - Removed chest armor mesh"));
+		}
+		else if (SlotTag.MatchesTag(ArmsSlot))
+		{
+			PlayerInterface->ChangeGloves(NullMesh);
+			UE_LOG(LogTemp, Log, TEXT("RemoveArmorMeshFromCharacter - Removed gloves mesh"));
+		}
+		else if (SlotTag.MatchesTag(LegsSlot))
+		{
+			PlayerInterface->ChangeGreaves(NullMesh);
+			UE_LOG(LogTemp, Log, TEXT("RemoveArmorMeshFromCharacter - Removed greaves mesh"));
+		}
 	}
 }

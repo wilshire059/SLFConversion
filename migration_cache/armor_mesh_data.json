@@ -1,0 +1,101 @@
+{
+  "DA_ExampleArmor": {
+    "path": "/Game/SoulslikeFramework/Data/Items/DA_ExampleArmor",
+    "skeletal_mesh_info": {
+      "DA_Quinn": "/Game/SoulslikeFramework/Meshes/SKM/Armor/Quinn/SKM_Quinn_Armor01.SKM_Quinn_Armor01",
+      "DA_Manny": "/Game/SoulslikeFramework/Meshes/SKM/Armor/Manny/SKM_MannyArmor_01.SKM_MannyArmor_01"
+    },
+    "stat_changes": {
+      "SoulslikeFramework.Stat.Misc.Weight": 10.0,
+      "SoulslikeFramework.Stat.Defense.Negation.Fire": 1.0,
+      "SoulslikeFramework.Stat.Defense.Negation.Frost": 1.0,
+      "SoulslikeFramework.Stat.Defense.Negation.Physical": 5.0
+    },
+    "equip_slots": [
+      "SoulslikeFramework.Equipment.SlotType.Armor"
+    ]
+  },
+  "DA_ExampleArmor02": {
+    "path": "/Game/SoulslikeFramework/Data/Items/DA_ExampleArmor02",
+    "skeletal_mesh_info": {
+      "DA_Quinn": "/Game/SoulslikeFramework/Meshes/SKM/Armor/Quinn/SKM_Quinn_Armor02.SKM_Quinn_Armor02",
+      "DA_Manny": "/Game/SoulslikeFramework/Meshes/SKM/Armor/Manny/SKM_MannyArmor_02.SKM_MannyArmor_02"
+    },
+    "stat_changes": {
+      "SoulslikeFramework.Stat.Misc.Weight": 8.0,
+      "SoulslikeFramework.Stat.Defense.Negation.Holy": 5.0,
+      "SoulslikeFramework.Stat.Defense.Negation.Lightning": 5.0,
+      "SoulslikeFramework.Stat.Defense.Negation.Physical": 13.0
+    },
+    "equip_slots": [
+      "SoulslikeFramework.Equipment.SlotType.Armor"
+    ]
+  },
+  "DA_ExampleHelmet": {
+    "path": "/Game/SoulslikeFramework/Data/Items/DA_ExampleHelmet",
+    "skeletal_mesh_info": {
+      "DA_Quinn": "/Game/SoulslikeFramework/Meshes/SKM/Armor/Quinn/SKM_QuinnHelm.SKM_QuinnHelm",
+      "DA_Manny": "/Game/SoulslikeFramework/Meshes/SKM/Armor/Manny/SKM_MannyHelmet.SKM_MannyHelmet"
+    },
+    "stat_changes": {
+      "SoulslikeFramework.Stat.Misc.Weight": 7.0,
+      "SoulslikeFramework.Stat.Defense.Negation.Holy": 11.0,
+      "SoulslikeFramework.Stat.Defense.Negation.Lightning": 3.0
+    },
+    "equip_slots": [
+      "SoulslikeFramework.Equipment.SlotType.Head"
+    ]
+  },
+  "DA_ExampleHat": {
+    "path": "/Game/SoulslikeFramework/Data/Items/DA_ExampleHat",
+    "skeletal_mesh_info": {
+      "DA_Quinn": "/Game/SoulslikeFramework/Meshes/SKM/Armor/Quinn/SKM_QuinnHat.SKM_QuinnHat",
+      "DA_Manny": "/Game/SoulslikeFramework/Meshes/SKM/Armor/Manny/SKM_MannyHat.SKM_MannyHat"
+    },
+    "stat_changes": {
+      "SoulslikeFramework.Stat.Primary.Dexterity": 5.0
+    },
+    "equip_slots": [
+      "SoulslikeFramework.Equipment.SlotType.Head"
+    ]
+  },
+  "DA_ExampleBracers": {
+    "path": "/Game/SoulslikeFramework/Data/Items/DA_ExampleBracers",
+    "skeletal_mesh_info": {
+      "DA_Quinn": "/Game/SoulslikeFramework/Meshes/SKM/Armor/Quinn/SKM_Quinn_Gloves.SKM_Quinn_Gloves",
+      "DA_Manny": "/Game/SoulslikeFramework/Meshes/SKM/Armor/Manny/SKM_MannyGloves.SKM_MannyGloves"
+    },
+    "stat_changes": {
+      "SoulslikeFramework.Stat.Misc.Weight": 5.0,
+      "SoulslikeFramework.Stat.Defense.Negation.Holy": 3.0,
+      "SoulslikeFramework.Stat.Defense.Negation.Lightning": 3.0
+    },
+    "equip_slots": [
+      "SoulslikeFramework.Equipment.SlotType.Gloves"
+    ]
+  },
+  "DA_ExampleGreaves": {
+    "path": "/Game/SoulslikeFramework/Data/Items/DA_ExampleGreaves",
+    "skeletal_mesh_info": {
+      "DA_Quinn": "/Game/SoulslikeFramework/Meshes/SKM/Armor/Quinn/SKM_Quinn_Greaves.SKM_Quinn_Greaves",
+      "DA_Manny": "/Game/SoulslikeFramework/Meshes/SKM/Armor/Manny/SKM_MannyGreaves.SKM_MannyGreaves"
+    },
+    "stat_changes": {
+      "SoulslikeFramework.Stat.Misc.Weight": 3.0,
+      "SoulslikeFramework.Stat.Defense.Negation.Magic": 3.0,
+      "SoulslikeFramework.Stat.Defense.Negation.Physical": 5.0,
+      "SoulslikeFramework.Stat.Defense.Negation.Lightning": 2.0
+    },
+    "equip_slots": [
+      "SoulslikeFramework.Equipment.SlotType.Greaves"
+    ]
+  },
+  "DA_ExampleTalisman": {
+    "path": "/Game/SoulslikeFramework/Data/Items/DA_ExampleTalisman",
+    "skeletal_mesh_info": {},
+    "stat_changes": {},
+    "equip_slots": [
+      "SoulslikeFramework.Equipment.SlotType.Trinket 1"
+    ]
+  }
+}

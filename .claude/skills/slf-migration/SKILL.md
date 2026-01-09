@@ -205,34 +205,31 @@ Extract BEFORE restoring, while backup has valid data:
   -stdout -unattended -nosplash 2>&1
 ```
 
-### Step 2: Restore Backup
+### Step 2: SURGICAL Restore (NOT full backup)
+
+**⚠️ DO NOT restore entire Content folder. Copy only the specific assets being migrated:**
 
 ```bash
-powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Recurse -Force; Copy-Item -Path 'C:\scripts\bp_only\Content\*' -Destination 'C:\scripts\SLFConversion\Content\' -Recurse -Force"
+# Copy ONLY the specific Blueprint(s) being migrated
+cp "C:/scripts/bp_only/Content/[path]/[BLUEPRINT].uasset" \
+   "C:/scripts/SLFConversion/Content/[path]/"
 ```
 
-### Step 3: Run Reparenting Migration
+### Step 3: Run TARGETED Reparenting Migration
+
+**Create a targeted migration script for only the assets being migrated:**
 
 ```bash
-"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
-  "C:/scripts/SLFConversion/SLFConversion.uproject" ^
-  -run=pythonscript -script="C:/scripts/SLFConversion/run_migration.py" ^
-  -stdout -unattended -nosplash 2>&1
-```
-
-### Step 4: Apply Cached Data
-
-```bash
-"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
-  "C:/scripts/SLFConversion/SLFConversion.uproject" ^
-  -run=pythonscript -script="C:/scripts/SLFConversion/apply_icons_fixed.py" ^
-  -stdout -unattended -nosplash 2>&1
+# Example: migrate_[category]_only.py
+# See migrate_armor_only.py for pattern
 
 "C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
   "C:/scripts/SLFConversion/SLFConversion.uproject" ^
-  -run=pythonscript -script="C:/scripts/SLFConversion/apply_remaining_data.py" ^
+  -run=pythonscript -script="C:/scripts/SLFConversion/migrate_[category]_only.py" ^
   -stdout -unattended -nosplash 2>&1
 ```
+
+**Result:** Only the specified assets are reparented. All other assets remain untouched.
 
 ### Build C++ First (if needed)
 
