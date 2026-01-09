@@ -249,6 +249,77 @@ If migration crashes with "Cast of nullptr to Function failed":
 
 See: `.claude/skills/cpp-property-migration.md` for complete workflow.
 
+### 5. Blueprint CDO Overrides C++ Constructor Defaults (CRITICAL)
+After reparenting a Blueprint to a C++ class, the Blueprint's **serialized CDO values override C++ constructor defaults**.
+
+**Symptom:** Stats show 0/0 values, empty display names, or invalid tags even though C++ constructor sets them.
+
+**Root Cause:** Blueprint CDOs have serialized struct data (e.g., `FStatInfo`) that was empty/default before reparenting. This serialized data takes precedence over C++ constructor initialization.
+
+**Solution:** When creating objects from Blueprint classes, check if values are default/empty and copy from C++ parent CDO:
+```cpp
+USLFStatBase* NewStat = NewObject<USLFStatBase>(this, BlueprintClass);
+
+// Check if Blueprint CDO has empty/default values
+bool bNeedsParentDefaults = !NewStat->StatInfo.Tag.IsValid() ||
+    (NewStat->StatInfo.CurrentValue == 0.0 && NewStat->StatInfo.MaxValue == 0.0);
+
+if (bNeedsParentDefaults)
+{
+    // Walk up to find native C++ parent
+    UClass* ParentClass = BlueprintClass->GetSuperClass();
+    while (ParentClass)
+    {
+        if (!ParentClass->HasAnyClassFlags(CLASS_CompiledFromBlueprint))
+        {
+            USLFStatBase* ParentCDO = Cast<USLFStatBase>(ParentClass->GetDefaultObject());
+            if (ParentCDO && ParentCDO->StatInfo.Tag.IsValid())
+            {
+                // Copy FULL struct from C++ parent
+                NewStat->StatInfo = ParentCDO->StatInfo;
+                break;
+            }
+        }
+        ParentClass = ParentClass->GetSuperClass();
+    }
+}
+```
+
+### 6. Multiple Class Hierarchies (UB_Stat vs USLFStatBase)
+This project has **two separate stat class hierarchies**:
+- `UB_Stat` (older, in `Blueprints/B_Stat.h`)
+- `USLFStatBase` (newer, in `Blueprints/SLFStatBase.h`)
+
+Both inherit from `UObject` and are **NOT related**. Blueprints are parented to `USLFStatBase` hierarchy.
+
+**Critical:** Widget code must use the **correct hierarchy**. If widgets cast to `UB_Stat*` but objects are `USLFStatBase*`, the cast returns nullptr.
+
+**Solution:** Check which class hierarchy the StatManager creates, then update all widget code to match:
+```cpp
+// WRONG - widgets using old hierarchy
+UB_Stat* Stat = Cast<UB_Stat>(StatObj);  // Returns nullptr!
+
+// RIGHT - widgets using correct hierarchy
+USLFStatBase* Stat = Cast<USLFStatBase>(StatObj);  // Works!
+```
+
+### 7. Widget Name Mismatches
+Widget names in C++ must **exactly match** Blueprint UMG designer names.
+
+**Symptom:** `GetWidgetFromName()` returns nullptr, widgets don't populate.
+
+**Solution:** Check Blueprint JSON export for exact widget names:
+```cpp
+// WRONG - guessed name
+StatsBox = Cast<UVerticalBox>(GetWidgetFromName(TEXT("StatsBox")));
+
+// RIGHT - exact name from Blueprint
+StatsBox = Cast<UVerticalBox>(GetWidgetFromName(TEXT("StatBox")));
+```
+
+Find correct names in: `Exports/BlueprintDNA_v2/WidgetBlueprint/*.json`
+Search for: `"Class": "VerticalBox"` or similar, check `"Name":` field.
+
 ---
 
 ## C++ PROPERTY MIGRATION (CRITICAL PATTERN)
