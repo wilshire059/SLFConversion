@@ -466,18 +466,113 @@ TArray<FSLFInventoryItem> UInventoryManagerComponent::GetItemsForCategory_Implem
 
 TArray<FSLFInventoryItem> UInventoryManagerComponent::GetItemsForEquipmentSlot_Implementation(FGameplayTag SlotTag)
 {
+	UE_LOG(LogTemp, Log, TEXT("[InventoryManager] GetItemsForEquipmentSlot - Looking for slot: %s, Items in inventory: %d"),
+		*SlotTag.ToString(), Items.Num());
+
+	// Parse slot type from tag (e.g., "Right Hand Weapon 1" from full tag path)
+	FString SlotTagStr = SlotTag.ToString();
+	bool bIsRightHand = SlotTagStr.Contains(TEXT("Right Hand"));
+	bool bIsLeftHand = SlotTagStr.Contains(TEXT("Left Hand"));
+	bool bIsHead = SlotTagStr.Contains(TEXT("Head"));
+	bool bIsArmor = SlotTagStr.Contains(TEXT("Armor"));
+	bool bIsGloves = SlotTagStr.Contains(TEXT("Gloves"));
+	bool bIsGreaves = SlotTagStr.Contains(TEXT("Greaves"));
+	bool bIsTrinket = SlotTagStr.Contains(TEXT("Trinket"));
+	bool bIsArrow = SlotTagStr.Contains(TEXT("Arrow"));
+	bool bIsBullet = SlotTagStr.Contains(TEXT("Bullet"));
+
 	TArray<FSLFInventoryItem> Result;
 	for (const auto& Pair : Items)
 	{
 		if (UPDA_Item* ItemData = Cast<UPDA_Item>(Pair.Value.ItemAsset))
 		{
-			// Check if item's EquipSlots contains the requested slot
-			if (ItemData->ItemInformation.EquipmentDetails.EquipSlots.HasTag(SlotTag))
+			bool bMatches = false;
+
+			// First check explicit EquipSlots tags
+			if (ItemData->ItemInformation.EquipmentDetails.EquipSlots.Num() > 0)
+			{
+				bMatches = ItemData->ItemInformation.EquipmentDetails.EquipSlots.HasTag(SlotTag);
+			}
+			else
+			{
+				// Fallback: Match by Category/SubCategory since EquipSlots are empty
+				ESLFItemCategory Category = ItemData->ItemInformation.Category.Category;
+				ESLFItemSubCategory SubCategory = ItemData->ItemInformation.Category.SubCategory;
+
+				UE_LOG(LogTemp, Log, TEXT("[InventoryManager]   Checking %s: Category=%d, SubCat=%d"),
+					*ItemData->GetName(),
+					static_cast<int32>(Category),
+					static_cast<int32>(SubCategory));
+
+				// Right Hand slots: Weapons, Swords, Katanas, Axes, Maces, Staffs
+				if (bIsRightHand)
+				{
+					bMatches = (Category == ESLFItemCategory::Weapons) ||
+					           (Category == ESLFItemCategory::Abilities) ||  // Abilities category used for weapons in test data
+					           (SubCategory == ESLFItemSubCategory::Sword) ||
+					           (SubCategory == ESLFItemSubCategory::Katana) ||
+					           (SubCategory == ESLFItemSubCategory::Axe) ||
+					           (SubCategory == ESLFItemSubCategory::Mace) ||
+					           (SubCategory == ESLFItemSubCategory::Staff);
+				}
+				// Left Hand slots: Shields
+				else if (bIsLeftHand)
+				{
+					bMatches = (Category == ESLFItemCategory::Shields);
+				}
+				// Head slot: Head subcategory OR Armor category with Head subcategory
+				else if (bIsHead)
+				{
+					bMatches = (SubCategory == ESLFItemSubCategory::Head) ||
+					           (Category == ESLFItemCategory::Armor && SubCategory == ESLFItemSubCategory::Head);
+				}
+				// Armor/Chest slot: Chest subcategory OR Armor category
+				else if (bIsArmor)
+				{
+					bMatches = (SubCategory == ESLFItemSubCategory::Chest) ||
+					           (Category == ESLFItemCategory::Armor && SubCategory == ESLFItemSubCategory::Chest);
+				}
+				// Gloves/Arms slot
+				else if (bIsGloves)
+				{
+					bMatches = (SubCategory == ESLFItemSubCategory::Arms) ||
+					           (Category == ESLFItemCategory::Armor && SubCategory == ESLFItemSubCategory::Arms);
+				}
+				// Greaves/Legs slot
+				else if (bIsGreaves)
+				{
+					bMatches = (SubCategory == ESLFItemSubCategory::Legs) ||
+					           (Category == ESLFItemCategory::Armor && SubCategory == ESLFItemSubCategory::Legs);
+				}
+				// Trinket slots: Talismans
+				else if (bIsTrinket)
+				{
+					bMatches = (SubCategory == ESLFItemSubCategory::Talismans);
+				}
+				// Arrow slot: Projectiles
+				else if (bIsArrow)
+				{
+					bMatches = (SubCategory == ESLFItemSubCategory::Projectiles);
+				}
+				// Bullet slot: Projectiles (same as arrows - both are ammo types)
+				else if (bIsBullet)
+				{
+					bMatches = (SubCategory == ESLFItemSubCategory::Projectiles);
+				}
+			}
+
+			if (bMatches)
 			{
 				Result.Add(Pair.Value);
+				UE_LOG(LogTemp, Log, TEXT("[InventoryManager]   MATCH: %s (Category=%d, SubCat=%d)"),
+					*ItemData->GetName(),
+					static_cast<int32>(ItemData->ItemInformation.Category.Category),
+					static_cast<int32>(ItemData->ItemInformation.Category.SubCategory));
 			}
 		}
 	}
+
+	UE_LOG(LogTemp, Log, TEXT("[InventoryManager] GetItemsForEquipmentSlot - Found %d matching items"), Result.Num());
 	return Result;
 }
 

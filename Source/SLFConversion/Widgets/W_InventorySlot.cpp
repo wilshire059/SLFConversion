@@ -53,7 +53,7 @@ void UW_InventorySlot::CacheWidgetReferences()
 	CachedSlotButton = Cast<UButton>(GetWidgetFromName(TEXT("SlotButton")));
 	CachedItemIcon = Cast<UImage>(GetWidgetFromName(TEXT("ItemIcon")));
 	CachedItemAmount = Cast<UTextBlock>(GetWidgetFromName(TEXT("ItemAmount")));
-	CachedSlotBorder = Cast<UBorder>(GetWidgetFromName(TEXT("SlotBorder")));
+	CachedSlotBorder = Cast<UBorder>(GetWidgetFromName(TEXT("HightlightBorder")));
 }
 
 void UW_InventorySlot::BindButtonEvents()
@@ -277,26 +277,17 @@ void UW_InventorySlot::EventOccupySlot_Implementation(UPDA_Item* AssignedItemAss
  * EventOnSelected - Handle slot selection state change
  *
  * Blueprint Logic:
- * 1. Update visual state (border color, highlight)
+ * 1. Toggle highlight border visibility
  * 2. Broadcast OnSelected event
  */
 void UW_InventorySlot::EventOnSelected_Implementation(bool Selected)
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_InventorySlot::EventOnSelected - Selected: %s"), Selected ? TEXT("true") : TEXT("false"));
 
-	// Update border/background color based on selection
-	if (UBorder* SlotBorder = Cast<UBorder>(GetWidgetFromName(TEXT("SlotBorder"))))
+	// Toggle highlight border visibility (Blueprint pattern)
+	if (UBorder* HighlightBorder = Cast<UBorder>(GetWidgetFromName(TEXT("HightlightBorder"))))
 	{
-		if (Selected)
-		{
-			// Use a highlight color when selected
-			SlotBorder->SetBrushColor(FLinearColor(1.0f, 0.8f, 0.2f, 1.0f)); // Gold highlight
-		}
-		else
-		{
-			// Return to normal color
-			SlotBorder->SetBrushColor(SlotColor);
-		}
+		HighlightBorder->SetVisibility(Selected ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 	}
 
 	// Broadcast event
@@ -309,19 +300,10 @@ void UW_InventorySlot::EventOnSelected_Implementation(bool Selected)
  */
 void UW_InventorySlot::SetSlotSelected(bool bSelected)
 {
-	// Update border/background color based on selection - same as EventOnSelected but NO broadcast
-	if (UBorder* SlotBorder = Cast<UBorder>(GetWidgetFromName(TEXT("SlotBorder"))))
+	// Toggle highlight border visibility - same as EventOnSelected but NO broadcast
+	if (UBorder* HighlightBorder = Cast<UBorder>(GetWidgetFromName(TEXT("HightlightBorder"))))
 	{
-		if (bSelected)
-		{
-			// Use a highlight color when selected
-			SlotBorder->SetBrushColor(FLinearColor(1.0f, 0.8f, 0.2f, 1.0f)); // Gold highlight
-		}
-		else
-		{
-			// Return to normal color
-			SlotBorder->SetBrushColor(SlotColor);
-		}
+		HighlightBorder->SetVisibility(bSelected ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 	}
 	// NOTE: No broadcast here - that's the key difference from EventOnSelected
 }
@@ -333,19 +315,10 @@ void UW_InventorySlot::EventSetHighlighted_Implementation(bool Highlighted)
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_InventorySlot::EventSetHighlighted - Highlighted: %s"), Highlighted ? TEXT("true") : TEXT("false"));
 
-	// Update visual highlight state
-	if (UBorder* SlotBorder = Cast<UBorder>(GetWidgetFromName(TEXT("SlotBorder"))))
+	// Toggle highlight border visibility for hover
+	if (UBorder* HighlightBorder = Cast<UBorder>(GetWidgetFromName(TEXT("HightlightBorder"))))
 	{
-		if (Highlighted)
-		{
-			// Subtle highlight on hover
-			SlotBorder->SetBrushColor(FLinearColor(0.8f, 0.8f, 0.8f, 1.0f));
-		}
-		else
-		{
-			// Return to slot color
-			SlotBorder->SetBrushColor(SlotColor);
-		}
+		HighlightBorder->SetVisibility(Highlighted ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 	}
 }
 

@@ -71,13 +71,21 @@ public:
 	UScrollBox* ItemScrollBox;
 
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
-	UUniformGridPanel* ItemGrid;
+	UUniformGridPanel* UniformEquipmentItemsGrid;
+
+	/** Grid panel for equipment slots - slots are created dynamically from SlotTable */
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UUniformGridPanel* EquipmentSlotsUniformGrid;
 
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
 	UWidgetSwitcher* ItemInfoBoxSwitcher;
 
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
 	UTextBlock* SlotNameText;
+
+	/** Main equipment switcher - index 0 = equipment slots view, index 1 = item selection view */
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UWidgetSwitcher* EquipmentSwitcher;
 
 	/** Error display border container */
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
@@ -124,6 +132,10 @@ public:
 	// Slot class for creating inventory slots dynamically
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
 	TSubclassOf<UW_InventorySlot> InventorySlotClass;
+
+	// Slot class for creating equipment slots dynamically from SlotTable
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
+	TSubclassOf<UW_EquipmentSlot> EquipmentSlotClass;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (1)
@@ -243,6 +255,9 @@ protected:
 
 	// Bind equipment slot events
 	void BindEquipmentSlotEvents();
+
+	/** Sync equipment slot visuals with EquipmentManager actual state */
+	void SyncEquipmentSlotsFromManager();
 
 	// Delegate handlers (match delegate signatures, then call refresh functions)
 	UFUNCTION()

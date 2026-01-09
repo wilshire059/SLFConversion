@@ -25,7 +25,7 @@ void UW_EquipmentSlot::NativeConstruct()
 	// Cache widget references
 	CacheWidgetReferences();
 
-	// Set initial background icon if configured
+	// Set initial background icon if configured, otherwise hide to avoid white square
 	if (UImage* BackgroundImage = Cast<UImage>(GetWidgetFromName(TEXT("BackgroundImage"))))
 	{
 		if (!BackgroundIcon.IsNull())
@@ -34,7 +34,18 @@ void UW_EquipmentSlot::NativeConstruct()
 			if (BgTexture)
 			{
 				BackgroundImage->SetBrushFromTexture(BgTexture);
+				BackgroundImage->SetVisibility(ESlateVisibility::Visible);
 			}
+			else
+			{
+				// No valid texture loaded - hide to prevent white square
+				BackgroundImage->SetVisibility(ESlateVisibility::Collapsed);
+			}
+		}
+		else
+		{
+			// No background icon set - hide to prevent white square
+			BackgroundImage->SetVisibility(ESlateVisibility::Collapsed);
 		}
 	}
 
@@ -75,7 +86,7 @@ void UW_EquipmentSlot::EventClearEquipmentSlot_Implementation()
 		ItemIcon->SetVisibility(ESlateVisibility::Collapsed);
 	}
 
-	// Show background icon (empty slot indicator)
+	// Show background icon (empty slot indicator) only if we have a valid texture
 	if (UImage* BackgroundImage = Cast<UImage>(GetWidgetFromName(TEXT("BackgroundImage"))))
 	{
 		if (!BackgroundIcon.IsNull())
@@ -84,15 +95,24 @@ void UW_EquipmentSlot::EventClearEquipmentSlot_Implementation()
 			if (BgTexture)
 			{
 				BackgroundImage->SetBrushFromTexture(BgTexture);
+				BackgroundImage->SetVisibility(ESlateVisibility::Visible);
+			}
+			else
+			{
+				BackgroundImage->SetVisibility(ESlateVisibility::Collapsed);
 			}
 		}
-		BackgroundImage->SetVisibility(ESlateVisibility::Visible);
+		else
+		{
+			// No background texture - hide to prevent white square
+			BackgroundImage->SetVisibility(ESlateVisibility::Collapsed);
+		}
 	}
 
-	// Reset border color
-	if (UBorder* SlotBorder = Cast<UBorder>(GetWidgetFromName(TEXT("SlotBorder"))))
+	// Hide highlight border
+	if (UBorder* HighlightBorder = Cast<UBorder>(GetWidgetFromName(TEXT("HightlightBorder"))))
 	{
-		SlotBorder->SetBrushColor(FLinearColor::White);
+		HighlightBorder->SetVisibility(ESlateVisibility::Collapsed);
 	}
 }
 
@@ -161,26 +181,17 @@ void UW_EquipmentSlot::EventOccupyEquipmentSlot_Implementation(UPDA_Item* InAssi
  * EventOnSelected - Handle equipment slot selection state change
  *
  * Blueprint Logic:
- * 1. Update visual state (border color, highlight)
+ * 1. Toggle highlight border visibility
  * 2. Broadcast OnSelected event
  */
 void UW_EquipmentSlot::EventOnSelected_Implementation(bool Selected)
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_EquipmentSlot::EventOnSelected - Selected: %s"), Selected ? TEXT("true") : TEXT("false"));
 
-	// Update border/background color based on selection
-	if (UBorder* SlotBorder = Cast<UBorder>(GetWidgetFromName(TEXT("SlotBorder"))))
+	// Toggle highlight border visibility (Blueprint pattern - note typo in widget name)
+	if (UBorder* HighlightBorder = Cast<UBorder>(GetWidgetFromName(TEXT("HightlightBorder"))))
 	{
-		if (Selected)
-		{
-			// Use a highlight color when selected (gold)
-			SlotBorder->SetBrushColor(FLinearColor(1.0f, 0.8f, 0.2f, 1.0f));
-		}
-		else
-		{
-			// Return to normal color
-			SlotBorder->SetBrushColor(FLinearColor::White);
-		}
+		HighlightBorder->SetVisibility(Selected ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 	}
 
 	// Broadcast event
@@ -191,25 +202,16 @@ void UW_EquipmentSlot::EventOnSelected_Implementation(bool Selected)
  * EventSetHighlighted - Set highlighted state (hover effect)
  *
  * Blueprint Logic:
- * 1. Update visual state to show hover
+ * 1. Toggle highlight border visibility for hover
  * 2. Does not broadcast (visual feedback only)
  */
 void UW_EquipmentSlot::EventSetHighlighted_Implementation(bool Highlighted)
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_EquipmentSlot::EventSetHighlighted - Highlighted: %s"), Highlighted ? TEXT("true") : TEXT("false"));
 
-	// Update visual highlight state
-	if (UBorder* SlotBorder = Cast<UBorder>(GetWidgetFromName(TEXT("SlotBorder"))))
+	// Toggle highlight border visibility for hover
+	if (UBorder* HighlightBorder = Cast<UBorder>(GetWidgetFromName(TEXT("HightlightBorder"))))
 	{
-		if (Highlighted)
-		{
-			// Subtle highlight on hover (light gray)
-			SlotBorder->SetBrushColor(FLinearColor(0.8f, 0.8f, 0.8f, 1.0f));
-		}
-		else
-		{
-			// Return to normal white
-			SlotBorder->SetBrushColor(FLinearColor::White);
-		}
+		HighlightBorder->SetVisibility(Highlighted ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 	}
 }

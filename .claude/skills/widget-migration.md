@@ -223,6 +223,153 @@ To understand original Blueprint logic:
 
 This tells us: Call `SetBrushColor` on `ButtonBorder` with result from `Select Color` node.
 
+## Equipment Widget Case Study (W_Equipment)
+
+### Problem: Multiple Interconnected Issues
+
+The W_Equipment widget had several subtle bugs that required systematic debugging:
+
+1. **Item selection panel not appearing** - WidgetSwitcher not being toggled
+2. **Can't cycle through items** - Navigation only handled equipment slots, not item list
+3. **Icons not showing immediately** - Delegate handler was invalidating pointers
+4. **No visual highlighting** - Wrong widget name AND wrong update method
+
+### Lesson 1: WidgetSwitcher View Management
+
+Equipment screens use `UWidgetSwitcher` to toggle between views:
+- Index 0: Equipment slots grid
+- Index 1: Item selection list
+
+**Must manage transitions:**
+```cpp
+// When selecting an equipment slot, show items
+EquipmentSwitcher->SetActiveWidgetIndex(1);
+
+// After equipping, return to slots view
+EquipmentSwitcher->SetActiveWidgetIndex(0);
+
+// On re-entry, reset to initial view
+void EventOnVisibilityChanged_Implementation(ESlateVisibility InVisibility)
+{
+    if (InVisibility == ESlateVisibility::Visible)
+    {
+        EquipmentSwitcher->SetActiveWidgetIndex(0);  // Reset!
+    }
+}
+```
+
+### Lesson 2: Multi-View Navigation
+
+Navigation functions must check which view is active:
+```cpp
+void EventNavigateDown_Implementation()
+{
+    // In item selection view?
+    if (EquipmentInventorySlots.Num() > 0)
+    {
+        // Navigate items
+        ItemNavigationIndex++;
+        ActiveItemSlot = EquipmentInventorySlots[ItemNavigationIndex];
+        ActiveItemSlot->EventOnSelected(true);
+    }
+    else
+    {
+        // Navigate equipment slots
+        EquipmentSlotNavigationIndex++;
+        SelectedSlot = EquipmentSlots[EquipmentSlotNavigationIndex];
+    }
+}
+```
+
+### Lesson 3: Delegate Handler Pointer Invalidation
+
+**Critical Bug Pattern:**
+```cpp
+// WRONG - destroys all slots mid-operation!
+void HandleItemEquippedToSlot(FSLFCurrentEquipment ItemData, FGameplayTag TargetSlot)
+{
+    PopulateEquipmentSlots();  // Destroys ActiveEquipmentSlot!
+    BindEquipmentSlotEvents();
+}
+// Later: ActiveEquipmentSlot->EventOccupySlot() crashes!
+
+// RIGHT - update only affected slot
+void HandleItemEquippedToSlot(FSLFCurrentEquipment ItemData, FGameplayTag TargetSlot)
+{
+    UW_EquipmentSlot* Slot = GetEquipmentSlotByTag(TargetSlot);
+    if (Slot && ItemData.ItemAsset)
+    {
+        Slot->EventOccupyEquipmentSlot(Cast<UPDA_Item>(ItemData.ItemAsset));
+    }
+}
+```
+
+### Lesson 4: Visibility vs Brush Color for Highlighting
+
+Blueprint widgets often use **visibility toggling** for highlights, not color changes.
+
+**Wrong (widget exists but highlight invisible):**
+```cpp
+SlotBorder->SetBrushColor(FLinearColor::Gold);
+```
+
+**Right (matches Blueprint pattern):**
+```cpp
+HighlightBorder->SetVisibility(Selected ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+```
+
+**How to check:** Search Blueprint JSON for the pattern:
+```bash
+grep -i "Set Visibility\|Set Brush Color" W_InventorySlot.json
+```
+
+### Lesson 5: Blueprint Widget Name Typos
+
+Widget names may contain typos that C++ must match exactly!
+
+**Example:** `HightlightBorder` (missing 'i') instead of `HighlightBorder`
+
+**Always verify from Blueprint JSON:**
+```bash
+grep -i "border" Exports/BlueprintDNA_v2/WidgetBlueprint/W_EquipmentSlot.json
+# Output: "HightlightBorder" - note the typo!
+```
+
+### Lesson 6: Item-to-Slot Matching via SubCategory
+
+Equipment slots match items by **Category AND SubCategory**:
+
+```cpp
+// Head slot matches Armor category + Head subcategory
+else if (bIsHead)
+{
+    bMatches = (Category == ESLFItemCategory::Armor &&
+                SubCategory == ESLFItemSubCategory::Head);
+}
+```
+
+**If items aren't matching:** Check SubCategory values with logging:
+```cpp
+UE_LOG(LogTemp, Log, TEXT("Item %s: Category=%d, SubCat=%d"),
+    *ItemData->GetName(),
+    static_cast<int32>(Category),
+    static_cast<int32>(SubCategory));
+```
+
+**Fix with Python script:** `apply_item_subcategories.py`
+
+### Debugging Flow Summary
+
+1. **Widget not appearing?** → Check `GetWidgetFromName()` returns non-null
+2. **Wrong widget name?** → Search Blueprint JSON for exact spelling
+3. **Highlight not working?** → Check if Blueprint uses SetVisibility vs SetBrushColor
+4. **Navigation broken?** → Verify function handles all view states
+5. **Pointers invalid?** → Check if delegate handlers recreate widgets
+6. **Items not matching?** → Log Category/SubCategory values
+7. **View stuck?** → Ensure WidgetSwitcher index is reset on visibility change
+
+---
+
 ## Verification Checklist
 
 After widget migration, verify:
@@ -235,3 +382,6 @@ After widget migration, verify:
 - [ ] Event dispatchers broadcast to listeners
 - [ ] C++ compiles without errors
 - [ ] PIE test shows correct behavior
+- [ ] WidgetSwitcher resets to correct view on re-entry
+- [ ] Delegate handlers don't invalidate active pointers
+- [ ] Highlight borders use correct visibility toggling

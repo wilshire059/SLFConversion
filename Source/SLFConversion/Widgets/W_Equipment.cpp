@@ -16,14 +16,17 @@
 #include "Components/CanvasPanel.h"
 #include "Components/Border.h"
 #include "Blueprint/WidgetTree.h"
+#include "Engine/DataTable.h"
 
 UW_Equipment::UW_Equipment(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 	, EquipmentCanvas(nullptr)
 	, ItemScrollBox(nullptr)
-	, ItemGrid(nullptr)
+	, UniformEquipmentItemsGrid(nullptr)
+	, EquipmentSlotsUniformGrid(nullptr)
 	, ItemInfoBoxSwitcher(nullptr)
 	, SlotNameText(nullptr)
+	, EquipmentSwitcher(nullptr)
 	, ErrorBorder(nullptr)
 	, W_EquipmentError(nullptr)
 	, InventoryComponent(nullptr)
@@ -33,6 +36,7 @@ UW_Equipment::UW_Equipment(const FObjectInitializer& ObjectInitializer)
 	, ActiveItemSlot(nullptr)
 	, EquipmentSlotNavigationIndex(0)
 	, ItemNavigationIndex(0)
+	, EquipmentSlotClass(nullptr)
 {
 }
 
@@ -286,30 +290,170 @@ void UW_Equipment::CacheWidgetReferences()
 
 void UW_Equipment::PopulateEquipmentSlots()
 {
+	// Clear existing slots
 	EquipmentSlots.Empty();
 
-	// Find all W_EquipmentSlot widgets in the tree
-	TArray<UWidget*> AllChildren;
-	WidgetTree->GetAllWidgets(AllChildren);
-
-	for (UWidget* Child : AllChildren)
+	if (!EquipmentSlotsUniformGrid)
 	{
-		if (UW_EquipmentSlot* EquipSlot = Cast<UW_EquipmentSlot>(Child))
+		UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] PopulateEquipmentSlots - EquipmentSlotsUniformGrid not found!"));
+		return;
+	}
+
+	// Clear the grid
+	EquipmentSlotsUniformGrid->ClearChildren();
+
+	// Try to find EquipmentSlotClass if not set
+	if (!EquipmentSlotClass)
+	{
+		// Try to load the default W_EquipmentSlot Blueprint class
+		static const TCHAR* DefaultSlotPath = TEXT("/Game/SoulslikeFramework/Widgets/Equipment/W_EquipmentSlot.W_EquipmentSlot_C");
+		EquipmentSlotClass = LoadClass<UW_EquipmentSlot>(nullptr, DefaultSlotPath);
+
+		if (EquipmentSlotClass)
 		{
-			EquipmentSlots.Add(EquipSlot);
-			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Found equipment slot: %s"), *EquipSlot->GetName());
+			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] PopulateEquipmentSlots - Loaded default EquipmentSlotClass"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] PopulateEquipmentSlots - EquipmentSlotClass not set and default not found!"));
+			return;
 		}
 	}
+
+	// Define equipment slots directly in C++ (matching original DT_ExampleEquipmentSlotInfo)
+	// This avoids the Blueprint struct row type mismatch issue with DataTables
+	struct FEquipmentSlotDef
+	{
+		FGameplayTag SlotTag;
+		int32 Row;
+		int32 Column;
+	};
+
+	TArray<FEquipmentSlotDef> SlotDefinitions;
+
+	// Right Hand Weapons (Column 0)
+	SlotDefinitions.Add({FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Right Hand Weapon 1")), 0, 0});
+	SlotDefinitions.Add({FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Right Hand Weapon 2")), 1, 0});
+	SlotDefinitions.Add({FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Right Hand Weapon 3")), 2, 0});
+
+	// Left Hand Weapons (Column 1)
+	SlotDefinitions.Add({FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Left Hand Weapon 1")), 0, 1});
+	SlotDefinitions.Add({FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Left Hand Weapon 2")), 1, 1});
+	SlotDefinitions.Add({FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Left Hand Weapon 3")), 2, 1});
+
+	// Armor (Column 2)
+	SlotDefinitions.Add({FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Head")), 0, 2});
+	SlotDefinitions.Add({FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Armor")), 1, 2});
+	SlotDefinitions.Add({FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Gloves")), 2, 2});
+	SlotDefinitions.Add({FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Greaves")), 3, 2});
+
+	// Accessories (Column 3)
+	SlotDefinitions.Add({FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Trinket 1")), 0, 3});
+	SlotDefinitions.Add({FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Trinket 2")), 1, 3});
+
+	// Ammo (Column 4)
+	SlotDefinitions.Add({FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Arrow")), 0, 4});
+	SlotDefinitions.Add({FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Bullet")), 1, 4});
+
+	UE_LOG(LogTemp, Log, TEXT("[W_Equipment] PopulateEquipmentSlots - Creating %d slots from C++ definitions"), SlotDefinitions.Num());
+
+	for (const FEquipmentSlotDef& SlotDef : SlotDefinitions)
+	{
+		if (!SlotDef.SlotTag.IsValid())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] PopulateEquipmentSlots - Invalid slot tag, skipping"));
+			continue;
+		}
+
+		// Create the equipment slot widget
+		UW_EquipmentSlot* NewSlot = CreateWidget<UW_EquipmentSlot>(this, EquipmentSlotClass);
+		if (!NewSlot)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] PopulateEquipmentSlots - Failed to create slot widget"));
+			continue;
+		}
+
+		// Configure the slot
+		NewSlot->EquipmentSlot = SlotDef.SlotTag;
+		// BackgroundIcon can be set from default in W_EquipmentSlot Blueprint
+
+		// Add to grid at specified position
+		EquipmentSlotsUniformGrid->AddChildToUniformGrid(NewSlot, SlotDef.Row, SlotDef.Column);
+
+		// Track the slot
+		EquipmentSlots.Add(NewSlot);
+
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Created equipment slot: %s at Row=%d, Col=%d"),
+			*SlotDef.SlotTag.ToString(), SlotDef.Row, SlotDef.Column);
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[W_Equipment] PopulateEquipmentSlots - Created %d slots"), EquipmentSlots.Num());
 }
 
 void UW_Equipment::BindEquipmentSlotEvents()
 {
-	for (UW_EquipmentSlot* EquipSlot : EquipmentSlots)
+	UE_LOG(LogTemp, Log, TEXT("[W_Equipment] BindEquipmentSlotEvents - Binding %d slots"), EquipmentSlots.Num());
+
+	for (int32 i = 0; i < EquipmentSlots.Num(); i++)
 	{
+		UW_EquipmentSlot* EquipSlot = EquipmentSlots[i];
 		if (IsValid(EquipSlot))
 		{
+			// Remove any existing bindings first to prevent duplicates
+			EquipSlot->OnSelected.RemoveAll(this);
+			EquipSlot->OnPressed.RemoveAll(this);
+
+			// Bind fresh
 			EquipSlot->OnSelected.AddDynamic(this, &UW_Equipment::EventOnEquipmentSlotSelected);
 			EquipSlot->OnPressed.AddDynamic(this, &UW_Equipment::EventOnEquipmentSlotPressed);
+
+			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Bound events for slot %d: %s"), i, *EquipSlot->EquipmentSlot.ToString());
+		}
+	}
+}
+
+void UW_Equipment::SyncEquipmentSlotsFromManager()
+{
+	if (!EquipmentComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] SyncEquipmentSlotsFromManager - No EquipmentComponent"));
+		return;
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[W_Equipment] SyncEquipmentSlotsFromManager - Syncing %d slots"), EquipmentSlots.Num());
+
+	for (UW_EquipmentSlot* EquipSlot : EquipmentSlots)
+	{
+		if (!IsValid(EquipSlot))
+		{
+			continue;
+		}
+
+		FSLFItemInfo ItemData;
+		UPrimaryDataAsset* ItemAsset = nullptr;
+		FGuid ItemId;
+		FSLFItemInfo ItemData2;
+		UPrimaryDataAsset* ItemAsset2 = nullptr;
+		FGuid ItemId2;
+
+		EquipmentComponent->GetItemAtSlot(
+			EquipSlot->EquipmentSlot,
+			ItemData, ItemAsset, ItemId,
+			ItemData2, ItemAsset2, ItemId2
+		);
+
+		if (ItemAsset)
+		{
+			if (UPDA_Item* Item = Cast<UPDA_Item>(ItemAsset))
+			{
+				EquipSlot->EventOccupyEquipmentSlot(Item);
+				UE_LOG(LogTemp, Log, TEXT("[W_Equipment] SyncEquipmentSlotsFromManager - Slot %s has item: %s"),
+					*EquipSlot->EquipmentSlot.ToString(), *Item->GetName());
+			}
+		}
+		else
+		{
+			EquipSlot->EventClearEquipmentSlot();
 		}
 	}
 }
@@ -358,14 +502,57 @@ void UW_Equipment::EquipItemAtSlot_Implementation(UW_InventorySlot* InSlot)
 	UPDA_Item* ItemToEquip = Cast<UPDA_Item>(InSlot->AssignedItem);
 	if (!ItemToEquip)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] EquipItemAtSlot - Item is not UPDA_Item"));
 		return;
 	}
 
-	// Equip the item to the active equipment slot
-	ActiveEquipmentSlot->EventOccupyEquipmentSlot(ItemToEquip);
+	// Call EquipmentManager to actually equip the item
+	if (EquipmentComponent)
+	{
+		// Check stat requirements first
+		bool bCanEquip = true;
+		bool bCanEquip2 = true;
+		EquipmentComponent->CheckRequiredStats(ItemToEquip->ItemInformation, bCanEquip, bCanEquip2);
 
-	// Clear the inventory slot
-	InSlot->EventClearSlot(true);
+		if (!bCanEquip)
+		{
+			EventShowError(FText::FromString(TEXT("Stats requirements not met")));
+			UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] EquipItemAtSlot - Stats requirements not met"));
+			return;
+		}
+
+		// Call EquipmentManager to equip
+		bool bSuccess = false;
+		bool bSuccess2 = false;
+		bool bSuccess3 = false;
+		bool bSuccess4 = false;
+		bool bSuccess5 = false;
+		bool bSuccess6 = false;
+		bool bSuccess7 = false;
+
+		EquipmentComponent->EquipItemToSlot(
+			ItemToEquip,
+			ActiveEquipmentSlot->EquipmentSlot,
+			true,  // ChangeStats
+			bSuccess, bSuccess2, bSuccess3, bSuccess4, bSuccess5, bSuccess6, bSuccess7
+		);
+
+		if (!bSuccess)
+		{
+			EventShowError(FText::FromString(TEXT("Failed to equip item")));
+			UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] EquipItemAtSlot - EquipItemToSlot failed"));
+			return;
+		}
+
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] EquipItemAtSlot - EquipmentManager::EquipItemToSlot succeeded"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] EquipItemAtSlot - No EquipmentComponent!"));
+	}
+
+	// Update the visual slot
+	ActiveEquipmentSlot->EventOccupyEquipmentSlot(ItemToEquip);
 
 	UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Equipped item to slot"));
 }
@@ -377,15 +564,27 @@ void UW_Equipment::UnequipItemAtSlot_Implementation(const FGameplayTag& SlotTag)
 	UW_EquipmentSlot* TargetSlot = GetEquipmentSlotByTag(SlotTag);
 	if (!TargetSlot || !TargetSlot->IsOccupied)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] UnequipItemAtSlot - Slot not found or not occupied"));
 		return;
 	}
 
 	UPDA_Item* UnequippedItem = Cast<UPDA_Item>(TargetSlot->AssignedItem);
 
-	// Clear the equipment slot
+	// Call EquipmentManager to actually unequip the item
+	if (EquipmentComponent)
+	{
+		EquipmentComponent->UnequipItemAtSlot(SlotTag);
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] UnequipItemAtSlot - Called EquipmentManager::UnequipItemAtSlot"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] UnequipItemAtSlot - No EquipmentComponent!"));
+	}
+
+	// Clear the equipment slot visual
 	TargetSlot->EventClearEquipmentSlot();
 
-	// Notify that item was unequipped
+	// Notify that item was unequipped (for adding back to inventory display)
 	if (UnequippedItem)
 	{
 		EventOnItemUnequippedFromSlot(UnequippedItem, SlotTag);
@@ -396,7 +595,37 @@ void UW_Equipment::EventNavigateUp_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("[W_Equipment] EventNavigateUp"));
 
-	if (!CanNavigate() || EquipmentSlots.Num() == 0)
+	if (!CanNavigate())
+	{
+		return;
+	}
+
+	// Check if we're in item selection view (has inventory slots to navigate)
+	if (EquipmentInventorySlots.Num() > 0)
+	{
+		// Navigate through inventory items
+		if (ActiveItemSlot)
+		{
+			ActiveItemSlot->EventOnSelected(false);
+		}
+
+		ItemNavigationIndex--;
+		if (ItemNavigationIndex < 0)
+		{
+			ItemNavigationIndex = EquipmentInventorySlots.Num() - 1;
+		}
+
+		ActiveItemSlot = EquipmentInventorySlots[ItemNavigationIndex];
+		if (ActiveItemSlot)
+		{
+			ActiveItemSlot->EventOnSelected(true);
+			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] EventNavigateUp - Selected item %d of %d"), ItemNavigationIndex + 1, EquipmentInventorySlots.Num());
+		}
+		return;
+	}
+
+	// Otherwise navigate through equipment slots
+	if (EquipmentSlots.Num() == 0)
 	{
 		return;
 	}
@@ -427,7 +656,37 @@ void UW_Equipment::EventNavigateDown_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("[W_Equipment] EventNavigateDown"));
 
-	if (!CanNavigate() || EquipmentSlots.Num() == 0)
+	if (!CanNavigate())
+	{
+		return;
+	}
+
+	// Check if we're in item selection view (has inventory slots to navigate)
+	if (EquipmentInventorySlots.Num() > 0)
+	{
+		// Navigate through inventory items
+		if (ActiveItemSlot)
+		{
+			ActiveItemSlot->EventOnSelected(false);
+		}
+
+		ItemNavigationIndex++;
+		if (ItemNavigationIndex >= EquipmentInventorySlots.Num())
+		{
+			ItemNavigationIndex = 0;
+		}
+
+		ActiveItemSlot = EquipmentInventorySlots[ItemNavigationIndex];
+		if (ActiveItemSlot)
+		{
+			ActiveItemSlot->EventOnSelected(true);
+			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] EventNavigateDown - Selected item %d of %d"), ItemNavigationIndex + 1, EquipmentInventorySlots.Num());
+		}
+		return;
+	}
+
+	// Otherwise navigate through equipment slots
+	if (EquipmentSlots.Num() == 0)
 	{
 		return;
 	}
@@ -531,6 +790,21 @@ void UW_Equipment::EventNavigateOk_Implementation()
 	if (ActiveItemSlot && ActiveItemSlot->IsOccupied)
 	{
 		EquipItemAtSlot(ActiveItemSlot);
+
+		// After equipping, switch back to equipment slots view
+		EquipmentInventorySlots.Empty();
+		if (UniformEquipmentItemsGrid)
+		{
+			UniformEquipmentItemsGrid->ClearChildren();
+		}
+		ActiveItemSlot = nullptr;
+		ItemNavigationIndex = 0;
+
+		if (EquipmentSwitcher)
+		{
+			EquipmentSwitcher->SetActiveWidgetIndex(0);
+			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Switched back to equipment slots view after equipping"));
+		}
 	}
 	// Otherwise, if we have an equipment slot selected, show items for it
 	else if (SelectedSlot)
@@ -548,10 +822,18 @@ void UW_Equipment::EventNavigateCancel_Implementation()
 	{
 		// Clear item list
 		EquipmentInventorySlots.Empty();
-		if (ItemGrid)
+		if (UniformEquipmentItemsGrid)
 		{
-			ItemGrid->ClearChildren();
+			UniformEquipmentItemsGrid->ClearChildren();
 		}
+
+		// Switch back to equipment slots view (index 0)
+		if (EquipmentSwitcher)
+		{
+			EquipmentSwitcher->SetActiveWidgetIndex(0);
+			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Switched back to equipment slots view"));
+		}
+
 		ActiveItemSlot = nullptr;
 		ItemNavigationIndex = 0;
 
@@ -608,17 +890,52 @@ void UW_Equipment::EventOnEquipmentSlotPressed_Implementation(UW_EquipmentSlot* 
 		return;
 	}
 
+	// Load InventorySlotClass if not set
+	if (!InventorySlotClass)
+	{
+		static const TCHAR* DefaultInventorySlotPath = TEXT("/Game/SoulslikeFramework/Widgets/Inventory/W_InventorySlot.W_InventorySlot_C");
+		InventorySlotClass = LoadClass<UW_InventorySlot>(nullptr, DefaultInventorySlotPath);
+		if (InventorySlotClass)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Loaded default InventorySlotClass"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] InventorySlotClass not set and default not found at: %s"), DefaultInventorySlotPath);
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] InventorySlotClass already set: %s"), *InventorySlotClass->GetName());
+	}
+
 	ActiveEquipmentSlot = InSlot;
 
 	// Get items that can be equipped in this slot
 	TArray<FSLFInventoryItem> AvailableItems = InventoryComponent->GetItemsForEquipmentSlot(InSlot->EquipmentSlot);
 
-	// Clear and populate item grid
-	EquipmentInventorySlots.Empty();
-	if (ItemGrid)
-	{
-		ItemGrid->ClearChildren();
+	UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Got %d available items, UniformEquipmentItemsGrid=%s, InventorySlotClass=%s"),
+		AvailableItems.Num(),
+		UniformEquipmentItemsGrid ? TEXT("valid") : TEXT("NULL"),
+		InventorySlotClass ? TEXT("valid") : TEXT("NULL"));
 
+	// Clear existing item slots
+	EquipmentInventorySlots.Empty();
+	if (UniformEquipmentItemsGrid)
+	{
+		UniformEquipmentItemsGrid->ClearChildren();
+	}
+
+	// Switch to item selection view (index 1)
+	if (EquipmentSwitcher)
+	{
+		EquipmentSwitcher->SetActiveWidgetIndex(1);
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Switched to item selection view"));
+	}
+
+	// Populate item grid
+	if (UniformEquipmentItemsGrid)
+	{
 		int32 Column = 0;
 		int32 Row = 0;
 		int32 SlotsPerRow = 4;
@@ -643,7 +960,7 @@ void UW_Equipment::EventOnEquipmentSlotPressed_Implementation(UW_EquipmentSlot* 
 						NewSlot->OnSelected.AddDynamic(this, &UW_Equipment::EventOnEquipmentSelected);
 						NewSlot->OnPressed.AddDynamic(this, &UW_Equipment::EventOnEquipmentPressed);
 
-						ItemGrid->AddChildToUniformGrid(NewSlot, Row, Column);
+						UniformEquipmentItemsGrid->AddChildToUniformGrid(NewSlot, Row, Column);
 						EquipmentInventorySlots.Add(NewSlot);
 
 						Column++;
@@ -778,8 +1095,27 @@ void UW_Equipment::EventOnVisibilityChanged_Implementation(ESlateVisibility InVi
 		InVisibility == ESlateVisibility::SelfHitTestInvisible ||
 		InVisibility == ESlateVisibility::HitTestInvisible)
 	{
+		// CRITICAL: Reset to equipment slots view BEFORE populating
+		// This ensures we're showing the correct panel when creating slots
+		if (EquipmentSwitcher)
+		{
+			EquipmentSwitcher->SetActiveWidgetIndex(0);
+			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Reset to equipment slots view (index 0)"));
+		}
+
+		// Clear any leftover item slots from previous session
+		EquipmentInventorySlots.Empty();
+		ActiveItemSlot = nullptr;
+		ItemNavigationIndex = 0;
+
 		// Refresh equipment slots when becoming visible
 		PopulateEquipmentSlots();
+
+		// CRITICAL: Bind events to newly created slots (slots were recreated above)
+		BindEquipmentSlotEvents();
+
+		// Sync equipment slot visuals with EquipmentManager state
+		SyncEquipmentSlotsFromManager();
 
 		// Select first slot
 		if (EquipmentSlots.Num() > 0)
@@ -861,18 +1197,30 @@ void UW_Equipment::HandleItemEquippedToSlot(FSLFCurrentEquipment ItemData, FGame
 {
 	UE_LOG(LogTemp, Log, TEXT("[W_Equipment] HandleItemEquippedToSlot - Slot: %s"), *TargetSlot.ToString());
 
-	// Refresh equipment slots when item is equipped
-	PopulateEquipmentSlots();
-	BindEquipmentSlotEvents();
+	// Update just the specific slot that was equipped, don't recreate all slots
+	// (Recreating slots during equip operation would invalidate ActiveEquipmentSlot pointer)
+	UW_EquipmentSlot* TargetEquipSlot = GetEquipmentSlotByTag(TargetSlot);
+	if (TargetEquipSlot && ItemData.ItemAsset)
+	{
+		if (UPDA_Item* Item = Cast<UPDA_Item>(ItemData.ItemAsset))
+		{
+			TargetEquipSlot->EventOccupyEquipmentSlot(Item);
+			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] HandleItemEquippedToSlot - Updated slot visual for %s"), *Item->GetName());
+		}
+	}
 }
 
 void UW_Equipment::HandleItemUnequippedFromSlot(UPrimaryDataAsset* Item, FGameplayTag TargetSlot)
 {
 	UE_LOG(LogTemp, Log, TEXT("[W_Equipment] HandleItemUnequippedFromSlot - Slot: %s"), *TargetSlot.ToString());
 
-	// Refresh equipment slots when item is unequipped
-	PopulateEquipmentSlots();
-	BindEquipmentSlotEvents();
+	// Update just the specific slot that was unequipped, don't recreate all slots
+	UW_EquipmentSlot* TargetEquipSlot = GetEquipmentSlotByTag(TargetSlot);
+	if (TargetEquipSlot)
+	{
+		TargetEquipSlot->EventClearEquipmentSlot();
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] HandleItemUnequippedFromSlot - Cleared slot visual"));
+	}
 }
 
 void UW_Equipment::HandleInventoryUpdated()

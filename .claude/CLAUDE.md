@@ -92,19 +92,51 @@ Phase 1+: Process all other Blueprints normally
 
 The migration process preserves Blueprint data (icons, Niagara effects, montages) that would otherwise be lost during reparenting. **The cache survives restores**, so data only needs to be extracted once.
 
-### Step 1: Extract Data FROM BACKUP (One-time or if data changed)
+### Step 1a: Extract Item Data FROM BACKUP (One-time or if data changed)
 
 **IMPORTANT:** Extract BEFORE restoring, while the backup has valid Blueprint data.
 
 ```bash
 # Extract item icons, niagara systems, and other Blueprint data to cache
 "C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
-  "C:/scripts/bp_only/SLFConversion.uproject" ^
+  "C:/scripts/bp_only/bp_only.uproject" ^
   -run=pythonscript -script="C:/scripts/SLFConversion/extract_item_data.py" ^
   -stdout -unattended -nosplash 2>&1
 ```
 
 Cache location: `C:/scripts/SLFConversion/migration_cache/item_data.json`
+
+### Step 1b: Extract BaseStats FROM BACKUP (One-time or if data changed)
+
+```bash
+# Extract character class BaseStats (stat values per character class)
+"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
+  "C:/scripts/bp_only/bp_only.uproject" ^
+  -run=pythonscript -script="C:/scripts/SLFConversion/extract_base_stats.py" ^
+  -stdout -unattended -nosplash 2>&1
+```
+
+Cache location: `C:/scripts/SLFConversion/migration_cache/base_stats.json`
+
+### Step 1c: Extract Stat Defaults FROM BACKUP (One-time)
+
+**IMPORTANT:** This extracts the original Blueprint CDO stat values. The C++ SLFAutomationLibrary must be copied to the backup project first.
+
+```bash
+# First, copy SLFAutomationLibrary to backup and build it
+cp "C:/scripts/SLFConversion/Source/SLFConversion/SLFAutomationLibrary.h" "C:/scripts/bp_only/Source/bp_only/"
+cp "C:/scripts/SLFConversion/Source/SLFConversion/SLFAutomationLibrary.cpp" "C:/scripts/bp_only/Source/bp_only/"
+# Update Build.cs to add GameplayTags, UnrealEd, Kismet, BlueprintGraph dependencies
+# Build backup project
+
+# Then extract stat defaults
+"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
+  "C:/scripts/bp_only/bp_only.uproject" ^
+  -run=pythonscript -script="C:/scripts/SLFConversion/extract_stat_defaults_cpp.py" ^
+  -stdout -unattended -nosplash 2>&1
+```
+
+Cache location: `C:/scripts/SLFConversion/migration_cache/stat_defaults.json`
 
 ### Step 2: Restore Backup
 
@@ -147,6 +179,12 @@ powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Rec
   "C:/scripts/SLFConversion/SLFConversion.uproject" ^
   -run=pythonscript -script="C:/scripts/SLFConversion/apply_item_categories.py" ^
   -stdout -unattended -nosplash 2>&1
+
+# 4e. Apply BaseStats to character class data assets
+"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
+  "C:/scripts/SLFConversion/SLFConversion.uproject" ^
+  -run=pythonscript -script="C:/scripts/SLFConversion/apply_base_stats.py" ^
+  -stdout -unattended -nosplash 2>&1
 ```
 
 ### Build C++ First (if needed)
@@ -172,11 +210,14 @@ powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Rec
 | Script | Purpose |
 |--------|---------|
 | `extract_item_data.py` | Extract icons, niagara from backup (run on bp_only) |
+| `extract_base_stats.py` | Extract character class BaseStats (run on bp_only) |
+| `extract_stat_defaults_cpp.py` | Extract stat CDO defaults using C++ (run on bp_only) |
 | `run_migration.py` | Multi-phase reparenting |
 | `apply_icons_fixed.py` | Apply item icons from cache |
 | `apply_remaining_data.py` | Apply niagara + dodge montages |
 | `apply_item_data.py` | Apply item descriptions, names, display data |
 | `apply_item_categories.py` | Apply item categories (Weapons, Armor, Tools, etc.) |
+| `apply_base_stats.py` | Apply BaseStats to character class data assets |
 | `full_migration.py` | All-in-one workflow (extract + migrate + apply) |
 
 ### Expected Output
@@ -319,6 +360,229 @@ StatsBox = Cast<UVerticalBox>(GetWidgetFromName(TEXT("StatBox")));
 
 Find correct names in: `Exports/BlueprintDNA_v2/WidgetBlueprint/*.json`
 Search for: `"Class": "VerticalBox"` or similar, check `"Name":` field.
+
+### 8. Widget Visual Feedback (Highlighting/Selection)
+
+Blueprints often toggle **visibility** of highlight borders rather than changing brush colors.
+
+**Symptom:** Selection/highlighting doesn't appear even though code runs.
+
+**Wrong approach (won't work if border is designed as overlay):**
+```cpp
+SlotBorder->SetBrushColor(FLinearColor::Gold);  // May not be visible
+```
+
+**Right approach (matches Blueprint pattern):**
+```cpp
+HighlightBorder->SetVisibility(Selected ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+```
+
+**How to verify:** Check Blueprint JSON for `Set Visibility` vs `Set Brush Color` calls:
+```bash
+grep -i "visibility\|brush.*color" Exports/BlueprintDNA_v2/WidgetBlueprint/W_InventorySlot.json
+```
+
+### 9. Widget Typos in Blueprint Names
+
+Blueprint widget names may contain typos that C++ must match exactly.
+
+**Example:** `HightlightBorder` (typo) instead of `HighlightBorder`
+
+**Solution:** Always check the actual Blueprint JSON for exact spelling:
+```bash
+grep -i "border\|highlight" Exports/BlueprintDNA_v2/WidgetBlueprint/W_EquipmentSlot.json
+```
+
+---
+
+## WIDGET DEBUGGING STRATEGIES (W_Equipment Case Study)
+
+When debugging complex widget systems like equipment screens, follow this systematic approach:
+
+### Phase 1: Identify the View Structure
+
+Equipment screens typically use `UWidgetSwitcher` to toggle between views:
+- Index 0: Equipment slots grid (showing equipped items)
+- Index 1: Item selection list (showing available items to equip)
+
+**Check for switcher in Blueprint JSON:**
+```bash
+grep -i "WidgetSwitcher\|switcher" Exports/BlueprintDNA_v2/WidgetBlueprint/W_Equipment.json
+```
+
+### Phase 2: Track Navigation State
+
+Navigation functions must know which view is active:
+```cpp
+void EventNavigateDown_Implementation()
+{
+    // Check if in item selection view
+    if (EquipmentInventorySlots.Num() > 0)
+    {
+        // Navigate through items
+        ItemNavigationIndex++;
+        ActiveItemSlot = EquipmentInventorySlots[ItemNavigationIndex];
+    }
+    else
+    {
+        // Navigate through equipment slots
+        EquipmentSlotNavigationIndex++;
+        SelectedSlot = EquipmentSlots[EquipmentSlotNavigationIndex];
+    }
+}
+```
+
+### Phase 3: Prevent Pointer Invalidation
+
+**Critical Bug:** Delegate handlers that recreate widgets invalidate pointers held elsewhere.
+
+**Wrong:**
+```cpp
+void HandleItemEquippedToSlot(FSLFCurrentEquipment ItemData, FGameplayTag TargetSlot)
+{
+    // THIS DESTROYS ALL SLOTS - including ActiveEquipmentSlot pointer!
+    PopulateEquipmentSlots();
+    BindEquipmentSlotEvents();
+}
+```
+
+**Right:**
+```cpp
+void HandleItemEquippedToSlot(FSLFCurrentEquipment ItemData, FGameplayTag TargetSlot)
+{
+    // Update ONLY the specific slot
+    UW_EquipmentSlot* TargetEquipSlot = GetEquipmentSlotByTag(TargetSlot);
+    if (TargetEquipSlot && ItemData.ItemAsset)
+    {
+        TargetEquipSlot->EventOccupyEquipmentSlot(Cast<UPDA_Item>(ItemData.ItemAsset));
+    }
+}
+```
+
+### Phase 4: Auto-Return to Previous View
+
+After completing an action, return to the appropriate view:
+```cpp
+void EventNavigateOk_Implementation()
+{
+    if (ActiveItemSlot && ActiveItemSlot->IsOccupied)
+    {
+        EquipItemAtSlot(ActiveItemSlot);
+
+        // After equipping, switch back to equipment slots view
+        EquipmentInventorySlots.Empty();
+        UniformEquipmentItemsGrid->ClearChildren();
+        EquipmentSwitcher->SetActiveWidgetIndex(0);
+    }
+}
+```
+
+### Phase 5: Data Asset SubCategory Matching
+
+Equipment slots match items by Category AND SubCategory:
+
+| Slot Type | Category | SubCategory |
+|-----------|----------|-------------|
+| Head | Armor (8) | Head (6) |
+| Chest | Armor (8) | Chest (7) |
+| Arms/Gloves | Armor (8) | Arms (8) |
+| Legs/Greaves | Armor (8) | Legs (9) |
+| Right Hand | Weapons (6) | Sword/Katana/etc. |
+| Left Hand | Shields (7) | Any |
+| Trinket | Bolstering (3) | Talismans (10) |
+| Arrow/Bullet | Tools (1) | Projectiles (2) |
+
+**Fix missing subcategories with Python script:**
+```python
+# apply_item_subcategories.py
+ITEM_SUBCATEGORY_DATA = {
+    "DA_ExampleHelmet": SLFItemSubCategory.HEAD,
+    "DA_ExampleArmor": SLFItemSubCategory.CHEST,
+    "DA_ExampleBracers": SLFItemSubCategory.ARMS,
+    "DA_ExampleGreaves": SLFItemSubCategory.LEGS,
+}
+```
+
+### Debugging Checklist
+
+1. **Widget not appearing?** Check `GetWidgetFromName()` returns non-null, verify exact name from JSON
+2. **Highlighting not working?** Check if Blueprint uses `SetVisibility` vs `SetBrushColor`
+3. **Items not matching slots?** Add logging to show Category/SubCategory values
+4. **Pointers becoming invalid?** Check if delegate handlers recreate widgets mid-operation
+5. **View not switching?** Verify `WidgetSwitcher->SetActiveWidgetIndex()` is called
+6. **Navigation not working?** Check if navigation function knows which view is active
+
+---
+
+## STAT SYSTEM ARCHITECTURE
+
+The stat system uses a multi-layered approach for character stats (Health, Stamina, Vigor, etc.).
+
+### Class Hierarchies
+
+**USLFStatBase** (the correct hierarchy):
+- `USLFStatBase` - Base class with `FStatInfo` struct
+- `USLFStatHP`, `USLFStatVigor`, etc. - Specific stat types
+- Blueprint stats (B_Vigor, B_HP, etc.) are reparented to these C++ classes
+
+**UB_Stat** (older, deprecated):
+- Separate hierarchy, NOT related to USLFStatBase
+- Do NOT mix these in widget code
+
+### Stat Initialization Flow
+
+1. **DataTable → Stat Objects**
+   - `StatManagerComponent` reads `DT_ExampleStatTable`
+   - Creates `USLFStatBase` objects from Blueprint classes in the table
+
+2. **C++ Constructor Defaults**
+   - Each `USLFStat*` class sets defaults in constructor
+   - These are FALLBACK values if no character class is selected
+
+3. **Character Class BaseStats**
+   - `PDA_BaseCharacterInfo` assets (DA_Manny, DA_Quinn) have `BaseStats` TMap
+   - Maps `UClass* → double` (stat class → base value)
+   - `StatManagerComponent::ApplyBaseStatsFromCharacterClass()` applies these at runtime
+
+4. **Level-Up System**
+   - `AdjustStat()` modifies stats from their base values
+   - Fully compatible with character class system
+
+### Key Files
+
+| File | Purpose |
+|------|---------|
+| `SLFStatBase.h/cpp` | Base stat class with FStatInfo |
+| `StatManagerComponent.h/cpp` | Creates and manages stats, applies BaseStats |
+| `SLFPrimaryDataAssets.h` | `UPDA_BaseCharacterInfo` with `BaseStats` property |
+
+### UPDA_BaseCharacterInfo Structure
+
+```cpp
+UCLASS(Blueprintable, BlueprintType)
+class UPDA_BaseCharacterInfo : public UPDA_Base
+{
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
+    FText CharacterClassName;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
+    TMap<UClass*, double> BaseStats;  // Stat class -> base value
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
+    UDataAsset* DefaultMeshAsset;
+};
+```
+
+### C++ Automation Functions (SLFAutomationLibrary)
+
+```cpp
+// Extract BaseStats from character class data assets
+static bool ExtractBaseStats(const FString& CharacterClassPath, const FString& OutputPath);
+static int32 ExtractAllBaseStats(const FString& OutputPath);
+
+// Apply BaseStats from JSON cache
+static int32 ApplyBaseStatsFromCache(const FString& InputPath);
+```
 
 ---
 
