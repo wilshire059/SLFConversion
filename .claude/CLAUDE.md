@@ -121,19 +121,31 @@ powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Rec
   -stdout -unattended -nosplash 2>&1
 ```
 
-### Step 4: Apply Cached Data
+### Step 4: Apply Cached Data (ALL SCRIPTS REQUIRED)
 
 ```bash
-# Apply icons and niagara to items
+# 4a. Apply icons to items
 "C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
   "C:/scripts/SLFConversion/SLFConversion.uproject" ^
   -run=pythonscript -script="C:/scripts/SLFConversion/apply_icons_fixed.py" ^
   -stdout -unattended -nosplash 2>&1
 
-# Apply niagara and dodge montages
+# 4b. Apply niagara and dodge montages
 "C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
   "C:/scripts/SLFConversion/SLFConversion.uproject" ^
   -run=pythonscript -script="C:/scripts/SLFConversion/apply_remaining_data.py" ^
+  -stdout -unattended -nosplash 2>&1
+
+# 4c. Apply item descriptions, names, and data (CRITICAL for inventory display)
+"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
+  "C:/scripts/SLFConversion/SLFConversion.uproject" ^
+  -run=pythonscript -script="C:/scripts/SLFConversion/apply_item_data.py" ^
+  -stdout -unattended -nosplash 2>&1
+
+# 4d. Apply item categories
+"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
+  "C:/scripts/SLFConversion/SLFConversion.uproject" ^
+  -run=pythonscript -script="C:/scripts/SLFConversion/apply_item_categories.py" ^
   -stdout -unattended -nosplash 2>&1
 ```
 
@@ -163,6 +175,8 @@ powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Rec
 | `run_migration.py` | Multi-phase reparenting |
 | `apply_icons_fixed.py` | Apply item icons from cache |
 | `apply_remaining_data.py` | Apply niagara + dodge montages |
+| `apply_item_data.py` | Apply item descriptions, names, display data |
+| `apply_item_categories.py` | Apply item categories (Weapons, Armor, Tools, etc.) |
 | `full_migration.py` | All-in-one workflow (extract + migrate + apply) |
 
 ### Expected Output
@@ -170,6 +184,8 @@ powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Rec
 - Migration: ~306 successful reparents, 0 errors
 - Apply icons: "Applied icons to 21 items"
 - Apply remaining: "Applied Niagara to 21 items", "Saved B_Action_Dodge"
+- Apply item data: "21 succeeded, 0 failed"
+- Apply categories: "OK: DA_Sword01" with category assignments
 
 ---
 

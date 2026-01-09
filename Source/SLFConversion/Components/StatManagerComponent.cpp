@@ -12,6 +12,7 @@
 #include "StatManagerComponent.h"
 #include "Engine/DataTable.h"
 #include "Blueprints/B_Stat.h"
+#include "UObject/ConstructorHelpers.h"
 
 UStatManagerComponent::UStatManagerComponent()
 {
@@ -20,8 +21,19 @@ UStatManagerComponent::UStatManagerComponent()
 	// Initialize config
 	bIsAiComponent = false;
 	SpeedAsset = nullptr;
-	StatTable = nullptr;
 	SelectedClassAsset = nullptr;
+
+	// Load default StatTable if not set by Blueprint
+	static ConstructorHelpers::FObjectFinder<UDataTable> DefaultStatTableFinder(
+		TEXT("/Game/SoulslikeFramework/Data/_Datatables/DT_ExampleStatTable.DT_ExampleStatTable"));
+	if (DefaultStatTableFinder.Succeeded())
+	{
+		StatTable = DefaultStatTableFinder.Object;
+	}
+	else
+	{
+		StatTable = nullptr;
+	}
 
 	// Initialize runtime
 	Level = 1;

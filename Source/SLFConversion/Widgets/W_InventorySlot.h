@@ -1,7 +1,7 @@
 // W_InventorySlot.h
 // C++ Widget class for W_InventorySlot
 //
-// 20-PASS VALIDATION: 2026-01-01 Autonomous Session
+// 20-PASS VALIDATION: 2026-01-08
 // Source: BlueprintDNA/WidgetBlueprint/W_InventorySlot.json
 // Parent: UUserWidget
 // Variables: 8 | Functions: 1 | Dispatchers: 4
@@ -10,26 +10,17 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "GameplayTagContainer.h"
 #include "SLFEnums.h"
 #include "SLFGameTypes.h"
 #include "SLFPrimaryDataAssets.h"
-#include "InputMappingContext.h"
-#include "GameFramework/InputSettings.h"
-#include "GenericPlatform/GenericWindow.h"
-#include "MediaPlayer.h"
-
 
 #include "W_InventorySlot.generated.h"
 
-// Forward declarations for widget types
-
-
-// Forward declarations for Blueprint types
-
-
-// Forward declarations for SaveGame types
-
+// Forward declarations
+class UButton;
+class UImage;
+class UTextBlock;
+class UBorder;
 
 // Event Dispatchers
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FW_InventorySlot_OnSelected, bool, Selected, UW_InventorySlot*, Slot);
@@ -109,6 +100,10 @@ public:
 	void EventOnSelected(bool Selected);
 	virtual void EventOnSelected_Implementation(bool Selected);
 
+	// Helper to update selection visual without broadcasting (prevents recursion when called from parent)
+	UFUNCTION(BlueprintCallable, Category = "W_InventorySlot")
+	void SetSlotSelected(bool bSelected);
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_InventorySlot")
 	void EventSetHighlighted(bool Highlighted);
 	virtual void EventSetHighlighted_Implementation(bool Highlighted);
@@ -128,4 +123,30 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Bind button events
+	void BindButtonEvents();
+
+	// Button event handlers (bound to SlotButton delegates)
+	UFUNCTION()
+	void OnSlotButtonPressed();
+
+	UFUNCTION()
+	void OnSlotButtonHovered();
+
+	UFUNCTION()
+	void OnSlotButtonUnhovered();
+
+	// Cached widget references
+	UPROPERTY()
+	UButton* CachedSlotButton;
+
+	UPROPERTY()
+	UImage* CachedItemIcon;
+
+	UPROPERTY()
+	UTextBlock* CachedItemAmount;
+
+	UPROPERTY()
+	UBorder* CachedSlotBorder;
 };

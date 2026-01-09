@@ -1,7 +1,7 @@
 // W_InventorySlot.cpp
 // C++ Widget implementation for W_InventorySlot
 //
-// 20-PASS VALIDATION: 2026-01-07
+// 20-PASS VALIDATION: 2026-01-08
 // Full implementation with slot state management and event broadcasting
 
 #include "Widgets/W_InventorySlot.h"
@@ -9,6 +9,7 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Components/Border.h"
+#include "Components/Button.h"
 
 UW_InventorySlot::UW_InventorySlot(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -21,6 +22,12 @@ UW_InventorySlot::UW_InventorySlot(const FObjectInitializer& ObjectInitializer)
 	EquipmentRelated = false;
 	CraftingSlotEnabled = true;
 	SlotColor = FLinearColor::White;
+
+	// Initialize cached widget pointers
+	CachedSlotButton = nullptr;
+	CachedItemIcon = nullptr;
+	CachedItemAmount = nullptr;
+	CachedSlotBorder = nullptr;
 }
 
 void UW_InventorySlot::NativeConstruct()
@@ -28,6 +35,7 @@ void UW_InventorySlot::NativeConstruct()
 	Super::NativeConstruct();
 
 	CacheWidgetReferences();
+	BindButtonEvents();
 
 	UE_LOG(LogTemp, Log, TEXT("UW_InventorySlot::NativeConstruct"));
 }
@@ -41,8 +49,53 @@ void UW_InventorySlot::NativeDestruct()
 
 void UW_InventorySlot::CacheWidgetReferences()
 {
-	// Widget references are bound via BindWidget in Blueprint UMG
-	// Visual updates happen through Blueprint property bindings
+	// Cache widget references for faster access
+	CachedSlotButton = Cast<UButton>(GetWidgetFromName(TEXT("SlotButton")));
+	CachedItemIcon = Cast<UImage>(GetWidgetFromName(TEXT("ItemIcon")));
+	CachedItemAmount = Cast<UTextBlock>(GetWidgetFromName(TEXT("ItemAmount")));
+	CachedSlotBorder = Cast<UBorder>(GetWidgetFromName(TEXT("SlotBorder")));
+}
+
+void UW_InventorySlot::BindButtonEvents()
+{
+	// Find and bind to the SlotButton's events
+	if (CachedSlotButton)
+	{
+		CachedSlotButton->OnPressed.AddDynamic(this, &UW_InventorySlot::OnSlotButtonPressed);
+		CachedSlotButton->OnHovered.AddDynamic(this, &UW_InventorySlot::OnSlotButtonHovered);
+		CachedSlotButton->OnUnhovered.AddDynamic(this, &UW_InventorySlot::OnSlotButtonUnhovered);
+		UE_LOG(LogTemp, Log, TEXT("[W_InventorySlot] Bound SlotButton events"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_InventorySlot] SlotButton widget not found - click events won't work!"));
+	}
+}
+
+void UW_InventorySlot::OnSlotButtonPressed()
+{
+	UE_LOG(LogTemp, Log, TEXT("[W_InventorySlot] SlotButton pressed - IsOccupied: %s, Item: %s"),
+		IsOccupied ? TEXT("true") : TEXT("false"),
+		AssignedItem ? *AssignedItem->GetName() : TEXT("None"));
+
+	// Call EventSlotPressed which broadcasts OnPressed
+	EventSlotPressed();
+}
+
+void UW_InventorySlot::OnSlotButtonHovered()
+{
+	UE_LOG(LogTemp, Log, TEXT("[W_InventorySlot] SlotButton hovered"));
+
+	// Call EventSetHighlighted with true
+	EventSetHighlighted(true);
+}
+
+void UW_InventorySlot::OnSlotButtonUnhovered()
+{
+	UE_LOG(LogTemp, Log, TEXT("[W_InventorySlot] SlotButton unhovered"));
+
+	// Call EventSetHighlighted with false
+	EventSetHighlighted(false);
 }
 
 /**
@@ -172,24 +225,38 @@ void UW_InventorySlot::EventOccupySlot_Implementation(UPDA_Item* AssignedItemAss
 	{
 		// Get icon from item - access ItemInformation.IconSmall
 		UTexture2D* ItemIcon = nullptr;
-		if (AssignedItemAsset->ItemInformation.IconSmall.IsValid())
+
+		// Log the icon path for debugging
+		FString IconPath = AssignedItemAsset->ItemInformation.IconSmall.ToString();
+		UE_LOG(LogTemp, Log, TEXT("[InventorySlot] Icon path: %s, IsNull: %s, IsValid: %s"),
+			*IconPath,
+			AssignedItemAsset->ItemInformation.IconSmall.IsNull() ? TEXT("true") : TEXT("false"),
+			AssignedItemAsset->ItemInformation.IconSmall.IsValid() ? TEXT("true") : TEXT("false"));
+
+		if (!AssignedItemAsset->ItemInformation.IconSmall.IsNull())
 		{
 			ItemIcon = AssignedItemAsset->ItemInformation.IconSmall.LoadSynchronous();
-		}
-		else if (!AssignedItemAsset->ItemInformation.IconSmall.IsNull())
-		{
-			ItemIcon = AssignedItemAsset->ItemInformation.IconSmall.LoadSynchronous();
+			UE_LOG(LogTemp, Log, TEXT("[InventorySlot] Loaded icon: %s"), ItemIcon ? *ItemIcon->GetName() : TEXT("FAILED"));
 		}
 
 		if (ItemIcon)
 		{
 			IconImage->SetBrushFromTexture(ItemIcon);
+			UE_LOG(LogTemp, Log, TEXT("[InventorySlot] Set brush from texture successfully"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[InventorySlot] No icon texture for item %s"), *AssignedItemAsset->GetName());
 		}
 		IconImage->SetVisibility(ESlateVisibility::Visible);
 	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[InventorySlot] ItemIcon widget not found!"));
+	}
 
-	// Update amount text
-	if (UTextBlock* AmountText = Cast<UTextBlock>(GetWidgetFromName(TEXT("AmountText"))))
+	// Update amount text - widget is named "ItemAmount" in Blueprint
+	if (UTextBlock* AmountText = Cast<UTextBlock>(GetWidgetFromName(TEXT("ItemAmount"))))
 	{
 		if (Count > 1)
 		{
@@ -234,6 +301,29 @@ void UW_InventorySlot::EventOnSelected_Implementation(bool Selected)
 
 	// Broadcast event
 	OnSelected.Broadcast(Selected, this);
+}
+
+/**
+ * SetSlotSelected - Update selection visual without broadcasting
+ * Use this from parent widgets to prevent event recursion
+ */
+void UW_InventorySlot::SetSlotSelected(bool bSelected)
+{
+	// Update border/background color based on selection - same as EventOnSelected but NO broadcast
+	if (UBorder* SlotBorder = Cast<UBorder>(GetWidgetFromName(TEXT("SlotBorder"))))
+	{
+		if (bSelected)
+		{
+			// Use a highlight color when selected
+			SlotBorder->SetBrushColor(FLinearColor(1.0f, 0.8f, 0.2f, 1.0f)); // Gold highlight
+		}
+		else
+		{
+			// Return to normal color
+			SlotBorder->SetBrushColor(SlotColor);
+		}
+	}
+	// NOTE: No broadcast here - that's the key difference from EventOnSelected
 }
 
 /**

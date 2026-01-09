@@ -1,0 +1,41 @@
+============================================================
+FIXING KeyCorrelationTable PROPERTY
+============================================================
+Loaded data table: DT_KeyMappingCorrelation
+
+Checking: /Game/SoulslikeFramework/Widgets/Inventory/W_Inventory.W_Inventory
+  Loaded Blueprint: W_Inventory
+  Generated class: W_Inventory_C
+  CDO: Default__W_Inventory_C
+  Current KeyCorrelationTable: <Object '/Game/SoulslikeFramework/Data/_Datatables/DT_KeyMappingCorrelation.DT_KeyMappingCorrelation' (0x00000293DF569600) Class 'DataTable'>
+  Already set to: DT_KeyMappingCorrelation
+
+============================================================
+Fixed 0 widgets
+============================================================
+
+============================================================
+DATA TABLE ROWS (first 20)
+============================================================
+Found 98 rows:
+  Gamepad_Left2D
+  Gamepad_LeftX
+  Gamepad_LeftY
+  Gamepad_Right2D
+  Gamepad_RightX
+  Gamepad_RightY
+  Gamepad_LeftTriggerAxis
+  Gamepad_RightTriggerAxis
+  Gamepad_LeftThumbstick
+  Gamepad_RightThumbstick
+  Gamepad_Special_Left
+  Gamepad_Special_Left_X
+  Gamepad_Special_Left_Y
+  Gamepad_Special_Right
+  Gamepad_FaceButton_Bottom
+  Gamepad_FaceButton_Right
+  Gamepad_FaceButton_Left
+  Gamepad_FaceButton_Top
+  Gamepad_LeftShoulder
+  Gamepad_RightShoulder
+  ... and 78 more

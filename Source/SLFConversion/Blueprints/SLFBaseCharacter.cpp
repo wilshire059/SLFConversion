@@ -40,9 +40,11 @@ ASLFBaseCharacter::ASLFBaseCharacter()
 	TargetLerpLocation = FVector::ZeroVector;
 	TargetLerpRotation = FRotator::ZeroRotator;
 
-	// NOTE: Components are NOT created here - they are defined in the Blueprint.
-	// The Blueprint's component instances will be used at runtime.
-	// C++ pointers are populated via FindComponentByClass in BeginPlay or by Blueprint serialization.
+	// NOTE: Manager components (StatManager, StatusEffectManager, BuffManager) are defined in
+	// the Blueprint's SCS (Simple Construction Script) with their data (StatTable, Stats, etc.).
+	// Do NOT create them here with CreateDefaultSubobject as that would override the Blueprint
+	// instances and lose their configured data.
+	// They will be found via FindComponentByClass in BeginPlay.
 	CachedStatManager = nullptr;
 	CachedStatusEffectManager = nullptr;
 	CachedBuffManager = nullptr;
@@ -64,6 +66,17 @@ void ASLFBaseCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	UE_LOG(LogTemp, Log, TEXT("[BaseCharacter] BeginPlay: %s"), *GetName());
+
+	// DEBUG: List all components on this character
+	TArray<UActorComponent*> AllComponents;
+	GetComponents(AllComponents);
+	UE_LOG(LogTemp, Log, TEXT("[BaseCharacter] Total components: %d"), AllComponents.Num());
+	for (UActorComponent* Comp : AllComponents)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[BaseCharacter]   Component: %s (Class: %s)"),
+			*Comp->GetName(),
+			*Comp->GetClass()->GetName());
+	}
 
 	// Cache component references from Blueprint-defined components
 	CachedStatManager = FindComponentByClass<UStatManagerComponent>();

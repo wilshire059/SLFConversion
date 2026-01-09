@@ -1,0 +1,6985 @@
+# Category: AI
+- name: BTS_ChaseBounds
+  category: AI
+  description: Type: BPTYPE_Normal, Parent: BTService_BlueprintBase
+  functions:
+    []
+  variables:
+    - ChaseDistanceKey
+    - InverseCondition?
+    - StartPositionKey
+    - State
+    - StateKey
+
+- name: BTS_DistanceCheck
+  category: AI
+  description: Type: BPTYPE_Normal, Parent: BTService_BlueprintBase
+  functions:
+    []
+  variables:
+    - CompareType
+    - DistanceKey
+    - KeyToSet
+    - TargetKey
+
+- name: BTS_IsTargetDead
+  category: AI
+  description: Type: BPTYPE_Normal, Parent: BTService_BlueprintBase
+  functions:
+    []
+  variables:
+    - StateToSwitchTo
+    - TargetKey
+
+- name: BTS_SetMovementModeBasedOnDistance
+  category: AI
+  description: Type: BPTYPE_Normal, Parent: BTService_BlueprintBase
+  functions:
+    []
+  variables:
+    - DistanceKey
+    - TargetKey
+
+- name: BTS_TryGetAbility
+  category: AI
+  description: Type: BPTYPE_Normal, Parent: BTService_BlueprintBase
+  functions:
+    []
+  variables:
+    - CanAttackKey
+
+- name: BTT_ClearKey
+  category: AI
+  description: Type: BPTYPE_Normal, Parent: BTTask_BlueprintBase
+  functions:
+    - NewEventGraph
+  variables:
+    - Key
+
+- name: BTT_GetCurrentLocation
+  category: AI
+  description: Type: BPTYPE_Normal, Parent: BTTask_BlueprintBase
+  functions:
+    []
+  variables:
+    - CurrentLocationKey
+
+- name: BTT_GetRandomPoint
+  category: AI
+  description: Type: BPTYPE_Normal, Parent: BTTask_BlueprintBase
+  functions:
+    []
+  variables:
+    - Radius
+    - TargetKey
+
+- name: BTT_GetRandomPointNearStartPosition
+  category: AI
+  description: Type: BPTYPE_Normal, Parent: BTTask_BlueprintBase
+  functions:
+    []
+  variables:
+    - Radius
+    - StartPositionKey
+
+- name: BTT_GetStrafePointAroundTarget
+  category: AI
+  description: Type: BPTYPE_Normal, Parent: BTTask_BlueprintBase
+  functions:
+    - PickStrafeMethodBasedOnScore
+    - SetStrafeLocations
+  variables:
+    - LocationList
+    - PickedStrafeLoc
+    - PickedStrafeMethod
+    - PossibleMethods
+    - RadiusKey
+    - StrafeLocationKey
+    - TargetKey
+
+- name: BTT_PatrolPath
+  category: AI
+  description: Type: BPTYPE_Normal, Parent: BTTask_BlueprintBase
+  functions:
+    []
+  variables:
+    []
+
+- name: BTT_SetKey
+  category: AI
+  description: Type: BPTYPE_Normal, Parent: BTTask_BlueprintBase
+  functions:
+    - NewEventGraph
+  variables:
+    - Key
+    - KeyData
+
+- name: BTT_SetMovementMode
+  category: AI
+  description: Type: BPTYPE_Normal, Parent: BTTask_BlueprintBase
+  functions:
+    []
+  variables:
+    - MovementMode
+
+- name: BTT_SimpleMoveTo
+  category: AI
+  description: Type: BPTYPE_Normal, Parent: BTTask_BlueprintBase
+  functions:
+    []
+  variables:
+    - RadiusKey
+    - TargetKey
+
+- name: BTT_SwitchState
+  category: AI
+  description: Type: BPTYPE_Normal, Parent: BTTask_BlueprintBase
+  functions:
+    []
+  variables:
+    - Data
+    - New State
+
+- name: BTT_SwitchToPreviousState
+  category: AI
+  description: Type: BPTYPE_Normal, Parent: BTTask_BlueprintBase
+  functions:
+    []
+  variables:
+    []
+
+- name: BTT_ToggleFocus
+  category: AI
+  description: Type: BPTYPE_Normal, Parent: BTTask_BlueprintBase
+  functions:
+    []
+  variables:
+    - Focus?
+    - TargetKey
+
+- name: BTT_TryExecuteAbility
+  category: AI
+  description: Type: BPTYPE_Normal, Parent: BTTask_BlueprintBase
+  functions:
+    []
+  variables:
+    []
+
+
+# Category: AnimBlueprint
+- name: ABP_Manny_PostProcess
+  category: AnimBlueprint
+  description: Type: BPTYPE_Normal, Parent: AnimInstance
+  functions:
+    - AnimGraph
+  variables:
+    []
+
+- name: ABP_Quinn_PostProcess
+  category: AnimBlueprint
+  description: Type: BPTYPE_Normal, Parent: AnimInstance
+  functions:
+    - AnimGraph
+  variables:
+    []
+
+- name: ABP_SoulslikeBossNew
+  category: AnimBlueprint
+  description: Type: BPTYPE_Normal, Parent: AnimInstance
+  functions:
+    - AnimGraph
+  variables:
+    - AC AI Combat Manager
+    - Direction
+    - GroundSpeed
+    - Hit Location
+    - IsFalling
+    - MovementComponent
+    - PhysicsWeight
+    - PoiseBroken
+    - SoulslikeBoss
+    - Velocity
+
+- name: ABP_SoulslikeCharacter_Additive
+  category: AnimBlueprint
+  description: Type: BPTYPE_Normal, Parent: AnimInstance
+  functions:
+    - AnimGraph
+    - BlueprintThreadSafeUpdateAnimation
+    - GetAccelerationData
+    - GetActionComponent
+    - GetBlockSequenceForWeapon
+    - GetCharacterMovementComponent
+    - GetCombatComponent
+    - GetEquipmentComponent
+    - GetGrantedTags
+    - GetIkHitReactData
+    - GetIsBlocking
+    - GetIsCrouched
+    - GetIsResting
+    - GetLocationData
+    - GetOverlayStates
+    - GetRotationData
+    - GetVelocityData
+  variables:
+    - Acceleration
+    - Acceleration2D
+    - ActionManager
+    - ActiveGuardSequence
+    - ActiveHitNormal
+    - AnimDataAsset
+    - CombatManager
+    - Direction(Angle)
+    - EquipmentManager
+    - GrantedTags
+    - IkWeight
+    - IsCrouched
+    - IsResting?
+    - LeftHandOverlayState
+    - RightHandOverlayState
+    - Speed
+    - Velocity
+    - Velocity2D
+    - WorldLocation
+    - WorldRotation
+    - bIsAccelerating?
+    - bIsBlocking?
+    - bIsFalling?
+
+- name: ABP_SoulslikeEnemy
+  category: AnimBlueprint
+  description: Type: BPTYPE_Normal, Parent: AnimInstance
+  functions:
+    - AnimGraph
+  variables:
+    - AC AI Combat Manager
+    - Direction
+    - EquipmentComponent
+    - GroundSpeed
+    - Hit Location
+    - IsFalling
+    - LocomotionType
+    - MovementComponent
+    - PhysicsWeight
+    - PoiseBreakAsset
+    - PoiseBroken
+    - SoulslikeCharacter
+    - SoulslikeEnemy
+    - Velocity
+
+- name: ABP_SoulslikeNPC
+  category: AnimBlueprint
+  description: Type: BPTYPE_Normal, Parent: AnimInstance
+  functions:
+    - AnimGraph
+  variables:
+    - AC AI Combat Manager
+    - Direction
+    - DistanceToLookAtTarget
+    - EquipmentComponent
+    - GroundSpeed
+    - HasLookAtTarget
+    - IsFalling
+    - LookAtLocation
+    - MaxDistance
+    - MovementComponent
+    - ShouldMove
+    - SoulslikeCharacter
+    - SoulslikeNpc
+    - Velocity
+
+- name: ALI_LocomotionStates
+  category: AnimBlueprint
+  description: Type: BPTYPE_Interface, Parent: AnimLayerInterface
+  functions:
+    - LL_CrouchCycle
+    - LL_CrouchIdle
+    - LL_Cycle
+    - LL_Idle
+    - LL_RestingIdle
+  variables:
+    []
+
+- name: ALI_OverlayStates
+  category: AnimBlueprint
+  description: Type: BPTYPE_Interface, Parent: AnimLayerInterface
+  functions:
+    - LL_OneHanded_Left
+    - LL_OneHanded_Right
+    - LL_Shield_Block_Left
+    - LL_Shield_Block_Right
+    - LL_Shield_Left
+    - LL_Shield_Right
+    - LL_TwoHanded_Left
+    - LL_TwoHanded_Right
+  variables:
+    []
+
+
+# Category: Animation
+- name: ANS_AI_FistTrace
+  category: Animation
+  description: Type: BPTYPE_Const, Parent: AnimNotifyState
+  functions:
+    - GetNotifyName
+    - Received_NotifyBegin
+    - Received_NotifyEnd
+    - Received_NotifyTick
+  variables:
+    - DebugRadius
+    - DebugTraceColor
+    - DebugTraceDuration
+    - DebugTraceThickness
+    - TraceType
+
+- name: ANS_AI_RotateTowardsTarget
+  category: Animation
+  description: Type: BPTYPE_Const, Parent: AnimNotifyState
+  functions:
+    - GetNotifyName
+    - Received_NotifyBegin
+    - Received_NotifyEnd
+  variables:
+    []
+
+- name: ANS_AI_Trail
+  category: Animation
+  description: Type: BPTYPE_Const, Parent: AnimNotifyState
+  functions:
+    - GetNotifyName
+    - Received_NotifyBegin
+    - Received_NotifyEnd
+  variables:
+    - WeaponSockets
+
+- name: ANS_AI_WeaponTrace
+  category: Animation
+  description: Type: BPTYPE_Const, Parent: AnimNotifyState
+  functions:
+    - GetNotifyName
+    - Received_NotifyBegin
+    - Received_NotifyEnd
+  variables:
+    - DamageMultiplier
+    - TraceSizeMultiplier
+    - TracedWeaponSockets
+
+- name: ANS_FistTrace
+  category: Animation
+  description: Type: BPTYPE_Const, Parent: AnimNotifyState
+  functions:
+    - GetNotifyName
+    - Received_NotifyBegin
+    - Received_NotifyEnd
+    - Received_NotifyTick
+  variables:
+    - Radius
+    - TraceColor
+    - TraceDuration
+    - TraceThickness
+    - TraceType
+
+- name: ANS_HyperArmor
+  category: Animation
+  description: Type: BPTYPE_Const, Parent: AnimNotifyState
+  functions:
+    - GetNotifyName
+    - Received_NotifyBegin
+    - Received_NotifyEnd
+  variables:
+    - IsAI?
+
+- name: ANS_InputBuffer
+  category: Animation
+  description: Type: BPTYPE_Const, Parent: AnimNotifyState
+  functions:
+    - GetNotifyName
+    - Received_NotifyBegin
+    - Received_NotifyEnd
+  variables:
+    []
+
+- name: ANS_InvincibilityFrame
+  category: Animation
+  description: Type: BPTYPE_Const, Parent: AnimNotifyState
+  functions:
+    - GetNotifyName
+    - Received_NotifyBegin
+    - Received_NotifyEnd
+  variables:
+    - IsAI?
+
+- name: ANS_RegisterAttackSequence
+  category: Animation
+  description: Type: BPTYPE_Const, Parent: AnimNotifyState
+  functions:
+    - GetNotifyName
+    - Received_NotifyBegin
+    - Received_NotifyEnd
+  variables:
+    - QueuedSection
+
+- name: ANS_ToggleChaosField
+  category: Animation
+  description: Type: BPTYPE_Const, Parent: AnimNotifyState
+  functions:
+    - GetNotifyName
+    - Received_NotifyBegin
+    - Received_NotifyEnd
+  variables:
+    []
+
+- name: ANS_Trail
+  category: Animation
+  description: Type: BPTYPE_Const, Parent: AnimNotifyState
+  functions:
+    - GetNotifyName
+    - Received_NotifyBegin
+    - Received_NotifyEnd
+  variables:
+    - TraceType
+
+- name: ANS_WeaponTrace
+  category: Animation
+  description: Type: BPTYPE_Const, Parent: AnimNotifyState
+  functions:
+    - GetNotifyName
+    - Received_NotifyBegin
+    - Received_NotifyEnd
+  variables:
+    - Damage Multiplier
+    - TraceType
+
+- name: AN_AI_SpawnProjectile
+  category: Animation
+  description: Type: BPTYPE_Const, Parent: AnimNotify
+  functions:
+    - GetNotifyName
+    - Received_Notify
+  variables:
+    - ProjectileClass
+    - SpawnSocketName
+    - UseSocketRotation?
+
+- name: AN_AdjustStat
+  category: Animation
+  description: Type: BPTYPE_Const, Parent: AnimNotify
+  functions:
+    - GetNotifyName
+    - Received_Notify
+  variables:
+    - Change
+    - Stat Tag
+    - Trigger Regen?
+    - Value Type
+
+- name: AN_AoeDamage
+  category: Animation
+  description: Type: BPTYPE_Const, Parent: AnimNotify
+  functions:
+    - GetNotifyName
+    - Received_Notify
+  variables:
+    - DrawDebug?
+    - MaxDamage
+    - MinDamage
+    - ObjectTypes
+    - OptionalClassFilter
+    - OverlapOffset
+    - Radius
+
+- name: AN_CameraShake
+  category: Animation
+  description: Type: BPTYPE_Const, Parent: AnimNotify
+  functions:
+    - GetNotifyName
+    - Received_Notify
+  variables:
+    - CameraShake
+    - Scale
+
+- name: AN_FootstepTrace
+  category: Animation
+  description: Type: BPTYPE_Const, Parent: AnimNotify
+  functions:
+    - GetNotifyName
+    - Received_Notify
+  variables:
+    - DebugTrace
+    - Effects
+    - FootSocket
+    - Sounds
+    - TraceLength
+    - TraceType
+
+- name: AN_InterruptMontage
+  category: Animation
+  description: Type: BPTYPE_Const, Parent: AnimNotify
+  functions:
+    - GetNotifyName
+    - Received_Notify
+  variables:
+    - BlendOutDuration
+
+- name: AN_LaunchField
+  category: Animation
+  description: Type: BPTYPE_Const, Parent: AnimNotify
+  functions:
+    - GetNotifyName
+    - Received_Notify
+  variables:
+    - LaunchStrength
+    - OverlapDrawDebug?
+    - OverlapObjectTypes
+    - OverlapOffset
+    - OverlapOptionalClassFilter
+    - OverlapRadius
+
+- name: AN_PlayCameraSequence
+  category: Animation
+  description: Type: BPTYPE_Const, Parent: AnimNotify
+  functions:
+    - GetNotifyName
+    - Received_Notify
+  variables:
+    - Sequence
+    - Settings
+
+- name: AN_SetAiState
+  category: Animation
+  description: Type: BPTYPE_Const, Parent: AnimNotify
+  functions:
+    - GetNotifyName
+    - Received_Notify
+  variables:
+    - Data
+    - State
+
+- name: AN_SetMovementMode
+  category: Animation
+  description: Type: BPTYPE_Const, Parent: AnimNotify
+  functions:
+    - GetNotifyName
+    - Received_Notify
+  variables:
+    - MovementMode
+
+- name: AN_SpawnProjectile
+  category: Animation
+  description: Type: BPTYPE_Const, Parent: AnimNotify
+  functions:
+    - GetNotifyName
+    - Received_Notify
+  variables:
+    - ProjectileClass
+    - SpawnSocketName
+    - UseSocketRotation?
+
+- name: AN_TryGuard
+  category: Animation
+  description: Type: BPTYPE_Const, Parent: AnimNotify
+  functions:
+    - GetNotifyName
+    - Received_Notify
+  variables:
+    []
+
+- name: AN_WorldCameraShake
+  category: Animation
+  description: Type: BPTYPE_Const, Parent: AnimNotify
+  functions:
+    - GetNotifyName
+    - Received_Notify
+  variables:
+    - CameraShake
+    - Falloff
+    - Inner Radius
+    - Orient Towards Epicenter?
+    - Outer Radius
+
+
+# Category: Blackboard
+- name: BB_Standard
+  category: Blackboard
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+
+# Category: Blueprint
+- name: AIC_SoulslikeFramework
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: AIController
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: BFL_Helper
+  category: Blueprint
+  description: Type: BPTYPE_FunctionLibrary, Parent: BlueprintFunctionLibrary
+  functions:
+    - ActorTagMatches
+    - CalculateWeaponDamage
+    - CompareStrings
+    - GetDeathTagFromDirection
+    - GetDirectionFromHit
+    - GetEquipmentComponent
+    - GetInputUserSettings
+    - GetInventoryComponent
+    - GetIsBehindTarget?
+    - GetIsMoving2D?
+    - GetKeysForIA
+    - GetLocalProgressManager
+    - GetLocationActorTransform
+    - GetSaveDataByTag
+    - GetSaveLoadComponent
+    - GetStatCurrentValue
+    - GetStatMaxValue
+    - GetStatPercentValue
+    - GetUniqueSlotName
+    - IsEnemyDead?
+    - ParseAffectedStats
+    - ParseOutTagName
+    - ParseStringLength
+    - RemoveDuplicateCategories
+    - SendErrorMessage
+    - TryGetHudForActor
+    - UnlockCraftableItems
+  variables:
+    []
+
+- name: BML_HelperMacros
+  category: Blueprint
+  description: Type: BPTYPE_MacroLibrary, Parent: Object
+  functions:
+    - CombineExecute
+    - DelayedForeachLoop
+    - DoCooldown
+    - FastForEachLoop
+    - FastForEachLoopWithBreak
+    - FastReverseForEachLoop
+    - FastReverseForEachLoopWithBreak
+    - FastSort
+    - IsClass
+    - IsClassChlid
+    - IsValidArray
+    - TickLoop
+    - TickLoopWithDuration
+  variables:
+    []
+
+- name: BML_StructConversion
+  category: Blueprint
+  description: Type: BPTYPE_MacroLibrary, Parent: Object
+  functions:
+    - ConvertToClassSaveInfoStruct
+    - ConvertToEquipmentItemsSaveInfoStructs
+    - ConvertToFBool
+    - ConvertToFClass
+    - ConvertToFEnumByte
+    - ConvertToFFloat
+    - ConvertToFInt
+    - ConvertToFName
+    - ConvertToFProgress
+    - ConvertToFRotator
+    - ConvertToFString
+    - ConvertToFVector
+    - ConvertToGuidStructs
+    - ConvertToIntStruct
+    - ConvertToInteractableStateSaveInfoStructs
+    - ConvertToInventoryItemsSaveInfoStructs
+    - ConvertToItemWheelSaveInfoStructs
+    - ConvertToNpcSaveInfoStructs
+    - ConvertToProgressSaveInfoStructs
+    - ConvertToSpawnedActorSaveInfoStructs
+    - ConvertToStatInfoStructs
+    - ConvertToStatusEffectOneShotAndTickStructure
+    - ConvertToStatusEffectStatChangesStructure
+    - ConvertToStatusEffectTickStructure
+    - ConvertToTimespanStruct
+    - ConvertToVendorSaveInfoStructs
+    - ConvertToWorldSaveInfoStruct
+  variables:
+    []
+
+- name: B_AP_Fire
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_AP_Frost
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_AP_Holy
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_AP_Lightning
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_AP_Magic
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_AP_Physical
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_AbilityEffectBase
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: Actor
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: B_Action
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: Object
+  functions:
+    - AdjustStatByRequirement
+    - CheckStatRequirement
+    - GetActionManager
+    - GetCombatManager
+    - GetEquipmentManager
+    - GetInputBuffer
+    - GetInteractionManager
+    - GetInventoryManager
+    - GetOwnerAnimInstance
+    - GetStatManager
+    - GetWeaponAnimset
+    - GetWeaponStaminaMultiplier
+  variables:
+    - Action
+    - OwnerActor
+
+- name: B_Action_Backstab
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Action_C
+  functions:
+    - NewEventGraph
+  variables:
+    []
+
+- name: B_Action_ComboHeavy
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Action_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_Action_ComboLight_L
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Action_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_Action_ComboLight_R
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Action_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_Action_Crouch
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Action_C
+  functions:
+    - NewEventGraph
+  variables:
+    []
+
+- name: B_Action_Dodge
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Action_C
+  functions:
+    - NewEventGraph
+  variables:
+    - DodgeMontages
+
+- name: B_Action_DrinkFlask_HP
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Action_C
+  functions:
+    - GetChangeAmountFromPercent
+    - NewEventGraph
+  variables:
+    []
+
+- name: B_Action_DualWieldAttack
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Action_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_Action_Execute
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Action_C
+  functions:
+    - NewEventGraph
+  variables:
+    []
+
+- name: B_Action_GuardCancel
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Action_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_Action_GuardEnd
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Action_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_Action_GuardStart
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Action_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_Action_Jump
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Action_C
+  functions:
+    - NewEventGraph
+  variables:
+    []
+
+- name: B_Action_JumpAttack
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Action_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_Action_PickupItemMontage
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Action_C
+  functions:
+    - NewEventGraph
+  variables:
+    []
+
+- name: B_Action_ScrollWheel_LeftHand
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Action_C
+  functions:
+    - NewEventGraph
+  variables:
+    []
+
+- name: B_Action_ScrollWheel_RightHand
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Action_C
+  functions:
+    - NewEventGraph
+  variables:
+    []
+
+- name: B_Action_ScrollWheel_Tools
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Action_C
+  functions:
+    - NewEventGraph
+  variables:
+    []
+
+- name: B_Action_SprintAttack
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Action_C
+  functions:
+    - NewEventGraph
+  variables:
+    []
+
+- name: B_Action_StartSprinting
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Action_C
+  functions:
+    - NewEventGraph
+  variables:
+    []
+
+- name: B_Action_StopSprinting
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Action_C
+  functions:
+    - NewEventGraph
+  variables:
+    []
+
+- name: B_Action_ThrowProjectile
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Action_C
+  functions:
+    - NewEventGraph
+  variables:
+    []
+
+- name: B_Action_TwoHandedStance_L
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Action_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_Action_TwoHandedStance_R
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Action_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_Action_UseEquippedTool
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Action_C
+  functions:
+    - NewEventGraph
+  variables:
+    []
+
+- name: B_Action_WeaponAbility
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Action_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_Arcane
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_BaseCharacter
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: Character
+  functions:
+    - OnLocationLerpEnd
+    - OnLocationRotationLerpEnd
+    - OnRotationLerpEnd
+    - UserConstructionScript
+  variables:
+    - Cache_Location
+    - Cache_Rotation
+    - IK_Weight
+    - OnLocationLerpEnd
+    - OnLocationRotationLerpEnd
+    - OnRotationLerpEnd
+
+- name: B_BaseProjectile
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: Actor
+  functions:
+    - UserConstructionScript
+  variables:
+    - DestroyDelay
+    - HitEffect
+    - HomingDuration
+    - IsHoming?
+    - Lifespan
+    - MaxDamage
+    - MinDamage
+    - NegationStat
+    - StatusEffects
+    - TargetTag
+
+- name: B_BossDoor
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Door_C
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: B_Buff
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: Object
+  functions:
+    - GetMultiplierForCurrentRank
+    - GetOwnerStatManager
+  variables:
+    - BuffData
+    - OwnerActor
+    - Rank
+
+- name: B_Buff_AttackPower
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Buff_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_Chaos_ForceField
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: FieldSystemActor
+  functions:
+    - UserConstructionScript
+  variables:
+    - FieldVolume
+    - OperatorFIeld_Input
+    - skel
+
+- name: B_Container
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Interactable_C
+  functions:
+    - UserConstructionScript
+  variables:
+    - CachedIntensity
+    - MoveDistance
+    - OpenMontage
+    - OpenVFX
+    - SpeedMultiplier
+
+- name: B_DN_Fire
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_DN_Frost
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_DN_Holy
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_DN_Lightning
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_DN_Magic
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_DN_Physical
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_DeathCurrency
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Interactable_C
+  functions:
+    - UserConstructionScript
+  variables:
+    - CacheTest
+    - CacheTransform
+    - CurrencyAmount
+    - PlayerLocation
+
+- name: B_DeathTrigger
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: Actor
+  functions:
+    - UserConstructionScript
+  variables:
+    - BillboardProportionalScaleMultiplier
+    - RelevantActorTags
+    - ShowBillboard?
+
+- name: B_DemoDisplay
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: Actor
+  functions:
+    - Add Title Panel
+    - Create Display
+    - Create Instances
+    - Format Text
+    - Redraw
+    - Scalable Panel
+    - ScaleSafeInstance
+    - Shadow Box
+    - Text Alignment Offset
+    - Title Text Transform
+    - TitlePanelTextTransform
+    - UserConstructionScript
+  variables:
+    - Cast Shadows
+    - Colour
+    - Custom Colour
+    - Depth
+    - Description Colour
+    - Description Scale
+    - Description Text
+    - DescriptionFinal
+    - Floor Text
+    - Height
+    - ISM_ Curve
+    - ISM_ CurveEdge
+    - ISM_Corner
+    - ISM_Main
+    - ISM_ShadowRound
+    - ISM_ShadowStraight
+    - ISM_Side
+    - ISM_TitleBarEnd
+    - ISM_TitleBarMain
+    - Number of lines between paragraphs
+    - Number of spaces between lines
+    - Seperate Title Panel
+    - ShadowCover
+    - Spotlight
+    - Text Alignment
+    - Text Padding
+    - Title Colour
+    - Title Scale
+    - Title Text
+    - Width
+
+- name: B_DemoRoom
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: Actor
+  functions:
+    - Add Spacer
+    - Create Instances
+    - Create Room
+    - EndWall
+    - Floor
+    - Lighting
+    - Make BackWall
+    - Make Door
+    - Make Pillar
+    - Make Rounded End
+    - MetalStrip
+    - Redraw
+    - UserConstructionScript
+  variables:
+    - 10MCurve
+    - 10MEdgeBlack
+    - 10MEdge_Colour
+    - 10MEdge_White
+    - 10MPillar
+    - 10MPillar2
+    - 10MPillar2Black
+    - 10MPillar_Black
+    - 10MWall
+    - 10MWall_Black
+    - 10MWall_Ceiling
+    - 10MWall_Colour
+    - 10MWall_Grey
+    - BackWall_Corner
+    - BackWall_Edge
+    - BlackRibbedCurve
+    - BlackRibbedWall
+    - Draw End Wall
+    - Draw Start Wall
+    - FloorFilter
+    - Floor_Corner
+    - Floor_Edge
+    - LightPanel
+    - MetalTrim_Corner
+    - MetalTrim_Straight
+    - PillarCurve
+    - PillarCurveCorner
+    - PillarCurveCornerBlack
+    - Pipe
+    - Rooms
+    - Segment Counter
+    - SpacerSize
+    - Trim
+    - Trim_Curve
+    - Trim_End
+    - Trim_Straight
+    - UELogo
+    - WhiteRibbedWall
+    - isikdevLogo
+
+- name: B_Demo_TimeSlider
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Interactable_C
+  functions:
+    - UserConstructionScript
+  variables:
+    - Active
+    - ClosestSplineLoc
+    - MyActor
+    - MyActorLoc
+    - SkyManager
+
+- name: B_Destructible
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: Actor
+  functions:
+    - UserConstructionScript
+  variables:
+    - DestructionSound
+    - GeometryCollection
+
+- name: B_Dexterity
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_Discovery
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_Door
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Interactable_C
+  functions:
+    - GetRequiredItemsParsed
+    - OnDoorOpened
+    - UserConstructionScript
+    - ValidateUnlockRequirements
+  variables:
+    - Cache_Rotation
+    - InteractMontage_LH
+    - InteractMontage_RH
+    - LockInfo
+    - MoveToDistance
+    - OnDoorOpened
+    - OpenForwards?
+    - PlayRate
+    - SelectedMontage
+    - YawRotationAmount
+
+- name: B_Door_Demo
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Door_C
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: B_Endurance
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_FP
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_Faith
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_HP
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_IncantationPower
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_Intelligence
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_Interactable
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: Actor
+  functions:
+    - AddInteractableStateToSaveData
+    - AddSpawnedInteractableToSaveData
+    - UserConstructionScript
+  variables:
+    - CanBeTraced?
+    - ID
+    - InteractableDisplayName
+    - InteractionText
+    - IsActivated?
+
+- name: B_Item
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: Actor
+  functions:
+    - UserConstructionScript
+  variables:
+    - ItemInfo
+
+- name: B_Item_AI_Weapon
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Item_Weapon_C
+  functions:
+    - TryApplyDamage
+    - UserConstructionScript
+  variables:
+    - Item Data
+
+- name: B_Item_AI_Weapon_BossMace
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Item_AI_Weapon_C
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: B_Item_AI_Weapon_Greatsword
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Item_AI_Weapon_C
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: B_Item_AI_Weapon_Sword
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Item_AI_Weapon_C
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: B_Item_Lantern
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Item_C
+  functions:
+    - UserConstructionScript
+  variables:
+    - LanternLife
+
+- name: B_Item_Weapon
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Item_C
+  functions:
+    - GetAttackPowerStats
+    - GetWeaponAttackPowerData
+    - GetWeaponPoiseDamage
+    - GetWeaponStat
+    - GetWeaponStatScaling
+    - GetWeaponStatusEffectData
+    - TryApplyDamage
+    - UserConstructionScript
+  variables:
+    - DebugVisualizeTrace?
+    - EnvironmentImpactEffect
+    - EnvironmentImpactSound
+    - GuardSound
+    - PerfectGuard Sound
+    - TrailEffect
+    - TrailWidthParameterName
+
+- name: B_Item_Weapon_BossMace
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Item_Weapon_C
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: B_Item_Weapon_Greatsword
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Item_Weapon_C
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: B_Item_Weapon_Katana
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Item_Weapon_C
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: B_Item_Weapon_PoisonSword
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Item_Weapon_C
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: B_Item_Weapon_Shield
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Item_Weapon_C
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: B_Item_Weapon_SwordExample01
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Item_Weapon_C
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: B_Item_Weapon_SwordExample02
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Item_Weapon_C
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: B_Ladder
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Interactable_C
+  functions:
+    - CreateLadder
+    - GetPoleHeight
+    - UserConstructionScript
+  variables:
+    - AddFinishBar?
+    - BarAtZero?
+    - BarOffset
+    - BottomCollisionExtent
+    - BottomCollisionOffsetX
+    - BottomCollisionOffsetZ
+    - Cache_LastBarIndex
+    - ConnectionCount
+    - LadderHeight
+    - OvershootCount
+    - TopCollisionExtent
+    - TopCollisionOffsetX
+    - TopCollisionOffsetZ
+    - TopdownCollisionExtent
+    - TopdownCollisionOffsetX
+    - TopdownCollisionOffsetZ
+
+- name: B_LocationActor
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: Actor
+  functions:
+    - UserConstructionScript
+  variables:
+    - LocationTag
+
+- name: B_Mind
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_PatrolPath
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: Actor
+  functions:
+    - GetWorldPositionForCurrentPoint
+    - UserConstructionScript
+  variables:
+    - CurrentPointIndex
+    - IncrementBy
+
+- name: B_PickupItem
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Interactable_C
+  functions:
+    - OnItemLooted
+    - TryGetItemInfo
+    - UserConstructionScript
+  variables:
+    - Count
+    - Item
+    - ItemInfo
+    - OnItemLooted
+    - PlacementTraceChannel
+    - UsePhysics?
+
+- name: B_Poise
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_Projectile_Boss_Fireball
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_BaseProjectile_C
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: B_Projectile_ThrowingKnife
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_BaseProjectile_C
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: B_Resistance_Focus
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_Resistance_Immunity
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_Resistance_Robustness
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_Resistance_Vitality
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_RestingPoint
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Interactable_C
+  functions:
+    - GetReplenishData
+    - OnExited
+    - OnReady
+    - UserConstructionScript
+  variables:
+    - CameraDistance
+    - CameraOffset
+    - CameraRotation
+    - DiscoverInteractionMontage
+    - ForceFaceSittingActor?
+    - ItemsToReplenish
+    - LocationName
+    - OnExited
+    - OnReady
+    - SittingActor
+    - SittingAngle
+    - StatsToReplenish
+
+- name: B_SequenceActor
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: Actor
+  functions:
+    - OnSequenceFinished
+    - UserConstructionScript
+  variables:
+    - ActiveSequencePlayer
+    - CanBeSkipped?
+    - OnSequenceFinished
+    - SequenceToPlay
+    - Settings
+
+- name: B_ShowcaseEnemy_ExitCombat
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: Actor
+  functions:
+    - UserConstructionScript
+  variables:
+    - CacheTransform
+    - DefaultTransform
+    - MyEnemyActor
+
+- name: B_ShowcaseEnemy_StatDisplay
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: Actor
+  functions:
+    - UserConstructionScript
+  variables:
+    - MyEnemyActor
+    - Stats
+
+- name: B_SkyManager
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: Actor
+  functions:
+    - UserConstructionScript
+  variables:
+    - CurrentLightningMode
+    - FogDensityTrack
+    - Time
+    - TimeDilation
+    - TimeEntryInfo
+    - TimeInfoAsset
+
+- name: B_Soulslike_Boss
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Soulslike_Enemy_C
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: B_Soulslike_Boss_Malgareth
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Soulslike_Boss_C
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: B_Soulslike_Character
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_BaseCharacter_C
+  functions:
+    - GetAxisValue
+    - GetMeshInitialized
+    - HandleTargetLock
+    - MakeModularMeshData
+    - OnCameraResetFinished
+    - OnInputDetected
+    - OnInteractPressed
+    - UserConstructionScript
+  variables:
+    - Cache_ActiveCameraSequence
+    - Cache_ControlRotation
+    - Cache_InteractElapsed
+    - Cache_IsAsyncEquipmentBusy
+    - Cache_SpringArmLength
+    - Cache_isHoldingInteract
+    - Cache_isHoldingSprint
+    - CameraPitchLock
+    - CustomGameSettings
+    - DefaultMeshInfo
+    - IsMeshInitialized?
+    - MeshMergeData
+    - OnCameraResetFinished
+    - OnInputDetected
+    - OnInteractPressed
+    - PlayerMappingContext
+
+- name: B_Soulslike_Enemy
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_BaseCharacter_C
+  functions:
+    - CheckSense
+    - OnAttackEnd
+    - UserConstructionScript
+  variables:
+    - EnemyId
+    - OnAttackEnd
+
+- name: B_Soulslike_Enemy_Guard
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Soulslike_Enemy_C
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: B_Soulslike_Enemy_Showcase
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Soulslike_Enemy_C
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: B_Soulslike_NPC
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_BaseCharacter_C
+  functions:
+    - GetLookAtLocation
+    - UserConstructionScript
+  variables:
+    - CanBeTraced?
+    - LookAtComponent
+    - NpcId
+
+- name: B_Soulslike_NPC_ShowcaseGuide
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Soulslike_NPC_C
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: B_Soulslike_NPC_ShowcaseVendor
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Soulslike_NPC_C
+  functions:
+    - UserConstructionScript
+  variables:
+    - MeshMergeData
+
+- name: B_Stamina
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_Stance
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_Stat
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: Object
+  functions:
+    - AdjustAffectedValue
+    - AdjustValue
+    - CalculatePercent
+    - GetRegenInfo
+    - InitializeBaseClassValue
+    - OnLeveledUp
+    - OnStatUpdated
+    - UpdateStatInfo
+  variables:
+    - MinValue
+    - OnLeveledUp
+    - OnStatUpdated
+    - OnlyMaxValueRelevant
+    - ShowMaxValueOnLevelUp?
+    - StatInfo
+
+- name: B_StatusEffect
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: Object
+  functions:
+    - GetBuildupPercent
+    - GetEffectData
+    - GetEffectRankData
+    - GetOwnerStatManager
+    - GetResistiveStatValue
+    - GetTriggeredText
+    - OnBuildupUpdated
+    - OnStatusEffectFinished
+    - OnStatusEffectTriggered
+    - SpawnLoopingVfxAttached
+  variables:
+    - ActiveRank
+    - BuildupPercent
+    - Data
+    - EffectDuration
+    - EffectSteps
+    - IsTriggered?
+    - OnBuildupUpdated
+    - OnStatusEffectFinished
+    - OnStatusEffectTriggered
+    - OneShotStatChange
+    - Owner
+    - OwnerResistiveStatValue
+    - StatsToAdjust
+    - TickAndOneShotStatChange
+    - TickStatChange
+
+- name: B_StatusEffectArea
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: Actor
+  functions:
+    - UserConstructionScript
+  variables:
+    - EffectRank
+    - StatusEffectToApply
+
+- name: B_StatusEffectBuildup
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_StatusEffectOneShot
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: Actor
+  functions:
+    - UserConstructionScript
+  variables:
+    - Amount
+    - CurrentTarget
+    - Rank
+    - StatusEffectToApply
+
+- name: B_StatusEffect_Bleed
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_StatusEffect_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_StatusEffect_Burn
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_StatusEffect_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_StatusEffect_Corruption
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_StatusEffect_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_StatusEffect_Frostbite
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_StatusEffect_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_StatusEffect_Madness
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_StatusEffect_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_StatusEffect_Plague
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_StatusEffect_C
+  functions:
+    - NewEventGraph
+    - NewEventGraph_0
+  variables:
+    []
+
+- name: B_StatusEffect_Poison
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_StatusEffect_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_Strength
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_Torch
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: Actor
+  functions:
+    - UserConstructionScript
+  variables:
+    - Attenuation
+    - CastShadows?
+    - Color
+    - Intensity
+
+- name: B_Vigor
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: B_Weight
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: B_Stat_C
+  functions:
+    []
+  variables:
+    []
+
+- name: CS_Boss_Roar
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: LegacyCameraShake
+  functions:
+    []
+  variables:
+    []
+
+- name: CS_Guard
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: LegacyCameraShake
+  functions:
+    []
+  variables:
+    []
+
+- name: CS_JumpHit
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: LegacyCameraShake
+  functions:
+    []
+  variables:
+    []
+
+- name: CS_Seq_Handheld
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: CameraShakeBase
+  functions:
+    []
+  variables:
+    []
+
+- name: CS_StrongHit
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: LegacyCameraShake
+  functions:
+    []
+  variables:
+    []
+
+- name: CS_SubtleHit
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: LegacyCameraShake
+  functions:
+    []
+  variables:
+    []
+
+- name: GS_SoulslikeFramework
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: GameState
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: PS_SoulslikeFramework
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: PlayerState
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: SG_SaveSlots
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: SaveGame
+  functions:
+    - AddSlot
+    - GetAllSlots
+    - GetLastSaveSlot
+  variables:
+    - LastSavedSlot
+    - Slots
+
+- name: SG_SoulslikeFramework
+  category: Blueprint
+  description: Type: BPTYPE_Normal, Parent: SaveGame
+  functions:
+    - GetSavedData
+    - SetSavedData
+  variables:
+    - SavedData
+
+
+# Category: Component
+- name: AC_AI_BehaviorManager
+  category: Component
+  description: Type: BPTYPE_Normal, Parent: ActorComponent
+  functions:
+    - GetBlackboard
+    - GetState
+    - GetTarget
+    - SetKeyValue
+    - SetPatrolPath
+    - SetState
+    - SetTarget
+  variables:
+    - AttackDistanceThreshold
+    - Behavior
+    - CurrentState
+    - CurrentTarget
+    - MaxChaseDistanceThreshold
+    - MinimumStrafePointDistanceThreshold
+    - PatrolPath
+    - PreviousState
+    - SpeedAdjustDistanceThreshold
+    - StrafeDistanceThreshold
+    - StrafeMethods
+
+- name: AC_AI_Boss
+  category: Component
+  description: Type: BPTYPE_Normal, Parent: ActorComponent
+  functions:
+    - EvaluatePhaseRequirement
+    - SetFightActive
+    - SetPhase
+    - TryGetBossDoors
+    - TryUnlockBossDoors
+  variables:
+    - ActiveMusicComponent
+    - ActivePhase
+    - ActivePhaseIndex
+    - BossDoorClass
+    - DeathSequence
+    - DeathText
+    - DeathTextDelay
+    - DebugActive?
+    - DebugPhase
+    - DoorCheckDistance
+    - EncounterTriggerType
+    - FightActive?
+    - HiddenInDeathSequence?
+    - Name
+    - Phases
+    - RelatedBossDoors
+    - ShowBossBar?
+    - TriggerCollisionRadius
+
+- name: AC_AI_CombatManager
+  category: Component
+  description: Type: BPTYPE_Normal, Parent: ActorComponent
+  functions:
+    - ApplyFistDamage
+    - ApplyIncomingStatusEffects
+    - EvaluateAbilityRule
+    - GetKnockbackAmountForDamage
+    - GetRelevantExecutedMontage
+    - GetSelectedAbility
+    - HandleDeath
+    - HandleHitReaction
+    - HandleIncomingWeaponDamage_AI
+    - HandleProjectileDamage_AI
+    - OnDeath
+    - OnPoiseBroken
+    - OverrideAbilities
+    - ProcessHandTrace
+    - SetHyperArmor
+    - SetInvincibility
+    - TryGetAbility
+  variables:
+    - Abilities
+    - AbilityTimer
+    - BrokenPoiseDuration
+    - CanBePushed?
+    - CausesHitStop?
+    - CurrencyReward
+    - CurrentHitNormal
+    - DamagingActor
+    - DelayAfterDeath
+    - ExecutedMontages
+    - FistTracedActors
+    - HandSocket_L_End
+    - HandSocket_L_Start
+    - HandSocket_R_End
+    - HandSocket_R_Start
+    - HandTraceRadius
+    - HealthBarDuration
+    - HealthbarActive
+    - HealthbarLosTimer
+    - HealthbarTimer
+    - HitReactType
+    - HitSFX
+    - HitStopDuration
+    - HitVFX
+    - HyperArmor?
+    - IkWeight
+    - Invincible?
+    - IsDead
+    - LeftHandTraceTimer
+    - LineOfSightCheckInterval
+    - MaxUnarmedPoiseDamage
+    - Mesh
+    - MinUnarmedPoiseDamage
+    - OnDeath
+    - OnPoiseBroken
+    - PoiseBreakAsset
+    - PoiseBreakTimer
+    - PoiseBroken
+    - RagdollOnDeath?
+    - ReactionAnimset
+    - RightHandTraceTimer
+    - SelectedAbility
+    - UseWorldHealthbar?
+
+- name: AC_AI_InteractionManager
+  category: Component
+  description: Type: BPTYPE_Normal, Parent: ActorComponent
+  functions:
+    - GetCurrentDialogEntry
+    - OnDialogFinished
+  variables:
+    - ActiveTable
+    - CurrentIndex
+    - DialogAsset
+    - MaxIndex
+    - Name
+    - OnDialogFinished
+    - ProgressManager
+    - VendorAsset
+
+- name: AC_ActionManager
+  category: Component
+  description: Type: BPTYPE_Normal, Parent: ActorComponent
+  functions:
+    - GetCombatManager
+    - GetDirectionalDodge
+    - GetInteractionManager
+    - GetIsCrouched
+    - GetStatManager
+    - SetIsResting
+    - SetIsSprinting
+    - SetMoveDir
+    - ToggleCrouch
+  variables:
+    - ActionAssetsCache
+    - ActionTagsCache
+    - Actions
+    - AvailableActions
+    - IsCrouched
+    - IsOnLadder
+    - IsResting
+    - IsSprinting
+    - MovementDirection
+    - MovementVector
+    - OverrideTable
+    - StaminaLossTimer
+    - StaminaRegenDelay
+
+- name: AC_BuffManager
+  category: Component
+  description: Type: BPTYPE_Normal, Parent: ActorComponent
+  functions:
+    - GetBuffsWithTag
+    - OnBuffDetected
+    - RemoveAllBuffsOfType
+    - RemoveAllBuffsWithTag
+    - RemoveBuffOfType
+    - RemoveBuffWithTag
+  variables:
+    - ActiveBuffs
+    - Cache_Buff
+    - OnBuffDetected
+
+- name: AC_CollisionManager
+  category: Component
+  description: Type: BPTYPE_Normal, Parent: ActorComponent
+  functions:
+    - GetMultipliers
+    - GetTraceLocations
+    - OnActorTraced
+    - ProcessTrace
+    - SetMultipliers
+    - SubsteppedTrace
+  variables:
+    - DamageMultiplier
+    - LastEndPosition
+    - LastStartPosition
+    - OnActorTraced
+    - TargetMesh
+    - TraceDebugMode
+    - TraceRadius
+    - TraceSizeMultiplier
+    - TraceSocketEnd
+    - TraceSocketStart
+    - TraceTypes
+    - TracedActors
+
+- name: AC_CombatManager
+  category: Component
+  description: Type: BPTYPE_Normal, Parent: ActorComponent
+  functions:
+    - ApplyFistDamage
+    - ApplyIncomingStatusEffects
+    - DropCurrency
+    - GetBossDoorCurrencyDropLocation
+    - GetIsFacingEnemy
+    - GetIsGuarding
+    - GetKnockbackAmountForDamage
+    - GetStaminaDrainAmountForDamage
+    - GetTimeSinceGuardActivation
+    - GuardGracePeriod
+    - HandleDeath
+    - HandleHitReaction
+    - HandleIncomingWeaponDamage
+    - HandleProjectileDamage
+    - IncreaseTimeSinceGuard
+    - ProcessHandTrace
+    - SetExecutionTarget
+    - SetGuardState
+    - SetHyperArmor
+    - SetInvincibility
+  variables:
+    - ComboSection
+    - CurrentHitNormal
+    - DefaultComboSequenceSection
+    - ExecutionTarget
+    - FacingDirectionAcceptance
+    - FistTracedActors
+    - GenericReactionShake
+    - GuardCameraShake
+    - GuardEffect
+    - GuardGracePeriodTimer
+    - GuardTimer
+    - GuardingGracePeriod
+    - HandSocket_L
+    - HandSocket_R
+    - HitReactType
+    - HitSFX
+    - HitVFX
+    - HyperArmor?
+    - IKWeight
+    - IsDead?
+    - IsGuarding?
+    - IsInvincible?
+    - LeftHandTraceTimer
+    - MaxPerfectGuardPoiseDamage
+    - MaxUnarmedPoiseDamage
+    - Mesh
+    - MinPerfectGuardPoiseDamage
+    - MinUnarmedPoiseDamage
+    - PerfectGuardDuration
+    - PerfectGuardEffect
+    - PoiseBroken?
+    - RagdollOnDeath?
+    - ReactionAnimset
+    - RightHandTraceTimer
+    - TimeSinceGuard
+    - UnarmedAnimset
+    - WantsToGuard?
+
+- name: AC_DebugCentral
+  category: Component
+  description: Type: BPTYPE_Normal, Parent: ActorComponent
+  functions:
+    []
+  variables:
+    - ActionComponent
+    - BuffComponent
+    - CombatComponent
+    - Components
+    - EnableDebugging
+    - EquipmentComponent
+    - HUD_Debug
+    - InputComponent
+    - InteractionComponent
+    - InventoryComponent
+    - ProgressComponent
+    - RadarComponent
+    - SaveLoadComponent
+    - StatComponent
+    - StatusEffectComponent
+    - ToggleKey
+
+- name: AC_EquipmentManager
+  category: Component
+  description: Type: BPTYPE_Normal, Parent: ActorComponent
+  functions:
+    - AdjustForTwoHandStance
+    - ApplyStatChanges
+    - AreBothWeaponSlotsActive?
+    - CheckRequiredStats
+    - DoesEquipmentSupportGuard?
+    - EquipArmorToSlot
+    - EquipItemToSlot
+    - EquipTalismanToSlot
+    - EquipToolToSlot
+    - EquipWeaponToSlot
+    - GetActiveToolSlot
+    - GetActiveWeaponSlot
+    - GetActiveWheelSlotForTool
+    - GetActiveWheelSlotForWeapon
+    - GetAmountOfEquippedItem
+    - GetBuffManager
+    - GetGuardHitMontage
+    - GetItemAtSlot
+    - GetSpawnedItemAtSlot
+    - GetTwoHandStance
+    - HideItemAtSlot
+    - IsDualWieldPossible?
+    - IsItemEquipped?
+    - IsItemEquippedToSlot
+    - IsSlotOccupied?
+    - IsTwoHandStanceActive?
+    - OnItemEffectAdded
+    - OnItemEffectRemoved
+    - OnItemEquippedToSlot
+    - OnItemUnequippedFromSlot
+    - OnSaveRequested
+    - OnStanceChanged
+    - OnWeaponAbilityRemoved
+    - OnWeaponAbilityUpdated
+    - OnWeaponStatCheckFailed
+    - OverrideOverlayStates
+    - RefreshActiveGuardSequence
+    - ReinitializeMovementWithWeight
+    - SerializeEquipmentData
+    - SetActiveToolSlot
+    - SwitchOnSlot
+    - TryGrantBuffs
+    - TryRemoveBuffs
+    - UnequipArmorAtSlot
+    - UnequipItemAtSlot
+    - UnequipTalismanAtSlot
+    - UnequipToolAtSlot
+    - UnequipToolFromOtherSlots
+    - UnequipWeaponAtSlot
+    - UnwieldItemAtSlot
+    - UpdateOverlayStates
+    - WieldItemAtSlot
+  variables:
+    - ActiveBlockSequence
+    - ActiveOverlayState
+    - ActiveToolSlot
+    - AllEquippedItems
+    - Cached_LoadedEquipment
+    - GrantedTags
+    - HiddenItems
+    - IsAsyncWeaponBusy?
+    - LeftHandOverlayState
+    - LeftHandOverlayTags
+    - LeftHandSlots
+    - OnItemEffectAdded
+    - OnItemEffectRemoved
+    - OnItemEquippedToSlot
+    - OnItemUnequippedFromSlot
+    - OnSaveRequested
+    - OnStanceChanged
+    - OnWeaponAbilityRemoved
+    - OnWeaponAbilityUpdated
+    - OnWeaponStatCheckFailed
+    - RightHandOverlayState
+    - RightHandOverlayTags
+    - RightHandSlots
+    - SlotTable
+    - SpawnedBuffAtSlot
+    - SpawnedItemsAtSlots
+    - ToolSlots
+    - WeaponAbilitySlot
+
+- name: AC_InputBuffer
+  category: Component
+  description: Type: BPTYPE_Normal, Parent: ActorComponent
+  functions:
+    - ConsumeInputBuffer
+    - ExecuteActionImmediately
+    - OnInputBufferConsumed
+    - QueueAction
+    - ToggleBuffer
+  variables:
+    - BufferOpen?
+    - IgnoreNextOfActions
+    - IncomingActionTag
+    - OnInputBufferConsumed
+
+- name: AC_InteractionManager
+  category: Component
+  description: Type: BPTYPE_Normal, Parent: ActorComponent
+  functions:
+    - CheckTargetDistance
+    - IsTargetLocked?
+    - LockOnTarget
+    - RemoveFromNearbyInteractables
+    - ResetLockOn
+    - TargetLockTrace
+  variables:
+    - AllowTargetSwap?
+    - DebugDraw?
+    - InteractionRadius
+    - LastRestingPoint
+    - LockedOnComponent
+    - LockedOnTarget
+    - MaxTargetLockDistance
+    - NearbyInteractables
+    - NearestInteractable
+    - TargetLockAcceptedActorTags
+    - TargetLockDebugDrawType
+    - TargetLockDistanceTimer
+    - TargetLockStrength
+    - TargetLockTraceDistance
+    - TargetLockTraceObjectTypes
+    - TargetLockTraceRadius
+    - TargetLocked
+    - Targets
+    - TraceChannels
+
+- name: AC_InventoryManager
+  category: Component
+  description: Type: BPTYPE_Normal, Parent: ActorComponent
+  functions:
+    - AddItem
+    - AddItemAtSlotToStorage
+    - AddItemToStorage
+    - AdjustCurrency
+    - DiscardItemAtSlot
+    - GetAllItems
+    - GetAmountOfItem
+    - GetAmountOfItemWithTag
+    - GetCurrentCurency
+    - GetEmptySlot
+    - GetInventoryWidget
+    - GetItemsForCategory
+    - GetItemsForEquipmentSlot
+    - GetOverallCountForItem
+    - GetSlotWithItem
+    - GetSlotWithItemTag
+    - GetStoredAmountOfItem
+    - GetTotalInventoryItemsCount
+    - GetTotalStorageItemsCount
+    - HasItem?
+    - InitializeLoadedInventory
+    - InitializeLoadedStorage
+    - LeaveItemAtSlot
+    - LootPickupItem
+    - OnCurrencyIncreased
+    - OnCurrencyUpdated
+    - OnErrorTrigger
+    - OnInventoryUpdated
+    - OnItemAmountUpdated
+    - OnItemLooted
+    - OnSaveRequested
+    - RemoveItem
+    - RemoveItemAtSlot
+    - RemoveItemAtStorageSlot
+    - RemoveStoredItem
+    - ReplenishItem
+    - RetrieveItemAtSlot
+    - RetrieveItemAtSlotFromStorage
+    - SerializeInventoryStorageCurrencyData
+    - StoreItemAtSlot
+    - UseItemAtSlot
+    - UseItemFromInventory
+  variables:
+    - Categories
+    - Currency
+    - Items
+    - OnCurrencyIncreased
+    - OnCurrencyUpdated
+    - OnErrorTrigger
+    - OnInventoryUpdated
+    - OnItemAmountUpdated
+    - OnItemLooted
+    - OnSaveRequested
+    - OwnerActor
+    - SlotCount
+    - SlotsPerRow
+    - StoredItems
+
+- name: AC_LadderManager
+  category: Component
+  description: Type: BPTYPE_Normal, Parent: ActorComponent
+  functions:
+    - SetCurrentLadder
+    - SetIsClimbing
+    - SetIsClimbingDownFromTop
+    - SetIsClimbingOffTop
+    - SetIsOnGround
+    - TryLoadClimbMontages
+  variables:
+    - ClimbAnimState
+    - ClimbFast?
+    - ClimbSprintMultiplier
+    - CurrentLadder
+    - IsClimbing
+    - IsClimbingDownFromTop
+    - IsClimbingOffTop
+    - IsOnGround
+    - IsOrientedToLadder
+    - LadderAnimset
+
+- name: AC_LootDropManager
+  category: Component
+  description: Type: BPTYPE_Normal, Parent: ActorComponent
+  functions:
+    - GetRandomItemFromTable
+    - IsOverrideItemValid?
+    - OnItemReadyForSpawn
+  variables:
+    - Loot Table
+    - OnItemReadyForSpawn
+    - Override Item
+
+- name: AC_ProgressManager
+  category: Component
+  description: Type: BPTYPE_Normal, Parent: ActorComponent
+  functions:
+    - ExecuteGameplayEvents
+    - GetProgress
+    - GetRequiredCurrencyForLevel
+    - OnPlayTimeUpdated
+    - OnSaveRequested
+    - SerializeProgressData
+    - SetProgress
+  variables:
+    - CurrentProgress
+    - DefaultsToProgress
+    - LevelUpCosts
+    - OnPlayTimeUpdated
+    - OnSaveRequested
+    - PlayTime
+
+- name: AC_RadarElement
+  category: Component
+  description: Type: BPTYPE_Normal, Parent: ActorComponent
+  functions:
+    []
+  variables:
+    - Icon
+    - IconSize
+    - IconTint
+    - MarkerWidget
+
+- name: AC_RadarManager
+  category: Component
+  description: Type: BPTYPE_Normal, Parent: ActorComponent
+  functions:
+    - ConvertToCircleDegrees
+    - ConvertToTranslation
+    - GetDelta
+    - RefreshCardinals
+    - RefreshTrackedElements
+    - SetupCardinals
+    - SetupPlayerIcon
+    - StartTrackElement
+    - StopTrackElement
+    - ToggleUpdateState
+  variables:
+    - CardinalData
+    - IconSize
+    - IconTint
+    - Pawn
+    - PlayerCamera
+    - PlayerIcon
+    - RadarClampLength
+    - RadarWidget
+    - RefreshInterval
+    - ShouldUpdate?
+    - Timer
+    - TrackedComponents
+    - Visible?
+
+- name: AC_SaveLoadManager
+  category: Component
+  description: Type: BPTYPE_Normal, Parent: ActorComponent
+  functions:
+    - GetDataByTag
+    - GetSavedClass
+    - GetSavedLevelName
+    - IsDataValid
+    - LoadDataAsync
+    - OnDataLoaded
+    - OnSaveCompleted
+    - RefreshData
+    - SerializeAllDataForSaving
+    - SerializeClassData
+    - SerializeDataForSaving
+    - SerializeInteractableStates
+    - SerializeLevelData
+    - SerializeVendorData
+  variables:
+    - AutoSaveNeeded?
+    - AutosaveTimer
+    - AutosaveTimerHandle
+    - CanResave?
+    - CurrentSaveSlot
+    - Data
+    - DataCache
+    - EquipmentManager
+    - InventoryManager
+    - OnDataLoaded
+    - OnSaveCompleted
+    - ProgressManager
+    - SGO Slots
+    - SGO_Character
+    - StatManager
+
+- name: AC_StatManager
+  category: Component
+  description: Type: BPTYPE_Normal, Parent: ActorComponent
+  functions:
+    - AdjustAffected
+    - AdjustAffectedStats
+    - AdjustLevel
+    - AdjustStat
+    - GetAllStats
+    - GetStat
+    - GetStatsForCategory
+    - InitializeLoadedStats
+    - IsStatMoreThan
+    - OnLevelUpdated
+    - OnSaveRequested
+    - OnStatsInitialized
+    - ResetStat
+    - SerializeStatsData
+    - ToggleRegenForStat
+  variables:
+    - ActiveStats
+    - IsAiComponent
+    - Level
+    - OnLevelUpdated
+    - OnSaveRequested
+    - OnStatsInitialized
+    - SelectedClassAsset
+    - SpeedAsset
+    - StatOverrides
+    - StatTable
+    - Stats
+
+- name: AC_StatusEffectManager
+  category: Component
+  description: Type: BPTYPE_Normal, Parent: ActorComponent
+  functions:
+    - AddOneShotBuildup
+    - IsStatusEffectActive?
+    - OnStatusEffectAdded
+    - OnStatusEffectRemoved
+    - OnStatusEffectTriggered
+    - StartBuildup
+    - StopBuildup
+  variables:
+    - ActiveStatusEffects
+    - OnStatusEffectAdded
+    - OnStatusEffectRemoved
+    - OnStatusEffectTriggered
+
+
+# Category: ControlRig
+- name: CR_Mannequin_BasicFootIK
+  category: ControlRig
+  description: Type: BPTYPE_Normal, Parent: ControlRig
+  functions:
+    - ConstructionGraph_1
+    - FootTrace
+    - Rig Graph
+  variables:
+    - ShouldDoIKTrace
+    - ZOffset_L
+    - ZOffset_L_Target
+    - ZOffset_Pelvis
+    - ZOffset_R
+    - ZOffset_R_Target
+
+- name: CR_Mannequin_Procedural
+  category: ControlRig
+  description: Type: BPTYPE_Normal, Parent: ControlRig
+  functions:
+    - Rig Graph
+  variables:
+    []
+
+- name: CR_SoulslikeFramework
+  category: ControlRig
+  description: Type: BPTYPE_Normal, Parent: ControlRig
+  functions:
+    - Rig
+  variables:
+    []
+
+
+# Category: DataAsset
+- name: DA_AI_Ability_Boss_FastLongCombo
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_AI_Ability_Boss_FiveSwings
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_AI_Ability_Boss_FourSwings
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_AI_Ability_Boss_FourSwings+DoublePain
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_AI_Ability_Boss_HeavyAttack+Projectile
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_AI_Ability_Boss_JukeSwings
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_AI_Ability_Boss_JumpAttackClose
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_AI_Ability_Boss_Ranged_Charge
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_AI_Ability_Boss_Ranged_DoublePain
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_AI_Ability_Boss_Ranged_Fireball
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_AI_Ability_Boss_SevenSwings
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_AI_Ability_Enemy_Attack01
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_AI_Ability_Enemy_Attack02
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_AI_Ability_Enemy_Attack03_Fast
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Action_Backstab
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Action_ComboHeavy
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Action_ComboLight_L
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Action_ComboLight_R
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Action_Crouch
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Action_Dodge
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Action_DrinkFlask_HP
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Action_DualWieldAttack
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Action_Execute
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Action_GuardCancel
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Action_GuardEnd
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Action_GuardStart
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Action_Jump
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Action_JumpAttack
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Action_PickupItemMontage
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Action_Projectile
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Action_ScrollWheel_LeftHand
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Action_ScrollWheel_RightHand
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Action_ScrollWheel_Tools
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Action_SprintAttack
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Action_StartSprinting
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Action_StopSprinting
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Action_TwoHandedStance_L
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Action_TwoHandedStance_R
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Action_UseEquippedTool
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Action_WeaponAbility
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Animset_Greatsword
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Animset_Katana
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Animset_LightSword
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Animset_Shield
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Animset_Unarmed
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Apple
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_BossMace
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_BossMovementSpeed
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Buff_AttackPower
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_CrimsonEverbloom
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Cube
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_CustomGameSettings
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_ExampleAnimSetup
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_ExampleArmor
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_ExampleArmor02
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_ExampleBossReactionAnimset
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_ExampleBracers
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_ExampleCredits
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_ExampleDayNightInfo
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_ExampleDialog
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_ExampleDialog_Vendor
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_ExampleEnemyReactionAnimset
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_ExampleGreaves
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_ExampleHat
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_ExampleHelmet
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_ExampleLadderAnimSetup
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_ExampleLoadingScreenInfo
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_ExampleMainMenuConfig
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_ExamplePlayerReactionAnimset
+  category: DataAsset
+  description: Type: Unknown, Parent: PDA_CombatReactionAnimData_C
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_ExamplePoiseBreak_Boss
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_ExamplePoiseBreak_Enemy_Guard
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_ExampleTalisman
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_ExampleVendor
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_ExampleWeaponAbility
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Execute_Generic
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_GenericMovementSpeed
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Greatsword
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_HealthFlask
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Katana
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Lantern
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Manny
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_MannyMeshDefault
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Multiply
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_PoisonSword
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_PrisonKey
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Quinn
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_QuinnMeshDefault
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Shield01
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_StatusEffect_Bleed
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_StatusEffect_Burn
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_StatusEffect_Corruption
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_StatusEffect_Frostbite
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_StatusEffect_Madness
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_StatusEffect_Plague
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_StatusEffect_Poison
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Sword01
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_Sword02
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: DA_ThrowingKnife
+  category: DataAsset
+  description: Type: Unknown, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: PDA_AI_Ability
+  category: DataAsset
+  description: Type: BPTYPE_Normal, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    - AiRules
+    - Cooldown
+    - Montage
+    - Score
+
+- name: PDA_Action
+  category: DataAsset
+  description: Type: BPTYPE_Normal, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    - ActionClass
+    - RelevantData
+    - RequiredStatAmount
+    - RequiredStatTag
+
+- name: PDA_AnimData
+  category: DataAsset
+  description: Type: BPTYPE_Normal, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    - CrouchIdle
+    - CrouchLocomotion
+    - DualWield
+    - Idle
+    - OneHandedWeapon_Left
+    - OneHandedWeapon_Right
+    - RestingIdle
+    - ShieldLeft
+    - TwoHandedWeapon_Left
+    - TwoHandedWeapon_Right
+    - WalkRunLocomotion
+
+- name: PDA_BaseCharacterInfo
+  category: DataAsset
+  description: Type: BPTYPE_Normal, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    - BaseClassTexture
+    - BaseStats
+    - CharacterClassName
+    - DefaultMeshAsset
+    - ModularMeshData
+    - QuitCardTexture
+    - SaveSlotTexture
+
+- name: PDA_Buff
+  category: DataAsset
+  description: Type: BPTYPE_Normal, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    - BuffIcon
+    - BuffTag
+    - Class
+    - Duration
+    - RankMultiplierCurve
+
+- name: PDA_Calculations
+  category: DataAsset
+  description: Type: BPTYPE_Normal, Parent: PrimaryDataAsset
+  functions:
+    - Calculate
+  variables:
+    - CalculationType
+
+- name: PDA_CombatReactionAnimData
+  category: DataAsset
+  description: Type: BPTYPE_Normal, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    - Death
+    - HitReactions
+
+- name: PDA_CombatReactionAnimData_Player
+  category: DataAsset
+  description: Type: BPTYPE_Normal, Parent: PDA_CombatReactionAnimData_C
+  functions:
+    []
+  variables:
+    - PoiseBreak
+
+- name: PDA_Credits
+  category: DataAsset
+  description: Type: BPTYPE_Normal, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    - EntryList
+    - ExtraData
+
+- name: PDA_CustomSettings
+  category: DataAsset
+  description: Type: BPTYPE_Normal, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    - CamSpeed
+    - Invert Cam X
+    - Invert Cam Y
+
+- name: PDA_DayNight
+  category: DataAsset
+  description: Type: BPTYPE_Normal, Parent: PrimaryDataAsset
+  functions:
+    - GetEntryForTime
+    - GetInfoForTimeTag
+  variables:
+    - Entries
+
+- name: PDA_DefaultMeshData
+  category: DataAsset
+  description: Type: BPTYPE_Normal, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    - FinalPhysicsAsset
+    - MeshData
+
+- name: PDA_Dialog
+  category: DataAsset
+  description: Type: BPTYPE_Normal, Parent: PrimaryDataAsset
+  functions:
+    - GetDialogTableBasedOnProgress
+  variables:
+    - DefaultDialogTable
+    - Requirement
+
+- name: PDA_ExecutionAnimData
+  category: DataAsset
+  description: Type: BPTYPE_Normal, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    - ExecuteBack
+    - ExecuteFront
+
+- name: PDA_Item
+  category: DataAsset
+  description: Type: BPTYPE_Normal, Parent: PrimaryDataAsset
+  functions:
+    - GetRequiredCraftingItems
+    - OnCraftingUnlocked
+    - UnlockCrafting
+  variables:
+    - CrafingUnlocked?
+    - ItemInformation
+    - OnCraftingUnlocked
+    - SellPrice
+
+- name: PDA_LadderAnimData
+  category: DataAsset
+  description: Type: BPTYPE_Normal, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    - ClimbDown
+    - ClimbInFromTop
+    - ClimbOutAtTop
+    - ClimbUp
+
+- name: PDA_LoadingScreens
+  category: DataAsset
+  description: Type: BPTYPE_Normal, Parent: PrimaryDataAsset
+  functions:
+    - GetRandomLoadingScreenData
+  variables:
+    - Textures
+    - Tips
+
+- name: PDA_MainMenuData
+  category: DataAsset
+  description: Type: BPTYPE_Normal, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    - AdditionalWaitMax
+    - AdditionalWaitMin
+    - DefaultLevelToLoad
+    - LoadingScreenAsset
+    - RemoveOnFinish?
+
+- name: PDA_MovementSpeedData
+  category: DataAsset
+  description: Type: BPTYPE_Normal, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    - RunSpeed
+    - SprintSpeed
+    - WalkSpeed
+
+- name: PDA_PoiseBreakAnimData
+  category: DataAsset
+  description: Type: BPTYPE_Normal, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    - PoiseBreak_Loop
+    - PoiseBreak_Start
+
+- name: PDA_StatusEffect
+  category: DataAsset
+  description: Type: BPTYPE_Normal, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    - BarFillColor
+    - BaseBuildupRate
+    - BaseDecayRate
+    - CanRetrigger?
+    - CuredBy
+    - DecayDelay
+    - Effect
+    - Icon
+    - MitigatedBy
+    - RankInfo
+    - ResistiveStat
+    - ResistiveStatCurve
+    - Tag
+    - TriggeredText
+
+- name: PDA_Vendor
+  category: DataAsset
+  description: Type: BPTYPE_Normal, Parent: PrimaryDataAsset
+  functions:
+    - OnItemStockUpdated
+    - ReduceItemStock
+  variables:
+    - CachedItems
+    - DefaultSlotCount
+    - DefaultSlotsPerRow
+    - Items
+    - OnItemStockUpdated
+
+- name: PDA_WeaponAbility
+  category: DataAsset
+  description: Type: BPTYPE_Normal, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    - AdditionalEffectClass
+    - Affected Stat
+    - Cost
+    - Icon
+    - Montage
+    - Name
+
+- name: PDA_WeaponAnimset
+  category: DataAsset
+  description: Type: BPTYPE_Normal, Parent: PrimaryDataAsset
+  functions:
+    []
+  variables:
+    - 1h_HeavyComboMontage_L
+    - 1h_HeavyComboMontage_R
+    - 1h_LightComboMontage_L
+    - 1h_LightComboMontage_R
+    - 2h_HeavyComboMontage
+    - 2h_LightComboMontage
+    - ExecutionAsset
+    - Guard_L
+    - Guard_L_Hit
+    - Guard_R
+    - Guard_R_Hit
+    - HeavyDualWieldMontage
+    - JumpAttackMontage
+    - LightDualWieldMontage
+    - SprintAttackMontage
+
+
+# Category: EditorUtilityBlueprint
+- name: EUO_Hook
+  category: EditorUtilityBlueprint
+  description: Type: BPTYPE_Normal, Parent: EditorUtilityObject
+  functions:
+    []
+  variables:
+    []
+
+
+# Category: EditorUtilityWidgetBlueprint
+- name: EUW_AI_AbilityCreator
+  category: EditorUtilityWidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: EditorUtilityWidget
+  functions:
+    []
+  variables:
+    - AbilityDataAssetName
+    - AbilityRules
+    - AiAbilityDataPath
+    - Cooldown
+    - Montage
+    - Score
+
+- name: EUW_ActionBrowser
+  category: EditorUtilityWidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: EditorUtilityWidget
+  functions:
+    - GetLocalMousePosition
+    - LoadAllActionsFromRegistry
+    - OnMouseButtonDown
+    - SetupAllActions
+  variables:
+    - ActionAssets
+    - ActionEntries
+    - ActionLogicPath
+    - ActionObjects
+    - ActiveCategory
+    - ActiveEntry
+    - MousePos
+    - ResizeMode
+    - Width Override
+
+- name: EUW_ActionCreator
+  category: EditorUtilityWidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: EditorUtilityWidget
+  functions:
+    []
+  variables:
+    - ActionDataAssetName
+    - ActionDataPath
+    - ActionLogicClass
+    - ActionLogicPath
+    - ActionObjectName
+    - RelevantDataStructType
+    - RequiredStatAmount
+    - RequiredStatTag
+
+- name: EUW_EnemyViewer
+  category: EditorUtilityWidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: EditorUtilityWidget
+  functions:
+    - UpdateSelectedEnemyInfo
+  variables:
+    - SelectedActor
+
+- name: EUW_ItemBrowser
+  category: EditorUtilityWidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: EditorUtilityWidget
+  functions:
+    - GetLocalMousePosition
+    - LoadAllItemsFromRegistry
+    - OnMouseButtonDown
+    - SetupAllItems
+    - SetupItemsByCategory
+  variables:
+    - ActiveCategory
+    - ItemAssets
+    - ItemEntries
+    - MousePos
+    - ResizeMode
+    - Width Override
+
+- name: EUW_ItemCreator
+  category: EditorUtilityWidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: EditorUtilityWidget
+  functions:
+    - CheckItemInfo
+    - MakeItemInfoStruct
+  variables:
+    - Class
+    - Craftable?
+    - CraftingRecipeUnlocked?
+    - DataAssetName
+    - DiscoveryDescription
+    - EquipmentMeshData
+    - EquipmentSlots
+    - GrantedBuffs
+    - IconLarge
+    - IconSmall
+    - Item
+    - ItemEffectDescription
+    - ItemsPath
+    - LeftHandSocket
+    - LongDescription
+    - MainCategory
+    - Name
+    - OverlayTag
+    - PrimaryItemAsset
+    - Rechargeable
+    - RequiredItems
+    - RequiredStats
+    - RequiresStats?
+    - RightHandSocket
+    - ScalesStats?
+    - SheatheSocket
+    - ShortDescription
+    - SkeletalEquipmentMesh
+    - StackMax
+    - StatUpgrades
+    - StaticEquipmentMesh
+    - StatsToScale
+    - SubCategory
+    - Tag
+    - TagsGranted
+    - TriggeredActionOnUse
+    - Usable
+    - UseDescription
+    - WeaponAbility
+    - WeaponMaxPoiseDamage
+    - WeaponMinPoiseDamage
+    - WeaponMoveset
+    - WeaponStaminaMultiplier
+    - WeaponStatusEffects
+    - WorldDisplay
+    - WorldInfo_0
+    - WorldNiagara
+    - WorldSK
+    - WorldSM
+
+- name: EUW_Setup
+  category: EditorUtilityWidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: EditorUtilityWidget
+  functions:
+    []
+  variables:
+    - Asset_ActionDodge
+    - Asset_AnimsetExecution
+    - Asset_AnimsetKatana
+    - Asset_AnimsetLadder
+    - Asset_AnimsetLocomotion
+    - Asset_AnimsetReaction
+    - Asset_AnimsetUnarmed
+    - Asset_KatanaItem
+    - Asset_LoadingScreen
+    - Asset_MainMenuConfig
+    - Asset_Speed
+    - CurrentPageIndex
+
+- name: EUW_StatusEffectBrowser
+  category: EditorUtilityWidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: EditorUtilityWidget
+  functions:
+    - GetLocalMousePosition
+    - LoadAllStatusEffectsFromRegistry
+    - OnMouseButtonDown
+    - SetupAllStatusEffects
+  variables:
+    - ActiveCategory
+    - ActiveEntry
+    - MousePos
+    - ResizeMode
+    - StatusEffectAssets
+    - StatusEffectEntries
+    - StatusEffectLogicPath
+    - StatusEffectObjects
+    - Width Override
+
+- name: EUW_StatusEffectCreator
+  category: EditorUtilityWidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: EditorUtilityWidget
+  functions:
+    []
+  variables:
+    - BarFillColor
+    - BaseBuildupRate
+    - BaseDecayRate
+    - CanRetrigger?
+    - CureItems
+    - DataAssetName
+    - DecayDelay
+    - Icon
+    - MitigationItems
+    - ObjectName
+    - RankInfo
+    - RequiredStatAmount
+    - ResistiveStat
+    - ResistiveStatCurve
+    - StatusEffectClass
+    - StatusEffectDataPath
+    - StatusEffectLogicPath
+    - StatusEffectTag
+    - TriggeredText
+
+- name: EUW_WeaponAbilityBrowser
+  category: EditorUtilityWidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: EditorUtilityWidget
+  functions:
+    - GetLocalMousePosition
+    - LoadAllWeaponAbilitiesFromRegistry
+    - OnMouseButtonDown
+    - SetupAllWeaponAbilities
+  variables:
+    - ActiveCategory
+    - ActiveEntry
+    - MousePos
+    - ResizeMode
+    - WeaponAbilityAssets
+    - WeaponAbilityEntries
+    - Width Override
+
+- name: EUW_WeaponAbilityCreator
+  category: EditorUtilityWidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: EditorUtilityWidget
+  functions:
+    - CheckEntries
+  variables:
+    - AbilityMontage
+    - AdditionalEffect
+    - AffectedStat
+    - AssetName
+    - Icon
+    - Name
+    - StatCost
+    - WeaponAbilityPath
+
+- name: EUW_WeaponAnimsetBrowser
+  category: EditorUtilityWidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: EditorUtilityWidget
+  functions:
+    - GetLocalMousePosition
+    - LoadAllAnimsetsFromRegistry
+    - LoadAllItemsFromRegistry
+    - OnMouseButtonDown
+    - SetupAllAnimsets
+  variables:
+    - ActiveCategory
+    - ActiveEntry
+    - AnimsetAssets
+    - AnimsetEntries
+    - ItemAssets
+    - MousePos
+    - ResizeMode
+    - Width Override
+
+- name: EUW_WeaponAnimsetCreator
+  category: EditorUtilityWidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: EditorUtilityWidget
+  functions:
+    []
+  variables:
+    - 1hHeavyComboMontage_L
+    - 1hHeavyComboMontage_R
+    - 1hLightComboMontage_L
+    - 1hLightComboMontage_R
+    - 2hHeavyComboMontage
+    - 2hLightComboMontage
+    - AnimsetPath
+    - DataAssetName
+    - DualWieldHeavyComboMontage
+    - DualWieldLightComboMontage
+    - ExecutionAsset
+    - ExecutionMontages
+    - GuardSequence_L
+    - GuardSequence_L_Hit
+    - GuardSequence_R
+    - GuardSequence_R_Hit
+    - JumpAttackMontage
+    - SprintAttackMontage
+
+
+# Category: GameFramework
+- name: GI_SoulslikeFramework
+  category: GameFramework
+  description: Type: BPTYPE_Normal, Parent: GameInstance
+  functions:
+    - OnSelectedClassChanged
+  variables:
+    - ActiveSlot
+    - CustomGameSettings
+    - FirstTimeOnDemoLevel?
+    - OnSelectedClassChanged
+    - SGO_Slots
+    - SelectedBaseClass
+    - SlotsSaveName
+
+- name: GM_Menu_SoulslikeFramework
+  category: GameFramework
+  description: Type: BPTYPE_Normal, Parent: GameMode
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: GM_SoulslikeFramework
+  category: GameFramework
+  description: Type: BPTYPE_Normal, Parent: GameMode
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: PC_Menu_SoulslikeFramework
+  category: GameFramework
+  description: Type: BPTYPE_Normal, Parent: PlayerController
+  functions:
+    - UserConstructionScript
+  variables:
+    - Navigable Widget Tag
+    - SaveGameExists?
+    - W_MainMenu
+
+- name: PC_SoulslikeFramework
+  category: GameFramework
+  description: Type: BPTYPE_Normal, Parent: PlayerController
+  functions:
+    - GetNearestRestingPoint
+    - Handle Main Menu Request
+    - OnHudInitialized
+    - OnInputDetected
+    - UserConstructionScript
+  variables:
+    - ActiveSequencePlayer
+    - ActiveWidgetTag
+    - GameplayMappingContext
+    - OnHudInitialized
+    - OnInputDetected
+    - W_HUD
+
+
+# Category: InputAction
+- name: IA_AnyKey
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_Crouch
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_GameMenu
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_Guard_LeftHandAttack_DualWieldAttack
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_Interact
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_Jump
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_Look
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_Move
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_NavigableMenu_Back
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_NavigableMenu_DetailedView
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_NavigableMenu_Down
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_NavigableMenu_Left
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_NavigableMenu_Left_Category
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_NavigableMenu_Ok
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_NavigableMenu_ResetToDefaults
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_NavigableMenu_Right
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_NavigableMenu_Right_Category
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_NavigableMenu_Unequip
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_NavigableMenu_Up
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_RestMenu_Back
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_RestMenu_Down
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_RestMenu_Left
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_RestMenu_Ok
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_RestMenu_Right
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_RestMenu_Up
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_RightHandAttack
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_Scroll_LeftHand
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_Scroll_RightHand
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_Scroll_Tools
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_Sprint_Dodge
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_StrongAttack
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_TargetLock
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_UseEquippedItem
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IA_WeaponSkill
+  category: InputAction
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+
+# Category: InputMappingContext
+- name: IMC_Death
+  category: InputMappingContext
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IMC_Dialog
+  category: InputMappingContext
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IMC_Gameplay
+  category: InputMappingContext
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IMC_MainMenu
+  category: InputMappingContext
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IMC_NavigableMenu
+  category: InputMappingContext
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+- name: IMC_Settings
+  category: InputMappingContext
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+
+# Category: Interface
+- name: BPI_AIC
+  category: Interface
+  description: Type: BPTYPE_Interface, Parent: Interface
+  functions:
+    - InitializeBehavior
+  variables:
+    []
+
+- name: BPI_BossDoor
+  category: Interface
+  description: Type: BPTYPE_Interface, Parent: Interface
+  functions:
+    - GetDeathCurrencySpawnPoint
+    - UnlockBossDoor
+  variables:
+    []
+
+- name: BPI_Controller
+  category: Interface
+  description: Type: BPTYPE_Interface, Parent: Interface
+  functions:
+    - AdjustCurrency
+    - BlendViewTarget
+    - GetCurrency
+    - GetInventoryComponent
+    - GetPawnFromController
+    - GetPlayerHUD
+    - GetProgressManager
+    - GetSoulslikeController
+    - LootItemToInventory
+    - RequestAddToSaveData
+    - RequestUpdateSaveData
+    - SendBigScreenMessage
+    - SerializeAllDataForSaving
+    - SerializeDataForSaving
+    - SetActiveWidgetForNavigation
+    - ShowSavingVisual
+    - StartRespawn
+    - SwitchInputContext
+    - ToggleInput
+    - ToggleRadarUpdateState
+  variables:
+    []
+
+- name: BPI_DestructibleHelper
+  category: Interface
+  description: Type: BPTYPE_Interface, Parent: Interface
+  functions:
+    - DisableChaosDestroy
+    - EnableChaosDestroy
+  variables:
+    []
+
+- name: BPI_Enemy
+  category: Interface
+  description: Type: BPTYPE_Interface, Parent: Interface
+  functions:
+    - DisplayDeathVfx
+    - GetExecutionMoveToTransform
+    - GetPatrolPath
+    - PickAndSpawnLoot
+    - RotateTowardsTarget
+    - StopRotateTowardsTarget
+    - ToggleHealthbarVisual
+    - UpdateEnemyHealth
+  variables:
+    []
+
+- name: BPI_EnemyHealthbar
+  category: Interface
+  description: Type: BPTYPE_Interface, Parent: Interface
+  functions:
+    - UpdateEnemyHealthbar
+  variables:
+    []
+
+- name: BPI_Executable
+  category: Interface
+  description: Type: BPTYPE_Interface, Parent: Interface
+  functions:
+    - OnBackstabbed
+    - OnExecuted
+    - OnExecutionStarted
+  variables:
+    []
+
+- name: BPI_ExecutionIndicator
+  category: Interface
+  description: Type: BPTYPE_Interface, Parent: Interface
+  functions:
+    - ToggleExecutionIcon
+  variables:
+    []
+
+- name: BPI_GameInstance
+  category: Interface
+  description: Type: BPTYPE_Interface, Parent: Interface
+  functions:
+    - AddAndSaveSlots
+    - DoesAnySaveExist?
+    - GetActiveSlotName
+    - GetAllSaveSlots
+    - GetCustomGameSettings
+    - GetSelectedClass
+    - GetSoulslikeGameInstance
+    - SetActiveSlot
+    - SetLastSlotNameToActive
+    - SetSelectedClass
+  variables:
+    []
+
+- name: BPI_GenericCharacter
+  category: Interface
+  description: Type: BPTYPE_Interface, Parent: Interface
+  functions:
+    - EnableRagdoll
+    - GenericLocationAndRotationLerp
+    - GenericLocationLerp
+    - GenericRotationLerp
+    - GetHomingPositionComponent
+    - GetLockonComponent
+    - GetMeshInitialized
+    - GetSoulslikeAnimInstance
+    - GetStatManager
+    - JumpReplicated
+    - OpenContainer
+    - OpenDoor
+    - PlayIkReaction
+    - PlayMontageReplicated
+    - PlayPrioMontageReplicated
+    - PlaySoftMontageReplicated
+    - PlaySoftNiagaraLoopingReplicated
+    - PlaySoftNiagaraOneshotAtLocationReplicated
+    - PlaySoftNiagaraOneshotReplicated
+    - PlaySoftSoundAtLocation
+    - SetMovementMode
+    - SetSpeedReplicated
+    - SpawnActorReplicated
+    - SpawnPickupItemReplicated
+    - SpawnProjectile
+    - SpawnSoftActorReplicated
+    - StartCameraShake
+    - StartHitstop
+    - StartWorldCameraShake
+    - StopActiveMontage
+    - ToggleGuardReplicated
+    - ToggleLockonWidget
+    - TryClimbLadder
+  variables:
+    []
+
+- name: BPI_Interactable
+  category: Interface
+  description: Type: BPTYPE_Interface, Parent: Interface
+  functions:
+    - OnInteract
+    - OnSpawnedFromSave
+    - OnTraced
+    - TryGetItemInfo
+  variables:
+    []
+
+- name: BPI_Item
+  category: Interface
+  description: Type: BPTYPE_Interface, Parent: Interface
+  functions:
+    - OnUse
+    - OnWeaponEquip
+    - OnWeaponUnequip
+  variables:
+    []
+
+- name: BPI_MainMenu
+  category: Interface
+  description: Type: BPTYPE_Interface, Parent: Interface
+  functions:
+    - OnMenuButtonPressed
+    - PlayButtonInitAnimation
+    - SetMenuButtonSelected
+  variables:
+    []
+
+- name: BPI_NPC
+  category: Interface
+  description: Type: BPTYPE_Interface, Parent: Interface
+  functions:
+    []
+  variables:
+    []
+
+- name: BPI_Player
+  category: Interface
+  description: Type: BPTYPE_Interface, Parent: Interface
+  functions:
+    - ChangeArmor
+    - ChangeGloves
+    - ChangeGreaves
+    - ChangeHeadpiece
+    - DiscoverRestingPoint
+    - GetSoulslikeCharacter
+    - OnDialogStarted
+    - OnInteractableTraced
+    - OnLootItem
+    - OnNpcTraced
+    - OnRest
+    - OnTargetLocked
+    - PlayBackstabMontage
+    - PlayCameraSequence
+    - PlayExecuteMontage
+    - ResetArmor
+    - ResetCameraView
+    - ResetGloves
+    - ResetGreaves
+    - ResetHeadpiece
+    - StopActiveCameraSequence
+    - ToggleCrouchReplicated
+    - TriggerChaosField
+  variables:
+    []
+
+- name: BPI_Projectile
+  category: Interface
+  description: Type: BPTYPE_Interface, Parent: Interface
+  functions:
+    - InitializeProjectile
+  variables:
+    []
+
+- name: BPI_RestingPoint
+  category: Interface
+  description: Type: BPTYPE_Interface, Parent: Interface
+  functions:
+    - GetRestingPointSpawnPosition
+  variables:
+    []
+
+- name: BPI_StatEntry
+  category: Interface
+  description: Type: BPTYPE_Interface, Parent: Interface
+  functions:
+    - GetStatEntry
+  variables:
+    []
+
+
+# Category: Other
+- name: AIC_SoulslikeFramework
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: AIController
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: ANS_AI_FistTrace
+  category: Other
+  description: Type: BPTYPE_Const, Parent: AnimNotifyState
+  functions:
+    - GetNotifyName
+    - Received_NotifyBegin
+    - Received_NotifyEnd
+    - Received_NotifyTick
+  variables:
+    - DebugRadius
+    - DebugTraceColor
+    - DebugTraceDuration
+    - DebugTraceThickness
+    - TraceType
+
+- name: ANS_AI_RotateTowardsTarget
+  category: Other
+  description: Type: BPTYPE_Const, Parent: AnimNotifyState
+  functions:
+    - GetNotifyName
+    - Received_NotifyBegin
+    - Received_NotifyEnd
+  variables:
+    []
+
+- name: ANS_AI_Trail
+  category: Other
+  description: Type: BPTYPE_Const, Parent: AnimNotifyState
+  functions:
+    - GetNotifyName
+    - Received_NotifyBegin
+    - Received_NotifyEnd
+  variables:
+    - WeaponSockets
+
+- name: ANS_AI_WeaponTrace
+  category: Other
+  description: Type: BPTYPE_Const, Parent: AnimNotifyState
+  functions:
+    - GetNotifyName
+    - Received_NotifyBegin
+    - Received_NotifyEnd
+  variables:
+    - DamageMultiplier
+    - TraceSizeMultiplier
+    - TracedWeaponSockets
+
+- name: ANS_FistTrace
+  category: Other
+  description: Type: BPTYPE_Const, Parent: AnimNotifyState
+  functions:
+    - GetNotifyName
+    - Received_NotifyBegin
+    - Received_NotifyEnd
+    - Received_NotifyTick
+  variables:
+    - Radius
+    - TraceColor
+    - TraceDuration
+    - TraceThickness
+    - TraceType
+
+- name: ANS_HyperArmor
+  category: Other
+  description: Type: BPTYPE_Const, Parent: AnimNotifyState
+  functions:
+    - GetNotifyName
+    - Received_NotifyBegin
+    - Received_NotifyEnd
+  variables:
+    - IsAI?
+
+- name: ANS_InputBuffer
+  category: Other
+  description: Type: BPTYPE_Const, Parent: AnimNotifyState
+  functions:
+    - GetNotifyName
+    - Received_NotifyBegin
+    - Received_NotifyEnd
+  variables:
+    []
+
+- name: ANS_InvincibilityFrame
+  category: Other
+  description: Type: BPTYPE_Const, Parent: AnimNotifyState
+  functions:
+    - GetNotifyName
+    - Received_NotifyBegin
+    - Received_NotifyEnd
+  variables:
+    - IsAI?
+
+- name: ANS_RegisterAttackSequence
+  category: Other
+  description: Type: BPTYPE_Const, Parent: AnimNotifyState
+  functions:
+    - GetNotifyName
+    - Received_NotifyBegin
+    - Received_NotifyEnd
+  variables:
+    - QueuedSection
+
+- name: ANS_ToggleChaosField
+  category: Other
+  description: Type: BPTYPE_Const, Parent: AnimNotifyState
+  functions:
+    - GetNotifyName
+    - Received_NotifyBegin
+    - Received_NotifyEnd
+  variables:
+    []
+
+- name: ANS_Trail
+  category: Other
+  description: Type: BPTYPE_Const, Parent: AnimNotifyState
+  functions:
+    - GetNotifyName
+    - Received_NotifyBegin
+    - Received_NotifyEnd
+  variables:
+    - TraceType
+
+- name: ANS_WeaponTrace
+  category: Other
+  description: Type: BPTYPE_Const, Parent: AnimNotifyState
+  functions:
+    - GetNotifyName
+    - Received_NotifyBegin
+    - Received_NotifyEnd
+  variables:
+    - Damage Multiplier
+    - TraceType
+
+- name: AN_AI_SpawnProjectile
+  category: Other
+  description: Type: BPTYPE_Const, Parent: AnimNotify
+  functions:
+    - GetNotifyName
+    - Received_Notify
+  variables:
+    - ProjectileClass
+    - SpawnSocketName
+    - UseSocketRotation?
+
+- name: AN_AdjustStat
+  category: Other
+  description: Type: BPTYPE_Const, Parent: AnimNotify
+  functions:
+    - GetNotifyName
+    - Received_Notify
+  variables:
+    - Change
+    - Stat Tag
+    - Trigger Regen?
+    - Value Type
+
+- name: AN_AoeDamage
+  category: Other
+  description: Type: BPTYPE_Const, Parent: AnimNotify
+  functions:
+    - GetNotifyName
+    - Received_Notify
+  variables:
+    - DrawDebug?
+    - MaxDamage
+    - MinDamage
+    - ObjectTypes
+    - OptionalClassFilter
+    - OverlapOffset
+    - Radius
+
+- name: AN_CameraShake
+  category: Other
+  description: Type: BPTYPE_Const, Parent: AnimNotify
+  functions:
+    - GetNotifyName
+    - Received_Notify
+  variables:
+    - CameraShake
+    - Scale
+
+- name: AN_FootstepTrace
+  category: Other
+  description: Type: BPTYPE_Const, Parent: AnimNotify
+  functions:
+    - GetNotifyName
+    - Received_Notify
+  variables:
+    - DebugTrace
+    - Effects
+    - FootSocket
+    - Sounds
+    - TraceLength
+    - TraceType
+
+- name: AN_InterruptMontage
+  category: Other
+  description: Type: BPTYPE_Const, Parent: AnimNotify
+  functions:
+    - GetNotifyName
+    - Received_Notify
+  variables:
+    - BlendOutDuration
+
+- name: AN_LaunchField
+  category: Other
+  description: Type: BPTYPE_Const, Parent: AnimNotify
+  functions:
+    - GetNotifyName
+    - Received_Notify
+  variables:
+    - LaunchStrength
+    - OverlapDrawDebug?
+    - OverlapObjectTypes
+    - OverlapOffset
+    - OverlapOptionalClassFilter
+    - OverlapRadius
+
+- name: AN_PlayCameraSequence
+  category: Other
+  description: Type: BPTYPE_Const, Parent: AnimNotify
+  functions:
+    - GetNotifyName
+    - Received_Notify
+  variables:
+    - Sequence
+    - Settings
+
+- name: AN_SetAiState
+  category: Other
+  description: Type: BPTYPE_Const, Parent: AnimNotify
+  functions:
+    - GetNotifyName
+    - Received_Notify
+  variables:
+    - Data
+    - State
+
+- name: AN_SetMovementMode
+  category: Other
+  description: Type: BPTYPE_Const, Parent: AnimNotify
+  functions:
+    - GetNotifyName
+    - Received_Notify
+  variables:
+    - MovementMode
+
+- name: AN_SpawnProjectile
+  category: Other
+  description: Type: BPTYPE_Const, Parent: AnimNotify
+  functions:
+    - GetNotifyName
+    - Received_Notify
+  variables:
+    - ProjectileClass
+    - SpawnSocketName
+    - UseSocketRotation?
+
+- name: AN_TryGuard
+  category: Other
+  description: Type: BPTYPE_Const, Parent: AnimNotify
+  functions:
+    - GetNotifyName
+    - Received_Notify
+  variables:
+    []
+
+- name: AN_WorldCameraShake
+  category: Other
+  description: Type: BPTYPE_Const, Parent: AnimNotify
+  functions:
+    - GetNotifyName
+    - Received_Notify
+  variables:
+    - CameraShake
+    - Falloff
+    - Inner Radius
+    - Orient Towards Epicenter?
+    - Outer Radius
+
+- name: BFL_Helper
+  category: Other
+  description: Type: BPTYPE_FunctionLibrary, Parent: BlueprintFunctionLibrary
+  functions:
+    - ActorTagMatches
+    - CalculateWeaponDamage
+    - CompareStrings
+    - GetDeathTagFromDirection
+    - GetDirectionFromHit
+    - GetEquipmentComponent
+    - GetInputUserSettings
+    - GetInventoryComponent
+    - GetIsBehindTarget?
+    - GetIsMoving2D?
+    - GetKeysForIA
+    - GetLocalProgressManager
+    - GetLocationActorTransform
+    - GetSaveDataByTag
+    - GetSaveLoadComponent
+    - GetStatCurrentValue
+    - GetStatMaxValue
+    - GetStatPercentValue
+    - GetUniqueSlotName
+    - IsEnemyDead?
+    - ParseAffectedStats
+    - ParseOutTagName
+    - ParseStringLength
+    - RemoveDuplicateCategories
+    - SendErrorMessage
+    - TryGetHudForActor
+    - UnlockCraftableItems
+  variables:
+    []
+
+- name: BML_HelperMacros
+  category: Other
+  description: Type: BPTYPE_MacroLibrary, Parent: Object
+  functions:
+    - CombineExecute
+    - DelayedForeachLoop
+    - DoCooldown
+    - FastForEachLoop
+    - FastForEachLoopWithBreak
+    - FastReverseForEachLoop
+    - FastReverseForEachLoopWithBreak
+    - FastSort
+    - IsClass
+    - IsClassChlid
+    - IsValidArray
+    - TickLoop
+    - TickLoopWithDuration
+  variables:
+    []
+
+- name: BML_StructConversion
+  category: Other
+  description: Type: BPTYPE_MacroLibrary, Parent: Object
+  functions:
+    - ConvertToClassSaveInfoStruct
+    - ConvertToEquipmentItemsSaveInfoStructs
+    - ConvertToFBool
+    - ConvertToFClass
+    - ConvertToFEnumByte
+    - ConvertToFFloat
+    - ConvertToFInt
+    - ConvertToFName
+    - ConvertToFProgress
+    - ConvertToFRotator
+    - ConvertToFString
+    - ConvertToFVector
+    - ConvertToGuidStructs
+    - ConvertToIntStruct
+    - ConvertToInteractableStateSaveInfoStructs
+    - ConvertToInventoryItemsSaveInfoStructs
+    - ConvertToItemWheelSaveInfoStructs
+    - ConvertToNpcSaveInfoStructs
+    - ConvertToProgressSaveInfoStructs
+    - ConvertToSpawnedActorSaveInfoStructs
+    - ConvertToStatInfoStructs
+    - ConvertToStatusEffectOneShotAndTickStructure
+    - ConvertToStatusEffectStatChangesStructure
+    - ConvertToStatusEffectTickStructure
+    - ConvertToTimespanStruct
+    - ConvertToVendorSaveInfoStructs
+    - ConvertToWorldSaveInfoStruct
+  variables:
+    []
+
+- name: BTS_ChaseBounds
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: BTService_BlueprintBase
+  functions:
+    []
+  variables:
+    - ChaseDistanceKey
+    - InverseCondition?
+    - StartPositionKey
+    - State
+    - StateKey
+
+- name: BTS_DistanceCheck
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: BTService_BlueprintBase
+  functions:
+    []
+  variables:
+    - CompareType
+    - DistanceKey
+    - KeyToSet
+    - TargetKey
+
+- name: BTS_IsTargetDead
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: BTService_BlueprintBase
+  functions:
+    []
+  variables:
+    - StateToSwitchTo
+    - TargetKey
+
+- name: BTS_SetMovementModeBasedOnDistance
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: BTService_BlueprintBase
+  functions:
+    []
+  variables:
+    - DistanceKey
+    - TargetKey
+
+- name: BTS_TryGetAbility
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: BTService_BlueprintBase
+  functions:
+    []
+  variables:
+    - CanAttackKey
+
+- name: BTT_ClearKey
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: BTTask_BlueprintBase
+  functions:
+    - NewEventGraph
+  variables:
+    - Key
+
+- name: BTT_GetCurrentLocation
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: BTTask_BlueprintBase
+  functions:
+    []
+  variables:
+    - CurrentLocationKey
+
+- name: BTT_GetRandomPoint
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: BTTask_BlueprintBase
+  functions:
+    []
+  variables:
+    - Radius
+    - TargetKey
+
+- name: BTT_GetRandomPointNearStartPosition
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: BTTask_BlueprintBase
+  functions:
+    []
+  variables:
+    - Radius
+    - StartPositionKey
+
+- name: BTT_GetStrafePointAroundTarget
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: BTTask_BlueprintBase
+  functions:
+    - PickStrafeMethodBasedOnScore
+    - SetStrafeLocations
+  variables:
+    - LocationList
+    - PickedStrafeLoc
+    - PickedStrafeMethod
+    - PossibleMethods
+    - RadiusKey
+    - StrafeLocationKey
+    - TargetKey
+
+- name: BTT_PatrolPath
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: BTTask_BlueprintBase
+  functions:
+    []
+  variables:
+    []
+
+- name: BTT_SetKey
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: BTTask_BlueprintBase
+  functions:
+    - NewEventGraph
+  variables:
+    - Key
+    - KeyData
+
+- name: BTT_SetMovementMode
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: BTTask_BlueprintBase
+  functions:
+    []
+  variables:
+    - MovementMode
+
+- name: BTT_SimpleMoveTo
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: BTTask_BlueprintBase
+  functions:
+    []
+  variables:
+    - RadiusKey
+    - TargetKey
+
+- name: BTT_SwitchState
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: BTTask_BlueprintBase
+  functions:
+    []
+  variables:
+    - Data
+    - New State
+
+- name: BTT_SwitchToPreviousState
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: BTTask_BlueprintBase
+  functions:
+    []
+  variables:
+    []
+
+- name: BTT_ToggleFocus
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: BTTask_BlueprintBase
+  functions:
+    []
+  variables:
+    - Focus?
+    - TargetKey
+
+- name: BTT_TryExecuteAbility
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: BTTask_BlueprintBase
+  functions:
+    []
+  variables:
+    []
+
+- name: CS_Boss_Roar
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: LegacyCameraShake
+  functions:
+    []
+  variables:
+    []
+
+- name: CS_Guard
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: LegacyCameraShake
+  functions:
+    []
+  variables:
+    []
+
+- name: CS_JumpHit
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: LegacyCameraShake
+  functions:
+    []
+  variables:
+    []
+
+- name: CS_Seq_Handheld
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: CameraShakeBase
+  functions:
+    []
+  variables:
+    []
+
+- name: CS_StrongHit
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: LegacyCameraShake
+  functions:
+    []
+  variables:
+    []
+
+- name: CS_SubtleHit
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: LegacyCameraShake
+  functions:
+    []
+  variables:
+    []
+
+- name: GI_SoulslikeFramework
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: GameInstance
+  functions:
+    - OnSelectedClassChanged
+  variables:
+    - ActiveSlot
+    - CustomGameSettings
+    - FirstTimeOnDemoLevel?
+    - OnSelectedClassChanged
+    - SGO_Slots
+    - SelectedBaseClass
+    - SlotsSaveName
+
+- name: GM_Menu_SoulslikeFramework
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: GameMode
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: GM_SoulslikeFramework
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: GameMode
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: GS_SoulslikeFramework
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: GameState
+  functions:
+    - UserConstructionScript
+  variables:
+    []
+
+- name: PC_Menu_SoulslikeFramework
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: PlayerController
+  functions:
+    - UserConstructionScript
+  variables:
+    - Navigable Widget Tag
+    - SaveGameExists?
+    - W_MainMenu
+
+- name: PC_SoulslikeFramework
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: PlayerController
+  functions:
+    - GetNearestRestingPoint
+    - Handle Main Menu Request
+    - OnHudInitialized
+    - OnInputDetected
+    - UserConstructionScript
+  variables:
+    - ActiveSequencePlayer
+    - ActiveWidgetTag
+    - GameplayMappingContext
+    - OnHudInitialized
+    - OnInputDetected
+    - W_HUD
+
+- name: SG_SaveSlots
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: SaveGame
+  functions:
+    - AddSlot
+    - GetAllSlots
+    - GetLastSaveSlot
+  variables:
+    - LastSavedSlot
+    - Slots
+
+- name: SG_SoulslikeFramework
+  category: Other
+  description: Type: BPTYPE_Normal, Parent: SaveGame
+  functions:
+    - GetSavedData
+    - SetSavedData
+  variables:
+    - SavedData
+
+
+# Category: SkeletalMeshLODSettings
+- name: Mannequin_LODSettings
+  category: SkeletalMeshLODSettings
+  description: Type: Unknown, Parent: DataAsset
+  functions:
+    []
+  variables:
+    []
+
+
+# Category: WidgetBlueprint
+- name: W_AbilityDisplay
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - OnAbilityInfoValidated
+  variables:
+    - ActiveAbility
+    - OnAbilityInfoValidated
+
+- name: W_BigScreenMessage
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    []
+
+- name: W_Boss_Healthbar
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - DamageTimer
+    - HealthPercentCache
+    - TickTimer
+    - TotalDamage
+
+- name: W_BrowserFilterEntry
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - OnRemoved
+  variables:
+    - OnRemoved
+
+- name: W_Browser_Action
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - GetToolTipWidget
+    - OnMouseButtonDown_0
+    - OnMouseDoubleClick_0
+    - OnSelected
+  variables:
+    - Asset
+    - Object
+    - OnSelected
+    - Selected
+    - Tooltip
+
+- name: W_Browser_Action_Tooltip
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - Asset
+    - Obj
+
+- name: W_Browser_Animset
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - GetToolTipWidget
+    - GetUsedByItems
+    - OnMouseButtonDown_0
+    - OnMouseDoubleClick_0
+    - OnSelected
+  variables:
+    - AllItems
+    - Asset
+    - OnSelected
+    - Selected
+    - Tooltip
+
+- name: W_Browser_AnimsetTooltip
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - Asset
+    - UsedByItems
+
+- name: W_Browser_Animset_OwnerEntry
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - Item
+
+- name: W_Browser_Categories
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - OnCategorySelected
+  variables:
+    - Asset
+    - Categories
+    - OnCategorySelected
+
+- name: W_Browser_CategoryEntry
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - OnCategoryClicked
+  variables:
+    - Category
+    - OnCategoryClicked
+
+- name: W_Browser_Item
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - GetToolTipWidget
+    - OnMouseButtonDown_0
+    - OnMouseDoubleClick_0
+    - OnSelected
+  variables:
+    - Asset
+    - OnSelected
+    - Selected
+    - Tooltip
+
+- name: W_Browser_StatusEffect
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - GetToolTipWidget
+    - OnMouseButtonDown_0
+    - OnMouseDoubleClick_0
+    - OnSelected
+  variables:
+    - Asset
+    - Object
+    - OnSelected
+    - Selected
+    - Tooltip
+
+- name: W_Browser_StatusEffect_Tooltip
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - Asset
+    - Obj
+
+- name: W_Browser_Tooltip
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - Asset
+
+- name: W_Browser_WeaponAbility
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - GetToolTipWidget
+    - OnMouseButtonDown_0
+    - OnMouseDoubleClick_0
+    - OnSelected
+  variables:
+    - Asset
+    - OnSelected
+    - Selected
+    - Tooltip
+
+- name: W_Browser_WeaponAbility_Tooltip
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - Asset
+
+- name: W_Buff
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - Buff
+
+- name: W_CategoryEntry
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - Stat Category
+
+- name: W_CharacterSelection
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: W_Navigable_InputReader_C
+  functions:
+    - InitializeAndStoreClassAssets
+    - OnCharacterSelectionClosed
+    - OnClassCardClicked
+    - OnInputDeviceChanged
+  variables:
+    - BaseCharacterAssets
+    - CharacterCardEntries
+    - NavigationIndex
+    - OnCharacterSelectionClosed
+    - OnClassCardClicked
+    - PrimaryClassAsset
+
+- name: W_CharacterSelectionCard
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - InitializeStatEntries
+    - OnCardClicked
+    - OnCardSelected
+    - SetCardSelected
+  variables:
+    - CharacterClassAsset
+    - OnCardClicked
+    - OnCardSelected
+    - Selected
+
+- name: W_CharacterSelection_StatEntry
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - StatBaseValue
+    - StatName
+
+- name: W_Crafting
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: W_Navigable_InputReader_C
+  functions:
+    - CheckIfCraftable
+    - GetOwnedAmountFromTag
+    - OnCraftingClosed
+    - OnInputDeviceChanged
+    - RefreshCraftables
+    - SetupItemInformationPanel
+  variables:
+    - ActiveSlot
+    - CraftingSlots
+    - InventoryComponent
+    - NavigationIndex
+    - OnCraftingClosed
+    - SelectedSlot
+    - UnlockedCraftableEntries
+    - UnlockedCraftables
+
+- name: W_CraftingAction
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - CraftItem
+    - GetMaxPossibleAmount
+    - OnCraftingActionClosed
+    - SetupRequiredItems
+  variables:
+    - Assigned Item
+    - CurrentAmount
+    - MaxPossibleAmount
+    - OnCraftingActionClosed
+    - SelectedSlot
+
+- name: W_CraftingEntry
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - GetOwnedAmount
+  variables:
+    - OwnedAmount
+    - RequiredAmount
+    - RequiredItem
+
+- name: W_CraftingEntrySimple
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - GetOwnedAmount
+  variables:
+    - OwnedAmount
+    - RequiredAmount
+    - RequiredItem
+
+- name: W_CreditEntry
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - Title
+
+- name: W_CreditEntry_Extra
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - Data
+
+- name: W_CreditEntry_Sub
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - Sub-title
+
+- name: W_CreditEntry_Sub_NameEntry
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - Name
+
+- name: W_Credits
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: W_Navigable_C
+  functions:
+    - OnCreditsClosed
+    - SetupEntries
+    - SetupExtraData
+    - SortExtraDataByScore
+  variables:
+    - AutoScroll
+    - AutoScrollResetDuration
+    - CreditsAsset
+    - DelayAfterFinish
+    - OnCreditsClosed
+    - ScrollSpeed
+
+- name: W_CurrencyContainer
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - LocalCurrency
+
+- name: W_CurrencyEntry
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - LocalCurrency
+
+- name: W_DebugWindow
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - ParseActions
+    - ParseActiveStats
+    - ParseActors
+    - ParseBuffs
+    - ParseCardinals
+    - ParseEquippedItems
+    - ParseInventoryCategories
+    - ParseInventoryItems
+    - ParseLevelUpCosts
+    - ParseNameArray
+    - ParseProgress
+    - ParseSaveDataEntries
+    - ParseSpawnedEquipment
+    - ParseStatOverrides
+    - ParseStatSoftcaps
+    - ParseStats
+    - ParseStatsToAffect
+    - ParseStatusEffects
+    - ParseTagContainer
+    - ParseTraceChannels
+    - SetMovePositionClickDiff
+    - SetScaleClickDiff
+    - ToggleVisibility
+  variables:
+    - ComponentTag
+    - DebugCentral
+    - MousePos
+    - OffsetPos
+    - ScaleType
+    - WindowLocationTimer
+    - WindowScaleTimer
+
+- name: W_Debug_ComponentSlot
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - OnClicked
+  variables:
+    - ComponentTag
+    - OnClicked
+
+- name: W_Debug_ComponentTooltip
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - Tag
+
+- name: W_Debug_HUD
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - FindWindowForComponentWithTag
+  variables:
+    - Components
+    - Windows
+
+- name: W_Dialog
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - OnCraftingRequested
+    - OnEquipmentRequested
+    - OnInventoryRequested
+    - OnSettingsRequested
+    - OnStatusRequested
+  variables:
+    - OnCraftingRequested
+    - OnEquipmentRequested
+    - OnInventoryRequested
+    - OnSettingsRequested
+    - OnStatusRequested
+
+- name: W_EnemyHealthbar
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - DamageTimer
+    - HealthPercentCache
+    - TickTimer
+    - TotalDamage
+
+- name: W_Equipment
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: W_Navigable_InputReader_C
+  functions:
+    - EquipItemAtSlot
+    - GetEquipmentSlotByTag
+    - OnEquipmentClosed
+    - OnInputDeviceChanged
+    - SetupInformationPanel
+    - UnequipItemAtSlot
+  variables:
+    - ActiveEquipmentSlot
+    - ActiveItemSlot
+    - EquipmentComponent
+    - EquipmentInventorySlots
+    - EquipmentSlotNavigationIndex
+    - EquipmentSlots
+    - EquipmentSlotsPositions
+    - InventoryComponent
+    - ItemNavigationIndex
+    - OnEquipmentClosed
+    - SelectedSlot
+
+- name: W_EquipmentSlot
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - OnPressed
+    - OnSelected
+  variables:
+    - AssignedItem
+    - BackgroundIcon
+    - EquipmentSlot
+    - ID
+    - IsOccupied?
+    - OnPressed
+    - OnSelected
+
+- name: W_Equipment_Item_AttackPower
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    []
+
+- name: W_Equipment_Item_DamageNegation
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    []
+
+- name: W_Equipment_Item_ItemEffect
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    []
+
+- name: W_Equipment_Item_OnUseEffect
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    []
+
+- name: W_Equipment_Item_RequiredStats
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    []
+
+- name: W_Equipment_Item_Resistance
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    []
+
+- name: W_Equipment_Item_StatScaling
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    []
+
+- name: W_Equipment_Item_StatsGranted
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    []
+
+- name: W_Error
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - OnClosed
+  variables:
+    - Background Color
+    - ButtonStyle
+    - Inner Background Color
+    - Message Width
+    - MessageColor
+    - MessageText
+    - OnClosed
+    - TitleColor
+    - TitleText
+
+- name: W_FirstLootNotification
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    []
+
+- name: W_GameMenu
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: W_Navigable_InputReader_C
+  functions:
+    - OnGameMenuClosed
+    - OnGameMenuWidgetRequest
+    - OnInputDeviceChanged
+  variables:
+    - MenuButtons
+    - NavigationIndex
+    - OnGameMenuClosed
+    - OnGameMenuWidgetRequest
+
+- name: W_GameMenu_Button
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - OnGameMenuButtonPressed
+    - OnGameMenuButtonSelected
+    - SetGameMenuButtonSelected
+  variables:
+    - ButtonImage
+    - ButtonText
+    - HightlightColor
+    - ImageBorderColor
+    - ImageColor
+    - OnGameMenuButtonPressed
+    - OnGameMenuButtonSelected
+    - Selected?
+    - SelectedImageBorderColor
+    - SelectedImageColor
+    - TargetWidgetTag
+
+- name: W_GenericButton
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - OnButtonPressed
+    - OnButtonSelected
+    - SetButtonSelected
+  variables:
+    - ButtonColor
+    - OnButtonPressed
+    - OnButtonSelected
+    - OutlineColor
+    - OutlineCornerRadii
+    - OutlineWidth
+    - Selected?
+    - SelectedButtonColor
+    - SelectedOutlineColor
+    - Text
+    - TextColor
+    - TextPadding
+
+- name: W_GenericError
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - OnErrorMessageDismissed
+  variables:
+    - Message
+    - OnErrorMessageDismissed
+
+- name: W_HUD
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - BindToStatUpdate
+    - CloseAllMenus
+    - GetDialogWindowVisibility
+    - GetGameMenuVisibility
+    - GetTargetWidgetVisibility
+    - InitializeBindings
+    - InitializeLoadedItemWheelSlotData
+    - IsRestMenuHud?
+    - OnDialogWindowClosed
+    - SerializeItemWheelData
+    - StartFade
+  variables:
+    - CinematicMode?
+    - IsDialogActive?
+    - LoadingScreen
+    - OnDialogWindowClosed
+
+- name: W_Interaction
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: W_Navigable_InputReader_C
+  functions:
+    - OnInputDeviceChanged
+  variables:
+    - InputIconSize
+    - InputMapping_0
+
+- name: W_InteractionError
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - MessageActive
+
+- name: W_Inventory
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: W_Navigable_InputReader_C
+  functions:
+    - AddNewSlots
+    - GetActiveActionWidget
+    - GetTranslationForActionMenu
+    - OnEquipmentRemoved
+    - OnInputDeviceChanged
+    - OnInventoryClosed
+    - OnMouseWheel
+    - ReinitOccupiedInventorySlots
+    - ResetCategorization
+    - Set Categorization
+    - SetStorageMode
+  variables:
+    - ActiveFilterCategory
+    - CategoryEntries
+    - CategoryNavigationIndex
+    - InventoryComponent
+    - InventorySlots
+    - ItemNavigationIndex
+    - OccupiedInventorySlots
+    - OnEquipmentRemoved
+    - OnInventoryClosed
+    - SelectedSlot
+    - StorageMode
+    - StorageSlots
+
+- name: W_InventoryAction
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - AreAllButtonsDisabled?
+  variables:
+    - ButtonEntries
+    - NavigationIndex
+    - SelectedSlot
+
+- name: W_InventoryActionAmount
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - OnRequestCanceled
+    - OnRequestConfirmed
+  variables:
+    - CurrentAmount
+    - CurrentItem
+    - MaxAmount
+    - OnRequestCanceled
+    - OnRequestConfirmed
+    - OperationType
+    - SelectedSlot
+
+- name: W_InventorySlot
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - AdjustAmountAndIconOpacity
+    - OnPressed
+    - OnSelected
+    - OnSlotAssigned
+    - OnSlotCleared
+  variables:
+    - AssignedItem
+    - Count
+    - CraftingRelated?
+    - CraftingSlotEnabled?
+    - EquipmentRelated?
+    - IsOccupied?
+    - OnPressed
+    - OnSelected
+    - OnSlotAssigned
+    - OnSlotCleared
+    - SlotColor
+    - StorageRelated?
+
+- name: W_Inventory_ActionButton
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - OnActionButtonPressed
+    - OnActionButtonSelected
+    - SetActionButtonSelected
+  variables:
+    - ActionText
+    - Color
+    - OnActionButtonPressed
+    - OnActionButtonSelected
+    - Selected?
+    - SelectedColor
+
+- name: W_Inventory_CategoryEntry
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - OnSelected
+    - SetInventoryCategorySelected
+  variables:
+    - AllCategoriesButton?
+    - InventoryCategoryData
+    - OnSelected
+    - Selected?
+
+- name: W_ItemInfoEntry
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - CanCompare?
+    - CurrentStatValue
+    - EntryNameText
+    - Value
+
+- name: W_ItemInfoEntry_RequiredStats
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - CurrentValue
+    - EntryNameText
+    - RequiredValue
+
+- name: W_ItemInfoEntry_StatScaling
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - EntryNameText
+    - Value
+
+- name: W_ItemWheelSlot
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - AreAllSlotsEmpty?
+    - GetSlotWithIndex
+    - HandleNewItem
+    - NewEventGraph
+    - OnItemWheelSlotSelected
+    - RefreshChildSlots
+  variables:
+    - ActiveItem
+    - ActiveSlot
+    - ChildSlots
+    - CurrentIndex
+    - ExtraSlotInfo
+    - Identifier
+    - ItemWheelData
+    - Length
+    - MainSlot
+    - OnItemWheelSlotSelected
+    - PreviousSlot
+    - ShowEmptySlots?
+    - Size XY
+    - SlotsToTrack
+    - TrackedItems
+    - VisuallyAffectedByStanceChange?
+
+- name: W_ItemWheel_NextSlot
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - HandleChildItem
+    - NewEventGraph
+  variables:
+    - ActiveItem
+    - Parent Wheel Slot
+    - SizingInfo
+
+- name: W_LevelCurrencyBlock_LevelUp
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - OnLevelUpCostChanged
+  variables:
+    - LocalCurrency
+    - LocalPlayerLevel
+    - OnLevelUpCostChanged
+
+- name: W_LevelEntry
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - LocalPlayerLevel
+
+- name: W_LevelUp
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: W_Navigable_InputReader_C
+  functions:
+    - HandleStatChanges
+    - OnInputDeviceChanged
+    - OnLevelUpMenuClosed
+    - OnPreviewDisregarded
+    - SetAllStatEntries
+  variables:
+    - AllStatEntries
+    - CurrentChanges
+    - CurrentPlayerCurrency
+    - CurrentPlayerLevel
+    - DefaultValues
+    - InventoryComponent
+    - NavigationIndex
+    - OnLevelUpMenuClosed
+    - OnPreviewDisregarded
+    - StatManagerComponent
+
+- name: W_LevelUpCost
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - LevelRequirementCurve
+
+- name: W_LoadGame
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: W_Navigable_InputReader_C
+  functions:
+    - InitializeSaveSlots
+    - OnInputDeviceChanged
+    - OnLoadGameClosed
+  variables:
+    - LoadSlotEntries
+    - NavigationIndex
+    - OnLoadGameClosed
+
+- name: W_LoadGame_Entry
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - OnSaveSlotSelected
+    - SetSaveSlotSelected
+  variables:
+    - LoadedClass
+    - LoadingScreen
+    - OnSaveSlotSelected
+    - SGO
+    - SaveSlotName
+    - Selected
+
+- name: W_LoadingScreen
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - OnLoadingScreenFinished
+  variables:
+    - AdditionalWaitDuration
+    - AutoRemove?
+    - LoadingScreenAsset
+    - OnLoadingScreenFinished
+
+- name: W_LootNotification
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - Duration
+    - ItemLootedAmount
+    - ItemName
+    - ItemTexture
+    - MaxItemNameLength
+
+- name: W_MainMenu
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: W_Navigable_C
+  functions:
+    - CanNavigate?
+    - OnButtonSelected
+    - Sequencer Events
+  variables:
+    - Buttons
+    - CanContinueGame?
+    - LoadingScreen
+    - MainMenuAsset
+    - MediaPlayer
+    - NavigationIndex
+
+- name: W_MainMenu_Button
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - OnButtonClicked
+    - OnSelected
+  variables:
+    - OnButtonClicked
+    - OnSelected
+    - Selected
+    - Width
+
+- name: W_NPC_Window
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: W_Navigable_InputReader_C
+  functions:
+    - OnInputDeviceChanged
+    - OnNpcWindowActive
+    - OnNpcWindowClosed
+    - OnNpcWindowTalkInitiated
+  variables:
+    - ActiveDialogComponent
+    - NavigationIndex
+    - NpcMenuButtons
+    - NpcName
+    - OnNpcWindowActive
+    - OnNpcWindowClosed
+    - OnNpcWindowTalkInitiated
+    - VendorAsset
+
+- name: W_NPC_Window_Vendor
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: W_Navigable_InputReader_C
+  functions:
+    - AddNewSlots
+    - GetActiveWidget
+    - GetEmptySlot
+    - GetPlayerCurrency
+    - OnInputDeviceChanged
+    - OnMouseWheel
+    - OnVendorWindowClosed
+  variables:
+    - ActiveFilterCategory
+    - CategoryEntries
+    - CurrentNpcName
+    - CurrentVendorAsset
+    - NavigationIndex
+    - OccupiedVendorSlots
+    - OnVendorWindowClosed
+    - SelectedSlot
+    - VendorSlots
+    - VendorType
+
+- name: W_Navigable
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - CanNavigate?
+  variables:
+    - NavigableInputMapping
+    - NavigableTag
+
+- name: W_Navigable_InputReader
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: W_Navigable_C
+  functions:
+    - GetInputIconForKey
+    - OnInputDeviceChanged
+  variables:
+    - ActiveDeviceType
+    - KeyCorrelationTable
+
+- name: W_Radar
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - AddCardinal
+    - AddTrackedElement
+    - RemoveTrackedElement
+    - SetPlayerIcon
+  variables:
+    - Cardinals
+    - Elements
+
+- name: W_Radar_Cardinal
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - CardinalData
+    - MaxAllowedNameLength
+
+- name: W_Radar_TrackedElement
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - Icon
+    - IconSize
+    - IconTint
+
+- name: W_Resources
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - AdjustBarWidth
+  variables:
+    - BackBarDelay
+    - BackBarNegativeSpeed
+    - BackBarPositiveSpeed
+    - BaseWidthFp
+    - BaseWidthHp
+    - BaseWidthStamina
+    - BuffEntries
+    - FocusPercentCache
+    - HealthPercentCache
+    - StaminaPercentCache
+    - TickTimer
+
+- name: W_RestMenu
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: W_Navigable_InputReader_C
+  functions:
+    - GetLevelUpMenuVisibility
+    - InitializeTimeEntries
+    - InitializeTimePassWidget
+    - OnInputDeviceChanged
+    - OnStorageRequested
+  variables:
+    - CurrentRestingPoint
+    - LocalTimeInfo
+    - MainButtonEntries
+    - MainNavigationIndex
+    - OnStorageRequested
+    - TimeEntries
+    - TimeEntryNavigationIndex
+
+- name: W_RestMenu_Button
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - OnRestMenuButtonPressed
+    - OnRestMenuButtonSelected
+    - SetRestMenuButtonSelected
+  variables:
+    - ButtonText
+    - OnRestMenuButtonPressed
+    - OnRestMenuButtonSelected
+    - Selected?
+    - SelectedColor
+
+- name: W_RestMenu_TimeEntry
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - OnTimeEntryPressed
+    - OnTimeEntrySelected
+    - SetTimeEntrySelected
+  variables:
+    - OnTimeEntryPressed
+    - OnTimeEntrySelected
+    - Selected?
+    - SelectedColor
+    - TimeInfo
+
+- name: W_Settings
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: W_Navigable_InputReader_C
+  functions:
+    - GetEntryCountForActiveCategory
+    - InitializeCategories
+    - InitializeEntries
+    - OnInputDeviceChanged
+    - OnQuitRequested
+    - OnSettingsClosed
+  variables:
+    - ActiveQuitButton
+    - CategoriesToHide
+    - CategoryEntries
+    - CategoryNavigationIndex
+    - EntryNavigationIndex
+    - OnQuitRequested
+    - OnSettingsClosed
+    - QuitToDesktop?
+    - SettingEntries
+
+- name: W_Settings_CategoryEntry
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - OnSelected
+    - SetCategorySelected
+  variables:
+    - DeselectedColor
+    - Icon
+    - OnSelected
+    - Selected?
+    - SelectedColor
+    - SettingCategory
+    - SwitcherIndex
+    - W_Settings
+
+- name: W_Settings_CenteredText
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    []
+
+- name: W_Settings_ControlEntry
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: W_Navigable_InputReader_C
+  functions:
+    - OnInputDeviceChanged
+  variables:
+    - ControlName
+    - ControlnputKey
+
+- name: W_Settings_ControlsDisplay
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - ImageColor
+    - ScaleMultiplier
+
+- name: W_Settings_Entry
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - GetDecrementedValue
+    - GetIncrementedValue
+    - GetQualityLevelText
+    - OnEntrySelected
+    - OnGenerateItemWidget
+    - OnSingleButtonEntryPressed
+    - OnWindowModeChanged
+    - SetCameraInvertValue
+    - SetCurrentResolutionValue
+    - SetCurrentScreenModeValue
+    - SetCurrentValue (Bool)
+    - SetCurrentValue (Int)
+    - SetEntrySelected
+    - SetEntryType
+  variables:
+    - ButtonText (Single Button View)
+    - CurrentValue
+    - CustomSettingsAsset
+    - EntryType
+    - HoveredColor
+    - OnEntrySelected
+    - OnSingleButtonEntryPressed
+    - OnWindowModeChanged
+    - Resolutions
+    - Selected
+    - SettingDescription
+    - SettingName
+    - SettingTag
+    - SupportedResolutions
+    - UnhoveredColor
+    - WindowModes
+
+- name: W_Settings_InputKeySelector
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: W_Navigable_C
+  functions:
+    - GetCurrentKey
+    - OnKeySelectorSelected
+    - SetActive
+    - SetKeySelectorSelected
+    - TryGetKeyIcon
+  variables:
+    - Active?
+    - Color
+    - Key
+    - KeyCorrelationTable
+    - OnKeySelectorSelected
+    - OutlineColor
+    - OutlineCornerRadii
+    - OutlineWidth
+    - Selected?
+    - SelectedColor
+    - SelectedOutlineColor
+
+- name: W_Settings_KeyMapping
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: W_Navigable_InputReader_C
+  functions:
+    - OnInputDeviceChanged
+  variables:
+    - Categories
+    - KeyMappingEntries
+    - NavigationIndex
+    - NavigationMapping
+    - TargetInputMapping
+
+- name: W_Settings_KeyMapping_Category
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - KeymapCategoryName
+
+- name: W_Settings_KeyMapping_Entry
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: W_Navigable_C
+  functions:
+    - IsKeyUsed
+    - OnKeymapEntrySelected
+    - OnKeymapUpdated
+    - SelectMappingForSlot
+    - UpdateMapping
+  variables:
+    - HoveredColor
+    - InputAction
+    - InputMapping_0
+    - KeymapName
+    - Mappings
+    - OnKeymapEntrySelected
+    - OnKeymapUpdated
+    - SelectingGamepadKey
+    - SelectingKeyboardKey
+    - SelectorNavigationIndex
+    - UnhoveredColor
+    - UpdatedKey
+
+- name: W_Settings_PlayerCard
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - PlayerLevel
+
+- name: W_Settings_QuitConfirmation
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - OnQuitGameCanceled
+    - OnQuitGameConfirmed
+  variables:
+    - ActiveBtn
+    - OnQuitGameCanceled
+    - OnQuitGameConfirmed
+
+- name: W_SkipCinematic
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: W_Navigable_InputReader_C
+  functions:
+    - OnInputDeviceChanged
+  variables:
+    - IconSize
+    - RelatedMapping
+    - Text
+
+- name: W_StatBlock
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - GetAllStatsInBlock
+    - SetupCurrentStats
+  variables:
+    - Category
+    - ShowUpgradeButtons
+    - StatEntries
+
+- name: W_StatBlock_LevelUp
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - GetAllStatsInBlock
+    - SetupStatsByCategory
+  variables:
+    - Category
+    - Color
+    - Selected Color
+    - ShowUpgradeButtons
+    - StatEntries
+
+- name: W_StatEntry
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - InitStatEntry
+    - OnStatChangeRequest
+  variables:
+    - OldValue
+    - OnStatChangeRequest
+    - ShowAdjustButtons?
+    - Stat
+    - Tooltip
+
+- name: W_StatEntry_LevelUp
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - InitStatEntry
+    - OnStatChangeRequest
+    - OnStatEntrySelected
+    - SetLevelUpStatEntrySelected
+  variables:
+    - CanLevelUp?
+    - Color
+    - OldValue
+    - OnStatChangeRequest
+    - OnStatEntrySelected
+    - Selected?
+    - SelectedColor
+    - ShowAdjustButtons?
+    - Stat
+    - StatCategory
+    - Tooltip
+
+- name: W_StatEntry_StatName
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - Text
+    - Tooltip
+
+- name: W_StatEntry_Status
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - InitStatEntry
+    - OnStatChangeRequest
+  variables:
+    - OnStatChangeRequest
+    - Stat
+    - Tooltip
+
+- name: W_Status
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: W_Navigable_InputReader_C
+  functions:
+    - OnInputDeviceChanged
+    - OnStatusClosed
+  variables:
+    - CurrentPlayerCurrency
+    - CurrentPlayerLevel
+    - InventoryComponent
+    - OnStatusClosed
+    - StatManagerComponent
+
+- name: W_StatusEffectBar
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - Effect
+
+- name: W_StatusEffectNotification
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - NotificationDuration
+
+- name: W_Status_LevelCurrencyBlock
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - LevelRequirementCurve
+    - LocalCurrency
+    - LocalPlayerLevel
+
+- name: W_Status_StatBlock
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - GetAllStatsInBlock
+    - SetupCurrentStats
+  variables:
+    - Category
+    - DebugShowCount
+    - StatEntries
+
+- name: W_TargetExecutionIndicator
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    []
+
+- name: W_TargetLock
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    []
+
+- name: W_TimePass
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - OnTimePassEnd
+    - Sequencer Events
+  variables:
+    - From Time
+    - FromAngle
+    - OnTimePassEnd
+    - Timer
+    - To Time
+    - ToAngle
+
+- name: W_Utility_Asset
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - GetToolTipWidget
+    - OnDoubleClick
+    - OnMouseButtonDown_0
+    - OnMouseDoubleClick_0
+  variables:
+    - Asset
+    - OnDoubleClick
+    - Selected
+    - Tooltip
+
+- name: W_Utility_AssetTooltip
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    []
+  variables:
+    - Asset
+    - Obj
+
+- name: W_Utility_Component
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - GetToolTipWidget
+    - OnClicked
+    - OnDoubleClick
+    - OnMouseButtonDown_0
+    - OnMouseDoubleClick_0
+  variables:
+    - Component
+    - OnClicked
+    - OnDoubleClick
+    - Tooltip
+
+- name: W_VendorAction
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - BuyItem
+    - GetMaxPossibleAmount
+    - OnVendorActionClosed
+    - OnVendorItemPurchased
+    - OnVendorItemSold
+    - SellItem
+  variables:
+    - ActionType
+    - AssignedItem
+    - AssignedItemAmount
+    - AssignedItemPrice
+    - DesiredAmount
+    - MaxPossibleAmount
+    - OnVendorActionClosed
+    - OnVendorItemPurchased
+    - OnVendorItemSold
+    - SelectedSlot
+
+- name: W_VendorSlot
+  category: WidgetBlueprint
+  description: Type: BPTYPE_Normal, Parent: UserWidget
+  functions:
+    - AdjustAmountAndIconOpacity
+    - OnPressed
+    - OnSelected
+    - OnSlotAssigned
+    - OnSlotCleared
+  variables:
+    - AssignedItem
+    - AssignedItemPrice
+    - Count
+    - CraftingSlotEnabled?
+    - Currency
+    - Infinite?
+    - IsOccupied?
+    - OnPressed
+    - OnSelected
+    - OnSlotAssigned
+    - OnSlotCleared
+    - SlotColor
+    - Type
+
+

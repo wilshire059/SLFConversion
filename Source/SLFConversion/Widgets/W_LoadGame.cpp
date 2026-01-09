@@ -21,6 +21,13 @@ void UW_LoadGame::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	// CRITICAL: Hide MainBlur widget - it's a BackgroundBlur at highest ZOrder that blurs everything
+	if (UWidget* MainBlur = GetWidgetFromName(TEXT("MainBlur")))
+	{
+		MainBlur->SetVisibility(ESlateVisibility::Collapsed);
+		UE_LOG(LogTemp, Log, TEXT("[W_LoadGame] Hidden MainBlur widget"));
+	}
+
 	UE_LOG(LogTemp, Log, TEXT("UW_LoadGame::NativeConstruct"));
 
 	// Initialize save slots on construct

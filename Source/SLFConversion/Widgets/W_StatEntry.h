@@ -14,6 +14,7 @@
 #include "SLFEnums.h"
 #include "SLFGameTypes.h"
 #include "SLFPrimaryDataAssets.h"
+#include "SLFStatTypes.h"
 #include "InputMappingContext.h"
 #include "GameFramework/InputSettings.h"
 #include "GenericPlatform/GenericWindow.h"
@@ -77,8 +78,8 @@ public:
 
 	// Event Handlers (1 events)
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_StatEntry")
-	void EventOnStatUpdated(UB_Stat* UpdatedStat, double Change, bool UpdateAffectedStats, uint8 ValueType);
-	virtual void EventOnStatUpdated_Implementation(UB_Stat* UpdatedStat, double Change, bool UpdateAffectedStats, uint8 ValueType);
+	void EventOnStatUpdated(UB_Stat* UpdatedStat, double Change, bool UpdateAffectedStats, ESLFValueType ValueType);
+	virtual void EventOnStatUpdated_Implementation(UB_Stat* UpdatedStat, double Change, bool UpdateAffectedStats, ESLFValueType ValueType);
 
 protected:
 	// Cache references

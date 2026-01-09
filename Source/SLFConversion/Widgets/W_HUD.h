@@ -38,6 +38,7 @@ class UW_InteractableWidget;
 class UW_BossBar;
 class UW_ItemWheel;
 class UW_AbilityDisplay;
+class UW_Interaction;
 
 // Forward declarations for Blueprint types
 class UB_Stat;
@@ -66,8 +67,12 @@ public:
 	virtual void NativeDestruct() override;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// VARIABLES (3)
+	// VARIABLES
 	// ═══════════════════════════════════════════════════════════════════════
+	// NOTE: Widget pointers (W_Interaction, W_GameMenu, etc.) are NOT declared here
+	// because the Blueprint UMG designer already has BindWidget variables with these names.
+	// Declaring them in C++ causes "property already exists" compiler errors.
+	// These widgets are cached via GetWidgetFromName in CacheWidgetReferences().
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	UW_LoadingScreen* LoadingScreen;
@@ -75,6 +80,18 @@ public:
 	bool IsDialogActive;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	bool CinematicMode;
+
+protected:
+	// Cached widget pointers - NOT UPROPERTY to avoid conflict with Blueprint BindWidget variables
+	UW_Interaction* CachedW_Interaction;
+	UW_GameMenu* CachedW_GameMenu;
+	UW_Inventory* CachedW_Inventory;
+	UW_Equipment* CachedW_Equipment;
+	UW_Crafting* CachedW_Crafting;
+	UW_Status* CachedW_Status;
+	UW_Settings* CachedW_Settings;
+
+public:
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (1)
@@ -212,8 +229,8 @@ public:
 
 	// Interaction Events
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_HUD|Interaction")
-	void EventShowInteractableWidget(AB_Interactable* Interactable);
-	virtual void EventShowInteractableWidget_Implementation(AB_Interactable* Interactable);
+	void EventShowInteractableWidget(AActor* Interactable);
+	virtual void EventShowInteractableWidget_Implementation(AActor* Interactable);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_HUD|Interaction")
 	void EventHideInteractionWidget();
@@ -300,4 +317,24 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	/** Internal handler bound to W_GameMenu::OnGameMenuWidgetRequest */
+	UFUNCTION()
+	void OnGameMenuWidgetRequestHandler(FGameplayTag WidgetTag);
+
+	/** Internal handlers bound to child widget closed dispatchers */
+	UFUNCTION()
+	void OnInventoryClosedHandler();
+
+	UFUNCTION()
+	void OnEquipmentClosedHandler();
+
+	UFUNCTION()
+	void OnCraftingClosedHandler();
+
+	UFUNCTION()
+	void OnStatusClosedHandler();
+
+	UFUNCTION()
+	void OnSettingsClosedHandler();
 };

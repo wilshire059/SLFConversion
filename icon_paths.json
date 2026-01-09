@@ -1,0 +1,86 @@
+{
+  "DA_Apple": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_Apple.T_Apple",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_Apple.T_Apple"
+  },
+  "DA_BossMace": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_BossMace.T_BossMace",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_BossMace.T_BossMace"
+  },
+  "DA_CrimsonEverbloom": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_Flower.T_Flower",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_Flower.T_Flower"
+  },
+  "DA_Cube": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_Cube.T_Cube",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_Cube.T_Cube"
+  },
+  "DA_ExampleArmor": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_ExampleArmor.T_ExampleArmor",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_ExampleArmor.T_ExampleArmor"
+  },
+  "DA_ExampleArmor02": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_ExampleArmor02.T_ExampleArmor02",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_ExampleArmor02.T_ExampleArmor02"
+  },
+  "DA_ExampleBracers": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_ExampleBracers.T_ExampleBracers",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_ExampleBracers.T_ExampleBracers"
+  },
+  "DA_ExampleGreaves": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_ExampleGreaves.T_ExampleGreaves",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_ExampleGreaves.T_ExampleGreaves"
+  },
+  "DA_ExampleHat": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_ExampleHat.T_ExampleHat",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_ExampleHat.T_ExampleHat"
+  },
+  "DA_ExampleHelmet": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_ExampleHelmet.T_ExampleHelmet",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_ExampleHelmet.T_ExampleHelmet"
+  },
+  "DA_ExampleTalisman": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_ExampleTalisman01.T_ExampleTalisman01",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_ExampleTalisman01.T_ExampleTalisman01"
+  },
+  "DA_Greatsword": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_Greatsword.T_Greatsword",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_Greatsword.T_Greatsword"
+  },
+  "DA_HealthFlask": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_HealingFlask.T_HealingFlask",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_HealingFlask.T_HealingFlask"
+  },
+  "DA_Katana": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_ExampleKatana.T_ExampleKatana",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_ExampleKatana.T_ExampleKatana"
+  },
+  "DA_Lantern": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_Lantern.T_Lantern",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_Lantern.T_Lantern"
+  },
+  "DA_PoisonSword": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_ExamplePoisonSword.T_ExamplePoisonSword",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_ExamplePoisonSword.T_ExamplePoisonSword"
+  },
+  "DA_PrisonKey": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_PrisonKey.T_PrisonKey",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_PrisonKey.T_PrisonKey"
+  },
+  "DA_Shield01": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_Shield.T_Shield",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_Shield.T_Shield"
+  },
+  "DA_Sword01": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_ExampleSword01.T_ExampleSword01",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_ExampleSword01.T_ExampleSword01"
+  },
+  "DA_Sword02": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_ExampleSword02.T_ExampleSword02",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_ExampleSword02.T_ExampleSword02"
+  },
+  "DA_ThrowingKnife": {
+    "IconSmall": "/Game/SoulslikeFramework/Textures/Items/T_ThrowingKnife.T_ThrowingKnife",
+    "IconLargeOptional": "/Game/SoulslikeFramework/Textures/Items/T_ThrowingKnife.T_ThrowingKnife"
+  }
+}

@@ -1,0 +1,45 @@
+
+============================================================
+DEBUGGING ITEM ASSET PROPERTIES
+============================================================
+
+============================================================
+ASSET: DA_HealthFlask
+============================================================
+Class: PDA_Item_C
+
+--- Testing item_information property access ---
+  item_information: <class 'SLFItemInfo'>
+
+  Properties on item_info (dir):
+    action_to_trigger: GameplayTag
+    category: SLFItemCategoryData
+    crafting_details: SLFCraftingInfo
+    discovery_description: Text
+    display_name: Text
+    equipment_details: SLFEquipmentInfo
+    icon_large_optional: Texture2D
+    icon_small: Texture2D
+    item_class: NoneType
+    item_tag: GameplayTag
+    long_description: Text
+    max_amount: int
+    on_use_description: Text
+    rechargeable: bool
+    short_description: Text
+    usable: bool
+    world_pickup_info: SLFWorldMeshInfo
+
+  Trying usable property names:
+    usable: SUCCESS = True
+    b_usable: FAILED
+    bUsable: SUCCESS = True
+    Usable: SUCCESS = True
+
+  Trying category property:
+    category: <class 'SLFItemCategoryData'>
+    Category struct properties:
+      category: SLFItemCategory = <SLFItemCategory.NONE: 0>
+      sub_category: SLFItemSubCategory = <SLFItemSubCategory.MISCELLANEOUS: 4>
+
+============================================================

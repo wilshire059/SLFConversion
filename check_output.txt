@@ -30,5 +30,5 @@ COMPLETE: Applied 21, Failed 0
 ============================================================
 
 Verification - DA_Apple:
-  world_niagara_system: <Object '/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple' (0x000001EDB491C400) Class 'NiagaraSystem'>
+  world_niagara_system: <Object '/Game/SoulslikeFramework/VFX/Systems/NS_ItemLootSimple.NS_ItemLootSimple' (0x000002398D7A8C00) Class 'NiagaraSystem'>
   Niagara name: NS_ItemLootSimple

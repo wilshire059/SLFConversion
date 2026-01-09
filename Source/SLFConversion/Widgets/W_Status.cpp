@@ -6,8 +6,8 @@
 
 #include "Widgets/W_Status.h"
 #include "Widgets/W_Status_LevelCurrencyBlock.h"
-#include "Components/AC_InventoryManager.h"
-#include "Components/AC_StatManager.h"
+#include "Components/InventoryManagerComponent.h"
+#include "Components/StatManagerComponent.h"
 
 UW_Status::UW_Status(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -23,45 +23,84 @@ void UW_Status::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	// StatManagerComponent is on PAWN
-	if (APawn* Pawn = GetOwningPlayerPawn())
+	// CRITICAL: Hide MainBlur widget - it's a BackgroundBlur at highest ZOrder that blurs everything
+	if (UWidget* MainBlur = GetWidgetFromName(TEXT("MainBlur")))
 	{
-		StatManagerComponent = Pawn->FindComponentByClass<UAC_StatManager>();
+		MainBlur->SetVisibility(ESlateVisibility::Collapsed);
+		UE_LOG(LogTemp, Log, TEXT("[W_Status] Hidden MainBlur widget"));
+	}
+
+	// Components are on PlayerController based on debug logs
+	// Blueprint uses GetOwningPlayer() which returns PC
+	APlayerController* PC = GetOwningPlayer();
+	APawn* Pawn = GetOwningPlayerPawn();
+
+	UE_LOG(LogTemp, Log, TEXT("[W_Status] NativeConstruct - PC: %s, Pawn: %s"),
+		PC ? *PC->GetName() : TEXT("NULL"),
+		Pawn ? *Pawn->GetName() : TEXT("NULL"));
+
+	// Check PlayerController first (where components actually are)
+	if (PC)
+	{
+		StatManagerComponent = PC->FindComponentByClass<UStatManagerComponent>();
 		if (StatManagerComponent)
 		{
-			// Bind to OnLevelUpdated event
-			StatManagerComponent->OnLevelUpdated.AddDynamic(this, &UW_Status::EventOnLevelUpdated);
-
-			// Initialize CurrentPlayerLevel from component
-			CurrentPlayerLevel = StatManagerComponent->Level;
-
-			UE_LOG(LogTemp, Log, TEXT("[W_Status] Found StatManagerComponent on Pawn, Level=%d"), CurrentPlayerLevel);
+			UE_LOG(LogTemp, Log, TEXT("[W_Status] Found StatManagerComponent on PlayerController"));
 		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("[W_Status] StatManagerComponent not found on pawn"));
-		}
-	}
 
-	// InventoryComponent is on PLAYERCONTROLLER (not Pawn!)
-	if (APlayerController* PC = GetOwningPlayer())
-	{
-		InventoryComponent = PC->FindComponentByClass<UAC_InventoryManager>();
+		InventoryComponent = PC->FindComponentByClass<UInventoryManagerComponent>();
 		if (InventoryComponent)
 		{
-			// Bind to OnCurrencyUpdated event
-			InventoryComponent->OnCurrencyUpdated.AddDynamic(this, &UW_Status::EventOnCurrencyUpdated);
-
-			// Initialize CurrentPlayerCurrency from component
-			CurrentPlayerCurrency = InventoryComponent->Currency;
-
-			UE_LOG(LogTemp, Log, TEXT("[W_Status] Found InventoryComponent on PlayerController, Currency=%d"), CurrentPlayerCurrency);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("[W_Status] InventoryComponent not found on PlayerController"));
+			UE_LOG(LogTemp, Log, TEXT("[W_Status] Found InventoryComponent on PlayerController"));
 		}
 	}
+
+	// Fallback to Pawn if not found on PC
+	if (!StatManagerComponent && Pawn)
+	{
+		StatManagerComponent = Pawn->FindComponentByClass<UStatManagerComponent>();
+		if (StatManagerComponent)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[W_Status] Found StatManagerComponent on Pawn (fallback)"));
+		}
+	}
+	if (!InventoryComponent && Pawn)
+	{
+		InventoryComponent = Pawn->FindComponentByClass<UInventoryManagerComponent>();
+		if (InventoryComponent)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[W_Status] Found InventoryComponent on Pawn (fallback)"));
+		}
+	}
+
+	// Now bind events and initialize values
+	if (StatManagerComponent)
+	{
+		StatManagerComponent->OnLevelUpdated.AddDynamic(this, &UW_Status::EventOnLevelUpdated);
+		CurrentPlayerLevel = StatManagerComponent->Level;
+		UE_LOG(LogTemp, Log, TEXT("[W_Status] Bound to StatManagerComponent, Level=%d"), CurrentPlayerLevel);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_Status] StatManagerComponent NOT FOUND on PC or Pawn!"));
+	}
+
+	if (InventoryComponent)
+	{
+		InventoryComponent->OnCurrencyUpdated.AddDynamic(this, &UW_Status::EventOnCurrencyUpdated);
+		CurrentPlayerCurrency = InventoryComponent->Currency;
+		UE_LOG(LogTemp, Log, TEXT("[W_Status] Bound to InventoryComponent, Currency=%d"), CurrentPlayerCurrency);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_Status] InventoryComponent NOT FOUND on PC or Pawn!"));
+	}
+
+	// Make focusable for keyboard input
+	SetIsFocusable(true);
+
+	// Bind visibility changed
+	OnVisibilityChanged.AddDynamic(this, &UW_Status::EventOnVisibilityChanged);
 
 	// Initialize the level/currency block with current values
 	InitializeLevelCurrencyBlock();
@@ -81,9 +120,27 @@ void UW_Status::NativeDestruct()
 		InventoryComponent->OnCurrencyUpdated.RemoveAll(this);
 	}
 
+	OnVisibilityChanged.RemoveAll(this);
+
 	Super::NativeDestruct();
 
 	UE_LOG(LogTemp, Log, TEXT("[W_Status] NativeDestruct"));
+}
+
+FReply UW_Status::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	FKey Key = InKeyEvent.GetKey();
+
+	UE_LOG(LogTemp, Log, TEXT("[W_Status] NativeOnKeyDown - Key: %s"), *Key.ToString());
+
+	// Navigate Cancel/Back: Escape, Gamepad B, Tab
+	if (Key == EKeys::Escape || Key == EKeys::Gamepad_FaceButton_Right || Key == EKeys::Tab)
+	{
+		EventNavigateCancel();
+		return FReply::Handled();
+	}
+
+	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);
 }
 
 void UW_Status::InitializeLevelCurrencyBlock()
@@ -149,6 +206,13 @@ void UW_Status::EventOnVisibilityChanged_Implementation(ESlateVisibility InVisib
 
 		// Initialize the level/currency block
 		InitializeLevelCurrencyBlock();
+
+		// Set focus to this widget for keyboard input
+		if (APlayerController* PC = GetOwningPlayer())
+		{
+			SetUserFocus(PC);
+			UE_LOG(LogTemp, Log, TEXT("[W_Status] Set user focus"));
+		}
 
 		UE_LOG(LogTemp, Log, TEXT("[W_Status] Visibility changed to Visible - Refreshed Level=%d, Currency=%d"), CurrentPlayerLevel, CurrentPlayerCurrency);
 	}

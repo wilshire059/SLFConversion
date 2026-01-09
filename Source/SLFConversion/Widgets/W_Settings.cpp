@@ -24,7 +24,17 @@ void UW_Settings::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	// CRITICAL: Hide MainBlur widget - it's a BackgroundBlur at highest ZOrder that blurs everything
+	if (UWidget* MainBlur = GetWidgetFromName(TEXT("MainBlur")))
+	{
+		MainBlur->SetVisibility(ESlateVisibility::Collapsed);
+		UE_LOG(LogTemp, Log, TEXT("[W_Settings] Hidden MainBlur widget"));
+	}
+
 	UE_LOG(LogTemp, Log, TEXT("[W_Settings] NativeConstruct"));
+
+	// Make focusable for keyboard input - CRITICAL for NativeOnKeyDown to work
+	SetIsFocusable(true);
 
 	// Initialize categories from CategoriesBox
 	InitializeCategories();
@@ -52,6 +62,64 @@ void UW_Settings::NativeDestruct()
 	Super::NativeDestruct();
 
 	UE_LOG(LogTemp, Log, TEXT("[W_Settings] NativeDestruct"));
+}
+
+FReply UW_Settings::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	FKey Key = InKeyEvent.GetKey();
+
+	UE_LOG(LogTemp, Log, TEXT("[W_Settings] NativeOnKeyDown - Key: %s"), *Key.ToString());
+
+	// Handle Tab/Escape to close settings
+	if (Key == EKeys::Tab || Key == EKeys::Escape)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[W_Settings] Tab/Escape pressed - calling EventNavigateCancel"));
+		EventNavigateCancel();
+		return FReply::Handled();
+	}
+
+	// Handle arrow keys for navigation
+	if (Key == EKeys::Up || Key == EKeys::Gamepad_DPad_Up || Key == EKeys::Gamepad_LeftStick_Up)
+	{
+		EventNavigateUp();
+		return FReply::Handled();
+	}
+	if (Key == EKeys::Down || Key == EKeys::Gamepad_DPad_Down || Key == EKeys::Gamepad_LeftStick_Down)
+	{
+		EventNavigateDown();
+		return FReply::Handled();
+	}
+	if (Key == EKeys::Left || Key == EKeys::Gamepad_DPad_Left || Key == EKeys::Gamepad_LeftStick_Left)
+	{
+		EventNavigateLeft();
+		return FReply::Handled();
+	}
+	if (Key == EKeys::Right || Key == EKeys::Gamepad_DPad_Right || Key == EKeys::Gamepad_LeftStick_Right)
+	{
+		EventNavigateRight();
+		return FReply::Handled();
+	}
+
+	// Handle category navigation with Q/E or bumpers
+	if (Key == EKeys::Q || Key == EKeys::Gamepad_LeftShoulder)
+	{
+		EventNavigateCategoryLeft();
+		return FReply::Handled();
+	}
+	if (Key == EKeys::E || Key == EKeys::Gamepad_RightShoulder)
+	{
+		EventNavigateCategoryRight();
+		return FReply::Handled();
+	}
+
+	// Handle OK/Enter
+	if (Key == EKeys::Enter || Key == EKeys::Gamepad_FaceButton_Bottom)
+	{
+		EventNavigateOk();
+		return FReply::Handled();
+	}
+
+	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);
 }
 
 void UW_Settings::InitializeCategories_Implementation()

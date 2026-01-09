@@ -19,6 +19,7 @@
 #include "GenericPlatform/GenericWindow.h"
 #include "MediaPlayer.h"
 #include "Components/Button.h"
+#include "Engine/Texture2D.h"
 
 #include "W_InventoryAction.generated.h"
 
@@ -107,12 +108,12 @@ public:
 	virtual void EventSetupForStorage_Implementation(UW_InventorySlot* InSelectedSlot);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_InventoryAction")
-	void EventUpdateBackInputIcons(int32 BackInputTexture);
-	virtual void EventUpdateBackInputIcons_Implementation(int32 BackInputTexture);
+	void EventUpdateBackInputIcons(const TSoftObjectPtr<UTexture2D>& BackInputTexture);
+	virtual void EventUpdateBackInputIcons_Implementation(const TSoftObjectPtr<UTexture2D>& BackInputTexture);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_InventoryAction")
-	void EventUpdateOkInputIcons(int32 OkInputTexture);
-	virtual void EventUpdateOkInputIcons_Implementation(int32 OkInputTexture);
+	void EventUpdateOkInputIcons(const TSoftObjectPtr<UTexture2D>& OkInputTexture);
+	virtual void EventUpdateOkInputIcons_Implementation(const TSoftObjectPtr<UTexture2D>& OkInputTexture);
 
 protected:
 	// Cache references

@@ -40,6 +40,13 @@ void UW_Equipment::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	// CRITICAL: Hide MainBlur widget - it's a BackgroundBlur at highest ZOrder that blurs everything
+	if (UWidget* MainBlur = GetWidgetFromName(TEXT("MainBlur")))
+	{
+		MainBlur->SetVisibility(ESlateVisibility::Collapsed);
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Hidden MainBlur widget"));
+	}
+
 	UE_LOG(LogTemp, Log, TEXT("[W_Equipment] NativeConstruct - Getting components"));
 
 	// DIAGNOSTIC: Check what actors we have and where components are

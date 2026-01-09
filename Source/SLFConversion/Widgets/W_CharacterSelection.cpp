@@ -14,6 +14,13 @@ void UW_CharacterSelection::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	// CRITICAL: Hide MainBlur widget - it's a BackgroundBlur at highest ZOrder that blurs everything
+	if (UWidget* MainBlur = GetWidgetFromName(TEXT("MainBlur")))
+	{
+		MainBlur->SetVisibility(ESlateVisibility::Collapsed);
+		UE_LOG(LogTemp, Log, TEXT("[W_CharacterSelection] Hidden MainBlur widget"));
+	}
+
 	// Cache widget references
 	CacheWidgetReferences();
 

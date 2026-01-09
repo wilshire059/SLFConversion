@@ -1,0 +1,90 @@
+gap_analysis:
+  - blueprint: Manager Components (All)
+    cpp_class: AC_*Manager
+    status: Verified Parity
+    logic_issues:
+      - note: Rigorous line-by-line comparison of 8 key Managers (Loot, Stat, Equipment, Progress, AI Behavior, Combat, AI Combat, Action) confirms 100% variable and function signature match with Blueprint JSONs.
+      - note: The systems themselves are sound; the failure is in their *attachment* to Actors (see PC_SoulslikeFramework below).
+  - blueprint: B_Soulslike_Enemy
+
+    cpp_class: ASLFSoulslikeEnemy
+    status: Review Required
+    missing_components:
+      - name: ExecutionMoveTo
+        type: ArrowComponent
+        note: Replaced by hardcoded math in C++ (ForwardVector * 100). Designer control lost.
+      - name: VisualizerBillboard
+        type: BillboardComponent
+        note: Missing. Likely low impact (editor verification only).
+    logic_issues:
+      - function: CheckSense (Implementation)
+        severity: High
+        description: >
+          The C++ implementation attempts to find `UAIPerceptionComponent` on the **Character** (`FindComponentByClass`). 
+          Standard UE behavior trees/AI usually place the Perception Component on the **AIController**. 
+          If the BP version had the component on the Controller, this C++ function will always return false, 
+          causing the enemy to be "blind" and never react/walk/attack.
+        recommendation: Change logic to check `GetController()->FindComponentByClass<UAIPerceptionComponent>()`.
+    variables:
+      - match: true
+    interfaces:
+      - match: true
+      - note: All functions implemented.
+  - blueprint: AIC_SoulslikeFramework
+    cpp_class: UAIC_SoulslikeFramework
+    status: Critical Failure
+    inheritance_issue:
+      current: UObject
+      expected: AAIController
+      impact: Critical. The class is not an Actor or Controller. It cannot function as an AI Controller.
+    missing_components:
+      - name: AIPerception
+        type: AIPerceptionComponent
+        impact: Critical. No sensing capability.
+      - name: PathFollowingComponent
+        type: PathFollowingComponent
+        impact: AI cannot move.
+    logic_issues:
+      - description: Class is effectively empty. No Logic, no BeginPlay, no Possess.
+  - blueprint: B_PickupItem
+    cpp_class: ASLFPickupItemBase
+    status: Likely Functional (Passive)
+    components:
+      - note: Relies on Blueprint SCS for 'WorldNiagara' and 'SupportCollision'. C++ does not create them.
+    logic_issues:
+      - description: >
+          The C++ class implements `OnInteract` but does not contain logic to *trigger* it (e.g. no Overlap events bound). 
+          This implies the Player Character is responsible for tracing/overlapping and calling Interact. 
+          If items cannot be picked up, the issue is likely in the **Player Character's Interaction Logic**, not here.
+      - description: `SupportCollision` is used for Physics, but not explicitly for Interaction overlaps in C++.
+  - blueprint: SLFInteractableBase (Parent of B_PickupItem)
+    cpp_class: ASLFInteractableBase
+    status: Critical Failure
+    inheritance_issue:
+      missing_interface: IBPI_Interactable
+      impact: Critical. The player's InteractionManager checks `ImplementsInterface(UBPI_Interactable)`. Since this C++ class does not inherit it, it returns false, and the item is IGNORED.
+    recommendation: Add `public IBPI_Interactable` to class definition.
+  - blueprint: B_Soulslike_Character
+    cpp_class: ASLFSoulslikeCharacter
+    status: Likely Functional
+    components:
+      - name: AC_InteractionManager
+        status: Functional Logic, but blocked by above issue.
+    logic_issues:
+      - note: The Interaction Manager logic is sound (Sphere Trace -> Check Interface -> Interact). The failure lies in the target (InteractableBase) not implementing the interface in C++.
+  - blueprint: W_GameMenu
+    cpp_class: UW_GameMenu
+    status: Potentially Broken Input
+    logic_issues:
+      - note: `NativeOnKeyDown` hardcodes keys (W, S, Enter, Esc), bypassing the Enhanced Input system used elsewhere. If the user remaps keys, the menu navigation will NOT update.
+      - note: `W_Navigable_InputReader` (Parent) has empty C++ implementation for `GetInputIconForKey`, meaning input prompts (e.g., "Press A to Select") will likely be missing or blank.
+  - blueprint: W_HUD
+    cpp_class: UW_HUD
+    status: Fragile Implementation
+    logic_issues:
+      - note: Relies heavily on `GetWidgetFromName(TEXT("..."))` to find child widgets (Inventory, Equipment, etc.). If the Blueprint widget names don't EXACTLY match these hardcoded strings, the HUD will fail to show these menus.
+      - note: `EventToggleUiMode` logic assumes Player Controller 0, which is standard but could be an issue in split-screen (low priority).
+
+
+
+

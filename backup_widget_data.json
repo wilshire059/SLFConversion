@@ -1,0 +1,36 @@
+{
+  "W_Inventory": {
+    "path": "C:\\scripts\\bp_only\\Content\\SoulslikeFramework\\Widgets\\Inventory\\W_Inventory.uasset",
+    "size": 2485875,
+    "data": {
+      "textures": [
+        "/Game/SoulslikeFramework/Widgets/_Textures/T_Category_AllItems",
+        "/Game/SoulslikeFramework/Widgets/_Textures/T_Deco_Border",
+        "/Game/SoulslikeFramework/Widgets/_Textures/T_Info",
+        "/Game/SoulslikeFramework/Widgets/_Textures/T_Inventory",
+        "/Game/SoulslikeFramework/Widgets/_Textures/T_OnUse",
+        "/Game/SoulslikeFramework/Widgets/_Textures/T_Player",
+        "/Game/SoulslikeFramework/Widgets/_Textures/T_Storage_Large",
+        "/Game/SoulslikeFramework/Textures/Items/T_Apple"
+      ],
+      "categories": [
+        "E_ItemCategory",
+        "AllItems",
+        "Materials"
+      ]
+    }
+  },
+  "W_Inventory_CategoryEntry": {
+    "path": "C:\\scripts\\bp_only\\Content\\SoulslikeFramework\\Widgets\\Inventory\\W_Inventory_CategoryEntry.uasset",
+    "size": 152965,
+    "data": {
+      "textures": [
+        "/Game/SoulslikeFramework/Widgets/_Textures/T_Controller"
+      ],
+      "categories": [
+        "E_ItemCategory",
+        "Materials"
+      ]
+    }
+  }
+}

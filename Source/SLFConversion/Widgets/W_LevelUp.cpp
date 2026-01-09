@@ -25,6 +25,13 @@ void UW_LevelUp::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	// CRITICAL: Hide MainBlur widget - it's a BackgroundBlur at highest ZOrder that blurs everything
+	if (UWidget* MainBlur = GetWidgetFromName(TEXT("MainBlur")))
+	{
+		MainBlur->SetVisibility(ESlateVisibility::Collapsed);
+		UE_LOG(LogTemp, Log, TEXT("[W_LevelUp] Hidden MainBlur widget"));
+	}
+
 	// Cache widget references
 	CacheWidgetReferences();
 

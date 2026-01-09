@@ -22,6 +22,7 @@
 #include "GameFramework/Pawn.h"
 #include "GameFramework/Controller.h"
 #include "Interfaces/BPI_Interactable.h"
+#include "Interfaces/SLFInteractableInterface.h"
 #include "Interfaces/BPI_GenericCharacter.h"
 #include "Interfaces/BPI_Player.h"
 #include "Interfaces/BPI_Controller.h"
@@ -45,12 +46,21 @@ UAC_InteractionManager::UAC_InteractionManager()
 	AllowTargetSwap = true;
 	LastRestingPoint = nullptr;
 	LockedOnComponent = nullptr;
+
+	// Initialize default trace channels for interactables
+	// WorldStatic and WorldDynamic are common for pickups/interactables
+	TraceChannels.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic));
+	TraceChannels.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic));
+	TraceChannels.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_PhysicsBody));
 }
 
 void UAC_InteractionManager::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(LogTemp, Log, TEXT("UAC_InteractionManager::BeginPlay"));
+	UE_LOG(LogTemp, Log, TEXT("UAC_InteractionManager::BeginPlay - Owner: %s, TraceChannels: %d, Radius: %.1f"),
+		GetOwner() ? *GetOwner()->GetName() : TEXT("None"),
+		TraceChannels.Num(),
+		InteractionRadius);
 }
 
 void UAC_InteractionManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -119,11 +129,14 @@ void UAC_InteractionManager::TickComponent(float DeltaTime, ELevelTick TickType,
 				continue;
 			}
 
-			// Check if implements BPI_Interactable
-			if (HitActor->GetClass()->ImplementsInterface(UBPI_Interactable::StaticClass()))
+			// Check if implements either BPI_Interactable or SLFInteractableInterface
+			// Both interfaces are used for interactables in the codebase
+			if (HitActor->GetClass()->ImplementsInterface(UBPI_Interactable::StaticClass()) ||
+				HitActor->GetClass()->ImplementsInterface(USLFInteractableInterface::StaticClass()))
 			{
 				// Add unique to NearbyInteractables
 				NearbyInteractables.AddUnique(HitActor);
+				UE_LOG(LogTemp, Verbose, TEXT("[InteractionManager] Found interactable: %s"), *HitActor->GetName());
 			}
 		}
 

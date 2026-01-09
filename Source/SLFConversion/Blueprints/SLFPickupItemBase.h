@@ -86,13 +86,8 @@ public:
 	// FUNCTIONS: 3/3 migrated
 	// ═══════════════════════════════════════════════════════════════════
 
-	/** [1/3] Try to get item info from data asset
-	 * @param OutInfo - Retrieved item info
-	 * @return True if successful
-	 */
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Pickup")
-	bool TryGetItemInfo(FSLFItemInfo& OutInfo);
-	virtual bool TryGetItemInfo_Implementation(FSLFItemInfo& OutInfo);
+	/** [1/3] Override ISLFInteractableInterface::TryGetItemInfo to return item info from data asset */
+	virtual FSLFItemInfo TryGetItemInfo_Implementation() override;
 
 	/** [2/3] Trigger OnItemLooted dispatcher */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Pickup|Events")

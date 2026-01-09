@@ -24,9 +24,11 @@
 
 // Forward declarations for widget types
 class UW_StatEntry;
+class UVerticalBox;
+class UStatManagerComponent;
 
 // Forward declarations for Blueprint types
-
+class UB_Stat;
 
 // Forward declarations for SaveGame types
 
@@ -83,4 +85,19 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// StatManager binding
+	UPROPERTY()
+	UStatManagerComponent* StatManagerComponent;
+
+	// Container for stat entries
+	UPROPERTY()
+	UVerticalBox* StatsBox;
+
+	// Called when StatManager finishes initializing stats
+	UFUNCTION()
+	void OnStatsInitialized();
+
+	// Setup stats from the StatManager
+	void SetupFromStatManager();
 };

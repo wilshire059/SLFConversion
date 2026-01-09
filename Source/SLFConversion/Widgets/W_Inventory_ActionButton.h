@@ -44,6 +44,7 @@ public:
 	UW_Inventory_ActionButton(const FObjectInitializer& ObjectInitializer);
 
 	// Widget lifecycle
+	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 

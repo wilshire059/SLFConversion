@@ -29,6 +29,7 @@ class UW_InventoryAction;
 
 // Forward declarations for UMG types
 class UScrollBox;
+class UImage;
 class UUniformGridPanel;
 class UWidgetSwitcher;
 
@@ -85,6 +86,28 @@ public:
 
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
 	UScrollBox* StorageScrollBox;
+
+	// Input Icon Images (for input prompt display)
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets|InputIcons")
+	UImage* CategoryLeftInputIcon;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets|InputIcons")
+	UImage* CategoryRightInputIcon;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets|InputIcons")
+	UImage* OkInputIcon;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets|InputIcons")
+	UImage* BackInputIcon;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets|InputIcons")
+	UImage* ScrollLeftInputIcon;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets|InputIcons")
+	UImage* ScrollRightInputIcon;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets|InputIcons")
+	UImage* DetailsInputIcon;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (10)
@@ -228,6 +251,12 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Inventory|Error")
 	void EventDismissError();
 	virtual void EventDismissError_Implementation();
+
+	// Input Icon Update
+	void UpdateInputIcons();
+
+	// Override from parent to update icons when input device changes
+	virtual void EventOnHardwareDeviceDetected_Implementation(FPlatformUserId UserId, FInputDeviceId DeviceId) override;
 
 protected:
 	// Cache references

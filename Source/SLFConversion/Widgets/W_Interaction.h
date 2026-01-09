@@ -23,7 +23,7 @@
 #include "W_Interaction.generated.h"
 
 // Forward declarations for widget types
-
+class UTextBlock;
 
 // Forward declarations for Blueprint types
 
@@ -91,4 +91,8 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Widget references (cached from Blueprint widget tree)
+	UPROPERTY()
+	UTextBlock* CachedMessageText;
 };

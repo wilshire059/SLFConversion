@@ -1,0 +1,130 @@
+
+=== BEFORE MIGRATION ===
+
+============================================================
+CURRENT ITEM CATEGORY VALUES
+============================================================
+  DA_Apple: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_BossMace: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_ExampleArmor: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_ExampleArmor02: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_ExampleBracers: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_ExampleGreaves: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_ExampleHat: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_ExampleHelmet: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_ExampleTalisman: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_Greatsword: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_HealthFlask: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_Katana: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_Lantern: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_PoisonSword: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_PrisonKey: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_Shield01: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_Sword01: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_Sword02: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_ThrowingKnife: Error - 'GameplayTag' object has no attribute 'is_valid'
+============================================================
+
+=== APPLYING CHANGES ===
+
+============================================================
+APPLYING ITEM CATEGORIES AND USABLE FLAGS
+============================================================
+Processing 21 items...
+
+  OK: DA_Sword01
+      Category: NONE -> WEAPONS
+      Usable: False -> False (Not Usable)
+  OK: DA_Sword02
+      Category: NONE -> WEAPONS
+      Usable: False -> False (Not Usable)
+  OK: DA_PoisonSword
+      Category: NONE -> WEAPONS
+      Usable: False -> False (Not Usable)
+  OK: DA_Greatsword
+      Category: NONE -> WEAPONS
+      Usable: False -> False (Not Usable)
+  OK: DA_Katana
+      Category: NONE -> WEAPONS
+      Usable: False -> False (Not Usable)
+  OK: DA_BossMace
+      Category: NONE -> WEAPONS
+      Usable: False -> False (Not Usable)
+  OK: DA_Shield01
+      Category: NONE -> SHIELDS
+      Usable: False -> False (Not Usable)
+  OK: DA_ExampleArmor
+      Category: NONE -> ARMOR
+      Usable: False -> False (Not Usable)
+  OK: DA_ExampleArmor02
+      Category: NONE -> ARMOR
+      Usable: False -> False (Not Usable)
+  OK: DA_ExampleBracers
+      Category: NONE -> ARMOR
+      Usable: False -> False (Not Usable)
+  OK: DA_ExampleGreaves
+      Category: NONE -> ARMOR
+      Usable: False -> False (Not Usable)
+  OK: DA_ExampleHelmet
+      Category: NONE -> ARMOR
+      Usable: False -> False (Not Usable)
+  OK: DA_ExampleHat
+      Category: NONE -> ARMOR
+      Usable: False -> False (Not Usable)
+    Warning: Could not set action_tag for DA_Lantern: module 'unreal' has no attribute 'GameplayTagsManager'
+  OK: DA_Lantern
+      Category: NONE -> TOOLS
+      Usable: True -> True (Usable)
+    Warning: Could not set action_tag for DA_ThrowingKnife: module 'unreal' has no attribute 'GameplayTagsManager'
+  OK: DA_ThrowingKnife
+      Category: NONE -> TOOLS
+      Usable: True -> True (Usable)
+    Warning: Could not set action_tag for DA_HealthFlask: module 'unreal' has no attribute 'GameplayTagsManager'
+  OK: DA_HealthFlask
+      Category: NONE -> TOOLS
+      Usable: True -> True (Usable)
+  OK: DA_ExampleTalisman
+      Category: NONE -> BOLSTERING
+      Usable: False -> False (Not Usable)
+  OK: DA_Apple
+      Category: NONE -> CRAFTING
+      Usable: True -> True (Usable)
+  OK: DA_CrimsonEverbloom
+      Category: NONE -> CRAFTING
+      Usable: False -> False (Not Usable)
+  OK: DA_Cube
+      Category: NONE -> CRAFTING
+      Usable: True -> False (Not Usable)
+  OK: DA_PrisonKey
+      Category: NONE -> KEY_ITEMS
+      Usable: False -> False (Not Usable)
+
+============================================================
+Results: 21 succeeded, 0 failed
+============================================================
+
+=== AFTER MIGRATION ===
+
+============================================================
+CURRENT ITEM CATEGORY VALUES
+============================================================
+  DA_Apple: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_BossMace: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_ExampleArmor: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_ExampleArmor02: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_ExampleBracers: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_ExampleGreaves: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_ExampleHat: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_ExampleHelmet: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_ExampleTalisman: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_Greatsword: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_HealthFlask: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_Katana: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_Lantern: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_PoisonSword: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_PrisonKey: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_Shield01: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_Sword01: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_Sword02: Error - 'GameplayTag' object has no attribute 'is_valid'
+  DA_ThrowingKnife: Error - 'GameplayTag' object has no attribute 'is_valid'
+============================================================

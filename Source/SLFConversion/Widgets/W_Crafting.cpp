@@ -35,6 +35,13 @@ void UW_Crafting::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	// CRITICAL: Hide MainBlur widget - it's a BackgroundBlur at highest ZOrder that blurs everything
+	if (UWidget* MainBlur = GetWidgetFromName(TEXT("MainBlur")))
+	{
+		MainBlur->SetVisibility(ESlateVisibility::Collapsed);
+		UE_LOG(LogTemp, Log, TEXT("[W_Crafting] Hidden MainBlur widget"));
+	}
+
 	UE_LOG(LogTemp, Log, TEXT("UW_Crafting::NativeConstruct"));
 
 	// Cache widget references

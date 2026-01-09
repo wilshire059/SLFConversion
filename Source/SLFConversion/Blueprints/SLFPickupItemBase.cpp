@@ -38,10 +38,10 @@ void ASLFPickupItemBase::BeginPlay()
 	UE_LOG(LogTemp, Log, TEXT("[PickupItem] BeginPlay: %s x%d"),
 		Item ? *Item->GetName() : TEXT("null"), Count);
 
-	// Get item info from data asset
+	// Get item info from data asset via interface function
 	if (Item)
 	{
-		TryGetItemInfo(ItemInfo);
+		ItemInfo = ISLFInteractableInterface::Execute_TryGetItemInfo(this);
 	}
 
 	// Setup Niagara effect from item data (replaces EventGraph logic)
@@ -109,14 +109,19 @@ void ASLFPickupItemBase::SetupWorldNiagara()
 // FUNCTIONS [1-3/4]
 // ═══════════════════════════════════════════════════════════════════════════════
 
-bool ASLFPickupItemBase::TryGetItemInfo_Implementation(FSLFItemInfo& OutInfo)
+FSLFItemInfo ASLFPickupItemBase::TryGetItemInfo_Implementation()
 {
-	if (Item)
+	// Read ItemInformation directly from the UPDA_Item data asset
+	if (UPDA_Item* ItemData = Cast<UPDA_Item>(Item))
 	{
-		OutInfo = ItemInfo;
-		return true;
+		const FSLFItemInfo& Info = ItemData->ItemInformation;
+		UE_LOG(LogTemp, Log, TEXT("[PickupItem] TryGetItemInfo - Got ItemInfo: DisplayName='%s', Tag='%s'"),
+			*Info.DisplayName.ToString(), *Info.ItemTag.ToString());
+		return Info;
 	}
-	return false;
+	UE_LOG(LogTemp, Warning, TEXT("[PickupItem] TryGetItemInfo - Item is not UPDA_Item: %s"),
+		Item ? *Item->GetName() : TEXT("null"));
+	return FSLFItemInfo();
 }
 
 void ASLFPickupItemBase::TriggerOnItemLooted_Implementation()
@@ -130,10 +135,10 @@ void ASLFPickupItemBase::SetupInteractable_Implementation()
 
 	UE_LOG(LogTemp, Log, TEXT("[PickupItem] SetupInteractable"));
 
-	// Get item info from data asset
+	// Get item info from data asset via interface function
 	if (Item)
 	{
-		TryGetItemInfo(ItemInfo);
+		ItemInfo = ISLFInteractableInterface::Execute_TryGetItemInfo(this);
 		InteractableDisplayName = ItemInfo.DisplayName;
 	}
 

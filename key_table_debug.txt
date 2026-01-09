@@ -1,0 +1,78 @@
+============================================================
+DEBUGGING DT_KeyMappingCorrelation
+============================================================
+Data table: DT_KeyMappingCorrelation
+Row struct: <Object '/Game/SoulslikeFramework/Structures/_Misc/FKeyMappingCorrelation.FKeyMappingCorrelation' (0x000001D776656C00) Class 'UserDefinedStruct'>
+
+Total rows: 98
+
+Checking specific keyboard keys:
+  Row 'Q': EXISTS
+  Row 'E': EXISTS
+  Row 'Enter': EXISTS
+  Row 'Escape': EXISTS
+  Row 'A': EXISTS
+  Row 'D': EXISTS
+  Row 'Tab': EXISTS
+  Row 'Backspace': NOT FOUND
+  Row 'Space': NOT FOUND
+
+All keyboard-like row names (non-Gamepad, non-Mouse):
+  LeftMouseButton
+  RightMouseButton
+  MiddleMouseButton
+  ThumbMouseButton
+  ThumbMouseButton2
+  BackSpace
+  Tab
+  Enter
+  Pause
+  CapsLock
+  Escape
+  SpaceBar
+  PageUp
+  PageDown
+  End
+  Home
+  Left
+  Up
+  Right
+  Down
+  Insert
+  Delete
+  Zero
+  One
+  Two
+  Three
+  Four
+  Five
+  Six
+  Seven
+  Eight
+  Nine
+  A
+  B
+  C
+  D
+  E
+  F
+  G
+  H
+  I
+  J
+  K
+  L
+  M
+  N
+  O
+  P
+  Q
+  R
+  S
+  T
+  U
+  V
+  W
+  X
+  Y
+  Z

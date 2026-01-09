@@ -4,12 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "InstancedStruct.h"
+#include "SLFGameTypes.h"
+#include "Interfaces/SLFInteractableInterface.h"
 #include "SLFInteractableBase.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteracted, AActor*, Interactor);
 
 UCLASS(Blueprintable, BlueprintType)
-class SLFCONVERSION_API ASLFInteractableBase : public AActor
+class SLFCONVERSION_API ASLFInteractableBase : public AActor, public ISLFInteractableInterface
 {
 	GENERATED_BODY()
 
@@ -84,4 +87,13 @@ protected:
 	virtual void BeginPlay() override;
 	// NOTE: Components are defined in Blueprint's SCS, NOT in C++
 	// KEEP_VARS_MAP preserves SCS during migration
+
+public:
+	// ============================================================
+	// ISLFInteractableInterface Implementation
+	// Note: OnInteract already exists as a class function and will serve as the interface impl
+	// ============================================================
+	virtual void OnTraced_Implementation(AActor* TracedBy) override;
+	virtual void OnSpawnedFromSave_Implementation(const FGuid& Id, const FInstancedStruct& CustomData) override;
+	virtual FSLFItemInfo TryGetItemInfo_Implementation() override;
 };

@@ -78,6 +78,9 @@ void UW_Inventory::NativeConstruct()
 		EventOnSlotSelected(true, InventorySlots[0]);
 	}
 
+	// Update input icons based on current input device
+	UpdateInputIcons();
+
 	UE_LOG(LogTemp, Log, TEXT("[W_Inventory] NativeConstruct COMPLETE - Created %d slots"), InventorySlots.Num());
 }
 
@@ -699,24 +702,27 @@ void UW_Inventory::ReinitOccupiedInventorySlots_Implementation()
 	{
 		if (InvSlot && InvSlot->IsOccupied && InvSlot->AssignedItem)
 		{
+			// Get item data for debug logging
+			UPDA_Item* ItemData = Cast<UPDA_Item>(InvSlot->AssignedItem);
+			ESLFItemCategory ItemCategory = ESLFItemCategory::None;
+
+			if (ItemData)
+			{
+				ItemCategory = ItemData->ItemInformation.Category.Category;
+				UE_LOG(LogTemp, Verbose, TEXT("  Item: %s, Category: %d"),
+					*ItemData->GetName(), (int32)ItemCategory);
+			}
+
 			// Filter by category if active
 			if (ActiveFilterCategory == ESLFItemCategory::None)
 			{
 				// No filter - show all occupied slots
 				OccupiedInventorySlots.Add(InvSlot);
 			}
-			else
+			else if (ItemCategory == ActiveFilterCategory)
 			{
-				// Check if item matches the active filter category
-				UPDA_Item* ItemData = Cast<UPDA_Item>(InvSlot->AssignedItem);
-				if (ItemData)
-				{
-					ESLFItemCategory ItemCategory = ItemData->ItemInformation.Category.Category;
-					if (ItemCategory == ActiveFilterCategory)
-					{
-						OccupiedInventorySlots.Add(InvSlot);
-					}
-				}
+				// Item matches filter
+				OccupiedInventorySlots.Add(InvSlot);
 			}
 		}
 	}
@@ -1680,4 +1686,82 @@ void UW_Inventory::HandleSlotCleared(UW_InventorySlot* InSlot, bool bTriggerShif
 void UW_Inventory::HandleSlotAssigned(UW_InventorySlot* InSlot)
 {
 	EventOnInventorySlotAssigned(InSlot);
+}
+
+/**
+ * UpdateInputIcons - Update all input icon images based on current input bindings
+ */
+void UW_Inventory::UpdateInputIcons()
+{
+	// Define input keys for each icon widget name
+	// These correspond to the typical inventory navigation keys
+	struct FInputIconBinding {
+		FName WidgetName;
+		FKey Key;
+	};
+
+	// Note: These keys should match your Input Action mappings
+	// Widget names must match the UMG designer names exactly
+	TArray<FInputIconBinding> Bindings = {
+		{TEXT("CategoryLeftInputIcon"), EKeys::Q},
+		{TEXT("CategoryRightInputIcon"), EKeys::E},
+		{TEXT("OkInputIcon"), EKeys::Enter},
+		{TEXT("BackInputIcon"), EKeys::Escape},
+		{TEXT("ScrollLeftInputIcon"), EKeys::A},
+		{TEXT("ScrollRightInputIcon"), EKeys::D},
+		{TEXT("DetailsInputIcon"), EKeys::Tab}
+	};
+
+	for (const FInputIconBinding& Binding : Bindings)
+	{
+		// Use GetWidgetFromName to find the widget dynamically
+		// This works regardless of whether BindWidget/BindWidgetOptional found it
+		UWidget* Widget = GetWidgetFromName(Binding.WidgetName);
+		UImage* ImageWidget = Cast<UImage>(Widget);
+
+		if (ImageWidget)
+		{
+			TSoftObjectPtr<UTexture2D> IconTexture;
+			GetInputIconForKey(Binding.Key, IconTexture);
+
+			if (!IconTexture.IsNull())
+			{
+				ImageWidget->SetBrushFromSoftTexture(IconTexture, false);
+				ImageWidget->SetVisibility(ESlateVisibility::Visible);
+				UE_LOG(LogTemp, Log, TEXT("UpdateInputIcons: Set %s to %s"), *Binding.WidgetName.ToString(), *IconTexture.ToString());
+			}
+			else
+			{
+				// Hide the icon if no texture is available
+				ImageWidget->SetVisibility(ESlateVisibility::Collapsed);
+				UE_LOG(LogTemp, Warning, TEXT("UpdateInputIcons: No texture for %s (Key: %s)"), *Binding.WidgetName.ToString(), *Binding.Key.ToString());
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("UpdateInputIcons: Widget '%s' not found"), *Binding.WidgetName.ToString());
+		}
+	}
+
+	// Also update W_InventoryAction icons if available
+	if (W_InventoryAction)
+	{
+		TSoftObjectPtr<UTexture2D> OkTexture;
+		TSoftObjectPtr<UTexture2D> BackTexture;
+		GetInputIconForKey(EKeys::Enter, OkTexture);
+		GetInputIconForKey(EKeys::Escape, BackTexture);
+		W_InventoryAction->EventUpdateOkInputIcons(OkTexture);
+		W_InventoryAction->EventUpdateBackInputIcons(BackTexture);
+	}
+}
+
+/**
+ * EventOnHardwareDeviceDetected - Called when input device changes (keyboard/gamepad)
+ */
+void UW_Inventory::EventOnHardwareDeviceDetected_Implementation(FPlatformUserId UserId, FInputDeviceId DeviceId)
+{
+	Super::EventOnHardwareDeviceDetected_Implementation(UserId, DeviceId);
+
+	// Update input icons when input device changes
+	UpdateInputIcons();
 }

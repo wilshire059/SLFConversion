@@ -28,8 +28,8 @@ class UW_Status_LevelCurrencyBlock;
 class UW_Status_StatBlock;
 
 // Forward declarations for Blueprint types
-class UAC_InventoryManager;
-class UAC_StatManager;
+class UInventoryManagerComponent;
+class UStatManagerComponent;
 
 // Event Dispatchers
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FW_Status_OnStatusClosed);
@@ -46,6 +46,9 @@ public:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 
+	// Input handling (replaces Blueprint EventGraph input bindings)
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+
 	// ═══════════════════════════════════════════════════════════════════════
 	// BIND WIDGETS - Direct access via BindWidgetOptional
 	// ═══════════════════════════════════════════════════════════════════════
@@ -58,13 +61,13 @@ public:
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UPROPERTY(BlueprintReadWrite, Category = "Default")
-	UAC_InventoryManager* InventoryComponent;
+	UInventoryManagerComponent* InventoryComponent;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	int32 CurrentPlayerCurrency;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Default")
-	UAC_StatManager* StatManagerComponent;
+	UStatManagerComponent* StatManagerComponent;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	int32 CurrentPlayerLevel;

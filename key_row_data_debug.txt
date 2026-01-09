@@ -1,0 +1,26 @@
+============================================================
+DEBUGGING KEY ROW DATA
+============================================================
+Row struct path: /Game/SoulslikeFramework/Structures/_Misc/FKeyMappingCorrelation.FKeyMappingCorrelation
+
+First 10 row names:
+  Row 0: 'Gamepad_Left2D'
+  Row 1: 'Gamepad_LeftX'
+  Row 2: 'Gamepad_LeftY'
+  Row 3: 'Gamepad_Right2D'
+  Row 4: 'Gamepad_RightX'
+  Row 5: 'Gamepad_RightY'
+  Row 6: 'Gamepad_LeftTriggerAxis'
+  Row 7: 'Gamepad_RightTriggerAxis'
+  Row 8: 'Gamepad_LeftThumbstick'
+  Row 9: 'Gamepad_RightThumbstick'
+
+============================================================
+EXPORTING DATA TABLE TO TEXT
+============================================================
+Error exporting: 'DataTable' object has no attribute 'export_text'
+Traceback (most recent call last):
+  File "C:/scripts/SLFConversion/debug_key_row_data.py", line 45, in debug_row_data
+    export_text = data_table.export_text()
+                  ^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DataTable' object has no attribute 'export_text'

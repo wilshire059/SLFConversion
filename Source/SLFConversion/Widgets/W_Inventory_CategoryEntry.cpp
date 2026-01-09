@@ -100,8 +100,12 @@ void UW_Inventory_CategoryEntry::OnButtonClicked()
 {
 	UE_LOG(LogTemp, Log, TEXT("[W_Inventory_CategoryEntry] Button clicked - Category: %d"), (int32)InventoryCategoryData.Category);
 
-	// Call SetInventoryCategorySelected with true
+	// Update visual state
 	SetInventoryCategorySelected(true);
+
+	// Broadcast selection event - only on user click, not on programmatic selection
+	// This prevents infinite loop: Click → Broadcast → SetCategorization → SetSelected → Broadcast...
+	OnSelected.Broadcast(this, InventoryCategoryData.Category);
 }
 
 void UW_Inventory_CategoryEntry::OnButtonHovered()
@@ -139,7 +143,8 @@ void UW_Inventory_CategoryEntry::SetInventoryCategorySelected_Implementation(boo
 
 	Selected = InSelected;
 
-	// Update visual state
+	// Update visual state only - NO broadcast here
+	// Broadcasting is done in OnButtonClicked() to prevent infinite loops
 	if (UImage* IconImage = Cast<UImage>(GetWidgetFromName(TEXT("CategoryIcon"))))
 	{
 		if (InSelected)
@@ -155,7 +160,4 @@ void UW_Inventory_CategoryEntry::SetInventoryCategorySelected_Implementation(boo
 			IconImage->SetBrushTintColor(NormalTint);
 		}
 	}
-
-	// Broadcast selection event
-	OnSelected.Broadcast(this, InventoryCategoryData.Category);
 }

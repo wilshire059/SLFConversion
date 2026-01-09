@@ -12,6 +12,18 @@ UW_Inventory_ActionButton::UW_Inventory_ActionButton(const FObjectInitializer& O
 {
 }
 
+void UW_Inventory_ActionButton::NativePreConstruct()
+{
+	Super::NativePreConstruct();
+
+	// Set the button text from ActionText property (originally in Blueprint PreConstruct)
+	// Widget is named "Txt" in UMG designer, not "BtnText"
+	if (UTextBlock* TxtWidget = Cast<UTextBlock>(GetWidgetFromName(TEXT("Txt"))))
+	{
+		TxtWidget->SetText(ActionText);
+	}
+}
+
 void UW_Inventory_ActionButton::NativeConstruct()
 {
 	Super::NativeConstruct();

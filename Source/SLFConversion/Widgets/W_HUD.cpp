@@ -9,6 +9,11 @@
 #include "Blueprints/B_StatusEffect.h"
 #include "Blueprints/B_Interactable.h"
 #include "Blueprints/B_RestingPoint.h"
+#include "Blueprints/Actors/SLFInteractableBase.h"
+#include "Blueprints/SLFPickupItemBase.h"
+#include "SLFPrimaryDataAssets.h"
+#include "Interfaces/SLFInteractableInterface.h"
+#include "Interfaces/BPI_Interactable.h"
 #include "Components/AC_AI_InteractionManager.h"
 #include "Widgets/W_LoadingScreen.h"
 #include "Widgets/W_Inventory.h"
@@ -16,6 +21,7 @@
 #include "Widgets/W_Crafting.h"
 #include "Widgets/W_GameMenu.h"
 #include "Widgets/W_Status.h"
+#include "Widgets/W_Settings.h"
 #include "Widgets/W_RestMenu.h"
 #include "Widgets/W_NPC_Window.h"
 #include "Widgets/W_Dialog.h"
@@ -30,6 +36,13 @@ UW_HUD::UW_HUD(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	LoadingScreen = nullptr;
+	CachedW_Interaction = nullptr;
+	CachedW_GameMenu = nullptr;
+	CachedW_Inventory = nullptr;
+	CachedW_Equipment = nullptr;
+	CachedW_Crafting = nullptr;
+	CachedW_Status = nullptr;
+	CachedW_Settings = nullptr;
 	IsDialogActive = false;
 	CinematicMode = false;
 }
@@ -50,10 +63,104 @@ void UW_HUD::NativeDestruct()
 
 void UW_HUD::CacheWidgetReferences()
 {
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - START"));
+
 	if (!LoadingScreen)
 	{
 		LoadingScreen = Cast<UW_LoadingScreen>(GetWidgetFromName(TEXT("LoadingScreen")));
 	}
+
+	if (!CachedW_Interaction)
+	{
+		CachedW_Interaction = Cast<UW_Interaction>(GetWidgetFromName(TEXT("W_Interaction")));
+	}
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - CachedW_Interaction: %s"),
+		CachedW_Interaction ? TEXT("Found") : TEXT("NOT FOUND"));
+
+	// Find CachedW_GameMenu if not already set
+	if (!CachedW_GameMenu)
+	{
+		CachedW_GameMenu = Cast<UW_GameMenu>(GetWidgetFromName(TEXT("W_GameMenu")));
+	}
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - CachedW_GameMenu: %s"),
+		CachedW_GameMenu ? TEXT("Found") : TEXT("NOT FOUND"));
+
+	// Find child menu widgets
+	if (!CachedW_Inventory)
+	{
+		CachedW_Inventory = Cast<UW_Inventory>(GetWidgetFromName(TEXT("W_Inventory")));
+	}
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - CachedW_Inventory: %s"),
+		CachedW_Inventory ? TEXT("Found") : TEXT("NOT FOUND"));
+
+	if (!CachedW_Equipment)
+	{
+		CachedW_Equipment = Cast<UW_Equipment>(GetWidgetFromName(TEXT("W_Equipment")));
+	}
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - CachedW_Equipment: %s"),
+		CachedW_Equipment ? TEXT("Found") : TEXT("NOT FOUND"));
+
+	if (!CachedW_Crafting)
+	{
+		CachedW_Crafting = Cast<UW_Crafting>(GetWidgetFromName(TEXT("W_Crafting")));
+	}
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - CachedW_Crafting: %s"),
+		CachedW_Crafting ? TEXT("Found") : TEXT("NOT FOUND"));
+
+	if (!CachedW_Status)
+	{
+		CachedW_Status = Cast<UW_Status>(GetWidgetFromName(TEXT("W_Status")));
+	}
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - CachedW_Status: %s"),
+		CachedW_Status ? TEXT("Found") : TEXT("NOT FOUND"));
+
+	// Bind to CachedW_GameMenu's OnGameMenuWidgetRequest dispatcher
+	if (CachedW_GameMenu)
+	{
+		CachedW_GameMenu->OnGameMenuWidgetRequest.AddUniqueDynamic(this, &UW_HUD::OnGameMenuWidgetRequestHandler);
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - Bound to OnGameMenuWidgetRequest"));
+	}
+
+	// Bind to child widget closed dispatchers
+	if (CachedW_Inventory)
+	{
+		CachedW_Inventory->OnInventoryClosed.AddUniqueDynamic(this, &UW_HUD::OnInventoryClosedHandler);
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - Bound to CachedW_Inventory::OnInventoryClosed"));
+	}
+
+	if (CachedW_Equipment)
+	{
+		CachedW_Equipment->OnEquipmentClosed.AddUniqueDynamic(this, &UW_HUD::OnEquipmentClosedHandler);
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - Bound to CachedW_Equipment::OnEquipmentClosed"));
+	}
+
+	if (CachedW_Crafting)
+	{
+		CachedW_Crafting->OnCraftingClosed.AddUniqueDynamic(this, &UW_HUD::OnCraftingClosedHandler);
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - Bound to CachedW_Crafting::OnCraftingClosed"));
+	}
+
+	if (CachedW_Status)
+	{
+		CachedW_Status->OnStatusClosed.AddUniqueDynamic(this, &UW_HUD::OnStatusClosedHandler);
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - Bound to CachedW_Status::OnStatusClosed"));
+	}
+
+	// Find CachedW_Settings widget
+	if (!CachedW_Settings)
+	{
+		CachedW_Settings = Cast<UW_Settings>(GetWidgetFromName(TEXT("W_Settings")));
+	}
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - CachedW_Settings: %s"),
+		CachedW_Settings ? TEXT("Found") : TEXT("NOT FOUND"));
+
+	if (CachedW_Settings)
+	{
+		CachedW_Settings->OnSettingsClosed.AddUniqueDynamic(this, &UW_HUD::OnSettingsClosedHandler);
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - Bound to CachedW_Settings::OnSettingsClosed"));
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - END"));
 }
 
 bool UW_HUD::GetTargetWidgetVisibility_Implementation(UUserWidget* Widget)
@@ -110,7 +217,11 @@ void UW_HUD::BindToStatUpdate_Implementation(const TArray<UB_Stat*>& AllStats, c
 
 bool UW_HUD::GetGameMenuVisibility_Implementation()
 {
-	if (UW_GameMenu* GameMenu = Cast<UW_GameMenu>(GetWidgetFromName(TEXT("GameMenu"))))
+	if (CachedW_GameMenu)
+	{
+		return GetTargetWidgetVisibility(CachedW_GameMenu);
+	}
+	else if (UW_GameMenu* GameMenu = Cast<UW_GameMenu>(GetWidgetFromName(TEXT("W_GameMenu"))))
 	{
 		return GetTargetWidgetVisibility(GameMenu);
 	}
@@ -125,6 +236,21 @@ bool UW_HUD::IsRestMenuHud_Implementation()
 void UW_HUD::InitializeBindings_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::InitializeBindings"));
+
+	// Also try to bind CachedW_GameMenu here in case CacheWidgetReferences missed it
+	if (!CachedW_GameMenu)
+	{
+		CachedW_GameMenu = Cast<UW_GameMenu>(GetWidgetFromName(TEXT("W_GameMenu")));
+		if (CachedW_GameMenu)
+		{
+			CachedW_GameMenu->OnGameMenuWidgetRequest.AddUniqueDynamic(this, &UW_HUD::OnGameMenuWidgetRequestHandler);
+			UE_LOG(LogTemp, Log, TEXT("UW_HUD::InitializeBindings - Bound to CachedW_GameMenu::OnGameMenuWidgetRequest"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("UW_HUD::InitializeBindings - CachedW_GameMenu not found!"));
+		}
+	}
 }
 
 void UW_HUD::SerializeItemWheelData_Implementation()
@@ -178,9 +304,14 @@ void UW_HUD::EventToggleUiMode_Implementation(bool bToggled)
 void UW_HUD::EventShowInventory_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowInventory"));
-	if (UWidget* InventoryWidget = GetWidgetFromName(TEXT("InventoryWidget")))
+	if (UWidget* InventoryWidget = GetWidgetFromName(TEXT("W_Inventory")))
 	{
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowInventory - Found CachedW_Inventory, setting visible"));
 		InventoryWidget->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::EventShowInventory - CachedW_Inventory not found!"));
 	}
 	EventToggleUiMode(true);
 }
@@ -188,7 +319,7 @@ void UW_HUD::EventShowInventory_Implementation()
 void UW_HUD::EventCloseInventory_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventCloseInventory"));
-	if (UWidget* InventoryWidget = GetWidgetFromName(TEXT("InventoryWidget")))
+	if (UWidget* InventoryWidget = GetWidgetFromName(TEXT("W_Inventory")))
 	{
 		InventoryWidget->SetVisibility(ESlateVisibility::Collapsed);
 	}
@@ -197,9 +328,14 @@ void UW_HUD::EventCloseInventory_Implementation()
 void UW_HUD::EventShowEquipment_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowEquipment"));
-	if (UWidget* EquipmentWidget = GetWidgetFromName(TEXT("EquipmentWidget")))
+	if (UWidget* EquipmentWidget = GetWidgetFromName(TEXT("W_Equipment")))
 	{
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowEquipment - Found CachedW_Equipment, setting visible"));
 		EquipmentWidget->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::EventShowEquipment - CachedW_Equipment not found!"));
 	}
 	EventToggleUiMode(true);
 }
@@ -207,7 +343,7 @@ void UW_HUD::EventShowEquipment_Implementation()
 void UW_HUD::EventCloseEquipment_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventCloseEquipment"));
-	if (UWidget* EquipmentWidget = GetWidgetFromName(TEXT("EquipmentWidget")))
+	if (UWidget* EquipmentWidget = GetWidgetFromName(TEXT("W_Equipment")))
 	{
 		EquipmentWidget->SetVisibility(ESlateVisibility::Collapsed);
 	}
@@ -216,9 +352,14 @@ void UW_HUD::EventCloseEquipment_Implementation()
 void UW_HUD::EventShowStatus_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowStatus"));
-	if (UWidget* StatusWidget = GetWidgetFromName(TEXT("StatusWidget")))
+	if (UWidget* StatusWidget = GetWidgetFromName(TEXT("W_Status")))
 	{
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowStatus - Found CachedW_Status, setting visible"));
 		StatusWidget->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::EventShowStatus - CachedW_Status not found!"));
 	}
 	EventToggleUiMode(true);
 }
@@ -226,7 +367,7 @@ void UW_HUD::EventShowStatus_Implementation()
 void UW_HUD::EventCloseStatus_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventCloseStatus"));
-	if (UWidget* StatusWidget = GetWidgetFromName(TEXT("StatusWidget")))
+	if (UWidget* StatusWidget = GetWidgetFromName(TEXT("W_Status")))
 	{
 		StatusWidget->SetVisibility(ESlateVisibility::Collapsed);
 	}
@@ -235,9 +376,14 @@ void UW_HUD::EventCloseStatus_Implementation()
 void UW_HUD::EventShowCrafting_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowCrafting"));
-	if (UWidget* CraftingWidget = GetWidgetFromName(TEXT("CraftingWidget")))
+	if (UWidget* CraftingWidget = GetWidgetFromName(TEXT("W_Crafting")))
 	{
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowCrafting - Found CachedW_Crafting, setting visible"));
 		CraftingWidget->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::EventShowCrafting - CachedW_Crafting not found!"));
 	}
 	EventToggleUiMode(true);
 }
@@ -245,7 +391,7 @@ void UW_HUD::EventShowCrafting_Implementation()
 void UW_HUD::EventCloseCrafting_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventCloseCrafting"));
-	if (UWidget* CraftingWidget = GetWidgetFromName(TEXT("CraftingWidget")))
+	if (UWidget* CraftingWidget = GetWidgetFromName(TEXT("W_Crafting")))
 	{
 		CraftingWidget->SetVisibility(ESlateVisibility::Collapsed);
 	}
@@ -254,9 +400,14 @@ void UW_HUD::EventCloseCrafting_Implementation()
 void UW_HUD::EventShowSettings_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowSettings"));
-	if (UWidget* SettingsWidget = GetWidgetFromName(TEXT("SettingsWidget")))
+	if (UWidget* SettingsWidget = GetWidgetFromName(TEXT("W_Settings")))
 	{
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowSettings - Found CachedW_Settings, setting visible"));
 		SettingsWidget->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::EventShowSettings - CachedW_Settings not found!"));
 	}
 	EventToggleUiMode(true);
 }
@@ -264,7 +415,7 @@ void UW_HUD::EventShowSettings_Implementation()
 void UW_HUD::EventCloseSettings_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventCloseSettings"));
-	if (UWidget* SettingsWidget = GetWidgetFromName(TEXT("SettingsWidget")))
+	if (UWidget* SettingsWidget = GetWidgetFromName(TEXT("W_Settings")))
 	{
 		SettingsWidget->SetVisibility(ESlateVisibility::Collapsed);
 	}
@@ -273,7 +424,11 @@ void UW_HUD::EventCloseSettings_Implementation()
 void UW_HUD::EventShowGameMenu_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowGameMenu"));
-	if (UWidget* GameMenuWidget = GetWidgetFromName(TEXT("GameMenu")))
+	if (CachedW_GameMenu)
+	{
+		CachedW_GameMenu->SetVisibility(ESlateVisibility::Visible);
+	}
+	else if (UWidget* GameMenuWidget = GetWidgetFromName(TEXT("W_GameMenu")))
 	{
 		GameMenuWidget->SetVisibility(ESlateVisibility::Visible);
 	}
@@ -283,7 +438,11 @@ void UW_HUD::EventShowGameMenu_Implementation()
 void UW_HUD::EventCloseGameMenu_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventCloseGameMenu"));
-	if (UWidget* GameMenuWidget = GetWidgetFromName(TEXT("GameMenu")))
+	if (CachedW_GameMenu)
+	{
+		CachedW_GameMenu->SetVisibility(ESlateVisibility::Collapsed);
+	}
+	else if (UWidget* GameMenuWidget = GetWidgetFromName(TEXT("W_GameMenu")))
 	{
 		GameMenuWidget->SetVisibility(ESlateVisibility::Collapsed);
 	}
@@ -350,22 +509,82 @@ void UW_HUD::EventOnDataLoaded_Implementation(const FSLFSaveGameInfo& LoadedData
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventOnDataLoaded"));
 }
 
-void UW_HUD::EventShowInteractableWidget_Implementation(AB_Interactable* Interactable)
+void UW_HUD::EventShowInteractableWidget_Implementation(AActor* Interactable)
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowInteractableWidget - Interactable: %s"),
 		Interactable ? *Interactable->GetName() : TEXT("None"));
-	if (UWidget* InteractionWidget = GetWidgetFromName(TEXT("InteractionWidget")))
+
+	// Cache reference if not set
+	if (!CachedW_Interaction)
 	{
-		InteractionWidget->SetVisibility(ESlateVisibility::Visible);
+		CachedW_Interaction = Cast<UW_Interaction>(GetWidgetFromName(TEXT("W_Interaction")));
 	}
+
+	if (!CachedW_Interaction)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::EventShowInteractableWidget - CachedW_Interaction widget not found!"));
+		return;
+	}
+
+	if (!Interactable)
+	{
+		return;
+	}
+
+	// Try C++ interface first (ISLFInteractableInterface::TryGetItemInfo returns FSLFItemInfo)
+	if (Interactable->GetClass()->ImplementsInterface(USLFInteractableInterface::StaticClass()))
+	{
+		FSLFItemInfo ItemInfo = ISLFInteractableInterface::Execute_TryGetItemInfo(Interactable);
+		// Check DisplayName instead of ItemTag (ItemTag wasn't migrated, but DisplayName was)
+		if (!ItemInfo.DisplayName.IsEmpty())
+		{
+			UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowInteractableWidget - Via ISLFInteractableInterface, showing item: %s"),
+				*ItemInfo.DisplayName.ToString());
+			CachedW_Interaction->EventOnItemOverlap(ItemInfo);
+			return;
+		}
+	}
+
+	// Fallback: Try Blueprint interface (IBPI_Interactable::TryGetItemInfo has out param signature)
+	if (Interactable->GetClass()->ImplementsInterface(UBPI_Interactable::StaticClass()))
+	{
+		FSLFItemInfo ItemInfo;
+		IBPI_Interactable::Execute_TryGetItemInfo(Interactable, ItemInfo);
+		// Check DisplayName instead of ItemTag
+		if (!ItemInfo.DisplayName.IsEmpty())
+		{
+			UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowInteractableWidget - Via IBPI_Interactable, showing item: %s"),
+				*ItemInfo.DisplayName.ToString());
+			CachedW_Interaction->EventOnItemOverlap(ItemInfo);
+			return;
+		}
+	}
+
+	// Get interaction text from the actor - check if it's an ASLFInteractableBase
+	FText InteractionText = FText::GetEmpty();
+	if (ASLFInteractableBase* InteractableBase = Cast<ASLFInteractableBase>(Interactable))
+	{
+		InteractionText = InteractableBase->InteractionText;
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowInteractableWidget - Showing interactable overlap for text: %s"),
+		*InteractionText.ToString());
+	CachedW_Interaction->EventOnInteractableOverlap(InteractionText);
 }
 
 void UW_HUD::EventHideInteractionWidget_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventHideInteractionWidget"));
-	if (UWidget* InteractionWidget = GetWidgetFromName(TEXT("InteractionWidget")))
+
+	// Cache reference if not set
+	if (!CachedW_Interaction)
 	{
-		InteractionWidget->SetVisibility(ESlateVisibility::Collapsed);
+		CachedW_Interaction = Cast<UW_Interaction>(GetWidgetFromName(TEXT("W_Interaction")));
+	}
+
+	if (CachedW_Interaction)
+	{
+		CachedW_Interaction->EventHide();
 	}
 }
 
@@ -527,4 +746,81 @@ void UW_HUD::EventOnBossDestroyed_Implementation(AActor* DestroyedActor)
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventOnBossDestroyed"));
 	EventHideBossBar();
+}
+
+void UW_HUD::OnGameMenuWidgetRequestHandler(FGameplayTag WidgetTag)
+{
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnGameMenuWidgetRequestHandler - Tag: %s"), *WidgetTag.ToString());
+
+	// Switch on gameplay tag to show the appropriate widget
+	static const FGameplayTag InventoryTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Backend.Widgets.Inventory"));
+	static const FGameplayTag EquipmentTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Backend.Widgets.Equipment"));
+	static const FGameplayTag CraftingTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Backend.Widgets.Crafting"));
+	static const FGameplayTag StatusTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Backend.Widgets.Status"));
+	static const FGameplayTag SystemTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Backend.Widgets.System"));
+
+	if (WidgetTag.MatchesTag(InventoryTag))
+	{
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnGameMenuWidgetRequestHandler - Showing Inventory"));
+		EventShowInventory();
+	}
+	else if (WidgetTag.MatchesTag(EquipmentTag))
+	{
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnGameMenuWidgetRequestHandler - Showing Equipment"));
+		EventShowEquipment();
+	}
+	else if (WidgetTag.MatchesTag(CraftingTag))
+	{
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnGameMenuWidgetRequestHandler - Showing Crafting"));
+		EventShowCrafting();
+	}
+	else if (WidgetTag.MatchesTag(StatusTag))
+	{
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnGameMenuWidgetRequestHandler - Showing Status"));
+		EventShowStatus();
+	}
+	else if (WidgetTag.MatchesTag(SystemTag))
+	{
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnGameMenuWidgetRequestHandler - Showing Settings"));
+		EventShowSettings();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::OnGameMenuWidgetRequestHandler - Unknown tag: %s"), *WidgetTag.ToString());
+	}
+}
+
+void UW_HUD::OnInventoryClosedHandler()
+{
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnInventoryClosedHandler - Closing Inventory, showing GameMenu"));
+	EventCloseInventory();
+	EventShowGameMenu();
+}
+
+void UW_HUD::OnEquipmentClosedHandler()
+{
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnEquipmentClosedHandler - Closing Equipment, showing GameMenu"));
+	EventCloseEquipment();
+	EventShowGameMenu();
+}
+
+void UW_HUD::OnCraftingClosedHandler()
+{
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnCraftingClosedHandler - Closing Crafting, showing GameMenu"));
+	EventCloseCrafting();
+	EventShowGameMenu();
+}
+
+void UW_HUD::OnStatusClosedHandler()
+{
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnStatusClosedHandler - Closing Status, showing GameMenu"));
+	EventCloseStatus();
+	EventShowGameMenu();
+}
+
+void UW_HUD::OnSettingsClosedHandler()
+{
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnSettingsClosedHandler - Closing Settings, showing GameMenu"));
+	EventCloseSettings();
+	EventShowGameMenu();
 }
