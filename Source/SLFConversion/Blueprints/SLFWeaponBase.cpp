@@ -11,6 +11,7 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 #include "SLFWeaponBase.h"
+#include "Engine/StaticMesh.h"
 #include "NiagaraSystem.h"
 #include "NiagaraComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -22,18 +23,19 @@
 
 ASLFWeaponBase::ASLFWeaponBase()
 {
-	// NOTE: Component creation moved to Blueprint SCS to preserve child Blueprint configurations
-	// The Blueprint's StaticMesh component holds the configured mesh asset.
-	// Creating components here would conflict with Blueprint hierarchy and lose mesh data.
-	//
-	// Blueprint hierarchy (preserved):
-	//   DefaultSceneRoot (SceneComponent)
-	//     └── StaticMesh (StaticMeshComponent) - contains weapon mesh
-	//     └── Trail (NiagaraComponent) - trail effect
-	//
-	// Access components via FindComponentByClass if needed in C++
-	WeaponMesh = nullptr;
-	TrailComponent = nullptr;
+	// Create default scene root
+	USceneComponent* DefaultSceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("DefaultSceneRoot"));
+	RootComponent = DefaultSceneRoot;
+
+	// Create WeaponMesh component - Blueprint children override mesh via property
+	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
+	WeaponMesh->SetupAttachment(RootComponent);
+	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	// Create TrailComponent - Blueprint children override effect via property
+	TrailComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("TrailComponent"));
+	TrailComponent->SetupAttachment(RootComponent);
+	TrailComponent->SetAutoActivate(false);
 
 	// Initialize VFX
 	TrailEffect = nullptr;
@@ -105,6 +107,17 @@ void ASLFWeaponBase::BeginPlay()
 	if (TrailComponent && TrailEffect)
 	{
 		TrailComponent->SetAsset(TrailEffect);
+	}
+
+	// Apply default weapon mesh if set (from Blueprint CDO)
+	if (WeaponMesh && !DefaultWeaponMesh.IsNull())
+	{
+		UStaticMesh* MeshToApply = DefaultWeaponMesh.LoadSynchronous();
+		if (MeshToApply)
+		{
+			WeaponMesh->SetStaticMesh(MeshToApply);
+			UE_LOG(LogTemp, Log, TEXT("[Weapon] Applied DefaultWeaponMesh: %s"), *MeshToApply->GetName());
+		}
 	}
 
 	// Find and bind to CollisionManager for AI weapon trace damage

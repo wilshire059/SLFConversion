@@ -218,6 +218,7 @@ powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Rec
 | `apply_item_data.py` | Apply item descriptions, names, display data |
 | `apply_item_categories.py` | Apply item categories (Weapons, Armor, Tools, etc.) |
 | `apply_base_stats.py` | Apply BaseStats to character class data assets |
+| `apply_weapon_meshes.py` | Apply weapon mesh assignments to Blueprint CDOs |
 | `full_migration.py` | All-in-one workflow (extract + migrate + apply) |
 
 ### Expected Output
@@ -392,6 +393,62 @@ Blueprint widget names may contain typos that C++ must match exactly.
 ```bash
 grep -i "border\|highlight" Exports/BlueprintDNA_v2/WidgetBlueprint/W_EquipmentSlot.json
 ```
+
+### 10. Component Mesh Data Lost During Migration (Weapon Mesh Pattern)
+
+When Blueprint actors have components (StaticMeshComponent, NiagaraComponent) created via Blueprint SCS, the mesh/asset assignments are lost during reparenting to C++.
+
+**Symptom:** Equipped weapons appear invisible - components exist but have no mesh assigned.
+
+**Root Cause:**
+1. Blueprint SCS (SimpleConstructionScript) stores component hierarchy and property values
+2. When reparenting to C++ parent with `CreateDefaultSubobject`, SCS data is lost
+3. C++ components are created fresh with no mesh assignment
+
+**Solution: TSoftObjectPtr Property Pattern**
+
+1. **Add serializable property to C++ class:**
+```cpp
+// In SLFWeaponBase.h
+UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Mesh")
+TSoftObjectPtr<UStaticMesh> DefaultWeaponMesh;
+```
+
+2. **Apply property in BeginPlay:**
+```cpp
+// In SLFWeaponBase.cpp BeginPlay()
+if (WeaponMesh && !DefaultWeaponMesh.IsNull())
+{
+    UStaticMesh* MeshToApply = DefaultWeaponMesh.LoadSynchronous();
+    if (MeshToApply)
+    {
+        WeaponMesh->SetStaticMesh(MeshToApply);
+    }
+}
+```
+
+3. **Set property via Python script (persists to Blueprint CDO):**
+```python
+# apply_weapon_meshes.py
+cdo = unreal.get_default_object(gen_class)
+cdo.set_editor_property("default_weapon_mesh", mesh)
+unreal.EditorAssetLibrary.save_asset(bp_path)
+```
+
+**Why This Works:**
+- `TSoftObjectPtr<UStaticMesh>` is a UPROPERTY that serializes with the Blueprint
+- Setting via `set_editor_property()` persists to the Blueprint CDO
+- At runtime, `LoadSynchronous()` loads the mesh and applies it
+
+**Script:** `apply_weapon_meshes.py` - Run after migration to restore weapon meshes
+
+**Weapons Updated:**
+| Blueprint | Mesh |
+|-----------|------|
+| B_Item_Weapon_SwordExample01 | SM_ExampleSword01 |
+| B_Item_Weapon_Greatsword | SM_Greatsword |
+| B_Item_Weapon_Katana | SM_Katana |
+| B_Item_Weapon_Shield | SM_Shield |
 
 ---
 

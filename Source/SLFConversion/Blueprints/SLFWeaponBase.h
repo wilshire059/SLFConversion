@@ -100,6 +100,15 @@ public:
 	UNiagaraComponent* TrailComponent;
 
 	// ═══════════════════════════════════════════════════════════════════
+	// DEFAULT MESH - Serializable property for Blueprint children
+	// This property persists to Blueprint and is applied in BeginPlay
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** Default mesh to apply to WeaponMesh component. Set per Blueprint child. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Mesh")
+	TSoftObjectPtr<UStaticMesh> DefaultWeaponMesh;
+
+	// ═══════════════════════════════════════════════════════════════════
 	// VARIABLES: 7/7 migrated
 	// ═══════════════════════════════════════════════════════════════════
 
@@ -215,4 +224,10 @@ protected:
 	/** Handler for OnActorTraced event from CollisionManager */
 	UFUNCTION()
 	void OnActorTraced(AActor* Actor, FHitResult Hit, double Multiplier);
+
+	/** Attach weapon to owner's skeletal mesh socket */
+	void AttachToOwnerSocket();
+
+	/** Check if this is a right-hand weapon based on equipment slot */
+	bool IsRightHandWeapon() const;
 };
