@@ -39,6 +39,9 @@ class UW_BossBar;
 class UW_ItemWheel;
 class UW_AbilityDisplay;
 class UW_Interaction;
+class UW_LootNotification;
+class UW_FirstLootNotification;
+class UVerticalBox;
 
 // Forward declarations for Blueprint types
 class UB_Stat;
@@ -90,6 +93,14 @@ protected:
 	UW_Crafting* CachedW_Crafting;
 	UW_Status* CachedW_Status;
 	UW_Settings* CachedW_Settings;
+
+	// Loot notification widgets - cached from UMG
+	UVerticalBox* CachedItemLootNotificationsBox;
+	UW_FirstLootNotification* CachedW_FirstLootNotification;
+
+	// Loot notification widget class for dynamic creation
+	UPROPERTY()
+	TSubclassOf<UW_LootNotification> LootNotificationWidgetClass;
 
 public:
 
@@ -317,6 +328,10 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	/** Internal handler bound to InventoryManager::OnItemLooted - bridges to EventOnItemLooted */
+	UFUNCTION()
+	void OnItemLootedHandler(UDataAsset* ItemAsset, int32 Amount);
 
 	/** Internal handler bound to W_GameMenu::OnGameMenuWidgetRequest */
 	UFUNCTION()

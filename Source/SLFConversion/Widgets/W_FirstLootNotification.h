@@ -23,6 +23,8 @@
 #include "W_FirstLootNotification.generated.h"
 
 // Forward declarations for widget types
+class UTexture2D;
+class UWidgetAnimation;
 
 
 // Forward declarations for Blueprint types
@@ -70,10 +72,20 @@ public:
 	virtual void EventOnFinish_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_FirstLootNotification")
-	void EventShowNotification(const FText& ItemName, int32 ItemIcon, double InDuration);
-	virtual void EventShowNotification_Implementation(const FText& ItemName, int32 ItemIcon, double InDuration);
+	void EventShowNotification(const FText& ItemName, UTexture2D* ItemIcon, double InDuration);
+	virtual void EventShowNotification_Implementation(const FText& ItemName, UTexture2D* ItemIcon, double InDuration);
 
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Timer handle for auto-hide
+	FTimerHandle HideTimerHandle;
+
+	// Called when fade out animation completes
+	UFUNCTION()
+	void OnFadeOutComplete();
+
+	// Helper to find widget animation by name
+	UWidgetAnimation* FindAnimationByName(const FName& AnimName) const;
 };

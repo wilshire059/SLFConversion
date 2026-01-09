@@ -23,6 +23,7 @@
 #include "W_LootNotification.generated.h"
 
 // Forward declarations for widget types
+class UWidgetAnimation;
 
 
 // Forward declarations for Blueprint types
@@ -81,4 +82,14 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Timer handle for auto-removal
+	FTimerHandle RemovalTimerHandle;
+
+	// Called when fade out animation completes
+	UFUNCTION()
+	void OnFadeOutComplete();
+
+	// Helper to find widget animation by name
+	UWidgetAnimation* FindAnimationByName(const FName& AnimName) const;
 };

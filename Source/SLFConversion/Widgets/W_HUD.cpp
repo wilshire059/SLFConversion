@@ -26,11 +26,16 @@
 #include "Widgets/W_NPC_Window.h"
 #include "Widgets/W_Dialog.h"
 #include "Widgets/W_Interaction.h"
+#include "Widgets/W_LootNotification.h"
+#include "Widgets/W_FirstLootNotification.h"
+#include "Components/VerticalBox.h"
 #include "Components/WidgetSwitcher.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Animation/WidgetAnimation.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/InventoryManagerComponent.h"
+#include "GameFramework/PC_SoulslikeFramework.h"
 
 UW_HUD::UW_HUD(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -43,6 +48,9 @@ UW_HUD::UW_HUD(const FObjectInitializer& ObjectInitializer)
 	CachedW_Crafting = nullptr;
 	CachedW_Status = nullptr;
 	CachedW_Settings = nullptr;
+	CachedItemLootNotificationsBox = nullptr;
+	CachedW_FirstLootNotification = nullptr;
+	LootNotificationWidgetClass = nullptr;
 	IsDialogActive = false;
 	CinematicMode = false;
 }
@@ -160,6 +168,30 @@ void UW_HUD::CacheWidgetReferences()
 		UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - Bound to CachedW_Settings::OnSettingsClosed"));
 	}
 
+	// Cache loot notification widgets
+	if (!CachedItemLootNotificationsBox)
+	{
+		CachedItemLootNotificationsBox = Cast<UVerticalBox>(GetWidgetFromName(TEXT("ItemLootNotificationsBox")));
+	}
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - CachedItemLootNotificationsBox: %s"),
+		CachedItemLootNotificationsBox ? TEXT("Found") : TEXT("NOT FOUND"));
+
+	if (!CachedW_FirstLootNotification)
+	{
+		CachedW_FirstLootNotification = Cast<UW_FirstLootNotification>(GetWidgetFromName(TEXT("W_FirstLootNotification")));
+	}
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - CachedW_FirstLootNotification: %s"),
+		CachedW_FirstLootNotification ? TEXT("Found") : TEXT("NOT FOUND"));
+
+	// Pre-load loot notification widget class
+	if (!LootNotificationWidgetClass)
+	{
+		LootNotificationWidgetClass = LoadClass<UW_LootNotification>(nullptr,
+			TEXT("/Game/SoulslikeFramework/Widgets/HUD/W_LootNotification.W_LootNotification_C"));
+	}
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - LootNotificationWidgetClass: %s"),
+		LootNotificationWidgetClass ? TEXT("Loaded") : TEXT("NOT LOADED"));
+
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - END"));
 }
 
@@ -249,6 +281,21 @@ void UW_HUD::InitializeBindings_Implementation()
 		else
 		{
 			UE_LOG(LogTemp, Warning, TEXT("UW_HUD::InitializeBindings - CachedW_GameMenu not found!"));
+		}
+	}
+
+	// Bind to InventoryManager's OnItemLooted event
+	// Use FindComponentByClass to work with any controller type (Blueprint or C++)
+	if (APlayerController* PC = GetOwningPlayer())
+	{
+		if (UInventoryManagerComponent* InvMgr = PC->FindComponentByClass<UInventoryManagerComponent>())
+		{
+			InvMgr->OnItemLooted.AddUniqueDynamic(this, &UW_HUD::OnItemLootedHandler);
+			UE_LOG(LogTemp, Log, TEXT("UW_HUD::InitializeBindings - Bound to InventoryManager::OnItemLooted"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("UW_HUD::InitializeBindings - InventoryManagerComponent not found on controller"));
 		}
 	}
 }
@@ -495,8 +542,57 @@ void UW_HUD::EventOnBuffDetected_Implementation(UPDA_Buff* Buff, bool bAdded)
 
 void UW_HUD::EventOnItemLooted_Implementation(const FSLFItemInfo& InItem, int32 InAmount, bool bExists)
 {
-	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventOnItemLooted - Amount: %d, Exists: %s"),
-		InAmount, bExists ? TEXT("true") : TEXT("false"));
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventOnItemLooted - Item: %s, Amount: %d, Exists: %s"),
+		*InItem.DisplayName.ToString(), InAmount, bExists ? TEXT("true") : TEXT("false"));
+
+	// If this is a new item (doesn't exist in inventory yet), show the "NEW" notification
+	if (!bExists && CachedW_FirstLootNotification)
+	{
+		// Get icon texture from item
+		UTexture2D* IconTexture = nullptr;
+		if (!InItem.IconSmall.IsNull())
+		{
+			IconTexture = InItem.IconSmall.LoadSynchronous();
+		}
+
+		// Show the "NEW" first loot notification with item name and icon
+		CachedW_FirstLootNotification->EventShowNotification(InItem.DisplayName, IconTexture, 3.0);
+
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventOnItemLooted - Showing NEW notification for first-time item: %s"),
+			*InItem.DisplayName.ToString());
+	}
+
+	// Create and show the regular loot notification
+	if (CachedItemLootNotificationsBox && LootNotificationWidgetClass)
+	{
+		UW_LootNotification* LootNotif = CreateWidget<UW_LootNotification>(GetOwningPlayer(), LootNotificationWidgetClass);
+		if (LootNotif)
+		{
+			// Get icon texture
+			UTexture2D* IconTexture = nullptr;
+			if (!InItem.IconSmall.IsNull())
+			{
+				IconTexture = InItem.IconSmall.LoadSynchronous();
+			}
+
+			// Setup the notification with item info
+			LootNotif->ItemName = InItem.DisplayName;
+			LootNotif->ItemLootedAmount = InAmount;
+			LootNotif->ItemTexture = InItem.IconSmall;  // Copy the soft object ptr directly
+			LootNotif->Duration = 3.0;
+
+			// Add to the notifications box
+			CachedItemLootNotificationsBox->AddChild(LootNotif);
+
+			UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventOnItemLooted - Created loot notification widget"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::EventOnItemLooted - Cannot create notification: Box=%s, Class=%s"),
+			CachedItemLootNotificationsBox ? TEXT("OK") : TEXT("NULL"),
+			LootNotificationWidgetClass ? TEXT("OK") : TEXT("NULL"));
+	}
 }
 
 void UW_HUD::EventOnAbilityInfoInvalidated_Implementation()
@@ -823,4 +919,42 @@ void UW_HUD::OnSettingsClosedHandler()
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnSettingsClosedHandler - Closing Settings, showing GameMenu"));
 	EventCloseSettings();
 	EventShowGameMenu();
+}
+
+void UW_HUD::OnItemLootedHandler(UDataAsset* ItemAsset, int32 Amount)
+{
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnItemLootedHandler - Item: %s, Amount: %d"),
+		ItemAsset ? *ItemAsset->GetName() : TEXT("null"), Amount);
+
+	if (!ItemAsset)
+	{
+		return;
+	}
+
+	// Get item info from the data asset
+	FSLFItemInfo ItemInfo;
+	bool bExists = false;
+
+	// Try to cast to PDA_Item to get the item information
+	if (UPDA_Item* ItemData = Cast<UPDA_Item>(ItemAsset))
+	{
+		ItemInfo = ItemData->ItemInformation;
+
+		// Check if item existed in inventory before this add (Amount > 1 means it existed)
+		// Note: The inventory manager broadcasts AFTER adding, so if the new amount is
+		// greater than the amount just added, it means the item already existed
+		if (APlayerController* PC = GetOwningPlayer())
+		{
+			if (UInventoryManagerComponent* InvMgr = PC->FindComponentByClass<UInventoryManagerComponent>())
+			{
+				// Get the current amount from inventory
+				int32 CurrentAmount = InvMgr->GetOverallCountForItem(ItemAsset);
+				// If current amount > Amount we just picked up, item already existed
+				bExists = (CurrentAmount > Amount);
+			}
+		}
+	}
+
+	// Call the main event handler with transformed parameters
+	EventOnItemLooted(ItemInfo, Amount, bExists);
 }
