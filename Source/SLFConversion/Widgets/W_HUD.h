@@ -325,6 +325,62 @@ public:
 	void EventOnBossDestroyed(AActor* DestroyedActor);
 	virtual void EventOnBossDestroyed_Implementation(AActor* DestroyedActor);
 
+	// ═══════════════════════════════════════════════════════════════════════
+	// NAVIGATION ROUTING (Called by PlayerController based on ActiveWidgetTag)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	/** Route navigation cancel (Back button/B button) to active widget */
+	UFUNCTION(BlueprintCallable, Category = "W_HUD|Navigation")
+	void RouteNavigateCancel(const FGameplayTag& ActiveWidgetTag);
+
+	/** Route navigation OK (A button/Enter) to active widget */
+	UFUNCTION(BlueprintCallable, Category = "W_HUD|Navigation")
+	void RouteNavigateOk(const FGameplayTag& ActiveWidgetTag);
+
+	/** Route navigation up (DPad Up/W key) to active widget */
+	UFUNCTION(BlueprintCallable, Category = "W_HUD|Navigation")
+	void RouteNavigateUp(const FGameplayTag& ActiveWidgetTag);
+
+	/** Route navigation down (DPad Down/S key) to active widget */
+	UFUNCTION(BlueprintCallable, Category = "W_HUD|Navigation")
+	void RouteNavigateDown(const FGameplayTag& ActiveWidgetTag);
+
+	/** Route navigation left (DPad Left/A key) to active widget */
+	UFUNCTION(BlueprintCallable, Category = "W_HUD|Navigation")
+	void RouteNavigateLeft(const FGameplayTag& ActiveWidgetTag);
+
+	/** Route navigation right (DPad Right/D key) to active widget */
+	UFUNCTION(BlueprintCallable, Category = "W_HUD|Navigation")
+	void RouteNavigateRight(const FGameplayTag& ActiveWidgetTag);
+
+	/** Route category left (LB/Q key) to active widget */
+	UFUNCTION(BlueprintCallable, Category = "W_HUD|Navigation")
+	void RouteNavigateCategoryLeft(const FGameplayTag& ActiveWidgetTag);
+
+	/** Route category right (RB/E key) to active widget */
+	UFUNCTION(BlueprintCallable, Category = "W_HUD|Navigation")
+	void RouteNavigateCategoryRight(const FGameplayTag& ActiveWidgetTag);
+
+	/** Route unequip action (Y button) to active widget */
+	UFUNCTION(BlueprintCallable, Category = "W_HUD|Navigation")
+	void RouteNavigateUnequip(const FGameplayTag& ActiveWidgetTag);
+
+	/** Route detailed view toggle (X button) to active widget */
+	UFUNCTION(BlueprintCallable, Category = "W_HUD|Navigation")
+	void RouteNavigateDetailedView(const FGameplayTag& ActiveWidgetTag);
+
+	/** Route reset to defaults to active widget */
+	UFUNCTION(BlueprintCallable, Category = "W_HUD|Navigation")
+	void RouteNavigateResetToDefaults(const FGameplayTag& ActiveWidgetTag);
+
+	// Getters for cached widgets (used by PlayerController)
+	UW_GameMenu* GetCachedGameMenu() const { return CachedW_GameMenu; }
+	UW_Inventory* GetCachedInventory() const { return CachedW_Inventory; }
+	UW_Equipment* GetCachedEquipment() const { return CachedW_Equipment; }
+	UW_Crafting* GetCachedCrafting() const { return CachedW_Crafting; }
+	UW_Status* GetCachedStatus() const { return CachedW_Status; }
+	UW_Settings* GetCachedSettings() const { return CachedW_Settings; }
+
 protected:
 	// Cache references
 	void CacheWidgetReferences();

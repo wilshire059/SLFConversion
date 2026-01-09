@@ -6,6 +6,7 @@
 
 #include "Widgets/W_GameMenu.h"
 #include "Widgets/W_GameMenu_Button.h"
+#include "Widgets/W_HUD.h"
 #include "Components/PanelWidget.h"
 #include "Animation/WidgetAnimation.h"
 #include "Blueprint/WidgetTree.h"
@@ -291,16 +292,21 @@ void UW_GameMenu::EventNavigateCancel_Implementation()
 	// Broadcast that the menu is closed
 	OnGameMenuClosed.Broadcast();
 
-	// Cast to BPI_Controller and call CloseEscMenu if implemented
+	// Get the HUD reference through the PlayerController and call EventCloseGameMenu
 	APlayerController* PC = GetOwningPlayer();
 	if (PC)
 	{
-		// Try to call interface method on controller
 		if (ASLFPlayerController* SLFPC = Cast<ASLFPlayerController>(PC))
 		{
-			// Call CloseEscMenu through the interface if it exists
-			// Note: The interface call should be implemented on the controller
-			UE_LOG(LogTemp, Log, TEXT("[W_GameMenu] Broadcasting menu closed"));
+			if (UW_HUD* HUD = SLFPC->HUDWidgetRef)
+			{
+				UE_LOG(LogTemp, Log, TEXT("[W_GameMenu] Calling EventCloseGameMenu on HUD"));
+				HUD->EventCloseGameMenu();
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[W_GameMenu] HUDWidgetRef is null, cannot close menu"));
+			}
 		}
 	}
 }

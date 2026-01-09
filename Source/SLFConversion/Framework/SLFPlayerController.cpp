@@ -19,6 +19,8 @@ ASLFPlayerController::ASLFPlayerController()
 	HUDWidgetClass = nullptr;
 	GameMenuWidgetClass = nullptr;
 	GameMenuWidgetRef = nullptr;
+	IMC_Gameplay = nullptr;
+	IMC_NavigableMenu = nullptr;
 
 	// Load IA_GameMenu input action
 	static ConstructorHelpers::FObjectFinder<UInputAction> GameMenuActionFinder(
@@ -32,6 +34,60 @@ ASLFPlayerController::ASLFPlayerController()
 		IA_GameMenu = nullptr;
 	}
 
+	// Load navigation input actions
+	static ConstructorHelpers::FObjectFinder<UInputAction> BackActionFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Back.IA_NavigableMenu_Back"));
+	IA_NavigableMenu_Back = BackActionFinder.Succeeded() ? BackActionFinder.Object : nullptr;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> OkActionFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Ok.IA_NavigableMenu_Ok"));
+	IA_NavigableMenu_Ok = OkActionFinder.Succeeded() ? OkActionFinder.Object : nullptr;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> UpActionFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Up.IA_NavigableMenu_Up"));
+	IA_NavigableMenu_Up = UpActionFinder.Succeeded() ? UpActionFinder.Object : nullptr;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> DownActionFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Down.IA_NavigableMenu_Down"));
+	IA_NavigableMenu_Down = DownActionFinder.Succeeded() ? DownActionFinder.Object : nullptr;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> LeftActionFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Left.IA_NavigableMenu_Left"));
+	IA_NavigableMenu_Left = LeftActionFinder.Succeeded() ? LeftActionFinder.Object : nullptr;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> RightActionFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Right.IA_NavigableMenu_Right"));
+	IA_NavigableMenu_Right = RightActionFinder.Succeeded() ? RightActionFinder.Object : nullptr;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> LeftCategoryActionFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Left_Category.IA_NavigableMenu_Left_Category"));
+	IA_NavigableMenu_Left_Category = LeftCategoryActionFinder.Succeeded() ? LeftCategoryActionFinder.Object : nullptr;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> RightCategoryActionFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Right_Category.IA_NavigableMenu_Right_Category"));
+	IA_NavigableMenu_Right_Category = RightCategoryActionFinder.Succeeded() ? RightCategoryActionFinder.Object : nullptr;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> UnequipActionFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Unequip.IA_NavigableMenu_Unequip"));
+	IA_NavigableMenu_Unequip = UnequipActionFinder.Succeeded() ? UnequipActionFinder.Object : nullptr;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> DetailedViewActionFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_DetailedView.IA_NavigableMenu_DetailedView"));
+	IA_NavigableMenu_DetailedView = DetailedViewActionFinder.Succeeded() ? DetailedViewActionFinder.Object : nullptr;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> ResetToDefaultsActionFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_ResetToDefaults.IA_NavigableMenu_ResetToDefaults"));
+	IA_NavigableMenu_ResetToDefaults = ResetToDefaultsActionFinder.Succeeded() ? ResetToDefaultsActionFinder.Object : nullptr;
+
+	// Load input mapping contexts
+	static ConstructorHelpers::FObjectFinder<UInputMappingContext> GameplayIMCFinder(
+		TEXT("/Game/SoulslikeFramework/Input/IMC_Gameplay.IMC_Gameplay"));
+	IMC_Gameplay = GameplayIMCFinder.Succeeded() ? GameplayIMCFinder.Object : nullptr;
+
+	static ConstructorHelpers::FObjectFinder<UInputMappingContext> MenuIMCFinder(
+		TEXT("/Game/SoulslikeFramework/Input/IMC_NavigableMenu.IMC_NavigableMenu"));
+	IMC_NavigableMenu = MenuIMCFinder.Succeeded() ? MenuIMCFinder.Object : nullptr;
+
 	// NOTE: Don't load widget classes in constructor - they have compile errors
 	// that cause the editor to hang. Widget search is done at runtime instead.
 }
@@ -41,21 +97,17 @@ void ASLFPlayerController::BeginPlay()
 	Super::BeginPlay();
 	UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] BeginPlay - C++ PlayerController active"));
 
+	// AAA Pattern: Pre-load widget classes FIRST to eliminate first-use freeze
+	PreloadWidgetClasses();
+
 	// From Blueprint DNA: BeginPlay → Sequence → Native_InitializeHUD
 	// Initialize the HUD widget (creates W_HUD and adds to viewport)
-	// Note: Using Native_InitializeHUD instead of Native_InitializeHUD to avoid Blueprint name conflict
 	Native_InitializeHUD();
 
-	// Note: W_GameMenu has compile errors, so we handle toggle in HandleGameMenuInput
-	// using reflection search fallback
-	if (GameMenuWidgetClass)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] GameMenuWidgetClass loaded successfully"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] GameMenuWidgetClass is NULL (widget has compile errors?)"));
-	}
+	// NOTE: Menu toggle (IA_GameMenu / Tab) is handled by the Blueprint's EventGraph
+	// The Blueprint binds IA_GameMenu → W_HUD.EventShowGameMenu() which properly
+	// toggles menu visibility and switches input contexts.
+	// We do NOT override this in C++ to preserve the original Blueprint behavior.
 }
 
 void ASLFPlayerController::SetupInputComponent()
@@ -63,212 +115,110 @@ void ASLFPlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] SetupInputComponent"));
 
-	// Get Enhanced Input Component
+	// Get Enhanced Input Component and bind all input actions
 	if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(InputComponent))
 	{
-		// Bind IA_GameMenu to our handler
+		// Gameplay input - game menu toggle
 		if (IA_GameMenu)
 		{
 			EnhancedInput->BindAction(IA_GameMenu, ETriggerEvent::Started, this, &ASLFPlayerController::HandleGameMenuInput);
-			UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] Bound IA_GameMenu to HandleGameMenuInput"));
+			UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] Bound IA_GameMenu"));
 		}
-		else
+
+		// Navigation inputs - for menu navigation
+		if (IA_NavigableMenu_Back)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] IA_GameMenu is NULL - could not bind"));
+			EnhancedInput->BindAction(IA_NavigableMenu_Back, ETriggerEvent::Started, this, &ASLFPlayerController::HandleNavigateBack);
+			UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] Bound IA_NavigableMenu_Back"));
 		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] No EnhancedInputComponent found"));
+
+		if (IA_NavigableMenu_Ok)
+		{
+			EnhancedInput->BindAction(IA_NavigableMenu_Ok, ETriggerEvent::Started, this, &ASLFPlayerController::HandleNavigateOk);
+			UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] Bound IA_NavigableMenu_Ok"));
+		}
+
+		if (IA_NavigableMenu_Up)
+		{
+			EnhancedInput->BindAction(IA_NavigableMenu_Up, ETriggerEvent::Started, this, &ASLFPlayerController::HandleNavigateUp);
+			UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] Bound IA_NavigableMenu_Up"));
+		}
+
+		if (IA_NavigableMenu_Down)
+		{
+			EnhancedInput->BindAction(IA_NavigableMenu_Down, ETriggerEvent::Started, this, &ASLFPlayerController::HandleNavigateDown);
+			UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] Bound IA_NavigableMenu_Down"));
+		}
+
+		if (IA_NavigableMenu_Left)
+		{
+			EnhancedInput->BindAction(IA_NavigableMenu_Left, ETriggerEvent::Started, this, &ASLFPlayerController::HandleNavigateLeft);
+			UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] Bound IA_NavigableMenu_Left"));
+		}
+
+		if (IA_NavigableMenu_Right)
+		{
+			EnhancedInput->BindAction(IA_NavigableMenu_Right, ETriggerEvent::Started, this, &ASLFPlayerController::HandleNavigateRight);
+			UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] Bound IA_NavigableMenu_Right"));
+		}
+
+		if (IA_NavigableMenu_Left_Category)
+		{
+			EnhancedInput->BindAction(IA_NavigableMenu_Left_Category, ETriggerEvent::Started, this, &ASLFPlayerController::HandleNavigateCategoryLeft);
+			UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] Bound IA_NavigableMenu_Left_Category"));
+		}
+
+		if (IA_NavigableMenu_Right_Category)
+		{
+			EnhancedInput->BindAction(IA_NavigableMenu_Right_Category, ETriggerEvent::Started, this, &ASLFPlayerController::HandleNavigateCategoryRight);
+			UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] Bound IA_NavigableMenu_Right_Category"));
+		}
+
+		if (IA_NavigableMenu_Unequip)
+		{
+			EnhancedInput->BindAction(IA_NavigableMenu_Unequip, ETriggerEvent::Started, this, &ASLFPlayerController::HandleNavigateUnequip);
+			UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] Bound IA_NavigableMenu_Unequip"));
+		}
+
+		if (IA_NavigableMenu_DetailedView)
+		{
+			EnhancedInput->BindAction(IA_NavigableMenu_DetailedView, ETriggerEvent::Started, this, &ASLFPlayerController::HandleNavigateDetailedView);
+			UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] Bound IA_NavigableMenu_DetailedView"));
+		}
+
+		if (IA_NavigableMenu_ResetToDefaults)
+		{
+			EnhancedInput->BindAction(IA_NavigableMenu_ResetToDefaults, ETriggerEvent::Started, this, &ASLFPlayerController::HandleNavigateResetToDefaults);
+			UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] Bound IA_NavigableMenu_ResetToDefaults"));
+		}
 	}
 }
 
 void ASLFPlayerController::HandleGameMenuInput(const FInputActionValue& Value)
 {
-	// Debounce check - prevent double-fire from Blueprint + C++ bindings
-	double CurrentTime = FPlatformTime::Seconds();
-	if (CurrentTime - LastMenuInputTime < 0.1)
+	UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] HandleGameMenuInput - IA_GameMenu triggered"));
+
+	// Toggle game menu via W_HUD
+	if (HUDWidgetRef)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] HandleGameMenuInput DEBOUNCED (%.3f sec since last)"),
-			CurrentTime - LastMenuInputTime);
-		return;
-	}
-	LastMenuInputTime = CurrentTime;
+		bool bIsMenuVisible = HUDWidgetRef->GetGameMenuVisibility();
+		UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] Menu currently visible: %s"),
+			bIsMenuVisible ? TEXT("YES") : TEXT("NO"));
 
-	UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] HandleGameMenuInput triggered (Tab pressed)!"));
-
-	// Direct approach: Find W_HUD and access its W_GameMenu variable via reflection
-	// W_HUD has compile errors so we can't rely on its Blueprint events
-
-	TArray<UUserWidget*> AllWidgets;
-	UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), AllWidgets, UUserWidget::StaticClass(), false);
-
-	for (UUserWidget* Widget : AllWidgets)
-	{
-		FString ClassName = Widget->GetClass()->GetName();
-
-		// Find W_HUD and access its W_GameMenu child widget
-		if (ClassName.Equals(TEXT("W_HUD_C")))
+		if (bIsMenuVisible)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] Found W_HUD_C, looking for W_GameMenu property..."));
-
-			// Access W_GameMenu variable via reflection
-			FProperty* GameMenuProp = Widget->GetClass()->FindPropertyByName(FName(TEXT("W_GameMenu")));
-			if (GameMenuProp)
-			{
-				FObjectProperty* ObjProp = CastField<FObjectProperty>(GameMenuProp);
-				if (ObjProp)
-				{
-					UObject* GameMenuObj = ObjProp->GetObjectPropertyValue_InContainer(Widget);
-					UUserWidget* GameMenu = Cast<UUserWidget>(GameMenuObj);
-
-					if (GameMenu)
-					{
-						UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] Found W_GameMenu widget via reflection!"));
-
-						// Toggle visibility
-						ESlateVisibility CurrentVis = GameMenu->GetVisibility();
-						bool bIsVisible = CurrentVis == ESlateVisibility::Visible;
-						ESlateVisibility NewVis = bIsVisible ? ESlateVisibility::Collapsed : ESlateVisibility::Visible;
-						GameMenu->SetVisibility(NewVis);
-
-						UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] W_GameMenu visibility: %d -> %d"),
-							static_cast<int32>(CurrentVis), static_cast<int32>(NewVis));
-
-						// Debug: Check size and render opacity
-						FVector2D DesiredSize = GameMenu->GetDesiredSize();
-						float RenderOpacity = GameMenu->GetRenderOpacity();
-						UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] W_GameMenu DesiredSize: %.1f x %.1f, RenderOpacity: %.2f"),
-							DesiredSize.X, DesiredSize.Y, RenderOpacity);
-
-						// Force layout update
-						GameMenu->ForceLayoutPrepass();
-						FVector2D SizeAfterLayout = GameMenu->GetDesiredSize();
-						UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] W_GameMenu after ForceLayoutPrepass: %.1f x %.1f"),
-							SizeAfterLayout.X, SizeAfterLayout.Y);
-
-						// Check if widget has a Canvas slot and its position/size
-						if (UPanelSlot* Slot = GameMenu->Slot)
-						{
-							if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Slot))
-							{
-								FAnchors Anchors = CanvasSlot->GetAnchors();
-								FVector2D SlotPos = CanvasSlot->GetPosition();
-								FVector2D SlotSize = CanvasSlot->GetSize();
-								UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] CanvasSlot - Pos: (%.1f, %.1f), Size: (%.1f, %.1f), Anchors: (%.2f,%.2f)-(%.2f,%.2f)"),
-									SlotPos.X, SlotPos.Y, SlotSize.X, SlotSize.Y,
-									Anchors.Minimum.X, Anchors.Minimum.Y, Anchors.Maximum.X, Anchors.Maximum.Y);
-							}
-							else
-							{
-								UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] W_GameMenu Slot type: %s (not CanvasPanelSlot)"),
-									*Slot->GetClass()->GetName());
-							}
-						}
-						else
-						{
-							UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] W_GameMenu has NO Slot!"));
-						}
-
-						// Log parent widget hierarchy visibility
-						UWidget* ParentWidget = GameMenu->GetParent();
-						int32 ParentLevel = 0;
-						while (ParentWidget && ParentLevel < 5)
-						{
-							UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] Parent[%d]: %s - Visibility: %d"),
-								ParentLevel, *ParentWidget->GetClass()->GetName(), static_cast<int32>(ParentWidget->GetVisibility()));
-							ParentWidget = ParentWidget->GetParent();
-							ParentLevel++;
-						}
-
-						// CRITICAL: Also need to ensure ViewportSwitcher is showing MainHUD (index 0)
-						// The menu is inside: W_GameMenu -> HudElementsCanvas -> MainHUD -> ViewportSwitcher
-						// ViewportSwitcher must be set to show MainHUD for W_GameMenu to be visible
-						FProperty* SwitcherProp = Widget->GetClass()->FindPropertyByName(FName(TEXT("ViewportSwitcher")));
-						if (SwitcherProp)
-						{
-							FObjectProperty* SwitcherObjProp = CastField<FObjectProperty>(SwitcherProp);
-							if (SwitcherObjProp)
-							{
-								UObject* SwitcherObj = SwitcherObjProp->GetObjectPropertyValue_InContainer(Widget);
-								UWidgetSwitcher* Switcher = Cast<UWidgetSwitcher>(SwitcherObj);
-								if (Switcher)
-								{
-									int32 CurrentIndex = Switcher->GetActiveWidgetIndex();
-									UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] ViewportSwitcher current index: %d, NumWidgets: %d"),
-										CurrentIndex, Switcher->GetNumWidgets());
-
-									// MainHUD is at index 0 (default gameplay view)
-									// When opening menu, we stay on MainHUD but make W_GameMenu visible
-									// The switcher should already be at index 0 for normal gameplay
-									if (CurrentIndex != 0)
-									{
-										Switcher->SetActiveWidgetIndex(0);
-										UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] Set ViewportSwitcher to index 0 (MainHUD)"));
-									}
-								}
-								else
-								{
-									UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] ViewportSwitcher cast failed"));
-								}
-							}
-						}
-						else
-						{
-							UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] ViewportSwitcher property not found"));
-						}
-
-						// Update input mode and cursor
-						if (bIsVisible)
-						{
-							SetInputMode(FInputModeGameOnly());
-							bShowMouseCursor = false;
-							UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] Menu CLOSED"));
-							if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, TEXT("Menu CLOSED"));
-						}
-						else
-						{
-							SetInputMode(FInputModeGameAndUI());
-							bShowMouseCursor = true;
-							UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] Menu OPENED"));
-							if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("Menu OPENED"));
-						}
-						return;
-					}
-					else
-					{
-						UE_LOG(LogTemp, Error, TEXT("[SLFPlayerController] W_GameMenu property found but Cast to UUserWidget failed!"));
-					}
-				}
-				else
-				{
-					UE_LOG(LogTemp, Error, TEXT("[SLFPlayerController] W_GameMenu property is not an FObjectProperty!"));
-				}
-			}
-			else
-			{
-				UE_LOG(LogTemp, Error, TEXT("[SLFPlayerController] W_GameMenu property not found on W_HUD_C!"));
-			}
-
-			// If reflection failed, log all properties for debugging
-			UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] Listing W_HUD properties:"));
-			for (TFieldIterator<FProperty> PropIt(Widget->GetClass()); PropIt; ++PropIt)
-			{
-				FProperty* Prop = *PropIt;
-				if (Prop->GetName().Contains(TEXT("GameMenu")) || Prop->GetName().Contains(TEXT("Menu")))
-				{
-					UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController]   - %s (type: %s)"),
-						*Prop->GetName(), *Prop->GetClass()->GetName());
-				}
-			}
-			return;
+			HUDWidgetRef->EventCloseGameMenu();
+			UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] Called EventCloseGameMenu"));
+		}
+		else
+		{
+			HUDWidgetRef->EventShowGameMenu();
+			UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] Called EventShowGameMenu"));
 		}
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] W_HUD_C not found in widget list"));
-	if (GEngine)
+	else
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("W_HUD not found!"));
+		UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] HUDWidgetRef is NULL, cannot toggle menu"));
 	}
 }
 
@@ -338,6 +288,200 @@ void ASLFPlayerController::Native_InitializeHUD()
 			if (GEngine)
 			{
 				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("FAILED to create W_HUD widget instance!"));
+			}
+		}
+	}
+}
+
+void ASLFPlayerController::PreloadWidgetClasses()
+{
+	// AAA Pattern: Pre-load commonly used widget Blueprint classes at startup
+	// This loads them into memory once, eliminating the 2+ second freeze on first use
+	// Classes are stored in UPROPERTY to prevent garbage collection
+
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] PreloadWidgetClasses - Starting widget preload..."));
+
+	double StartTime = FPlatformTime::Seconds();
+
+	// Inventory slot - used heavily when opening inventory or picking up items
+	CachedInventorySlotClass = LoadClass<UUserWidget>(nullptr,
+		TEXT("/Game/SoulslikeFramework/Widgets/Inventory/W_InventorySlot.W_InventorySlot_C"));
+
+	// Category entry - used for inventory category tabs
+	CachedCategoryEntryClass = LoadClass<UUserWidget>(nullptr,
+		TEXT("/Game/SoulslikeFramework/Widgets/Inventory/W_Inventory_CategoryEntry.W_Inventory_CategoryEntry_C"));
+
+	// Loot notification - shown when items are picked up
+	CachedLootNotificationClass = LoadClass<UUserWidget>(nullptr,
+		TEXT("/Game/SoulslikeFramework/Widgets/HUD/W_LootNotification.W_LootNotification_C"));
+
+	double EndTime = FPlatformTime::Seconds();
+	double LoadTime = (EndTime - StartTime) * 1000.0; // Convert to milliseconds
+
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] PreloadWidgetClasses - Completed in %.1fms"), LoadTime);
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] Preloaded: InventorySlot=%s, CategoryEntry=%s, LootNotification=%s"),
+		CachedInventorySlotClass ? TEXT("OK") : TEXT("FAIL"),
+		CachedCategoryEntryClass ? TEXT("OK") : TEXT("FAIL"),
+		CachedLootNotificationClass ? TEXT("OK") : TEXT("FAIL"));
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// NAVIGATION INPUT HANDLERS
+// ═══════════════════════════════════════════════════════════════════════════
+
+void ASLFPlayerController::HandleNavigateBack(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] HandleNavigateBack - ActiveWidgetTag: %s"),
+		*ActiveWidgetTag.ToString());
+
+	if (HUDWidgetRef && ActiveWidgetTag.IsValid())
+	{
+		HUDWidgetRef->RouteNavigateCancel(ActiveWidgetTag);
+	}
+}
+
+void ASLFPlayerController::HandleNavigateOk(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] HandleNavigateOk - ActiveWidgetTag: %s"),
+		*ActiveWidgetTag.ToString());
+
+	if (HUDWidgetRef && ActiveWidgetTag.IsValid())
+	{
+		HUDWidgetRef->RouteNavigateOk(ActiveWidgetTag);
+	}
+}
+
+void ASLFPlayerController::HandleNavigateUp(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] HandleNavigateUp - ActiveWidgetTag: %s"),
+		*ActiveWidgetTag.ToString());
+
+	if (HUDWidgetRef && ActiveWidgetTag.IsValid())
+	{
+		HUDWidgetRef->RouteNavigateUp(ActiveWidgetTag);
+	}
+}
+
+void ASLFPlayerController::HandleNavigateDown(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] HandleNavigateDown - ActiveWidgetTag: %s"),
+		*ActiveWidgetTag.ToString());
+
+	if (HUDWidgetRef && ActiveWidgetTag.IsValid())
+	{
+		HUDWidgetRef->RouteNavigateDown(ActiveWidgetTag);
+	}
+}
+
+void ASLFPlayerController::HandleNavigateLeft(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] HandleNavigateLeft - ActiveWidgetTag: %s"),
+		*ActiveWidgetTag.ToString());
+
+	if (HUDWidgetRef && ActiveWidgetTag.IsValid())
+	{
+		HUDWidgetRef->RouteNavigateLeft(ActiveWidgetTag);
+	}
+}
+
+void ASLFPlayerController::HandleNavigateRight(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] HandleNavigateRight - ActiveWidgetTag: %s"),
+		*ActiveWidgetTag.ToString());
+
+	if (HUDWidgetRef && ActiveWidgetTag.IsValid())
+	{
+		HUDWidgetRef->RouteNavigateRight(ActiveWidgetTag);
+	}
+}
+
+void ASLFPlayerController::HandleNavigateCategoryLeft(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] HandleNavigateCategoryLeft - ActiveWidgetTag: %s"),
+		*ActiveWidgetTag.ToString());
+
+	if (HUDWidgetRef && ActiveWidgetTag.IsValid())
+	{
+		HUDWidgetRef->RouteNavigateCategoryLeft(ActiveWidgetTag);
+	}
+}
+
+void ASLFPlayerController::HandleNavigateCategoryRight(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] HandleNavigateCategoryRight - ActiveWidgetTag: %s"),
+		*ActiveWidgetTag.ToString());
+
+	if (HUDWidgetRef && ActiveWidgetTag.IsValid())
+	{
+		HUDWidgetRef->RouteNavigateCategoryRight(ActiveWidgetTag);
+	}
+}
+
+void ASLFPlayerController::HandleNavigateUnequip(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] HandleNavigateUnequip - ActiveWidgetTag: %s"),
+		*ActiveWidgetTag.ToString());
+
+	if (HUDWidgetRef && ActiveWidgetTag.IsValid())
+	{
+		HUDWidgetRef->RouteNavigateUnequip(ActiveWidgetTag);
+	}
+}
+
+void ASLFPlayerController::HandleNavigateDetailedView(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] HandleNavigateDetailedView - ActiveWidgetTag: %s"),
+		*ActiveWidgetTag.ToString());
+
+	if (HUDWidgetRef && ActiveWidgetTag.IsValid())
+	{
+		HUDWidgetRef->RouteNavigateDetailedView(ActiveWidgetTag);
+	}
+}
+
+void ASLFPlayerController::HandleNavigateResetToDefaults(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] HandleNavigateResetToDefaults - ActiveWidgetTag: %s"),
+		*ActiveWidgetTag.ToString());
+
+	if (HUDWidgetRef && ActiveWidgetTag.IsValid())
+	{
+		HUDWidgetRef->RouteNavigateResetToDefaults(ActiveWidgetTag);
+	}
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// INPUT CONTEXT SWITCHING
+// ═══════════════════════════════════════════════════════════════════════════
+
+void ASLFPlayerController::SwitchInputContext(const TArray<UInputMappingContext*>& ContextsToEnable, const TArray<UInputMappingContext*>& ContextsToDisable)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] SwitchInputContext - Enabling %d contexts, Disabling %d contexts"),
+		ContextsToEnable.Num(), ContextsToDisable.Num());
+
+	// Get the Enhanced Input Local Player Subsystem
+	if (ULocalPlayer* LocalPlayer = GetLocalPlayer())
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+		{
+			// First, disable contexts
+			for (UInputMappingContext* Context : ContextsToDisable)
+			{
+				if (Context)
+				{
+					Subsystem->RemoveMappingContext(Context);
+					UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] SwitchInputContext - Disabled: %s"), *Context->GetName());
+				}
+			}
+
+			// Then, enable contexts with priority 0
+			for (UInputMappingContext* Context : ContextsToEnable)
+			{
+				if (Context)
+				{
+					Subsystem->AddMappingContext(Context, 0);
+					UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] SwitchInputContext - Enabled: %s"), *Context->GetName());
+				}
 			}
 		}
 	}

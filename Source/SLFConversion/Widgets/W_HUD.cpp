@@ -36,6 +36,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/InventoryManagerComponent.h"
 #include "GameFramework/PC_SoulslikeFramework.h"
+#include "Framework/SLFPlayerController.h"
 
 UW_HUD::UW_HUD(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -197,7 +198,10 @@ void UW_HUD::CacheWidgetReferences()
 
 bool UW_HUD::GetTargetWidgetVisibility_Implementation(UUserWidget* Widget)
 {
-	if (Widget && Widget->IsInViewport())
+	// NOTE: Don't check IsInViewport() - child widgets inside W_HUD are not
+	// added to viewport separately, so IsInViewport() returns false for them.
+	// Just check the widget's visibility directly.
+	if (Widget)
 	{
 		ESlateVisibility WidgetVisibility = Widget->GetVisibility();
 		return WidgetVisibility == ESlateVisibility::Visible ||
@@ -474,12 +478,37 @@ void UW_HUD::EventShowGameMenu_Implementation()
 	if (CachedW_GameMenu)
 	{
 		CachedW_GameMenu->SetVisibility(ESlateVisibility::Visible);
+		// Set keyboard focus so gamepad/keyboard input works after returning from sub-menu
+		CachedW_GameMenu->SetKeyboardFocus();
 	}
 	else if (UWidget* GameMenuWidget = GetWidgetFromName(TEXT("W_GameMenu")))
 	{
 		GameMenuWidget->SetVisibility(ESlateVisibility::Visible);
 	}
 	EventToggleUiMode(true);
+
+	// Set ActiveWidgetTag and switch input context on PlayerController
+	if (ASLFPlayerController* PC = Cast<ASLFPlayerController>(GetOwningPlayer()))
+	{
+		// Set active widget tag for navigation routing
+		PC->ActiveWidgetTag = FGameplayTag::RequestGameplayTag(FName(TEXT("SoulslikeFramework.Backend.Widgets.GameMenu")));
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowGameMenu - Set ActiveWidgetTag to GameMenu"));
+
+		// Switch input context: Enable menu context, disable gameplay context
+		TArray<UInputMappingContext*> ToEnable;
+		TArray<UInputMappingContext*> ToDisable;
+
+		if (PC->IMC_NavigableMenu)
+		{
+			ToEnable.Add(PC->IMC_NavigableMenu);
+		}
+		if (PC->IMC_Gameplay)
+		{
+			ToDisable.Add(PC->IMC_Gameplay);
+		}
+
+		PC->SwitchInputContext(ToEnable, ToDisable);
+	}
 }
 
 void UW_HUD::EventCloseGameMenu_Implementation()
@@ -494,6 +523,29 @@ void UW_HUD::EventCloseGameMenu_Implementation()
 		GameMenuWidget->SetVisibility(ESlateVisibility::Collapsed);
 	}
 	EventToggleUiMode(false);
+
+	// Clear ActiveWidgetTag and switch input context back to gameplay
+	if (ASLFPlayerController* PC = Cast<ASLFPlayerController>(GetOwningPlayer()))
+	{
+		// Clear active widget tag
+		PC->ActiveWidgetTag = FGameplayTag();
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventCloseGameMenu - Cleared ActiveWidgetTag"));
+
+		// Switch input context: Enable gameplay context, disable menu context
+		TArray<UInputMappingContext*> ToEnable;
+		TArray<UInputMappingContext*> ToDisable;
+
+		if (PC->IMC_Gameplay)
+		{
+			ToEnable.Add(PC->IMC_Gameplay);
+		}
+		if (PC->IMC_NavigableMenu)
+		{
+			ToDisable.Add(PC->IMC_NavigableMenu);
+		}
+
+		PC->SwitchInputContext(ToEnable, ToDisable);
+	}
 }
 
 void UW_HUD::EventOnExitStorage_Implementation()
@@ -957,4 +1009,248 @@ void UW_HUD::OnItemLootedHandler(UDataAsset* ItemAsset, int32 Amount)
 
 	// Call the main event handler with transformed parameters
 	EventOnItemLooted(ItemInfo, Amount, bExists);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// NAVIGATION ROUTING FUNCTIONS
+// ═══════════════════════════════════════════════════════════════════════════
+
+void UW_HUD::RouteNavigateCancel(const FGameplayTag& ActiveWidgetTag)
+{
+	FString TagString = ActiveWidgetTag.ToString();
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::RouteNavigateCancel - ActiveWidgetTag: %s"), *TagString);
+
+	// Route based on active widget tag
+	if (TagString.Contains(TEXT("GameMenu")))
+	{
+		if (CachedW_GameMenu) CachedW_GameMenu->EventNavigateCancel();
+	}
+	else if (TagString.Contains(TEXT("Inventory")))
+	{
+		if (CachedW_Inventory) CachedW_Inventory->EventNavigateCancel();
+	}
+	else if (TagString.Contains(TEXT("Equipment")))
+	{
+		if (CachedW_Equipment) CachedW_Equipment->EventNavigateCancel();
+	}
+	else if (TagString.Contains(TEXT("Crafting")))
+	{
+		if (CachedW_Crafting) CachedW_Crafting->EventNavigateCancel();
+	}
+	else if (TagString.Contains(TEXT("Status")))
+	{
+		if (CachedW_Status) CachedW_Status->EventNavigateCancel();
+	}
+	else if (TagString.Contains(TEXT("System")) || TagString.Contains(TEXT("Settings")))
+	{
+		if (CachedW_Settings) CachedW_Settings->EventNavigateCancel();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::RouteNavigateCancel - Unknown widget tag: %s"), *TagString);
+	}
+}
+
+void UW_HUD::RouteNavigateOk(const FGameplayTag& ActiveWidgetTag)
+{
+	FString TagString = ActiveWidgetTag.ToString();
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::RouteNavigateOk - ActiveWidgetTag: %s"), *TagString);
+
+	// Note: W_Status only has EventNavigateCancel
+	if (TagString.Contains(TEXT("GameMenu")))
+	{
+		if (CachedW_GameMenu) CachedW_GameMenu->EventNavigateOk();
+	}
+	else if (TagString.Contains(TEXT("Inventory")))
+	{
+		if (CachedW_Inventory) CachedW_Inventory->EventNavigateOk();
+	}
+	else if (TagString.Contains(TEXT("Equipment")))
+	{
+		if (CachedW_Equipment) CachedW_Equipment->EventNavigateOk();
+	}
+	else if (TagString.Contains(TEXT("Crafting")))
+	{
+		if (CachedW_Crafting) CachedW_Crafting->EventNavigateOk();
+	}
+	else if (TagString.Contains(TEXT("System")) || TagString.Contains(TEXT("Settings")))
+	{
+		if (CachedW_Settings) CachedW_Settings->EventNavigateOk();
+	}
+}
+
+void UW_HUD::RouteNavigateUp(const FGameplayTag& ActiveWidgetTag)
+{
+	FString TagString = ActiveWidgetTag.ToString();
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::RouteNavigateUp - ActiveWidgetTag: %s"), *TagString);
+
+	// Note: W_Status only has EventNavigateCancel, no Up/Down navigation
+	if (TagString.Contains(TEXT("GameMenu")))
+	{
+		if (CachedW_GameMenu) CachedW_GameMenu->EventNavigateUp();
+	}
+	else if (TagString.Contains(TEXT("Inventory")))
+	{
+		if (CachedW_Inventory) CachedW_Inventory->EventNavigateUp();
+	}
+	else if (TagString.Contains(TEXT("Equipment")))
+	{
+		if (CachedW_Equipment) CachedW_Equipment->EventNavigateUp();
+	}
+	else if (TagString.Contains(TEXT("Crafting")))
+	{
+		if (CachedW_Crafting) CachedW_Crafting->EventNavigateUp();
+	}
+	else if (TagString.Contains(TEXT("System")) || TagString.Contains(TEXT("Settings")))
+	{
+		if (CachedW_Settings) CachedW_Settings->EventNavigateUp();
+	}
+}
+
+void UW_HUD::RouteNavigateDown(const FGameplayTag& ActiveWidgetTag)
+{
+	FString TagString = ActiveWidgetTag.ToString();
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::RouteNavigateDown - ActiveWidgetTag: %s"), *TagString);
+
+	// Note: W_Status only has EventNavigateCancel, no Up/Down navigation
+	if (TagString.Contains(TEXT("GameMenu")))
+	{
+		if (CachedW_GameMenu) CachedW_GameMenu->EventNavigateDown();
+	}
+	else if (TagString.Contains(TEXT("Inventory")))
+	{
+		if (CachedW_Inventory) CachedW_Inventory->EventNavigateDown();
+	}
+	else if (TagString.Contains(TEXT("Equipment")))
+	{
+		if (CachedW_Equipment) CachedW_Equipment->EventNavigateDown();
+	}
+	else if (TagString.Contains(TEXT("Crafting")))
+	{
+		if (CachedW_Crafting) CachedW_Crafting->EventNavigateDown();
+	}
+	else if (TagString.Contains(TEXT("System")) || TagString.Contains(TEXT("Settings")))
+	{
+		if (CachedW_Settings) CachedW_Settings->EventNavigateDown();
+	}
+}
+
+void UW_HUD::RouteNavigateLeft(const FGameplayTag& ActiveWidgetTag)
+{
+	FString TagString = ActiveWidgetTag.ToString();
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::RouteNavigateLeft - ActiveWidgetTag: %s"), *TagString);
+
+	// Note: W_GameMenu and W_Status don't have Left navigation
+	if (TagString.Contains(TEXT("Inventory")))
+	{
+		if (CachedW_Inventory) CachedW_Inventory->EventNavigateLeft();
+	}
+	else if (TagString.Contains(TEXT("Equipment")))
+	{
+		if (CachedW_Equipment) CachedW_Equipment->EventNavigateLeft();
+	}
+	else if (TagString.Contains(TEXT("Crafting")))
+	{
+		if (CachedW_Crafting) CachedW_Crafting->EventNavigateLeft();
+	}
+	else if (TagString.Contains(TEXT("System")) || TagString.Contains(TEXT("Settings")))
+	{
+		if (CachedW_Settings) CachedW_Settings->EventNavigateLeft();
+	}
+}
+
+void UW_HUD::RouteNavigateRight(const FGameplayTag& ActiveWidgetTag)
+{
+	FString TagString = ActiveWidgetTag.ToString();
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::RouteNavigateRight - ActiveWidgetTag: %s"), *TagString);
+
+	// Note: W_GameMenu and W_Status don't have Right navigation
+	if (TagString.Contains(TEXT("Inventory")))
+	{
+		if (CachedW_Inventory) CachedW_Inventory->EventNavigateRight();
+	}
+	else if (TagString.Contains(TEXT("Equipment")))
+	{
+		if (CachedW_Equipment) CachedW_Equipment->EventNavigateRight();
+	}
+	else if (TagString.Contains(TEXT("Crafting")))
+	{
+		if (CachedW_Crafting) CachedW_Crafting->EventNavigateRight();
+	}
+	else if (TagString.Contains(TEXT("System")) || TagString.Contains(TEXT("Settings")))
+	{
+		if (CachedW_Settings) CachedW_Settings->EventNavigateRight();
+	}
+}
+
+void UW_HUD::RouteNavigateCategoryLeft(const FGameplayTag& ActiveWidgetTag)
+{
+	FString TagString = ActiveWidgetTag.ToString();
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::RouteNavigateCategoryLeft - ActiveWidgetTag: %s"), *TagString);
+
+	// Only Inventory and Settings have category navigation
+	if (TagString.Contains(TEXT("Inventory")))
+	{
+		if (CachedW_Inventory) CachedW_Inventory->EventNavigateCategoryLeft();
+	}
+	else if (TagString.Contains(TEXT("System")) || TagString.Contains(TEXT("Settings")))
+	{
+		if (CachedW_Settings) CachedW_Settings->EventNavigateCategoryLeft();
+	}
+}
+
+void UW_HUD::RouteNavigateCategoryRight(const FGameplayTag& ActiveWidgetTag)
+{
+	FString TagString = ActiveWidgetTag.ToString();
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::RouteNavigateCategoryRight - ActiveWidgetTag: %s"), *TagString);
+
+	// Only Inventory and Settings have category navigation
+	if (TagString.Contains(TEXT("Inventory")))
+	{
+		if (CachedW_Inventory) CachedW_Inventory->EventNavigateCategoryRight();
+	}
+	else if (TagString.Contains(TEXT("System")) || TagString.Contains(TEXT("Settings")))
+	{
+		if (CachedW_Settings) CachedW_Settings->EventNavigateCategoryRight();
+	}
+}
+
+void UW_HUD::RouteNavigateUnequip(const FGameplayTag& ActiveWidgetTag)
+{
+	FString TagString = ActiveWidgetTag.ToString();
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::RouteNavigateUnequip - ActiveWidgetTag: %s"), *TagString);
+
+	// Only Equipment has unequip navigation
+	if (TagString.Contains(TEXT("Equipment")))
+	{
+		if (CachedW_Equipment) CachedW_Equipment->EventNavigateUnequip();
+	}
+}
+
+void UW_HUD::RouteNavigateDetailedView(const FGameplayTag& ActiveWidgetTag)
+{
+	FString TagString = ActiveWidgetTag.ToString();
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::RouteNavigateDetailedView - ActiveWidgetTag: %s"), *TagString);
+
+	// Inventory and Equipment have detailed view
+	if (TagString.Contains(TEXT("Inventory")))
+	{
+		if (CachedW_Inventory) CachedW_Inventory->EventNavigateDetailedView();
+	}
+	else if (TagString.Contains(TEXT("Equipment")))
+	{
+		if (CachedW_Equipment) CachedW_Equipment->EventNavigateDetailedView();
+	}
+}
+
+void UW_HUD::RouteNavigateResetToDefaults(const FGameplayTag& ActiveWidgetTag)
+{
+	FString TagString = ActiveWidgetTag.ToString();
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::RouteNavigateResetToDefaults - ActiveWidgetTag: %s"), *TagString);
+
+	// Only Settings has reset to defaults (note: function is EventNavigateResetToDefault, singular)
+	if (TagString.Contains(TEXT("System")) || TagString.Contains(TEXT("Settings")))
+	{
+		if (CachedW_Settings) CachedW_Settings->EventNavigateResetToDefault();
+	}
 }
