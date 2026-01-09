@@ -27,6 +27,7 @@ UW_Inventory::UW_Inventory(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 	, UniformInventoryGrid(nullptr)
 	, UniformStorageGrid(nullptr)
+	, CategoriesScroll(nullptr)
 	, InventoryComponent(nullptr)
 	, SelectedSlot(nullptr)
 	, ActiveFilterCategory(ESLFItemCategory::None)
@@ -224,6 +225,16 @@ void UW_Inventory::CacheWidgetReferences()
 		}
 	}
 
+	// FALLBACK: Find CategoriesScroll if BindWidget didn't find it
+	if (!CategoriesScroll)
+	{
+		CategoriesScroll = Cast<UScrollBox>(GetWidgetFromName(TEXT("CategoriesScroll")));
+		if (CategoriesScroll)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[W_Inventory] Found CategoriesScroll via GetWidgetFromName"));
+		}
+	}
+
 	// ═══════════════════════════════════════════════════════════════════════════
 	// FIND AND CACHE CATEGORY ENTRIES
 	// The AllItemsCategoryEntry widget is designed in UMG (WidgetTree)
@@ -237,10 +248,19 @@ void UW_Inventory::CacheWidgetReferences()
 		{
 			CategoryEntries.Add(CategoryEntry);
 
+			// Set up AllItems specific properties
+			CategoryEntry->AllCategoriesButton = true;
+			CategoryEntry->InventoryCategoryData.Category = ESLFItemCategory::None;
+			CategoryEntry->InventoryCategoryData.CategoryIcon = TSoftObjectPtr<UTexture2D>(
+				FSoftObjectPath(TEXT("/Game/SoulslikeFramework/Widgets/_Textures/T_Category_AllItems.T_Category_AllItems")));
+
+			// Apply the icon (SetupCategoryIcon reads from InventoryCategoryData.CategoryIcon)
+			CategoryEntry->SetupCategoryIcon();
+
 			// Bind OnSelected event
 			CategoryEntry->OnSelected.AddDynamic(this, &UW_Inventory::EventOnCategorySelected);
 
-			UE_LOG(LogTemp, Log, TEXT("[W_Inventory] Found and bound AllItemsCategoryEntry"));
+			UE_LOG(LogTemp, Log, TEXT("[W_Inventory] Found and bound AllItemsCategoryEntry with icon"));
 		}
 	}
 
@@ -852,6 +872,12 @@ void UW_Inventory::SetCategorization_Implementation(ESLFItemCategory ItemCategor
 			if (bShouldSelect)
 			{
 				CategoryNavigationIndex = i;
+
+				// Scroll the selected category into view
+				if (CategoriesScroll)
+				{
+					CategoriesScroll->ScrollWidgetIntoView(CategoryEntries[i], true, EDescendantScrollDestination::Center);
+				}
 			}
 		}
 	}

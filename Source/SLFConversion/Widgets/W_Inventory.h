@@ -87,6 +87,10 @@ public:
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
 	UScrollBox* StorageScrollBox;
 
+	// ScrollBox for category entries (used for scrolling when navigating categories)
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UScrollBox* CategoriesScroll;
+
 	// Input Icon Images (for input prompt display)
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets|InputIcons")
 	UImage* CategoryLeftInputIcon;

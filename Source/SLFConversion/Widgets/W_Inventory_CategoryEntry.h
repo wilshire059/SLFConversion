@@ -63,12 +63,12 @@ public:
 	void SetInventoryCategorySelected(bool InSelected);
 	virtual void SetInventoryCategorySelected_Implementation(bool InSelected);
 
+	// Set up the category icon from InventoryCategoryData (public for external setup)
+	void SetupCategoryIcon();
+
 protected:
 	// Cache references
 	void CacheWidgetReferences();
-
-	// Set up the category icon from InventoryCategoryData
-	void SetupCategoryIcon();
 
 	// Bind button events
 	void BindButtonEvents();
