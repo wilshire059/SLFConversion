@@ -10,6 +10,7 @@
 #include "Components/ScrollBox.h"
 #include "Widgets/W_InventoryAction.h"
 #include "Components/TextBlock.h"
+#include "Widgets/W_GenericError.h"
 #include "Components/UniformGridPanel.h"
 #include "Components/UniformGridSlot.h"
 #include "Components/Image.h"
@@ -1586,20 +1587,26 @@ void UW_Inventory::EventSetupItemInfoPanel_Implementation(UW_InventorySlot* ForS
 
 /**
  * EventOnErrorReceived - Display error message
+ *
+ * Blueprint Logic:
+ * 1. Set ErrorBorder visibility to Visible
+ * 2. Call EventSetErrorMessage on W_Error widget
  */
 void UW_Inventory::EventOnErrorReceived_Implementation(const FText& ErrorMessage)
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_Inventory::EventOnErrorReceived - %s"), *ErrorMessage.ToString());
 
-	// Display error overlay widget with the message
-	if (UWidget* ErrorOverlay = GetWidgetFromName(TEXT("ErrorOverlay")))
+	// Show ErrorBorder
+	if (UWidget* ErrorBorder = GetWidgetFromName(TEXT("ErrorBorder")))
 	{
-		ErrorOverlay->SetVisibility(ESlateVisibility::Visible);
+		ErrorBorder->SetVisibility(ESlateVisibility::Visible);
 	}
 
-	if (UTextBlock* ErrorText = Cast<UTextBlock>(GetWidgetFromName(TEXT("ErrorText"))))
+	// Setup error message on W_Error widget (W_GenericError)
+	if (UW_GenericError* W_Error = Cast<UW_GenericError>(GetWidgetFromName(TEXT("W_Error"))))
 	{
-		ErrorText->SetText(ErrorMessage);
+		W_Error->EventSetErrorMessage(ErrorMessage);
+		UE_LOG(LogTemp, Log, TEXT("[W_Inventory] Displayed error via W_Error: %s"), *ErrorMessage.ToString());
 	}
 }
 
@@ -1611,9 +1618,9 @@ void UW_Inventory::EventDismissError_Implementation()
 	UE_LOG(LogTemp, Log, TEXT("UW_Inventory::EventDismissError"));
 
 	// Hide the error overlay widget
-	if (UWidget* ErrorOverlay = GetWidgetFromName(TEXT("ErrorOverlay")))
+	if (UWidget* ErrorBorder = GetWidgetFromName(TEXT("ErrorBorder")))
 	{
-		ErrorOverlay->SetVisibility(ESlateVisibility::Collapsed);
+		ErrorBorder->SetVisibility(ESlateVisibility::Collapsed);
 	}
 }
 
