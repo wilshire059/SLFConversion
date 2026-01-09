@@ -25,6 +25,7 @@
 // Forward declarations for widget types
 class UW_InventorySlot;
 class UW_Inventory_CategoryEntry;
+class UW_InventoryAction;
 
 // Forward declarations for UMG types
 class UScrollBox;
@@ -70,6 +71,20 @@ public:
 	// Index 0 = CharacterStatsOverlay, Index 1 = ItemInfo panel
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
 	UWidgetSwitcher* ItemInfoBoxSwitcher;
+
+	// Action menu widgets (from WidgetTree)
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UW_InventoryAction* W_InventoryAction;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UW_InventoryAction* W_StorageAction;
+
+	// ScrollBox widgets for positioning action menus
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UScrollBox* InventoryScrollBox;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UScrollBox* StorageScrollBox;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (10)

@@ -8,6 +8,7 @@
 #include "Widgets/W_InventorySlot.h"
 #include "Widgets/W_Inventory_CategoryEntry.h"
 #include "Components/ScrollBox.h"
+#include "Widgets/W_InventoryAction.h"
 #include "Components/TextBlock.h"
 #include "Components/UniformGridPanel.h"
 #include "Components/UniformGridSlot.h"
@@ -270,13 +271,48 @@ void UW_Inventory::CacheWidgetReferences()
 		ItemInfoBoxSwitcher = Cast<UWidgetSwitcher>(GetWidgetFromName(TEXT("ItemInfoBoxSwitcher")));
 		if (ItemInfoBoxSwitcher)
 		{
-			UE_LOG(LogTemp, Log, TEXT("[W_Inventory] Found ItemInfoBoxSwitcher, current index: %d"), 
+			UE_LOG(LogTemp, Log, TEXT("[W_Inventory] Found ItemInfoBoxSwitcher, current index: %d"),
 				ItemInfoBoxSwitcher->GetActiveWidgetIndex());
 		}
 		else
 		{
 			UE_LOG(LogTemp, Warning, TEXT("[W_Inventory] ItemInfoBoxSwitcher NOT FOUND!"));
 		}
+	}
+
+	// ═══════════════════════════════════════════════════════════════════════════
+	// FIND ACTION MENU WIDGETS
+	// W_InventoryAction - Action menu for inventory items (use, drop, etc.)
+	// W_StorageAction - Action menu for storage items (store, retrieve, etc.)
+	// ═══════════════════════════════════════════════════════════════════════════
+	if (!W_InventoryAction)
+	{
+		W_InventoryAction = Cast<UW_InventoryAction>(GetWidgetFromName(TEXT("W_InventoryAction")));
+		if (W_InventoryAction)
+		{
+			W_InventoryAction->SetVisibility(ESlateVisibility::Collapsed);
+			UE_LOG(LogTemp, Log, TEXT("[W_Inventory] Found W_InventoryAction"));
+		}
+	}
+
+	if (!W_StorageAction)
+	{
+		W_StorageAction = Cast<UW_InventoryAction>(GetWidgetFromName(TEXT("W_StorageAction")));
+		if (W_StorageAction)
+		{
+			W_StorageAction->SetVisibility(ESlateVisibility::Collapsed);
+			UE_LOG(LogTemp, Log, TEXT("[W_Inventory] Found W_StorageAction"));
+		}
+	}
+
+	// Find scroll boxes for action menu positioning
+	if (!InventoryScrollBox)
+	{
+		InventoryScrollBox = Cast<UScrollBox>(GetWidgetFromName(TEXT("InventoryScrollBox")));
+	}
+	if (!StorageScrollBox)
+	{
+		StorageScrollBox = Cast<UScrollBox>(GetWidgetFromName(TEXT("StorageScrollBox")));
 	}
 }
 
@@ -1078,13 +1114,50 @@ void UW_Inventory::EventOnSlotPressed_Implementation(UW_InventorySlot* InSlot)
 	{
 		EventSetupItemInfoPanel(InSlot);
 
+		// Show action menu for the item
+		UW_InventoryAction* ActionWidget = StorageMode ? W_StorageAction : W_InventoryAction;
+		UScrollBox* TargetScrollBox = StorageMode ? StorageScrollBox : InventoryScrollBox;
+
+		if (ActionWidget)
+		{
+			// Position the action menu relative to the scrollbox
+			FVector2D Translation = GetTranslationForActionMenu(TargetScrollBox);
+			ActionWidget->SetRenderTranslation(Translation);
+
+			// Show the action menu
+			ActionWidget->SetVisibility(ESlateVisibility::Visible);
+
+			// Setup the action menu for the selected slot
+			if (StorageMode)
+			{
+				ActionWidget->EventSetupForStorage(InSlot);
+			}
+			else
+			{
+				ActionWidget->EventSetupForInventory(InSlot);
+			}
+
+			UE_LOG(LogTemp, Log, TEXT("[W_Inventory] Showing action menu at translation (%.1f, %.1f)"),
+				Translation.X, Translation.Y);
+		}
+
 		UE_LOG(LogTemp, Log, TEXT("[W_Inventory] Slot pressed - item info panel updated for %s"),
 			InSlot->AssignedItem ? *InSlot->AssignedItem->GetName() : TEXT("Unknown"));
 	}
 	else
 	{
-		// Hide item info for empty slots
+		// Hide item info and action menu for empty slots
 		EventToggleItemInfo(false);
+
+		// Hide action menus
+		if (W_InventoryAction)
+		{
+			W_InventoryAction->SetVisibility(ESlateVisibility::Collapsed);
+		}
+		if (W_StorageAction)
+		{
+			W_StorageAction->SetVisibility(ESlateVisibility::Collapsed);
+		}
 	}
 }
 
