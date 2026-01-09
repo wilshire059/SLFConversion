@@ -8,18 +8,27 @@
 
 #include "Widgets/W_Crafting.h"
 #include "Widgets/W_InventorySlot.h"
-#include "Components/AC_InventoryManager.h"
+#include "Widgets/W_CraftingAction.h"
+#include "Components/InventoryManagerComponent.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
+#include "Components/Overlay.h"
+#include "Components/WidgetSwitcher.h"
+#include "Components/UniformGridPanel.h"
+#include "Blueprint/WidgetTree.h"
 #include "Kismet/GameplayStatics.h"
 
 UW_Crafting::UW_Crafting(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
+	, InventoryComponent(nullptr)
+	, SelectedSlot(nullptr)
+	, ActiveSlot(nullptr)
+	, NavigationIndex(0)
+	, CraftingActionPopup(nullptr)
+	, ItemInfoBoxSwitcher(nullptr)
+	, UniformCraftingItemsGrid(nullptr)
+	, W_CraftingAction(nullptr)
 {
-	NavigationIndex = 0;
-	InventoryComponent = nullptr;
-	SelectedSlot = nullptr;
-	ActiveSlot = nullptr;
 }
 
 void UW_Crafting::NativeConstruct()
@@ -31,14 +40,44 @@ void UW_Crafting::NativeConstruct()
 	// Cache widget references
 	CacheWidgetReferences();
 
-	// Get inventory manager from player pawn
-	if (APlayerController* PC = GetOwningPlayer())
+	// Components are on PlayerController based on debug logs
+	APlayerController* PC = GetOwningPlayer();
+	APawn* Pawn = GetOwningPlayerPawn();
+
+	UE_LOG(LogTemp, Log, TEXT("[W_Crafting] NativeConstruct - PC: %s, Pawn: %s"),
+		PC ? *PC->GetName() : TEXT("NULL"),
+		Pawn ? *Pawn->GetName() : TEXT("NULL"));
+
+	// Check PlayerController first (where components actually are)
+	if (PC)
 	{
-		if (APawn* Pawn = PC->GetPawn())
+		InventoryComponent = PC->FindComponentByClass<UInventoryManagerComponent>();
+		if (InventoryComponent)
 		{
-			InventoryComponent = Pawn->FindComponentByClass<UAC_InventoryManager>();
+			UE_LOG(LogTemp, Log, TEXT("[W_Crafting] Found InventoryComponent on PlayerController"));
 		}
 	}
+
+	// Fallback to Pawn if not found on PC
+	if (!InventoryComponent && Pawn)
+	{
+		InventoryComponent = Pawn->FindComponentByClass<UInventoryManagerComponent>();
+		if (InventoryComponent)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[W_Crafting] Found InventoryComponent on Pawn (fallback)"));
+		}
+	}
+
+	if (!InventoryComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_Crafting] InventoryComponent NOT FOUND on PC or Pawn!"));
+	}
+
+	// Make focusable for keyboard input
+	SetIsFocusable(true);
+
+	// Bind visibility changed
+	OnVisibilityChanged.AddDynamic(this, &UW_Crafting::EventOnVisibilityChanged);
 
 	// Refresh craftables list
 	RefreshCraftables();
@@ -46,14 +85,106 @@ void UW_Crafting::NativeConstruct()
 
 void UW_Crafting::NativeDestruct()
 {
+	OnVisibilityChanged.RemoveAll(this);
+
 	Super::NativeDestruct();
 
 	UE_LOG(LogTemp, Log, TEXT("UW_Crafting::NativeDestruct"));
 }
 
+FReply UW_Crafting::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	FKey Key = InKeyEvent.GetKey();
+
+	UE_LOG(LogTemp, Log, TEXT("[W_Crafting] NativeOnKeyDown - Key: %s"), *Key.ToString());
+
+	// Navigate Up: W, Up Arrow, Gamepad DPad Up
+	if (Key == EKeys::W || Key == EKeys::Up || Key == EKeys::Gamepad_DPad_Up || Key == EKeys::Gamepad_LeftStick_Up)
+	{
+		EventNavigateUp();
+		return FReply::Handled();
+	}
+
+	// Navigate Down: S, Down Arrow, Gamepad DPad Down
+	if (Key == EKeys::S || Key == EKeys::Down || Key == EKeys::Gamepad_DPad_Down || Key == EKeys::Gamepad_LeftStick_Down)
+	{
+		EventNavigateDown();
+		return FReply::Handled();
+	}
+
+	// Navigate Left: A, Left Arrow, Gamepad DPad Left
+	if (Key == EKeys::A || Key == EKeys::Left || Key == EKeys::Gamepad_DPad_Left || Key == EKeys::Gamepad_LeftStick_Left)
+	{
+		EventNavigateLeft();
+		return FReply::Handled();
+	}
+
+	// Navigate Right: D, Right Arrow, Gamepad DPad Right
+	if (Key == EKeys::D || Key == EKeys::Right || Key == EKeys::Gamepad_DPad_Right || Key == EKeys::Gamepad_LeftStick_Right)
+	{
+		EventNavigateRight();
+		return FReply::Handled();
+	}
+
+	// Navigate Ok/Confirm: Enter, Space, Gamepad A
+	if (Key == EKeys::Enter || Key == EKeys::SpaceBar || Key == EKeys::Gamepad_FaceButton_Bottom)
+	{
+		EventNavigateOk();
+		return FReply::Handled();
+	}
+
+	// Navigate Cancel/Back: Escape, Gamepad B, Tab
+	if (Key == EKeys::Escape || Key == EKeys::Gamepad_FaceButton_Right || Key == EKeys::Tab)
+	{
+		EventNavigateCancel();
+		return FReply::Handled();
+	}
+
+	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);
+}
+
 void UW_Crafting::CacheWidgetReferences()
 {
-	// Widget references would be set via BindWidget in Blueprint
+	// Cache CraftingActionPopup (Overlay)
+	if (!CraftingActionPopup)
+	{
+		CraftingActionPopup = Cast<UOverlay>(GetWidgetFromName(TEXT("CraftingActionPopup")));
+		if (CraftingActionPopup)
+		{
+			CraftingActionPopup->SetVisibility(ESlateVisibility::Collapsed);
+			UE_LOG(LogTemp, Log, TEXT("[W_Crafting] Found CraftingActionPopup"));
+		}
+	}
+
+	// Cache ItemInfoBoxSwitcher (WidgetSwitcher)
+	if (!ItemInfoBoxSwitcher)
+	{
+		ItemInfoBoxSwitcher = Cast<UWidgetSwitcher>(GetWidgetFromName(TEXT("ItemInfoBoxSwitcher")));
+		if (ItemInfoBoxSwitcher)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[W_Crafting] Found ItemInfoBoxSwitcher"));
+		}
+	}
+
+	// Cache UniformCraftingItemsGrid (UniformGridPanel)
+	if (!UniformCraftingItemsGrid)
+	{
+		UniformCraftingItemsGrid = Cast<UUniformGridPanel>(GetWidgetFromName(TEXT("UniformCraftingItemsGrid")));
+		if (UniformCraftingItemsGrid)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[W_Crafting] Found UniformCraftingItemsGrid"));
+		}
+	}
+
+	// Cache W_CraftingAction
+	if (!W_CraftingAction)
+	{
+		W_CraftingAction = Cast<UW_CraftingAction>(GetWidgetFromName(TEXT("W_CraftingAction")));
+		if (W_CraftingAction)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[W_Crafting] Found W_CraftingAction"));
+		}
+	}
 }
 
 /**
@@ -200,25 +331,41 @@ bool UW_Crafting::CheckIfCraftable_Implementation(UPrimaryDataAsset* ItemAsset)
  * RefreshCraftables - Rebuild the list of craftable items
  *
  * Blueprint Logic:
- * 1. Clear UnlockedCraftableEntries
- * 2. For each item in UnlockedCraftables:
- *    a. Check if craftable via CheckIfCraftable
- *    b. Create/update slot widget
- *    c. Add to UnlockedCraftableEntries
+ * 1. Clear CraftingSlots array
+ * 2. Clear UniformCraftingItemsGrid children
+ * 3. Get Values from UnlockedCraftables map
+ * 4. For each item:
+ *    - Create W_InventorySlot widget
+ *    - Bind OnSelected and OnPressed dispatchers
+ *    - Call EventOccupySlot with item
+ *    - Add to grid at calculated row/column (4 columns)
+ *    - Add to CraftingSlots and UnlockedCraftableEntries arrays
+ * 5. After loop, if slots exist, select first slot
  */
 void UW_Crafting::RefreshCraftables_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_Crafting::RefreshCraftables"));
 
-	// Clear existing entries
+	// Clear existing slots
+	CraftingSlots.Empty();
 	UnlockedCraftableEntries.Empty();
 
-	// Process each unlocked craftable
-	for (const auto& CraftablePair : UnlockedCraftables)
+	// Clear grid children
+	if (UniformCraftingItemsGrid)
 	{
-		FGameplayTag ItemTag = CraftablePair.Key;
-		UPrimaryDataAsset* ItemAsset = CraftablePair.Value;
+		UniformCraftingItemsGrid->ClearChildren();
+	}
 
+	// Get all values from UnlockedCraftables map
+	TArray<UPrimaryDataAsset*> CraftableItems;
+	UnlockedCraftables.GenerateValueArray(CraftableItems);
+
+	const int32 ColumnsPerRow = 4;
+	int32 Index = 0;
+
+	// Process each unlocked craftable
+	for (UPrimaryDataAsset* ItemAsset : CraftableItems)
+	{
 		if (!IsValid(ItemAsset))
 		{
 			continue;
@@ -230,14 +377,73 @@ void UW_Crafting::RefreshCraftables_Implementation()
 		UE_LOG(LogTemp, Log, TEXT("  Item: %s, CanCraft: %s"),
 			*ItemAsset->GetName(), bCanCraft ? TEXT("true") : TEXT("false"));
 
-		// Would create/update a slot widget here and add to entries
-		// For now, just track that we processed it
+		// Create slot widget
+		UW_InventorySlot* SlotWidget = nullptr;
+		if (SlotWidgetClass)
+		{
+			SlotWidget = CreateWidget<UW_InventorySlot>(GetOwningPlayer(), SlotWidgetClass);
+		}
+		else
+		{
+			// Fallback to loading class from path
+			UClass* SlotClass = LoadClass<UW_InventorySlot>(nullptr, TEXT("/Game/SoulslikeFramework/Widgets/Inventory/W_InventorySlot.W_InventorySlot_C"));
+			if (SlotClass)
+			{
+				SlotWidget = CreateWidget<UW_InventorySlot>(GetOwningPlayer(), SlotClass);
+			}
+		}
+
+		if (!SlotWidget)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[W_Crafting] Failed to create slot widget for %s"), *ItemAsset->GetName());
+			continue;
+		}
+
+		// Mark as crafting related
+		SlotWidget->CraftingRelated = true;
+
+		// Bind dispatchers
+		SlotWidget->OnSelected.AddDynamic(this, &UW_Crafting::EventOnCraftingSlotSelected);
+		SlotWidget->OnPressed.AddDynamic(this, &UW_Crafting::EventOnCraftingSlotPressed);
+
+		// Occupy slot with item
+		if (UPDA_Item* Item = Cast<UPDA_Item>(ItemAsset))
+		{
+			SlotWidget->EventOccupySlot(Item, 1);
+		}
+
+		// Enable/disable based on craftability
+		SlotWidget->CraftingSlotEnabled = bCanCraft;
+		SlotWidget->EventToggleSlot(bCanCraft);
+
+		// Add to grid at calculated position
+		if (UniformCraftingItemsGrid)
+		{
+			int32 Row = Index / ColumnsPerRow;
+			int32 Column = Index % ColumnsPerRow;
+			UniformCraftingItemsGrid->AddChildToUniformGrid(SlotWidget, Row, Column);
+		}
+
+		// Add to tracking arrays
+		CraftingSlots.Add(SlotWidget);
+		UnlockedCraftableEntries.Add(SlotWidget);
+
+		Index++;
 	}
 
 	// Broadcast update event
 	EventOnCraftablesUpdated();
 
-	UE_LOG(LogTemp, Log, TEXT("  Refreshed %d craftables"), UnlockedCraftables.Num());
+	// Select first slot if any exist
+	if (CraftingSlots.Num() > 0)
+	{
+		NavigationIndex = 0;
+		ActiveSlot = CraftingSlots[0];
+		EventOnCraftingSlotSelected(true, ActiveSlot);
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("  Refreshed %d craftables, %d slots created"),
+		UnlockedCraftables.Num(), CraftingSlots.Num());
 }
 
 void UW_Crafting::EventAsyncLoadCraftables_Implementation()
@@ -367,21 +573,38 @@ void UW_Crafting::EventOnCraftingSlotPressed_Implementation(UW_InventorySlot* In
 
 void UW_Crafting::EventOnCraftingSlotSelected_Implementation(bool Selected, UW_InventorySlot* InSlot)
 {
-	UE_LOG(LogTemp, Log, TEXT("UW_Crafting::EventOnCraftingSlotSelected - Selected: %s"),
-		Selected ? TEXT("true") : TEXT("false"));
+	UE_LOG(LogTemp, Log, TEXT("UW_Crafting::EventOnCraftingSlotSelected - Selected: %s, Slot: %s"),
+		Selected ? TEXT("true") : TEXT("false"),
+		InSlot ? *InSlot->GetName() : TEXT("None"));
 
-	if (!IsValid(InSlot))
+	// Blueprint logic:
+	// 1. For Each Loop through CraftingSlots → EventSetHighlighted(false) on each
+	// 2. After loop complete, Branch on Selected
+	// 3. If Selected==true: EventSetHighlighted(true) on InSlot, SetupItemInformationPanel(InSlot->AssignedItem)
+
+	// Clear highlighting on all slots first
+	for (UW_InventorySlot* CraftSlot : CraftingSlots)
 	{
-		return;
+		if (IsValid(CraftSlot))
+		{
+			CraftSlot->EventSetHighlighted(false);
+		}
 	}
 
-	if (Selected)
+	// If selecting a slot
+	if (Selected && IsValid(InSlot))
 	{
 		ActiveSlot = InSlot;
 
-		// Update item info panel
-		// Would get item from slot and call SetupItemInformationPanel
-		EventToggleItemInfo(true);
+		// Highlight the selected slot
+		InSlot->EventSetHighlighted(true);
+
+		// Update item info panel with slot's assigned item
+		if (IsValid(InSlot->AssignedItem))
+		{
+			SetupItemInformationPanel(InSlot->AssignedItem);
+			EventToggleItemInfo(true);
+		}
 	}
 }
 
@@ -393,15 +616,22 @@ void UW_Crafting::EventOnInventoryUpdated_Implementation()
 	RefreshCraftables();
 }
 
-void UW_Crafting::EventOnVisibilityChanged_Implementation(uint8 InVisibility)
+void UW_Crafting::EventOnVisibilityChanged_Implementation(ESlateVisibility InVisibility)
 {
-	UE_LOG(LogTemp, Log, TEXT("UW_Crafting::EventOnVisibilityChanged - %d"), InVisibility);
+	UE_LOG(LogTemp, Log, TEXT("UW_Crafting::EventOnVisibilityChanged - %d"), static_cast<int32>(InVisibility));
 
-	if (InVisibility == static_cast<uint8>(ESlateVisibility::Visible) ||
-		InVisibility == static_cast<uint8>(ESlateVisibility::SelfHitTestInvisible))
+	if (InVisibility == ESlateVisibility::Visible ||
+		InVisibility == ESlateVisibility::SelfHitTestInvisible)
 	{
 		// Refresh when becoming visible
 		RefreshCraftables();
+
+		// Set focus to this widget for keyboard input
+		if (APlayerController* PC = GetOwningPlayer())
+		{
+			SetUserFocus(PC);
+			UE_LOG(LogTemp, Log, TEXT("[W_Crafting] Set user focus"));
+		}
 	}
 }
 
@@ -410,7 +640,22 @@ void UW_Crafting::EventToggleCraftingAction_Implementation(bool Show)
 	UE_LOG(LogTemp, Log, TEXT("UW_Crafting::EventToggleCraftingAction - Show: %s"),
 		Show ? TEXT("true") : TEXT("false"));
 
-	// Would show/hide the crafting action dialog widget
+	// Set visibility on CraftingActionPopup overlay
+	// Blueprint logic: Select(Show? → false=Collapsed, true=Visible)
+	if (CraftingActionPopup)
+	{
+		ESlateVisibility NewVisibility = Show ? ESlateVisibility::Visible : ESlateVisibility::Collapsed;
+		CraftingActionPopup->SetVisibility(NewVisibility);
+		UE_LOG(LogTemp, Log, TEXT("  Set CraftingActionPopup visibility to %s"),
+			Show ? TEXT("Visible") : TEXT("Collapsed"));
+	}
+
+	// Setup the crafting action widget with current slot
+	if (Show && W_CraftingAction && IsValid(ActiveSlot))
+	{
+		// W_CraftingAction would have a setup function to configure for the selected item
+		UE_LOG(LogTemp, Log, TEXT("  Setting up W_CraftingAction for slot"));
+	}
 }
 
 void UW_Crafting::EventToggleItemInfo_Implementation(bool Visible)
@@ -418,5 +663,13 @@ void UW_Crafting::EventToggleItemInfo_Implementation(bool Visible)
 	UE_LOG(LogTemp, Log, TEXT("UW_Crafting::EventToggleItemInfo - Visible: %s"),
 		Visible ? TEXT("true") : TEXT("false"));
 
-	// Would show/hide the item info panel
+	// Set visibility on ItemInfoBoxSwitcher
+	// Blueprint logic: Select(Visible? → false=Collapsed, true=SelfHitTestInvisible)
+	if (ItemInfoBoxSwitcher)
+	{
+		ESlateVisibility NewVisibility = Visible ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed;
+		ItemInfoBoxSwitcher->SetVisibility(NewVisibility);
+		UE_LOG(LogTemp, Log, TEXT("  Set ItemInfoBoxSwitcher visibility to %s"),
+			Visible ? TEXT("SelfHitTestInvisible") : TEXT("Collapsed"));
+	}
 }

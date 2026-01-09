@@ -25,9 +25,14 @@
 // Forward declarations for widget types
 class UW_EquipmentSlot;
 class UW_InventorySlot;
+class UW_CraftingAction;
+class UOverlay;
+class UWidgetSwitcher;
+class UUniformGridPanel;
+class UWidgetAnimation;
 
 // Forward declarations for Blueprint types
-class UAC_InventoryManager;
+class UInventoryManagerComponent;
 
 // Forward declarations for SaveGame types
 
@@ -47,12 +52,15 @@ public:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 
+	// Input handling (replaces Blueprint EventGraph input bindings)
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+
 	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (7)
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
-	UAC_InventoryManager* InventoryComponent;
+	UInventoryManagerComponent* InventoryComponent;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	UW_EquipmentSlot* SelectedSlot;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
@@ -66,6 +74,30 @@ public:
 	TMap<FGameplayTag, UPrimaryDataAsset*> UnlockedCraftables;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	int32 NavigationIndex;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// WIDGET REFERENCES (from WidgetTree)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	/** Overlay container for the crafting action popup */
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UOverlay* CraftingActionPopup;
+
+	/** Widget switcher for item info panel visibility */
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UWidgetSwitcher* ItemInfoBoxSwitcher;
+
+	/** Uniform grid panel for displaying craftable items */
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UUniformGridPanel* UniformCraftingItemsGrid;
+
+	/** Crafting action widget for confirming crafting */
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UW_CraftingAction* W_CraftingAction;
+
+	/** Widget class for creating inventory slots */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Widgets")
+	TSubclassOf<UW_InventorySlot> SlotWidgetClass;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (1)
@@ -138,8 +170,8 @@ public:
 	virtual void EventOnInventoryUpdated_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Crafting")
-	void EventOnVisibilityChanged(uint8 InVisibility);
-	virtual void EventOnVisibilityChanged_Implementation(uint8 InVisibility);
+	void EventOnVisibilityChanged(ESlateVisibility InVisibility);
+	virtual void EventOnVisibilityChanged_Implementation(ESlateVisibility InVisibility);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Crafting")
 	void EventToggleCraftingAction(bool Show);
