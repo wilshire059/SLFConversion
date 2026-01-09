@@ -4,7 +4,7 @@
 // 20-PASS VALIDATION: 2026-01-08 - Full implementation with stat display
 
 #include "Widgets/W_StatEntry.h"
-#include "Blueprints/B_Stat.h"
+#include "Blueprints/SLFStatBase.h"
 #include "Components/TextBlock.h"
 #include "SLFStatTypes.h"
 
@@ -140,7 +140,7 @@ void UW_StatEntry::InitStatEntry_Implementation()
 	}
 }
 
-void UW_StatEntry::EventOnStatUpdated_Implementation(UB_Stat* UpdatedStat, double Change, bool UpdateAffectedStats, ESLFValueType ValueType)
+void UW_StatEntry::EventOnStatUpdated_Implementation(USLFStatBase* UpdatedStat, double Change, bool UpdateAffectedStats, ESLFValueType ValueType)
 {
 	UE_LOG(LogTemp, Log, TEXT("[W_StatEntry] EventOnStatUpdated - Change: %.1f, ValueType: %d"), Change, ValueType);
 

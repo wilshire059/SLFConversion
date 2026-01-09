@@ -8,7 +8,7 @@
 #include "Components/StatManagerComponent.h"
 #include "Components/VerticalBox.h"
 #include "Blueprint/WidgetTree.h"
-#include "Blueprints/B_Stat.h"
+#include "Blueprints/SLFStatBase.h"
 
 UW_StatBlock::UW_StatBlock(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -96,11 +96,15 @@ void UW_StatBlock::NativeDestruct()
 
 void UW_StatBlock::CacheWidgetReferences()
 {
-	// Get the StatsBox vertical box for adding entries
-	StatsBox = Cast<UVerticalBox>(GetWidgetFromName(TEXT("StatsBox")));
+	// Get the StatBox vertical box for adding entries (named "StatBox" in Blueprint)
+	StatsBox = Cast<UVerticalBox>(GetWidgetFromName(TEXT("StatBox")));
 	if (!StatsBox)
 	{
-		// Try alternative name
+		// Try alternative names
+		StatsBox = Cast<UVerticalBox>(GetWidgetFromName(TEXT("StatsBox")));
+	}
+	if (!StatsBox)
+	{
 		StatsBox = Cast<UVerticalBox>(GetWidgetFromName(TEXT("StatEntriesBox")));
 	}
 
@@ -130,10 +134,10 @@ void UW_StatBlock::SetupFromStatManager()
 	UE_LOG(LogTemp, Log, TEXT("[W_StatBlock] SetupFromStatManager - Got %d stats from manager"), AllStatObjects.Num());
 
 	// Filter stats by category
-	TArray<UB_Stat*> FilteredStats;
+	TArray<USLFStatBase*> FilteredStats;
 	for (UObject* StatObj : AllStatObjects)
 	{
-		UB_Stat* Stat = Cast<UB_Stat>(StatObj);
+		USLFStatBase* Stat = Cast<USLFStatBase>(StatObj);
 		if (Stat)
 		{
 			// Check if this stat matches our category
@@ -145,20 +149,25 @@ void UW_StatBlock::SetupFromStatManager()
 					*Stat->StatInfo.Tag.ToString(), *Category.ToString());
 			}
 		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[W_StatBlock] Failed to cast stat to USLFStatBase: %s"),
+				StatObj ? *StatObj->GetClass()->GetName() : TEXT("NULL"));
+		}
 	}
 
 	UE_LOG(LogTemp, Log, TEXT("[W_StatBlock] Filtered to %d stats for category: %s"),
 		FilteredStats.Num(), *Category.ToString());
 
 	// Convert to the format SetupCurrentStats expects
-	TMap<FGameplayTag, TSubclassOf<UB_Stat>> StatMap;
+	TMap<FGameplayTag, TSubclassOf<USLFStatBase>> StatMap;
 	SetupCurrentStats(FilteredStats, StatMap);
 
 	// Notify that initialization is complete
 	EventStatInitializationComplete();
 }
 
-void UW_StatBlock::SetupCurrentStats_Implementation(const TArray<UB_Stat*>& StatObjects, const TMap<FGameplayTag, TSubclassOf<UB_Stat>>& StatClassesAndCategories)
+void UW_StatBlock::SetupCurrentStats_Implementation(const TArray<USLFStatBase*>& StatObjects, const TMap<FGameplayTag, TSubclassOf<USLFStatBase>>& StatClassesAndCategories)
 {
 	UE_LOG(LogTemp, Log, TEXT("[W_StatBlock] SetupCurrentStats - %d stats"), StatObjects.Num());
 
@@ -190,14 +199,14 @@ void UW_StatBlock::SetupCurrentStats_Implementation(const TArray<UB_Stat*>& Stat
 	}
 
 	// Create a W_StatEntry widget for each stat
-	for (UB_Stat* Stat : StatObjects)
+	for (USLFStatBase* Stat : StatObjects)
 	{
 		if (!Stat) continue;
 
 		UW_StatEntry* StatEntry = CreateWidget<UW_StatEntry>(this, StatEntryClass);
 		if (StatEntry)
 		{
-			// Set the stat on the entry
+			// Set the stat on the entry (W_StatEntry uses USLFStatBase)
 			StatEntry->Stat = Stat;
 			StatEntry->ShowAdjustButtons = ShowUpgradeButtons;
 

@@ -27,8 +27,8 @@ class UW_StatEntry;
 class UVerticalBox;
 class UStatManagerComponent;
 
-// Forward declarations for Blueprint types
-class UB_Stat;
+// Forward declarations for stat types
+class USLFStatBase;
 
 // Forward declarations for SaveGame types
 
@@ -70,8 +70,8 @@ public:
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_StatBlock")
-	void SetupCurrentStats(const TArray<UB_Stat*>& StatObjects, const TMap<FGameplayTag, TSubclassOf<UB_Stat>>& StatClassesAndCategories);
-	virtual void SetupCurrentStats_Implementation(const TArray<UB_Stat*>& StatObjects, const TMap<FGameplayTag, TSubclassOf<UB_Stat>>& StatClassesAndCategories);
+	void SetupCurrentStats(const TArray<USLFStatBase*>& StatObjects, const TMap<FGameplayTag, TSubclassOf<USLFStatBase>>& StatClassesAndCategories);
+	virtual void SetupCurrentStats_Implementation(const TArray<USLFStatBase*>& StatObjects, const TMap<FGameplayTag, TSubclassOf<USLFStatBase>>& StatClassesAndCategories);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_StatBlock")
 	TArray<UW_StatEntry*> GetAllStatsInBlock();
 	virtual TArray<UW_StatEntry*> GetAllStatsInBlock_Implementation();

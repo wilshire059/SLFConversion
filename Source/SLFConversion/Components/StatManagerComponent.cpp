@@ -11,8 +11,9 @@
 
 #include "StatManagerComponent.h"
 #include "Engine/DataTable.h"
-#include "Blueprints/B_Stat.h"
+#include "Blueprints/SLFStatBase.h"
 #include "UObject/ConstructorHelpers.h"
+#include "UObject/UnrealType.h"  // For TFieldIterator, FProperty, FClassProperty
 
 UStatManagerComponent::UStatManagerComponent()
 {
@@ -43,6 +44,29 @@ void UStatManagerComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	UE_LOG(LogTemp, Error, TEXT("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
+	UE_LOG(LogTemp, Error, TEXT("!!!!! UStatManagerComponent::BeginPlay() CALLED !!!!!"));
+	UE_LOG(LogTemp, Error, TEXT("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
+	UE_LOG(LogTemp, Warning, TEXT("[StatManager] >>> UStatManagerComponent::BeginPlay() called"));
+	UE_LOG(LogTemp, Warning, TEXT("[StatManager] >>> StatTable before load: %s"), StatTable ? *StatTable->GetName() : TEXT("NULL"));
+
+	// If StatTable is not set, load it at runtime
+	// This handles Blueprint components that don't inherit C++ constructor defaults
+	if (!StatTable)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[StatManager] >>> Attempting runtime load of StatTable..."));
+		UObject* LoadedObject = StaticLoadObject(
+			UDataTable::StaticClass(), nullptr,
+			TEXT("/Game/SoulslikeFramework/Data/_Datatables/DT_ExampleStatTable.DT_ExampleStatTable"));
+		UE_LOG(LogTemp, Warning, TEXT("[StatManager] >>> LoadedObject: %s"), LoadedObject ? *LoadedObject->GetName() : TEXT("NULL"));
+
+		if (LoadedObject)
+		{
+			StatTable = Cast<UDataTable>(LoadedObject);
+			UE_LOG(LogTemp, Warning, TEXT("[StatManager] >>> Cast to UDataTable: %s"), StatTable ? *StatTable->GetName() : TEXT("NULL/CAST FAILED"));
+		}
+	}
+
 	AActor* Owner = GetOwner();
 	UE_LOG(LogTemp, Warning, TEXT("═══════════════════════════════════════════════════════════════"));
 	UE_LOG(LogTemp, Warning, TEXT("[StatManager] BeginPlay on %s (AI: %s)"),
@@ -53,23 +77,138 @@ void UStatManagerComponent::BeginPlay()
 	UE_LOG(LogTemp, Warning, TEXT("[StatManager] ActiveStats count: %d"), ActiveStats.Num());
 	UE_LOG(LogTemp, Warning, TEXT("[StatManager] StatOverrides count: %d"), StatOverrides.Num());
 
-	// Initialize stats from table
+	// Initialize stats from table using generic row access
+	// (DataTable uses Blueprint struct, so we use reflection to read StatObject property)
 	if (StatTable)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[StatManager] Loading stats from table..."));
-		// Load stat definitions from data table
-		TArray<FName> RowNames = StatTable->GetRowNames();
-		for (const FName& RowName : RowNames)
+		UE_LOG(LogTemp, Warning, TEXT("[StatManager] Loading stats from table using reflection..."));
+
+		const UScriptStruct* RowStruct = StatTable->GetRowStruct();
+		if (!RowStruct)
 		{
-			// Get the row data (assuming FStatTableRow structure)
-			FStatInfo* RowData = StatTable->FindRow<FStatInfo>(RowName, TEXT("StatManagerInit"));
-			if (RowData)
+			UE_LOG(LogTemp, Error, TEXT("[StatManager] DataTable has no RowStruct!"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[StatManager] RowStruct: %s"), *RowStruct->GetName());
+
+			// Find StatObject property in the row struct
+			FProperty* StatObjectProp = RowStruct->FindPropertyByName(TEXT("StatObject"));
+			if (!StatObjectProp)
 			{
-				// Create a new B_Stat instance for this stat
-				UB_Stat* NewStat = NewObject<UB_Stat>(this);
-				NewStat->StatInfo = *RowData;
-				ActiveStats.Add(RowData->Tag, NewStat);
-				UE_LOG(LogTemp, Warning, TEXT("[StatManager] Created stat: %s"), *RowData->Tag.ToString());
+				// Try with Blueprint naming convention (may have GUID suffix)
+				for (TFieldIterator<FProperty> It(RowStruct); It; ++It)
+				{
+					if (It->GetName().StartsWith(TEXT("StatObject")))
+					{
+						StatObjectProp = *It;
+						UE_LOG(LogTemp, Warning, TEXT("[StatManager] Found property: %s"), *It->GetName());
+						break;
+					}
+				}
+			}
+
+			if (StatObjectProp)
+			{
+				// Iterate over all rows using raw row map
+				const TMap<FName, uint8*>& RowMap = StatTable->GetRowMap();
+				for (const auto& Pair : RowMap)
+				{
+					const FName& RowName = Pair.Key;
+					uint8* RowData = Pair.Value;
+
+					// Get StatObject value using property accessor
+					UClass* StatClass = nullptr;
+					if (FClassProperty* ClassProp = CastField<FClassProperty>(StatObjectProp))
+					{
+						StatClass = Cast<UClass>(ClassProp->GetObjectPropertyValue(StatObjectProp->ContainerPtrToValuePtr<void>(RowData)));
+					}
+					else if (FSoftClassProperty* SoftClassProp = CastField<FSoftClassProperty>(StatObjectProp))
+					{
+						FSoftObjectPtr SoftPtr = SoftClassProp->GetPropertyValue(StatObjectProp->ContainerPtrToValuePtr<void>(RowData));
+						StatClass = Cast<UClass>(SoftPtr.LoadSynchronous());
+					}
+					else if (FObjectProperty* ObjProp = CastField<FObjectProperty>(StatObjectProp))
+					{
+						StatClass = Cast<UClass>(ObjProp->GetObjectPropertyValue(StatObjectProp->ContainerPtrToValuePtr<void>(RowData)));
+					}
+
+					if (StatClass)
+					{
+						UE_LOG(LogTemp, Warning, TEXT("[StatManager] Row %s: Got StatClass %s"), *RowName.ToString(), *StatClass->GetName());
+
+						// Validate that StatClass is a USLFStatBase subclass
+						if (!StatClass->IsChildOf(USLFStatBase::StaticClass()))
+						{
+							UE_LOG(LogTemp, Warning, TEXT("[StatManager] Row %s: StatClass %s is not a USLFStatBase subclass!"),
+								*RowName.ToString(), *StatClass->GetName());
+							continue;
+						}
+
+						// Create an instance of the stat class
+						USLFStatBase* NewStat = NewObject<USLFStatBase>(this, StatClass);
+						if (NewStat)
+						{
+							// Get stat tag from its default StatInfo
+							FGameplayTag StatTag = NewStat->StatInfo.Tag;
+
+							// If tag is invalid or values are zero, check C++ parent class CDO
+							// (Blueprint CDO may have overridden StatInfo with empty/default values)
+							bool bNeedsParentDefaults = !StatTag.IsValid() ||
+								(NewStat->StatInfo.CurrentValue == 0.0 && NewStat->StatInfo.MaxValue == 0.0);
+
+							if (bNeedsParentDefaults)
+							{
+								UClass* ParentClass = StatClass->GetSuperClass();
+								while (ParentClass)
+								{
+									// Check if this is a native C++ class (not Blueprint)
+									if (!ParentClass->HasAnyClassFlags(CLASS_CompiledFromBlueprint))
+									{
+										if (USLFStatBase* ParentCDO = Cast<USLFStatBase>(ParentClass->GetDefaultObject()))
+										{
+											if (ParentCDO->StatInfo.Tag.IsValid())
+											{
+												// Copy the FULL StatInfo from C++ parent (not just tag)
+												NewStat->StatInfo = ParentCDO->StatInfo;
+												NewStat->MinValue = ParentCDO->MinValue;
+												NewStat->bOnlyMaxValueRelevant = ParentCDO->bOnlyMaxValueRelevant;
+												NewStat->bShowMaxValueOnLevelUp = ParentCDO->bShowMaxValueOnLevelUp;
+												NewStat->StatBehavior = ParentCDO->StatBehavior;
+												StatTag = NewStat->StatInfo.Tag;
+												UE_LOG(LogTemp, Warning, TEXT("[StatManager] Got StatInfo from C++ parent %s (Tag: %s, Value: %.0f/%.0f)"),
+													*ParentClass->GetName(), *StatTag.ToString(),
+													NewStat->StatInfo.CurrentValue, NewStat->StatInfo.MaxValue);
+												break;
+											}
+										}
+									}
+									ParentClass = ParentClass->GetSuperClass();
+								}
+							}
+
+							if (StatTag.IsValid())
+							{
+								ActiveStats.Add(StatTag, NewStat);
+								UE_LOG(LogTemp, Warning, TEXT("[StatManager] Created stat: %s (Tag: %s, Value: %.0f/%.0f)"),
+									*NewStat->GetName(), *StatTag.ToString(),
+									NewStat->StatInfo.CurrentValue, NewStat->StatInfo.MaxValue);
+							}
+							else
+							{
+								UE_LOG(LogTemp, Warning, TEXT("[StatManager] Stat %s has invalid tag (no C++ parent tag found)"), *NewStat->GetName());
+							}
+						}
+					}
+					else
+					{
+						UE_LOG(LogTemp, Warning, TEXT("[StatManager] Row %s: StatObject is NULL or wrong type"), *RowName.ToString());
+					}
+				}
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("[StatManager] Could not find StatObject property in RowStruct!"));
 			}
 		}
 	}
@@ -80,7 +219,7 @@ void UStatManagerComponent::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("[StatManager] Applying override for: %s"), *Override.Key.ToString());
 		if (UObject** StatObj = ActiveStats.Find(Override.Key))
 		{
-			UB_Stat* Stat = Cast<UB_Stat>(*StatObj);
+			USLFStatBase* Stat = Cast<USLFStatBase>(*StatObj);
 			if (Stat)
 			{
 				// Apply override values to stat
@@ -108,7 +247,7 @@ bool UStatManagerComponent::GetStat_Implementation(FGameplayTag StatTag, UObject
 		OutStatObject = *Found;
 
 		// Extract FStatInfo from the B_Stat object
-		UB_Stat* Stat = Cast<UB_Stat>(*Found);
+		USLFStatBase* Stat = Cast<USLFStatBase>(*Found);
 		if (Stat)
 		{
 			OutStatInfo = Stat->StatInfo;
@@ -164,7 +303,7 @@ void UStatManagerComponent::ResetStat_Implementation(FGameplayTag StatTag)
 	if (UObject** Found = ActiveStats.Find(StatTag))
 	{
 		// Reset B_Stat's current value to max value
-		UB_Stat* Stat = Cast<UB_Stat>(*Found);
+		USLFStatBase* Stat = Cast<USLFStatBase>(*Found);
 		if (Stat)
 		{
 			Stat->StatInfo.CurrentValue = Stat->StatInfo.MaxValue;
@@ -183,7 +322,7 @@ void UStatManagerComponent::AdjustStat_Implementation(FGameplayTag StatTag, ESLF
 
 	if (UObject** Found = ActiveStats.Find(StatTag))
 	{
-		UB_Stat* Stat = Cast<UB_Stat>(*Found);
+		USLFStatBase* Stat = Cast<USLFStatBase>(*Found);
 		if (Stat)
 		{
 			// Use the B_Stat's own AdjustValue function
@@ -209,7 +348,7 @@ void UStatManagerComponent::AdjustAffectedStats_Implementation(UObject* Stat, do
 	UE_LOG(LogTemp, Log, TEXT("[StatManager] AdjustAffectedStats from %s"), *Stat->GetName());
 
 	// Get StatBehavior.StatsToAffect from the B_Stat
-	UB_Stat* BStat = Cast<UB_Stat>(Stat);
+	USLFStatBase* BStat = Cast<USLFStatBase>(Stat);
 	if (!BStat) return;
 
 	const FStatBehavior& StatBehavior = BStat->StatBehavior;
@@ -280,7 +419,7 @@ void UStatManagerComponent::SerializeStatsData_Implementation()
 	// For each ActiveStat, create FInstancedStruct with save data
 	for (const auto& StatEntry : ActiveStats)
 	{
-		UB_Stat* Stat = Cast<UB_Stat>(StatEntry.Value);
+		USLFStatBase* Stat = Cast<USLFStatBase>(StatEntry.Value);
 		if (Stat)
 		{
 			// Create save info struct from the stat
@@ -310,7 +449,7 @@ void UStatManagerComponent::InitializeLoadedStats_Implementation(const TArray<FI
 		{
 			if (UObject** Found = ActiveStats.Find(StatData->Tag))
 			{
-				UB_Stat* Stat = Cast<UB_Stat>(*Found);
+				USLFStatBase* Stat = Cast<USLFStatBase>(*Found);
 				if (Stat)
 				{
 					Stat->StatInfo = *StatData;
@@ -334,7 +473,7 @@ void UStatManagerComponent::ToggleRegenForStat_Implementation(FGameplayTag StatT
 	if (UObject** Found = ActiveStats.Find(StatTag))
 	{
 		// Call ToggleStatRegen on B_Stat object
-		UB_Stat* Stat = Cast<UB_Stat>(*Found);
+		USLFStatBase* Stat = Cast<USLFStatBase>(*Found);
 		if (Stat)
 		{
 			Stat->ToggleStatRegen(bStop);
@@ -358,7 +497,7 @@ void UStatManagerComponent::EventInitializeStats()
 
 		if (StatClass)
 		{
-			UB_Stat* StatInstance = NewObject<UB_Stat>(this, StatClass);
+			USLFStatBase* StatInstance = NewObject<USLFStatBase>(this, StatClass);
 			if (StatInstance)
 			{
 				StatInstance->StatInfo.Tag = StatTag;
@@ -378,7 +517,7 @@ void UStatManagerComponent::EventOnLevelUpRequested(FGameplayTag StatTag)
 	// Find the stat and try to level it up
 	if (UObject** Found = ActiveStats.Find(StatTag))
 	{
-		UB_Stat* Stat = Cast<UB_Stat>(*Found);
+		USLFStatBase* Stat = Cast<USLFStatBase>(*Found);
 		if (Stat)
 		{
 			// Check if we have enough currency for level up

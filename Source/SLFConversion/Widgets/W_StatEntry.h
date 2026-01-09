@@ -26,14 +26,14 @@
 // Forward declarations for widget types
 
 
-// Forward declarations for Blueprint types
-class UB_Stat;
+// Forward declarations for stat types
+class USLFStatBase;
 
 // Forward declarations for SaveGame types
 
 
 // Event Dispatchers
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FW_StatEntry_OnStatChangeRequest, UB_Stat*, StatObject, bool, Increase);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FW_StatEntry_OnStatChangeRequest, USLFStatBase*, StatObject, bool, Increase);
 
 UCLASS()
 class SLFCONVERSION_API UW_StatEntry : public UUserWidget, public ISLFStatEntryInterface
@@ -52,7 +52,7 @@ public:
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
-	UB_Stat* Stat;
+	USLFStatBase* Stat;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	UObject* Tooltip;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
@@ -78,8 +78,8 @@ public:
 
 	// Event Handlers (1 events)
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_StatEntry")
-	void EventOnStatUpdated(UB_Stat* UpdatedStat, double Change, bool UpdateAffectedStats, ESLFValueType ValueType);
-	virtual void EventOnStatUpdated_Implementation(UB_Stat* UpdatedStat, double Change, bool UpdateAffectedStats, ESLFValueType ValueType);
+	void EventOnStatUpdated(USLFStatBase* UpdatedStat, double Change, bool UpdateAffectedStats, ESLFValueType ValueType);
+	virtual void EventOnStatUpdated_Implementation(USLFStatBase* UpdatedStat, double Change, bool UpdateAffectedStats, ESLFValueType ValueType);
 
 protected:
 	// Cache references
