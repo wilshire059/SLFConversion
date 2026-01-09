@@ -24,6 +24,7 @@
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "UObject/UObjectGlobals.h"
 #include "UObject/SavePackage.h"
+#include "GameplayTagContainer.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogSLFAutomation, Log, All);
 
@@ -1438,6 +1439,277 @@ int32 USLFAutomationLibrary::ReplaceVariableReferences(UObject* BlueprintAsset, 
 
 	UE_LOG(LogSLFAutomation, Warning, TEXT("=== Modified %d nodes ==="), ModifiedCount);
 	return ModifiedCount;
+}
+
+// ============================================================================
+// DATA ASSET OPERATIONS
+// ============================================================================
+
+bool USLFAutomationLibrary::ApplyEquipSlotsToItem(const FString& ItemAssetPath, const TArray<FString>& SlotTags)
+{
+	UE_LOG(LogSLFAutomation, Warning, TEXT("ApplyEquipSlotsToItem: %s with %d tags"), *ItemAssetPath, SlotTags.Num());
+
+	// Load the asset
+	UObject* Asset = LoadObject<UObject>(nullptr, *ItemAssetPath);
+	if (!Asset)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Failed to load asset: %s"), *ItemAssetPath);
+		return false;
+	}
+
+	// Get the ItemInformation property
+	FStructProperty* ItemInfoProp = FindFProperty<FStructProperty>(Asset->GetClass(), TEXT("ItemInformation"));
+	if (!ItemInfoProp)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  No ItemInformation property found"));
+		return false;
+	}
+
+	void* ItemInfoPtr = ItemInfoProp->ContainerPtrToValuePtr<void>(Asset);
+	if (!ItemInfoPtr)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Could not get ItemInformation pointer"));
+		return false;
+	}
+
+	// Get EquipmentDetails from ItemInformation
+	UScriptStruct* ItemInfoStruct = ItemInfoProp->Struct;
+	FStructProperty* EquipDetailsProp = FindFProperty<FStructProperty>(ItemInfoStruct, TEXT("EquipmentDetails"));
+	if (!EquipDetailsProp)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  No EquipmentDetails property found"));
+		return false;
+	}
+
+	void* EquipDetailsPtr = EquipDetailsProp->ContainerPtrToValuePtr<void>(ItemInfoPtr);
+	if (!EquipDetailsPtr)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Could not get EquipmentDetails pointer"));
+		return false;
+	}
+
+	// Get EquipSlots from EquipmentDetails
+	UScriptStruct* EquipDetailsStruct = EquipDetailsProp->Struct;
+	FStructProperty* EquipSlotsProp = FindFProperty<FStructProperty>(EquipDetailsStruct, TEXT("EquipSlots"));
+	if (!EquipSlotsProp)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  No EquipSlots property found"));
+		return false;
+	}
+
+	void* EquipSlotsPtr = EquipSlotsProp->ContainerPtrToValuePtr<void>(EquipDetailsPtr);
+	if (!EquipSlotsPtr)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Could not get EquipSlots pointer"));
+		return false;
+	}
+
+	// Cast to FGameplayTagContainer
+	FGameplayTagContainer* TagContainer = static_cast<FGameplayTagContainer*>(EquipSlotsPtr);
+
+	// Add each tag
+	int32 AddedCount = 0;
+	for (const FString& TagStr : SlotTags)
+	{
+		FGameplayTag Tag = FGameplayTag::RequestGameplayTag(FName(*TagStr), false);
+		if (Tag.IsValid())
+		{
+			TagContainer->AddTag(Tag);
+			AddedCount++;
+			UE_LOG(LogSLFAutomation, Warning, TEXT("  Added tag: %s"), *TagStr);
+		}
+		else
+		{
+			UE_LOG(LogSLFAutomation, Warning, TEXT("  Invalid tag (not registered): %s"), *TagStr);
+		}
+	}
+
+	if (AddedCount == 0)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  No tags added"));
+		return false;
+	}
+
+	// Mark package dirty and save
+	Asset->MarkPackageDirty();
+
+	UPackage* Package = Asset->GetOutermost();
+	FString PackageFileName = FPackageName::LongPackageNameToFilename(Package->GetName(), FPackageName::GetAssetPackageExtension());
+
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Standalone;
+	SaveArgs.Error = GError;
+
+	bool bSaved = UPackage::SavePackage(Package, Asset, *PackageFileName, SaveArgs);
+
+	if (bSaved)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  Saved successfully with %d tags"), AddedCount);
+	}
+	else
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Failed to save"));
+	}
+
+	return bSaved;
+}
+
+bool USLFAutomationLibrary::ApplySkeletalMeshInfoToItem(const FString& ItemAssetPath, const TArray<FString>& CharacterAssetNames, const TArray<FString>& MeshPaths)
+{
+	UE_LOG(LogSLFAutomation, Warning, TEXT("ApplySkeletalMeshInfoToItem: %s with %d entries"), *ItemAssetPath, CharacterAssetNames.Num());
+
+	if (CharacterAssetNames.Num() != MeshPaths.Num())
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  CharacterAssetNames and MeshPaths arrays must have same length"));
+		return false;
+	}
+
+	if (CharacterAssetNames.Num() == 0)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  No mesh entries to apply"));
+		return true;
+	}
+
+	// Load the asset
+	UObject* Asset = LoadObject<UObject>(nullptr, *ItemAssetPath);
+	if (!Asset)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Failed to load asset: %s"), *ItemAssetPath);
+		return false;
+	}
+
+	// Get the ItemInformation property
+	FStructProperty* ItemInfoProp = FindFProperty<FStructProperty>(Asset->GetClass(), TEXT("ItemInformation"));
+	if (!ItemInfoProp)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  No ItemInformation property found"));
+		return false;
+	}
+
+	void* ItemInfoPtr = ItemInfoProp->ContainerPtrToValuePtr<void>(Asset);
+	if (!ItemInfoPtr)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Could not get ItemInformation pointer"));
+		return false;
+	}
+
+	// Get EquipmentDetails from ItemInformation
+	UScriptStruct* ItemInfoStruct = ItemInfoProp->Struct;
+	FStructProperty* EquipDetailsProp = FindFProperty<FStructProperty>(ItemInfoStruct, TEXT("EquipmentDetails"));
+	if (!EquipDetailsProp)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  No EquipmentDetails property found"));
+		return false;
+	}
+
+	void* EquipDetailsPtr = EquipDetailsProp->ContainerPtrToValuePtr<void>(ItemInfoPtr);
+	if (!EquipDetailsPtr)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Could not get EquipmentDetails pointer"));
+		return false;
+	}
+
+	// Get SkeletalMeshInfo from EquipmentDetails
+	UScriptStruct* EquipDetailsStruct = EquipDetailsProp->Struct;
+	FMapProperty* MeshInfoProp = FindFProperty<FMapProperty>(EquipDetailsStruct, TEXT("SkeletalMeshInfo"));
+	if (!MeshInfoProp)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  No SkeletalMeshInfo property found"));
+		return false;
+	}
+
+	void* MeshInfoPtr = MeshInfoProp->ContainerPtrToValuePtr<void>(EquipDetailsPtr);
+	if (!MeshInfoPtr)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Could not get SkeletalMeshInfo pointer"));
+		return false;
+	}
+
+	// The TMap is: TMap<TSoftObjectPtr<UPrimaryDataAsset>, TSoftObjectPtr<USkeletalMesh>>
+	// We need to use reflection to add entries
+	FScriptMapHelper MapHelper(MeshInfoProp, MeshInfoPtr);
+
+	int32 AddedCount = 0;
+	for (int32 i = 0; i < CharacterAssetNames.Num(); i++)
+	{
+		const FString& CharName = CharacterAssetNames[i];
+		const FString& MeshPath = MeshPaths[i];
+
+		// Find the character data asset - try common paths
+		FString CharAssetPath = FString::Printf(TEXT("/Game/SoulslikeFramework/Data/BaseCharacters/%s.%s"), *CharName, *CharName);
+		UPrimaryDataAsset* CharAsset = LoadObject<UPrimaryDataAsset>(nullptr, *CharAssetPath);
+
+		if (!CharAsset)
+		{
+			// Try Characters subfolder
+			CharAssetPath = FString::Printf(TEXT("/Game/SoulslikeFramework/Data/Characters/%s.%s"), *CharName, *CharName);
+			CharAsset = LoadObject<UPrimaryDataAsset>(nullptr, *CharAssetPath);
+		}
+
+		if (!CharAsset)
+		{
+			// Try directly in Data folder
+			CharAssetPath = FString::Printf(TEXT("/Game/SoulslikeFramework/Data/%s.%s"), *CharName, *CharName);
+			CharAsset = LoadObject<UPrimaryDataAsset>(nullptr, *CharAssetPath);
+		}
+
+		if (!CharAsset)
+		{
+			UE_LOG(LogSLFAutomation, Warning, TEXT("  Could not find character asset: %s"), *CharName);
+			continue;
+		}
+
+		// Load the skeletal mesh
+		USkeletalMesh* SkMesh = LoadObject<USkeletalMesh>(nullptr, *MeshPath);
+		if (!SkMesh)
+		{
+			UE_LOG(LogSLFAutomation, Warning, TEXT("  Could not load skeletal mesh: %s"), *MeshPath);
+			continue;
+		}
+
+		// Create soft object pointers
+		TSoftObjectPtr<UPrimaryDataAsset> CharSoftPtr(CharAsset);
+		TSoftObjectPtr<USkeletalMesh> MeshSoftPtr(SkMesh);
+
+		// Add to the map using the helper
+		// MapHelper doesn't work well with soft object ptrs, so we'll use direct cast approach
+		typedef TMap<TSoftObjectPtr<UPrimaryDataAsset>, TSoftObjectPtr<USkeletalMesh>> MeshMapType;
+		MeshMapType* ActualMap = static_cast<MeshMapType*>(MeshInfoPtr);
+
+		ActualMap->Add(CharSoftPtr, MeshSoftPtr);
+		AddedCount++;
+
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  Added mesh mapping: %s -> %s"), *CharName, *SkMesh->GetName());
+	}
+
+	if (AddedCount == 0)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  No mesh entries added"));
+		return false;
+	}
+
+	// Mark package dirty and save
+	Asset->MarkPackageDirty();
+
+	UPackage* Package = Asset->GetOutermost();
+	FString PackageFileName = FPackageName::LongPackageNameToFilename(Package->GetName(), FPackageName::GetAssetPackageExtension());
+
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Standalone;
+	SaveArgs.Error = GError;
+
+	bool bSaved = UPackage::SavePackage(Package, Asset, *PackageFileName, SaveArgs);
+
+	if (bSaved)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  Saved successfully with %d mesh entries"), AddedCount);
+	}
+	else
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Failed to save"));
+	}
+
+	return bSaved;
 }
 
 #endif // WITH_EDITOR

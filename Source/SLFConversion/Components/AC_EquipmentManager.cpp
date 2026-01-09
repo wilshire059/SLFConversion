@@ -12,6 +12,8 @@
 #include "Components/StatManagerComponent.h"
 #include "Components/AC_InventoryManager.h"
 #include "Interfaces/SLFPlayerInterface.h"
+#include "Interfaces/BPI_Player.h"
+#include "Framework/SLFGameInstance.h"
 #include "Blueprints/B_Item.h"
 #include "Widgets/W_InventorySlot.h"
 #include "Net/UnrealNetwork.h"
@@ -578,14 +580,80 @@ void UAC_EquipmentManager::SerializeEquipmentData_Implementation()
 
 /**
  * EquipItemToSlot - Generic equip function
+ * Routes to appropriate equip function based on item category
  */
 void UAC_EquipmentManager::EquipItemToSlot_Implementation(UPrimaryDataAsset* TargetItem, const FGameplayTag& TargetEquipmentSlot, bool ChangeStats, bool& OutSuccess, bool& OutSuccess_1, bool& OutSuccess_2, bool& OutSuccess_3, bool& OutSuccess_4, bool& OutSuccess_5, bool& OutSuccess_6)
 {
-	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::EquipItemToSlot"));
+	OutSuccess = false;
+	OutSuccess_1 = false;
+	OutSuccess_2 = false;
+	OutSuccess_3 = false;
+	OutSuccess_4 = false;
+	OutSuccess_5 = false;
+	OutSuccess_6 = false;
 
-	// Determine item type and call appropriate equip function
-	// For now, use weapon equip as default
-	EquipWeaponToSlot(TargetItem, TargetEquipmentSlot, ChangeStats, OutSuccess, OutSuccess_1, OutSuccess_2, OutSuccess_3);
+	// Get item category to determine which equip function to use
+	UPDA_Item* Item = Cast<UPDA_Item>(TargetItem);
+	if (!Item)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UAC_EquipmentManager::EquipItemToSlot - Item is not UPDA_Item"));
+		// Fallback to weapon equip
+		EquipWeaponToSlot(TargetItem, TargetEquipmentSlot, ChangeStats, OutSuccess, OutSuccess_1, OutSuccess_2, OutSuccess_3);
+		OutSuccess_4 = OutSuccess;
+		OutSuccess_5 = OutSuccess;
+		OutSuccess_6 = OutSuccess;
+		return;
+	}
+
+	ESLFItemCategory Category = Item->ItemInformation.Category.Category;
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::EquipItemToSlot - Item: %s, Category: %d, Slot: %s"),
+		*Item->GetName(), static_cast<int32>(Category), *TargetEquipmentSlot.ToString());
+
+	switch (Category)
+	{
+	case ESLFItemCategory::Weapons:
+	case ESLFItemCategory::Shields:
+	case ESLFItemCategory::Abilities:
+		// Weapons, shields, and abilities spawn as actors attached to sockets
+		EquipWeaponToSlot(TargetItem, TargetEquipmentSlot, ChangeStats, OutSuccess, OutSuccess_1, OutSuccess_2, OutSuccess_3);
+		break;
+
+	case ESLFItemCategory::Armor:
+		// Armor swaps character skeletal mesh components
+		EquipArmorToSlot(TargetItem, TargetEquipmentSlot, ChangeStats, OutSuccess, OutSuccess_1, OutSuccess_2, OutSuccess_3);
+		break;
+
+	case ESLFItemCategory::Bolstering:
+		// Talismans apply buffs/stats only (no visual)
+		{
+			bool bTalismanSuccess = EquipTalismanToSlot(TargetItem, TargetEquipmentSlot, ChangeStats);
+			OutSuccess = bTalismanSuccess;
+			OutSuccess_1 = bTalismanSuccess;
+			OutSuccess_2 = bTalismanSuccess;
+			OutSuccess_3 = bTalismanSuccess;
+		}
+		break;
+
+	case ESLFItemCategory::Tools:
+		// Tools go to tool slots
+		{
+			bool ToolSuccess1, ToolSuccess2, ToolSuccess3;
+			EquipToolToSlot(TargetItem, TargetEquipmentSlot, ChangeStats, ToolSuccess1, ToolSuccess2, ToolSuccess3);
+			OutSuccess = ToolSuccess1;
+			OutSuccess_1 = ToolSuccess2;
+			OutSuccess_2 = ToolSuccess3;
+			OutSuccess_3 = ToolSuccess1;
+		}
+		break;
+
+	default:
+		// Unknown category - fallback to weapon equip
+		UE_LOG(LogTemp, Warning, TEXT("UAC_EquipmentManager::EquipItemToSlot - Unknown category %d, using weapon equip"),
+			static_cast<int32>(Category));
+		EquipWeaponToSlot(TargetItem, TargetEquipmentSlot, ChangeStats, OutSuccess, OutSuccess_1, OutSuccess_2, OutSuccess_3);
+		break;
+	}
+
 	OutSuccess_4 = OutSuccess;
 	OutSuccess_5 = OutSuccess;
 	OutSuccess_6 = OutSuccess;
@@ -1300,45 +1368,54 @@ void UAC_EquipmentManager::DestroyEquipmentActor(const FGameplayTag& SlotTag)
  */
 void UAC_EquipmentManager::ApplyArmorMeshToCharacter(UPDA_Item* ArmorItem, const FGameplayTag& SlotTag)
 {
+
 	if (!ArmorItem || !SlotTag.IsValid())
 	{
+		UE_LOG(LogTemp, Warning, TEXT("ApplyArmorMeshToCharacter - Invalid ArmorItem or SlotTag"));
 		return;
 	}
 
+	// Get the character - Owner might be PlayerController, so get Pawn if needed
 	AActor* Owner = GetOwner();
 	if (!Owner)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("ApplyArmorMeshToCharacter - No owner"));
 		return;
+	}
+
+	// If Owner is a PlayerController, get the Pawn instead
+	AActor* TargetActor = Owner;
+	if (APlayerController* PC = Cast<APlayerController>(Owner))
+	{
+		TargetActor = PC->GetPawn();
+		if (!TargetActor)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("ApplyArmorMeshToCharacter - PlayerController has no Pawn"));
+			return;
+		}
 	}
 
 	// Get the skeletal mesh map from the armor item
 	const TMap<TSoftObjectPtr<UPrimaryDataAsset>, TSoftObjectPtr<USkeletalMesh>>& MeshMap =
 		ArmorItem->ItemInformation.EquipmentDetails.SkeletalMeshInfo;
 
+
 	if (MeshMap.Num() == 0)
 	{
-		UE_LOG(LogTemp, Log, TEXT("ApplyArmorMeshToCharacter - No mesh entries for %s"), *ArmorItem->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("ApplyArmorMeshToCharacter - No mesh entries for %s (SkeletalMeshInfo is empty)"), *ArmorItem->GetName());
 		return;
 	}
 
 	// Get the current character's base info from GameInstance to find the right mesh
 	TSoftObjectPtr<USkeletalMesh> ArmorMesh;
-	UGameInstance* GI = Owner->GetGameInstance();
-	if (GI)
+	if (USLFGameInstance* GI = Cast<USLFGameInstance>(TargetActor->GetGameInstance()))
 	{
-		// Try to get SelectedBaseClass property from GameInstance
-		FProperty* Prop = GI->GetClass()->FindPropertyByName(TEXT("SelectedBaseClass"));
-		if (Prop && Prop->IsA<FObjectPropertyBase>())
+		if (GI->SelectedBaseClass)
 		{
-			FObjectPropertyBase* ObjProp = CastField<FObjectPropertyBase>(Prop);
-			UObject* SelectedClass = ObjProp->GetObjectPropertyValue_InContainer(GI);
-			if (SelectedClass)
+			TSoftObjectPtr<UPrimaryDataAsset> CharacterInfoKey(GI->SelectedBaseClass);
+			if (const TSoftObjectPtr<USkeletalMesh>* MeshPtr = MeshMap.Find(CharacterInfoKey))
 			{
-				TSoftObjectPtr<UPrimaryDataAsset> CharacterInfoKey(Cast<UPrimaryDataAsset>(SelectedClass));
-				if (const TSoftObjectPtr<USkeletalMesh>* MeshPtr = MeshMap.Find(CharacterInfoKey))
-				{
-					ArmorMesh = *MeshPtr;
-				}
+				ArmorMesh = *MeshPtr;
 			}
 		}
 	}
@@ -1362,33 +1439,37 @@ void UAC_EquipmentManager::ApplyArmorMeshToCharacter(UPDA_Item* ArmorItem, const
 		return;
 	}
 
+
 	// Call ISLFPlayerInterface mesh swap functions based on slot type
-	if (ISLFPlayerInterface* PlayerInterface = Cast<ISLFPlayerInterface>(Owner))
+	IBPI_Player* PlayerInterface = Cast<IBPI_Player>(TargetActor);
+	if (!PlayerInterface)
 	{
-		static const FGameplayTag HeadSlot = FGameplayTag::RequestGameplayTag(FName("Equipment.Slot.Head"));
-		static const FGameplayTag ChestSlot = FGameplayTag::RequestGameplayTag(FName("Equipment.Slot.Chest"));
-		static const FGameplayTag ArmsSlot = FGameplayTag::RequestGameplayTag(FName("Equipment.Slot.Arms"));
-		static const FGameplayTag LegsSlot = FGameplayTag::RequestGameplayTag(FName("Equipment.Slot.Legs"));
+		UE_LOG(LogTemp, Warning, TEXT("ApplyArmorMeshToCharacter - TargetActor %s does not implement IBPI_Player!"), *TargetActor->GetName());
+		return;
+	}
+
+	if (PlayerInterface)
+	{
+		static const FGameplayTag HeadSlot = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Head"));
+		static const FGameplayTag ChestSlot = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Armor"));
+		static const FGameplayTag ArmsSlot = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Gloves"));
+		static const FGameplayTag LegsSlot = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Greaves"));
 
 		if (SlotTag.MatchesTag(HeadSlot))
 		{
-			PlayerInterface->ChangeHeadpiece(ArmorMesh);
-			UE_LOG(LogTemp, Log, TEXT("ApplyArmorMeshToCharacter - Applied headpiece mesh"));
+			IBPI_Player::Execute_ChangeHeadpiece(TargetActor, ArmorMesh);
 		}
 		else if (SlotTag.MatchesTag(ChestSlot))
 		{
-			PlayerInterface->ChangeArmor(ArmorMesh);
-			UE_LOG(LogTemp, Log, TEXT("ApplyArmorMeshToCharacter - Applied chest armor mesh"));
+			IBPI_Player::Execute_ChangeArmor(TargetActor, ArmorMesh);
 		}
 		else if (SlotTag.MatchesTag(ArmsSlot))
 		{
-			PlayerInterface->ChangeGloves(ArmorMesh);
-			UE_LOG(LogTemp, Log, TEXT("ApplyArmorMeshToCharacter - Applied gloves mesh"));
+			IBPI_Player::Execute_ChangeGloves(TargetActor, ArmorMesh);
 		}
 		else if (SlotTag.MatchesTag(LegsSlot))
 		{
-			PlayerInterface->ChangeGreaves(ArmorMesh);
-			UE_LOG(LogTemp, Log, TEXT("ApplyArmorMeshToCharacter - Applied greaves mesh"));
+			IBPI_Player::Execute_ChangeGreaves(TargetActor, ArmorMesh);
 		}
 	}
 }
@@ -1409,35 +1490,42 @@ void UAC_EquipmentManager::RemoveArmorMeshFromCharacter(const FGameplayTag& Slot
 		return;
 	}
 
-	// Call ISLFPlayerInterface mesh swap functions with null/default mesh
-	if (ISLFPlayerInterface* PlayerInterface = Cast<ISLFPlayerInterface>(Owner))
+	// If Owner is a PlayerController, get the Pawn instead
+	AActor* TargetActor = Owner;
+	if (APlayerController* PC = Cast<APlayerController>(Owner))
 	{
-		static const FGameplayTag HeadSlot = FGameplayTag::RequestGameplayTag(FName("Equipment.Slot.Head"));
-		static const FGameplayTag ChestSlot = FGameplayTag::RequestGameplayTag(FName("Equipment.Slot.Chest"));
-		static const FGameplayTag ArmsSlot = FGameplayTag::RequestGameplayTag(FName("Equipment.Slot.Arms"));
-		static const FGameplayTag LegsSlot = FGameplayTag::RequestGameplayTag(FName("Equipment.Slot.Legs"));
+		TargetActor = PC->GetPawn();
+		if (!TargetActor)
+		{
+			return;
+		}
+	}
+
+	// Call ISLFPlayerInterface mesh swap functions with null/default mesh
+	if (IBPI_Player* PlayerInterface = Cast<IBPI_Player>(TargetActor))
+	{
+		static const FGameplayTag HeadSlot = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Head"));
+		static const FGameplayTag ChestSlot = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Armor"));
+		static const FGameplayTag ArmsSlot = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Gloves"));
+		static const FGameplayTag LegsSlot = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Greaves"));
 
 		TSoftObjectPtr<USkeletalMesh> NullMesh;  // Empty/null mesh to revert
 
 		if (SlotTag.MatchesTag(HeadSlot))
 		{
-			PlayerInterface->ChangeHeadpiece(NullMesh);
-			UE_LOG(LogTemp, Log, TEXT("RemoveArmorMeshFromCharacter - Removed headpiece mesh"));
+			IBPI_Player::Execute_ChangeHeadpiece(TargetActor, NullMesh);
 		}
 		else if (SlotTag.MatchesTag(ChestSlot))
 		{
-			PlayerInterface->ChangeArmor(NullMesh);
-			UE_LOG(LogTemp, Log, TEXT("RemoveArmorMeshFromCharacter - Removed chest armor mesh"));
+			IBPI_Player::Execute_ChangeArmor(TargetActor, NullMesh);
 		}
 		else if (SlotTag.MatchesTag(ArmsSlot))
 		{
-			PlayerInterface->ChangeGloves(NullMesh);
-			UE_LOG(LogTemp, Log, TEXT("RemoveArmorMeshFromCharacter - Removed gloves mesh"));
+			IBPI_Player::Execute_ChangeGloves(TargetActor, NullMesh);
 		}
 		else if (SlotTag.MatchesTag(LegsSlot))
 		{
-			PlayerInterface->ChangeGreaves(NullMesh);
-			UE_LOG(LogTemp, Log, TEXT("RemoveArmorMeshFromCharacter - Removed greaves mesh"));
+			IBPI_Player::Execute_ChangeGreaves(TargetActor, NullMesh);
 		}
 	}
 }

@@ -130,5 +130,28 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
 	static int32 ReplaceVariableReferences(UObject* BlueprintAsset, FName OldVarName, FName NewVarName);
 
+	// ========================================================================
+	// DATA ASSET OPERATIONS
+	// ========================================================================
+
+	/**
+	 * Apply equip slot tags to an item data asset.
+	 * @param ItemAssetPath Full path to the item asset (e.g., "/Game/SoulslikeFramework/Data/Items/DA_ExampleArmor")
+	 * @param SlotTags Array of slot tag strings (e.g., "SoulslikeFramework.Equipment.SlotType.Armor")
+	 * @return true if successfully applied and saved
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|DataAsset")
+	static bool ApplyEquipSlotsToItem(const FString& ItemAssetPath, const TArray<FString>& SlotTags);
+
+	/**
+	 * Apply skeletal mesh info to an armor item data asset.
+	 * @param ItemAssetPath Full path to the item asset (e.g., "/Game/SoulslikeFramework/Data/Items/DA_ExampleArmor")
+	 * @param CharacterAssetNames Array of character asset names (e.g., "DA_Quinn", "DA_Manny")
+	 * @param MeshPaths Array of skeletal mesh paths corresponding to each character
+	 * @return true if successfully applied and saved
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|DataAsset")
+	static bool ApplySkeletalMeshInfoToItem(const FString& ItemAssetPath, const TArray<FString>& CharacterAssetNames, const TArray<FString>& MeshPaths);
+
 #endif // WITH_EDITOR
 };

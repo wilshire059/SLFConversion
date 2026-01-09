@@ -56,13 +56,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config")
 	UDataTable* SlotTable;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Runtime")
-	TMap<FGameplayTag, FGameplayTag> AllEquippedItems;
+	TMap<FGameplayTag, TObjectPtr<UPrimaryDataAsset>> AllEquippedItems;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Runtime")
 	TMap<FGameplayTag, FGameplayTag> HiddenItems;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Runtime")
-	TMap<FGameplayTag, FGameplayTag> SpawnedItemsAtSlots;
+	TMap<FGameplayTag, TObjectPtr<AActor>> SpawnedItemsAtSlots;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Runtime")
-	TMap<FGameplayTag, FGameplayTag> SpawnedBuffAtSlot;
+	TMap<FGameplayTag, TObjectPtr<UObject>> SpawnedBuffAtSlot;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Runtime", Replicated)
 	ESLFOverlayState ActiveOverlayState;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config")
@@ -138,6 +138,18 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_EquipmentManager")
 	void UnequipArmorAtSlot(const FGameplayTag& SlotTag);
 	virtual void UnequipArmorAtSlot_Implementation(const FGameplayTag& SlotTag);
+
+	/**
+	 * Spawn equipment actor (weapon mesh) and attach to character
+	 * Used for weapons that spawn as actors in the world attached to character sockets
+	 */
+	void SpawnEquipmentActor(UPDA_Item* Item, const FGameplayTag& SlotTag);
+
+	/**
+	 * Destroy spawned equipment actor at slot
+	 * Called when unequipping weapons
+	 */
+	void DestroyEquipmentActor(const FGameplayTag& SlotTag);
 
 	/**
 	 * Apply armor skeletal mesh to character body slot
