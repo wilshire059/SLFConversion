@@ -9,13 +9,14 @@
 
 #include "Components/AC_EquipmentManager.h"
 #include "Components/AC_BuffManager.h"
-#include "Components/AC_StatManager.h"
+#include "Components/StatManagerComponent.h"
 #include "Components/AC_InventoryManager.h"
 #include "Blueprints/B_Item.h"
 #include "Widgets/W_InventorySlot.h"
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/PlayerController.h"
 
 UAC_EquipmentManager::UAC_EquipmentManager()
 {
@@ -34,7 +35,26 @@ UAC_EquipmentManager::UAC_EquipmentManager()
 void UAC_EquipmentManager::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::BeginPlay"));
+
+	// Load default SlotTable if not set
+	if (!SlotTable)
+	{
+		static const TCHAR* DefaultSlotTablePath = TEXT("/Game/SoulslikeFramework/Data/_Datatables/DT_ExampleEquipmentSlotInfo.DT_ExampleEquipmentSlotInfo");
+		SlotTable = LoadObject<UDataTable>(nullptr, DefaultSlotTablePath);
+
+		if (SlotTable)
+		{
+			UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::BeginPlay - Loaded default SlotTable with %d rows"), SlotTable->GetRowNames().Num());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("UAC_EquipmentManager::BeginPlay - SlotTable not set and default not found!"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::BeginPlay - SlotTable already set with %d rows"), SlotTable->GetRowNames().Num());
+	}
 }
 
 void UAC_EquipmentManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -59,16 +79,29 @@ void UAC_EquipmentManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 bool UAC_EquipmentManager::IsSlotOccupied_Implementation(const FGameplayTag& SlotTag)
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::IsSlotOccupied - Slot: %s"), *SlotTag.ToString());
-	return AllEquippedItems.Contains(SlotTag);
+	if (TObjectPtr<UPrimaryDataAsset>* ItemPtr = AllEquippedItems.Find(SlotTag))
+	{
+		return IsValid(*ItemPtr);
+	}
+	return false;
 }
 
 /**
  * EquipWeaponToSlot - Equip a weapon to a specific slot
+ *
+ * Blueprint Logic:
+ * 1. Unequip any existing item at the slot
+ * 2. Store item in AllEquippedItems map
+ * 3. Apply stat changes if requested
+ * 4. Spawn world actor (weapon mesh) via AsyncSpawnAndEquipWeapon
+ * 5. Update overlay states and guard sequence
+ * 6. Broadcast OnItemEquippedToSlot
  */
 void UAC_EquipmentManager::EquipWeaponToSlot_Implementation(UPrimaryDataAsset* TargetItem, const FGameplayTag& TargetEquipmentSlot, bool ChangeStats, bool& OutSuccess, bool& OutSuccess_1, bool& OutSuccess_2, bool& OutSuccess_3)
 {
-	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::EquipWeaponToSlot - Item: %s, Slot: %s"),
-		TargetItem ? *TargetItem->GetName() : TEXT("None"), *TargetEquipmentSlot.ToString());
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::EquipWeaponToSlot - Item: %s, Slot: %s, ChangeStats: %s"),
+		TargetItem ? *TargetItem->GetName() : TEXT("None"), *TargetEquipmentSlot.ToString(),
+		ChangeStats ? TEXT("true") : TEXT("false"));
 
 	OutSuccess = false;
 	OutSuccess_1 = false;
@@ -77,6 +110,7 @@ void UAC_EquipmentManager::EquipWeaponToSlot_Implementation(UPrimaryDataAsset* T
 
 	if (!IsValid(TargetItem) || !TargetEquipmentSlot.IsValid())
 	{
+		UE_LOG(LogTemp, Warning, TEXT("  Invalid item or slot tag"));
 		return;
 	}
 
@@ -86,9 +120,25 @@ void UAC_EquipmentManager::EquipWeaponToSlot_Implementation(UPrimaryDataAsset* T
 		UnequipWeaponAtSlot(TargetEquipmentSlot);
 	}
 
-	// Add to equipped items map
-	FGameplayTag ItemTag = FGameplayTag::RequestGameplayTag(*TargetItem->GetName());
-	AllEquippedItems.Add(TargetEquipmentSlot, ItemTag);
+	// Store item directly in map
+	AllEquippedItems.Add(TargetEquipmentSlot, TargetItem);
+	UE_LOG(LogTemp, Log, TEXT("  Stored item in AllEquippedItems"));
+
+	// Apply stat changes if requested
+	if (ChangeStats)
+	{
+		if (UPDA_Item* Item = Cast<UPDA_Item>(TargetItem))
+		{
+			ApplyStatChanges(Item->ItemInformation, true);
+			UE_LOG(LogTemp, Log, TEXT("  Applied stat changes"));
+		}
+	}
+
+	// Spawn world actor for the weapon (mesh attached to character)
+	if (UPDA_Item* Item = Cast<UPDA_Item>(TargetItem))
+	{
+		SpawnEquipmentActor(Item, TargetEquipmentSlot);
+	}
 
 	// Update overlay states
 	UpdateOverlayStates();
@@ -96,8 +146,9 @@ void UAC_EquipmentManager::EquipWeaponToSlot_Implementation(UPrimaryDataAsset* T
 	// Refresh guard sequence
 	RefreshActiveGuardSequence();
 
-	// Broadcast event
+	// Broadcast event with item data
 	FSLFCurrentEquipment EquipData;
+	EquipData.ItemAsset = TargetItem;
 	OnItemEquippedToSlot.Broadcast(EquipData, TargetEquipmentSlot);
 
 	OutSuccess = true;
@@ -113,8 +164,9 @@ void UAC_EquipmentManager::EquipWeaponToSlot_Implementation(UPrimaryDataAsset* T
  */
 void UAC_EquipmentManager::EquipArmorToSlot_Implementation(UPrimaryDataAsset* TargetItem, const FGameplayTag& TargetEquipmentSlot, bool ChangeStats, bool& OutSuccess, bool& OutSuccess_1, bool& OutSuccess_2, bool& OutSuccess_3)
 {
-	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::EquipArmorToSlot - Item: %s, Slot: %s"),
-		TargetItem ? *TargetItem->GetName() : TEXT("None"), *TargetEquipmentSlot.ToString());
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::EquipArmorToSlot - Item: %s, Slot: %s, ChangeStats: %s"),
+		TargetItem ? *TargetItem->GetName() : TEXT("None"), *TargetEquipmentSlot.ToString(),
+		ChangeStats ? TEXT("true") : TEXT("false"));
 
 	OutSuccess = false;
 	OutSuccess_1 = false;
@@ -132,12 +184,21 @@ void UAC_EquipmentManager::EquipArmorToSlot_Implementation(UPrimaryDataAsset* Ta
 		UnequipArmorAtSlot(TargetEquipmentSlot);
 	}
 
-	// Add to equipped items map
-	FGameplayTag ItemTag = FGameplayTag::RequestGameplayTag(*TargetItem->GetName());
-	AllEquippedItems.Add(TargetEquipmentSlot, ItemTag);
+	// Store item directly in map
+	AllEquippedItems.Add(TargetEquipmentSlot, TargetItem);
 
-	// Broadcast event
+	// Apply stat changes if requested
+	if (ChangeStats)
+	{
+		if (UPDA_Item* Item = Cast<UPDA_Item>(TargetItem))
+		{
+			ApplyStatChanges(Item->ItemInformation, true);
+		}
+	}
+
+	// Broadcast event with item data
 	FSLFCurrentEquipment EquipData;
+	EquipData.ItemAsset = TargetItem;
 	OnItemEquippedToSlot.Broadcast(EquipData, TargetEquipmentSlot);
 
 	OutSuccess = true;
@@ -150,18 +211,34 @@ void UAC_EquipmentManager::EquipArmorToSlot_Implementation(UPrimaryDataAsset* Ta
 
 /**
  * UnequipWeaponAtSlot - Remove weapon from slot
+ *
+ * Blueprint Logic:
+ * 1. Get item at slot
+ * 2. Remove stat changes
+ * 3. Destroy spawned world actor (weapon mesh)
+ * 4. Remove from AllEquippedItems
+ * 5. Update overlay states and guard sequence
+ * 6. Broadcast OnItemUnequippedFromSlot
  */
 void UAC_EquipmentManager::UnequipWeaponAtSlot_Implementation(const FGameplayTag& SlotTag)
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::UnequipWeaponAtSlot - Slot: %s"), *SlotTag.ToString());
 
-	if (FGameplayTag* ItemTag = AllEquippedItems.Find(SlotTag))
+	if (TObjectPtr<UPrimaryDataAsset>* ItemPtr = AllEquippedItems.Find(SlotTag))
 	{
-		// Remove from map
-		AllEquippedItems.Remove(SlotTag);
+		UPrimaryDataAsset* Item = *ItemPtr;
 
-		// Destroy spawned item if any
-		SpawnedItemsAtSlots.Remove(SlotTag);
+		// Remove stat changes before removing item
+		if (UPDA_Item* PDAItem = Cast<UPDA_Item>(Item))
+		{
+			ApplyStatChanges(PDAItem->ItemInformation, false);
+		}
+
+		// Destroy spawned world actor (weapon mesh) if any
+		DestroyEquipmentActor(SlotTag);
+
+		// Remove from item map
+		AllEquippedItems.Remove(SlotTag);
 
 		// Update overlay states
 		UpdateOverlayStates();
@@ -169,8 +246,9 @@ void UAC_EquipmentManager::UnequipWeaponAtSlot_Implementation(const FGameplayTag
 		// Refresh guard
 		RefreshActiveGuardSequence();
 
-		// Broadcast
-		OnItemUnequippedFromSlot.Broadcast(nullptr, SlotTag);
+		// Broadcast with item
+		OnItemUnequippedFromSlot.Broadcast(Item, SlotTag);
+		UE_LOG(LogTemp, Log, TEXT("  Weapon unequipped successfully"));
 	}
 }
 
@@ -181,10 +259,18 @@ void UAC_EquipmentManager::UnequipArmorAtSlot_Implementation(const FGameplayTag&
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::UnequipArmorAtSlot - Slot: %s"), *SlotTag.ToString());
 
-	if (AllEquippedItems.Contains(SlotTag))
+	if (TObjectPtr<UPrimaryDataAsset>* ItemPtr = AllEquippedItems.Find(SlotTag))
 	{
+		UPrimaryDataAsset* Item = *ItemPtr;
+
+		// Remove stat changes before removing item
+		if (UPDA_Item* PDAItem = Cast<UPDA_Item>(Item))
+		{
+			ApplyStatChanges(PDAItem->ItemInformation, false);
+		}
+
 		AllEquippedItems.Remove(SlotTag);
-		OnItemUnequippedFromSlot.Broadcast(nullptr, SlotTag);
+		OnItemUnequippedFromSlot.Broadcast(Item, SlotTag);
 	}
 }
 
@@ -195,11 +281,11 @@ void UAC_EquipmentManager::HideItemAtSlot_Implementation(const FGameplayTag& Slo
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::HideItemAtSlot - Slot: %s"), *SlotTag.ToString());
 
-	if (AllEquippedItems.Contains(SlotTag))
+	if (TObjectPtr<UPrimaryDataAsset>* ItemPtr = AllEquippedItems.Find(SlotTag))
 	{
-		// Copy from equipped to hidden
-		FGameplayTag ItemTag = AllEquippedItems[SlotTag];
-		HiddenItems.Add(SlotTag, ItemTag);
+		// Mark slot as hidden (for visual purposes)
+		// We use the slot tag itself as a marker since we store items directly now
+		HiddenItems.Add(SlotTag, SlotTag);
 	}
 }
 
@@ -208,7 +294,7 @@ void UAC_EquipmentManager::HideItemAtSlot_Implementation(const FGameplayTag& Slo
  */
 void UAC_EquipmentManager::IsItemEquipped_Implementation(const FSLFItemInfo& TargetItem, bool& OutEquipped, FGameplayTag& OutOnSlot)
 {
-	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::IsItemEquipped"));
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::IsItemEquipped - ItemTag: %s"), *TargetItem.ItemTag.ToString());
 
 	OutEquipped = false;
 	OutOnSlot = FGameplayTag();
@@ -216,12 +302,15 @@ void UAC_EquipmentManager::IsItemEquipped_Implementation(const FSLFItemInfo& Tar
 	// Search through all equipped items
 	for (const auto& EquipEntry : AllEquippedItems)
 	{
-		// Compare item IDs
-		if (EquipEntry.Value.MatchesTag(TargetItem.ItemTag))
+		if (UPDA_Item* EquippedItem = Cast<UPDA_Item>(EquipEntry.Value.Get()))
 		{
-			OutEquipped = true;
-			OutOnSlot = EquipEntry.Key;
-			return;
+			// Compare item tags
+			if (EquippedItem->ItemInformation.ItemTag.MatchesTagExact(TargetItem.ItemTag))
+			{
+				OutEquipped = true;
+				OutOnSlot = EquipEntry.Key;
+				return;
+			}
 		}
 	}
 }
@@ -231,11 +320,14 @@ void UAC_EquipmentManager::IsItemEquipped_Implementation(const FSLFItemInfo& Tar
  */
 bool UAC_EquipmentManager::IsItemEquippedToSlot_Implementation(const FSLFItemInfo& TargetItem, const FGameplayTag& ActiveEquipmentSlot)
 {
-	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::IsItemEquippedToSlot"));
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::IsItemEquippedToSlot - Slot: %s"), *ActiveEquipmentSlot.ToString());
 
-	if (FGameplayTag* ItemTag = AllEquippedItems.Find(ActiveEquipmentSlot))
+	if (TObjectPtr<UPrimaryDataAsset>* ItemPtr = AllEquippedItems.Find(ActiveEquipmentSlot))
 	{
-		return ItemTag->MatchesTag(TargetItem.ItemTag);
+		if (UPDA_Item* EquippedItem = Cast<UPDA_Item>(ItemPtr->Get()))
+		{
+			return EquippedItem->ItemInformation.ItemTag.MatchesTagExact(TargetItem.ItemTag);
+		}
 	}
 	return false;
 }
@@ -266,13 +358,15 @@ void UAC_EquipmentManager::GetSpawnedItemAtSlot_Implementation(const FGameplayTa
 	OutItem = nullptr;
 	OutItem_1 = nullptr;
 
-	// SpawnedItemsAtSlots maps slot tag to item tag (not actor pointer)
-	// Item actors are spawned/attached via BPI_GenericCharacter interface
-	if (const FGameplayTag* ItemTag = SpawnedItemsAtSlots.Find(SlotTag))
+	// Get spawned actor from map
+	if (TObjectPtr<AActor>* ActorPtr = SpawnedItemsAtSlots.Find(SlotTag))
 	{
-		UE_LOG(LogTemp, Log, TEXT("  Slot has spawned item tag: %s"), *ItemTag->ToString());
-		// Actual actor lookup would require searching world for actors with this item
-		// For now, actors are accessed through the character's attached components
+		if (IsValid(*ActorPtr))
+		{
+			OutItem = Cast<AB_Item>(*ActorPtr);
+			OutItem_1 = OutItem;
+			UE_LOG(LogTemp, Log, TEXT("  Found spawned item actor: %s"), *(*ActorPtr)->GetName());
+		}
 	}
 }
 
@@ -347,7 +441,7 @@ void UAC_EquipmentManager::ApplyStatChanges_Implementation(const FSLFItemInfo& I
 		return;
 	}
 
-	UAC_StatManager* StatManager = Owner->FindComponentByClass<UAC_StatManager>();
+	UStatManagerComponent* StatManager = Owner->FindComponentByClass<UStatManagerComponent>();
 	if (!IsValid(StatManager))
 	{
 		return;
@@ -380,28 +474,22 @@ void UAC_EquipmentManager::GetItemAtSlot_Implementation(const FGameplayTag& Slot
 	OutItemAsset_1 = nullptr;
 	OutId_1 = FGuid();
 
-	// Look up item in map - AllEquippedItems stores slot tag -> item tag
-	if (FGameplayTag* ItemTag = AllEquippedItems.Find(SlotTag))
+	// Look up item directly from map
+	if (TObjectPtr<UPrimaryDataAsset>* ItemPtr = AllEquippedItems.Find(SlotTag))
 	{
-		UE_LOG(LogTemp, Log, TEXT("  Found item tag: %s"), *ItemTag->ToString());
+		OutItemAsset = ItemPtr->Get();
+		OutItemAsset_1 = OutItemAsset;
 
-		// Query inventory manager to get the actual item data
-		AActor* Owner = GetOwner();
-		if (IsValid(Owner))
+		if (UPDA_Item* Item = Cast<UPDA_Item>(OutItemAsset))
 		{
-			UAC_InventoryManager* InventoryManager = Owner->FindComponentByClass<UAC_InventoryManager>();
-			if (IsValid(InventoryManager))
-			{
-				// Get slot that has this item tag
-				UW_InventorySlot* Slot = InventoryManager->GetSlotWithItemTag(*ItemTag, ESLFInventorySlotType::InventorySlot);
-				if (IsValid(Slot) && IsValid(Slot->AssignedItem))
-				{
-					OutItemAsset = Slot->AssignedItem;
-					OutItemAsset_1 = OutItemAsset;
-					// ItemData and Id would come from the data asset or require additional lookup
-				}
-			}
+			OutItemData = Item->ItemInformation;
+			OutItemData_1 = OutItemData;
+			UE_LOG(LogTemp, Log, TEXT("  Found item: %s"), *Item->GetName());
 		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("  No item at slot"));
 	}
 }
 
@@ -421,7 +509,7 @@ void UAC_EquipmentManager::CheckRequiredStats_Implementation(const FSLFItemInfo&
 		return;
 	}
 
-	UAC_StatManager* StatManager = Owner->FindComponentByClass<UAC_StatManager>();
+	UStatManagerComponent* StatManager = Owner->FindComponentByClass<UStatManagerComponent>();
 	if (!IsValid(StatManager))
 	{
 		return;
@@ -433,9 +521,9 @@ void UAC_EquipmentManager::CheckRequiredStats_Implementation(const FSLFItemInfo&
 		// Check each required stat from WeaponStatInfo
 		for (const auto& RequiredStat : Item.EquipmentDetails.WeaponStatInfo.StatRequirementInfo)
 		{
-			UB_Stat* Stat = nullptr;
+			UObject* StatObj = nullptr;
 			FStatInfo StatInfo;
-			StatManager->GetStat(RequiredStat.Key, Stat, StatInfo);
+			StatManager->GetStat(RequiredStat.Key, StatObj, StatInfo);
 
 			if (StatInfo.CurrentValue < RequiredStat.Value)
 			{
@@ -458,30 +546,20 @@ void UAC_EquipmentManager::SerializeEquipmentData_Implementation()
 	TArray<FInstancedStruct> EquipmentData;
 
 	// Convert AllEquippedItems to FInstancedStruct array
-	AActor* Owner = GetOwner();
-	if (IsValid(Owner))
+	for (const auto& EquipEntry : AllEquippedItems)
 	{
-		UAC_InventoryManager* InventoryManager = Owner->FindComponentByClass<UAC_InventoryManager>();
-
-		for (const auto& EquipEntry : AllEquippedItems)
+		if (!IsValid(EquipEntry.Value))
 		{
-			FSLFEquipmentItemsSaveInfo SaveInfo;
-			SaveInfo.SlotTag = EquipEntry.Key;
-
-			// Lookup the item asset from inventory
-			if (IsValid(InventoryManager))
-			{
-				UW_InventorySlot* Slot = InventoryManager->GetSlotWithItemTag(EquipEntry.Value, ESLFInventorySlotType::InventorySlot);
-				if (IsValid(Slot))
-				{
-					SaveInfo.AssignedItem = Slot->AssignedItem;
-				}
-			}
-
-			FInstancedStruct StructInstance;
-			StructInstance.InitializeAs<FSLFEquipmentItemsSaveInfo>(SaveInfo);
-			EquipmentData.Add(StructInstance);
+			continue;
 		}
+
+		FSLFEquipmentItemsSaveInfo SaveInfo;
+		SaveInfo.SlotTag = EquipEntry.Key;
+		SaveInfo.AssignedItem = EquipEntry.Value;
+
+		FInstancedStruct StructInstance;
+		StructInstance.InitializeAs<FSLFEquipmentItemsSaveInfo>(SaveInfo);
+		EquipmentData.Add(StructInstance);
 	}
 
 	FGameplayTag SaveTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Save.Equipment"));
@@ -517,7 +595,8 @@ void UAC_EquipmentManager::UnequipItemAtSlot_Implementation(const FGameplayTag& 
  */
 bool UAC_EquipmentManager::EquipTalismanToSlot_Implementation(UPrimaryDataAsset* TargetItem, const FGameplayTag& TargetEquipmentSlot, bool ChangeStats)
 {
-	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::EquipTalismanToSlot"));
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::EquipTalismanToSlot - Item: %s, Slot: %s"),
+		TargetItem ? *TargetItem->GetName() : TEXT("None"), *TargetEquipmentSlot.ToString());
 
 	if (!IsValid(TargetItem) || !TargetEquipmentSlot.IsValid())
 	{
@@ -530,12 +609,21 @@ bool UAC_EquipmentManager::EquipTalismanToSlot_Implementation(UPrimaryDataAsset*
 		UnequipTalismanAtSlot(TargetEquipmentSlot);
 	}
 
-	// Add to equipped items
-	FGameplayTag ItemTag = FGameplayTag::RequestGameplayTag(*TargetItem->GetName());
-	AllEquippedItems.Add(TargetEquipmentSlot, ItemTag);
+	// Store item directly
+	AllEquippedItems.Add(TargetEquipmentSlot, TargetItem);
 
-	// Broadcast event
+	// Apply stat changes if requested
+	if (ChangeStats)
+	{
+		if (UPDA_Item* Item = Cast<UPDA_Item>(TargetItem))
+		{
+			ApplyStatChanges(Item->ItemInformation, true);
+		}
+	}
+
+	// Broadcast event with item data
 	FSLFCurrentEquipment EquipData;
+	EquipData.ItemAsset = TargetItem;
 	OnItemEquippedToSlot.Broadcast(EquipData, TargetEquipmentSlot);
 
 	return true;
@@ -546,12 +634,20 @@ bool UAC_EquipmentManager::EquipTalismanToSlot_Implementation(UPrimaryDataAsset*
  */
 void UAC_EquipmentManager::UnequipTalismanAtSlot_Implementation(const FGameplayTag& SlotTag)
 {
-	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::UnequipTalismanAtSlot"));
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::UnequipTalismanAtSlot - Slot: %s"), *SlotTag.ToString());
 
-	if (AllEquippedItems.Contains(SlotTag))
+	if (TObjectPtr<UPrimaryDataAsset>* ItemPtr = AllEquippedItems.Find(SlotTag))
 	{
+		UPrimaryDataAsset* Item = *ItemPtr;
+
+		// Remove stat changes
+		if (UPDA_Item* PDAItem = Cast<UPDA_Item>(Item))
+		{
+			ApplyStatChanges(PDAItem->ItemInformation, false);
+		}
+
 		AllEquippedItems.Remove(SlotTag);
-		OnItemUnequippedFromSlot.Broadcast(nullptr, SlotTag);
+		OnItemUnequippedFromSlot.Broadcast(Item, SlotTag);
 	}
 }
 
@@ -568,11 +664,9 @@ int32 UAC_EquipmentManager::GetAmountOfEquippedItem_Implementation(UPrimaryDataA
 	}
 
 	int32 Count = 0;
-	FGameplayTag ItemTag = FGameplayTag::RequestGameplayTag(*Item->GetName());
-
 	for (const auto& EquipEntry : AllEquippedItems)
 	{
-		if (EquipEntry.Value.MatchesTag(ItemTag))
+		if (EquipEntry.Value == Item)
 		{
 			Count++;
 		}
@@ -585,7 +679,8 @@ int32 UAC_EquipmentManager::GetAmountOfEquippedItem_Implementation(UPrimaryDataA
  */
 void UAC_EquipmentManager::EquipToolToSlot_Implementation(UPrimaryDataAsset* TargetItem, const FGameplayTag& TargetEquipmentSlot, bool ChangeStats, bool& OutSuccess, bool& OutSuccess_1, bool& OutSuccess_2)
 {
-	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::EquipToolToSlot"));
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::EquipToolToSlot - Item: %s, Slot: %s"),
+		TargetItem ? *TargetItem->GetName() : TEXT("None"), *TargetEquipmentSlot.ToString());
 
 	OutSuccess = false;
 	OutSuccess_1 = false;
@@ -605,15 +700,15 @@ void UAC_EquipmentManager::EquipToolToSlot_Implementation(UPrimaryDataAsset* Tar
 		UnequipToolAtSlot(TargetEquipmentSlot);
 	}
 
-	// Add to equipped
-	FGameplayTag ItemTag = FGameplayTag::RequestGameplayTag(*TargetItem->GetName());
-	AllEquippedItems.Add(TargetEquipmentSlot, ItemTag);
+	// Store item directly
+	AllEquippedItems.Add(TargetEquipmentSlot, TargetItem);
 
 	// Set as active tool slot
 	SetActiveToolSlot(TargetEquipmentSlot);
 
-	// Broadcast
+	// Broadcast with item data
 	FSLFCurrentEquipment EquipData;
+	EquipData.ItemAsset = TargetItem;
 	OnItemEquippedToSlot.Broadcast(EquipData, TargetEquipmentSlot);
 
 	OutSuccess = true;
@@ -626,12 +721,13 @@ void UAC_EquipmentManager::EquipToolToSlot_Implementation(UPrimaryDataAsset* Tar
  */
 void UAC_EquipmentManager::UnequipToolAtSlot_Implementation(const FGameplayTag& SlotTag)
 {
-	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::UnequipToolAtSlot"));
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::UnequipToolAtSlot - Slot: %s"), *SlotTag.ToString());
 
-	if (AllEquippedItems.Contains(SlotTag))
+	if (TObjectPtr<UPrimaryDataAsset>* ItemPtr = AllEquippedItems.Find(SlotTag))
 	{
+		UPrimaryDataAsset* Item = *ItemPtr;
 		AllEquippedItems.Remove(SlotTag);
-		OnItemUnequippedFromSlot.Broadcast(nullptr, SlotTag);
+		OnItemUnequippedFromSlot.Broadcast(Item, SlotTag);
 	}
 }
 
@@ -848,13 +944,13 @@ void UAC_EquipmentManager::ReinitializeMovementWithWeight_Implementation()
 	}
 
 	// Get weight stat from stat manager
-	UAC_StatManager* StatManager = Owner->FindComponentByClass<UAC_StatManager>();
+	UStatManagerComponent* StatManager = Owner->FindComponentByClass<UStatManagerComponent>();
 	if (IsValid(StatManager))
 	{
 		FGameplayTag WeightTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Misc.Weight"));
-		UB_Stat* WeightStat = nullptr;
+		UObject* WeightStatObj = nullptr;
 		FStatInfo WeightInfo;
-		StatManager->GetStat(WeightTag, WeightStat, WeightInfo);
+		StatManager->GetStat(WeightTag, WeightStatObj, WeightInfo);
 
 		// Calculate movement speed modifier based on equip load ratio
 		// MaxValue represents max carry capacity, CurrentValue is current weight
@@ -895,13 +991,12 @@ void UAC_EquipmentManager::UnequipToolFromOtherSlots_Implementation(UPrimaryData
 		return;
 	}
 
-	FGameplayTag ItemTag = FGameplayTag::RequestGameplayTag(*Item->GetName());
 	TArray<FGameplayTag> SlotsToRemove;
 
 	// Find all slots with this item
 	for (const auto& EquipEntry : AllEquippedItems)
 	{
-		if (EquipEntry.Value.MatchesTag(ItemTag) && ToolSlots.HasTag(EquipEntry.Key))
+		if (EquipEntry.Value == Item && ToolSlots.HasTag(EquipEntry.Key))
 		{
 			SlotsToRemove.Add(EquipEntry.Key);
 		}
@@ -1018,13 +1113,32 @@ double UAC_EquipmentManager::GetWeaponDamage() const
 	// Get equipped weapon from right hand slots
 	for (const FGameplayTag& SlotTag : RightHandSlots)
 	{
-		if (const FGameplayTag* ItemTag = AllEquippedItems.Find(SlotTag))
+		if (const TObjectPtr<UPrimaryDataAsset>* ItemPtr = AllEquippedItems.Find(SlotTag))
 		{
-			if (ItemTag->IsValid())
+			if (UPDA_Item* Item = Cast<UPDA_Item>(ItemPtr->Get()))
 			{
-				// Try to get the weapon's base damage from the item data
-				// For now, return a default value - full implementation needs item data lookup
-				return 25.0;  // Default weapon damage
+				// Check StatChanges for damage values using gameplay tags
+				// Damage is typically stored in StatChanges map with tags like "Stats.Attack.Physical"
+				const TMap<FGameplayTag, FSLFEquipmentStat>& StatChanges = Item->ItemInformation.EquipmentDetails.StatChanges;
+				double TotalDamage = 0.0;
+
+				for (const auto& StatPair : StatChanges)
+				{
+					// Sum up all attack/damage stat changes
+					if (StatPair.Key.ToString().Contains(TEXT("Attack")) ||
+						StatPair.Key.ToString().Contains(TEXT("Damage")))
+					{
+						TotalDamage += StatPair.Value.Delta;
+					}
+				}
+
+				if (TotalDamage > 0.0)
+				{
+					return TotalDamage;
+				}
+
+				// Fallback: return based on MinPoiseDamage (rough approximation)
+				return FMath::Max(Item->ItemInformation.EquipmentDetails.MinPoiseDamage * 2.0, 10.0);
 			}
 		}
 	}
@@ -1036,13 +1150,12 @@ double UAC_EquipmentManager::GetWeaponPoiseDamage() const
 	// Get equipped weapon from right hand slots
 	for (const FGameplayTag& SlotTag : RightHandSlots)
 	{
-		if (const FGameplayTag* ItemTag = AllEquippedItems.Find(SlotTag))
+		if (const TObjectPtr<UPrimaryDataAsset>* ItemPtr = AllEquippedItems.Find(SlotTag))
 		{
-			if (ItemTag->IsValid())
+			if (UPDA_Item* Item = Cast<UPDA_Item>(ItemPtr->Get()))
 			{
-				// Try to get the weapon's poise damage from the item data
-				// For now, return a default value - full implementation needs item data lookup
-				return 15.0;  // Default weapon poise damage
+				// Get poise damage from item data
+				return Item->ItemInformation.EquipmentDetails.MinPoiseDamage;
 			}
 		}
 	}
@@ -1056,15 +1169,117 @@ TMap<FGameplayTag, UPrimaryDataAsset*> UAC_EquipmentManager::GetWeaponStatusEffe
 	// Get equipped weapon from right hand slots
 	for (const FGameplayTag& SlotTag : RightHandSlots)
 	{
-		if (const FGameplayTag* ItemTag = AllEquippedItems.Find(SlotTag))
+		if (const TObjectPtr<UPrimaryDataAsset>* ItemPtr = AllEquippedItems.Find(SlotTag))
 		{
-			if (ItemTag->IsValid())
+			if (UPDA_Item* Item = Cast<UPDA_Item>(ItemPtr->Get()))
 			{
-				// Get status effects from weapon data
-				// Full implementation needs item data lookup
+				// Copy status effects from weapon data
+				// Note: The original stores as TMap<FGameplayTag, double>, we return assets
+				// This needs adjustment based on actual status effect system
 			}
 		}
 	}
 
 	return StatusEffects;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// EQUIPMENT ACTOR SPAWNING (AsyncSpawnAndEquipWeapon equivalent)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void UAC_EquipmentManager::SpawnEquipmentActor(UPDA_Item* Item, const FGameplayTag& SlotTag)
+{
+	if (!IsValid(Item))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SpawnEquipmentActor - Invalid item"));
+		return;
+	}
+
+	// Get the item class to spawn
+	UClass* ItemClass = Item->ItemInformation.ItemClass.LoadSynchronous();
+	if (!ItemClass)
+	{
+		UE_LOG(LogTemp, Log, TEXT("SpawnEquipmentActor - No ItemClass set for %s, skipping spawn"), *Item->GetName());
+		return;
+	}
+
+	// Get the owning actor (could be PlayerController or Character)
+	AActor* Owner = GetOwner();
+	if (!IsValid(Owner))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SpawnEquipmentActor - No valid owner"));
+		return;
+	}
+
+	// Get the Pawn/Character to use as Instigator
+	// If owner is a PlayerController, get its Pawn. If owner is already a Pawn, use it directly.
+	APawn* InstigatorPawn = Cast<APawn>(Owner);
+	if (!InstigatorPawn)
+	{
+		if (APlayerController* PC = Cast<APlayerController>(Owner))
+		{
+			InstigatorPawn = PC->GetPawn();
+		}
+	}
+
+	if (!InstigatorPawn)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SpawnEquipmentActor - Could not find Pawn for instigator"));
+		return;
+	}
+
+	UWorld* World = GetWorld();
+	if (!IsValid(World))
+	{
+		return;
+	}
+
+	// Use deferred spawn so we can set ItemInfo BEFORE BeginPlay runs
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = InstigatorPawn;  // Owner should be the character, not the controller
+	SpawnParams.Instigator = InstigatorPawn;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParams.bDeferConstruction = true; // CRITICAL: Defer so BeginPlay doesn't run yet
+
+	AActor* SpawnedActor = World->SpawnActor<AActor>(ItemClass, FTransform::Identity, SpawnParams);
+	if (!IsValid(SpawnedActor))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SpawnEquipmentActor - Failed to spawn actor from class %s"), *ItemClass->GetName());
+		return;
+	}
+
+	// Set the ItemInfo BEFORE finishing spawn (so BeginPlay can read it)
+	if (AB_Item* ItemActor = Cast<AB_Item>(SpawnedActor))
+	{
+		ItemActor->ItemInfo = Item->ItemInformation;
+		UE_LOG(LogTemp, Log, TEXT("SpawnEquipmentActor - Set ItemInfo with sockets L=%s R=%s"),
+			*ItemActor->ItemInfo.EquipmentDetails.AttachmentSockets.LeftHandSocketName.ToString(),
+			*ItemActor->ItemInfo.EquipmentDetails.AttachmentSockets.RightHandSocketName.ToString());
+	}
+
+	// Now finish spawning - this will call BeginPlay with ItemInfo populated
+	SpawnedActor->FinishSpawning(FTransform::Identity);
+
+	// Store in map
+	SpawnedItemsAtSlots.Add(SlotTag, SpawnedActor);
+
+	UE_LOG(LogTemp, Log, TEXT("SpawnEquipmentActor - Spawned %s for slot %s"),
+		*SpawnedActor->GetName(), *SlotTag.ToString());
+
+	// Note: The spawned B_Item_Weapon actor handles its own attachment in BeginPlay
+	// It reads ItemInfo.EquipmentDetails.AttachmentSockets and uses K2_AttachToComponent
+	// to attach to the character's skeletal mesh socket
+}
+
+void UAC_EquipmentManager::DestroyEquipmentActor(const FGameplayTag& SlotTag)
+{
+	if (TObjectPtr<AActor>* ActorPtr = SpawnedItemsAtSlots.Find(SlotTag))
+	{
+		if (IsValid(*ActorPtr))
+		{
+			UE_LOG(LogTemp, Log, TEXT("DestroyEquipmentActor - Destroying actor at slot %s"), *SlotTag.ToString());
+			(*ActorPtr)->Destroy();
+		}
+		SpawnedItemsAtSlots.Remove(SlotTag);
+	}
 }

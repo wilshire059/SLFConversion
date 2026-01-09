@@ -14,8 +14,10 @@
 #include "NiagaraSystem.h"
 #include "NiagaraComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Components/AC_CombatManager.h"
 #include "Components/AICombatManagerComponent.h"
+#include "GameFramework/Character.h"
 #include "SLFEnums.h" // For ESLFStatScaling
 
 ASLFWeaponBase::ASLFWeaponBase()
@@ -56,7 +58,19 @@ void ASLFWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UE_LOG(LogTemp, Log, TEXT("[Weapon] BeginPlay: %s"), *GetName());
+	UE_LOG(LogTemp, Log, TEXT("[Weapon] BeginPlay: %s (Class: %s)"), *GetName(), *GetClass()->GetName());
+
+	// Debug: List all components on this actor
+	TArray<UActorComponent*> AllComponents;
+	GetComponents(AllComponents);
+	UE_LOG(LogTemp, Log, TEXT("[Weapon] Actor has %d components:"), AllComponents.Num());
+	for (UActorComponent* Comp : AllComponents)
+	{
+		if (Comp)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[Weapon]   - %s (%s)"), *Comp->GetName(), *Comp->GetClass()->GetName());
+		}
+	}
 
 	// Cache Blueprint components if not already set
 	if (!WeaponMesh)
@@ -65,7 +79,15 @@ void ASLFWeaponBase::BeginPlay()
 		WeaponMesh = FindComponentByClass<UStaticMeshComponent>();
 		if (WeaponMesh)
 		{
-			UE_LOG(LogTemp, Log, TEXT("[Weapon] Found StaticMesh component: %s"), *WeaponMesh->GetName());
+			UStaticMesh* Mesh = WeaponMesh->GetStaticMesh();
+			UE_LOG(LogTemp, Log, TEXT("[Weapon] Found StaticMesh component: %s, Mesh: %s, Visible: %s"),
+				*WeaponMesh->GetName(),
+				Mesh ? *Mesh->GetName() : TEXT("NULL"),
+				WeaponMesh->IsVisible() ? TEXT("Yes") : TEXT("No"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[Weapon] No StaticMeshComponent found on %s"), *GetName());
 		}
 	}
 
@@ -94,6 +116,105 @@ void ASLFWeaponBase::BeginPlay()
 			UE_LOG(LogTemp, Log, TEXT("[Weapon] Found CollisionManager, binding to OnActorTraced"));
 			CollisionManager->OnActorTraced.AddDynamic(this, &ASLFWeaponBase::OnActorTraced);
 		}
+	}
+
+	// ═══════════════════════════════════════════════════════════════════════════════
+	// SOCKET ATTACHMENT - Attach weapon to character's skeletal mesh socket
+	// ═══════════════════════════════════════════════════════════════════════════════
+	AttachToOwnerSocket();
+}
+
+void ASLFWeaponBase::AttachToOwnerSocket()
+{
+	// Get the character that owns this weapon (set as Instigator during spawn)
+	APawn* InstigatorPawn = GetInstigator();
+	if (!IsValid(InstigatorPawn))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[Weapon] AttachToOwnerSocket - No Instigator, cannot attach"));
+		return;
+	}
+
+	// Get the skeletal mesh component from the character
+	USkeletalMeshComponent* MeshComponent = nullptr;
+
+	// Try to get the mesh from Character first
+	if (ACharacter* Character = Cast<ACharacter>(InstigatorPawn))
+	{
+		MeshComponent = Character->GetMesh();
+	}
+	else
+	{
+		// Fallback: try to find any skeletal mesh component
+		MeshComponent = InstigatorPawn->FindComponentByClass<USkeletalMeshComponent>();
+	}
+
+	if (!IsValid(MeshComponent))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[Weapon] AttachToOwnerSocket - No SkeletalMeshComponent on Instigator"));
+		return;
+	}
+
+	// Get socket names from ItemInfo
+	const FSLFEquipmentSocketInfo& Sockets = ItemInfo.EquipmentDetails.AttachmentSockets;
+
+	UE_LOG(LogTemp, Log, TEXT("[Weapon] AttachToOwnerSocket - Sockets L=%s R=%s"),
+		*Sockets.LeftHandSocketName.ToString(),
+		*Sockets.RightHandSocketName.ToString());
+
+	// Select appropriate socket based on equipment slot (right or left hand)
+	FName SocketName = IsRightHandWeapon() ? Sockets.RightHandSocketName : Sockets.LeftHandSocketName;
+
+	// Use default socket if none specified
+	if (SocketName.IsNone())
+	{
+		SocketName = IsRightHandWeapon() ? FName("hand_r") : FName("hand_l");
+		UE_LOG(LogTemp, Log, TEXT("[Weapon] Using default socket: %s"), *SocketName.ToString());
+	}
+
+	// Check if socket exists on the mesh
+	if (!MeshComponent->DoesSocketExist(SocketName))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[Weapon] Socket '%s' does not exist on mesh, trying alternatives"),
+			*SocketName.ToString());
+
+		// Try common socket names
+		TArray<FName> AlternativeSockets = {
+			FName("weapon_r"), FName("weapon_l"),
+			FName("hand_r"), FName("hand_l"),
+			FName("soulslike_weapon_r"), FName("soulslike_weapon_l"),
+			FName("RightHand"), FName("LeftHand")
+		};
+
+		for (const FName& AltSocket : AlternativeSockets)
+		{
+			if (MeshComponent->DoesSocketExist(AltSocket))
+			{
+				SocketName = AltSocket;
+				UE_LOG(LogTemp, Log, TEXT("[Weapon] Found alternative socket: %s"), *SocketName.ToString());
+				break;
+			}
+		}
+	}
+
+	// Attach to the socket
+	bool bAttached = K2_AttachToComponent(
+		MeshComponent,
+		SocketName,
+		EAttachmentRule::SnapToTarget,
+		EAttachmentRule::SnapToTarget,
+		EAttachmentRule::KeepWorld,
+		false
+	);
+
+	if (bAttached)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[Weapon] Attached to socket '%s' on %s"),
+			*SocketName.ToString(), *InstigatorPawn->GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[Weapon] Failed to attach to socket '%s'"),
+			*SocketName.ToString());
 	}
 }
 
@@ -289,6 +410,26 @@ void ASLFWeaponBase::SetupItem_Implementation()
 	{
 		TrailComponent->SetAsset(TrailEffect);
 	}
+}
+
+bool ASLFWeaponBase::IsRightHandWeapon() const
+{
+	// Check EquipSlots to determine hand side
+	// Equipment slots typically contain tags like "Equipment.Slot.RightHand" or similar
+	const FGameplayTagContainer& EquipSlots = ItemInfo.EquipmentDetails.EquipSlots;
+
+	// Check for left hand slot tags
+	if (EquipSlots.HasTagExact(FGameplayTag::RequestGameplayTag(FName("Equipment.Slot.LeftHand"), false)) ||
+		EquipSlots.HasTagExact(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.Slot.LeftHand"), false)) ||
+		EquipSlots.HasTagExact(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Left Hand Weapon 1"), false)) ||
+		EquipSlots.HasTagExact(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Left Hand Weapon 2"), false)) ||
+		EquipSlots.HasTagExact(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Left Hand Weapon 3"), false)))
+	{
+		return false;
+	}
+
+	// Default to right hand for weapons
+	return true;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
