@@ -113,8 +113,8 @@ void UW_InventorySlot::AdjustAmountAndIconOpacity_Implementation(double Alpha)
 		IconImage->SetRenderOpacity(Alpha);
 	}
 
-	// Find and adjust amount text opacity
-	if (UTextBlock* AmountText = Cast<UTextBlock>(GetWidgetFromName(TEXT("AmountText"))))
+	// Find and adjust amount text opacity - widget is named "ItemAmount" in Blueprint
+	if (UTextBlock* AmountText = Cast<UTextBlock>(GetWidgetFromName(TEXT("ItemAmount"))))
 	{
 		AmountText->SetRenderOpacity(Alpha);
 	}
@@ -134,8 +134,8 @@ void UW_InventorySlot::EventChangeAmount_Implementation(int32 NewCount)
 
 	Count = NewCount;
 
-	// Update amount text display
-	if (UTextBlock* AmountText = Cast<UTextBlock>(GetWidgetFromName(TEXT("AmountText"))))
+	// Update amount text display - widget is named "ItemAmount" in Blueprint
+	if (UTextBlock* AmountText = Cast<UTextBlock>(GetWidgetFromName(TEXT("ItemAmount"))))
 	{
 		if (Count > 1)
 		{
@@ -182,8 +182,8 @@ void UW_InventorySlot::EventClearSlot_Implementation(bool TriggerShift)
 		IconImage->SetVisibility(ESlateVisibility::Collapsed);
 	}
 
-	// Hide amount text
-	if (UTextBlock* AmountText = Cast<UTextBlock>(GetWidgetFromName(TEXT("AmountText"))))
+	// Hide amount text - widget is named "ItemAmount" in Blueprint
+	if (UTextBlock* AmountText = Cast<UTextBlock>(GetWidgetFromName(TEXT("ItemAmount"))))
 	{
 		AmountText->SetVisibility(ESlateVisibility::Collapsed);
 	}

@@ -274,6 +274,9 @@ protected:
 	// Populate slots with items from InventoryComponent
 	void PopulateSlotsWithItems();
 
+	// Refresh display with filtered items (used when category changes)
+	void RefreshFilteredDisplay();
+
 	// Default slot widget class for dynamic creation
 	UPROPERTY(EditDefaultsOnly, Category = "Config")
 	TSubclassOf<UW_InventorySlot> InventorySlotClass;

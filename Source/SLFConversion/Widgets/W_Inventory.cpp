@@ -642,6 +642,97 @@ void UW_Inventory::PopulateSlotsWithItems()
 }
 
 /**
+ * RefreshFilteredDisplay - Repopulate slots showing only items that match the active category filter
+ *
+ * When a category filter is applied, this function:
+ * 1. Clears all inventory slot displays
+ * 2. Gets all items from the InventoryComponent
+ * 3. Filters items by ActiveFilterCategory
+ * 4. Repopulates slots with only matching items
+ */
+void UW_Inventory::RefreshFilteredDisplay()
+{
+	if (!InventoryComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_Inventory] RefreshFilteredDisplay - No InventoryComponent!"));
+		return;
+	}
+
+	// Clear all slots first
+	for (UW_InventorySlot* InvSlot : InventorySlots)
+	{
+		if (InvSlot && InvSlot->IsOccupied)
+		{
+			InvSlot->EventClearSlot(false);
+		}
+	}
+
+	// Get all items from inventory
+	TArray<FSLFInventoryItem> AllItems = InventoryComponent->GetAllItems();
+
+	UE_LOG(LogTemp, Log, TEXT("[W_Inventory] RefreshFilteredDisplay - Filter: %d, Total items: %d"),
+		(int32)ActiveFilterCategory, AllItems.Num());
+
+	int32 SlotIndex = 0;
+	int32 MatchingItems = 0;
+
+	for (const FSLFInventoryItem& InvItem : AllItems)
+	{
+		if (SlotIndex >= InventorySlots.Num())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[W_Inventory] Not enough slots for filtered items!"));
+			break;
+		}
+
+		UObject* ItemAsset = InvItem.ItemAsset;
+		if (!ItemAsset)
+		{
+			continue;
+		}
+
+		// Cast to UPDA_Item for category check
+		UPDA_Item* Item = Cast<UPDA_Item>(ItemAsset);
+		if (!Item)
+		{
+			continue;
+		}
+
+		// Check category filter
+		ESLFItemCategory ItemCategory = Item->ItemInformation.Category.Category;
+
+		// If no filter (None), show all items; otherwise filter by category
+		if (ActiveFilterCategory != ESLFItemCategory::None && ItemCategory != ActiveFilterCategory)
+		{
+			// Item doesn't match filter - skip it
+			UE_LOG(LogTemp, Verbose, TEXT("[W_Inventory] Filtering out %s (Category: %d, Filter: %d)"),
+				*Item->GetName(), (int32)ItemCategory, (int32)ActiveFilterCategory);
+			continue;
+		}
+
+		// Item matches filter - populate slot
+		int32 ItemCount = InvItem.Amount;
+		if (ItemCount <= 0)
+		{
+			ItemCount = 1;
+		}
+
+		UW_InventorySlot* InvSlot = InventorySlots[SlotIndex];
+		if (InvSlot)
+		{
+			InvSlot->EventOccupySlot(Item, ItemCount);
+			MatchingItems++;
+			UE_LOG(LogTemp, Verbose, TEXT("[W_Inventory] Populated slot %d with %s (matches filter)"),
+				SlotIndex, *Item->GetName());
+		}
+
+		SlotIndex++;
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[W_Inventory] RefreshFilteredDisplay complete - %d items match filter, populated %d slots"),
+		MatchingItems, SlotIndex);
+}
+
+/**
  * AddNewSlots - Create new inventory/storage slots
  */
 void UW_Inventory::AddNewSlots_Implementation(ESLFInventorySlotType SlotType)
@@ -765,7 +856,11 @@ void UW_Inventory::SetCategorization_Implementation(ESLFItemCategory ItemCategor
 		}
 	}
 
-	// Rebuild occupied slots with new filter
+	// CRITICAL: Refresh the visual display with filtered items
+	// This clears all slots and repopulates with only matching items
+	RefreshFilteredDisplay();
+
+	// Rebuild occupied slots array for navigation
 	ReinitOccupiedInventorySlots();
 
 	// Reset item navigation
@@ -774,9 +869,18 @@ void UW_Inventory::SetCategorization_Implementation(ESLFItemCategory ItemCategor
 	{
 		EventOnSlotSelected(true, OccupiedInventorySlots[0]);
 	}
+	else
+	{
+		// No items match filter - deselect current slot
+		if (SelectedSlot)
+		{
+			SelectedSlot->SetSlotSelected(false);
+			SelectedSlot = nullptr;
+		}
+	}
 
-	UE_LOG(LogTemp, Log, TEXT("UW_Inventory::SetCategorization - Category: %d, NavIndex: %d"),
-		(int32)ItemCategory, CategoryNavigationIndex);
+	UE_LOG(LogTemp, Log, TEXT("UW_Inventory::SetCategorization - Category: %d, NavIndex: %d, MatchingItems: %d"),
+		(int32)ItemCategory, CategoryNavigationIndex, OccupiedInventorySlots.Num());
 }
 
 /**
@@ -787,9 +891,20 @@ void UW_Inventory::ResetCategorization_Implementation()
 	ActiveFilterCategory = ESLFItemCategory::None;
 	CategoryNavigationIndex = 0;
 
+	// Refresh display to show all items again
+	RefreshFilteredDisplay();
+
+	// Rebuild navigation array
 	ReinitOccupiedInventorySlots();
 
-	UE_LOG(LogTemp, Log, TEXT("UW_Inventory::ResetCategorization"));
+	// Select first item if available
+	ItemNavigationIndex = 0;
+	if (OccupiedInventorySlots.Num() > 0)
+	{
+		EventOnSlotSelected(true, OccupiedInventorySlots[0]);
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("UW_Inventory::ResetCategorization - Showing all %d items"), OccupiedInventorySlots.Num());
 }
 
 /**
