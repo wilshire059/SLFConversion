@@ -25,6 +25,9 @@
 #include "UObject/UObjectGlobals.h"
 #include "UObject/SavePackage.h"
 #include "GameplayTagContainer.h"
+// AnimBP LinkedAnimLayer node support (AAA-quality fix)
+#include "AnimGraphNode_LinkedAnimLayer.h"
+#include "Animation/AnimNode_LinkedAnimLayer.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogSLFAutomation, Log, All);
 
@@ -1441,6 +1444,72 @@ int32 USLFAutomationLibrary::ReplaceVariableReferences(UObject* BlueprintAsset, 
 	return ModifiedCount;
 }
 
+
+// ============================================================================
+// VARIABLE RENAMING (For "?" suffix fix)
+// ============================================================================
+
+bool USLFAutomationLibrary::RenameVariable(UObject* BlueprintAsset, const FString& OldVarName, const FString& NewVarName)
+{
+	UBlueprint* Blueprint = GetBlueprintFromAsset(BlueprintAsset);
+	if (!Blueprint)
+	{
+		return false;
+	}
+
+	FName OldName(*OldVarName);
+	FName NewName(*NewVarName);
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("RenameVariable: '%s' -> '%s' in '%s'"),
+		*OldVarName, *NewVarName, *Blueprint->GetName());
+
+	// Check if variable exists
+	bool bFound = false;
+	for (const FBPVariableDescription& Var : Blueprint->NewVariables)
+	{
+		if (Var.VarName == OldName)
+		{
+			bFound = true;
+			break;
+		}
+	}
+
+	if (!bFound)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Variable '%s' not found in Blueprint"), *OldVarName);
+		return false;
+	}
+
+	// Use FBlueprintEditorUtils::RenameMemberVariable which properly updates all references
+	FBlueprintEditorUtils::RenameMemberVariable(Blueprint, OldName, NewName);
+
+	// Compile to apply changes
+	FKismetEditorUtilities::CompileBlueprint(Blueprint, EBlueprintCompileOptions::SkipGarbageCollection);
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("  Successfully renamed '%s' to '%s'"), *OldVarName, *NewVarName);
+	return true;
+}
+
+int32 USLFAutomationLibrary::RenameVariables(UObject* BlueprintAsset, const TArray<FString>& OldNames, const TArray<FString>& NewNames)
+{
+	if (OldNames.Num() != NewNames.Num())
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("RenameVariables: OldNames and NewNames arrays must have same length"));
+		return 0;
+	}
+
+	int32 SuccessCount = 0;
+	for (int32 i = 0; i < OldNames.Num(); ++i)
+	{
+		if (RenameVariable(BlueprintAsset, OldNames[i], NewNames[i]))
+		{
+			++SuccessCount;
+		}
+	}
+
+	return SuccessCount;
+}
+
 // ============================================================================
 // DATA ASSET OPERATIONS
 // ============================================================================
@@ -1711,5 +1780,183 @@ bool USLFAutomationLibrary::ApplySkeletalMeshInfoToItem(const FString& ItemAsset
 
 	return bSaved;
 }
+
+FString USLFAutomationLibrary::GetWeaponOverlayTag(const FString& ItemAssetPath)
+{
+	UE_LOG(LogSLFAutomation, Warning, TEXT("GetWeaponOverlayTag: %s"), *ItemAssetPath);
+
+	// Load the asset
+	UObject* Asset = LoadObject<UObject>(nullptr, *ItemAssetPath);
+	if (!Asset)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Failed to load asset: %s"), *ItemAssetPath);
+		return TEXT("");
+	}
+
+	// Get the ItemInformation property
+	FStructProperty* ItemInfoProp = FindFProperty<FStructProperty>(Asset->GetClass(), TEXT("ItemInformation"));
+	if (!ItemInfoProp)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  No ItemInformation property found"));
+		return TEXT("");
+	}
+
+	void* ItemInfoPtr = ItemInfoProp->ContainerPtrToValuePtr<void>(Asset);
+	if (!ItemInfoPtr)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Could not get ItemInformation pointer"));
+		return TEXT("");
+	}
+
+	// Get EquipmentDetails from ItemInformation
+	UScriptStruct* ItemInfoStruct = ItemInfoProp->Struct;
+	FStructProperty* EquipDetailsProp = FindFProperty<FStructProperty>(ItemInfoStruct, TEXT("EquipmentDetails"));
+	if (!EquipDetailsProp)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  No EquipmentDetails property found"));
+		return TEXT("");
+	}
+
+	void* EquipDetailsPtr = EquipDetailsProp->ContainerPtrToValuePtr<void>(ItemInfoPtr);
+	if (!EquipDetailsPtr)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Could not get EquipmentDetails pointer"));
+		return TEXT("");
+	}
+
+	// Get WeaponOverlay from EquipmentDetails (it's a FGameplayTag)
+	UScriptStruct* EquipDetailsStruct = EquipDetailsProp->Struct;
+	FStructProperty* OverlayProp = FindFProperty<FStructProperty>(EquipDetailsStruct, TEXT("WeaponOverlay"));
+	if (!OverlayProp)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  No WeaponOverlay property found"));
+		return TEXT("");
+	}
+
+	void* OverlayPtr = OverlayProp->ContainerPtrToValuePtr<void>(EquipDetailsPtr);
+	if (!OverlayPtr)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Could not get WeaponOverlay pointer"));
+		return TEXT("");
+	}
+
+	// Cast to FGameplayTag
+	FGameplayTag* Tag = static_cast<FGameplayTag*>(OverlayPtr);
+	if (Tag->IsValid())
+	{
+		FString TagStr = Tag->ToString();
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  WeaponOverlay: %s"), *TagStr);
+		return TagStr;
+	}
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("  No WeaponOverlay tag set"));
+	return TEXT("");
+}
+
+bool USLFAutomationLibrary::ApplyWeaponOverlayTag(const FString& ItemAssetPath, const FString& OverlayTagString)
+{
+	UE_LOG(LogSLFAutomation, Warning, TEXT("ApplyWeaponOverlayTag: %s -> %s"), *ItemAssetPath, *OverlayTagString);
+
+	if (OverlayTagString.IsEmpty())
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  Empty overlay tag string, skipping"));
+		return true;
+	}
+
+	// Load the asset
+	UObject* Asset = LoadObject<UObject>(nullptr, *ItemAssetPath);
+	if (!Asset)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Failed to load asset: %s"), *ItemAssetPath);
+		return false;
+	}
+
+	// Get the ItemInformation property
+	FStructProperty* ItemInfoProp = FindFProperty<FStructProperty>(Asset->GetClass(), TEXT("ItemInformation"));
+	if (!ItemInfoProp)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  No ItemInformation property found"));
+		return false;
+	}
+
+	void* ItemInfoPtr = ItemInfoProp->ContainerPtrToValuePtr<void>(Asset);
+	if (!ItemInfoPtr)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Could not get ItemInformation pointer"));
+		return false;
+	}
+
+	// Get EquipmentDetails from ItemInformation
+	UScriptStruct* ItemInfoStruct = ItemInfoProp->Struct;
+	FStructProperty* EquipDetailsProp = FindFProperty<FStructProperty>(ItemInfoStruct, TEXT("EquipmentDetails"));
+	if (!EquipDetailsProp)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  No EquipmentDetails property found"));
+		return false;
+	}
+
+	void* EquipDetailsPtr = EquipDetailsProp->ContainerPtrToValuePtr<void>(ItemInfoPtr);
+	if (!EquipDetailsPtr)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Could not get EquipmentDetails pointer"));
+		return false;
+	}
+
+	// Get WeaponOverlay from EquipmentDetails
+	UScriptStruct* EquipDetailsStruct = EquipDetailsProp->Struct;
+	FStructProperty* OverlayProp = FindFProperty<FStructProperty>(EquipDetailsStruct, TEXT("WeaponOverlay"));
+	if (!OverlayProp)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  No WeaponOverlay property found"));
+		return false;
+	}
+
+	void* OverlayPtr = OverlayProp->ContainerPtrToValuePtr<void>(EquipDetailsPtr);
+	if (!OverlayPtr)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Could not get WeaponOverlay pointer"));
+		return false;
+	}
+
+	// Request the gameplay tag
+	FGameplayTag NewTag = FGameplayTag::RequestGameplayTag(FName(*OverlayTagString), false);
+	if (!NewTag.IsValid())
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Invalid tag (not registered): %s"), *OverlayTagString);
+		return false;
+	}
+
+	// Set the tag
+	FGameplayTag* Tag = static_cast<FGameplayTag*>(OverlayPtr);
+	*Tag = NewTag;
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("  Set WeaponOverlay to: %s"), *OverlayTagString);
+
+	// Mark package dirty and save
+	Asset->MarkPackageDirty();
+
+	UPackage* Package = Asset->GetOutermost();
+	FString PackageFileName = FPackageName::LongPackageNameToFilename(Package->GetName(), FPackageName::GetAssetPackageExtension());
+
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Standalone;
+	SaveArgs.Error = GError;
+
+	bool bSaved = UPackage::SavePackage(Package, Asset, *PackageFileName, SaveArgs);
+
+	if (bSaved)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  Saved successfully"));
+	}
+	else
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Failed to save"));
+	}
+
+	return bSaved;
+}
+
+// Include AnimBP Export/Diff/Fix implementations
+#include "SLFAnimBPExport.inl"
 
 #endif // WITH_EDITOR
