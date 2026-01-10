@@ -141,6 +141,23 @@ void UAC_EquipmentManager::EquipWeaponToSlot_Implementation(UPrimaryDataAsset* T
 	if (UPDA_Item* Item = Cast<UPDA_Item>(TargetItem))
 	{
 		SpawnEquipmentActor(Item, TargetEquipmentSlot);
+
+		// Add weapon's overlay tag to the appropriate hand's tag container
+		FGameplayTag WeaponOverlayTag = Item->ItemInformation.EquipmentDetails.WeaponOverlay;
+		if (WeaponOverlayTag.IsValid())
+		{
+			// Determine if this is a left or right hand slot
+			if (LeftHandSlots.HasTag(TargetEquipmentSlot))
+			{
+				LeftHandOverlayTags.AddTag(WeaponOverlayTag);
+				UE_LOG(LogTemp, Log, TEXT("  Added overlay tag %s to LeftHandOverlayTags"), *WeaponOverlayTag.ToString());
+			}
+			else if (RightHandSlots.HasTag(TargetEquipmentSlot))
+			{
+				RightHandOverlayTags.AddTag(WeaponOverlayTag);
+				UE_LOG(LogTemp, Log, TEXT("  Added overlay tag %s to RightHandOverlayTags"), *WeaponOverlayTag.ToString());
+			}
+		}
 	}
 
 	// Update overlay states
@@ -241,6 +258,23 @@ void UAC_EquipmentManager::UnequipWeaponAtSlot_Implementation(const FGameplayTag
 		if (UPDA_Item* PDAItem = Cast<UPDA_Item>(Item))
 		{
 			ApplyStatChanges(PDAItem->ItemInformation, false);
+
+			// Remove weapon's overlay tag from the appropriate hand's tag container
+			FGameplayTag WeaponOverlayTag = PDAItem->ItemInformation.EquipmentDetails.WeaponOverlay;
+			if (WeaponOverlayTag.IsValid())
+			{
+				// Determine if this is a left or right hand slot
+				if (LeftHandSlots.HasTag(SlotTag))
+				{
+					LeftHandOverlayTags.RemoveTag(WeaponOverlayTag);
+					UE_LOG(LogTemp, Log, TEXT("  Removed overlay tag %s from LeftHandOverlayTags"), *WeaponOverlayTag.ToString());
+				}
+				else if (RightHandSlots.HasTag(SlotTag))
+				{
+					RightHandOverlayTags.RemoveTag(WeaponOverlayTag);
+					UE_LOG(LogTemp, Log, TEXT("  Removed overlay tag %s from RightHandOverlayTags"), *WeaponOverlayTag.ToString());
+				}
+			}
 		}
 
 		// Destroy spawned world actor (weapon mesh) if any
@@ -816,34 +850,97 @@ void UAC_EquipmentManager::UpdateOverlayStates_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::UpdateOverlayStates"));
 
-	// Default to no overlay
-	LeftHandOverlayState = ESLFOverlayState::Default;
-	RightHandOverlayState = ESLFOverlayState::Default;
+	// Define the overlay tags to check
+	static const FGameplayTag OneHandedTag = FGameplayTag::RequestGameplayTag(TEXT("SoulslikeFramework.Equipment.Weapons.Overlay.OneHanded"), false);
+	static const FGameplayTag ShieldTag = FGameplayTag::RequestGameplayTag(TEXT("SoulslikeFramework.Equipment.Weapons.Overlay.Shield"), false);
+	static const FGameplayTag TwoHandedTag = FGameplayTag::RequestGameplayTag(TEXT("SoulslikeFramework.Equipment.Weapons.Overlay.TwoHanded"), false);
 
-	// Check left hand weapon
-	FGameplayTag LeftSlot = GetActiveWeaponSlot(false);
-	if (LeftSlot.IsValid() && IsSlotOccupied(LeftSlot))
+	// Debug: Log tag validity
+	UE_LOG(LogTemp, Log, TEXT("  Tags valid - OneHanded: %s, Shield: %s, TwoHanded: %s"),
+		OneHandedTag.IsValid() ? TEXT("YES") : TEXT("NO"),
+		ShieldTag.IsValid() ? TEXT("YES") : TEXT("NO"),
+		TwoHandedTag.IsValid() ? TEXT("YES") : TEXT("NO"));
+
+	// Debug: Log container contents
+	UE_LOG(LogTemp, Log, TEXT("  LeftHandOverlayTags count: %d"), LeftHandOverlayTags.Num());
+	for (const FGameplayTag& Tag : LeftHandOverlayTags)
 	{
-		// Default to OneHanded overlay for equipped weapons
-		LeftHandOverlayState = ESLFOverlayState::OneHanded;
+		UE_LOG(LogTemp, Log, TEXT("    - %s"), *Tag.ToString());
+	}
+	UE_LOG(LogTemp, Log, TEXT("  RightHandOverlayTags count: %d"), RightHandOverlayTags.Num());
+	for (const FGameplayTag& Tag : RightHandOverlayTags)
+	{
+		UE_LOG(LogTemp, Log, TEXT("    - %s"), *Tag.ToString());
 	}
 
-	// Check right hand weapon
-	FGameplayTag RightSlot = GetActiveWeaponSlot(true);
-	if (RightSlot.IsValid() && IsSlotOccupied(RightSlot))
+	// Default to Unarmed (no weapon equipped)
+	LeftHandOverlayState = ESLFOverlayState::Unarmed;
+	RightHandOverlayState = ESLFOverlayState::Unarmed;
+
+	// Check left hand overlay tags
+	// Blueprint uses Sequence node - all branches execute in order, last match "wins"
+	// Order: OneHanded, Shield, TwoHanded (so TwoHanded has highest priority)
+	if (LeftHandOverlayTags.HasTag(OneHandedTag))
+	{
+		LeftHandOverlayState = ESLFOverlayState::OneHanded;
+		UE_LOG(LogTemp, Log, TEXT("  LeftHand: OneHanded"));
+	}
+	if (LeftHandOverlayTags.HasTag(ShieldTag))
+	{
+		LeftHandOverlayState = ESLFOverlayState::Shield;
+		UE_LOG(LogTemp, Log, TEXT("  LeftHand: Shield"));
+	}
+	if (LeftHandOverlayTags.HasTag(TwoHandedTag))
+	{
+		LeftHandOverlayState = ESLFOverlayState::TwoHanded;
+		UE_LOG(LogTemp, Log, TEXT("  LeftHand: TwoHanded"));
+	}
+
+	// Check right hand overlay tags
+	if (RightHandOverlayTags.HasTag(OneHandedTag))
 	{
 		RightHandOverlayState = ESLFOverlayState::OneHanded;
+		UE_LOG(LogTemp, Log, TEXT("  RightHand: OneHanded"));
+	}
+	if (RightHandOverlayTags.HasTag(ShieldTag))
+	{
+		RightHandOverlayState = ESLFOverlayState::Shield;
+		UE_LOG(LogTemp, Log, TEXT("  RightHand: Shield"));
+	}
+	if (RightHandOverlayTags.HasTag(TwoHandedTag))
+	{
+		RightHandOverlayState = ESLFOverlayState::TwoHanded;
+		UE_LOG(LogTemp, Log, TEXT("  RightHand: TwoHanded"));
 	}
 
-	// Determine combined overlay state
-	if (LeftHandOverlayState != ESLFOverlayState::Default || RightHandOverlayState != ESLFOverlayState::Default)
+	// Check for dual wield (both hands have one-handed weapons)
+	if (LeftHandOverlayState == ESLFOverlayState::OneHanded && RightHandOverlayState == ESLFOverlayState::OneHanded)
+	{
+		// Check if dual wield is actually active (both slots occupied)
+		if (AreBothWeaponSlotsActive())
+		{
+			LeftHandOverlayState = ESLFOverlayState::DualWield;
+			RightHandOverlayState = ESLFOverlayState::DualWield;
+			UE_LOG(LogTemp, Log, TEXT("  DualWield active"));
+		}
+	}
+
+	// Determine combined overlay state (right hand takes priority)
+	if (RightHandOverlayState != ESLFOverlayState::Unarmed)
 	{
 		ActiveOverlayState = RightHandOverlayState;
 	}
+	else if (LeftHandOverlayState != ESLFOverlayState::Unarmed)
+	{
+		ActiveOverlayState = LeftHandOverlayState;
+	}
 	else
 	{
-		ActiveOverlayState = ESLFOverlayState::Default;
+		ActiveOverlayState = ESLFOverlayState::Unarmed;
 	}
+
+	UE_LOG(LogTemp, Log, TEXT("  Final States - Left: %d, Right: %d, Active: %d"),
+		(int32)LeftHandOverlayState, (int32)RightHandOverlayState, (int32)ActiveOverlayState);
 }
 
 /**
