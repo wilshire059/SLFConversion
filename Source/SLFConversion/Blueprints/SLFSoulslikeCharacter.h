@@ -371,4 +371,10 @@ protected:
 
 	/** Execute action immediately (bypasses buffer) */
 	void ExecuteActionImmediately(const FGameplayTag& ActionTag);
+
+	/** Update AnimInstance overlay states from EquipmentManager
+	 * Called each tick to sync overlay states for weapon animations
+	 * Uses reflection to set Blueprint enum variables since AnimBP isn't reparented
+	 */
+	void UpdateAnimInstanceOverlayStates();
 };

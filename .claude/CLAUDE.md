@@ -249,6 +249,12 @@ powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Rec
   "C:/scripts/SLFConversion/SLFConversion.uproject" ^
   -run=pythonscript -script="C:/scripts/SLFConversion/apply_armor_data.py" ^
   -stdout -unattended -nosplash 2>&1
+
+# 4g. Apply weapon overlay tags (for weapon hold/attack animations)
+"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
+  "C:/scripts/SLFConversion/SLFConversion.uproject" ^
+  -run=pythonscript -script="C:/scripts/SLFConversion/apply_weapon_overlay.py" ^
+  -stdout -unattended -nosplash 2>&1
 ```
 
 ### Build C++ First (if needed)
@@ -285,6 +291,8 @@ powershell -Command "Remove-Item -Path 'C:\scripts\SLFConversion\Content\*' -Rec
 | `apply_base_stats.py` | Apply BaseStats to character class data assets |
 | `apply_armor_data.py` | Apply armor mesh data (character-keyed SkeletalMeshInfo) |
 | `apply_weapon_meshes.py` | Apply weapon mesh assignments to Blueprint CDOs |
+| `extract_weapon_overlay.py` | Extract WeaponOverlay tags (run on bp_only) |
+| `apply_weapon_overlay.py` | Apply WeaponOverlay tags for weapon animations |
 | `full_migration.py` | All-in-one workflow (extract + migrate + apply) |
 
 ### Expected Output

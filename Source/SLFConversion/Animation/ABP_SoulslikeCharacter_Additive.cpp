@@ -57,7 +57,7 @@ void UABP_SoulslikeCharacter_Additive::NativeUpdateAnimation(float DeltaSeconds)
 		bIsAccelerating = Acceleration2D.Size() > 0.1f;
 	}
 
-	// Cache and use CombatManager for blocking state
+	// Cache and use CombatManager for blocking state (on Character)
 	if (!CombatManager)
 	{
 		CombatManager = OwnerCharacter->FindComponentByClass<UAC_CombatManager>();
@@ -67,7 +67,7 @@ void UABP_SoulslikeCharacter_Additive::NativeUpdateAnimation(float DeltaSeconds)
 		bIsBlocking = CombatManager->IsGuarding;
 	}
 
-	// Cache and use ActionManager for resting state
+	// Cache and use ActionManager for resting state (on Character)
 	if (!ActionManager)
 	{
 		ActionManager = OwnerCharacter->FindComponentByClass<UAC_ActionManager>();
@@ -77,15 +77,36 @@ void UABP_SoulslikeCharacter_Additive::NativeUpdateAnimation(float DeltaSeconds)
 		IsResting = ActionManager->IsResting;
 	}
 
+	// Cache and use EquipmentManager for overlay states (on Controller, NOT Character!)
+	if (!EquipmentManager)
+	{
+		if (AController* Controller = OwnerCharacter->GetController())
+		{
+			EquipmentManager = Controller->FindComponentByClass<UAC_EquipmentManager>();
+			if (EquipmentManager)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[AnimBP] Found EquipmentManager on Controller: %s"), *Controller->GetName());
+			}
+		}
+	}
+	// Read overlay states from EquipmentManager
+	if (EquipmentManager)
+	{
+		LeftHandOverlayState = EquipmentManager->LeftHandOverlayState;
+		RightHandOverlayState = EquipmentManager->RightHandOverlayState;
+		ActiveOverlayState = EquipmentManager->ActiveOverlayState;
+	}
+
 	// DEBUG: Log animation state periodically
 	static int32 DebugLogCounter = 0;
 	if (++DebugLogCounter % 60 == 0)  // Log every ~1 second at 60fps
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[AnimBP DEBUG] IsCrouched=%s, Speed=%.1f, bIsFalling=%s, Owner=%s"),
-			IsCrouched ? TEXT("TRUE") : TEXT("FALSE"),
+		UE_LOG(LogTemp, Warning, TEXT("[AnimBP DEBUG] Speed=%.1f, LeftOverlay=%d, RightOverlay=%d, ActiveOverlay=%d, EquipMgr=%s"),
 			Speed,
-			bIsFalling ? TEXT("TRUE") : TEXT("FALSE"),
-			OwnerCharacter ? *OwnerCharacter->GetName() : TEXT("NULL"));
+			(int32)LeftHandOverlayState,
+			(int32)RightHandOverlayState,
+			(int32)ActiveOverlayState,
+			EquipmentManager ? TEXT("YES") : TEXT("NO"));
 	}
 }
 

@@ -571,7 +571,17 @@ struct SLFCONVERSION_API FSLFEquipmentSocketInfo
 {
 	GENERATED_BODY()
 
-	// Socket attachment info - expand as needed based on actual usage
+	// Socket name for left hand attachment (e.g., "hand_l_socket")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Equipment")
+	FName LeftHandSocketName;
+
+	// Socket name for right hand attachment (e.g., "hand_r_socket")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Equipment")
+	FName RightHandSocketName;
+
+	// Socket name for back/holster attachment (e.g., "back_socket")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Equipment")
+	FName HolsterSocketName;
 
 	FSLFEquipmentSocketInfo() {}
 };

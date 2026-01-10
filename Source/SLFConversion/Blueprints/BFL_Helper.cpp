@@ -209,13 +209,8 @@ void UBFL_Helper::GetEquipmentComponent(AController* Target, const UObject* Worl
 		return;
 	}
 
-	APawn* Pawn = Target->GetPawn();
-	if (!Pawn)
-	{
-		return;
-	}
-
-	OutEquipmentManager = Pawn->FindComponentByClass<UAC_EquipmentManager>();
+	// Component is on the Controller, not the Pawn
+	OutEquipmentManager = Target->FindComponentByClass<UAC_EquipmentManager>();
 }
 
 void UBFL_Helper::GetInventoryComponent(AController* Target, const UObject* WorldContextObject, UAC_InventoryManager*& OutInventoryManager)
@@ -227,13 +222,8 @@ void UBFL_Helper::GetInventoryComponent(AController* Target, const UObject* Worl
 		return;
 	}
 
-	APawn* Pawn = Target->GetPawn();
-	if (!Pawn)
-	{
-		return;
-	}
-
-	OutInventoryManager = Pawn->FindComponentByClass<UAC_InventoryManager>();
+	// Component is on the Controller, not the Pawn
+	OutInventoryManager = Target->FindComponentByClass<UAC_InventoryManager>();
 }
 
 void UBFL_Helper::GetSaveLoadComponent(AController* Target, const UObject* WorldContextObject, UAC_SaveLoadManager*& OutSaveLoadManager)
@@ -245,13 +235,8 @@ void UBFL_Helper::GetSaveLoadComponent(AController* Target, const UObject* World
 		return;
 	}
 
-	APawn* Pawn = Target->GetPawn();
-	if (!Pawn)
-	{
-		return;
-	}
-
-	OutSaveLoadManager = Pawn->FindComponentByClass<UAC_SaveLoadManager>();
+	// Component is on the Controller, not the Pawn
+	OutSaveLoadManager = Target->FindComponentByClass<UAC_SaveLoadManager>();
 }
 
 UAC_ProgressManager* UBFL_Helper::GetLocalProgressManager(const UObject* WorldContextObject)

@@ -42,6 +42,14 @@ void ASLFPickupItemBase::BeginPlay()
 	if (Item)
 	{
 		ItemInfo = ISLFInteractableInterface::Execute_TryGetItemInfo(this);
+
+		// Set InteractionPrompt from item DisplayName for UI display
+		if (!ItemInfo.DisplayName.IsEmpty())
+		{
+			InteractionPrompt = ItemInfo.DisplayName;
+			InteractableDisplayName = ItemInfo.DisplayName;
+			UE_LOG(LogTemp, Log, TEXT("[PickupItem] Set InteractionPrompt to: %s"), *InteractionPrompt.ToString());
+		}
 	}
 
 	// Setup Niagara effect from item data (replaces EventGraph logic)

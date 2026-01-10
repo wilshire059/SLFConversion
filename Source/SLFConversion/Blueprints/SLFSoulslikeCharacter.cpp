@@ -27,6 +27,7 @@
 #include "Components/AC_ActionManager.h"
 #include "Components/AC_CombatManager.h"
 #include "Components/AC_InteractionManager.h"
+#include "Components/AC_EquipmentManager.h"
 #include "Interfaces/SLFInteractableInterface.h"
 #include "LevelSequence.h"
 #include "LevelSequenceActor.h"
@@ -220,9 +221,9 @@ void ASLFSoulslikeCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// NOTE: AnimBP IsCrouched is now handled by the AnimBP's own EventGraph + Property Access.
-	// The EventGraph caches the ActionManager reference in BeginPlay, and AnimGraph functions
-	// use Property Access nodes to read ActionManager.IsCrouched directly - no reflection needed.
+	// Update AnimBP overlay states from EquipmentManager
+	// This syncs C++ overlay values to Blueprint enum variables for weapon animations
+	UpdateAnimInstanceOverlayStates();
 }
 
 void ASLFSoulslikeCharacter::OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
@@ -1511,5 +1512,67 @@ void ASLFSoulslikeCharacter::OnInteractableTraced_Implementation(AActor* Interac
 		// Hide interaction prompt
 		HUD->EventHideInteractionWidget();
 		UE_LOG(LogTemp, Log, TEXT("  Hiding interaction widget"));
+	}
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// OVERLAY STATE SYNC - Updates AnimBP Blueprint enum variables from EquipmentManager
+// ═══════════════════════════════════════════════════════════════════════════════
+void ASLFSoulslikeCharacter::UpdateAnimInstanceOverlayStates()
+{
+	// Get AnimInstance from skeletal mesh
+	UAnimInstance* AnimInstance = GetMesh() ? GetMesh()->GetAnimInstance() : nullptr;
+	if (!AnimInstance)
+	{
+		return;
+	}
+
+	// Get EquipmentManager from controller (NOT character!)
+	UAC_EquipmentManager* EquipMgr = nullptr;
+	if (AController* PC = GetController())
+	{
+		EquipMgr = PC->FindComponentByClass<UAC_EquipmentManager>();
+	}
+	if (!EquipMgr)
+	{
+		return;
+	}
+
+	// Get the AnimInstance class to find Blueprint properties
+	UClass* AnimClass = AnimInstance->GetClass();
+
+	// Find and set LeftHandOverlayState (Blueprint enum property)
+	if (FEnumProperty* LeftProp = FindFProperty<FEnumProperty>(AnimClass, TEXT("LeftHandOverlayState")))
+	{
+		// Get the integer value from C++ enum
+		int64 Value = static_cast<int64>(EquipMgr->LeftHandOverlayState);
+		// Set using the numeric property (works for both Blueprint and C++ enums)
+		FNumericProperty* UnderlyingProp = LeftProp->GetUnderlyingProperty();
+		if (UnderlyingProp)
+		{
+			UnderlyingProp->SetIntPropertyValue(LeftProp->ContainerPtrToValuePtr<void>(AnimInstance), Value);
+		}
+	}
+
+	// Find and set RightHandOverlayState
+	if (FEnumProperty* RightProp = FindFProperty<FEnumProperty>(AnimClass, TEXT("RightHandOverlayState")))
+	{
+		int64 Value = static_cast<int64>(EquipMgr->RightHandOverlayState);
+		FNumericProperty* UnderlyingProp = RightProp->GetUnderlyingProperty();
+		if (UnderlyingProp)
+		{
+			UnderlyingProp->SetIntPropertyValue(RightProp->ContainerPtrToValuePtr<void>(AnimInstance), Value);
+		}
+	}
+
+	// Find and set ActiveOverlayState  
+	if (FEnumProperty* ActiveProp = FindFProperty<FEnumProperty>(AnimClass, TEXT("ActiveOverlayState")))
+	{
+		int64 Value = static_cast<int64>(EquipMgr->ActiveOverlayState);
+		FNumericProperty* UnderlyingProp = ActiveProp->GetUnderlyingProperty();
+		if (UnderlyingProp)
+		{
+			UnderlyingProp->SetIntPropertyValue(ActiveProp->ContainerPtrToValuePtr<void>(AnimInstance), Value);
+		}
 	}
 }

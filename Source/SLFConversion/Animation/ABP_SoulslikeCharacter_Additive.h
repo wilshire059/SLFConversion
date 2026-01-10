@@ -78,8 +78,14 @@ public:
 	bool bIsFalling;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	bool IsResting;
-	// NOTE: OverlayState enums removed - they conflict with Blueprint variables when reparenting
-	// The AnimGraph uses the Blueprint versions via Property Access
+	// Overlay states - populated from EquipmentManager in NativeUpdateAnimation
+	// Blueprint variables with same names are REMOVED during migration to avoid conflict
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	ESLFOverlayState LeftHandOverlayState = ESLFOverlayState::Default;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	ESLFOverlayState RightHandOverlayState = ESLFOverlayState::Default;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	ESLFOverlayState ActiveOverlayState = ESLFOverlayState::Default;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	UAC_EquipmentManager* EquipmentManager;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
