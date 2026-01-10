@@ -124,7 +124,7 @@ void UW_LevelUp::SetAllStatEntries_Implementation()
 
 	// Get all stats from stat manager
 	TArray<UB_Stat*> StatObjects;
-	TMap<FGameplayTag, TSubclassOf<UB_Stat>> StatClasses;
+	TMap<TSubclassOf<UB_Stat>, FGameplayTag> StatClasses;
 	StatManagerComponent->GetAllStats(StatObjects, StatClasses);
 
 	// Store default values

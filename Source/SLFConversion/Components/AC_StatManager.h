@@ -56,7 +56,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
 	UDataTable* StatTable;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
-	TMap<FGameplayTag, TSubclassOf<UB_Stat>> Stats;
+	TMap<TSubclassOf<UB_Stat>, FGameplayTag> Stats;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Runtime")
 	int32 Level;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Runtime")
@@ -87,8 +87,8 @@ public:
 	void GetStat(const FGameplayTag& StatTag, UB_Stat*& OutFoundStat, FStatInfo& OutStatInfo);
 	virtual void GetStat_Implementation(const FGameplayTag& StatTag, UB_Stat*& OutFoundStat, FStatInfo& OutStatInfo);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_StatManager")
-	void GetAllStats(TArray<UB_Stat*>& OutStatObjects, TMap<FGameplayTag, TSubclassOf<UB_Stat>>& OutStatClassesAndCategories);
-	virtual void GetAllStats_Implementation(TArray<UB_Stat*>& OutStatObjects, TMap<FGameplayTag, TSubclassOf<UB_Stat>>& OutStatClassesAndCategories);
+	void GetAllStats(TArray<UB_Stat*>& OutStatObjects, TMap<TSubclassOf<UB_Stat>, FGameplayTag>& OutStatClassesAndCategories);
+	virtual void GetAllStats_Implementation(TArray<UB_Stat*>& OutStatObjects, TMap<TSubclassOf<UB_Stat>, FGameplayTag>& OutStatClassesAndCategories);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_StatManager")
 	void ResetStat(const FGameplayTag& StatTag);
 	virtual void ResetStat_Implementation(const FGameplayTag& StatTag);
@@ -119,4 +119,8 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_StatManager")
 	void ToggleRegenForStat(const FGameplayTag& StatTag, bool Stop);
 	virtual void ToggleRegenForStat_Implementation(const FGameplayTag& StatTag, bool Stop);
+	// EventInitializeStats: Initialize stats from DataTable on BeginPlay
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_StatManager")
+	void EventInitializeStats();
+	virtual void EventInitializeStats_Implementation();
 };
