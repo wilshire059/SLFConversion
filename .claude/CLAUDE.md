@@ -328,6 +328,38 @@ MIGRATION_MAP = {...}                 # All other Blueprints
 
 ---
 
+## BACKUPS
+
+**Master Index:** `C:/scripts/SLFConversion/backups/BACKUPS.md`
+
+Check this file for available backups, descriptions, and restore commands.
+
+| Backup | Location | Purpose |
+|--------|----------|---------|
+| `bp_only` | `C:/scripts/bp_only/` | **PRIMARY** - Original Blueprint-only project (pre-migration) |
+| `animbp_native_complete` | `backups/animbp_native_complete/` | AnimBP after C++ native migration (no reflection) |
+
+### bp_only: SURGICAL RESTORES ONLY
+
+**NEVER overwrite the entire Content/ folder from bp_only.** This causes regressions in working Blueprints that have already been reparented to C++.
+
+```bash
+# WRONG - causes regressions
+Remove-Item 'C:\scripts\SLFConversion\Content\*' -Recurse; Copy-Item 'C:\scriptsp_only\Content\*' ...
+
+# RIGHT - surgical restore of specific assets only
+cp "C:/scripts/bp_only/Content/.../SpecificAsset.uasset" "C:/scripts/SLFConversion/Content/.../"
+```
+
+### Quick Restore Example
+```bash
+# Restore AnimBP to working native state
+cp "C:/scripts/SLFConversion/backups/animbp_native_complete/ABP_SoulslikeCharacter_Additive.uasset" \
+   "C:/scripts/SLFConversion/Content/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/"
+```
+
+---
+
 ## KNOWN ISSUES AND SOLUTIONS
 
 ### 1. "?" Suffix Pin Problem

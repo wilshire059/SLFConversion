@@ -222,8 +222,11 @@ FString USLFAutomationLibrary::ExportAnimGraphState(UObject* AnimBlueprintAsset,
 	Json += TEXT("  \"Graphs\": [\n");
 
 	TArray<UEdGraph*> AllGraphs;
-	AllGraphs.Append(AnimBP->UbergraphPages);
-	AllGraphs.Append(AnimBP->FunctionGraphs);
+	
+	// Use GetAllGraphs to include AnimGraph (where BlendListByEnum nodes are)
+	AnimBP->GetAllGraphs(AllGraphs);
+	// Skip the old approach
+	// AllGraphs.Append(AnimBP->UbergraphPages);
 
 	for (int32 gi = 0; gi < AllGraphs.Num(); gi++)
 	{
@@ -416,8 +419,11 @@ int32 USLFAutomationLibrary::FixPropertyAccessPaths(UObject* AnimBlueprintAsset,
 	int32 FixCount = 0;
 
 	TArray<UEdGraph*> AllGraphs;
-	AllGraphs.Append(AnimBP->UbergraphPages);
-	AllGraphs.Append(AnimBP->FunctionGraphs);
+	
+	// Use GetAllGraphs to include AnimGraph (where BlendListByEnum nodes are)
+	AnimBP->GetAllGraphs(AllGraphs);
+	// Skip the old approach
+	// AllGraphs.Append(AnimBP->UbergraphPages);
 
 	for (UEdGraph* Graph : AllGraphs)
 	{
@@ -497,8 +503,11 @@ int32 USLFAutomationLibrary::FixLinkedAnimLayers(UObject* AnimBlueprintAsset, co
 	int32 FixCount = 0;
 
 	TArray<UEdGraph*> AllGraphs;
-	AllGraphs.Append(AnimBP->UbergraphPages);
-	AllGraphs.Append(AnimBP->FunctionGraphs);
+	
+	// Use GetAllGraphs to include AnimGraph (where BlendListByEnum nodes are)
+	AnimBP->GetAllGraphs(AllGraphs);
+	// Skip the old approach
+	// AllGraphs.Append(AnimBP->UbergraphPages);
 
 	for (UEdGraph* Graph : AllGraphs)
 	{
@@ -561,8 +570,11 @@ FString USLFAutomationLibrary::DiagnoseAnimGraphNodes(UObject* AnimBlueprintAsse
 	Diagnosis += TEXT("\n=== GRAPHS ===\n");
 
 	TArray<UEdGraph*> AllGraphs;
-	AllGraphs.Append(AnimBP->UbergraphPages);
-	AllGraphs.Append(AnimBP->FunctionGraphs);
+	
+	// Use GetAllGraphs to include AnimGraph (where BlendListByEnum nodes are)
+	AnimBP->GetAllGraphs(AllGraphs);
+	// Skip the old approach
+	// AllGraphs.Append(AnimBP->UbergraphPages);
 
 	for (UEdGraph* Graph : AllGraphs)
 	{
@@ -666,8 +678,11 @@ FString USLFAutomationLibrary::DiagnoseLinkedAnimLayerNodes(UObject* AnimBluepri
 
 	// Find LinkedAnimLayer nodes using proper Cast<>
 	TArray<UEdGraph*> AllGraphs;
-	AllGraphs.Append(AnimBP->UbergraphPages);
-	AllGraphs.Append(AnimBP->FunctionGraphs);
+	
+	// Use GetAllGraphs to include AnimGraph (where BlendListByEnum nodes are)
+	AnimBP->GetAllGraphs(AllGraphs);
+	// Skip the old approach
+	// AllGraphs.Append(AnimBP->UbergraphPages);
 
 	Result += TEXT("=== LINKEDANIMLAYER NODES ===\n");
 	int32 TotalNodes = 0;
@@ -766,8 +781,11 @@ int32 USLFAutomationLibrary::FixLinkedAnimLayerGuid(UObject* AnimBlueprintAsset)
 
 	// Find LinkedAnimLayer nodes
 	TArray<UEdGraph*> AllGraphs;
-	AllGraphs.Append(AnimBP->UbergraphPages);
-	AllGraphs.Append(AnimBP->FunctionGraphs);
+	
+	// Use GetAllGraphs to include AnimGraph (where BlendListByEnum nodes are)
+	AnimBP->GetAllGraphs(AllGraphs);
+	// Skip the old approach
+	// AllGraphs.Append(AnimBP->UbergraphPages);
 
 	for (UEdGraph* Graph : AllGraphs)
 	{
@@ -881,4 +899,991 @@ FString USLFAutomationLibrary::GetBlueprintCompileErrors(UObject* BlueprintAsset
 	}
 
 	return Result;
+}
+
+// ============================================================================
+// DiagnoseAnimBP - Comprehensive AnimBP analysis
+// ============================================================================
+FString USLFAutomationLibrary::DiagnoseAnimBP(UObject* AnimBlueprintAsset)
+{
+	UAnimBlueprint* AnimBP = Cast<UAnimBlueprint>(AnimBlueprintAsset);
+	if (!AnimBP)
+	{
+		return TEXT("ERROR: Not an AnimBlueprint asset");
+	}
+
+	FString Result;
+	Result += TEXT("=======================================================================\n");
+	Result += TEXT("ANIMBP DIAGNOSTIC REPORT\n");
+	Result += FString::Printf(TEXT("Asset: %s\n"), *AnimBP->GetPathName());
+	Result += TEXT("=======================================================================\n\n");
+
+	// Get all graphs
+	TArray<UEdGraph*> AllGraphs;
+	AnimBP->GetAllGraphs(AllGraphs);
+
+	Result += FString::Printf(TEXT("Total Graphs: %d\n\n"), AllGraphs.Num());
+
+	// Find AnimGraph and analyze it
+	for (UEdGraph* Graph : AllGraphs)
+	{
+		if (!Graph) continue;
+
+		FString GraphName = Graph->GetName();
+		int32 NodeCount = Graph->Nodes.Num();
+
+		// Check if this is the AnimGraph
+		bool bIsAnimGraph = GraphName.Contains(TEXT("AnimGraph"));
+
+		if (bIsAnimGraph)
+		{
+			Result += TEXT("=== ANIMGRAPH ===\n");
+			Result += FString::Printf(TEXT("Node Count: %d\n\n"), NodeCount);
+
+			// Analyze each node
+			for (UEdGraphNode* Node : Graph->Nodes)
+			{
+				if (!Node) continue;
+
+				FString NodeClass = Node->GetClass()->GetName();
+				FString NodeTitle = Node->GetNodeTitle(ENodeTitleType::FullTitle).ToString();
+				NodeTitle = NodeTitle.Replace(TEXT("\n"), TEXT(" | "));
+
+				// Check for K2Node_VariableGet (variable references)
+				if (UK2Node_VariableGet* VarGet = Cast<UK2Node_VariableGet>(Node))
+				{
+					FName VarName = VarGet->GetVarName();
+					FString VarNameStr = VarName.ToString();
+
+					Result += FString::Printf(TEXT("VARIABLE GET: %s\n"), *VarNameStr);
+					Result += FString::Printf(TEXT("  Position: X=%d, Y=%d\n"), Node->NodePosX, Node->NodePosY);
+
+					// Check if variable has special characters
+					if (VarNameStr.Contains(TEXT("?")) || VarNameStr.Contains(TEXT("(")))
+					{
+						Result += TEXT("  *** PROBLEM: Variable has special characters ***\n");
+					}
+
+					// Trace output connections
+					for (UEdGraphPin* Pin : Node->Pins)
+					{
+						if (Pin && Pin->Direction == EGPD_Output && Pin->LinkedTo.Num() > 0)
+						{
+							for (UEdGraphPin* LinkedPin : Pin->LinkedTo)
+							{
+								if (LinkedPin && LinkedPin->GetOwningNode())
+								{
+									FString LinkedTitle = LinkedPin->GetOwningNode()->GetNodeTitle(ENodeTitleType::FullTitle).ToString();
+									LinkedTitle = LinkedTitle.Replace(TEXT("\n"), TEXT(" | "));
+									Result += FString::Printf(TEXT("  OUTPUT --> %s (pin: %s)\n"),
+										*LinkedTitle, *LinkedPin->PinName.ToString());
+								}
+							}
+						}
+					}
+					Result += TEXT("\n");
+				}
+
+				// Check for AnimGraphNode_BlendListByEnum (Blend Poses by enum)
+				if (NodeClass.Contains(TEXT("BlendListByEnum")))
+				{
+					Result += FString::Printf(TEXT("BLEND POSES BY ENUM: %s\n"), *NodeTitle);
+					Result += FString::Printf(TEXT("  Position: X=%d, Y=%d\n"), Node->NodePosX, Node->NodePosY);
+
+					// Check ActiveEnumValue pin
+					for (UEdGraphPin* Pin : Node->Pins)
+					{
+						if (Pin && Pin->PinName.ToString().Contains(TEXT("ActiveEnumValue")))
+						{
+							if (Pin->LinkedTo.Num() > 0)
+							{
+								for (UEdGraphPin* LinkedPin : Pin->LinkedTo)
+								{
+									if (LinkedPin && LinkedPin->GetOwningNode())
+									{
+										FString LinkedTitle = LinkedPin->GetOwningNode()->GetNodeTitle(ENodeTitleType::FullTitle).ToString();
+										Result += FString::Printf(TEXT("  ActiveEnumValue <-- %s\n"), *LinkedTitle);
+									}
+								}
+							}
+							else
+							{
+								Result += FString::Printf(TEXT("  ActiveEnumValue = %s (NOT CONNECTED!)\n"), *Pin->DefaultValue);
+								Result += TEXT("  *** NEEDS BINDING TO OVERLAY STATE VARIABLE ***\n");
+							}
+						}
+					}
+
+					// Check pose inputs
+					for (UEdGraphPin* Pin : Node->Pins)
+					{
+						if (Pin && Pin->Direction == EGPD_Input && Pin->PinName.ToString().StartsWith(TEXT("BlendPose")))
+						{
+							if (Pin->LinkedTo.Num() > 0)
+							{
+								for (UEdGraphPin* LinkedPin : Pin->LinkedTo)
+								{
+									if (LinkedPin && LinkedPin->GetOwningNode())
+									{
+										FString LinkedTitle = LinkedPin->GetOwningNode()->GetNodeTitle(ENodeTitleType::FullTitle).ToString();
+										LinkedTitle = LinkedTitle.Replace(TEXT("\n"), TEXT(" | "));
+										Result += FString::Printf(TEXT("  %s <-- %s\n"),
+											*Pin->PinName.ToString(), *LinkedTitle);
+									}
+								}
+							}
+						}
+					}
+
+					// Check output
+					for (UEdGraphPin* Pin : Node->Pins)
+					{
+						if (Pin && Pin->Direction == EGPD_Output && Pin->LinkedTo.Num() > 0)
+						{
+							for (UEdGraphPin* LinkedPin : Pin->LinkedTo)
+							{
+								if (LinkedPin && LinkedPin->GetOwningNode())
+								{
+									FString LinkedTitle = LinkedPin->GetOwningNode()->GetNodeTitle(ENodeTitleType::FullTitle).ToString();
+									LinkedTitle = LinkedTitle.Replace(TEXT("\n"), TEXT(" | "));
+									Result += FString::Printf(TEXT("  OUTPUT --> %s\n"), *LinkedTitle);
+								}
+							}
+						}
+					}
+					Result += TEXT("\n");
+				}
+
+				// Check for AnimGraphNode_StateMachine
+				if (NodeClass.Contains(TEXT("StateMachine")))
+				{
+					Result += FString::Printf(TEXT("STATE MACHINE: %s\n"), *NodeTitle);
+					Result += FString::Printf(TEXT("  Position: X=%d, Y=%d\n"), Node->NodePosX, Node->NodePosY);
+
+					// Output connection
+					for (UEdGraphPin* Pin : Node->Pins)
+					{
+						if (Pin && Pin->Direction == EGPD_Output && Pin->LinkedTo.Num() > 0)
+						{
+							for (UEdGraphPin* LinkedPin : Pin->LinkedTo)
+							{
+								if (LinkedPin && LinkedPin->GetOwningNode())
+								{
+									FString LinkedTitle = LinkedPin->GetOwningNode()->GetNodeTitle(ENodeTitleType::FullTitle).ToString();
+									LinkedTitle = LinkedTitle.Replace(TEXT("\n"), TEXT(" | "));
+									Result += FString::Printf(TEXT("  OUTPUT --> %s\n"), *LinkedTitle);
+								}
+							}
+						}
+					}
+					Result += TEXT("\n");
+				}
+			}
+		}
+		else if (GraphName.Contains(TEXT("StateMachine")) || GraphName.Contains(TEXT("_SM")))
+		{
+			// This might be a state machine internal graph
+			Result += FString::Printf(TEXT("=== STATE MACHINE GRAPH: %s (%d nodes) ===\n"), *GraphName, NodeCount);
+
+			for (UEdGraphNode* Node : Graph->Nodes)
+			{
+				if (!Node) continue;
+
+				FString NodeClass = Node->GetClass()->GetName();
+				FString NodeTitle = Node->GetNodeTitle(ENodeTitleType::FullTitle).ToString();
+				NodeTitle = NodeTitle.Replace(TEXT("\n"), TEXT(" | "));
+
+				// States
+				if (NodeClass.Contains(TEXT("StateNode")) || NodeClass.Contains(TEXT("AnimState")))
+				{
+					Result += FString::Printf(TEXT("  STATE: %s\n"), *NodeTitle);
+				}
+				// Transitions
+				else if (NodeClass.Contains(TEXT("Transition")))
+				{
+					Result += FString::Printf(TEXT("  TRANSITION: %s\n"), *NodeTitle);
+
+					// Check for connected conditions
+					bool bHasCondition = false;
+					for (UEdGraphPin* Pin : Node->Pins)
+					{
+						if (Pin && Pin->PinName.ToString().Contains(TEXT("Result")) && Pin->Direction == EGPD_Input)
+						{
+							if (Pin->LinkedTo.Num() > 0)
+							{
+								bHasCondition = true;
+								for (UEdGraphPin* LinkedPin : Pin->LinkedTo)
+								{
+									if (LinkedPin && LinkedPin->GetOwningNode())
+									{
+										FString LinkedTitle = LinkedPin->GetOwningNode()->GetNodeTitle(ENodeTitleType::FullTitle).ToString();
+										Result += FString::Printf(TEXT("    Condition: %s\n"), *LinkedTitle);
+									}
+								}
+							}
+						}
+					}
+					if (!bHasCondition)
+					{
+						Result += TEXT("    *** NO CONDITION CONNECTED ***\n");
+					}
+				}
+			}
+			Result += TEXT("\n");
+		}
+	}
+
+	Result += TEXT("=======================================================================\n");
+	Result += TEXT("END OF DIAGNOSTIC REPORT\n");
+	Result += TEXT("=======================================================================\n");
+
+	return Result;
+}
+
+// ============================================================================
+// GetStateMachineStructure - Get detailed state machine info
+// ============================================================================
+FString USLFAutomationLibrary::GetStateMachineStructure(UObject* AnimBlueprintAsset, const FString& StateMachineName)
+{
+	UAnimBlueprint* AnimBP = Cast<UAnimBlueprint>(AnimBlueprintAsset);
+	if (!AnimBP)
+	{
+		return TEXT("ERROR: Not an AnimBlueprint asset");
+	}
+
+	FString Result;
+	Result += FString::Printf(TEXT("=== STATE MACHINE: %s ===\n\n"), *StateMachineName);
+
+	// Get all graphs
+	TArray<UEdGraph*> AllGraphs;
+	AnimBP->GetAllGraphs(AllGraphs);
+
+	for (UEdGraph* Graph : AllGraphs)
+	{
+		if (!Graph) continue;
+
+		FString GraphName = Graph->GetName();
+
+		// Check if this graph is related to the state machine
+		if (GraphName.Contains(StateMachineName) || GraphName.Contains(TEXT("_SM")))
+		{
+			Result += FString::Printf(TEXT("Graph: %s\n"), *GraphName);
+
+			for (UEdGraphNode* Node : Graph->Nodes)
+			{
+				if (!Node) continue;
+
+				FString NodeClass = Node->GetClass()->GetName();
+				FString NodeTitle = Node->GetNodeTitle(ENodeTitleType::FullTitle).ToString();
+				NodeTitle = NodeTitle.Replace(TEXT("\n"), TEXT(" | "));
+
+				Result += FString::Printf(TEXT("  [%s] %s\n"), *NodeClass, *NodeTitle);
+				Result += FString::Printf(TEXT("    Position: X=%d, Y=%d\n"), Node->NodePosX, Node->NodePosY);
+
+				// List all pins and connections
+				for (UEdGraphPin* Pin : Node->Pins)
+				{
+					if (!Pin) continue;
+
+					FString PinDir = (Pin->Direction == EGPD_Input) ? TEXT("IN") : TEXT("OUT");
+					Result += FString::Printf(TEXT("    Pin [%s] %s"), *PinDir, *Pin->PinName.ToString());
+
+					if (Pin->LinkedTo.Num() > 0)
+					{
+						Result += TEXT(" --> ");
+						for (int32 i = 0; i < Pin->LinkedTo.Num(); i++)
+						{
+							if (i > 0) Result += TEXT(", ");
+							UEdGraphPin* LinkedPin = Pin->LinkedTo[i];
+							if (LinkedPin && LinkedPin->GetOwningNode())
+							{
+								Result += LinkedPin->GetOwningNode()->GetNodeTitle(ENodeTitleType::FullTitle).ToString();
+							}
+						}
+					}
+					else if (Pin->Direction == EGPD_Input && !Pin->DefaultValue.IsEmpty())
+					{
+						Result += FString::Printf(TEXT(" = %s"), *Pin->DefaultValue);
+					}
+
+					Result += TEXT("\n");
+				}
+			}
+			Result += TEXT("\n");
+		}
+	}
+
+	return Result;
+}
+
+// ============================================================================
+// InspectTransitionGraph - Show ALL nodes in transitions matching a keyword
+// ============================================================================
+FString USLFAutomationLibrary::InspectTransitionGraph(UObject* AnimBlueprintAsset, const FString& Keyword)
+{
+	UAnimBlueprint* AnimBP = Cast<UAnimBlueprint>(AnimBlueprintAsset);
+	if (!AnimBP)
+	{
+		return TEXT("ERROR: Not an AnimBlueprint asset");
+	}
+
+	FString Result;
+	Result += FString::Printf(TEXT("=== INSPECTING TRANSITIONS (keyword: '%s') ===\n\n"), *Keyword);
+
+	// Get all graphs
+	TArray<UEdGraph*> AllGraphs;
+	AnimBP->GetAllGraphs(AllGraphs);
+
+	int32 TransitionIndex = 0;
+	for (UEdGraph* Graph : AllGraphs)
+	{
+		if (!Graph) continue;
+
+		FString GraphName = Graph->GetName();
+
+		// Look for transition graphs
+		if (!GraphName.Contains(TEXT("Transition"))) continue;
+
+		// If keyword is empty, show all transitions
+		// Otherwise, check if any node in this graph matches the keyword
+		bool bShowThisGraph = Keyword.IsEmpty();
+		if (!bShowThisGraph)
+		{
+			for (UEdGraphNode* Node : Graph->Nodes)
+			{
+				if (!Node) continue;
+				FString NodeTitle = Node->GetNodeTitle(ENodeTitleType::FullTitle).ToString();
+				if (NodeTitle.Contains(Keyword))
+				{
+					bShowThisGraph = true;
+					break;
+				}
+				// Check pin connections
+				for (UEdGraphPin* Pin : Node->Pins)
+				{
+					if (!Pin) continue;
+					for (UEdGraphPin* LinkedPin : Pin->LinkedTo)
+					{
+						if (LinkedPin && LinkedPin->GetOwningNode())
+						{
+							FString LinkedTitle = LinkedPin->GetOwningNode()->GetNodeTitle(ENodeTitleType::FullTitle).ToString();
+							if (LinkedTitle.Contains(Keyword))
+							{
+								bShowThisGraph = true;
+								break;
+							}
+						}
+					}
+					if (bShowThisGraph) break;
+				}
+				if (bShowThisGraph) break;
+			}
+		}
+
+		if (!bShowThisGraph) continue;
+
+		TransitionIndex++;
+		Result += FString::Printf(TEXT("\n=== TRANSITION #%d ===\n"), TransitionIndex);
+		Result += FString::Printf(TEXT("Graph Name: %s\n"), *GraphName);
+		Result += FString::Printf(TEXT("Node Count: %d\n\n"), Graph->Nodes.Num());
+
+		for (UEdGraphNode* Node : Graph->Nodes)
+		{
+			if (!Node) continue;
+
+			FString NodeClass = Node->GetClass()->GetName();
+			FString NodeTitle = Node->GetNodeTitle(ENodeTitleType::FullTitle).ToString();
+			NodeTitle = NodeTitle.Replace(TEXT("\n"), TEXT(" | "));
+
+			Result += FString::Printf(TEXT("  [%s] %s\n"), *NodeClass, *NodeTitle);
+			Result += FString::Printf(TEXT("    Pos: X=%d, Y=%d\n"), Node->NodePosX, Node->NodePosY);
+
+			// Show all pins with details
+			for (UEdGraphPin* Pin : Node->Pins)
+			{
+				if (!Pin) continue;
+
+				FString PinDir = (Pin->Direction == EGPD_Input) ? TEXT("IN") : TEXT("OUT");
+
+				if (Pin->LinkedTo.Num() > 0)
+				{
+					for (UEdGraphPin* LinkedPin : Pin->LinkedTo)
+					{
+						if (LinkedPin && LinkedPin->GetOwningNode())
+						{
+							FString LinkedTitle = LinkedPin->GetOwningNode()->GetNodeTitle(ENodeTitleType::FullTitle).ToString();
+							LinkedTitle = LinkedTitle.Replace(TEXT("\n"), TEXT(" | "));
+							Result += FString::Printf(TEXT("    Pin [%s] %s --> %s\n"), *PinDir, *Pin->PinName.ToString(), *LinkedTitle);
+						}
+					}
+				}
+				else if (!Pin->DefaultValue.IsEmpty())
+				{
+					Result += FString::Printf(TEXT("    Pin [%s] %s = '%s'\n"), *PinDir, *Pin->PinName.ToString(), *Pin->DefaultValue);
+				}
+			}
+			Result += TEXT("\n");
+		}
+	}
+
+	Result += FString::Printf(TEXT("\nTotal matching transitions: %d\n"), TransitionIndex);
+	return Result;
+}
+
+// ============================================================================
+// FixTransitionBooleanInput - Fix a specific transition's broken boolean input
+// ============================================================================
+int32 USLFAutomationLibrary::FixTransitionBooleanInput(UObject* AnimBlueprintAsset, const FString& TransitionGraphNameContains, const FString& BoolPinName, const FString& VariableName)
+{
+	UAnimBlueprint* AnimBP = Cast<UAnimBlueprint>(AnimBlueprintAsset);
+	if (!AnimBP)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("FixTransitionBooleanInput: Not an AnimBlueprint"));
+		return 0;
+	}
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("FixTransitionBooleanInput: Looking for '%s' in transitions, pin '%s', variable '%s'"),
+		*TransitionGraphNameContains, *BoolPinName, *VariableName);
+
+	int32 FixCount = 0;
+
+	// Get all graphs
+	TArray<UEdGraph*> AllGraphs;
+	AnimBP->GetAllGraphs(AllGraphs);
+
+	for (UEdGraph* Graph : AllGraphs)
+	{
+		if (!Graph) continue;
+
+		FString GraphName = Graph->GetName();
+
+		// Only process transition graphs that match the filter
+		if (!GraphName.Contains(TEXT("Transition"))) continue;
+		if (!TransitionGraphNameContains.IsEmpty() && !GraphName.Contains(TransitionGraphNameContains)) continue;
+
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  Checking graph: %s"), *GraphName);
+
+		// Find boolean nodes (NOT/AND) with disconnected pin
+		for (UEdGraphNode* Node : Graph->Nodes)
+		{
+			if (!Node) continue;
+
+			FString NodeClass = Node->GetClass()->GetName();
+			if (!NodeClass.Contains(TEXT("K2Node_CallFunction")) && !NodeClass.Contains(TEXT("K2Node_CommutativeAssociativeBinaryOperator")))
+				continue;
+
+			// Check for the target pin
+			for (UEdGraphPin* Pin : Node->Pins)
+			{
+				if (!Pin || Pin->Direction != EGPD_Input) continue;
+				if (Pin->PinName.ToString() != BoolPinName) continue;
+				if (Pin->LinkedTo.Num() > 0) continue;  // Already connected
+
+				// Found a disconnected input pin - now create variable get node
+				UE_LOG(LogSLFAutomation, Warning, TEXT("    Found disconnected pin '%s' on node '%s'"),
+					*BoolPinName, *Node->GetName());
+
+				// Check if a variable get node already exists for this variable
+				UK2Node_VariableGet* ExistingVarGet = nullptr;
+				for (UEdGraphNode* OtherNode : Graph->Nodes)
+				{
+					if (UK2Node_VariableGet* VarGet = Cast<UK2Node_VariableGet>(OtherNode))
+					{
+						if (VarGet->GetVarName().ToString() == VariableName)
+						{
+							ExistingVarGet = VarGet;
+							break;
+						}
+					}
+				}
+
+				if (ExistingVarGet)
+				{
+					// Variable get node exists, just connect it
+					for (UEdGraphPin* VarPin : ExistingVarGet->Pins)
+					{
+						if (VarPin && VarPin->Direction == EGPD_Output)
+						{
+							Pin->MakeLinkTo(VarPin);
+							UE_LOG(LogSLFAutomation, Warning, TEXT("      Connected existing variable '%s' to pin '%s'"),
+								*VariableName, *BoolPinName);
+							FixCount++;
+							break;
+						}
+					}
+				}
+				else
+				{
+					// Need to create a new variable get node
+					UK2Node_VariableGet* NewVarGet = NewObject<UK2Node_VariableGet>(Graph);
+					NewVarGet->VariableReference.SetSelfMember(FName(*VariableName));
+					NewVarGet->SetFromProperty(
+						FindFProperty<FProperty>(AnimBP->GeneratedClass, FName(*VariableName)),
+						false, AnimBP->GeneratedClass);
+
+					// Position it near the target node
+					NewVarGet->NodePosX = Node->NodePosX - 200;
+					NewVarGet->NodePosY = Node->NodePosY;
+					NewVarGet->CreateNewGuid();
+
+					Graph->AddNode(NewVarGet, false, false);
+					NewVarGet->AllocateDefaultPins();
+
+					// Connect the output to our target pin
+					for (UEdGraphPin* VarPin : NewVarGet->Pins)
+					{
+						if (VarPin && VarPin->Direction == EGPD_Output && VarPin->PinType.PinCategory == UEdGraphSchema_K2::PC_Boolean)
+						{
+							Pin->MakeLinkTo(VarPin);
+							UE_LOG(LogSLFAutomation, Warning, TEXT("      Created and connected new variable get '%s' to pin '%s'"),
+								*VariableName, *BoolPinName);
+							FixCount++;
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	if (FixCount > 0)
+	{
+		FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(AnimBP);
+	}
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("  Fixed %d connections"), FixCount);
+	return FixCount;
+}
+
+// ============================================================================
+// FixAllBrokenTransitions - Auto-fix all known broken transition inputs
+// ============================================================================
+int32 USLFAutomationLibrary::FixAllBrokenTransitions(UObject* AnimBlueprintAsset)
+{
+	UAnimBlueprint* AnimBP = Cast<UAnimBlueprint>(AnimBlueprintAsset);
+	if (!AnimBP)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("FixAllBrokenTransitions: Not an AnimBlueprint"));
+		return 0;
+	}
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("=== FixAllBrokenTransitions: %s ==="), *AnimBP->GetName());
+
+	int32 TotalFixCount = 0;
+
+	// Get all graphs
+	TArray<UEdGraph*> AllGraphs;
+	AnimBP->GetAllGraphs(AllGraphs);
+
+	// First pass: identify all broken connections
+	TArray<TPair<UEdGraphPin*, FString>> BrokenConnections;
+
+	for (UEdGraph* Graph : AllGraphs)
+	{
+		if (!Graph) continue;
+		if (!Graph->GetName().Contains(TEXT("Transition"))) continue;
+
+		for (UEdGraphNode* Node : Graph->Nodes)
+		{
+			if (!Node) continue;
+
+			FString NodeTitle = Node->GetNodeTitle(ENodeTitleType::FullTitle).ToString();
+
+			// Check for boolean nodes
+			if (NodeTitle.Contains(TEXT("NOT Boolean")) || NodeTitle.Contains(TEXT("AND Boolean")))
+			{
+				for (UEdGraphPin* Pin : Node->Pins)
+				{
+					if (!Pin || Pin->Direction != EGPD_Input) continue;
+					if (Pin->PinType.PinCategory != UEdGraphSchema_K2::PC_Boolean) continue;
+					if (Pin->LinkedTo.Num() > 0) continue;  // Already connected
+					if (Pin->DefaultValue != TEXT("false")) continue;  // Not a broken default
+
+					// This pin is broken - determine which variable it should connect to
+					// Based on the original AnimBP structure:
+					// - CYCLE to IDLE: NOT bIsAccelerating (if not accelerating, go to idle)
+					// - Crouch transitions: IsCrouched
+					// - Rest transitions: IsResting
+
+					// Try to determine which variable to use based on context
+					FString VariableToConnect;
+
+					// Check if this is in a crouch-related transition
+					if (Graph->GetName().Contains(TEXT("CROUCH")) || Graph->GetName().Contains(TEXT("Crouch")))
+					{
+						VariableToConnect = TEXT("IsCrouched");
+					}
+					// Check for rest transitions
+					else if (Graph->GetName().Contains(TEXT("REST")) || Graph->GetName().Contains(TEXT("Rest")) || Graph->GetName().Contains(TEXT("SITTING")))
+					{
+						VariableToConnect = TEXT("IsResting");
+					}
+					// Default to bIsAccelerating for locomotion transitions
+					else
+					{
+						VariableToConnect = TEXT("bIsAccelerating");
+					}
+
+					BrokenConnections.Add(TPair<UEdGraphPin*, FString>(Pin, VariableToConnect));
+					UE_LOG(LogSLFAutomation, Warning, TEXT("  Found broken: %s.%s -> will connect to %s"),
+						*Node->GetName(), *Pin->PinName.ToString(), *VariableToConnect);
+				}
+			}
+		}
+	}
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("Found %d broken connections to fix"), BrokenConnections.Num());
+
+	// Second pass: create variable get nodes and connect them
+	for (const TPair<UEdGraphPin*, FString>& BrokenPair : BrokenConnections)
+	{
+		UEdGraphPin* Pin = BrokenPair.Key;
+		const FString& VariableName = BrokenPair.Value;
+		UEdGraph* Graph = Pin->GetOwningNode()->GetGraph();
+
+		// Check if property exists on the generated class
+		FProperty* FoundProp = FindFProperty<FProperty>(AnimBP->GeneratedClass, FName(*VariableName));
+		if (!FoundProp)
+		{
+			UE_LOG(LogSLFAutomation, Warning, TEXT("    Skipping - property '%s' not found on class"), *VariableName);
+			continue;
+		}
+
+		// Check if variable get already exists
+		UK2Node_VariableGet* ExistingVarGet = nullptr;
+		for (UEdGraphNode* Node : Graph->Nodes)
+		{
+			if (UK2Node_VariableGet* VarGet = Cast<UK2Node_VariableGet>(Node))
+			{
+				if (VarGet->GetVarName().ToString() == VariableName)
+				{
+					ExistingVarGet = VarGet;
+					break;
+				}
+			}
+		}
+
+		if (ExistingVarGet)
+		{
+			// Connect to existing
+			for (UEdGraphPin* VarPin : ExistingVarGet->Pins)
+			{
+				if (VarPin && VarPin->Direction == EGPD_Output && VarPin->PinType.PinCategory == UEdGraphSchema_K2::PC_Boolean)
+				{
+					Pin->MakeLinkTo(VarPin);
+					TotalFixCount++;
+					UE_LOG(LogSLFAutomation, Warning, TEXT("    Connected existing '%s' to pin"), *VariableName);
+					break;
+				}
+			}
+		}
+		else
+		{
+			// Create new variable get node
+			UK2Node_VariableGet* NewVarGet = NewObject<UK2Node_VariableGet>(Graph);
+			NewVarGet->VariableReference.SetSelfMember(FName(*VariableName));
+			NewVarGet->SetFromProperty(FoundProp, false, AnimBP->GeneratedClass);
+
+			UEdGraphNode* TargetNode = Pin->GetOwningNode();
+			NewVarGet->NodePosX = TargetNode->NodePosX - 200;
+			NewVarGet->NodePosY = TargetNode->NodePosY;
+			NewVarGet->CreateNewGuid();
+
+			Graph->AddNode(NewVarGet, false, false);
+			NewVarGet->AllocateDefaultPins();
+
+			// Connect
+			for (UEdGraphPin* VarPin : NewVarGet->Pins)
+			{
+				if (VarPin && VarPin->Direction == EGPD_Output && VarPin->PinType.PinCategory == UEdGraphSchema_K2::PC_Boolean)
+				{
+					Pin->MakeLinkTo(VarPin);
+					TotalFixCount++;
+					UE_LOG(LogSLFAutomation, Warning, TEXT("    Created and connected new '%s' node"), *VariableName);
+					break;
+				}
+			}
+		}
+	}
+
+	if (TotalFixCount > 0)
+	{
+		FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(AnimBP);
+		FKismetEditorUtilities::CompileBlueprint(AnimBP, EBlueprintCompileOptions::SkipGarbageCollection);
+	}
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("=== Fixed %d total broken connections ==="), TotalFixCount);
+	return TotalFixCount;
+}
+
+/**
+ * Fix a specific BlendListByEnum node by binding its ActiveEnumValue pin to a variable
+ */
+int32 USLFAutomationLibrary::FixBlendListByEnumBinding(UObject* AnimBlueprintAsset, int32 NodeIndex, const FString& VariableName)
+{
+	if (!AnimBlueprintAsset) return 0;
+
+	UAnimBlueprint* AnimBP = Cast<UAnimBlueprint>(AnimBlueprintAsset);
+	if (!AnimBP)
+	{
+		UBlueprint* BP = Cast<UBlueprint>(AnimBlueprintAsset);
+		if (BP && BP->GeneratedClass)
+		{
+			AnimBP = Cast<UAnimBlueprint>(BP);
+		}
+	}
+	if (!AnimBP) return 0;
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("=== Fixing BlendListByEnum node %d with variable '%s' ==="), NodeIndex, *VariableName);
+
+	// Find AnimGraph
+	UEdGraph* AnimGraph = nullptr;
+	for (UEdGraph* Graph : AnimBP->FunctionGraphs)
+	{
+		if (Graph && Graph->GetFName() == FName(TEXT("AnimGraph")))
+		{
+			AnimGraph = Graph;
+			break;
+		}
+	}
+
+	if (!AnimGraph)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  AnimGraph not found"));
+		return 0;
+	}
+
+	// Find all BlendListByEnum nodes
+	TArray<UAnimGraphNode_Base*> BlendNodes;
+	for (UEdGraphNode* Node : AnimGraph->Nodes)
+	{
+		if (Node && Node->GetClass()->GetName().Contains(TEXT("BlendListByEnum")))
+		{
+			BlendNodes.Add(Cast<UAnimGraphNode_Base>(Node));
+		}
+	}
+
+	if (NodeIndex < 0 || NodeIndex >= BlendNodes.Num())
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  Node index %d out of range (found %d nodes)"), NodeIndex, BlendNodes.Num());
+		return 0;
+	}
+
+	UAnimGraphNode_Base* TargetNode = BlendNodes[NodeIndex];
+	UE_LOG(LogSLFAutomation, Warning, TEXT("  Target node: %s at Y=%d"), *TargetNode->GetName(), (int32)TargetNode->NodePosY);
+
+	// Find the ActiveEnumValue pin
+	UEdGraphPin* EnumPin = nullptr;
+	for (UEdGraphPin* Pin : TargetNode->Pins)
+	{
+		if (Pin && Pin->PinName == TEXT("ActiveEnumValue"))
+		{
+			EnumPin = Pin;
+			break;
+		}
+	}
+
+	if (!EnumPin)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  ActiveEnumValue pin not found"));
+		return 0;
+	}
+
+	// Check if already connected
+	if (EnumPin->LinkedTo.Num() > 0)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  Pin already connected to %d nodes"), EnumPin->LinkedTo.Num());
+		return 0;
+	}
+
+	// Find or create the variable get node
+	FProperty* VarProp = AnimBP->GeneratedClass->FindPropertyByName(FName(*VariableName));
+	if (!VarProp)
+	{
+		// Try Blueprint variables
+		for (FBPVariableDescription& Var : AnimBP->NewVariables)
+		{
+			if (Var.VarName == FName(*VariableName))
+			{
+				VarProp = AnimBP->GeneratedClass->FindPropertyByName(Var.VarName);
+				break;
+			}
+		}
+	}
+
+	if (!VarProp)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  Variable '%s' not found"), *VariableName);
+		return 0;
+	}
+
+	// Create a K2Node_VariableGet
+	UK2Node_VariableGet* NewVarGet = NewObject<UK2Node_VariableGet>(AnimGraph);
+	NewVarGet->VariableReference.SetSelfMember(FName(*VariableName));
+	NewVarGet->NodePosX = TargetNode->NodePosX - 200;
+	NewVarGet->NodePosY = TargetNode->NodePosY + 400;
+	NewVarGet->CreateNewGuid();
+
+	AnimGraph->AddNode(NewVarGet, false, false);
+	NewVarGet->AllocateDefaultPins();
+
+	// Find the output pin on the variable get
+	UEdGraphPin* VarOutPin = nullptr;
+	for (UEdGraphPin* Pin : NewVarGet->Pins)
+	{
+		if (Pin && Pin->Direction == EGPD_Output)
+		{
+			VarOutPin = Pin;
+			break;
+		}
+	}
+
+	if (!VarOutPin)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  Failed to find output pin on variable node"));
+		return 0;
+	}
+
+	// Connect
+	EnumPin->MakeLinkTo(VarOutPin);
+
+	FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(AnimBP);
+	FKismetEditorUtilities::CompileBlueprint(AnimBP, EBlueprintCompileOptions::SkipGarbageCollection);
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("  Successfully connected ActiveEnumValue to '%s'"), *VariableName);
+	return 1;
+}
+
+/**
+ * Auto-fix all BlendListByEnum nodes for overlay states
+ * Matches nodes by Y position:
+ * - Y=16 (first) -> LeftHandOverlayState_0
+ * - Y=592 (second) -> RightHandOverlayState_0
+ */
+int32 USLFAutomationLibrary::FixAllBlendListByEnumBindings(UObject* AnimBlueprintAsset)
+{
+	if (!AnimBlueprintAsset) return 0;
+
+	UAnimBlueprint* AnimBP = Cast<UAnimBlueprint>(AnimBlueprintAsset);
+	if (!AnimBP)
+	{
+		UBlueprint* BP = Cast<UBlueprint>(AnimBlueprintAsset);
+		if (BP && BP->GeneratedClass)
+		{
+			AnimBP = Cast<UAnimBlueprint>(BP);
+		}
+	}
+	if (!AnimBP) return 0;
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("=== Auto-fixing BlendListByEnum bindings ==="));
+
+	// Find AnimGraph
+	UEdGraph* AnimGraph = nullptr;
+	for (UEdGraph* Graph : AnimBP->FunctionGraphs)
+	{
+		if (Graph && Graph->GetFName() == FName(TEXT("AnimGraph")))
+		{
+			AnimGraph = Graph;
+			break;
+		}
+	}
+
+	if (!AnimGraph)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  AnimGraph not found"));
+		return 0;
+	}
+
+	// Find all BlendListByEnum nodes and sort by Y position
+	TArray<UAnimGraphNode_Base*> BlendNodes;
+	for (UEdGraphNode* Node : AnimGraph->Nodes)
+	{
+		if (Node && Node->GetClass()->GetName().Contains(TEXT("BlendListByEnum")))
+		{
+			BlendNodes.Add(Cast<UAnimGraphNode_Base>(Node));
+		}
+	}
+
+	// Sort by Y position
+	BlendNodes.Sort([](const UAnimGraphNode_Base& A, const UAnimGraphNode_Base& B) {
+		return A.NodePosY < B.NodePosY;
+	});
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("  Found %d BlendListByEnum nodes"), BlendNodes.Num());
+
+	int32 TotalFixed = 0;
+
+	// Map: first node (lower Y) -> Left hand, second node (higher Y) -> Right hand
+	// Based on the diagnostic: Y=16 is Left, Y=592 is Right
+	TArray<FString> VariableNames;
+	VariableNames.Add(TEXT("LeftHandOverlayState_0"));  // First node (Y=16)
+	VariableNames.Add(TEXT("RightHandOverlayState_0")); // Second node (Y=592)
+
+	for (int32 i = 0; i < BlendNodes.Num() && i < VariableNames.Num(); ++i)
+	{
+		UAnimGraphNode_Base* Node = BlendNodes[i];
+		const FString& VarName = VariableNames[i];
+
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  Node %d at Y=%d -> %s"), i, (int32)Node->NodePosY, *VarName);
+
+		// Find the ActiveEnumValue pin
+		UEdGraphPin* EnumPin = nullptr;
+		for (UEdGraphPin* Pin : Node->Pins)
+		{
+			if (Pin && Pin->PinName == TEXT("ActiveEnumValue"))
+			{
+				EnumPin = Pin;
+				break;
+			}
+		}
+
+		if (!EnumPin)
+		{
+			UE_LOG(LogSLFAutomation, Warning, TEXT("    ActiveEnumValue pin not found"));
+			continue;
+		}
+
+		if (EnumPin->LinkedTo.Num() > 0)
+		{
+			UE_LOG(LogSLFAutomation, Warning, TEXT("    Already connected"));
+			continue;
+		}
+
+		// Create variable get node
+		UK2Node_VariableGet* NewVarGet = NewObject<UK2Node_VariableGet>(AnimGraph);
+		NewVarGet->VariableReference.SetSelfMember(FName(*VarName));
+		NewVarGet->NodePosX = Node->NodePosX - 200;
+		NewVarGet->NodePosY = Node->NodePosY + 400;
+		NewVarGet->CreateNewGuid();
+
+		AnimGraph->AddNode(NewVarGet, false, false);
+		NewVarGet->AllocateDefaultPins();
+
+		// Find output pin
+		UEdGraphPin* VarOutPin = nullptr;
+		for (UEdGraphPin* OutPin : NewVarGet->Pins)
+		{
+			if (OutPin && OutPin->Direction == EGPD_Output)
+			{
+				VarOutPin = OutPin;
+				break;
+			}
+		}
+
+		if (VarOutPin)
+		{
+			EnumPin->MakeLinkTo(VarOutPin);
+			TotalFixed++;
+			UE_LOG(LogSLFAutomation, Warning, TEXT("    Connected ActiveEnumValue to '%s'"), *VarName);
+		}
+	}
+
+	if (TotalFixed > 0)
+	{
+		FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(AnimBP);
+		FKismetEditorUtilities::CompileBlueprint(AnimBP, EBlueprintCompileOptions::SkipGarbageCollection);
+	}
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("=== Fixed %d BlendListByEnum bindings ==="), TotalFixed);
+	return TotalFixed;
 }

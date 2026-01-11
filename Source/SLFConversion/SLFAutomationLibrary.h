@@ -145,5 +145,36 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Export")
 	static FString GetNodeDetails(UObject* BlueprintAsset, const FString& NodeName);
 
+	// AnimBP Diagnostic - finds all broken nodes, state machine states/transitions
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|AnimBP")
+	static FString DiagnoseAnimBP(UObject* AnimBlueprintAsset);
+
+	// Get state machine structure (states and transitions)
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|AnimBP")
+	static FString GetStateMachineStructure(UObject* AnimBlueprintAsset, const FString& StateMachineName);
+
+	// Inspect transition graphs in detail (show all nodes for transitions matching keyword)
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|AnimBP")
+	static FString InspectTransitionGraph(UObject* AnimBlueprintAsset, const FString& Keyword);
+
+	// Fix broken transition boolean inputs by connecting to named variable
+	// Example: FixTransitionBooleanInput(bp, "Transition_2", "A", "bIsAccelerating")
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|AnimBP")
+	static int32 FixTransitionBooleanInput(UObject* AnimBlueprintAsset, const FString& TransitionGraphNameContains, const FString& BoolPinName, const FString& VariableName);
+
+	// Auto-fix all broken transition inputs based on variable mapping
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|AnimBP")
+	static int32 FixAllBrokenTransitions(UObject* AnimBlueprintAsset);
+
+	// Fix BlendListByEnum nodes by binding their ActiveEnumValue to a variable
+	// NodeIdentifier can be partial match on node name, position, or index
+	// VariableName is the Blueprint variable to bind to (e.g., "LeftHandOverlayState_0")
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|AnimBP")
+	static int32 FixBlendListByEnumBinding(UObject* AnimBlueprintAsset, int32 NodeIndex, const FString& VariableName);
+
+	// Auto-fix all BlendListByEnum nodes for overlay states
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|AnimBP")
+	static int32 FixAllBlendListByEnumBindings(UObject* AnimBlueprintAsset);
+
 #endif // WITH_EDITOR
 };
