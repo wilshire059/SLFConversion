@@ -10,6 +10,8 @@
 #include "Engine/SimpleConstructionScript.h"
 #include "Engine/DynamicBlueprintBinding.h"
 #include "Animation/AnimBlueprint.h"
+#include "Animation/AnimMontage.h"
+#include "Animation/AnimNotifies/AnimNotifyState.h"
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "Kismet2/KismetEditorUtilities.h"
 #include "K2Node_Variable.h"
@@ -1958,5 +1960,208 @@ bool USLFAutomationLibrary::ApplyWeaponOverlayTag(const FString& ItemAssetPath, 
 
 // Include AnimBP Export/Diff/Fix implementations
 #include "SLFAnimBPExport.inl"
+
+
+// ============================================================================
+// MONTAGE NOTIFY FIXING
+// ============================================================================
+
+int32 USLFAutomationLibrary::FixMontageComboNotifies(UObject* MontageAsset)
+{
+	UAnimMontage* Montage = Cast<UAnimMontage>(MontageAsset);
+	if (!Montage)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("FixMontageComboNotifies: Invalid montage asset"));
+		return 0;
+	}
+
+	int32 FixedCount = 0;
+	FString MontageName = Montage->GetName();
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("Processing montage: %s"), *MontageName);
+
+	// Enum value to section name mapping
+	static const TMap<int32, FName> EnumToSection = {
+		{0, FName("Light_01")}, {1, FName("Light_02")}, {2, FName("Light_03")}, {3, FName("Light_04")},
+		{4, FName("Light_05")}, {5, FName("Light_06")}, {6, FName("Light_07")}, {7, FName("Light_08")},
+		{8, FName("Light_09")}, {9, FName("Light_10")}, {10, FName("Light_11")}, {11, FName("Light_12")},
+		{12, FName("Light_13")}, {13, FName("Light_14")}, {14, FName("Light_15")},
+		{15, FName("Heavy_01")}, {16, FName("Heavy_02")}, {17, FName("Heavy_03")}, {18, FName("Heavy_04")},
+		{19, FName("Heavy_05")}, {20, FName("Heavy_06")}, {21, FName("Heavy_07")}, {22, FName("Heavy_08")},
+		{23, FName("Heavy_09")}, {24, FName("Heavy_10")}, {25, FName("Heavy_11")}, {26, FName("Heavy_12")},
+		{27, FName("Heavy_13")}, {28, FName("Heavy_14")}, {29, FName("Heavy_15")},
+		{30, FName("Charge_01")}, {31, FName("Charge_02")}, {32, FName("Charge_03")}, {33, FName("Charge_04")},
+		{34, FName("Charge_05")}, {35, FName("Charge_06")}, {36, FName("Charge_07")}, {37, FName("Charge_08")},
+		{38, FName("Charge_09")}, {39, FName("Charge_10")}
+	};
+
+	// Iterate through all AnimNotifyState events
+	for (FAnimNotifyEvent& NotifyEvent : Montage->Notifies)
+	{
+		UAnimNotifyState* NotifyState = NotifyEvent.NotifyStateClass;
+		if (!NotifyState)
+		{
+			continue;
+		}
+
+		// Check if this is ANS_RegisterAttackSequence
+		FString ClassName = NotifyState->GetClass()->GetName();
+		if (!ClassName.Contains(TEXT("RegisterAttackSequence")))
+		{
+			continue;
+		}
+
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  Found ANS_RegisterAttackSequence notify"));
+
+		// Get the QueuedSection property
+		FProperty* QueuedSectionProp = NotifyState->GetClass()->FindPropertyByName(FName("QueuedSection"));
+		if (!QueuedSectionProp)
+		{
+			UE_LOG(LogSLFAutomation, Warning, TEXT("    Could not find QueuedSection property"));
+			continue;
+		}
+
+		// Check if it's an FName property (our new type)
+		FNameProperty* NameProp = CastField<FNameProperty>(QueuedSectionProp);
+		if (NameProp)
+		{
+			// Already FName type - read current value
+			FName* CurrentValue = NameProp->ContainerPtrToValuePtr<FName>(NotifyState);
+			UE_LOG(LogSLFAutomation, Warning, TEXT("    Current QueuedSection (FName): %s"), *CurrentValue->ToString());
+
+			// If empty or invalid, try to determine from montage section structure
+			if (CurrentValue->IsNone() || CurrentValue->ToString().IsEmpty())
+			{
+				// Get the section this notify is in
+				float NotifyTime = NotifyEvent.GetTriggerTime();
+				int32 SectionIdx = Montage->GetSectionIndexFromPosition(NotifyTime);
+
+				if (SectionIdx != INDEX_NONE)
+				{
+					FName CurrentSectionName = Montage->GetSectionName(SectionIdx);
+					UE_LOG(LogSLFAutomation, Warning, TEXT("    Notify is in section: %s (index %d)"), *CurrentSectionName.ToString(), SectionIdx);
+
+					// Determine next section based on current section name
+					FString SectionStr = CurrentSectionName.ToString();
+					FString NextSection;
+
+					// Parse section name to determine next (e.g., Light_01 -> Light_02)
+					if (SectionStr.StartsWith(TEXT("Light_")) || SectionStr.StartsWith(TEXT("Heavy_")) || SectionStr.StartsWith(TEXT("Charge_")))
+					{
+						int32 UnderscoreIdx;
+						if (SectionStr.FindLastChar('_', UnderscoreIdx))
+						{
+							FString Prefix = SectionStr.Left(UnderscoreIdx + 1);
+							FString NumStr = SectionStr.Mid(UnderscoreIdx + 1);
+							int32 Num = FCString::Atoi(*NumStr);
+							NextSection = FString::Printf(TEXT("%s%02d"), *Prefix, Num + 1);
+						}
+					}
+
+					if (!NextSection.IsEmpty())
+					{
+						*CurrentValue = FName(*NextSection);
+						UE_LOG(LogSLFAutomation, Warning, TEXT("    Set QueuedSection to: %s"), *NextSection);
+						FixedCount++;
+					}
+				}
+			}
+			else
+			{
+				UE_LOG(LogSLFAutomation, Warning, TEXT("    QueuedSection already has valid value"));
+			}
+		}
+		else
+		{
+			// Check if it's still an enum/byte property (old type)
+			FByteProperty* ByteProp = CastField<FByteProperty>(QueuedSectionProp);
+			FEnumProperty* EnumProp = CastField<FEnumProperty>(QueuedSectionProp);
+
+			if (ByteProp || EnumProp)
+			{
+				// Read the raw byte value
+				uint8* ValuePtr = QueuedSectionProp->ContainerPtrToValuePtr<uint8>(NotifyState);
+				int32 EnumValue = static_cast<int32>(*ValuePtr);
+				UE_LOG(LogSLFAutomation, Warning, TEXT("    Current QueuedSection (enum): %d"), EnumValue);
+
+				// Map to section name
+				const FName* SectionName = EnumToSection.Find(EnumValue);
+				if (SectionName)
+				{
+					UE_LOG(LogSLFAutomation, Warning, TEXT("    Maps to section: %s"), *SectionName->ToString());
+				}
+				else
+				{
+					UE_LOG(LogSLFAutomation, Warning, TEXT("    Invalid enum value, no mapping found"));
+				}
+			}
+			else
+			{
+				UE_LOG(LogSLFAutomation, Warning, TEXT("    Unexpected property type for QueuedSection"));
+			}
+		}
+	}
+
+	if (FixedCount > 0)
+	{
+		Montage->MarkPackageDirty();
+
+		UPackage* Package = Montage->GetOutermost();
+		FString PackageFileName = FPackageName::LongPackageNameToFilename(Package->GetName(), FPackageName::GetAssetPackageExtension());
+
+		FSavePackageArgs SaveArgs;
+		SaveArgs.TopLevelFlags = RF_Standalone;
+		SaveArgs.Error = GError;
+
+		bool bSaved = UPackage::SavePackage(Package, Montage, *PackageFileName, SaveArgs);
+
+		if (bSaved)
+		{
+			UE_LOG(LogSLFAutomation, Warning, TEXT("  Saved %s with %d fixes"), *MontageName, FixedCount);
+		}
+	}
+
+	return FixedCount;
+}
+
+int32 USLFAutomationLibrary::FixAllMontageComboNotifies()
+{
+	int32 TotalFixed = 0;
+
+	// Get all AnimMontage assets
+	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+	IAssetRegistry& AssetRegistry = AssetRegistryModule.Get();
+
+	FARFilter Filter;
+	Filter.ClassPaths.Add(UAnimMontage::StaticClass()->GetClassPathName());
+	Filter.bRecursivePaths = true;
+	Filter.PackagePaths.Add(FName("/Game/SoulslikeFramework"));
+
+	TArray<FAssetData> AssetDataList;
+	AssetRegistry.GetAssets(Filter, AssetDataList);
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("Found %d AnimMontage assets"), AssetDataList.Num());
+
+	for (const FAssetData& AssetData : AssetDataList)
+	{
+		FString AssetPath = AssetData.PackageName.ToString();
+
+		// Only process combat montages
+		if (!AssetPath.Contains(TEXT("Combat")) && !AssetPath.Contains(TEXT("Light")) && !AssetPath.Contains(TEXT("Heavy")))
+		{
+			continue;
+		}
+
+		UAnimMontage* Montage = Cast<UAnimMontage>(AssetData.GetAsset());
+		if (Montage)
+		{
+			TotalFixed += FixMontageComboNotifies(Montage);
+		}
+	}
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("Total notifies fixed: %d"), TotalFixed);
+	return TotalFixed;
+}
+
 
 #endif // WITH_EDITOR

@@ -10,20 +10,10 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
-#include "GameplayTagContainer.h"
-#include "SLFEnums.h"
-#include "SLFGameTypes.h"
-#include "Kismet/KismetSystemLibrary.h"
-#include "LevelSequence.h"
-#include "MovieSceneSequencePlaybackSettings.h"
 #include "ANS_RegisterAttackSequence.generated.h"
 
-// Forward declarations for Blueprint classes
-class AB_BaseProjectile;
-class AB_Interactable;
-class UB_Action;
-class UB_Buff;
-class UB_StatusEffect;
+// Forward declarations
+class UAC_CombatManager;
 
 UCLASS()
 class SLFCONVERSION_API UANS_RegisterAttackSequence : public UAnimNotifyState
@@ -37,8 +27,9 @@ public:
 	// VARIABLES (1)
 	// ═══════════════════════════════════════════════════════════════════════
 
+	/** The montage section name to register for combo continuation (e.g., "Light_02", "Heavy_01") */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
-	ESLFMontageSection QueuedSection;
+	FName QueuedSection;
 
 	// Notify state callbacks
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference) override;
@@ -47,7 +38,9 @@ public:
 	virtual FString GetNotifyName_Implementation() const override;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// HELPER FUNCTIONS (3)
+	// HELPER FUNCTIONS
 	// ═══════════════════════════════════════════════════════════════════════
 
+	/** Get CombatManager from actor (checks both actor and controller) */
+	UAC_CombatManager* GetCombatManager(AActor* Owner);
 };

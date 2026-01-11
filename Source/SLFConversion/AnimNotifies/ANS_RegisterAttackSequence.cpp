@@ -6,15 +6,37 @@
 
 #include "AnimNotifies/ANS_RegisterAttackSequence.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "Components/CombatManagerComponent.h"
-#include "Components/AICombatManagerComponent.h"
+#include "Components/AC_CombatManager.h"
+#include "GameFramework/Pawn.h"
+#include "GameFramework/Controller.h"
 
 UANS_RegisterAttackSequence::UANS_RegisterAttackSequence()
-	: QueuedSection(ESLFMontageSection::Light_01)
+	: QueuedSection(NAME_None)
 {
 #if WITH_EDITORONLY_DATA
 	NotifyColor = FColor(255, 200, 0, 255); // Yellow for attack sequence
 #endif
+}
+
+UAC_CombatManager* UANS_RegisterAttackSequence::GetCombatManager(AActor* Owner)
+{
+	if (!Owner) return nullptr;
+
+	// First check on actor itself
+	UAC_CombatManager* Result = Owner->FindComponentByClass<UAC_CombatManager>();
+	if (Result) return Result;
+
+	// If not found and owner is a pawn, check controller
+	if (APawn* Pawn = Cast<APawn>(Owner))
+	{
+		if (AController* Controller = Pawn->GetController())
+		{
+			Result = Controller->FindComponentByClass<UAC_CombatManager>();
+			if (Result) return Result;
+		}
+	}
+
+	return nullptr;
 }
 
 void UANS_RegisterAttackSequence::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
@@ -28,17 +50,18 @@ void UANS_RegisterAttackSequence::NotifyBegin(USkeletalMeshComponent* MeshComp, 
 
 	AActor* Owner = MeshComp->GetOwner();
 
-	// From Blueprint: Get CombatManager and register next combo
-	UCombatManagerComponent* CombatManager = Owner->FindComponentByClass<UCombatManagerComponent>();
+	// Get CombatManager and register next combo section
+	UAC_CombatManager* CombatManager = GetCombatManager(Owner);
 	if (CombatManager)
 	{
-		CombatManager->RegisterNextCombo();
-		UE_LOG(LogTemp, Log, TEXT("UANS_RegisterAttackSequence::NotifyBegin - Registered combo on %s"), *Owner->GetName());
+		// Use QueuedSection FName directly
+		CombatManager->EventRegisterNextCombo(QueuedSection);
+		UE_LOG(LogTemp, Log, TEXT("[ANS_RegisterAttackSequence] NotifyBegin - Registered combo section '%s' on %s"),
+			*QueuedSection.ToString(), *Owner->GetName());
 		return;
 	}
 
-	// AI characters don't use combo system in the same way
-	UE_LOG(LogTemp, Log, TEXT("UANS_RegisterAttackSequence::NotifyBegin - No CombatManager on %s"), *Owner->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("[ANS_RegisterAttackSequence] NotifyBegin - No CombatManager on %s"), *Owner->GetName());
 }
 
 void UANS_RegisterAttackSequence::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
@@ -58,12 +81,12 @@ void UANS_RegisterAttackSequence::NotifyEnd(USkeletalMeshComponent* MeshComp, UA
 
 	AActor* Owner = MeshComp->GetOwner();
 
-	// From Blueprint: Get CombatManager and reset attack combo
-	UCombatManagerComponent* CombatManager = Owner->FindComponentByClass<UCombatManagerComponent>();
+	// Get CombatManager and reset attack combo
+	UAC_CombatManager* CombatManager = GetCombatManager(Owner);
 	if (CombatManager)
 	{
-		CombatManager->ResetAttackCombo();
-		UE_LOG(LogTemp, Log, TEXT("UANS_RegisterAttackSequence::NotifyEnd - Reset combo on %s"), *Owner->GetName());
+		CombatManager->EventRegisterNextCombo(NAME_None);  // Clear combo section
+		UE_LOG(LogTemp, Log, TEXT("[ANS_RegisterAttackSequence] NotifyEnd - Reset combo on %s"), *Owner->GetName());
 	}
 }
 

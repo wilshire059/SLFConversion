@@ -176,5 +176,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "SLF Automation|AnimBP")
 	static int32 FixAllBlendListByEnumBindings(UObject* AnimBlueprintAsset);
 
+	// Fix ANS_RegisterAttackSequence notify QueuedSection values on a montage
+	// Converts invalid enum values to FName section names
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Montage")
+	static int32 FixMontageComboNotifies(UObject* MontageAsset);
+
+	// Fix all montages with ANS_RegisterAttackSequence notifies
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Montage")
+	static int32 FixAllMontageComboNotifies();
+
 #endif // WITH_EDITOR
 };
