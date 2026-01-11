@@ -2,6 +2,7 @@
 // Logic: Get execution target from CombatManager (staggered/poise-broken enemy),
 // play paired execution/riposte animation on both attacker and victim
 #include "SLFActionExecute.h"
+#include "AC_CombatManager.h"
 #include "Components/CombatManagerComponent.h"
 #include "Interfaces/BPI_GenericCharacter.h"
 #include "SLFPrimaryDataAssets.h"
@@ -18,7 +19,7 @@ void USLFActionExecute::ExecuteAction_Implementation()
 	if (!OwnerActor) return;
 
 	// Get combat manager to find execution target
-	UCombatManagerComponent* CombatMgr = GetCombatManager();
+	UAC_CombatManager* CombatMgr = GetCombatManager();
 	if (!CombatMgr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[ActionExecute] No combat manager"));

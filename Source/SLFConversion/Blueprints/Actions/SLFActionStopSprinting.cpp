@@ -2,7 +2,7 @@
 // Logic: SetMovementMode(Walking), StopStaminaLoss, SetIsSprinting(false)
 #include "SLFActionStopSprinting.h"
 #include "Interfaces/BPI_GenericCharacter.h"
-#include "ActionManagerComponent.h"
+#include "AC_ActionManager.h"
 
 USLFActionStopSprinting::USLFActionStopSprinting()
 {
@@ -23,9 +23,9 @@ void USLFActionStopSprinting::ExecuteAction_Implementation()
 	}
 
 	// Stop stamina loss via ActionManager
-	if (UActionManagerComponent* ActionMgr = GetActionManager())
+	if (UAC_ActionManager* ActionMgr = GetActionManager())
 	{
-		ActionMgr->StopStaminaLoss();
+		ActionMgr->EventStopStaminaLoss();
 		ActionMgr->SetIsSprinting(false);
 		UE_LOG(LogTemp, Log, TEXT("[ActionStopSprinting] Stamina loss stopped, IsSprinting = false"));
 	}

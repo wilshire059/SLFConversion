@@ -1,6 +1,7 @@
 // SLFActionScrollWheelTools.cpp
 // Logic: Cycle through tool slots, set active tool slot
 #include "SLFActionScrollWheelTools.h"
+#include "AC_EquipmentManager.h"
 #include "Components/EquipmentManagerComponent.h"
 
 USLFActionScrollWheelTools::USLFActionScrollWheelTools()
@@ -15,7 +16,7 @@ void USLFActionScrollWheelTools::ExecuteAction_Implementation()
 	if (!OwnerActor) return;
 
 	// Get equipment manager
-	UEquipmentManagerComponent* EquipMgr = GetEquipmentManager();
+	UAC_EquipmentManager* EquipMgr = GetEquipmentManager();
 	if (!EquipMgr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[ActionScrollWheelTools] No equipment manager"));

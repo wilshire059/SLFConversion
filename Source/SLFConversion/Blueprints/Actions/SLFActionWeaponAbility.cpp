@@ -2,6 +2,8 @@
 // Logic: Get currently equipped weapon, extract its WeaponAbility data,
 // play the ability animation and apply any associated effects
 #include "SLFActionWeaponAbility.h"
+#include "AC_EquipmentManager.h"
+#include "AC_StatManager.h"
 #include "Components/EquipmentManagerComponent.h"
 #include "Components/StatManagerComponent.h"
 #include "Interfaces/BPI_GenericCharacter.h"
@@ -20,7 +22,7 @@ void USLFActionWeaponAbility::ExecuteAction_Implementation()
 	if (!OwnerActor) return;
 
 	// Get equipment manager to find active weapon
-	UEquipmentManagerComponent* EquipMgr = GetEquipmentManager();
+	UAC_EquipmentManager* EquipMgr = GetEquipmentManager();
 	if (!EquipMgr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[ActionWeaponAbility] No equipment manager"));
@@ -29,9 +31,9 @@ void USLFActionWeaponAbility::ExecuteAction_Implementation()
 
 	// Get active weapon slot (right hand by default)
 	FGameplayTag WeaponSlot = EquipMgr->GetActiveWeaponSlot(true); // true = right hand
-	UDataAsset* ItemAsset = nullptr;
+	UPrimaryDataAsset* ItemAsset = nullptr;
 	FGuid ItemId;
-	EquipMgr->GetItemAtSlot(WeaponSlot, ItemAsset, ItemId);
+	EquipMgr->GetItemAtSlotSimple(WeaponSlot, ItemAsset, ItemId);
 
 	if (!ItemAsset)
 	{
@@ -79,7 +81,7 @@ void USLFActionWeaponAbility::ExecuteAction_Implementation()
 	// Check if we have enough FP to use the ability
 	if (FPCost > 0.0f)
 	{
-		UStatManagerComponent* StatMgr = GetStatManager();
+		UAC_StatManager* StatMgr = GetStatManager();
 		if (StatMgr)
 		{
 			FGameplayTag FPTag = FGameplayTag::RequestGameplayTag(FName("Stat.FP"), false);

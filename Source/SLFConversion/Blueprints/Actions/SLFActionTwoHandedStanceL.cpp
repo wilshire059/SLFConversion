@@ -1,6 +1,7 @@
 // SLFActionTwoHandedStanceL.cpp
 // Logic: Toggle two-handed stance for left hand weapon
 #include "SLFActionTwoHandedStanceL.h"
+#include "AC_EquipmentManager.h"
 #include "Components/EquipmentManagerComponent.h"
 
 USLFActionTwoHandedStanceL::USLFActionTwoHandedStanceL()
@@ -15,7 +16,7 @@ void USLFActionTwoHandedStanceL::ExecuteAction_Implementation()
 	if (!OwnerActor) return;
 
 	// Get equipment manager
-	UEquipmentManagerComponent* EquipMgr = GetEquipmentManager();
+	UAC_EquipmentManager* EquipMgr = GetEquipmentManager();
 	if (!EquipMgr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[ActionTwoHandedStanceL] No equipment manager"));

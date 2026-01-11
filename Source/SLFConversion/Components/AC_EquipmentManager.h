@@ -274,6 +274,18 @@ public:
 	virtual void GetGuardHitMontage_Implementation(UAnimMontage*& OutGuardHitMontage, UAnimMontage*& OutGuardHitMontage_1, UAnimMontage*& OutGuardHitMontage_2, UAnimMontage*& OutGuardHitMontage_3, UAnimMontage*& OutGuardHitMontage_4, UAnimMontage*& OutGuardHitMontage_5);
 
 	// ═══════════════════════════════════════════════════════════════════════
+	// API COMPATIBILITY HELPERS (for Action classes)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	/** Simple check if any two-hand stance is active (for action classes) */
+	UFUNCTION(BlueprintCallable, Category = "AC_EquipmentManager|Helpers")
+	bool IsTwoHandStanceActiveSimple() const { return bRightHandTwoHandStance || bLeftHandTwoHandStance; }
+
+	/** Simple GetItemAtSlot that just returns the item asset and ID (for action classes) */
+	UFUNCTION(BlueprintCallable, Category = "AC_EquipmentManager|Helpers")
+	void GetItemAtSlotSimple(FGameplayTag SlotTag, UPrimaryDataAsset*& OutItemAsset, FGuid& OutId);
+
+	// ═══════════════════════════════════════════════════════════════════════
 	// WEAPON DAMAGE GETTERS (for AnimNotify weapon trace)
 	// ═══════════════════════════════════════════════════════════════════════
 

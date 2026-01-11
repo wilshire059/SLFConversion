@@ -25,13 +25,14 @@
 // Forward declarations
 class UDataAsset;
 class UAnimInstance;
-class UStatManagerComponent;
-class UActionManagerComponent;
-class UCombatManagerComponent;
-class UEquipmentManagerComponent;
-class UInventoryManagerComponent;
-class UInteractionManagerComponent;
-class UInputBufferComponent;
+// Use AC_* component classes (the actual components on characters)
+class UAC_StatManager;
+class UAC_ActionManager;
+class UAC_CombatManager;
+class UAC_EquipmentManager;
+class UAC_InventoryManager;
+class UAC_InteractionManager;
+class UAC_InputBuffer;
 
 /**
  * Action data struct - matches FActionData in PDA_Action
@@ -91,38 +92,38 @@ public:
 
 	/** [1/12] Get equipment manager from owner */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Action|Components")
-	UEquipmentManagerComponent* GetEquipmentManager();
-	virtual UEquipmentManagerComponent* GetEquipmentManager_Implementation();
+	UAC_EquipmentManager* GetEquipmentManager();
+	virtual UAC_EquipmentManager* GetEquipmentManager_Implementation();
 
 	/** [2/12] Get interaction manager from owner */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Action|Components")
-	UInteractionManagerComponent* GetInteractionManager();
-	virtual UInteractionManagerComponent* GetInteractionManager_Implementation();
+	UAC_InteractionManager* GetInteractionManager();
+	virtual UAC_InteractionManager* GetInteractionManager_Implementation();
 
 	/** [3/12] Get inventory manager from owner */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Action|Components")
-	UInventoryManagerComponent* GetInventoryManager();
-	virtual UInventoryManagerComponent* GetInventoryManager_Implementation();
+	UAC_InventoryManager* GetInventoryManager();
+	virtual UAC_InventoryManager* GetInventoryManager_Implementation();
 
 	/** [4/12] Get stat manager from owner */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Action|Components")
-	UStatManagerComponent* GetStatManager();
-	virtual UStatManagerComponent* GetStatManager_Implementation();
+	UAC_StatManager* GetStatManager();
+	virtual UAC_StatManager* GetStatManager_Implementation();
 
 	/** [5/12] Get combat manager from owner */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Action|Components")
-	UCombatManagerComponent* GetCombatManager();
-	virtual UCombatManagerComponent* GetCombatManager_Implementation();
+	UAC_CombatManager* GetCombatManager();
+	virtual UAC_CombatManager* GetCombatManager_Implementation();
 
 	/** [6/12] Get action manager from owner */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Action|Components")
-	UActionManagerComponent* GetActionManager();
-	virtual UActionManagerComponent* GetActionManager_Implementation();
+	UAC_ActionManager* GetActionManager();
+	virtual UAC_ActionManager* GetActionManager_Implementation();
 
 	/** [7/12] Get input buffer from owner */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Action|Components")
-	UInputBufferComponent* GetInputBuffer();
-	virtual UInputBufferComponent* GetInputBuffer_Implementation();
+	UAC_InputBuffer* GetInputBuffer();
+	virtual UAC_InputBuffer* GetInputBuffer_Implementation();
 
 	// --- Animation/Weapon Helpers (3) ---
 

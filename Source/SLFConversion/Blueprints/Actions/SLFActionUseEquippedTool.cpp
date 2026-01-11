@@ -1,6 +1,8 @@
 // SLFActionUseEquippedTool.cpp
 // Logic: Get active tool slot, get item at slot, use the item
 #include "SLFActionUseEquippedTool.h"
+#include "AC_EquipmentManager.h"
+#include "AC_InventoryManager.h"
 #include "Components/EquipmentManagerComponent.h"
 #include "Components/InventoryManagerComponent.h"
 
@@ -16,7 +18,7 @@ void USLFActionUseEquippedTool::ExecuteAction_Implementation()
 	if (!OwnerActor) return;
 
 	// Get equipment manager
-	UEquipmentManagerComponent* EquipMgr = GetEquipmentManager();
+	UAC_EquipmentManager* EquipMgr = GetEquipmentManager();
 	if (!EquipMgr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[ActionUseEquippedTool] No equipment manager"));
@@ -32,9 +34,9 @@ void USLFActionUseEquippedTool::ExecuteAction_Implementation()
 	}
 
 	// Get item at that slot
-	UDataAsset* ItemAsset = nullptr;
+	UPrimaryDataAsset* ItemAsset = nullptr;
 	FGuid ItemId;
-	EquipMgr->GetItemAtSlot(ActiveToolSlot, ItemAsset, ItemId);
+	EquipMgr->GetItemAtSlotSimple(ActiveToolSlot, ItemAsset, ItemId);
 
 	if (!ItemAsset)
 	{
@@ -45,7 +47,7 @@ void USLFActionUseEquippedTool::ExecuteAction_Implementation()
 	UE_LOG(LogTemp, Log, TEXT("[ActionUseEquippedTool] Using tool: %s"), *ItemAsset->GetName());
 
 	// Use the item via inventory manager
-	UInventoryManagerComponent* InvMgr = GetInventoryManager();
+	UAC_InventoryManager* InvMgr = GetInventoryManager();
 	if (InvMgr)
 	{
 		InvMgr->UseItemFromInventory(ItemAsset);

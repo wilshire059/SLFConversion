@@ -1,6 +1,7 @@
 // SLFActionDrinkFlaskHP.cpp
 // Logic: Play drink montage from Action data, adjust HP stat
 #include "SLFActionDrinkFlaskHP.h"
+#include "AC_StatManager.h"
 #include "SLFPrimaryDataAssets.h"
 #include "SLFGameTypes.h"
 #include "SLFStatTypes.h"
@@ -52,7 +53,7 @@ void USLFActionDrinkFlaskHP::ExecuteAction_Implementation()
 	}
 
 	// 2. Heal the player by adjusting HP stat
-	UStatManagerComponent* StatMgr = GetStatManager();
+	UAC_StatManager* StatMgr = GetStatManager();
 	if (StatMgr)
 	{
 		// Get HP tag

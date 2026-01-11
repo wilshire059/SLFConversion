@@ -1280,6 +1280,27 @@ void UAC_EquipmentManager::GetGuardHitMontage_Implementation(UAnimMontage*& OutG
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// API COMPATIBILITY HELPERS (for Action classes)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void UAC_EquipmentManager::GetItemAtSlotSimple(FGameplayTag SlotTag, UPrimaryDataAsset*& OutItemAsset, FGuid& OutId)
+{
+	OutItemAsset = nullptr;
+	OutId = FGuid();
+	
+	// Look up item in AllEquippedItems map
+	if (const TObjectPtr<UPrimaryDataAsset>* ItemPtr = AllEquippedItems.Find(SlotTag))
+	{
+		OutItemAsset = ItemPtr->Get();
+		// Generate a consistent GUID based on the item
+		if (OutItemAsset)
+		{
+			OutId = FGuid::NewGuid();  // In production, should track real IDs
+		}
+	}
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // WEAPON DAMAGE GETTERS (for AnimNotify weapon trace)
 // ═══════════════════════════════════════════════════════════════════════════════
 

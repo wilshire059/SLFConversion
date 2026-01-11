@@ -10,13 +10,15 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 #include "SLFActionBase.h"
-#include "StatManagerComponent.h"
-#include "ActionManagerComponent.h"
-#include "CombatManagerComponent.h"
-#include "EquipmentManagerComponent.h"
-#include "InventoryManagerComponent.h"
-#include "InteractionManagerComponent.h"
-#include "InputBufferComponent.h"
+#include "GameFramework/Pawn.h"
+#include "GameFramework/Controller.h"
+#include "AC_StatManager.h"
+#include "AC_ActionManager.h"
+#include "AC_CombatManager.h"
+#include "AC_EquipmentManager.h"
+#include "AC_InventoryManager.h"
+#include "AC_InteractionManager.h"
+#include "AC_InputBuffer.h"
 #include "Animation/AnimInstance.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "SLFPrimaryDataAssets.h"
@@ -31,65 +33,105 @@ USLFActionBase::USLFActionBase()
 // COMPONENT GETTERS [1-7/14]
 // ═══════════════════════════════════════════════════════════════════════════════
 
-UEquipmentManagerComponent* USLFActionBase::GetEquipmentManager_Implementation()
+UAC_EquipmentManager* USLFActionBase::GetEquipmentManager_Implementation()
 {
 	if (OwnerActor)
 	{
-		return OwnerActor->FindComponentByClass<UEquipmentManagerComponent>();
+		// First check on the character itself
+		UAC_EquipmentManager* Result = OwnerActor->FindComponentByClass<UAC_EquipmentManager>();
+		if (Result)
+		{
+			return Result;
+		}
+
+		// If not on character, check on the PlayerController
+		if (APawn* Pawn = Cast<APawn>(OwnerActor))
+		{
+			if (AController* Controller = Pawn->GetController())
+			{
+				Result = Controller->FindComponentByClass<UAC_EquipmentManager>();
+				if (Result)
+				{
+					return Result;
+				}
+			}
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("[GetEquipmentManager] Not found on Character or Controller"));
 	}
 	return nullptr;
 }
 
-UInteractionManagerComponent* USLFActionBase::GetInteractionManager_Implementation()
+UAC_InteractionManager* USLFActionBase::GetInteractionManager_Implementation()
 {
 	if (OwnerActor)
 	{
-		return OwnerActor->FindComponentByClass<UInteractionManagerComponent>();
+		return OwnerActor->FindComponentByClass<UAC_InteractionManager>();
 	}
 	return nullptr;
 }
 
-UInventoryManagerComponent* USLFActionBase::GetInventoryManager_Implementation()
+UAC_InventoryManager* USLFActionBase::GetInventoryManager_Implementation()
 {
 	if (OwnerActor)
 	{
-		return OwnerActor->FindComponentByClass<UInventoryManagerComponent>();
+		UAC_InventoryManager* Result = OwnerActor->FindComponentByClass<UAC_InventoryManager>();
+		if (Result) return Result;
+
+		if (APawn* Pawn = Cast<APawn>(OwnerActor))
+		{
+			if (AController* Controller = Pawn->GetController())
+			{
+				Result = Controller->FindComponentByClass<UAC_InventoryManager>();
+				if (Result) return Result;
+			}
+		}
 	}
 	return nullptr;
 }
 
-UStatManagerComponent* USLFActionBase::GetStatManager_Implementation()
+UAC_StatManager* USLFActionBase::GetStatManager_Implementation()
 {
 	if (OwnerActor)
 	{
-		return OwnerActor->FindComponentByClass<UStatManagerComponent>();
+		UAC_StatManager* Result = OwnerActor->FindComponentByClass<UAC_StatManager>();
+		if (Result) return Result;
+
+		if (APawn* Pawn = Cast<APawn>(OwnerActor))
+		{
+			if (AController* Controller = Pawn->GetController())
+			{
+				Result = Controller->FindComponentByClass<UAC_StatManager>();
+				if (Result) return Result;
+			}
+		}
 	}
 	return nullptr;
 }
 
-UCombatManagerComponent* USLFActionBase::GetCombatManager_Implementation()
+UAC_CombatManager* USLFActionBase::GetCombatManager_Implementation()
 {
 	if (OwnerActor)
 	{
-		return OwnerActor->FindComponentByClass<UCombatManagerComponent>();
+		return OwnerActor->FindComponentByClass<UAC_CombatManager>();
 	}
 	return nullptr;
 }
 
-UActionManagerComponent* USLFActionBase::GetActionManager_Implementation()
+UAC_ActionManager* USLFActionBase::GetActionManager_Implementation()
 {
 	if (OwnerActor)
 	{
-		return OwnerActor->FindComponentByClass<UActionManagerComponent>();
+		return OwnerActor->FindComponentByClass<UAC_ActionManager>();
 	}
 	return nullptr;
 }
 
-UInputBufferComponent* USLFActionBase::GetInputBuffer_Implementation()
+UAC_InputBuffer* USLFActionBase::GetInputBuffer_Implementation()
 {
 	if (OwnerActor)
 	{
-		return OwnerActor->FindComponentByClass<UInputBufferComponent>();
+		return OwnerActor->FindComponentByClass<UAC_InputBuffer>();
 	}
 	return nullptr;
 }
@@ -101,13 +143,13 @@ UInputBufferComponent* USLFActionBase::GetInputBuffer_Implementation()
 float USLFActionBase::GetWeaponStaminaMultiplier_Implementation()
 {
 	// Get stamina multiplier from equipped weapon
-	if (UEquipmentManagerComponent* EquipmentManager = GetEquipmentManager())
+	if (UAC_EquipmentManager* EquipmentManager = GetEquipmentManager())
 	{
 		// Get right hand weapon slot
 		FGameplayTag WeaponSlot = EquipmentManager->GetActiveWeaponSlot(true);
-		UDataAsset* ItemAsset = nullptr;
+		UPrimaryDataAsset* ItemAsset = nullptr;
 		FGuid Id;
-		EquipmentManager->GetItemAtSlot(WeaponSlot, ItemAsset, Id);
+		EquipmentManager->GetItemAtSlotSimple(WeaponSlot, ItemAsset, Id);
 		
 		if (UPDA_Item* Item = Cast<UPDA_Item>(ItemAsset))
 		{
@@ -129,24 +171,50 @@ UAnimInstance* USLFActionBase::GetOwnerAnimInstance_Implementation()
 	return nullptr;
 }
 
+
 UDataAsset* USLFActionBase::GetWeaponAnimset_Implementation()
 {
 	// Get animset from equipped weapon
-	if (UEquipmentManagerComponent* EquipmentManager = GetEquipmentManager())
+	UAC_EquipmentManager* EquipmentManager = GetEquipmentManager();
+	if (!EquipmentManager)
 	{
-		// Get right hand weapon slot
-		FGameplayTag WeaponSlot = EquipmentManager->GetActiveWeaponSlot(true);
-		UDataAsset* ItemAsset = nullptr;
-		FGuid Id;
-		EquipmentManager->GetItemAtSlot(WeaponSlot, ItemAsset, Id);
-		
-		if (UPDA_Item* Item = Cast<UPDA_Item>(ItemAsset))
-		{
-			// MovesetWeapons is UObject* but should be UPDA_WeaponAnimset
-			return Cast<UDataAsset>(Item->ItemInformation.EquipmentDetails.MovesetWeapons);
-		}
+		UE_LOG(LogTemp, Warning, TEXT("[GetWeaponAnimset] No EquipmentManager"));
+		return nullptr;
 	}
-	return nullptr;
+
+	// Get right hand weapon slot
+	FGameplayTag WeaponSlot = EquipmentManager->GetActiveWeaponSlot(true);
+	UE_LOG(LogTemp, Warning, TEXT("[GetWeaponAnimset] WeaponSlot: %s"), *WeaponSlot.ToString());
+
+	UPrimaryDataAsset* ItemAsset = nullptr;
+	FGuid Id;
+	EquipmentManager->GetItemAtSlotSimple(WeaponSlot, ItemAsset, Id);
+
+	if (!ItemAsset)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[GetWeaponAnimset] No item at weapon slot"));
+		return nullptr;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[GetWeaponAnimset] ItemAsset: %s"), *ItemAsset->GetName());
+
+	UPDA_Item* Item = Cast<UPDA_Item>(ItemAsset);
+	if (!Item)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[GetWeaponAnimset] ItemAsset is not UPDA_Item (class: %s)"), *ItemAsset->GetClass()->GetName());
+		return nullptr;
+	}
+
+	UObject* MovesetWeapons = Item->ItemInformation.EquipmentDetails.MovesetWeapons;
+	if (!MovesetWeapons)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[GetWeaponAnimset] MovesetWeapons is NULL on item %s"), *Item->GetName());
+		return nullptr;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[GetWeaponAnimset] MovesetWeapons: %s (Class: %s)"), *MovesetWeapons->GetName(), *MovesetWeapons->GetClass()->GetName());
+
+	return Cast<UDataAsset>(MovesetWeapons);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -155,7 +223,7 @@ UDataAsset* USLFActionBase::GetWeaponAnimset_Implementation()
 
 bool USLFActionBase::CheckStatRequirement_Implementation(FGameplayTag StatTag, float RequiredValue)
 {
-	if (UStatManagerComponent* StatManager = GetStatManager())
+	if (UAC_StatManager* StatManager = GetStatManager())
 	{
 		return StatManager->IsStatMoreThan(StatTag, RequiredValue);
 	}
@@ -164,7 +232,7 @@ bool USLFActionBase::CheckStatRequirement_Implementation(FGameplayTag StatTag, f
 
 void USLFActionBase::AdjustStatByRequirement_Implementation(FGameplayTag StatTag, float Amount)
 {
-	if (UStatManagerComponent* StatManager = GetStatManager())
+	if (UAC_StatManager* StatManager = GetStatManager())
 	{
 		// New signature: (StatTag, ValueType, Change, bLevelUp, bTriggerRegen)
 		StatManager->AdjustStat(StatTag, ESLFValueType::CurrentValue, -Amount, false, true);

@@ -2,7 +2,7 @@
 // Logic: SetMovementMode(Sprinting), get FSprintCost, StartStaminaLoss, SetIsSprinting(true)
 #include "SLFActionStartSprinting.h"
 #include "Interfaces/BPI_GenericCharacter.h"
-#include "ActionManagerComponent.h"
+#include "AC_ActionManager.h"
 #include "SLFPrimaryDataAssets.h"
 #include "StructUtils/InstancedStruct.h"
 #include "UObject/UnrealType.h"
@@ -90,9 +90,9 @@ void USLFActionStartSprinting::ExecuteAction_Implementation()
 	}
 
 	// Start stamina loss via ActionManager
-	if (UActionManagerComponent* ActionMgr = GetActionManager())
+	if (UAC_ActionManager* ActionMgr = GetActionManager())
 	{
-		ActionMgr->StartStaminaLoss(TickInterval, StaminaChange);
+		ActionMgr->EventStartStaminaLoss(TickInterval, StaminaChange);
 		ActionMgr->SetIsSprinting(true);
 		UE_LOG(LogTemp, Log, TEXT("[ActionStartSprinting] Stamina loss started, IsSprinting = true"));
 	}

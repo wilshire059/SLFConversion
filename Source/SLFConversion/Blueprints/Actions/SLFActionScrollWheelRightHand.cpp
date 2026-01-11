@@ -1,6 +1,8 @@
 // SLFActionScrollWheelRightHand.cpp
 // Logic: Check not guarding, cycle through right hand weapon slots, wield next
 #include "SLFActionScrollWheelRightHand.h"
+#include "AC_EquipmentManager.h"
+#include "AC_CombatManager.h"
 #include "Components/CombatManagerComponent.h"
 #include "Components/EquipmentManagerComponent.h"
 
@@ -16,7 +18,7 @@ void USLFActionScrollWheelRightHand::ExecuteAction_Implementation()
 	if (!OwnerActor) return;
 
 	// Check if guarding - don't cycle while guarding
-	UCombatManagerComponent* CombatMgr = GetCombatManager();
+	UAC_CombatManager* CombatMgr = GetCombatManager();
 	if (CombatMgr && CombatMgr->GetIsGuarding())
 	{
 		UE_LOG(LogTemp, Log, TEXT("[ActionScrollWheelRightHand] Cannot cycle while guarding"));
@@ -24,7 +26,7 @@ void USLFActionScrollWheelRightHand::ExecuteAction_Implementation()
 	}
 
 	// Get equipment manager
-	UEquipmentManagerComponent* EquipMgr = GetEquipmentManager();
+	UAC_EquipmentManager* EquipMgr = GetEquipmentManager();
 	if (!EquipMgr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[ActionScrollWheelRightHand] No equipment manager"));
