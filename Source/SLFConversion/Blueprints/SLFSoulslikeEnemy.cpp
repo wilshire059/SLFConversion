@@ -14,16 +14,23 @@
 // Source: BlueprintDNA_v2/Blueprint/B_Soulslike_Enemy.json
 
 #include "SLFSoulslikeEnemy.h"
+#include "AIC_SoulslikeFramework.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Perception/AIPerceptionComponent.h"
+#include "Interfaces/BPI_AIC.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/AICombatManagerComponent.h"
 #include "Components/AIBehaviorManagerComponent.h"
 #include "Components/LootDropManagerComponent.h"
+#include "Components/SLFAIStateMachineComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Animation/AnimInstance.h"
+#include "SLFPrimaryDataAssets.h"
+#include "KismetAnimationLibrary.h"
 
 ASLFSoulslikeEnemy::ASLFSoulslikeEnemy()
 {
@@ -33,28 +40,34 @@ ASLFSoulslikeEnemy::ASLFSoulslikeEnemy()
 	bRotatingTowardsTarget = false;
 	RotationAlpha = 0.0f;
 	RotationDuration = 1.0f;
+	LastCombatEntryTime = 0.0f;
 
 	// Enemies tick for AI
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Create components - use different FNames than Blueprint SCS to avoid collision
-	HealthbarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthbarWidget"));
-	if (HealthbarWidget)
-	{
-		HealthbarWidget->SetupAttachment(GetCapsuleComponent());
-		HealthbarWidget->SetVisibility(false); // Hidden by default
-	}
+	// Set AI Controller class - this is critical for AI to work
+	AIControllerClass = AAIC_SoulslikeFramework::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
-	CombatManagerComponent = CreateDefaultSubobject<UAICombatManagerComponent>(TEXT("CombatManagerComponent"));
-	BehaviorManagerComponent = CreateDefaultSubobject<UAIBehaviorManagerComponent>(TEXT("BehaviorManagerComponent"));
-	LootDropManagerComponent = CreateDefaultSubobject<ULootDropManagerComponent>(TEXT("LootDropManagerComponent"));
+	// NOTE: Components are NOT created here via CreateDefaultSubobject!
+	// The Blueprint SCS (SimpleConstructionScript) creates these components:
+	//   - AC_AI_BehaviorManager (reparented to UAIBehaviorManagerComponent)
+	//   - AC_AI_CombatManager (reparented to UAICombatManagerComponent)
+	//   - Healthbar (UWidgetComponent)
+	//   - NS_Souls (UNiagaraComponent)
+	//   - AC_LootDropManager (reparented to ULootDropManagerComponent)
+	//
+	// The member pointers will be set in BeginPlay by finding these components.
+	// This avoids creating duplicate components that conflict with Blueprint SCS.
 
-	SoulsNiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("SoulsNiagaraComponent"));
-	if (SoulsNiagaraComponent)
-	{
-		SoulsNiagaraComponent->SetupAttachment(RootComponent);
-		SoulsNiagaraComponent->SetAutoActivate(false);
-	}
+	HealthbarWidget = nullptr;
+	CombatManagerComponent = nullptr;
+	BehaviorManagerComponent = nullptr;
+	LootDropManagerComponent = nullptr;
+	SoulsNiagaraComponent = nullptr;
+
+	// Create AI State Machine component - this replaces Behavior Tree for combat AI
+	AIStateMachine = CreateDefaultSubobject<USLFAIStateMachineComponent>(TEXT("AIStateMachine"));
 }
 
 void ASLFSoulslikeEnemy::BeginPlay()
@@ -63,6 +76,374 @@ void ASLFSoulslikeEnemy::BeginPlay()
 
 	UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] BeginPlay: %s (ID: %s)"),
 		*GetName(), *EnemyId.ToString());
+
+	// Find components that were created by Blueprint SCS
+	// These are NOT created in C++ constructor - they come from the Blueprint
+	BehaviorManagerComponent = FindComponentByClass<UAIBehaviorManagerComponent>();
+	CombatManagerComponent = FindComponentByClass<UAICombatManagerComponent>();
+	LootDropManagerComponent = FindComponentByClass<ULootDropManagerComponent>();
+	HealthbarWidget = FindComponentByClass<UWidgetComponent>();
+	SoulsNiagaraComponent = FindComponentByClass<UNiagaraComponent>();
+
+	// Log what we found
+	UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] Components found:"));
+	UE_LOG(LogTemp, Log, TEXT("  BehaviorManager: %s"), BehaviorManagerComponent ? *BehaviorManagerComponent->GetName() : TEXT("NULL"));
+	UE_LOG(LogTemp, Log, TEXT("  CombatManager: %s"), CombatManagerComponent ? *CombatManagerComponent->GetName() : TEXT("NULL"));
+	UE_LOG(LogTemp, Log, TEXT("  LootDropManager: %s"), LootDropManagerComponent ? *LootDropManagerComponent->GetName() : TEXT("NULL"));
+	UE_LOG(LogTemp, Log, TEXT("  Healthbar: %s"), HealthbarWidget ? *HealthbarWidget->GetName() : TEXT("NULL"));
+	UE_LOG(LogTemp, Log, TEXT("  SoulsNiagara: %s"), SoulsNiagaraComponent ? *SoulsNiagaraComponent->GetName() : TEXT("NULL"));
+	UE_LOG(LogTemp, Log, TEXT("  AIStateMachine: %s"), AIStateMachine ? *AIStateMachine->GetName() : TEXT("NULL"));
+
+	// Enable debug logging on state machine for testing
+	if (AIStateMachine)
+	{
+		AIStateMachine->bDebugEnabled = true;
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] AI State Machine ENABLED - Combat AI will use C++ state machine instead of Behavior Tree!"));
+	}
+
+	if (BehaviorManagerComponent)
+	{
+		UE_LOG(LogTemp, Log, TEXT("  BehaviorManager Behavior Tree: %s"),
+			BehaviorManagerComponent->Behavior ? *BehaviorManagerComponent->Behavior->GetName() : TEXT("NULL"));
+
+		// If no behavior tree is assigned, try to load the default one
+		if (!BehaviorManagerComponent->Behavior)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] No BT assigned, loading default BT_Enemy"));
+			static UBehaviorTree* DefaultBT = nullptr;
+			if (!DefaultBT)
+			{
+				DefaultBT = LoadObject<UBehaviorTree>(nullptr,
+					TEXT("/Game/SoulslikeFramework/Blueprints/_AI/BT_Enemy.BT_Enemy"));
+			}
+			if (DefaultBT)
+			{
+				BehaviorManagerComponent->Behavior = DefaultBT;
+				UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] Assigned default BT: %s"), *DefaultBT->GetName());
+
+				// Component BeginPlay already ran, so we need to manually initialize the behavior tree
+				// This calls the AI Controller's InitializeBehavior via BPI_AIC interface
+				if (AController* MyController = GetController())
+				{
+					if (AAIController* AIC = Cast<AAIController>(MyController))
+					{
+						if (AIC->GetClass()->ImplementsInterface(UBPI_AIC::StaticClass()))
+						{
+							UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] Manually initializing behavior tree"));
+							IBPI_AIC::Execute_InitializeBehavior(AIC, DefaultBT);
+						}
+						else
+						{
+							// Fallback: directly run behavior tree
+							UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] Running behavior tree directly"));
+							AIC->RunBehaviorTree(DefaultBT);
+						}
+					}
+				}
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("[SoulslikeEnemy] Failed to load default BT_Enemy!"));
+			}
+		}
+	}
+
+	// Setup perception callbacks after a short delay to ensure controller is ready
+	SetupPerceptionCallbacks();
+}
+
+void ASLFSoulslikeEnemy::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	// NOTE: Animation variables are now updated by C++ AnimInstance NativeUpdateAnimation()
+	// The AnimBPs have been reparented to C++ AnimInstance classes (UABP_SoulslikeEnemy, etc.)
+	// which set GroundSpeed, Velocity, IsFalling, Direction directly via UPROPERTY
+	//
+	// The reflection-based UpdateAnimationVariables() is no longer needed and has been removed
+}
+
+void ASLFSoulslikeEnemy::UpdateAnimationVariables()
+{
+	// ═══════════════════════════════════════════════════════════════════════════════
+	// ANIMATION VARIABLE BRIDGE PATTERN (AAA Standard)
+	// ═══════════════════════════════════════════════════════════════════════════════
+	//
+	// This function sets Animation Blueprint variables from the owning Character.
+	// This is the CORRECT pattern for AnimBPs that have Blueprint-defined variables.
+	//
+	// WHY THIS PATTERN:
+	// - AnimBP has K2Node_VariableGet nodes referencing Blueprint variables by GUID
+	// - AnimGraph reads these variables for locomotion blend spaces
+	// - Simply reparenting to C++ AnimInstance doesn't work because nodes still
+	//   reference Blueprint variables, not C++ properties
+	// - The proper solution is to set Blueprint variables from the Character
+	//
+	// VARIABLES SET:
+	// - GroundSpeed: 2D velocity magnitude for locomotion blend
+	// - Velocity: Full 3D velocity vector
+	// - IsFalling: Whether character is in air
+	// - Direction: Movement direction relative to facing
+	// - SoulslikeEnemy: Reference to owning actor
+	// - SoulslikeCharacter: Reference to owning actor (alias)
+	// - MovementComponent: Reference to character movement
+	//
+	// ═══════════════════════════════════════════════════════════════════════════════
+
+	USkeletalMeshComponent* MeshComp = GetMesh();
+	if (!MeshComp)
+	{
+		return;
+	}
+
+	UAnimInstance* AnimInstance = MeshComp->GetAnimInstance();
+	if (!AnimInstance)
+	{
+		return;
+	}
+
+	// Calculate animation values from character state
+	const FVector CurrentVelocity = GetVelocity();
+	const float CurrentGroundSpeed = CurrentVelocity.Size2D();
+	const bool bIsFalling = GetCharacterMovement() ? GetCharacterMovement()->IsFalling() : false;
+
+	float CurrentDirection = 0.0f;
+	if (CurrentGroundSpeed > 1.0f)
+	{
+		CurrentDirection = UKismetAnimationLibrary::CalculateDirection(CurrentVelocity, GetActorRotation());
+	}
+
+	// Get AnimInstance class for property lookup
+	UClass* AnimClass = AnimInstance->GetClass();
+
+	// Set GroundSpeed (double or float depending on AnimBP definition)
+	if (FDoubleProperty* GroundSpeedProp = FindFProperty<FDoubleProperty>(AnimClass, TEXT("GroundSpeed")))
+	{
+		GroundSpeedProp->SetPropertyValue_InContainer(AnimInstance, CurrentGroundSpeed);
+	}
+	else if (FFloatProperty* GroundSpeedFloatProp = FindFProperty<FFloatProperty>(AnimClass, TEXT("GroundSpeed")))
+	{
+		GroundSpeedFloatProp->SetPropertyValue_InContainer(AnimInstance, static_cast<float>(CurrentGroundSpeed));
+	}
+
+	// Set Velocity (FVector)
+	if (FStructProperty* VelocityProp = FindFProperty<FStructProperty>(AnimClass, TEXT("Velocity")))
+	{
+		if (VelocityProp->Struct == TBaseStructure<FVector>::Get())
+		{
+			*VelocityProp->ContainerPtrToValuePtr<FVector>(AnimInstance) = CurrentVelocity;
+		}
+	}
+
+	// Set IsFalling (bool)
+	if (FBoolProperty* IsFallingProp = FindFProperty<FBoolProperty>(AnimClass, TEXT("IsFalling")))
+	{
+		IsFallingProp->SetPropertyValue_InContainer(AnimInstance, bIsFalling);
+	}
+
+	// Set Direction (double or float)
+	if (FDoubleProperty* DirectionProp = FindFProperty<FDoubleProperty>(AnimClass, TEXT("Direction")))
+	{
+		DirectionProp->SetPropertyValue_InContainer(AnimInstance, CurrentDirection);
+	}
+	else if (FFloatProperty* DirectionFloatProp = FindFProperty<FFloatProperty>(AnimClass, TEXT("Direction")))
+	{
+		DirectionFloatProp->SetPropertyValue_InContainer(AnimInstance, static_cast<float>(CurrentDirection));
+	}
+
+	// Set SoulslikeEnemy / SoulslikeCharacter (references to this actor)
+	if (FObjectProperty* SoulslikeEnemyProp = FindFProperty<FObjectProperty>(AnimClass, TEXT("SoulslikeEnemy")))
+	{
+		SoulslikeEnemyProp->SetObjectPropertyValue_InContainer(AnimInstance, this);
+	}
+	if (FObjectProperty* SoulslikeCharacterProp = FindFProperty<FObjectProperty>(AnimClass, TEXT("SoulslikeCharacter")))
+	{
+		SoulslikeCharacterProp->SetObjectPropertyValue_InContainer(AnimInstance, this);
+	}
+
+	// Set MovementComponent
+	if (FObjectProperty* MovementCompProp = FindFProperty<FObjectProperty>(AnimClass, TEXT("MovementComponent")))
+	{
+		MovementCompProp->SetObjectPropertyValue_InContainer(AnimInstance, GetCharacterMovement());
+	}
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PERCEPTION HANDLING
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void ASLFSoulslikeEnemy::SetupPerceptionCallbacks()
+{
+	// Get AI Controller
+	AController* MyController = GetController();
+	if (!MyController)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] SetupPerceptionCallbacks - No controller yet, will retry"));
+		// Retry after a short delay
+		FTimerHandle RetryHandle;
+		GetWorld()->GetTimerManager().SetTimer(RetryHandle, this, &ASLFSoulslikeEnemy::SetupPerceptionCallbacks, 0.1f, false);
+		return;
+	}
+
+	// Find AI Perception Component on the controller
+	UAIPerceptionComponent* PerceptionComp = MyController->FindComponentByClass<UAIPerceptionComponent>();
+	if (!PerceptionComp)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] SetupPerceptionCallbacks - No perception component on controller"));
+		return;
+	}
+
+	// Bind to OnTargetPerceptionUpdated
+	PerceptionComp->OnTargetPerceptionUpdated.AddDynamic(this, &ASLFSoulslikeEnemy::OnPerceptionUpdated);
+	UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] SetupPerceptionCallbacks - Bound perception callback"));
+}
+
+void ASLFSoulslikeEnemy::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
+{
+	if (!Actor)
+	{
+		return;
+	}
+
+	// Check if this is a player or other target
+	APawn* SensedPawn = Cast<APawn>(Actor);
+	if (!SensedPawn)
+	{
+		return;
+	}
+
+	// Only react to players (check if controlled by a player controller)
+	if (!SensedPawn->IsPlayerControlled())
+	{
+		return;
+	}
+
+	// ═══════════════════════════════════════════════════════════════════════════
+	// STATE MACHINE APPROACH (replaces Behavior Tree)
+	// ═══════════════════════════════════════════════════════════════════════════
+
+	// Check if we have the state machine
+	if (AIStateMachine)
+	{
+		// Get current state from state machine
+		ESLFAIState CurrentStateMachine = AIStateMachine->GetCurrentState();
+
+		// AAA APPROACH: Combat state has hysteresis
+		if (CurrentStateMachine == ESLFAIState::Combat)
+		{
+			UE_LOG(LogTemp, Verbose, TEXT("[SLF_PERCEPTION] %s already in Combat (StateMachine), refreshing target"),
+				*GetName());
+			LastCombatEntryTime = GetWorld()->GetTimeSeconds();
+			return;
+		}
+
+		// Not in combat - check if we should enter
+		AAIController* AIC = Cast<AAIController>(GetController());
+		if (!AIC)
+		{
+			return;
+		}
+
+		UAIPerceptionComponent* PerceptionComp = AIC->GetAIPerceptionComponent();
+		if (!PerceptionComp)
+		{
+			return;
+		}
+
+		// Check if target is currently sensed
+		FActorPerceptionBlueprintInfo PerceptionInfo;
+		bool bCurrentlySensed = false;
+		if (PerceptionComp->GetActorsPerception(Actor, PerceptionInfo))
+		{
+			for (const FAIStimulus& Stim : PerceptionInfo.LastSensedStimuli)
+			{
+				if (Stim.WasSuccessfullySensed())
+				{
+					bCurrentlySensed = true;
+					break;
+				}
+			}
+		}
+
+		if (bCurrentlySensed)
+		{
+			// Target detected - tell state machine!
+			UE_LOG(LogTemp, Warning, TEXT("[SLF_PERCEPTION_SENSED] Player detected on %s! Setting target on StateMachine"), *GetName());
+
+			// SetTarget automatically transitions to Combat state
+			AIStateMachine->SetTarget(Actor);
+			LastCombatEntryTime = GetWorld()->GetTimeSeconds();
+		}
+
+		return; // State machine handled it
+	}
+
+	// ═══════════════════════════════════════════════════════════════════════════
+	// FALLBACK: Legacy BehaviorManager path (for backwards compatibility)
+	// ═══════════════════════════════════════════════════════════════════════════
+
+	// Get current state
+	ESLFAIStates CurrentState = ESLFAIStates::Idle;
+	if (BehaviorManagerComponent)
+	{
+		CurrentState = BehaviorManagerComponent->GetState();
+	}
+
+	// AAA APPROACH: Combat state has hysteresis - once in combat, STAY in combat
+	if (CurrentState == ESLFAIStates::Combat)
+	{
+		UE_LOG(LogTemp, Verbose, TEXT("[SLF_PERCEPTION] %s already in Combat (BehaviorManager), ignoring"),
+			*GetName());
+		LastCombatEntryTime = GetWorld()->GetTimeSeconds();
+		return;
+	}
+
+	// Not in combat - check if we should enter combat
+	AAIController* AIC = Cast<AAIController>(GetController());
+	if (!AIC)
+	{
+		return;
+	}
+
+	UAIPerceptionComponent* PerceptionComp = AIC->GetAIPerceptionComponent();
+	if (!PerceptionComp)
+	{
+		return;
+	}
+
+	// Check if target is currently sensed by ANY configured sense
+	FActorPerceptionBlueprintInfo PerceptionInfo;
+	bool bCurrentlySensed = false;
+	if (PerceptionComp->GetActorsPerception(Actor, PerceptionInfo))
+	{
+		for (const FAIStimulus& Stim : PerceptionInfo.LastSensedStimuli)
+		{
+			if (Stim.WasSuccessfullySensed())
+			{
+				bCurrentlySensed = true;
+				break;
+			}
+		}
+	}
+
+	if (bCurrentlySensed)
+	{
+		// Target detected - enter combat!
+		UE_LOG(LogTemp, Warning, TEXT("[SLF_PERCEPTION_SENSED] Player detected on %s! Switching to Combat state (BehaviorManager)"), *GetName());
+
+		if (BehaviorManagerComponent)
+		{
+			BehaviorManagerComponent->SetTarget(Actor);
+			BehaviorManagerComponent->SetState(ESLFAIStates::Combat);
+			LastCombatEntryTime = GetWorld()->GetTimeSeconds();
+
+			if (UBlackboardComponent* BB = BehaviorManagerComponent->GetBlackboard())
+			{
+				BB->SetValueAsBool(FName("InCombat"), true);
+			}
+		}
+	}
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -91,6 +472,150 @@ bool ASLFSoulslikeEnemy::CheckSense_Implementation(AActor* Target)
 	}
 
 	return false;
+}
+
+void ASLFSoulslikeEnemy::PerformAbility_Implementation()
+{
+	UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] PerformAbility called on %s"), *GetName());
+
+	// Get Combat Manager
+	UAICombatManagerComponent* CombatManager = CombatManagerComponent;
+	if (!CombatManager)
+	{
+		CombatManager = FindComponentByClass<UAICombatManagerComponent>();
+	}
+
+	if (!CombatManager)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] PerformAbility - No CombatManager found!"));
+		OnAttackEnd.Broadcast();
+		return;
+	}
+
+	// Try to get an ability
+	UDataAsset* Ability = nullptr;
+	bool bGotAbility = CombatManager->TryGetAbility(Ability);
+
+	if (!bGotAbility || !Ability)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] PerformAbility - No ability available"));
+		OnAttackEnd.Broadcast();
+		return;
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] PerformAbility - Executing ability: %s (Class: %s)"),
+		*Ability->GetName(), *Ability->GetClass()->GetName());
+
+	// Get the ability montage from the ability asset
+	// UPDA_AI_Ability uses "Montage" property with TSoftObjectPtr<UAnimMontage>
+	UAnimMontage* AbilityMontage = nullptr;
+
+	// First try: Cast to UPDA_AI_Ability directly (preferred - avoids reflection)
+	if (UPDA_AI_Ability* AIAbility = Cast<UPDA_AI_Ability>(Ability))
+	{
+		AbilityMontage = AIAbility->Montage.LoadSynchronous();
+		UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] PerformAbility - Got montage from UPDA_AI_Ability: %s"),
+			AbilityMontage ? *AbilityMontage->GetName() : TEXT("null"));
+	}
+
+	// Fallback: Try reflection for "Montage" property (TSoftObjectPtr)
+	if (!AbilityMontage)
+	{
+		FProperty* MontageProp = Ability->GetClass()->FindPropertyByName(FName("Montage"));
+		if (MontageProp)
+		{
+			if (FSoftObjectProperty* SoftObjProp = CastField<FSoftObjectProperty>(MontageProp))
+			{
+				FSoftObjectPtr* SoftPtr = SoftObjProp->GetPropertyValuePtr_InContainer(Ability);
+				if (SoftPtr)
+				{
+					AbilityMontage = Cast<UAnimMontage>(SoftPtr->LoadSynchronous());
+					UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] PerformAbility - Got montage via reflection (Montage): %s"),
+						AbilityMontage ? *AbilityMontage->GetName() : TEXT("null"));
+				}
+			}
+		}
+	}
+
+	// Also try AbilityMontage (legacy)
+	if (!AbilityMontage)
+	{
+		FProperty* MontageProp = Ability->GetClass()->FindPropertyByName(FName("AbilityMontage"));
+		if (MontageProp)
+		{
+			if (FObjectProperty* ObjProp = CastField<FObjectProperty>(MontageProp))
+			{
+				UObject* MontageObj = ObjProp->GetObjectPropertyValue_InContainer(Ability);
+				AbilityMontage = Cast<UAnimMontage>(MontageObj);
+			}
+		}
+	}
+
+	// Also try ActionMontage (legacy - for action data assets)
+	if (!AbilityMontage)
+	{
+		FProperty* MontageProp = Ability->GetClass()->FindPropertyByName(FName("ActionMontage"));
+		if (MontageProp)
+		{
+			if (FSoftObjectProperty* SoftObjProp = CastField<FSoftObjectProperty>(MontageProp))
+			{
+				FSoftObjectPtr* SoftPtr = SoftObjProp->GetPropertyValuePtr_InContainer(Ability);
+				if (SoftPtr)
+				{
+					AbilityMontage = Cast<UAnimMontage>(SoftPtr->LoadSynchronous());
+				}
+			}
+			else if (FObjectProperty* ObjProp = CastField<FObjectProperty>(MontageProp))
+			{
+				UObject* MontageObj = ObjProp->GetObjectPropertyValue_InContainer(Ability);
+				AbilityMontage = Cast<UAnimMontage>(MontageObj);
+			}
+		}
+	}
+
+	if (!AbilityMontage)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] PerformAbility - No montage found in ability asset"));
+		OnAttackEnd.Broadcast();
+		return;
+	}
+
+	// Play the montage
+	USkeletalMeshComponent* MeshComp = GetMesh();
+	if (!MeshComp)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] PerformAbility - No mesh component"));
+		OnAttackEnd.Broadcast();
+		return;
+	}
+
+	UAnimInstance* AnimInstance = MeshComp->GetAnimInstance();
+	if (!AnimInstance)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] PerformAbility - No anim instance"));
+		OnAttackEnd.Broadcast();
+		return;
+	}
+
+	// Play montage and set up completion callback
+	FOnMontageEnded MontageEndDelegate;
+	MontageEndDelegate.BindLambda([this](UAnimMontage* EndedMontage, bool bInterrupted)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] PerformAbility montage ended (interrupted=%d)"), bInterrupted);
+		OnAttackEnd.Broadcast();
+	});
+
+	float PlayRate = AnimInstance->Montage_Play(AbilityMontage, 1.0f);
+	if (PlayRate > 0.0f)
+	{
+		AnimInstance->Montage_SetEndDelegate(MontageEndDelegate, AbilityMontage);
+		UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] PerformAbility - Playing montage: %s"), *AbilityMontage->GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] PerformAbility - Failed to play montage"));
+		OnAttackEnd.Broadcast();
+	}
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════

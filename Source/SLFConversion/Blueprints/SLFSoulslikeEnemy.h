@@ -34,6 +34,7 @@
 class UAICombatManagerComponent;
 class UAIBehaviorManagerComponent;
 class ULootDropManagerComponent;
+class USLFAIStateMachineComponent;
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // EVENT DISPATCHERS: 1/1 migrated
@@ -56,6 +57,10 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+
+	/** Update animation variables on the AnimInstance directly (bypasses broken EventGraph) */
+	void UpdateAnimationVariables();
 
 public:
 	// ═══════════════════════════════════════════════════════════════════
@@ -77,6 +82,10 @@ public:
 	/** Souls VFX Niagara component - named SoulsNiagaraComponent to avoid collision with Blueprint SCS "NS_Souls" */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<UNiagaraComponent> SoulsNiagaraComponent;
+
+	/** AI State Machine - replaces Behavior Tree for better performance */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<USLFAIStateMachineComponent> AIStateMachine;
 
 	// ═══════════════════════════════════════════════════════════════════
 	// VARIABLES: 1/1 migrated
@@ -118,6 +127,28 @@ public:
 	void UpdateRotationTowardsTarget();
 
 	// ═══════════════════════════════════════════════════════════════════
+	// PERCEPTION DEBOUNCE
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** Time when we last entered Combat state - used for debounce */
+	UPROPERTY()
+	float LastCombatEntryTime;
+
+	/** Minimum time to stay in Combat before allowing perception-based state change */
+	static constexpr float CombatDebounceTime = 2.0f;
+
+	// ═══════════════════════════════════════════════════════════════════
+	// PERCEPTION HANDLING
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** Bind perception callbacks in BeginPlay */
+	void SetupPerceptionCallbacks();
+
+	/** Handle perception update from AI controller */
+	UFUNCTION()
+	void OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
+
+	// ═══════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS: 1/1 migrated
 	// ═══════════════════════════════════════════════════════════════════
 
@@ -136,6 +167,13 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Enemy|AI")
 	bool CheckSense(AActor* Target);
 	virtual bool CheckSense_Implementation(AActor* Target);
+
+	/** Execute an AI ability - picks ability from CombatManager and executes it
+	 * Fires OnAttackEnd when ability completes
+	 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Enemy|Combat")
+	void PerformAbility();
+	virtual void PerformAbility_Implementation();
 
 	// ═══════════════════════════════════════════════════════════════════
 	// BPI_ENEMY INTERFACE IMPLEMENTATIONS (8 functions)
