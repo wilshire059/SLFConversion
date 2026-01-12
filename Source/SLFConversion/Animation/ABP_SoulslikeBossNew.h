@@ -49,17 +49,24 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	FVector Velocity;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
-	double GroundSpeed;
+	float GroundSpeed;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	bool IsFalling;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
-	double Direction;
+	float Direction;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
-	double PhysicsWeight;
+	float PhysicsWeight;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	FVector HitLocation;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	bool PoiseBroken;
+
+	// Additional variables for AnimGraph
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "IK")
+	float IkWeight;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Combat")
+	FVector CurrentHitNormal;
 
 	// Note: AnimGraph function removed - conflicts with UE's internal AnimGraph function name
 
@@ -68,9 +75,17 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Animation")
 	ACharacter* OwnerCharacter;
 
+	// Cached component references
+	UPROPERTY()
+	UActorComponent* CachedCombatManager;
+
 	// Helper to get owner velocity
 	FVector GetOwnerVelocity() const;
 
 	// Helper to get owner rotation
 	FRotator GetOwnerRotation() const;
+
+	// Reflection helpers for Blueprint variables with spaces
+	void SetBlueprintObjectVariable(const FName& VarName, UObject* Value);
+	void SetBlueprintVectorVariable(const FName& VarName, const FVector& Value);
 };

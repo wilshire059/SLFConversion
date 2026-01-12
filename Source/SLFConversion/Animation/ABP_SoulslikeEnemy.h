@@ -21,6 +21,7 @@ class ACharacter;
 class UCharacterMovementComponent;
 class UActorComponent;
 class UPrimaryDataAsset;
+class UPDA_PoiseBreakAnimData;
 
 UCLASS()
 class SLFCONVERSION_API UABP_SoulslikeEnemy : public UAnimInstance
@@ -49,7 +50,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "EssentialMovementData")
 	FVector Velocity;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Essential Movement Data")
-	double GroundSpeed;
+	float GroundSpeed;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Essential Movement Data")
 	bool IsFalling;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
@@ -57,7 +58,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	ESLFOverlayState LocomotionType;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
-	double PhysicsWeight;
+	float PhysicsWeight;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	AActor* SoulslikeEnemy;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
@@ -65,11 +66,23 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	FVector HitLocation;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
-	double Direction;
+	float Direction;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	bool PoiseBroken;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
-	UPrimaryDataAsset* PoiseBreakAsset;
+	UPDA_PoiseBreakAnimData* PoiseBreakAsset;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// ADDITIONAL ANIMATION VARIABLES (from AnimGraph analysis)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	// IK weight for physics-based animation blending
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "IK")
+	float IkWeight;
+
+	// Current hit normal for hit reactions
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Combat")
+	FVector CurrentHitNormal;
 
 	// Note: AnimGraph function removed - conflicts with UE's internal AnimGraph function name
 
@@ -78,9 +91,22 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Animation")
 	ACharacter* OwnerCharacter;
 
+	// Cached component references
+	UPROPERTY()
+	UActorComponent* CachedCombatManager;
+
 	// Helper to get owner velocity
 	FVector GetOwnerVelocity() const;
 
 	// Helper to get owner rotation
 	FRotator GetOwnerRotation() const;
+
+	// Helper to set Blueprint variables by name (supports spaces in FName)
+	// Used for variables like "AC AI Combat Manager" and "Hit Location"
+	template<typename T>
+	void SetBlueprintVariable(const FName& VarName, const T& Value);
+
+	// Specialized helper for object properties
+	void SetBlueprintObjectVariable(const FName& VarName, UObject* Value);
+	void SetBlueprintVectorVariable(const FName& VarName, const FVector& Value);
 };

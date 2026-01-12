@@ -2,14 +2,22 @@
 // C++ AnimInstance implementation for ABP_SoulslikeEnemy
 //
 // 20-PASS VALIDATION: 2026-01-01 Autonomous Session
+// Updated: 2026-01-11 - Added reflection helpers for Blueprint variables with spaces
 
 #include "Animation/ABP_SoulslikeEnemy.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "UObject/PropertyAccessUtil.h"
+#include "Components/ActorComponent.h"
 
 UABP_SoulslikeEnemy::UABP_SoulslikeEnemy()
 {
 	OwnerCharacter = nullptr;
+	CachedCombatManager = nullptr;
+	IkWeight = 1.0f;
+	PhysicsWeight = 1.0f;
+	PoiseBroken = false;
+	PoiseBreakAsset = nullptr;
 }
 
 void UABP_SoulslikeEnemy::NativeInitializeAnimation()
@@ -33,6 +41,10 @@ void UABP_SoulslikeEnemy::NativeUpdateAnimation(float DeltaSeconds)
 		if (!OwnerCharacter) return;
 	}
 
+	// ═══════════════════════════════════════════════════════════════════════
+	// C++ PROPERTIES (direct assignment - AnimGraph reads these by matching name)
+	// ═══════════════════════════════════════════════════════════════════════
+
 	// Update SoulslikeEnemy/SoulslikeCharacter reference (owning actor)
 	SoulslikeEnemy = OwnerCharacter;
 	SoulslikeCharacter = OwnerCharacter;
@@ -52,8 +64,63 @@ void UABP_SoulslikeEnemy::NativeUpdateAnimation(float DeltaSeconds)
 	// Calculate direction relative to actor rotation
 	Direction = CalculateDirection(Velocity, OwnerCharacter->GetActorRotation());
 
-	// Note: LocomotionType, PhysicsWeight, HitLocation, PoiseBroken, PoiseBreakAsset
-	// are set by the owning character/combat manager, not calculated here
+	// Default physics weight for IK blending
+	PhysicsWeight = 1.0f;
+
+	// Default IK weight
+	IkWeight = 1.0f;
+
+	// Get AI Combat Manager component if not cached
+	if (!CachedCombatManager)
+	{
+		CachedCombatManager = OwnerCharacter->FindComponentByClass<UActorComponent>();
+		// Try to find AC_AI_CombatManager specifically
+		for (UActorComponent* Comp : OwnerCharacter->GetComponents())
+		{
+			if (Comp && Comp->GetClass()->GetName().Contains(TEXT("AI_CombatManager")))
+			{
+				CachedCombatManager = Comp;
+				ACAICombatManager = Comp;
+				break;
+			}
+		}
+	}
+
+	// Update component reference
+	ACAICombatManager = CachedCombatManager;
+
+	// Get equipment component
+	for (UActorComponent* Comp : OwnerCharacter->GetComponents())
+	{
+		if (Comp && Comp->GetClass()->GetName().Contains(TEXT("Equipment")))
+		{
+			EquipmentComponent = Comp;
+			break;
+		}
+	}
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// BLUEPRINT VARIABLES WITH SPACES (set via reflection)
+	// AnimGraph nodes reference these by FName: "AC AI Combat Manager", "Hit Location"
+	// ═══════════════════════════════════════════════════════════════════════
+
+	// Set "AC AI Combat Manager" Blueprint variable
+	SetBlueprintObjectVariable(FName(TEXT("AC AI Combat Manager")), CachedCombatManager);
+
+	// Set "Hit Location" Blueprint variable (for hit reactions)
+	SetBlueprintVectorVariable(FName(TEXT("Hit Location")), HitLocation);
+
+	// Also set CurrentHitNormal (C++ property that might be referenced)
+	CurrentHitNormal = HitLocation;
+
+	// DEBUG: Log animation state periodically
+	static int32 LogCounter = 0;
+	if (LogCounter++ % 120 == 0) // Log every ~2 seconds at 60fps
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[ABP_SoulslikeEnemy] %s: GroundSpeed=%.1f, Velocity=%s, IsFalling=%d, Direction=%.1f, CombatMgr=%s"),
+			*OwnerCharacter->GetName(), GroundSpeed, *Velocity.ToString(), IsFalling ? 1 : 0, Direction,
+			CachedCombatManager ? *CachedCombatManager->GetName() : TEXT("None"));
+	}
 }
 
 FVector UABP_SoulslikeEnemy::GetOwnerVelocity() const
@@ -64,6 +131,70 @@ FVector UABP_SoulslikeEnemy::GetOwnerVelocity() const
 FRotator UABP_SoulslikeEnemy::GetOwnerRotation() const
 {
 	return OwnerCharacter ? OwnerCharacter->GetActorRotation() : FRotator::ZeroRotator;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// REFLECTION HELPERS
+// These allow setting Blueprint variables by FName, including those with spaces
+// Used to set variables like "AC AI Combat Manager" and "Hit Location"
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void UABP_SoulslikeEnemy::SetBlueprintObjectVariable(const FName& VarName, UObject* Value)
+{
+	// Get the Blueprint generated class
+	UClass* MyClass = GetClass();
+	if (!MyClass) return;
+
+	// Find the property by name (FName can contain spaces)
+	FProperty* Property = MyClass->FindPropertyByName(VarName);
+	if (!Property)
+	{
+		// Property might be in parent class or not exist
+		return;
+	}
+
+	// Verify it's an object property
+	FObjectProperty* ObjProp = CastField<FObjectProperty>(Property);
+	if (!ObjProp)
+	{
+		return;
+	}
+
+	// Set the value
+	void* PropertyAddr = ObjProp->ContainerPtrToValuePtr<void>(this);
+	ObjProp->SetObjectPropertyValue(PropertyAddr, Value);
+}
+
+void UABP_SoulslikeEnemy::SetBlueprintVectorVariable(const FName& VarName, const FVector& Value)
+{
+	// Get the Blueprint generated class
+	UClass* MyClass = GetClass();
+	if (!MyClass) return;
+
+	// Find the property by name (FName can contain spaces)
+	FProperty* Property = MyClass->FindPropertyByName(VarName);
+	if (!Property)
+	{
+		// Property might be in parent class or not exist
+		return;
+	}
+
+	// Verify it's a struct property (FVector is a struct)
+	FStructProperty* StructProp = CastField<FStructProperty>(Property);
+	if (!StructProp)
+	{
+		return;
+	}
+
+	// Verify the struct type is FVector
+	if (StructProp->Struct != TBaseStructure<FVector>::Get())
+	{
+		return;
+	}
+
+	// Set the value
+	void* PropertyAddr = StructProp->ContainerPtrToValuePtr<void>(this);
+	FMemory::Memcpy(PropertyAddr, &Value, sizeof(FVector));
 }
 
 // AnimGraph function removed - conflicts with UE's internal AnimGraph function name

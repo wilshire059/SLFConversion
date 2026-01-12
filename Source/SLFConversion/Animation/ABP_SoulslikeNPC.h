@@ -47,7 +47,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "EssentialMovementData")
 	FVector Velocity;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Essential Movement Data")
-	double GroundSpeed;
+	float GroundSpeed;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Essential Movement Data")
 	bool ShouldMove;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Essential Movement Data")
@@ -63,11 +63,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	FVector LookAtLocation;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
-	double DistanceToLookAtTarget;
+	float DistanceToLookAtTarget;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
-	double MaxDistance;
+	float MaxDistance;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
-	double Direction;
+	float Direction;
 
 	// Note: AnimGraph function removed - conflicts with UE's internal AnimGraph function name
 
@@ -76,9 +76,16 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Animation")
 	ACharacter* OwnerCharacter;
 
+	// Cached component references
+	UPROPERTY()
+	UActorComponent* CachedCombatManager;
+
 	// Helper to get owner velocity
 	FVector GetOwnerVelocity() const;
 
 	// Helper to get owner rotation
 	FRotator GetOwnerRotation() const;
+
+	// Reflection helper for Blueprint variables with spaces
+	void SetBlueprintObjectVariable(const FName& VarName, UObject* Value);
 };
