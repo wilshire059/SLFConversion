@@ -8,9 +8,7 @@
 
 AB_Item_AI_Weapon_Sword::AB_Item_AI_Weapon_Sword()
 {
-	// Set default rotation offset to fix upside-down weapons on certain skeletons
-	// The Demo enemy uses a skeleton with different socket orientations than Guard
-	// 180 degree pitch rotation flips the weapon right-side-up
-	DefaultAttachmentRotationOffset = FRotator(180.0f, 0.0f, 0.0f);
+	// NOTE: Mesh transform values are set via apply_ai_weapon_transforms.py
+	// since Blueprints are reparented to ASLFWeaponBase, not this class
 }
 

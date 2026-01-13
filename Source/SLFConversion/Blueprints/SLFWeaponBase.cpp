@@ -47,6 +47,10 @@ ASLFWeaponBase::ASLFWeaponBase()
 	// Add Pawn to trace types
 	CollisionManager->TraceTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
 
+	// Initialize mesh transform defaults (zero = no offset)
+	DefaultMeshRelativeLocation = FVector::ZeroVector;
+	DefaultMeshRelativeRotation = FRotator::ZeroRotator;
+
 	// Initialize VFX
 	TrailEffect = nullptr;
 	TrailWidthParameterName = FName("Width");
@@ -124,6 +128,21 @@ void ASLFWeaponBase::BeginPlay()
 		{
 			WeaponMesh->SetStaticMesh(MeshToApply);
 			UE_LOG(LogTemp, Log, TEXT("[Weapon] Applied DefaultWeaponMesh: %s"), *MeshToApply->GetName());
+		}
+	}
+
+	// Apply mesh transform offsets (from original Blueprint SCS component settings)
+	if (WeaponMesh)
+	{
+		if (!DefaultMeshRelativeLocation.IsZero())
+		{
+			WeaponMesh->SetRelativeLocation(DefaultMeshRelativeLocation);
+			UE_LOG(LogTemp, Log, TEXT("[Weapon] Applied mesh location offset: %s"), *DefaultMeshRelativeLocation.ToString());
+		}
+		if (!DefaultMeshRelativeRotation.IsZero())
+		{
+			WeaponMesh->SetRelativeRotation(DefaultMeshRelativeRotation);
+			UE_LOG(LogTemp, Log, TEXT("[Weapon] Applied mesh rotation offset: %s"), *DefaultMeshRelativeRotation.ToString());
 		}
 	}
 

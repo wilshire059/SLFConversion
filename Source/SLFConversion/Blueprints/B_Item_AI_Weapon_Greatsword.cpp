@@ -8,5 +8,7 @@
 
 AB_Item_AI_Weapon_Greatsword::AB_Item_AI_Weapon_Greatsword()
 {
+	// NOTE: Mesh transform values are set via apply_ai_weapon_transforms.py
+	// since Blueprints are reparented to ASLFWeaponBase, not this class
 }
 

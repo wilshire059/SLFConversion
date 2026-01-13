@@ -27,7 +27,7 @@ WEAPON_MESH_MAP = {
     "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/AI/B_Item_AI_Weapon_Greatsword":
         "/Game/SoulslikeFramework/Meshes/SM/Greatsword/SM_Greatsword",
     "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/AI/B_Item_AI_Weapon_Sword":
-        "/Game/SoulslikeFramework/Meshes/SM/Sword/SM_ExampleSword01",
+        "/Game/SoulslikeFramework/Meshes/SM/Sword_02/SM_ExampleSword02",
 }
 
 def apply_weapon_meshes():

@@ -33,6 +33,24 @@ UAC_EquipmentManager::UAC_EquipmentManager()
 	ActiveBlockSequence = nullptr;
 	IsAsyncWeaponBusy = false;
 	SlotTable = nullptr;
+
+	// Initialize hand slot tags - these define which equipment slots are left/right hand
+	// Left hand slots: Shields and secondary weapons
+	LeftHandSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Left Hand Weapon 1"), false));
+	LeftHandSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Left Hand Weapon 2"), false));
+	LeftHandSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Left Hand Weapon 3"), false));
+
+	// Right hand slots: Primary weapons
+	RightHandSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Right Hand Weapon 1"), false));
+	RightHandSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Right Hand Weapon 2"), false));
+	RightHandSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Right Hand Weapon 3"), false));
+
+	// Tool slots
+	ToolSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tools 1"), false));
+	ToolSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tools 2"), false));
+	ToolSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tools 3"), false));
+	ToolSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tools 4"), false));
+	ToolSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tools 5"), false));
 }
 
 void UAC_EquipmentManager::BeginPlay()

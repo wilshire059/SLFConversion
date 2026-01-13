@@ -108,6 +108,18 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Mesh")
 	TSoftObjectPtr<UStaticMesh> DefaultWeaponMesh;
 
+	/** Default mesh relative location offset.
+	 * Applied to WeaponMesh component to position mesh correctly relative to actor root.
+	 * Values from original Blueprint SCS component settings. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon|Mesh")
+	FVector DefaultMeshRelativeLocation;
+
+	/** Default mesh relative rotation offset.
+	 * Applied to WeaponMesh component to orient mesh correctly relative to actor root.
+	 * Values from original Blueprint SCS component settings. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon|Mesh")
+	FRotator DefaultMeshRelativeRotation;
+
 	/** Default rotation offset for socket attachment.
 	 * Applied when the item data asset doesn't specify an offset.
 	 * Useful for AI weapons that need different orientations on different skeletons. */
