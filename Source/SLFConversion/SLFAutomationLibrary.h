@@ -30,6 +30,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Query")
 	static TArray<FString> GetBlueprintSCSComponents(UObject* BlueprintAsset);
 
+	// SCS COMPONENT OPERATIONS
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
+	static bool RemoveSCSComponentByClass(UObject* BlueprintAsset, const FString& ComponentClassName);
+
 	// REPARENTING
 	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
 	static bool ReparentBlueprint(UObject* BlueprintAsset, const FString& NewParentClassPath);
@@ -40,6 +44,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
 	static int32 RemoveVariables(UObject* BlueprintAsset, const TArray<FString>& VariableNames);
+
+	// Remove ALL Blueprint variables (for AnimBP reparenting to C++)
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
+	static int32 RemoveAllVariables(UObject* BlueprintAsset);
 
 	// FUNCTION OPERATIONS
 	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
@@ -184,6 +192,30 @@ public:
 	// Fix all montages with ANS_RegisterAttackSequence notifies
 	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Montage")
 	static int32 FixAllMontageComboNotifies();
+
+	// Fix BT State decorator IntValue for enum-to-int migration
+	// Updates decorator's IntValue to match the expected state value
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|AI")
+	static FString FixBTStateDecoratorToValue(const FString& BehaviorTreePath, int32 ExpectedStateValue);
+
+	// Migrate blackboard enum key from Blueprint enum to C++ enum
+	// Changes the enum type from E_AI_States to ESLFAIStates
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|AI")
+	static FString MigrateBlackboardEnumToCpp(const FString& BlackboardPath, const FString& KeyName);
+
+	// Export Blueprint enum values (UUserDefinedEnum) to log
+	// Shows internal name, display name, and integer value for each entry
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|AI")
+	static FString ExportBlueprintEnumValues(const FString& EnumPath);
+
+	// Export blackboard State key current type and compare with C++ enum
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|AI")
+	static FString DiagnoseBlackboardStateKey(const FString& BlackboardPath);
+
+	// Export ALL decorator IntValues from a BehaviorTree (including nested nodes)
+	// Used to diagnose incorrect State decorator values after enum migration
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|AI")
+	static FString ExportBTAllDecoratorIntValues(const FString& BehaviorTreePath);
 
 #endif // WITH_EDITOR
 };

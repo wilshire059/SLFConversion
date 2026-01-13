@@ -1,29 +1,16 @@
 // ANS_WeaponTrace.h
 // C++ Animation Notify for ANS_WeaponTrace
 //
-// 20-PASS VALIDATION: 2026-01-01 Autonomous Session
-// Source: BlueprintDNA/Animation/ANS_WeaponTrace.json
+// 20-PASS VALIDATION: 2026-01-12 - Uses CollisionManager on attached weapons
 // Parent: UAnimNotifyState
-// Variables: 2 | Functions: 3
+// Enables CollisionManager tracing on equipped weapons during attack animations
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
-#include "GameplayTagContainer.h"
 #include "SLFEnums.h"
-#include "SLFGameTypes.h"
-#include "Kismet/KismetSystemLibrary.h"
-#include "LevelSequence.h"
-#include "MovieSceneSequencePlaybackSettings.h"
 #include "ANS_WeaponTrace.generated.h"
-
-// Forward declarations for Blueprint classes
-class AB_BaseProjectile;
-class AB_Interactable;
-class UB_Action;
-class UB_Buff;
-class UB_StatusEffect;
 
 UCLASS()
 class SLFCONVERSION_API UANS_WeaponTrace : public UAnimNotifyState
@@ -34,22 +21,23 @@ public:
 	UANS_WeaponTrace();
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// VARIABLES (2)
+	// CONFIGURATION
 	// ═══════════════════════════════════════════════════════════════════════
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
+	/** Which hand/weapon to trace (used for selecting which weapons to enable) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Trace")
 	ESLFTraceType TraceType;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
+
+	/** Damage multiplier for this attack (e.g., 1.5 for heavy attack) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Trace")
 	double DamageMultiplier;
 
-	// Notify state callbacks
+	// ═══════════════════════════════════════════════════════════════════════
+	// NOTIFY CALLBACKS
+	// ═══════════════════════════════════════════════════════════════════════
+
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference) override;
 	virtual void NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference) override;
 	virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
 	virtual FString GetNotifyName_Implementation() const override;
-
-	// ═══════════════════════════════════════════════════════════════════════
-	// HELPER FUNCTIONS (3)
-	// ═══════════════════════════════════════════════════════════════════════
-
 };

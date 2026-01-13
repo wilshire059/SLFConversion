@@ -12,6 +12,7 @@
 
 #include "SLFWeaponBase.h"
 #include "Engine/StaticMesh.h"
+#include "Engine/EngineTypes.h"
 #include "NiagaraSystem.h"
 #include "NiagaraComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -37,6 +38,15 @@ ASLFWeaponBase::ASLFWeaponBase()
 	TrailComponent->SetupAttachment(RootComponent);
 	TrailComponent->SetAutoActivate(false);
 
+	// Create CollisionManagerComponent for weapon tracing
+	CollisionManager = CreateDefaultSubobject<UCollisionManagerComponent>(TEXT("CollisionManager"));
+	// Configure default socket names for weapon meshes
+	CollisionManager->TraceSocketStart = FName("TraceStart");
+	CollisionManager->TraceSocketEnd = FName("TraceEnd");
+	CollisionManager->TraceRadius = 20.0;
+	// Add Pawn to trace types
+	CollisionManager->TraceTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
+
 	// Initialize VFX
 	TrailEffect = nullptr;
 	TrailWidthParameterName = FName("Width");
@@ -51,9 +61,6 @@ ASLFWeaponBase::ASLFWeaponBase()
 
 	// Initialize debug
 	bDebugVisualizeTrace = false;
-
-	// Initialize collision manager cache
-	CollisionManager = nullptr;
 }
 
 void ASLFWeaponBase::BeginPlay()
@@ -120,15 +127,17 @@ void ASLFWeaponBase::BeginPlay()
 		}
 	}
 
-	// Find and bind to CollisionManager for AI weapon trace damage
-	if (!CollisionManager)
+	// NOTE: Damage is handled directly by CollisionManager, not via OnActorTraced event.
+	// The weapon's OnActorTraced was sending 0 damage because GetAttackPowerStats returns empty.
+	// CollisionManager applies correct damage values directly.
+	if (CollisionManager)
 	{
-		CollisionManager = FindComponentByClass<UCollisionManagerComponent>();
-		if (CollisionManager)
-		{
-			UE_LOG(LogTemp, Log, TEXT("[Weapon] Found CollisionManager, binding to OnActorTraced"));
-			CollisionManager->OnActorTraced.AddDynamic(this, &ASLFWeaponBase::OnActorTraced);
-		}
+		UE_LOG(LogTemp, Log, TEXT("[Weapon] CollisionManager exists on %s"), *GetName());
+		// Damage handled in CollisionManager::ProcessHit directly - no event binding needed
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[Weapon] No CollisionManager found on %s!"), *GetName());
 	}
 
 	// ═══════════════════════════════════════════════════════════════════════════════
@@ -223,6 +232,30 @@ void ASLFWeaponBase::AttachToOwnerSocket()
 	{
 		UE_LOG(LogTemp, Log, TEXT("[Weapon] Attached to socket '%s' on %s"),
 			*SocketName.ToString(), *InstigatorPawn->GetName());
+
+		// Apply rotation offset if specified (handles different skeleton socket orientations)
+		// First check socket info, then fall back to class default
+		FRotator RotationOffset = FRotator::ZeroRotator;
+
+		if (!Sockets.AttachmentRotationOffset.IsZero())
+		{
+			RotationOffset = Sockets.AttachmentRotationOffset;
+			UE_LOG(LogTemp, Log, TEXT("[Weapon] Using socket info rotation offset: %s"),
+				*RotationOffset.ToString());
+		}
+		else if (!DefaultAttachmentRotationOffset.IsZero())
+		{
+			RotationOffset = DefaultAttachmentRotationOffset;
+			UE_LOG(LogTemp, Log, TEXT("[Weapon] Using default class rotation offset: %s"),
+				*RotationOffset.ToString());
+		}
+
+		if (!RotationOffset.IsZero())
+		{
+			SetActorRelativeRotation(RotationOffset);
+			UE_LOG(LogTemp, Log, TEXT("[Weapon] Applied rotation offset: %s"),
+				*RotationOffset.ToString());
+		}
 	}
 	else
 	{

@@ -108,6 +108,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Mesh")
 	TSoftObjectPtr<UStaticMesh> DefaultWeaponMesh;
 
+	/** Default rotation offset for socket attachment.
+	 * Applied when the item data asset doesn't specify an offset.
+	 * Useful for AI weapons that need different orientations on different skeletons. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon|Attachment")
+	FRotator DefaultAttachmentRotationOffset;
+
 	// ═══════════════════════════════════════════════════════════════════
 	// VARIABLES: 7/7 migrated
 	// ═══════════════════════════════════════════════════════════════════

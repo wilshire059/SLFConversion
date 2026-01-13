@@ -7,7 +7,7 @@
 #include "AI/BTT_SwitchState.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Components/AC_AI_BehaviorManager.h"
+#include "Components/AIBehaviorManagerComponent.h"
 
 UBTT_SwitchState::UBTT_SwitchState()
 {
@@ -26,10 +26,10 @@ EBTNodeResult::Type UBTT_SwitchState::ExecuteTask(UBehaviorTreeComponent& OwnerC
 
 	// From Blueprint: Get AI_BehaviorManager and call SetState
 	// NOTE: Blueprint always succeeds even if component is not valid
-	UAC_AI_BehaviorManager* BehaviorManager = ControlledPawn->FindComponentByClass<UAC_AI_BehaviorManager>();
+	UAIBehaviorManagerComponent* BehaviorManager = ControlledPawn->FindComponentByClass<UAIBehaviorManagerComponent>();
 	if (BehaviorManager)
 	{
-		BehaviorManager->SetState(NewState, Data);
+		BehaviorManager->SetState(NewState);
 		UE_LOG(LogTemp, Log, TEXT("UBTT_SwitchState::ExecuteTask - Set state %d on %s"), (int32)NewState, *ControlledPawn->GetName());
 	}
 	else

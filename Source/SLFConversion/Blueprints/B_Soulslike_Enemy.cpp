@@ -69,26 +69,9 @@ void AB_Soulslike_Enemy::BeginPlay()
 
 	UE_LOG(LogTemp, Log, TEXT("[B_Soulslike_Enemy] BeginPlay - %s"), *GetName());
 
-	// Bind to AI Perception Component's OnPerceptionUpdated event
-	// JSON Logic: BeginPlay -> GetAIController -> IsValid -> GetAIPerceptionComponent -> IsValid -> BindEvent OnPerceptionUpdated
-	if (AAIController* AIC = UAIBlueprintHelperLibrary::GetAIController(this))
-	{
-		UE_LOG(LogTemp, Log, TEXT("[B_Soulslike_Enemy] AI Controller found: %s"), *AIC->GetName());
-
-		if (UAIPerceptionComponent* PerceptionComp = AIC->GetAIPerceptionComponent())
-		{
-			UE_LOG(LogTemp, Log, TEXT("[B_Soulslike_Enemy] Binding to OnPerceptionUpdated"));
-			PerceptionComp->OnPerceptionUpdated.AddDynamic(this, &AB_Soulslike_Enemy::OnPerceptionUpdated);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("[B_Soulslike_Enemy] No AI Perception Component found!"));
-		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[B_Soulslike_Enemy] Enemy of type '%s' does not have a valid AI Controller."), *GetClass()->GetName());
-	}
+	// NOTE: Perception handling moved to parent class ASLFSoulslikeEnemy::OnPerceptionUpdated
+	// which uses OnTargetPerceptionUpdated and properly checks all senses before changing state.
+	// The old binding here caused duplicate state changes and rapid Combat/Investigating toggling.
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════

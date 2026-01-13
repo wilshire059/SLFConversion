@@ -12,6 +12,8 @@
 #include "CollisionManagerComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/AC_CombatManager.h"
+#include "Components/AICombatManagerComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 UCollisionManagerComponent::UCollisionManagerComponent()
@@ -144,17 +146,74 @@ void UCollisionManagerComponent::SubsteppedTrace_Implementation(double StepSize)
 
 void UCollisionManagerComponent::ProcessTrace_Implementation(const TArray<FHitResult>& HitResults)
 {
+	AActor* WeaponOwner = GetOwner();
+	if (!WeaponOwner)
+	{
+		return;
+	}
+
+	// Get the character that owns this weapon (weapon is attached to character)
+	AActor* AttackingCharacter = WeaponOwner->GetAttachParentActor();
+	if (!AttackingCharacter)
+	{
+		AttackingCharacter = WeaponOwner; // Fallback if weapon is the character itself
+	}
+
 	for (const FHitResult& Hit : HitResults)
 	{
 		AActor* HitActor = Hit.GetActor();
-		if (HitActor && !TracedActors.Contains(HitActor))
+		if (!HitActor || TracedActors.Contains(HitActor))
 		{
-			TracedActors.Add(HitActor);
+			continue;
+		}
 
-			UE_LOG(LogTemp, Log, TEXT("[CollisionManager] Traced new actor: %s"), *HitActor->GetName());
+		// Skip hitting ourselves or our owner
+		if (HitActor == WeaponOwner || HitActor == AttackingCharacter)
+		{
+			continue;
+		}
 
-			// Broadcast the hit
-			OnActorTraced.Broadcast(HitActor, Hit, DamageMultiplier);
+		TracedActors.Add(HitActor);
+
+		UE_LOG(LogTemp, Log, TEXT("[CollisionManager] Hit: %s (Damage: %.1f)"),
+			*HitActor->GetName(), 10.0 * DamageMultiplier);
+
+		// Broadcast the hit (for any external listeners)
+		OnActorTraced.Broadcast(HitActor, Hit, DamageMultiplier);
+
+		// Apply damage directly to the hit actor's combat manager
+		double Damage = 50.0 * DamageMultiplier;  // Base weapon damage with multiplier (10% of typical 500 HP)
+		double PoiseDamage = 25.0 * DamageMultiplier;
+		TMap<FGameplayTag, UPrimaryDataAsset*> StatusEffects;
+
+		// Try player combat manager first
+		UAC_CombatManager* TargetCombatManager = HitActor->FindComponentByClass<UAC_CombatManager>();
+		if (TargetCombatManager)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[CollisionManager] Applying %.1f damage to %s via CombatManager"),
+				Damage, *HitActor->GetName());
+
+			TargetCombatManager->HandleIncomingWeaponDamage(
+				AttackingCharacter,
+				nullptr,  // GuardSound
+				nullptr,  // PerfectGuardSound
+				Hit,
+				Damage,
+				PoiseDamage,
+				StatusEffects
+			);
+		}
+		else
+		{
+			// Try AI combat manager (UAICombatManagerComponent is the actual class used by enemies)
+			UAICombatManagerComponent* AICombatManager = HitActor->FindComponentByClass<UAICombatManagerComponent>();
+			if (AICombatManager)
+			{
+				UE_LOG(LogTemp, Log, TEXT("[CollisionManager] Applying %.1f damage to AI %s"),
+					Damage, *HitActor->GetName());
+
+				AICombatManager->HandleIncomingWeaponDamage_AI(AttackingCharacter, Damage, PoiseDamage, Hit);
+			}
 		}
 	}
 }

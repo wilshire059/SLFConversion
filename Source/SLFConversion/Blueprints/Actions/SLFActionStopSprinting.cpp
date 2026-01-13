@@ -15,11 +15,11 @@ void USLFActionStopSprinting::ExecuteAction_Implementation()
 
 	if (!OwnerActor) return;
 
-	// Set movement mode to walking via interface
+	// Set movement mode to Run (default) via interface - NOT Walk!
 	if (OwnerActor->GetClass()->ImplementsInterface(UBPI_GenericCharacter::StaticClass()))
 	{
-		IBPI_GenericCharacter::Execute_SetMovementMode(OwnerActor, ESLFMovementType::Walk);
-		UE_LOG(LogTemp, Log, TEXT("[ActionStopSprinting] MovementMode set to Walk"));
+		IBPI_GenericCharacter::Execute_SetMovementMode(OwnerActor, ESLFMovementType::Run);
+		UE_LOG(LogTemp, Log, TEXT("[ActionStopSprinting] MovementMode set to Run"));
 	}
 
 	// Stop stamina loss via ActionManager

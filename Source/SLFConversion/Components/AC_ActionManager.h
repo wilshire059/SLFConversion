@@ -21,7 +21,7 @@
 // Forward declarations
 class UAC_CombatManager;
 class UAC_InteractionManager;
-class UAC_StatManager;
+class UStatManagerComponent;
 class UAnimMontage;
 class UDataTable;
 class UPrimaryDataAsset;
@@ -91,8 +91,8 @@ public:
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_ActionManager")
-	UAC_StatManager* GetStatManager();
-	virtual UAC_StatManager* GetStatManager_Implementation();
+	UStatManagerComponent* GetStatManager();
+	virtual UStatManagerComponent* GetStatManager_Implementation();
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_ActionManager")
 	UAC_InteractionManager* GetInteractionManager();
 	virtual UAC_InteractionManager* GetInteractionManager_Implementation();

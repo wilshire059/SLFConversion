@@ -72,4 +72,15 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Cached widget references
+	UPROPERTY()
+	class UTextBlock* MessageTextBlock;
+
+	UPROPERTY()
+	class UTextBlock* BgMsgTextBlock;
+
+	// Animation reference - found by name "FadeSequential"
+	UPROPERTY()
+	class UWidgetAnimation* FadeSequentialAnim;
 };

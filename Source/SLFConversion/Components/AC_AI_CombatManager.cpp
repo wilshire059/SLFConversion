@@ -428,7 +428,7 @@ void UAC_AI_CombatManager::HandleIncomingWeaponDamage_AI_Implementation(AActor* 
 		if (IsValid(StatManager))
 		{
 			// Apply HP damage
-			FGameplayTag HPTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Primary.HP"));
+			FGameplayTag HPTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
 			StatManager->AdjustStat(HPTag, ESLFValueType::CurrentValue, -IncomingDamage, false, false);
 
 			// Apply poise damage
@@ -487,7 +487,7 @@ void UAC_AI_CombatManager::HandleProjectileDamage_AI_Implementation(double Incom
 				FinalDamage = FinalDamage * (1.0 - (StatInfo.CurrentValue / 100.0));
 			}
 
-			FGameplayTag HPTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Primary.HP"));
+			FGameplayTag HPTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
 			StatManager->AdjustStat(HPTag, ESLFValueType::CurrentValue, -FinalDamage, false, false);
 		}
 	}

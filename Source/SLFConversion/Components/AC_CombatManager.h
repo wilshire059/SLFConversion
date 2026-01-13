@@ -26,7 +26,7 @@
 #include "AC_CombatManager.generated.h"
 
 // Forward declarations
-class UAC_StatManager;
+class UStatManagerComponent;
 class UAnimMontage;
 class UDataTable;
 class UPrimaryDataAsset;
@@ -187,8 +187,8 @@ public:
 	void HandleHitReaction(const FHitResult& HitInfo);
 	virtual void HandleHitReaction_Implementation(const FHitResult& HitInfo);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_CombatManager")
-	void HandleDeath(UAC_StatManager* StatManager, const FHitResult& HitInfo);
-	virtual void HandleDeath_Implementation(UAC_StatManager* StatManager, const FHitResult& HitInfo);
+	void HandleDeath(UStatManagerComponent* StatManager, const FHitResult& HitInfo);
+	virtual void HandleDeath_Implementation(UStatManagerComponent* StatManager, const FHitResult& HitInfo);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_CombatManager")
 	void ApplyIncomingStatusEffects(const TMap<FGameplayTag, UPrimaryDataAsset*>& StatusEffects, double Multiplier);
 	virtual void ApplyIncomingStatusEffects_Implementation(const TMap<FGameplayTag, UPrimaryDataAsset*>& StatusEffects, double Multiplier);
@@ -231,13 +231,13 @@ public:
 
 	// --- Stat Change Callbacks ---
 	UFUNCTION(BlueprintCallable, Category = "AC_CombatManager|Events")
-	void EventOnHealthChanged(UB_Stat* UpdatedStat, double Change, bool bUpdateAffectedStats, ESLFValueType ValueType);
+	void EventOnHealthChanged(UObject* UpdatedStat, double Change, bool bUpdateAffectedStats, ESLFValueType ValueType);
 
 	UFUNCTION(BlueprintCallable, Category = "AC_CombatManager|Events")
 	void EventOnAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser);
 
 	UFUNCTION(BlueprintCallable, Category = "AC_CombatManager|Events")
-	void EventOnPoiseChanged(UB_Stat* UpdatedStat, double Change, bool bUpdateAffectedStats, ESLFValueType ValueType);
+	void EventOnPoiseChanged(UObject* UpdatedStat, double Change, bool bUpdateAffectedStats, ESLFValueType ValueType);
 
 	UFUNCTION(BlueprintCallable, Category = "AC_CombatManager|Events")
 	void EventOnDeath(bool bRagdoll, ESLFDirection KillingBlowDirection);

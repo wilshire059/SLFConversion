@@ -7,7 +7,7 @@
 #include "AI/BTT_SwitchToPreviousState.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Components/AC_AI_BehaviorManager.h"
+#include "Components/AIBehaviorManagerComponent.h"
 
 UBTT_SwitchToPreviousState::UBTT_SwitchToPreviousState()
 {
@@ -26,11 +26,11 @@ EBTNodeResult::Type UBTT_SwitchToPreviousState::ExecuteTask(UBehaviorTreeCompone
 
 	// From Blueprint: Get AI_BehaviorManager and call SwitchToPreviousState
 	// NOTE: Blueprint always succeeds even if component is not valid
-	UAC_AI_BehaviorManager* BehaviorManager = ControlledPawn->FindComponentByClass<UAC_AI_BehaviorManager>();
+	UAIBehaviorManagerComponent* BehaviorManager = ControlledPawn->FindComponentByClass<UAIBehaviorManagerComponent>();
 	if (BehaviorManager)
 	{
 		// Use SetState with PreviousState property
-		BehaviorManager->SetState(BehaviorManager->PreviousState, FInstancedStruct());
+		BehaviorManager->SetState(BehaviorManager->PreviousState);
 		UE_LOG(LogTemp, Log, TEXT("UBTT_SwitchToPreviousState::ExecuteTask - Switched to previous state on %s"), *ControlledPawn->GetName());
 	}
 	else

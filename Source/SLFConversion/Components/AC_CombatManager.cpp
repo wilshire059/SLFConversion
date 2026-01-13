@@ -9,11 +9,13 @@
 // Functions: 31 (20 core + 11 events)
 
 #include "Components/AC_CombatManager.h"
-#include "Components/AC_StatManager.h"
+#include "Components/StatManagerComponent.h"
 #include "Components/AC_EquipmentManager.h"
 #include "Components/AC_StatusEffectManager.h"
 #include "Blueprints/B_DeathCurrency.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/PlayerController.h"
+#include "Interfaces/BPI_Controller.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
@@ -208,13 +210,13 @@ void UAC_CombatManager::HandleProjectileDamage_Implementation(double IncomingDam
 	}
 
 	// Get stat manager for damage calculation
-	UAC_StatManager* StatManager = Owner->FindComponentByClass<UAC_StatManager>();
+	UStatManagerComponent* StatManager = Owner->FindComponentByClass<UStatManagerComponent>();
 
 	// Calculate actual damage (apply damage negation if stat provided)
 	double ActualDamage = IncomingDamage;
 	if (NegationStat.IsValid() && IsValid(StatManager))
 	{
-		UB_Stat* NegationStatObj = nullptr;
+		UObject* NegationStatObj = nullptr;
 		FStatInfo NegationInfo;
 		StatManager->GetStat(NegationStat, NegationStatObj, NegationInfo);
 
@@ -242,7 +244,7 @@ void UAC_CombatManager::HandleProjectileDamage_Implementation(double IncomingDam
 	// Apply damage to health
 	if (IsValid(StatManager))
 	{
-		FGameplayTag HealthTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Primary.HP"));
+		FGameplayTag HealthTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
 		StatManager->AdjustStat(HealthTag, ESLFValueType::CurrentValue, -ActualDamage, false, true);
 	}
 
@@ -280,7 +282,7 @@ void UAC_CombatManager::HandleIncomingWeaponDamage_Implementation(AActor* Weapon
 		return;
 	}
 
-	UAC_StatManager* StatManager = Owner->FindComponentByClass<UAC_StatManager>();
+	UStatManagerComponent* StatManager = Owner->FindComponentByClass<UStatManagerComponent>();
 	if (!IsValid(StatManager))
 	{
 		return;
@@ -321,7 +323,7 @@ void UAC_CombatManager::HandleIncomingWeaponDamage_Implementation(AActor* Weapon
 				// Apply poise damage to attacker (reflect)
 				if (IsValid(WeaponOwnerActor))
 				{
-					UAC_StatManager* AttackerStatManager = WeaponOwnerActor->FindComponentByClass<UAC_StatManager>();
+					UStatManagerComponent* AttackerStatManager = WeaponOwnerActor->FindComponentByClass<UStatManagerComponent>();
 					if (IsValid(AttackerStatManager))
 					{
 						FGameplayTag PoiseTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Poise"));
@@ -363,7 +365,7 @@ void UAC_CombatManager::HandleIncomingWeaponDamage_Implementation(AActor* Weapon
 				FGameplayTag StaminaTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Stamina"));
 
 				// Check if enough stamina to block
-				UB_Stat* StaminaStat = nullptr;
+				UObject* StaminaStat = nullptr;
 				FStatInfo StaminaInfo;
 				StatManager->GetStat(StaminaTag, StaminaStat, StaminaInfo);
 
@@ -374,7 +376,7 @@ void UAC_CombatManager::HandleIncomingWeaponDamage_Implementation(AActor* Weapon
 
 					// Reduced damage on block (e.g., 20% gets through)
 					double BlockedDamage = IncomingDamage * 0.2;
-					FGameplayTag HealthTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Primary.HP"));
+					FGameplayTag HealthTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
 					StatManager->AdjustStat(HealthTag, ESLFValueType::CurrentValue, -BlockedDamage, false, true);
 
 					UE_LOG(LogTemp, Log, TEXT("  Blocked! Stamina drained: %f, Chip damage: %f"), StaminaDrain, BlockedDamage);
@@ -387,7 +389,7 @@ void UAC_CombatManager::HandleIncomingWeaponDamage_Implementation(AActor* Weapon
 					IsGuarding = false;
 
 					// Take full damage
-					FGameplayTag HealthTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Primary.HP"));
+					FGameplayTag HealthTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
 					StatManager->AdjustStat(HealthTag, ESLFValueType::CurrentValue, -IncomingDamage, false, true);
 
 					// Handle stagger/reaction
@@ -404,7 +406,7 @@ void UAC_CombatManager::HandleIncomingWeaponDamage_Implementation(AActor* Weapon
 	UE_LOG(LogTemp, Log, TEXT("  Taking full damage"));
 
 	// Apply health damage
-	FGameplayTag HealthTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Primary.HP"));
+	FGameplayTag HealthTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
 	StatManager->AdjustStat(HealthTag, ESLFValueType::CurrentValue, -IncomingDamage, false, true);
 
 	// Apply poise damage (if not hyper armor)
@@ -412,7 +414,7 @@ void UAC_CombatManager::HandleIncomingWeaponDamage_Implementation(AActor* Weapon
 	{
 		FGameplayTag PoiseTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Poise"));
 
-		UB_Stat* PoiseStat = nullptr;
+		UObject* PoiseStat = nullptr;
 		FStatInfo PoiseInfo;
 		StatManager->GetStat(PoiseTag, PoiseStat, PoiseInfo);
 
@@ -436,7 +438,7 @@ void UAC_CombatManager::HandleIncomingWeaponDamage_Implementation(AActor* Weapon
 	HandleHitReaction(HitInfo);
 
 	// Check for death
-	UB_Stat* HealthStat = nullptr;
+	UObject* HealthStat = nullptr;
 	FStatInfo HealthInfo;
 	StatManager->GetStat(HealthTag, HealthStat, HealthInfo);
 
@@ -461,7 +463,7 @@ double UAC_CombatManager::GetStaminaDrainAmountForDamage_Implementation(double I
 		return IncomingDamage;
 	}
 
-	UAC_StatManager* StatManager = Owner->FindComponentByClass<UAC_StatManager>();
+	UStatManagerComponent* StatManager = Owner->FindComponentByClass<UStatManagerComponent>();
 	if (!IsValid(StatManager))
 	{
 		return IncomingDamage;
@@ -469,13 +471,13 @@ double UAC_CombatManager::GetStaminaDrainAmountForDamage_Implementation(double I
 
 	// Get max stamina
 	FGameplayTag StaminaTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Stamina"));
-	UB_Stat* StaminaStat = nullptr;
+	UObject* StaminaStat = nullptr;
 	FStatInfo StaminaInfo;
 	StatManager->GetStat(StaminaTag, StaminaStat, StaminaInfo);
 
 	// Get max health
-	FGameplayTag HealthTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Primary.HP"));
-	UB_Stat* HealthStat = nullptr;
+	FGameplayTag HealthTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
+	UObject* HealthStat = nullptr;
 	FStatInfo HealthInfo;
 	StatManager->GetStat(HealthTag, HealthStat, HealthInfo);
 
@@ -506,8 +508,8 @@ FVector UAC_CombatManager::GetKnockbackAmountForDamage_Implementation(const FHit
 	KnockbackDirection.Z = 0.0f; // Keep horizontal
 	KnockbackDirection.Normalize();
 
-	// Scale knockback by damage (clamped)
-	double KnockbackForce = FMath::Clamp(Damage * 2.0, 0.0, MaxClamp);
+	// Scale knockback by damage (clamped) - Blueprint uses 1.0 multiplier, not 2.0
+	double KnockbackForce = FMath::Clamp(Damage, 0.0, MaxClamp);
 
 	FVector Knockback = KnockbackDirection * KnockbackForce;
 
@@ -753,7 +755,7 @@ void UAC_CombatManager::HandleHitReaction_Implementation(const FHitResult& HitIn
  * 3. Drop currency
  * 4. Disable input
  */
-void UAC_CombatManager::HandleDeath_Implementation(UAC_StatManager* StatManager, const FHitResult& HitInfo)
+void UAC_CombatManager::HandleDeath_Implementation(UStatManagerComponent* StatManager, const FHitResult& HitInfo)
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager::HandleDeath"));
 
@@ -785,6 +787,49 @@ void UAC_CombatManager::HandleDeath_Implementation(UAC_StatManager* StatManager,
 
 	// Drop currency
 	DropCurrency();
+
+	// Calculate hit direction for death animation
+	ESLFDirection HitDirection = ESLFDirection::Fwd;
+	if (HitInfo.bBlockingHit)
+	{
+		FVector HitNormal = HitInfo.ImpactNormal;
+		FVector OwnerForward = Owner->GetActorForwardVector();
+		float DotProduct = FVector::DotProduct(HitNormal, OwnerForward);
+		if (DotProduct > 0.5f)
+		{
+			HitDirection = ESLFDirection::Fwd;
+		}
+		else if (DotProduct < -0.5f)
+		{
+			HitDirection = ESLFDirection::Bwd;
+		}
+	}
+
+	// Trigger death event (handles ragdoll, currency drop, etc.)
+	EventOnDeath(RagdollOnDeath, HitDirection);
+
+	// Start respawn sequence (fade out, show "You Died" screen)
+	// NOTE: Must be in HandleDeath, NOT EventOnDeath, because EventOnDeath has
+	// an early return when IsDead is true, and we set IsDead=true above.
+	if (APawn* OwnerPawn = Cast<APawn>(Owner))
+	{
+		if (APlayerController* PC = Cast<APlayerController>(OwnerPawn->GetController()))
+		{
+			if (PC->Implements<UBPI_Controller>())
+			{
+				IBPI_Controller::Execute_StartRespawn(PC, 2.0f); // 2 second fade delay
+				UE_LOG(LogTemp, Log, TEXT("  StartRespawn called on PlayerController"));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("  PlayerController does not implement BPI_Controller"));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("  No PlayerController found"));
+		}
+	}
 
 	UE_LOG(LogTemp, Log, TEXT("  Character died"));
 }
@@ -848,15 +893,20 @@ void UAC_CombatManager::DropCurrency_Implementation()
 	}
 
 	// Get stat manager for currency amount
-	UAC_StatManager* StatManager = Owner->FindComponentByClass<UAC_StatManager>();
+	UStatManagerComponent* StatManager = Owner->FindComponentByClass<UStatManagerComponent>();
 	if (!IsValid(StatManager))
 	{
 		return;
 	}
 
-	// Get death currency value
-	FGameplayTag CurrencyTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Currency.DeathCurrency"));
-	UB_Stat* CurrencyStat = nullptr;
+	// Get death currency value (don't error if tag doesn't exist)
+	FGameplayTag CurrencyTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Currency.DeathCurrency"), false);
+	if (!CurrencyTag.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  DeathCurrency tag not found, skipping currency drop"));
+		return;
+	}
+	UObject* CurrencyStat = nullptr;
 	FStatInfo CurrencyInfo;
 	StatManager->GetStat(CurrencyTag, CurrencyStat, CurrencyInfo);
 
@@ -1186,7 +1236,7 @@ void UAC_CombatManager::EventBeginCombo(USkeletalMeshComponent* InMesh, UAnimMon
  * 1. Check if health dropped to or below 0
  * 2. If so, trigger death sequence
  */
-void UAC_CombatManager::EventOnHealthChanged(UB_Stat* UpdatedStat, double Change, bool bUpdateAffectedStats, ESLFValueType ValueType)
+void UAC_CombatManager::EventOnHealthChanged(UObject* UpdatedStat, double Change, bool bUpdateAffectedStats, ESLFValueType ValueType)
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager::EventOnHealthChanged - Change: %f"), Change);
 
@@ -1206,11 +1256,11 @@ void UAC_CombatManager::EventOnHealthChanged(UB_Stat* UpdatedStat, double Change
 		}
 
 		// Get current health
-		UAC_StatManager* StatManager = Owner->FindComponentByClass<UAC_StatManager>();
+		UStatManagerComponent* StatManager = Owner->FindComponentByClass<UStatManagerComponent>();
 		if (IsValid(StatManager))
 		{
-			FGameplayTag HealthTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Primary.HP"));
-			UB_Stat* HealthStat = nullptr;
+			FGameplayTag HealthTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
+			UObject* HealthStat = nullptr;
 			FStatInfo HealthInfo;
 			StatManager->GetStat(HealthTag, HealthStat, HealthInfo);
 
@@ -1248,10 +1298,10 @@ void UAC_CombatManager::EventOnAnyDamage(AActor* DamagedActor, float Damage, con
 		return;
 	}
 
-	UAC_StatManager* StatManager = Owner->FindComponentByClass<UAC_StatManager>();
+	UStatManagerComponent* StatManager = Owner->FindComponentByClass<UStatManagerComponent>();
 	if (IsValid(StatManager))
 	{
-		FGameplayTag HealthTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Primary.HP"));
+		FGameplayTag HealthTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
 		StatManager->AdjustStat(HealthTag, ESLFValueType::CurrentValue, -static_cast<double>(Damage), false, true);
 	}
 }
@@ -1264,7 +1314,7 @@ void UAC_CombatManager::EventOnAnyDamage(AActor* DamagedActor, float Damage, con
  * 2. If so, set PoiseBroken to true
  * 3. Trigger stagger animation
  */
-void UAC_CombatManager::EventOnPoiseChanged(UB_Stat* UpdatedStat, double Change, bool bUpdateAffectedStats, ESLFValueType ValueType)
+void UAC_CombatManager::EventOnPoiseChanged(UObject* UpdatedStat, double Change, bool bUpdateAffectedStats, ESLFValueType ValueType)
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager::EventOnPoiseChanged - Change: %f"), Change);
 
@@ -1284,11 +1334,11 @@ void UAC_CombatManager::EventOnPoiseChanged(UB_Stat* UpdatedStat, double Change,
 		}
 
 		// Get current poise
-		UAC_StatManager* StatManager = Owner->FindComponentByClass<UAC_StatManager>();
+		UStatManagerComponent* StatManager = Owner->FindComponentByClass<UStatManagerComponent>();
 		if (IsValid(StatManager))
 		{
 			FGameplayTag PoiseTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Poise"));
-			UB_Stat* PoiseStat = nullptr;
+			UObject* PoiseStat = nullptr;
 			FStatInfo PoiseInfo;
 			StatManager->GetStat(PoiseTag, PoiseStat, PoiseInfo);
 
@@ -1385,6 +1435,19 @@ void UAC_CombatManager::EventOnDeath(bool bRagdoll, ESLFDirection KillingBlowDir
 
 	// Drop currency
 	DropCurrency();
+
+	// Start respawn sequence (fade out, show "You Died" screen)
+	if (APawn* OwnerPawn = Cast<APawn>(Owner))
+	{
+		if (APlayerController* PC = Cast<APlayerController>(OwnerPawn->GetController()))
+		{
+			if (PC->Implements<UBPI_Controller>())
+			{
+				IBPI_Controller::Execute_StartRespawn(PC, 2.0); // 2 second fade delay
+				UE_LOG(LogTemp, Log, TEXT("  StartRespawn called on PlayerController"));
+			}
+		}
+	}
 
 	UE_LOG(LogTemp, Log, TEXT("  Character died"));
 }

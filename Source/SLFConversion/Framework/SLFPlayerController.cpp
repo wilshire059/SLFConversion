@@ -12,6 +12,12 @@
 #include "Components/PanelWidget.h"
 #include "Widgets/W_HUD.h"
 #include "Engine/Engine.h"
+#include "TimerManager.h"
+#include "GameFramework/GameModeBase.h"
+#include "Interfaces/BPI_GenericCharacter.h"
+#include "Components/StatManagerComponent.h"
+#include "GameplayTagContainer.h"
+#include "SLFGameTypes.h"
 
 ASLFPlayerController::ASLFPlayerController()
 {
@@ -454,7 +460,7 @@ void ASLFPlayerController::HandleNavigateResetToDefaults(const FInputActionValue
 // INPUT CONTEXT SWITCHING
 // ═══════════════════════════════════════════════════════════════════════════
 
-void ASLFPlayerController::SwitchInputContext(const TArray<UInputMappingContext*>& ContextsToEnable, const TArray<UInputMappingContext*>& ContextsToDisable)
+void ASLFPlayerController::SwitchInputContextInternal(const TArray<UInputMappingContext*>& ContextsToEnable, const TArray<UInputMappingContext*>& ContextsToDisable)
 {
 	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] SwitchInputContext - Enabling %d contexts, Disabling %d contexts"),
 		ContextsToEnable.Num(), ContextsToDisable.Num());
@@ -485,4 +491,192 @@ void ASLFPlayerController::SwitchInputContext(const TArray<UInputMappingContext*
 			}
 		}
 	}
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// BPI_CONTROLLER INTERFACE IMPLEMENTATIONS
+// ═══════════════════════════════════════════════════════════════════════════
+
+void ASLFPlayerController::StartRespawn_Implementation(double FadeDelay)
+{
+	UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] StartRespawn_Implementation - FadeDelay: %.2f"), FadeDelay);
+
+	// Show "You Died" screen via HUD
+	if (HUDWidgetRef)
+	{
+		HUDWidgetRef->ShowDeathScreen();
+		UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] StartRespawn - Called HUD ShowDeathScreen"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] StartRespawn - HUDWidgetRef is NULL"));
+	}
+
+	// Disable player input during death
+	SetIgnoreMoveInput(true);
+	SetIgnoreLookInput(true);
+
+	// Start respawn timer
+	FTimerHandle RespawnTimerHandle;
+	GetWorldTimerManager().SetTimer(
+		RespawnTimerHandle,
+		this,
+		&ASLFPlayerController::CompleteRespawn,
+		FadeDelay > 0 ? FadeDelay : 3.0f, // Default 3 second delay
+		false
+	);
+
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] StartRespawn - Respawn timer set for %.2f seconds"), FadeDelay > 0 ? FadeDelay : 3.0f);
+}
+
+void ASLFPlayerController::CompleteRespawn()
+{
+	UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] CompleteRespawn - Respawning player"));
+
+	// Hide death screen
+	if (HUDWidgetRef)
+	{
+		HUDWidgetRef->HideDeathScreen();
+		UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] CompleteRespawn - Hid death screen"));
+	}
+
+	// Re-enable player input
+	SetIgnoreMoveInput(false);
+	SetIgnoreLookInput(false);
+
+	// Get the pawn and reset its state
+	APawn* ControlledPawn = GetPawn();
+	if (ControlledPawn)
+	{
+		// Find player start or use last resting point
+		AActor* PlayerStart = GetWorld()->GetAuthGameMode()->FindPlayerStart(this);
+		if (PlayerStart)
+		{
+			// Teleport pawn to player start
+			ControlledPawn->SetActorLocation(PlayerStart->GetActorLocation());
+			ControlledPawn->SetActorRotation(PlayerStart->GetActorRotation());
+			UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] CompleteRespawn - Teleported to %s"), *PlayerStart->GetName());
+		}
+
+		// Reset character health via stat manager
+		// Try to find and reset stats via interface
+		if (ControlledPawn->GetClass()->ImplementsInterface(UBPI_GenericCharacter::StaticClass()))
+		{
+			// Get stat manager and reset HP to max
+			UActorComponent* StatMgrComp = nullptr;
+			IBPI_GenericCharacter::Execute_GetStatManager(ControlledPawn, StatMgrComp);
+			if (UStatManagerComponent* StatMgr = Cast<UStatManagerComponent>(StatMgrComp))
+			{
+				FGameplayTag HPTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
+				UObject* StatObj = nullptr;
+				FStatInfo StatInfo;
+				if (StatMgr->GetStat(HPTag, StatObj, StatInfo))
+				{
+					// Reset HP to max
+					double HPToRestore = StatInfo.MaxValue - StatInfo.CurrentValue;
+					StatMgr->AdjustStat(HPTag, ESLFValueType::CurrentValue, HPToRestore, false, true);
+					UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] CompleteRespawn - Restored HP to max (%.0f)"), StatInfo.MaxValue);
+				}
+			}
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] CompleteRespawn - Respawn complete!"));
+}
+
+void ASLFPlayerController::RequestAddToSaveData_Implementation(FGameplayTag SaveTag, const FInstancedStruct& Data)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] RequestAddToSaveData - Tag: %s"), *SaveTag.ToString());
+}
+
+void ASLFPlayerController::RequestUpdateSaveData_Implementation(FGameplayTag SaveTag, TArray<FInstancedStruct>& Data)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] RequestUpdateSaveData - Tag: %s"), *SaveTag.ToString());
+}
+
+void ASLFPlayerController::SerializeDataForSaving_Implementation(ESLFSaveBehavior Behavior, FGameplayTag SaveTag)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] SerializeDataForSaving - Tag: %s"), *SaveTag.ToString());
+}
+
+void ASLFPlayerController::SerializeAllDataForSaving_Implementation(ESLFSaveBehavior Behavior)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] SerializeAllDataForSaving"));
+}
+
+void ASLFPlayerController::SetActiveWidgetForNavigation_Implementation(FGameplayTag NavigableWidgetTag)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] SetActiveWidgetForNavigation - Tag: %s"), *NavigableWidgetTag.ToString());
+	ActiveWidgetTag = NavigableWidgetTag;
+}
+
+void ASLFPlayerController::SendBigScreenMessage_Implementation(const FText& Text, UMaterialInterface* GradientMaterial, bool bBackdrop, double PlayRate)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] SendBigScreenMessage - Text: %s"), *Text.ToString());
+}
+
+void ASLFPlayerController::ShowSavingVisual_Implementation(double Length)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] ShowSavingVisual - Length: %.2f"), Length);
+}
+
+void ASLFPlayerController::ToggleRadarUpdateState_Implementation(bool bUpdateEnabled)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] ToggleRadarUpdateState - Enabled: %s"), bUpdateEnabled ? TEXT("true") : TEXT("false"));
+}
+
+void ASLFPlayerController::GetPlayerHUD_Implementation(UUserWidget*& HUD)
+{
+	HUD = HUDWidgetRef;
+}
+
+void ASLFPlayerController::SwitchInputContext_Implementation(TArray<UInputMappingContext*>& ContextsToEnable, TArray<UInputMappingContext*>& ContextsToDisable)
+{
+	// Call the internal version
+	SwitchInputContextInternal(ContextsToEnable, ContextsToDisable);
+}
+
+void ASLFPlayerController::ToggleInput_Implementation(bool bEnabled)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] ToggleInput - Enabled: %s"), bEnabled ? TEXT("true") : TEXT("false"));
+}
+
+void ASLFPlayerController::GetCurrency_Implementation(int32& Currency)
+{
+	Currency = 0; // TODO: Get from progress manager
+}
+
+void ASLFPlayerController::GetProgressManager_Implementation(UActorComponent*& ProgressManager)
+{
+	ProgressManager = nullptr; // TODO: Find progress manager component
+}
+
+void ASLFPlayerController::GetSoulslikeController_Implementation(APlayerController*& Controller)
+{
+	Controller = this;
+}
+
+void ASLFPlayerController::GetPawnFromController_Implementation(APawn*& OutPawn)
+{
+	OutPawn = GetPawn();
+}
+
+void ASLFPlayerController::GetInventoryComponent_Implementation(UActorComponent*& Inventory)
+{
+	Inventory = FindComponentByClass<UActorComponent>(); // TODO: Find specific inventory component
+}
+
+void ASLFPlayerController::AdjustCurrency_Implementation(int32 Delta)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] AdjustCurrency - Delta: %d"), Delta);
+}
+
+void ASLFPlayerController::LootItemToInventory_Implementation(AActor* Item)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] LootItemToInventory - Item: %s"), Item ? *Item->GetName() : TEXT("null"));
+}
+
+void ASLFPlayerController::BlendViewTarget_Implementation(AActor* TargetActor, double BlendTime, double BlendExp, bool bLockOutgoing)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] BlendViewTarget - Target: %s"), TargetActor ? *TargetActor->GetName() : TEXT("null"));
 }

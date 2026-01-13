@@ -38,8 +38,47 @@ void USLFAnimNotifyStateWeaponTrace::NotifyTick(USkeletalMeshComponent* MeshComp
 	if (!World) return;
 
 	// Get socket positions for trace
-	FVector StartPos = MeshComp->GetSocketLocation(StartSocketName);
-	FVector EndPos = MeshComp->GetSocketLocation(EndSocketName);
+	FVector StartPos = FVector::ZeroVector;
+	FVector EndPos = FVector::ZeroVector;
+
+	// Check if sockets exist, otherwise use fallback
+	bool bHasStartSocket = MeshComp->DoesSocketExist(StartSocketName);
+	bool bHasEndSocket = MeshComp->DoesSocketExist(EndSocketName);
+
+	if (bHasStartSocket && bHasEndSocket)
+	{
+		StartPos = MeshComp->GetSocketLocation(StartSocketName);
+		EndPos = MeshComp->GetSocketLocation(EndSocketName);
+	}
+	else
+	{
+		// Fallback: Try common socket names (hand_r, weapon_r)
+		FName FallbackSocket = NAME_None;
+		TArray<FName> CommonSockets = { FName("hand_r"), FName("weapon_r"), FName("RightHand"), FName("Hand_R") };
+		for (const FName& SocketName : CommonSockets)
+		{
+			if (MeshComp->DoesSocketExist(SocketName))
+			{
+				FallbackSocket = SocketName;
+				break;
+			}
+		}
+
+		if (!FallbackSocket.IsNone())
+		{
+			// Use found socket as start, extend forward for end
+			StartPos = MeshComp->GetSocketLocation(FallbackSocket);
+			FVector Forward = Owner->GetActorForwardVector();
+			EndPos = StartPos + (Forward * 150.0f); // 150 units forward (weapon reach)
+		}
+		else
+		{
+			// Last resort: trace from character center forward
+			StartPos = Owner->GetActorLocation() + FVector(0, 0, 80.0f); // Chest height
+			FVector Forward = Owner->GetActorForwardVector();
+			EndPos = StartPos + (Forward * 150.0f);
+		}
+	}
 
 	// Setup trace parameters
 	TArray<FHitResult> HitResults;
@@ -80,8 +119,8 @@ void USLFAnimNotifyStateWeaponTrace::NotifyTick(USkeletalMeshComponent* MeshComp
 				*HitActor->GetName(), *Hit.ImpactPoint.ToString());
 
 			// Get weapon damage info from equipment manager
-			double Damage = 10.0;  // Default damage
-			double PoiseDamage = 5.0;  // Default poise damage
+			double Damage = 50.0;  // Default damage (10% of typical 500 HP)
+			double PoiseDamage = 25.0;  // Default poise damage
 			TMap<FGameplayTag, UPrimaryDataAsset*> StatusEffects;
 			USoundBase* GuardSound = nullptr;
 			USoundBase* PerfectGuardSound = nullptr;
@@ -110,7 +149,7 @@ void USLFAnimNotifyStateWeaponTrace::NotifyTick(USkeletalMeshComponent* MeshComp
 			}
 			else
 			{
-				// Try AI combat manager (UAICombatManagerComponent)
+				// Try AI combat manager (UAICombatManagerComponent - used by enemies)
 				UAICombatManagerComponent* AICombatManager = HitActor->FindComponentByClass<UAICombatManagerComponent>();
 				if (AICombatManager)
 				{

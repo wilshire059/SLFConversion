@@ -24,6 +24,7 @@
 
 // Forward declarations for widget types
 class UW_Buff;
+class UProgressBar;
 
 // Forward declarations for Blueprint types
 
@@ -120,4 +121,12 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Cached widget references for stat bars (no UPROPERTY to avoid Blueprint conflict)
+	UProgressBar* CachedHealthBar_Front;
+	UProgressBar* CachedHealthBar_Back;
+	UProgressBar* CachedFocusBar_Front;
+	UProgressBar* CachedFocusBar_Back;
+	UProgressBar* CachedStaminaBar_Front;
+	UProgressBar* CachedStaminaBar_Back;
 };

@@ -1,8 +1,8 @@
 // ANS_WeaponTrace.cpp
 // C++ Animation Notify implementation for ANS_WeaponTrace
 //
-// 20-PASS VALIDATION: 2026-01-01 Autonomous Session
-// Logic migrated from JSON export - enables weapon collision tracing
+// 20-PASS VALIDATION: 2026-01-12 - Uses CollisionManager on attached weapons
+// Logic: Enable CollisionManager tracing on equipped weapons
 
 #include "AnimNotifies/ANS_WeaponTrace.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -27,8 +27,9 @@ void UANS_WeaponTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequen
 	}
 
 	AActor* Owner = MeshComp->GetOwner();
+	int32 WeaponsEnabled = 0;
 
-	// From Blueprint: Get attached actors (weapons) and enable their collision traces
+	// Get attached actors (weapons) and enable their collision traces
 	TArray<AActor*> AttachedActors;
 	Owner->GetAttachedActors(AttachedActors);
 
@@ -46,16 +47,18 @@ void UANS_WeaponTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequen
 			// Enable weapon trace and set damage multiplier
 			CollisionManager->SetMultipliers(DamageMultiplier, 1.0);
 			CollisionManager->ToggleTrace(true);
-			UE_LOG(LogTemp, Log, TEXT("UANS_WeaponTrace::NotifyBegin - Enabled trace on %s (Damage: %.2f)"),
-				*AttachedActor->GetName(), DamageMultiplier);
+			WeaponsEnabled++;
 		}
 	}
+
+	UE_LOG(LogTemp, Log, TEXT("[ANS_WeaponTrace] Begin on %s - Duration: %.2fs, DamageMultiplier: %.2f, Weapons: %d"),
+		*Owner->GetName(), TotalDuration, DamageMultiplier, WeaponsEnabled);
 }
 
 void UANS_WeaponTrace::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime, EventReference);
-	// No tick logic in Blueprint - collision manager handles its own tick
+	// CollisionManager handles tracing via its own tick
 }
 
 void UANS_WeaponTrace::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
@@ -68,8 +71,9 @@ void UANS_WeaponTrace::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequence
 	}
 
 	AActor* Owner = MeshComp->GetOwner();
+	int32 WeaponsDisabled = 0;
 
-	// From Blueprint: Get attached actors and disable their collision traces
+	// Get attached actors and disable their collision traces
 	TArray<AActor*> AttachedActors;
 	Owner->GetAttachedActors(AttachedActors);
 
@@ -86,9 +90,12 @@ void UANS_WeaponTrace::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequence
 		{
 			// Disable weapon trace
 			CollisionManager->ToggleTrace(false);
-			UE_LOG(LogTemp, Log, TEXT("UANS_WeaponTrace::NotifyEnd - Disabled trace on %s"), *AttachedActor->GetName());
+			WeaponsDisabled++;
 		}
 	}
+
+	UE_LOG(LogTemp, Log, TEXT("[ANS_WeaponTrace] End on %s - Weapons disabled: %d"),
+		*Owner->GetName(), WeaponsDisabled);
 }
 
 FString UANS_WeaponTrace::GetNotifyName_Implementation() const

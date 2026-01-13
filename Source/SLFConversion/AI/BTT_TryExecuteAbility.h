@@ -22,6 +22,7 @@
 
 // Forward declaration
 class AB_Soulslike_Enemy;
+class ASLFSoulslikeEnemy;
 
 UCLASS()
 class SLFCONVERSION_API UBTT_TryExecuteAbility : public UBTTask_BlueprintBase
@@ -44,9 +45,13 @@ protected:
 	void CleanupDelegateBinding();
 
 private:
-	// Cached reference to the enemy for delegate unbinding
+	// Cached reference to old enemy class for delegate unbinding
 	UPROPERTY()
 	TWeakObjectPtr<AB_Soulslike_Enemy> CachedEnemy;
+
+	// Cached reference to new SLF enemy class for delegate unbinding
+	UPROPERTY()
+	TWeakObjectPtr<ASLFSoulslikeEnemy> CachedSLFEnemy;
 
 	// Cached behavior tree component for FinishLatentTask
 	UPROPERTY()

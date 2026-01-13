@@ -583,7 +583,11 @@ struct SLFCONVERSION_API FSLFEquipmentSocketInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Equipment")
 	FName HolsterSocketName;
 
-	FSLFEquipmentSocketInfo() {}
+	// Rotation offset applied after attachment (for skeleton socket orientation differences)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Equipment")
+	FRotator AttachmentRotationOffset;
+
+	FSLFEquipmentSocketInfo() : AttachmentRotationOffset(FRotator::ZeroRotator) {}
 };
 
 // Replaces: /Game/SoulslikeFramework/Structures/Equipment/FEquipmentStat

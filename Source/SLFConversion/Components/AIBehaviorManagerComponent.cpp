@@ -69,6 +69,32 @@ void UAIBehaviorManagerComponent::BeginPlay()
 			{
 				UE_LOG(LogTemp, Warning, TEXT("[AIBehaviorManager] No behavior tree assigned!"));
 			}
+
+			// Initialize critical blackboard keys AFTER behavior tree is running
+			// Use a timer to ensure the blackboard is fully initialized
+			FTimerHandle InitBBHandle;
+			GetWorld()->GetTimerManager().SetTimer(InitBBHandle, [this, OwnerPawn]()
+			{
+				if (UBlackboardComponent* BB = GetBlackboard())
+				{
+					// Initialize StartPosition to enemy's spawn location
+					FVector StartPos = OwnerPawn->GetActorLocation();
+					BB->SetValueAsVector(FName("StartPosition"), StartPos);
+
+					// Initialize ChaseDistance from component property
+					BB->SetValueAsFloat(FName("ChaseDistance"), MaxChaseDistanceThreshold);
+
+					// Initialize State to current state
+					BB->SetValueAsEnum(FName("State"), static_cast<uint8>(CurrentState));
+
+					UE_LOG(LogTemp, Log, TEXT("[AIBehaviorManager] Blackboard initialized - StartPos=%s, ChaseDistance=%.1f, State=%d"),
+						*StartPos.ToString(), MaxChaseDistanceThreshold, static_cast<int32>(CurrentState));
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("[AIBehaviorManager] Failed to initialize blackboard - GetBlackboard returned nullptr"));
+				}
+			}, 0.1f, false);
 		}
 		else
 		{
@@ -88,13 +114,19 @@ void UAIBehaviorManagerComponent::SetState_Implementation(ESLFAIStates NewState)
 		PreviousState = CurrentState;
 		CurrentState = NewState;
 
-		UE_LOG(LogTemp, Log, TEXT("[AIBehaviorManager] SetState: %d -> %d"),
-			static_cast<int32>(PreviousState), static_cast<int32>(CurrentState));
+		UE_LOG(LogTemp, Warning, TEXT("[AIBehaviorManager] SetState on %s: %d -> %d"),
+			*GetOwner()->GetName(), static_cast<int32>(PreviousState), static_cast<int32>(CurrentState));
 
 		// Update blackboard state key
 		if (UBlackboardComponent* BB = GetBlackboard())
 		{
-			BB->SetValueAsEnum(FName("AIState"), static_cast<uint8>(CurrentState));
+			BB->SetValueAsEnum(FName("State"), static_cast<uint8>(CurrentState));
+			UE_LOG(LogTemp, Log, TEXT("[AIBehaviorManager] Blackboard State key updated to %d"),
+				static_cast<int32>(CurrentState));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("[AIBehaviorManager] FAILED to update blackboard - GetBlackboard returned nullptr!"));
 		}
 	}
 }
@@ -113,7 +145,12 @@ void UAIBehaviorManagerComponent::SetTarget_Implementation(AActor* NewTarget)
 	// Update blackboard target key
 	if (UBlackboardComponent* BB = GetBlackboard())
 	{
-		BB->SetValueAsObject(FName("TargetActor"), NewTarget);
+		BB->SetValueAsObject(FName("Target"), NewTarget);
+		UE_LOG(LogTemp, Log, TEXT("[AIBehaviorManager] Blackboard Target key updated"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[AIBehaviorManager] FAILED to update TargetActor - GetBlackboard returned nullptr!"));
 	}
 }
 
@@ -141,18 +178,44 @@ void UAIBehaviorManagerComponent::SetPatrolPath_Implementation(AActor* NewPath)
 
 UBlackboardComponent* UAIBehaviorManagerComponent::GetBlackboard_Implementation()
 {
-	if (AActor* Owner = GetOwner())
+	AActor* Owner = GetOwner();
+	if (!Owner)
 	{
-		// Try to get AI controller from pawn
-		if (APawn* Pawn = Cast<APawn>(Owner))
-		{
-			if (AAIController* AIC = Cast<AAIController>(Pawn->GetController()))
-			{
-				return AIC->GetBlackboardComponent();
-			}
-		}
+		UE_LOG(LogTemp, Error, TEXT("[AIBehaviorManager] GetBlackboard: Owner is nullptr"));
+		return nullptr;
 	}
-	return nullptr;
+
+	APawn* Pawn = Cast<APawn>(Owner);
+	if (!Pawn)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[AIBehaviorManager] GetBlackboard: Owner %s is not a Pawn"), *Owner->GetName());
+		return nullptr;
+	}
+
+	AController* Controller = Pawn->GetController();
+	if (!Controller)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[AIBehaviorManager] GetBlackboard: Pawn %s has no Controller"), *Pawn->GetName());
+		return nullptr;
+	}
+
+	AAIController* AIC = Cast<AAIController>(Controller);
+	if (!AIC)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[AIBehaviorManager] GetBlackboard: Controller %s is not AAIController (class: %s)"),
+			*Controller->GetName(), *Controller->GetClass()->GetName());
+		return nullptr;
+	}
+
+	UBlackboardComponent* BB = AIC->GetBlackboardComponent();
+	if (!BB)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[AIBehaviorManager] GetBlackboard: AIController %s has no BlackboardComponent"),
+			*AIC->GetName());
+		return nullptr;
+	}
+
+	return BB;
 }
 
 void UAIBehaviorManagerComponent::SetKeyValue_Implementation(FName KeyName, UObject* Value)

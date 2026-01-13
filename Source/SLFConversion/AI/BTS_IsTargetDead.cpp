@@ -7,7 +7,7 @@
 #include "AI/BTS_IsTargetDead.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Components/AC_AI_BehaviorManager.h"
+#include "Components/AIBehaviorManagerComponent.h"
 #include "Components/AC_CombatManager.h"
 
 UBTS_IsTargetDead::UBTS_IsTargetDead()
@@ -53,10 +53,10 @@ void UBTS_IsTargetDead::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 	// From Blueprint: If target is dead, switch to specified state
 	if (bIsTargetDead)
 	{
-		UAC_AI_BehaviorManager* BehaviorManager = ControlledPawn->FindComponentByClass<UAC_AI_BehaviorManager>();
+		UAIBehaviorManagerComponent* BehaviorManager = ControlledPawn->FindComponentByClass<UAIBehaviorManagerComponent>();
 		if (BehaviorManager)
 		{
-			BehaviorManager->SetState(StateToSwitchTo, FInstancedStruct());
+			BehaviorManager->SetState(StateToSwitchTo);
 			UE_LOG(LogTemp, Log, TEXT("UBTS_IsTargetDead::TickNode - Target dead, switching state on %s"), *ControlledPawn->GetName());
 		}
 	}

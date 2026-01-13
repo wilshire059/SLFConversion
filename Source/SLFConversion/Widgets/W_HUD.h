@@ -41,10 +41,12 @@ class UW_AbilityDisplay;
 class UW_Interaction;
 class UW_LootNotification;
 class UW_FirstLootNotification;
+class UW_Resources;
 class UVerticalBox;
 
 // Forward declarations for Blueprint types
 class UB_Stat;
+class USLFStatBase;
 class UB_StatusEffect;
 class UPDA_Buff;
 class UPDA_Vendor;
@@ -93,6 +95,7 @@ protected:
 	UW_Crafting* CachedW_Crafting;
 	UW_Status* CachedW_Status;
 	UW_Settings* CachedW_Settings;
+	UW_Resources* CachedW_Resources;
 
 	// Loot notification widgets - cached from UMG
 	UVerticalBox* CachedItemLootNotificationsBox;
@@ -119,8 +122,8 @@ public:
 	bool GetTargetWidgetVisibility(UUserWidget* Widget);
 	virtual bool GetTargetWidgetVisibility_Implementation(UUserWidget* Widget);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_HUD")
-	void BindToStatUpdate(const TArray<UB_Stat*>& AllStats, const TArray<TSubclassOf<UB_Stat>>& StatsToListenFor);
-	virtual void BindToStatUpdate_Implementation(const TArray<UB_Stat*>& AllStats, const TArray<TSubclassOf<UB_Stat>>& StatsToListenFor);
+	void BindToStatUpdate(const TArray<USLFStatBase*>& AllStats, const TArray<TSubclassOf<USLFStatBase>>& StatsToListenFor);
+	virtual void BindToStatUpdate_Implementation(const TArray<USLFStatBase*>& AllStats, const TArray<TSubclassOf<USLFStatBase>>& StatsToListenFor);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_HUD")
 	bool GetGameMenuVisibility();
 	virtual bool GetGameMenuVisibility_Implementation();
@@ -204,13 +207,13 @@ public:
 
 	// Stat/Status Events
 
-	/** Internal handler bound to UB_Stat::OnStatUpdated delegates */
+	/** Internal handler bound to USLFStatBase::OnStatUpdated delegates */
 	UFUNCTION()
-	void OnStatUpdatedHandler(UB_Stat* UpdatedStat, double Change, bool bUpdateAffectedStats, ESLFValueType ValueType);
+	void OnStatUpdatedHandler(USLFStatBase* UpdatedStat, double Change, bool bUpdateAffectedStats, ESLFValueType ValueType);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_HUD|Stats")
-	void EventOnStatUpdated(UB_Stat* UpdatedStat, double Change, bool bUpdateAffectedStats, ESLFValueType ValueType);
-	virtual void EventOnStatUpdated_Implementation(UB_Stat* UpdatedStat, double Change, bool bUpdateAffectedStats, ESLFValueType ValueType);
+	void EventOnStatUpdated(USLFStatBase* UpdatedStat, double Change, bool bUpdateAffectedStats, ESLFValueType ValueType);
+	virtual void EventOnStatUpdated_Implementation(USLFStatBase* UpdatedStat, double Change, bool bUpdateAffectedStats, ESLFValueType ValueType);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_HUD|Stats")
 	void EventOnStatusEffectAdded(UB_StatusEffect* StatusEffect);
@@ -380,6 +383,13 @@ public:
 	UW_Crafting* GetCachedCrafting() const { return CachedW_Crafting; }
 	UW_Status* GetCachedStatus() const { return CachedW_Status; }
 	UW_Settings* GetCachedSettings() const { return CachedW_Settings; }
+
+	// Death Screen
+	UFUNCTION(BlueprintCallable, Category = "W_HUD|Death")
+	void ShowDeathScreen();
+
+	UFUNCTION(BlueprintCallable, Category = "W_HUD|Death")
+	void HideDeathScreen();
 
 protected:
 	// Cache references

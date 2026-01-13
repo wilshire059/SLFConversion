@@ -106,7 +106,7 @@ void UAC_AI_BehaviorManager::SetState_Implementation(ESLFAIStates NewState, cons
 
 	if (IsValid(Blackboard))
 	{
-		Blackboard->SetValueAsEnum(FName("AIState"), static_cast<uint8>(NewState));
+		Blackboard->SetValueAsEnum(FName("State"), static_cast<uint8>(NewState));
 	}
 }
 
@@ -127,7 +127,7 @@ void UAC_AI_BehaviorManager::SetTarget_Implementation(AActor* Target)
 
 	if (IsValid(Blackboard))
 	{
-		Blackboard->SetValueAsObject(FName("TargetActor"), Target);
+		Blackboard->SetValueAsObject(FName("Target"), Target);
 	}
 }
 

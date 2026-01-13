@@ -30,6 +30,16 @@
 // AnimBP LinkedAnimLayer node support (AAA-quality fix)
 #include "AnimGraphNode_LinkedAnimLayer.h"
 #include "Animation/AnimNode_LinkedAnimLayer.h"
+// BehaviorTree support for AI migration
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BTCompositeNode.h"
+#include "BehaviorTree/BTDecorator.h"
+#include "BehaviorTree/BTTaskNode.h"
+#include "BehaviorTree/Decorators/BTDecorator_Blackboard.h"
+#include "BehaviorTree/BlackboardData.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Enum.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Int.h"
+#include "SLFEnums.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogSLFAutomation, Log, All);
 
@@ -153,6 +163,54 @@ TArray<FString> USLFAutomationLibrary::GetBlueprintSCSComponents(UObject* Bluepr
 	return ComponentNames;
 }
 
+bool USLFAutomationLibrary::RemoveSCSComponentByClass(UObject* BlueprintAsset, const FString& ComponentClassName)
+{
+	UBlueprint* Blueprint = GetBlueprintFromAsset(BlueprintAsset);
+	if (!Blueprint) return false;
+
+	USimpleConstructionScript* SCS = Blueprint->SimpleConstructionScript;
+	if (!SCS)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("Blueprint %s has no SimpleConstructionScript"), *Blueprint->GetName());
+		return false;
+	}
+
+	TArray<USCS_Node*> AllNodes = SCS->GetAllNodes();
+	USCS_Node* NodeToRemove = nullptr;
+
+	for (USCS_Node* Node : AllNodes)
+	{
+		if (Node && Node->ComponentTemplate)
+		{
+			FString ClassName = Node->ComponentTemplate->GetClass()->GetName();
+			if (ClassName.Contains(ComponentClassName))
+			{
+				NodeToRemove = Node;
+				UE_LOG(LogSLFAutomation, Warning, TEXT("Found SCS component to remove: %s (%s)"),
+					*Node->ComponentTemplate->GetName(), *ClassName);
+				break;
+			}
+		}
+	}
+
+	if (!NodeToRemove)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("No SCS component matching %s found"), *ComponentClassName);
+		return false;
+	}
+
+	// Remove the node from SCS
+	SCS->RemoveNode(NodeToRemove);
+
+	// Mark blueprint as modified
+	Blueprint->Modify();
+	FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(Blueprint);
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("Removed SCS component from %s"), *Blueprint->GetName());
+	return true;
+}
+
+
 // ============================================================================
 // REPARENTING
 // ============================================================================
@@ -227,6 +285,39 @@ int32 USLFAutomationLibrary::RemoveVariables(UObject* BlueprintAsset, const TArr
 			RemovedCount++;
 		}
 	}
+	return RemovedCount;
+}
+
+int32 USLFAutomationLibrary::RemoveAllVariables(UObject* BlueprintAsset)
+{
+	UBlueprint* Blueprint = GetBlueprintFromAsset(BlueprintAsset);
+	if (!Blueprint) return 0;
+
+	int32 RemovedCount = Blueprint->NewVariables.Num();
+
+	if (RemovedCount == 0)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("No variables to remove from %s"), *Blueprint->GetName());
+		return 0;
+	}
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("Removing ALL %d variables from %s"), RemovedCount, *Blueprint->GetName());
+
+	// Get all variable names first (to use proper removal API)
+	TArray<FName> VarNamesToRemove;
+	for (const FBPVariableDescription& Var : Blueprint->NewVariables)
+	{
+		VarNamesToRemove.Add(Var.VarName);
+		UE_LOG(LogSLFAutomation, Log, TEXT("  - %s (%s)"), *Var.VarName.ToString(), *Var.VarType.PinCategory.ToString());
+	}
+
+	// Remove each variable using the proper API
+	for (const FName& VarName : VarNamesToRemove)
+	{
+		FBlueprintEditorUtils::RemoveMemberVariable(Blueprint, VarName);
+	}
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("Removed ALL %d variables from %s"), RemovedCount, *Blueprint->GetName());
 	return RemovedCount;
 }
 
@@ -2163,5 +2254,523 @@ int32 USLFAutomationLibrary::FixAllMontageComboNotifies()
 	return TotalFixed;
 }
 
+// ============================================================================
+// FIX BT STATE DECORATOR INTVALUE
+// ============================================================================
+
+FString USLFAutomationLibrary::FixBTStateDecoratorToValue(const FString& BehaviorTreePath, int32 ExpectedStateValue)
+{
+	FString Result;
+
+	UBehaviorTree* BT = LoadObject<UBehaviorTree>(nullptr, *BehaviorTreePath);
+	if (!BT)
+	{
+		return FString::Printf(TEXT("ERROR: Could not load BehaviorTree: %s"), *BehaviorTreePath);
+	}
+
+	Result += FString::Printf(TEXT("BehaviorTree: %s\n"), *BT->GetName());
+	Result += FString::Printf(TEXT("Expected State value: %d\n\n"), ExpectedStateValue);
+
+	bool bMadeChanges = false;
+
+	// Process root decorators
+	for (int32 i = 0; i < BT->RootDecorators.Num(); ++i)
+	{
+		UBTDecorator_Blackboard* BBDec = Cast<UBTDecorator_Blackboard>(BT->RootDecorators[i]);
+		if (!BBDec) continue;
+
+		FName KeyName = BBDec->GetSelectedBlackboardKey();
+		if (KeyName != FName("State")) continue;
+
+		Result += FString::Printf(TEXT("[%d] %s - Key: %s\n"), i, *BBDec->GetNodeName(), *KeyName.ToString());
+
+		// Use reflection to access IntValue (protected member)
+		if (FIntProperty* IntValueProp = CastField<FIntProperty>(BBDec->GetClass()->FindPropertyByName(TEXT("IntValue"))))
+		{
+			int32 CurrentValue = IntValueProp->GetPropertyValue_InContainer(BBDec);
+			Result += FString::Printf(TEXT("    Current IntValue: %d\n"), CurrentValue);
+
+			if (CurrentValue != ExpectedStateValue)
+			{
+				IntValueProp->SetPropertyValue_InContainer(BBDec, ExpectedStateValue);
+				Result += FString::Printf(TEXT("    FIXED: Set IntValue from %d to %d\n"), CurrentValue, ExpectedStateValue);
+				bMadeChanges = true;
+			}
+			else
+			{
+				Result += TEXT("    OK: IntValue already correct\n");
+			}
+		}
+		Result += TEXT("\n");
+	}
+
+	// Save if changes were made
+	if (bMadeChanges)
+	{
+		BT->MarkPackageDirty();
+		FString PackageName = BT->GetOutermost()->GetName();
+		FSavePackageArgs SaveArgs;
+		SaveArgs.TopLevelFlags = RF_Standalone;
+		FString FilePath = FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension());
+		bool bSaved = UPackage::SavePackage(BT->GetOutermost(), BT, *FilePath, SaveArgs);
+
+		if (bSaved)
+		{
+			Result += TEXT("Saved BehaviorTree with fixes.\n");
+		}
+		else
+		{
+			Result += TEXT("Failed to save BehaviorTree!\n");
+		}
+	}
+	else
+	{
+		Result += TEXT("No changes needed.\n");
+	}
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("%s"), *Result);
+	return Result;
+}
+
+// Helper to recursively process BT nodes and extract decorator info
+static void ProcessBTNodeDecorators(UBTCompositeNode* Node, FString& Result, int32 Depth, int32& TotalDecorators, int32& StateDecorators, int32& TotalTasks)
+{
+	if (!Node) return;
+
+	FString Indent = FString::ChrN(Depth * 2, TEXT(' '));
+	Result += FString::Printf(TEXT("%sNode: %s (%s)\n"), *Indent, *Node->GetNodeName(), *Node->GetClass()->GetName());
+
+	// Process children and their decorators
+	int32 NumChildren = Node->GetChildrenNum();
+	Result += FString::Printf(TEXT("%s  NumChildren: %d\n"), *Indent, NumChildren);
+
+	for (int32 i = 0; i < NumChildren; ++i)
+	{
+		// Get child info from Children array
+		const FBTCompositeChild& Child = Node->Children[i];
+
+		// Get child name and type
+		FString ChildName = TEXT("Unknown");
+		FString ChildType = TEXT("?");
+		if (Child.ChildTask)
+		{
+			ChildName = Child.ChildTask->GetNodeName();
+			ChildType = Child.ChildTask->GetClass()->GetName();
+			TotalTasks++;
+		}
+		else if (Child.ChildComposite)
+		{
+			ChildName = Child.ChildComposite->GetNodeName();
+			ChildType = Child.ChildComposite->GetClass()->GetName();
+		}
+
+		Result += FString::Printf(TEXT("%s  [Branch %d] Child: %s (%s), Decorators: %d\n"),
+			*Indent, i, *ChildName, *ChildType, Child.Decorators.Num());
+
+		// Process child's decorators
+		for (int32 j = 0; j < Child.Decorators.Num(); ++j)
+		{
+			UBTDecorator* Decorator = Child.Decorators[j];
+			if (!Decorator) continue;
+
+			TotalDecorators++;
+
+			UBTDecorator_Blackboard* BBDec = Cast<UBTDecorator_Blackboard>(Decorator);
+			if (BBDec)
+			{
+				FName KeyName = BBDec->GetSelectedBlackboardKey();
+				Result += FString::Printf(TEXT("%s      Decorator[%d]: %s - Key: %s\n"),
+					*Indent, j, *Decorator->GetNodeName(), *KeyName.ToString());
+
+				// Get IntValue via reflection
+				if (FIntProperty* IntValueProp = CastField<FIntProperty>(BBDec->GetClass()->FindPropertyByName(TEXT("IntValue"))))
+				{
+					int32 IntValue = IntValueProp->GetPropertyValue_InContainer(BBDec);
+					Result += FString::Printf(TEXT("%s        IntValue: %d\n"), *Indent, IntValue);
+
+					if (KeyName == FName("State"))
+					{
+						StateDecorators++;
+						Result += FString::Printf(TEXT("%s        *** STATE KEY DECORATOR: IntValue=%d ***\n"), *Indent, IntValue);
+					}
+				}
+			}
+			else
+			{
+				Result += FString::Printf(TEXT("%s      Decorator[%d]: %s (%s)\n"),
+					*Indent, j, *Decorator->GetNodeName(), *Decorator->GetClass()->GetName());
+			}
+		}
+
+		// Recurse into child composites
+		if (Child.ChildComposite)
+		{
+			ProcessBTNodeDecorators(Child.ChildComposite, Result, Depth + 1, TotalDecorators, StateDecorators, TotalTasks);
+		}
+	}
+}
+
+FString USLFAutomationLibrary::ExportBTAllDecoratorIntValues(const FString& BehaviorTreePath)
+{
+	FString Result;
+
+	UBehaviorTree* BT = LoadObject<UBehaviorTree>(nullptr, *BehaviorTreePath);
+	if (!BT)
+	{
+		return FString::Printf(TEXT("ERROR: Could not load BehaviorTree: %s"), *BehaviorTreePath);
+	}
+
+	Result += FString::Printf(TEXT("=== BehaviorTree: %s ===\n\n"), *BT->GetName());
+
+	int32 TotalDecorators = 0;
+	int32 StateDecorators = 0;
+
+	// Process root decorators
+	Result += TEXT("--- Root Decorators ---\n");
+	for (int32 i = 0; i < BT->RootDecorators.Num(); ++i)
+	{
+		UBTDecorator* Decorator = BT->RootDecorators[i];
+		if (!Decorator) continue;
+
+		TotalDecorators++;
+
+		UBTDecorator_Blackboard* BBDec = Cast<UBTDecorator_Blackboard>(Decorator);
+		if (BBDec)
+		{
+			FName KeyName = BBDec->GetSelectedBlackboardKey();
+			Result += FString::Printf(TEXT("[Root][%d] %s - Key: %s\n"), i, *Decorator->GetNodeName(), *KeyName.ToString());
+
+			if (FIntProperty* IntValueProp = CastField<FIntProperty>(BBDec->GetClass()->FindPropertyByName(TEXT("IntValue"))))
+			{
+				int32 IntValue = IntValueProp->GetPropertyValue_InContainer(BBDec);
+				Result += FString::Printf(TEXT("    IntValue: %d\n"), IntValue);
+
+				if (KeyName == FName("State"))
+				{
+					StateDecorators++;
+					Result += FString::Printf(TEXT("    ^^^ STATE KEY DECORATOR - IntValue=%d ^^^\n"), IntValue);
+				}
+			}
+		}
+		else
+		{
+			Result += FString::Printf(TEXT("[Root][%d] %s (non-blackboard)\n"), i, *Decorator->GetNodeName());
+		}
+	}
+
+	// Process node tree
+	Result += TEXT("\n--- Node Tree ---\n");
+	int32 TotalTasks = 0;
+	if (BT->RootNode)
+	{
+		ProcessBTNodeDecorators(BT->RootNode, Result, 0, TotalDecorators, StateDecorators, TotalTasks);
+	}
+	else
+	{
+		Result += TEXT("No RootNode!\n");
+	}
+
+	Result += FString::Printf(TEXT("\n=== Summary ===\n"));
+	Result += FString::Printf(TEXT("Total Decorators: %d\n"), TotalDecorators);
+	Result += FString::Printf(TEXT("State Key Decorators: %d\n"), StateDecorators);
+	Result += FString::Printf(TEXT("Total Tasks: %d\n"), TotalTasks);
+
+	// Expected values for reference
+	Result += TEXT("\n=== Expected State Values (ESLFAIStates) ===\n");
+	Result += TEXT("  0 = Idle\n");
+	Result += TEXT("  1 = RandomRoam\n");
+	Result += TEXT("  2 = Patrolling\n");
+	Result += TEXT("  3 = Investigating\n");
+	Result += TEXT("  4 = Combat\n");
+	Result += TEXT("  5 = PoiseBroken\n");
+	Result += TEXT("  6 = Uninterruptable\n");
+	Result += TEXT("  7 = OutOfBounds\n");
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("%s"), *Result);
+	return Result;
+}
+
+
+
+FString USLFAutomationLibrary::MigrateBlackboardEnumToCpp(const FString& BlackboardPath, const FString& KeyName)
+{
+	FString Result;
+
+	// Load the blackboard asset
+	UBlackboardData* BB = LoadObject<UBlackboardData>(nullptr, *BlackboardPath);
+	if (!BB)
+	{
+		return FString::Printf(TEXT("ERROR: Could not load BlackboardData: %s"), *BlackboardPath);
+	}
+
+	Result += FString::Printf(TEXT("BlackboardData: %s\n"), *BB->GetName());
+	Result += FString::Printf(TEXT("Looking for key: %s\n\n"), *KeyName);
+
+	// Find the C++ enum
+	UEnum* CppEnum = StaticEnum<ESLFAIStates>();
+	if (!CppEnum)
+	{
+		return TEXT("ERROR: Could not find C++ enum ESLFAIStates");
+	}
+	Result += FString::Printf(TEXT("Found C++ enum: %s\n"), *CppEnum->GetPathName());
+
+	// Find the specified key
+	bool bFound = false;
+	bool bMadeChanges = false;
+
+	for (FBlackboardEntry& Key : BB->Keys)
+	{
+		if (Key.EntryName.ToString() != KeyName)
+		{
+			continue;
+		}
+
+		bFound = true;
+		Result += FString::Printf(TEXT("Found key: %s\n"), *Key.EntryName.ToString());
+
+		UBlackboardKeyType_Enum* EnumKeyType = Cast<UBlackboardKeyType_Enum>(Key.KeyType);
+		if (!EnumKeyType)
+		{
+			Result += TEXT("    ERROR: Key is not Enum type\n");
+			continue;
+		}
+
+		Result += FString::Printf(TEXT("    KeyType: %s\n"), *EnumKeyType->GetClass()->GetName());
+
+		// Get current enum type using reflection (EnumType is protected)
+		if (FObjectProperty* EnumTypeProp = CastField<FObjectProperty>(EnumKeyType->GetClass()->FindPropertyByName(TEXT("EnumType"))))
+		{
+			UEnum* CurrentEnum = Cast<UEnum>(EnumTypeProp->GetObjectPropertyValue_InContainer(EnumKeyType));
+			if (CurrentEnum)
+			{
+				Result += FString::Printf(TEXT("    Current EnumType: %s\n"), *CurrentEnum->GetPathName());
+			}
+			else
+			{
+				Result += TEXT("    Current EnumType: None\n");
+			}
+
+			// Set the new C++ enum type
+			EnumTypeProp->SetObjectPropertyValue_InContainer(EnumKeyType, CppEnum);
+			Result += FString::Printf(TEXT("    Set EnumType to: %s\n"), *CppEnum->GetPathName());
+			bMadeChanges = true;
+
+			// Verify the change
+			UEnum* NewEnum = Cast<UEnum>(EnumTypeProp->GetObjectPropertyValue_InContainer(EnumKeyType));
+			if (NewEnum)
+			{
+				Result += FString::Printf(TEXT("    Verified new EnumType: %s\n"), *NewEnum->GetPathName());
+			}
+		}
+		else
+		{
+			Result += TEXT("    ERROR: Could not find EnumType property via reflection\n");
+		}
+
+		// Also try setting EnumName property (for validation/display purposes)
+		if (FStrProperty* EnumNameProp = CastField<FStrProperty>(EnumKeyType->GetClass()->FindPropertyByName(TEXT("EnumName"))))
+		{
+			const FString& CurrentName = EnumNameProp->GetPropertyValue_InContainer(EnumKeyType);
+			Result += FString::Printf(TEXT("    Current EnumName: %s\n"), *CurrentName);
+
+			FString NewName = TEXT("ESLFAIStates");
+			EnumNameProp->SetPropertyValue_InContainer(EnumKeyType, NewName);
+			Result += FString::Printf(TEXT("    Set EnumName to: %s\n"), *NewName);
+		}
+
+		// Set bIsEnumNameValid to true
+		if (FBoolProperty* ValidProp = CastField<FBoolProperty>(EnumKeyType->GetClass()->FindPropertyByName(TEXT("bIsEnumNameValid"))))
+		{
+			ValidProp->SetPropertyValue_InContainer(EnumKeyType, true);
+			Result += TEXT("    Set bIsEnumNameValid to true\n");
+		}
+
+		break;
+	}
+
+	if (!bFound)
+	{
+		return FString::Printf(TEXT("ERROR: Key '%s' not found in blackboard"), *KeyName);
+	}
+
+	// Save if changes were made
+	if (bMadeChanges)
+	{
+		BB->MarkPackageDirty();
+		FString PackageName = BB->GetOutermost()->GetName();
+		FSavePackageArgs SaveArgs;
+		SaveArgs.TopLevelFlags = RF_Standalone;
+		FString FilePath = FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension());
+		bool bSaved = UPackage::SavePackage(BB->GetOutermost(), BB, *FilePath, SaveArgs);
+
+		if (bSaved)
+		{
+			Result += TEXT("\nSaved BlackboardData with enum migration.\n");
+		}
+		else
+		{
+			Result += TEXT("\nFailed to save BlackboardData!\n");
+		}
+	}
+	else
+	{
+		Result += TEXT("\nNo changes needed.\n");
+	}
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("%s"), *Result);
+	return Result;
+}
+
+
+FString USLFAutomationLibrary::ExportBlueprintEnumValues(const FString& EnumPath)
+{
+	FString Result;
+	Result += FString::Printf(TEXT("=== EXPORT BLUEPRINT ENUM: %s ===\n"), *EnumPath);
+
+	// Load the enum asset
+	UEnum* EnumAsset = LoadObject<UEnum>(nullptr, *EnumPath);
+	if (!EnumAsset)
+	{
+		// Try with /Script/ prefix for C++ enums
+		EnumAsset = LoadObject<UEnum>(nullptr, *(FString("/Script/SLFConversion.") + EnumPath));
+	}
+
+	if (!EnumAsset)
+	{
+		Result += TEXT("ERROR: Could not load enum asset\n");
+		UE_LOG(LogSLFAutomation, Error, TEXT("%s"), *Result);
+		return Result;
+	}
+
+	Result += FString::Printf(TEXT("Loaded: %s\n"), *EnumAsset->GetPathName());
+	Result += FString::Printf(TEXT("Class: %s\n"), *EnumAsset->GetClass()->GetName());
+
+	// Get enum value count
+	int32 NumEnums = EnumAsset->NumEnums();
+	Result += FString::Printf(TEXT("Value Count: %d (includes MAX)\n\n"), NumEnums);
+
+	Result += TEXT("| Index | Value | InternalName | DisplayName |\n");
+	Result += TEXT("|-------|-------|--------------|-------------|\n");
+
+	// Iterate through all values (except MAX which is usually last)
+	for (int32 i = 0; i < NumEnums; ++i)
+	{
+		int64 Value = EnumAsset->GetValueByIndex(i);
+		FName InternalName = EnumAsset->GetNameByIndex(i);
+		FText DisplayName = EnumAsset->GetDisplayNameTextByIndex(i);
+
+		// Skip MAX entry
+		if (InternalName.ToString().Contains(TEXT("MAX")))
+		{
+			continue;
+		}
+
+		Result += FString::Printf(TEXT("| %d | %lld | %s | %s |\n"),
+			i,
+			Value,
+			*InternalName.ToString(),
+			*DisplayName.ToString());
+	}
+
+	// Also show what our C++ enum looks like
+	Result += TEXT("\n=== C++ ESLFAIStates Comparison ===\n");
+	UEnum* CppEnum = StaticEnum<ESLFAIStates>();
+	if (CppEnum)
+	{
+		Result += TEXT("| Index | Value | Name |\n");
+		Result += TEXT("|-------|-------|------|\n");
+		for (int32 i = 0; i < CppEnum->NumEnums(); ++i)
+		{
+			int64 Value = CppEnum->GetValueByIndex(i);
+			FName Name = CppEnum->GetNameByIndex(i);
+			if (Name.ToString().Contains(TEXT("MAX")))
+			{
+				continue;
+			}
+			Result += FString::Printf(TEXT("| %d | %lld | %s |\n"), i, Value, *Name.ToString());
+		}
+	}
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("%s"), *Result);
+	return Result;
+}
+
+FString USLFAutomationLibrary::DiagnoseBlackboardStateKey(const FString& BlackboardPath)
+{
+	FString Result;
+	Result += FString::Printf(TEXT("=== DIAGNOSE BB STATE KEY: %s ===\n"), *BlackboardPath);
+
+	// Load blackboard
+	UBlackboardData* BB = LoadObject<UBlackboardData>(nullptr, *BlackboardPath);
+	if (!BB)
+	{
+		Result += TEXT("ERROR: Could not load BlackboardData\n");
+		return Result;
+	}
+
+	Result += FString::Printf(TEXT("Loaded: %s\n"), *BB->GetPathName());
+
+	// Find State key
+	const TArray<FBlackboardEntry>& Keys = BB->Keys;
+	Result += FString::Printf(TEXT("Total Keys: %d\n\n"), Keys.Num());
+
+	for (const FBlackboardEntry& Key : Keys)
+	{
+		FString KeyName = Key.EntryName.ToString();
+		FString KeyType = Key.KeyType ? Key.KeyType->GetClass()->GetName() : TEXT("NULL");
+
+		Result += FString::Printf(TEXT("Key: %s (Type: %s)\n"), *KeyName, *KeyType);
+
+		// If it's the State key, get more details
+		if (KeyName == TEXT("State"))
+		{
+			Result += TEXT("  >>> THIS IS THE STATE KEY <<<\n");
+
+			if (UBlackboardKeyType_Enum* EnumKeyType = Cast<UBlackboardKeyType_Enum>(Key.KeyType))
+			{
+				Result += TEXT("  KeyType is Enum\n");
+
+				// Get the enum type via reflection
+				if (FObjectProperty* EnumTypeProp = CastField<FObjectProperty>(EnumKeyType->GetClass()->FindPropertyByName(TEXT("EnumType"))))
+				{
+					UEnum* CurrentEnum = Cast<UEnum>(EnumTypeProp->GetObjectPropertyValue_InContainer(EnumKeyType));
+					if (CurrentEnum)
+					{
+						Result += FString::Printf(TEXT("  EnumType: %s\n"), *CurrentEnum->GetPathName());
+
+						// Show all enum values
+						Result += TEXT("  Enum Values:\n");
+						for (int32 i = 0; i < CurrentEnum->NumEnums(); ++i)
+						{
+							int64 Value = CurrentEnum->GetValueByIndex(i);
+							FName Name = CurrentEnum->GetNameByIndex(i);
+							FText DisplayName = CurrentEnum->GetDisplayNameTextByIndex(i);
+							if (!Name.ToString().Contains(TEXT("MAX")))
+							{
+								Result += FString::Printf(TEXT("    [%d] Value=%lld Name=%s Display=%s\n"),
+									i, Value, *Name.ToString(), *DisplayName.ToString());
+							}
+						}
+					}
+					else
+					{
+						Result += TEXT("  EnumType: NULL\n");
+					}
+				}
+			}
+			else if (UBlackboardKeyType_Int* IntKeyType = Cast<UBlackboardKeyType_Int>(Key.KeyType))
+			{
+				Result += TEXT("  KeyType is Int\n");
+			}
+			else
+			{
+				Result += FString::Printf(TEXT("  KeyType is %s (not Enum or Int)\n"), *KeyType);
+			}
+		}
+	}
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("%s"), *Result);
+	return Result;
+}
 
 #endif // WITH_EDITOR

@@ -7,7 +7,7 @@
 #include "AI/BTS_ChaseBounds.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Components/AC_AI_BehaviorManager.h"
+#include "Components/AIBehaviorManagerComponent.h"
 
 UBTS_ChaseBounds::UBTS_ChaseBounds()
 	: InverseCondition(false)
@@ -42,21 +42,48 @@ void UBTS_ChaseBounds::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 	double DistanceFromStart = FVector::Dist(CurrentLocation, StartPosition);
 
 	// Get BehaviorManager for state changes
-	UAC_AI_BehaviorManager* BehaviorManager = ControlledPawn->FindComponentByClass<UAC_AI_BehaviorManager>();
+	UAIBehaviorManagerComponent* BehaviorManager = ControlledPawn->FindComponentByClass<UAIBehaviorManagerComponent>();
+
+	// DEBUG: Log chase bounds check
+	static int32 DebugCounter = 0;
+	if (DebugCounter++ % 60 == 0) // Log once per ~60 ticks
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[BTS_ChaseBounds] %s: StartPos=%s, ChaseDistance=%.1f, CurrentPos=%s, DistFromStart=%.1f"),
+			*ControlledPawn->GetName(),
+			*StartPosition.ToString(),
+			ChaseDistance,
+			*CurrentLocation.ToString(),
+			DistanceFromStart);
+	}
 
 	// From Blueprint: Branch on "If out of bounds" (distance > chaseDistance)
 	if (DistanceFromStart > ChaseDistance)
 	{
 		// TRUE path: Out of bounds
-		// Set blackboard enum to the configured State
-		Blackboard->SetValueAsEnum(StateKey.SelectedKeyName, static_cast<uint8>(State));
+		UE_LOG(LogTemp, Warning, TEXT("[BTS_CHASEBOUNDS_OOB] %s OUT OF BOUNDS! Dist=%.1f > Chase=%.1f"),
+			*ControlledPawn->GetName(), DistanceFromStart, ChaseDistance);
 
-		// Then call SetState with Investigating (NewEnumerator3 = index 3)
+		// Use the configured State (usually OutOfBounds or Investigating)
+		ESLFAIStates TargetState = State;
+
+		// Set blackboard enum to the configured State
+		Blackboard->SetValueAsEnum(StateKey.SelectedKeyName, static_cast<uint8>(TargetState));
+
+		// CRITICAL: Clear InCombat so BT_Combat stops executing
+		Blackboard->SetValueAsBool(FName("InCombat"), false);
+
+		// Also clear Target so combat logic doesn't try to chase
+		Blackboard->ClearValue(FName("Target"));
+
+		// Call SetState with the configured state
 		if (BehaviorManager)
 		{
-			BehaviorManager->SetState(ESLFAIStates::Investigating, FInstancedStruct());
-			UE_LOG(LogTemp, Log, TEXT("UBTS_ChaseBounds::TickNode - Out of bounds, switching to Investigating on %s"), *ControlledPawn->GetName());
+			BehaviorManager->SetState(TargetState);
+			BehaviorManager->SetTarget(nullptr);
 		}
+
+		UE_LOG(LogTemp, Warning, TEXT("[BTS_CHASEBOUNDS_OOB] %s state changed to %d, InCombat=false, Target=null"),
+			*ControlledPawn->GetName(), static_cast<int32>(TargetState));
 	}
 	else
 	{
@@ -67,7 +94,7 @@ void UBTS_ChaseBounds::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 			// TRUE path: Call SetState with Patrolling (NewEnumerator2 = index 2)
 			if (BehaviorManager)
 			{
-				BehaviorManager->SetState(ESLFAIStates::Patrolling, FInstancedStruct());
+				BehaviorManager->SetState(ESLFAIStates::Patrolling);
 				UE_LOG(LogTemp, Log, TEXT("UBTS_ChaseBounds::TickNode - InverseCondition, switching to Patrolling on %s"), *ControlledPawn->GetName());
 			}
 		}

@@ -7,11 +7,29 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Perception/AIPerceptionComponent.h"
+#include "Perception/AISenseConfig_Sight.h"
 
 ASLFAIController::ASLFAIController()
 {
-	// Note: AIPerception component is defined in Blueprint SCS
-	// Use inherited GetAIPerceptionComponent() from AAIController
+	// Create AI Perception Component in C++ (was previously in Blueprint SCS)
+	AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerception"));
+	SetPerceptionComponent(*AIPerceptionComponent);
+
+	// Configure default sight sense
+	UAISenseConfig_Sight* SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
+	SightConfig->SightRadius = 2000.0f;
+	SightConfig->LoseSightRadius = 2500.0f;
+	SightConfig->PeripheralVisionAngleDegrees = 90.0f;
+	SightConfig->SetMaxAge(5.0f);
+	SightConfig->AutoSuccessRangeFromLastSeenLocation = 500.0f;
+	SightConfig->DetectionByAffiliation.bDetectEnemies = true;
+	SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
+	SightConfig->DetectionByAffiliation.bDetectFriendlies = false;
+
+	AIPerceptionComponent->ConfigureSense(*SightConfig);
+	AIPerceptionComponent->SetDominantSense(UAISense_Sight::StaticClass());
+
+	UE_LOG(LogTemp, Log, TEXT("[SLFAIController] Constructor - AI Perception configured"));
 }
 
 void ASLFAIController::BeginPlay()
@@ -27,6 +45,43 @@ void ASLFAIController::OnPossess(APawn* InPawn)
 
 	// Note: Behavior tree initialization happens via BPI_AIC::InitializeBehavior
 	// Called from AC_AI_BehaviorManager component
+}
+
+void ASLFAIController::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	// Log blackboard state every 2 seconds
+	static float DebugTimer = 0.0f;
+	DebugTimer += DeltaTime;
+	if (DebugTimer < 2.0f)
+	{
+		return;
+	}
+	DebugTimer = 0.0f;
+
+	UBlackboardComponent* BB = GetBlackboardComponent();
+	if (!BB)
+	{
+		return;
+	}
+
+	APawn* MyPawn = GetPawn();
+	if (!MyPawn)
+	{
+		return;
+	}
+
+	// Get State as Int
+	uint8 StateEnum = BB->GetValueAsEnum(FName("State"));
+
+	// Get TargetActor
+	UObject* Target = BB->GetValueAsObject(FName("Target"));
+
+	UE_LOG(LogTemp, Warning, TEXT("[SLFAIController_BB] %s: State=%d, Target=%s"),
+		*MyPawn->GetName(),
+		static_cast<int32>(StateEnum),
+		Target ? *Target->GetName() : TEXT("null"));
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════

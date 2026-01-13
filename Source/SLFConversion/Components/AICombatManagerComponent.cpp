@@ -18,6 +18,10 @@
 #include "Components/StatusEffectManagerComponent.h"
 #include "Interfaces/BPI_GenericCharacter.h"
 #include "Interfaces/BPI_Enemy.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraSystem.h"
+#include "Animation/AnimInstance.h"
+#include "UObject/ConstructorHelpers.h"
 
 UAICombatManagerComponent::UAICombatManagerComponent()
 {
@@ -54,10 +58,29 @@ UAICombatManagerComponent::UAICombatManagerComponent()
 
 	// Initialize hit reaction
 	HitReactType = ESLFHitReactType::Light;
-	ReactionAnimset = nullptr;
+	// Load default enemy reaction animset
+	static ConstructorHelpers::FObjectFinder<UDataAsset> ReactionAnimsetFinder(
+		TEXT("/Game/SoulslikeFramework/Data/_AnimationData/DA_ExampleEnemyReactionAnimset.DA_ExampleEnemyReactionAnimset"));
+	if (ReactionAnimsetFinder.Succeeded())
+	{
+		ReactionAnimset = ReactionAnimsetFinder.Object;
+	}
+	else
+	{
+		ReactionAnimset = nullptr;
+	}
 
-	// Initialize effects
-	HitVFX = nullptr;
+	// Initialize effects - Load default blood VFX
+	static ConstructorHelpers::FObjectFinder<UNiagaraSystem> BloodVFXFinder(
+		TEXT("/Game/SoulslikeFramework/VFX/Systems/NS_DirectionalBlood.NS_DirectionalBlood"));
+	if (BloodVFXFinder.Succeeded())
+	{
+		HitVFX = BloodVFXFinder.Object;
+	}
+	else
+	{
+		HitVFX = nullptr;
+	}
 	HitSFX = nullptr;
 	Mesh = nullptr;
 
@@ -113,8 +136,8 @@ void UAICombatManagerComponent::HandleIncomingWeaponDamage_AI_Implementation(
 		IBPI_GenericCharacter::Execute_GetStatManager(Owner, StatComp);
 		if (UStatManagerComponent* StatManager = Cast<UStatManagerComponent>(StatComp))
 		{
-			// Apply damage to health stat
-			FGameplayTag HealthTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Primary.HP"));
+			// Apply damage to health stat (HP is a Secondary stat)
+			FGameplayTag HealthTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
 			StatManager->AdjustStat(HealthTag, ESLFValueType::CurrentValue, -Damage, false, true);
 			UE_LOG(LogTemp, Log, TEXT("[AICombatManager] Applied %.2f damage to health"), Damage);
 
@@ -123,28 +146,67 @@ void UAICombatManagerComponent::HandleIncomingWeaponDamage_AI_Implementation(
 			StatManager->AdjustStat(PoiseTag, ESLFValueType::CurrentValue, -PoiseDamage, false, true);
 			UE_LOG(LogTemp, Log, TEXT("[AICombatManager] Applied %.2f poise damage"), PoiseDamage);
 
+			// Get current health values
+			UObject* StatObj = nullptr;
+			FStatInfo StatInfo;
+			bool bGotStat = StatManager->GetStat(HealthTag, StatObj, StatInfo);
+
+			// Check for death (HP <= 0)
+			if (bGotStat && StatInfo.CurrentValue <= 0.0f)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] HP <= 0 - Triggering death!"));
+				HandleDeath(DamageCauser);
+				return; // Don't process further after death
+			}
+
 			// Update healthbar via interface
 			if (Owner->GetClass()->ImplementsInterface(UBPI_Enemy::StaticClass()))
 			{
-				// Get current health values for UI update
-				UObject* StatObj = nullptr;
-				FStatInfo StatInfo;
-				if (StatManager->GetStat(HealthTag, StatObj, StatInfo))
+				// Show healthbar when taking damage
+				UE_LOG(LogTemp, Log, TEXT("[AICombatManager] Calling ToggleHealthbarVisual(true)"));
+				IBPI_Enemy::Execute_ToggleHealthbarVisual(Owner, true);
+
+				// Update health values for UI
+				if (bGotStat)
 				{
+					UE_LOG(LogTemp, Log, TEXT("[AICombatManager] GetStat succeeded - calling UpdateEnemyHealth (HP: %.0f/%.0f)"),
+						StatInfo.CurrentValue, StatInfo.MaxValue);
 					IBPI_Enemy::Execute_UpdateEnemyHealth(Owner, StatInfo.CurrentValue, StatInfo.MaxValue, -Damage);
 				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] GetStat FAILED for HP tag"));
+				}
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] Owner does NOT implement BPI_Enemy interface"));
 			}
 		}
 	}
 
-	// Spawn hit effects
+	// Spawn hit effects (blood VFX)
 	if (HitVFX)
 	{
-		// UNiagaraFunctionLibrary::SpawnSystemAtLocation(...)
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+			this,
+			HitVFX,
+			HitResult.ImpactPoint,
+			HitResult.ImpactNormal.Rotation(),
+			FVector(1.0f),
+			true,
+			true
+		);
+		UE_LOG(LogTemp, Log, TEXT("[AICombatManager] Spawned blood VFX at %s"), *HitResult.ImpactPoint.ToString());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] HitVFX is NULL - no blood effect"));
 	}
 	if (HitSFX)
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, HitSFX, HitResult.ImpactPoint);
+		UE_LOG(LogTemp, Log, TEXT("[AICombatManager] Played hit sound"));
 	}
 
 	// Handle hit reaction if not in hyper armor
@@ -197,38 +259,92 @@ void UAICombatManagerComponent::HandleHitReaction_Implementation(
 
 	UE_LOG(LogTemp, Log, TEXT("[AICombatManager] HandleHitReaction - Type: %d"), static_cast<int32>(ReactionType));
 
-	// Play hit reaction animation based on type and direction
-	if (ReactionAnimset)
+	AActor* Owner = GetOwner();
+	if (!Owner) return;
+
+	// Calculate hit direction for animation section selection
+	FVector Forward = Owner->GetActorForwardVector();
+	FVector Right = Owner->GetActorRightVector();
+
+	float ForwardDot = FVector::DotProduct(Forward, HitDirection.GetSafeNormal());
+	float RightDot = FVector::DotProduct(Right, HitDirection.GetSafeNormal());
+
+	// Determine direction: Front(Fwd), Back(Bwd), Left(L), Right(R)
+	FString DirectionSuffix;
+	if (FMath::Abs(ForwardDot) > FMath::Abs(RightDot))
 	{
-		AActor* Owner = GetOwner();
-		if (Owner)
+		DirectionSuffix = ForwardDot > 0 ? TEXT("Fwd") : TEXT("Bwd");
+	}
+	else
+	{
+		DirectionSuffix = RightDot > 0 ? TEXT("R") : TEXT("L");
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[AICombatManager] Hit reaction direction: %s"), *DirectionSuffix);
+
+	// Get the mesh's anim instance to play montage
+	USkeletalMeshComponent* OwnerMesh = Mesh;
+	if (!OwnerMesh)
+	{
+		OwnerMesh = Owner->FindComponentByClass<USkeletalMeshComponent>();
+	}
+
+	if (!OwnerMesh)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] No skeletal mesh found for hit reaction"));
+		return;
+	}
+
+	UAnimInstance* AnimInstance = OwnerMesh->GetAnimInstance();
+	if (!AnimInstance)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] No anim instance found for hit reaction"));
+		return;
+	}
+
+	// Load hit reaction montage directly by direction
+	// Montages are: AM_SLF_HitReaction_Fwd, AM_SLF_HitReaction_Bwd, AM_SLF_HitReaction_L, AM_SLF_HitReaction_R
+	FString MontagePath = FString::Printf(
+		TEXT("/Game/SoulslikeFramework/Demo/_Animations/HitReactions/AM_SLF_HitReaction_%s.AM_SLF_HitReaction_%s"),
+		*DirectionSuffix, *DirectionSuffix);
+
+	UAnimMontage* HitReactionMontage = LoadObject<UAnimMontage>(nullptr, *MontagePath);
+	if (HitReactionMontage)
+	{
+		float PlayRate = 1.0f;
+		// Play slightly faster for light reactions, slower for heavy
+		if (ReactionType == ESLFHitReactType::Light)
 		{
-			FVector Forward = Owner->GetActorForwardVector();
-			FVector Right = Owner->GetActorRightVector();
+			PlayRate = 1.2f;
+		}
+		else if (ReactionType == ESLFHitReactType::Heavy)
+		{
+			PlayRate = 0.8f;
+		}
 
-			float ForwardDot = FVector::DotProduct(Forward, HitDirection.GetSafeNormal());
-			float RightDot = FVector::DotProduct(Right, HitDirection.GetSafeNormal());
+		AnimInstance->Montage_Play(HitReactionMontage, PlayRate);
+		UE_LOG(LogTemp, Log, TEXT("[AICombatManager] Playing hit reaction montage: %s at rate %.2f"),
+			*HitReactionMontage->GetName(), PlayRate);
+		return;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] Failed to load hit reaction montage: %s"), *MontagePath);
+	}
 
-			// Determine direction: Front, Back, Left, Right
-			FName SectionName = NAME_None;
-			if (FMath::Abs(ForwardDot) > FMath::Abs(RightDot))
-			{
-				SectionName = ForwardDot > 0 ? FName("Front") : FName("Back");
-			}
-			else
-			{
-				SectionName = RightDot > 0 ? FName("Right") : FName("Left");
-			}
-
-			UE_LOG(LogTemp, Log, TEXT("[AICombatManager] Hit reaction direction: %s"), *SectionName.ToString());
-
-			// Play reaction montage via interface if available
-			if (Owner->GetClass()->ImplementsInterface(UBPI_GenericCharacter::StaticClass()))
-			{
-				UE_LOG(LogTemp, Log, TEXT("[AICombatManager] Would play reaction montage for %s"), *SectionName.ToString());
-			}
+	// Fallback: use ExecutedMontages array if direct load didn't work
+	if (ExecutedMontages.Num() > 0)
+	{
+		UAnimMontage* Montage = ExecutedMontages[0];
+		if (Montage)
+		{
+			AnimInstance->Montage_Play(Montage, 1.0f);
+			UE_LOG(LogTemp, Log, TEXT("[AICombatManager] Playing fallback hit reaction montage: %s"), *Montage->GetName());
+			return;
 		}
 	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] No hit reaction montage available - tried path: %s"), *MontagePath);
 }
 
 UAnimMontage* UAICombatManagerComponent::GetRelevantExecutedMontage_Implementation()
@@ -441,7 +557,7 @@ void UAICombatManagerComponent::ApplyFistDamage_Implementation(AActor* Target, c
 		if (UStatManagerComponent* TargetStatManager = Cast<UStatManagerComponent>(TargetStatComp))
 		{
 			// Apply health damage
-			FGameplayTag HealthTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Primary.HP"));
+			FGameplayTag HealthTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
 			TargetStatManager->AdjustStat(HealthTag, ESLFValueType::CurrentValue, -Damage, false, true);
 
 			// Apply poise damage

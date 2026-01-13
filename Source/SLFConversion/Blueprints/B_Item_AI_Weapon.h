@@ -39,12 +39,22 @@ class SLFCONVERSION_API AB_Item_AI_Weapon : public AB_Item_Weapon
 public:
 	AB_Item_AI_Weapon();
 
+protected:
+	virtual void BeginPlay() override;
+
+public:
 	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (1)
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "IMPORTANT")
 	UPrimaryDataAsset* ItemData;
+
+	/** Default rotation offset for socket attachment.
+	 * Applied when attaching to owner skeleton. Different skeletons may have
+	 * different socket orientations - this compensates for those differences. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon|Attachment")
+	FRotator DefaultAttachmentRotationOffset;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (0)

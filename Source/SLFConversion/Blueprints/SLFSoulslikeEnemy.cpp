@@ -94,6 +94,37 @@ void ASLFSoulslikeEnemy::BeginPlay()
 	UE_LOG(LogTemp, Log, TEXT("  SoulsNiagara: %s"), SoulsNiagaraComponent ? *SoulsNiagaraComponent->GetName() : TEXT("NULL"));
 	UE_LOG(LogTemp, Log, TEXT("  AIStateMachine: %s"), AIStateMachine ? *AIStateMachine->GetName() : TEXT("NULL"));
 
+	// Setup healthbar widget if WidgetClass is not set (lost during reparenting)
+	if (HealthbarWidget && !HealthbarWidget->GetWidgetClass())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] HealthbarWidget has no WidgetClass - loading W_EnemyHealthbar"));
+		static TSubclassOf<UUserWidget> EnemyHealthbarClass = nullptr;
+		if (!EnemyHealthbarClass)
+		{
+			EnemyHealthbarClass = LoadClass<UUserWidget>(nullptr,
+				TEXT("/Game/SoulslikeFramework/Widgets/World/W_EnemyHealthbar.W_EnemyHealthbar_C"));
+		}
+		if (EnemyHealthbarClass)
+		{
+			HealthbarWidget->SetWidgetClass(EnemyHealthbarClass);
+			HealthbarWidget->SetDrawSize(FVector2D(200.0f, 30.0f));
+			HealthbarWidget->SetWidgetSpace(EWidgetSpace::Screen);
+			HealthbarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 120.0f)); // Position above head
+			HealthbarWidget->SetVisibility(false); // Start hidden, show on damage
+			UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] Set HealthbarWidget class to: %s"), *EnemyHealthbarClass->GetName());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("[SoulslikeEnemy] Failed to load W_EnemyHealthbar class!"));
+		}
+	}
+	else if (HealthbarWidget)
+	{
+		// Widget class already set, but still need to fix position above head
+		HealthbarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 120.0f));
+		UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] Fixed HealthbarWidget position above head"));
+	}
+
 	// Enable debug logging on state machine for testing
 	if (AIStateMachine)
 	{
@@ -799,9 +830,42 @@ void ASLFSoulslikeEnemy::DisplayDeathVfx_Implementation(FVector AttractorPositio
 
 void ASLFSoulslikeEnemy::ToggleHealthbarVisual_Implementation(bool bVisible)
 {
+	UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] ToggleHealthbarVisual(%s) - HealthbarWidget: %s"),
+		bVisible ? TEXT("true") : TEXT("false"),
+		HealthbarWidget ? TEXT("Valid") : TEXT("NULL"));
+
 	if (HealthbarWidget)
 	{
+		// Get widget class status
+		TSubclassOf<UUserWidget> WidgetClass = HealthbarWidget->GetWidgetClass();
+		UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] WidgetClass: %s"), WidgetClass ? *WidgetClass->GetName() : TEXT("NULL"));
+
+		// Get the actual widget
+		UUserWidget* Widget = HealthbarWidget->GetWidget();
+		UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] Widget instance: %s"), Widget ? *Widget->GetName() : TEXT("NULL"));
+
+		// If no widget and we want visible, try to initialize
+		if (bVisible && !Widget && WidgetClass)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] Initializing widget manually"));
+			HealthbarWidget->InitWidget();
+			Widget = HealthbarWidget->GetWidget();
+			UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] After init - Widget: %s"), Widget ? *Widget->GetName() : TEXT("NULL"));
+		}
+
+		// Set visibility (inherited from USceneComponent)
 		HealthbarWidget->SetVisibility(bVisible);
+
+		// Also set hidden in game (sometimes needed)
+		HealthbarWidget->SetHiddenInGame(!bVisible);
+
+		UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] Set HealthbarWidget visibility=%s, hiddenInGame=%s"),
+			bVisible ? TEXT("true") : TEXT("false"),
+			!bVisible ? TEXT("true") : TEXT("false"));
+
+		// Log draw size for debugging
+		FVector2D DrawSize = HealthbarWidget->GetDrawSize();
+		UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] Widget DrawSize: %s"), *DrawSize.ToString());
 	}
 }
 

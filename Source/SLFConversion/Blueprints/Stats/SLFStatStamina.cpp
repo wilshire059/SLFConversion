@@ -21,9 +21,9 @@ USLFStatStamina::USLFStatStamina()
 	StatInfo.MaxValue = 50.0;
 	StatInfo.bShowMaxValue = true;
 
-	// Stamina regenerates quickly
+	// Stamina regenerates (Souls-like: ~3-4 seconds to full)
 	StatInfo.RegenInfo.bCanRegenerate = true;
-	StatInfo.RegenInfo.RegenPercent = 25.0;  // 25% per interval
+	StatInfo.RegenInfo.RegenPercent = 0.03;  // 3% of max per interval = ~30%/second
 	StatInfo.RegenInfo.RegenInterval = 0.1;  // Every 0.1 seconds
 
 	bShowMaxValueOnLevelUp = true;

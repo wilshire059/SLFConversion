@@ -19,7 +19,7 @@
 #include "GenericPlatform/GenericWindow.h"
 #include "MediaPlayer.h"
 
-#include "Interfaces/SLFEnemyHealthbarInterface.h"
+#include "Interfaces/BPI_EnemyHealthbar.h"
 #include "W_EnemyHealthbar.generated.h"
 
 // Forward declarations for widget types
@@ -35,7 +35,7 @@
 
 
 UCLASS()
-class SLFCONVERSION_API UW_EnemyHealthbar : public UUserWidget, public ISLFEnemyHealthbarInterface
+class SLFCONVERSION_API UW_EnemyHealthbar : public UUserWidget, public IBPI_EnemyHealthbar
 {
 	GENERATED_BODY()
 
@@ -84,7 +84,14 @@ public:
 	void EventTimerTick();
 	virtual void EventTimerTick_Implementation();
 
+	// ISLFEnemyHealthbarInterface implementation
+	virtual void UpdateEnemyHealthbar_Implementation(double CurrentHealth, double MaxHealth, double Change) override;
+
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Widget references (found via GetWidgetFromName, not UPROPERTY to avoid conflict with Blueprint)
+	class UProgressBar* CachedHealthBar_Front;
+	class UProgressBar* CachedHealthBar_Back;
 };

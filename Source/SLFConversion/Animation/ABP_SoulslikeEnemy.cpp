@@ -9,6 +9,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "UObject/PropertyAccessUtil.h"
 #include "Components/ActorComponent.h"
+#include "Components/AICombatManagerComponent.h"
+#include "SLFPrimaryDataAssets.h"
 
 UABP_SoulslikeEnemy::UABP_SoulslikeEnemy()
 {
@@ -88,6 +90,23 @@ void UABP_SoulslikeEnemy::NativeUpdateAnimation(float DeltaSeconds)
 
 	// Update component reference
 	ACAICombatManager = CachedCombatManager;
+
+	// Get PoiseBreakAsset and PoiseBroken from combat manager
+	if (UAICombatManagerComponent* AICombatMgr = Cast<UAICombatManagerComponent>(CachedCombatManager))
+	{
+		// Get PoiseBreakAsset from combat manager
+		if (AICombatMgr->PoiseBreakAsset)
+		{
+			PoiseBreakAsset = Cast<UPDA_PoiseBreakAnimData>(AICombatMgr->PoiseBreakAsset);
+		}
+		// Get PoiseBroken state
+		PoiseBroken = AICombatMgr->bPoiseBroken;
+		// Get IkWeight from combat manager
+		IkWeight = AICombatMgr->IkWeight;
+		// Get CurrentHitNormal from combat manager
+		CurrentHitNormal = AICombatMgr->CurrentHitNormal;
+		HitLocation = AICombatMgr->CurrentHitNormal;
+	}
 
 	// Get equipment component
 	for (UActorComponent* Comp : OwnerCharacter->GetComponents())

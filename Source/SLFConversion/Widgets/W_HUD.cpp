@@ -6,7 +6,9 @@
 
 #include "Widgets/W_HUD.h"
 #include "Blueprints/B_Stat.h"
+#include "Blueprints/SLFStatBase.h"
 #include "Blueprints/B_StatusEffect.h"
+#include "Components/StatManagerComponent.h"
 #include "Blueprints/B_Interactable.h"
 #include "Blueprints/B_RestingPoint.h"
 #include "Blueprints/Actors/SLFInteractableBase.h"
@@ -28,6 +30,8 @@
 #include "Widgets/W_Interaction.h"
 #include "Widgets/W_LootNotification.h"
 #include "Widgets/W_FirstLootNotification.h"
+#include "Widgets/W_Resources.h"
+#include "Widgets/W_BigScreenMessage.h"
 #include "Components/VerticalBox.h"
 #include "Components/WidgetSwitcher.h"
 #include "Components/Image.h"
@@ -49,6 +53,7 @@ UW_HUD::UW_HUD(const FObjectInitializer& ObjectInitializer)
 	CachedW_Crafting = nullptr;
 	CachedW_Status = nullptr;
 	CachedW_Settings = nullptr;
+	CachedW_Resources = nullptr;
 	CachedItemLootNotificationsBox = nullptr;
 	CachedW_FirstLootNotification = nullptr;
 	LootNotificationWidgetClass = nullptr;
@@ -163,6 +168,14 @@ void UW_HUD::CacheWidgetReferences()
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - CachedW_Settings: %s"),
 		CachedW_Settings ? TEXT("Found") : TEXT("NOT FOUND"));
 
+	// Find CachedW_Resources widget (stat bars)
+	if (!CachedW_Resources)
+	{
+		CachedW_Resources = Cast<UW_Resources>(GetWidgetFromName(TEXT("W_Resources")));
+	}
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - CachedW_Resources: %s"),
+		CachedW_Resources ? TEXT("Found") : TEXT("NOT FOUND"));
+
 	if (CachedW_Settings)
 	{
 		CachedW_Settings->OnSettingsClosed.AddUniqueDynamic(this, &UW_HUD::OnSettingsClosedHandler);
@@ -211,12 +224,12 @@ bool UW_HUD::GetTargetWidgetVisibility_Implementation(UUserWidget* Widget)
 	return false;
 }
 
-void UW_HUD::BindToStatUpdate_Implementation(const TArray<UB_Stat*>& AllStats, const TArray<TSubclassOf<UB_Stat>>& StatsToListenFor)
+void UW_HUD::BindToStatUpdate_Implementation(const TArray<USLFStatBase*>& AllStats, const TArray<TSubclassOf<USLFStatBase>>& StatsToListenFor)
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::BindToStatUpdate - Binding to %d stats, filtering by %d types"),
 		AllStats.Num(), StatsToListenFor.Num());
 
-	for (UB_Stat* Stat : AllStats)
+	for (USLFStatBase* Stat : AllStats)
 	{
 		if (!Stat)
 		{
@@ -231,7 +244,7 @@ void UW_HUD::BindToStatUpdate_Implementation(const TArray<UB_Stat*>& AllStats, c
 		else
 		{
 			UClass* StatClass = Stat->GetClass();
-			for (const TSubclassOf<UB_Stat>& FilterClass : StatsToListenFor)
+			for (const TSubclassOf<USLFStatBase>& FilterClass : StatsToListenFor)
 			{
 				if (FilterClass && StatClass->IsChildOf(FilterClass))
 				{
@@ -300,6 +313,36 @@ void UW_HUD::InitializeBindings_Implementation()
 		else
 		{
 			UE_LOG(LogTemp, Warning, TEXT("UW_HUD::InitializeBindings - InventoryManagerComponent not found on controller"));
+		}
+
+		// Bind to StatManager's OnStatsInitialized event and stat updates
+		if (APawn* Pawn = PC->GetPawn())
+		{
+			if (UStatManagerComponent* StatManager = Pawn->FindComponentByClass<UStatManagerComponent>())
+			{
+				// Bind to OnStatsInitialized for future initializations
+				StatManager->OnStatsInitialized.AddUniqueDynamic(this, &UW_HUD::EventOnStatsInitialized);
+				UE_LOG(LogTemp, Log, TEXT("UW_HUD::InitializeBindings - Bound to StatManager::OnStatsInitialized"));
+
+				// If stats are already initialized (component already ran BeginPlay), bind now
+				TArray<UObject*> StatObjects;
+				TMap<TSubclassOf<UObject>, FGameplayTag> StatClassesAndCategories;
+				StatManager->GetAllStats(StatObjects, StatClassesAndCategories);
+
+				if (StatObjects.Num() > 0)
+				{
+					UE_LOG(LogTemp, Log, TEXT("UW_HUD::InitializeBindings - Stats already initialized, binding now..."));
+					EventOnStatsInitialized();
+				}
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("UW_HUD::InitializeBindings - StatManagerComponent not found on Pawn"));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("UW_HUD::InitializeBindings - No Pawn available yet"));
 		}
 	}
 }
@@ -507,7 +550,7 @@ void UW_HUD::EventShowGameMenu_Implementation()
 			ToDisable.Add(PC->IMC_Gameplay);
 		}
 
-		PC->SwitchInputContext(ToEnable, ToDisable);
+		PC->SwitchInputContextInternal(ToEnable, ToDisable);
 	}
 }
 
@@ -544,7 +587,7 @@ void UW_HUD::EventCloseGameMenu_Implementation()
 			ToDisable.Add(PC->IMC_NavigableMenu);
 		}
 
-		PC->SwitchInputContext(ToEnable, ToDisable);
+		PC->SwitchInputContextInternal(ToEnable, ToDisable);
 	}
 }
 
@@ -555,23 +598,31 @@ void UW_HUD::EventOnExitStorage_Implementation()
 	EventToggleUiMode(false);
 }
 
-void UW_HUD::OnStatUpdatedHandler(UB_Stat* UpdatedStat, double Change, bool bUpdateAffectedStats, ESLFValueType ValueType)
+void UW_HUD::OnStatUpdatedHandler(USLFStatBase* UpdatedStat, double Change, bool bUpdateAffectedStats, ESLFValueType ValueType)
 {
 	EventOnStatUpdated(UpdatedStat, Change, bUpdateAffectedStats, ValueType);
 }
 
-void UW_HUD::EventOnStatUpdated_Implementation(UB_Stat* UpdatedStat, double Change, bool bUpdateAffectedStats, ESLFValueType ValueType)
+void UW_HUD::EventOnStatUpdated_Implementation(USLFStatBase* UpdatedStat, double Change, bool bUpdateAffectedStats, ESLFValueType ValueType)
 {
 	if (!UpdatedStat)
 	{
 		return;
 	}
+
 	FGameplayTag StatTag = UpdatedStat->StatInfo.Tag;
 	double CurrentValue = UpdatedStat->StatInfo.CurrentValue;
 	double MaxValue = UpdatedStat->StatInfo.MaxValue;
 	double Percent = UpdatedStat->CalculatePercent();
+
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventOnStatUpdated - Stat: %s, Value: %.1f/%.1f (%.1f%%), Change: %.1f"),
 		*StatTag.ToString(), CurrentValue, MaxValue, Percent, Change);
+
+	// Forward stat update to W_Resources for visual update
+	if (CachedW_Resources)
+	{
+		CachedW_Resources->EventUpdateStat(UpdatedStat->StatInfo);
+	}
 }
 
 void UW_HUD::EventOnStatusEffectAdded_Implementation(UB_StatusEffect* StatusEffect)
@@ -582,7 +633,49 @@ void UW_HUD::EventOnStatusEffectAdded_Implementation(UB_StatusEffect* StatusEffe
 
 void UW_HUD::EventOnStatsInitialized_Implementation()
 {
-	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventOnStatsInitialized"));
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventOnStatsInitialized - Binding to player stats"));
+
+	// Get the player pawn's StatManagerComponent
+	APlayerController* PC = GetOwningPlayer();
+	if (!PC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::EventOnStatsInitialized - No PlayerController!"));
+		return;
+	}
+
+	APawn* Pawn = PC->GetPawn();
+	if (!Pawn)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::EventOnStatsInitialized - No Pawn!"));
+		return;
+	}
+
+	UStatManagerComponent* StatManager = Pawn->FindComponentByClass<UStatManagerComponent>();
+	if (!StatManager)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::EventOnStatsInitialized - No StatManagerComponent!"));
+		return;
+	}
+
+	// Get all stats and bind to their OnStatUpdated delegates
+	TArray<UObject*> StatObjects;
+	TMap<TSubclassOf<UObject>, FGameplayTag> StatClassesAndCategories;
+	StatManager->GetAllStats(StatObjects, StatClassesAndCategories);
+
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventOnStatsInitialized - Found %d stats"), StatObjects.Num());
+
+	for (UObject* StatObj : StatObjects)
+	{
+		USLFStatBase* Stat = Cast<USLFStatBase>(StatObj);
+		if (Stat)
+		{
+			Stat->OnStatUpdated.AddUniqueDynamic(this, &UW_HUD::OnStatUpdatedHandler);
+			UE_LOG(LogTemp, Log, TEXT("  Bound to stat: %s (%.1f/%.1f)"),
+				*Stat->StatInfo.Tag.ToString(),
+				Stat->StatInfo.CurrentValue,
+				Stat->StatInfo.MaxValue);
+		}
+	}
 }
 
 void UW_HUD::EventOnBuffDetected_Implementation(UPDA_Buff* Buff, bool bAdded)
@@ -812,6 +905,55 @@ void UW_HUD::EventBigScreenMessage_Implementation(const FText& InMessage, UMater
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventBigScreenMessage - Message: %s, AnimationRate: %f"),
 		*InMessage.ToString(), AnimationRateScale);
+
+	// Find and show the W_BigScreenMessage widget
+	UW_BigScreenMessage* BigScreenMsg = Cast<UW_BigScreenMessage>(GetWidgetFromName(TEXT("W_BigScreenMessage")));
+	if (BigScreenMsg)
+	{
+		// Call EventShowMessage on the widget
+		BigScreenMsg->EventShowMessage(InMessage, GradientMaterial, bHasBackdrop, AnimationRateScale);
+		UE_LOG(LogTemp, Log, TEXT("[W_HUD] Forwarded to W_BigScreenMessage"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_HUD] W_BigScreenMessage widget not found!"));
+	}
+}
+
+void UW_HUD::ShowDeathScreen()
+{
+	UE_LOG(LogTemp, Warning, TEXT("UW_HUD::ShowDeathScreen - Showing 'YOU DIED' screen"));
+
+	// Call EventBigScreenMessage with "YOU DIED" text
+	EventBigScreenMessage(FText::FromString(TEXT("YOU DIED")), nullptr, true, 1.0f);
+
+	// Also display on-screen message as fallback
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("YOU DIED"));
+	}
+}
+
+void UW_HUD::HideDeathScreen()
+{
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::HideDeathScreen - Hiding death screen"));
+
+	// Hide the big screen message widget (use correct widget name "W_BigScreenMessage")
+	if (UWidget* BigScreenMessage = GetWidgetFromName(TEXT("W_BigScreenMessage")))
+	{
+		BigScreenMessage->SetVisibility(ESlateVisibility::Collapsed);
+		UE_LOG(LogTemp, Log, TEXT("[W_HUD] Hid W_BigScreenMessage widget"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_HUD] HideDeathScreen - W_BigScreenMessage not found!"));
+	}
+
+	// Clear any on-screen debug messages
+	if (GEngine)
+	{
+		GEngine->ClearOnScreenDebugMessages();
+	}
 }
 
 void UW_HUD::EventShowAutoSaveIcon_Implementation(float InDuration)

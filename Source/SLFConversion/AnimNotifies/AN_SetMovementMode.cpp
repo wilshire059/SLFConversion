@@ -9,7 +9,7 @@
 #include "Interfaces/BPI_GenericCharacter.h"
 
 UAN_SetMovementMode::UAN_SetMovementMode()
-	: MovementMode(ESLFMovementType::Walk)
+	: MovementMode(ESLFMovementType::Run) // Default to Run (400), not Walk (200)
 {
 #if WITH_EDITORONLY_DATA
 	NotifyColor = FColor(0, 150, 255, 255); // Blue for movement

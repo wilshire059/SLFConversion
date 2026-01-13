@@ -40,12 +40,20 @@ ASLFBaseCharacter::ASLFBaseCharacter()
 	TargetLerpLocation = FVector::ZeroVector;
 	TargetLerpRotation = FRotator::ZeroRotator;
 
-	// NOTE: Manager components (StatManager, StatusEffectManager, BuffManager) are defined in
-	// the Blueprint's SCS (Simple Construction Script) with their data (StatTable, Stats, etc.).
-	// Do NOT create them here with CreateDefaultSubobject as that would override the Blueprint
-	// instances and lose their configured data.
-	// They will be found via FindComponentByClass in BeginPlay.
-	CachedStatManager = nullptr;
+	// Create StatManagerComponent - this was previously expected to come from Blueprint SCS,
+	// but after migration the SCS components were lost. Creating in C++ ensures it always exists.
+	// The StatTable property can be overridden in Blueprint or set via Python script.
+	CachedStatManager = CreateDefaultSubobject<UStatManagerComponent>(TEXT("StatManagerComponent"));
+
+	// Set default StatTable path - this is the standard stat table used by the framework
+	static ConstructorHelpers::FObjectFinder<UDataTable> DefaultStatTableFinder(
+		TEXT("/Game/SoulslikeFramework/Data/_Datatables/DT_ExampleStatTable.DT_ExampleStatTable"));
+	if (DefaultStatTableFinder.Succeeded() && CachedStatManager)
+	{
+		CachedStatManager->StatTable = DefaultStatTableFinder.Object;
+	}
+
+	// Other manager components still use FindComponentByClass - they may be added by Blueprint
 	CachedStatusEffectManager = nullptr;
 	CachedBuffManager = nullptr;
 	CachedTargetLockonComponent = nullptr;
@@ -78,8 +86,13 @@ void ASLFBaseCharacter::BeginPlay()
 			*Comp->GetClass()->GetName());
 	}
 
-	// Cache component references from Blueprint-defined components
-	CachedStatManager = FindComponentByClass<UStatManagerComponent>();
+	// Cache component references
+	// StatManager is created in constructor, but check if Blueprint added a different one
+	if (!CachedStatManager)
+	{
+		CachedStatManager = FindComponentByClass<UStatManagerComponent>();
+	}
+	// Other manager components may be added by Blueprint SCS
 	CachedStatusEffectManager = FindComponentByClass<UStatusEffectManagerComponent>();
 	CachedBuffManager = FindComponentByClass<UBuffManagerComponent>();
 	CachedTargetLockonComponent = FindComponentByClass<UBillboardComponent>();
@@ -526,7 +539,7 @@ void ASLFBaseCharacter::SetMovementMode_Implementation(ESLFMovementType Type)
 		GetCharacterMovement()->MaxWalkSpeed = 200.0f;
 		break;
 	case ESLFMovementType::Run:
-		GetCharacterMovement()->MaxWalkSpeed = 400.0f;
+		GetCharacterMovement()->MaxWalkSpeed = 500.0f;  // Increased from 400 for testing
 		break;
 	case ESLFMovementType::Sprint:
 		GetCharacterMovement()->MaxWalkSpeed = 600.0f;

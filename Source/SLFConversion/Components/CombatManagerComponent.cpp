@@ -167,7 +167,7 @@ void UCombatManagerComponent::HandleIncomingWeaponDamage_Implementation(
 
 				// Apply reduced damage (e.g., 25% damage through guard)
 				float ReducedDamage = Damage * 0.25f;
-				FGameplayTag HealthTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Primary.HP"));
+				FGameplayTag HealthTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
 				StatManager->AdjustStat(HealthTag, ESLFValueType::CurrentValue, -ReducedDamage, false, true);
 				UE_LOG(LogTemp, Log, TEXT("[CombatManager] Guard reduced damage: %.2f (from %.2f)"), ReducedDamage, Damage);
 			}
@@ -194,7 +194,7 @@ void UCombatManagerComponent::HandleIncomingWeaponDamage_Implementation(
 		if (UStatManagerComponent* StatManager = Cast<UStatManagerComponent>(StatComp))
 		{
 			// Apply full damage to health stat
-			FGameplayTag HealthTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Primary.HP"));
+			FGameplayTag HealthTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
 			StatManager->AdjustStat(HealthTag, ESLFValueType::CurrentValue, -Damage, false, true);
 			UE_LOG(LogTemp, Log, TEXT("[CombatManager] Applied %.2f damage to health"), Damage);
 
@@ -523,7 +523,7 @@ void UCombatManagerComponent::ApplyFistDamage_Implementation(AActor* Target, con
 		if (UStatManagerComponent* TargetStatManager = Cast<UStatManagerComponent>(TargetStatComp))
 		{
 			// Apply health damage
-			FGameplayTag HealthTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Primary.HP"));
+			FGameplayTag HealthTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
 			TargetStatManager->AdjustStat(HealthTag, ESLFValueType::CurrentValue, -Damage, false, true);
 
 			// Apply poise damage (unarmed attacks do poise damage too)

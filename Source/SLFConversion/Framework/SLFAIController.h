@@ -24,12 +24,15 @@ public:
 
 	virtual void BeginPlay() override;
 	virtual void OnPossess(APawn* InPawn) override;
+	virtual void Tick(float DeltaTime) override;
 
 	// ═══════════════════════════════════════════════════════════════════════════════
 	// COMPONENTS
-	// Note: AIPerception is defined in Blueprint SCS
-	// Use inherited GetAIPerceptionComponent() from AAIController
 	// ═══════════════════════════════════════════════════════════════════════════════
+
+	/** AI Perception component for sensing targets */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
+	TObjectPtr<UAIPerceptionComponent> AIPerceptionComponent;
 
 	// ═══════════════════════════════════════════════════════════════════════════════
 	// BPI_AIC INTERFACE IMPLEMENTATIONS [1/1]

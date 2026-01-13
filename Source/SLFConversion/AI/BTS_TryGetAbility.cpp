@@ -8,6 +8,7 @@
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/AC_AI_CombatManager.h"
+#include "Components/AICombatManagerComponent.h"
 
 UBTS_TryGetAbility::UBTS_TryGetAbility()
 {
@@ -32,24 +33,40 @@ void UBTS_TryGetAbility::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 		return;
 	}
 
-	// From Blueprint: Get AC_AI_CombatManager from controlled pawn
-	UAC_AI_CombatManager* AICombatManager = ControlledPawn->FindComponentByClass<UAC_AI_CombatManager>();
-	if (!AICombatManager)
+	// Try to get combat manager - check both C++ and Blueprint component types
+	bool bCanAttack = false;
+
+	// First try C++ component (UAICombatManagerComponent)
+	UAICombatManagerComponent* CppCombatMgr = ControlledPawn->FindComponentByClass<UAICombatManagerComponent>();
+	if (CppCombatMgr)
 	{
-		return;
+		UDataAsset* SelectedAbility = nullptr;
+		bCanAttack = CppCombatMgr->TryGetAbility(SelectedAbility);
+		UE_LOG(LogTemp, Log, TEXT("[BTS_TryGetAbility] C++ CombatManager found, TryGetAbility=%s, Ability=%s"),
+			bCanAttack ? TEXT("true") : TEXT("false"),
+			SelectedAbility ? *SelectedAbility->GetName() : TEXT("null"));
 	}
-
-	// From Blueprint: Call TryGetAbility and check if result is valid
-	// The function has multiple output params but Blueprint only uses the first one
-	UPrimaryDataAsset* SelectedAbility = nullptr;
-	UPrimaryDataAsset* Unused1 = nullptr;
-	UPrimaryDataAsset* Unused2 = nullptr;
-	UPrimaryDataAsset* Unused3 = nullptr;
-	UPrimaryDataAsset* Unused4 = nullptr;
-	AICombatManager->TryGetAbility(SelectedAbility, Unused1, Unused2, Unused3, Unused4);
-
-	// From Blueprint: Set bCanAttack = IsValid(SelectedAbility)
-	bool bCanAttack = IsValid(SelectedAbility);
+	else
+	{
+		// Fallback: try Blueprint component (UAC_AI_CombatManager)
+		UAC_AI_CombatManager* BpCombatMgr = ControlledPawn->FindComponentByClass<UAC_AI_CombatManager>();
+		if (BpCombatMgr)
+		{
+			UPrimaryDataAsset* SelectedAbility = nullptr;
+			UPrimaryDataAsset* Unused1 = nullptr;
+			UPrimaryDataAsset* Unused2 = nullptr;
+			UPrimaryDataAsset* Unused3 = nullptr;
+			UPrimaryDataAsset* Unused4 = nullptr;
+			BpCombatMgr->TryGetAbility(SelectedAbility, Unused1, Unused2, Unused3, Unused4);
+			bCanAttack = IsValid(SelectedAbility);
+			UE_LOG(LogTemp, Log, TEXT("[BTS_TryGetAbility] BP CombatManager found, CanAttack=%s"),
+				bCanAttack ? TEXT("true") : TEXT("false"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[BTS_TryGetAbility] No CombatManager found on %s!"), *ControlledPawn->GetName());
+		}
+	}
 
 	// From Blueprint: Set result to blackboard
 	Blackboard->SetValueAsBool(CanAttackKey.SelectedKeyName, bCanAttack);

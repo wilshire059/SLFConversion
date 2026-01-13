@@ -27,16 +27,24 @@ EBTNodeResult::Type UBTT_SimpleMoveTo::ExecuteTask(UBehaviorTreeComponent& Owner
 
 	if (!ControlledPawn || !AIController)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UBTT_SimpleMoveTo::ExecuteTask - No pawn or controller"));
+		UE_LOG(LogTemp, Warning, TEXT("[BTT_SimpleMoveTo] No pawn or controller"));
 		return EBTNodeResult::Succeeded; // Always succeed per Blueprint design
 	}
 
 	UBlackboardComponent* Blackboard = OwnerComp.GetBlackboardComponent();
 	if (!Blackboard)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UBTT_SimpleMoveTo::ExecuteTask - No blackboard"));
+		UE_LOG(LogTemp, Warning, TEXT("[BTT_SimpleMoveTo] No blackboard"));
 		return EBTNodeResult::Succeeded; // Always succeed
 	}
+
+	// Log current state for debugging
+	uint8 CurrentState = Blackboard->GetValueAsEnum(FName("State"));
+	UE_LOG(LogTemp, Warning, TEXT("[BTT_SimpleMoveTo] EXECUTING on %s (State=%d, TargetKey=%s, RadiusKey=%s)"),
+		*ControlledPawn->GetName(),
+		static_cast<int32>(CurrentState),
+		*TargetKey.SelectedKeyName.ToString(),
+		*RadiusKey.SelectedKeyName.ToString());
 
 	// Cache reference for async completion
 	CachedOwnerComp = &OwnerComp;
@@ -105,9 +113,35 @@ EBTNodeResult::Type UBTT_SimpleMoveTo::ExecuteTask(UBehaviorTreeComponent& Owner
 	}
 	else
 	{
-		// Request failed - but we always succeed per Blueprint design
+		// Request failed - try direct movement without pathfinding as fallback
+		UE_LOG(LogTemp, Warning, TEXT("UBTT_SimpleMoveTo::ExecuteTask - Pathfinding failed, trying direct movement"));
 		CleanupMoveDelegate();
-		UE_LOG(LogTemp, Log, TEXT("UBTT_SimpleMoveTo::ExecuteTask - Move request failed, returning success anyway"));
+
+		// Get target location for direct movement
+		FVector TargetLocation;
+		if (IsValid(TargetActor))
+		{
+			TargetLocation = TargetActor->GetActorLocation();
+		}
+		else
+		{
+			TargetLocation = Blackboard->GetValueAsVector(TargetKey.SelectedKeyName);
+		}
+
+		// Use SimpleMoveToLocation which doesn't require pathfinding
+		// This will at least make the AI move towards the target
+		AIController->MoveToLocation(
+			TargetLocation,
+			AcceptanceRadius,
+			false, // bStopOnOverlap
+			false, // bUsePathfinding = FALSE for direct movement
+			false, // bCanStrafe
+			true,  // bAllowPartialPath
+			TSubclassOf<UNavigationQueryFilter>(),
+			false  // bProjectDestinationToNavigation
+		);
+
+		// Return success to keep BT running
 		return EBTNodeResult::Succeeded;
 	}
 }

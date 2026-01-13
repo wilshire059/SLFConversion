@@ -501,8 +501,26 @@ void UStatManagerComponent::EventInitializeStats()
 			if (StatInstance)
 			{
 				StatInstance->StatInfo.Tag = StatTag;
+
+				// CRITICAL: Initialize CurrentValue to MaxValue so stats start at full
+				// If MaxValue is 0, check the CDO for default values
+				if (StatInstance->StatInfo.MaxValue <= 0.0)
+				{
+					// Try to get MaxValue from the C++ parent class CDO
+					if (USLFStatBase* CDO = StatClass->GetDefaultObject<USLFStatBase>())
+					{
+						StatInstance->StatInfo.MaxValue = CDO->StatInfo.MaxValue;
+					}
+				}
+				// Set CurrentValue to MaxValue (stat starts at full)
+				if (StatInstance->StatInfo.CurrentValue <= 0.0 && StatInstance->StatInfo.MaxValue > 0.0)
+				{
+					StatInstance->StatInfo.CurrentValue = StatInstance->StatInfo.MaxValue;
+				}
+
 				ActiveStats.Add(StatTag, StatInstance);
-				UE_LOG(LogTemp, Log, TEXT("[StatManager] Initialized stat: %s"), *StatTag.ToString());
+				UE_LOG(LogTemp, Log, TEXT("[StatManager] Initialized stat: %s (Current: %.0f, Max: %.0f)"),
+					*StatTag.ToString(), StatInstance->StatInfo.CurrentValue, StatInstance->StatInfo.MaxValue);
 			}
 		}
 	}

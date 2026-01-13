@@ -8,7 +8,7 @@
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Navigation/PathFollowingComponent.h"
-#include "Components/AC_AI_BehaviorManager.h"
+#include "Components/AIBehaviorManagerComponent.h"
 
 UBTT_PatrolPath::UBTT_PatrolPath()
 {
@@ -26,7 +26,7 @@ EBTNodeResult::Type UBTT_PatrolPath::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 	}
 
 	// From Blueprint: Get AI_BehaviorManager and check patrol path
-	UAC_AI_BehaviorManager* BehaviorManager = ControlledPawn->FindComponentByClass<UAC_AI_BehaviorManager>();
+	UAIBehaviorManagerComponent* BehaviorManager = ControlledPawn->FindComponentByClass<UAIBehaviorManagerComponent>();
 	if (BehaviorManager && BehaviorManager->PatrolPath)
 	{
 		// Patrol path exists - use blackboard to get current patrol point

@@ -28,7 +28,7 @@ public:
 	FName EndSocketName = "weapon_end";
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
-	float TraceRadius = 10.0f;
+	float TraceRadius = 30.0f;  // Larger radius to ensure hits
 
 	// Actors already hit during this trace - cleared on NotifyEnd
 	UPROPERTY(Transient)

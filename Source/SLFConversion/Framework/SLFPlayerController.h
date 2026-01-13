@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "InputActionValue.h"
 #include "GameplayTagContainer.h"
+#include "Interfaces/BPI_Controller.h"
 #include "SLFPlayerController.generated.h"
 
 class UInputAction;
@@ -13,7 +14,7 @@ class UInputMappingContext;
 class UW_HUD;
 
 UCLASS(Blueprintable, BlueprintType)
-class SLFCONVERSION_API ASLFPlayerController : public APlayerController
+class SLFCONVERSION_API ASLFPlayerController : public APlayerController, public IBPI_Controller
 {
 	GENERATED_BODY()
 
@@ -141,12 +142,12 @@ public:
 	// ═══════════════════════════════════════════════════════════════════
 
 	/**
-	 * Switch between input mapping contexts.
+	 * Switch between input mapping contexts (non-interface version).
 	 * From Blueprint: Enables ContextsToEnable and disables ContextsToDisable.
 	 * Used when opening/closing menus to switch between gameplay and menu input.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Input")
-	void SwitchInputContext(const TArray<UInputMappingContext*>& ContextsToEnable, const TArray<UInputMappingContext*>& ContextsToDisable);
+	void SwitchInputContextInternal(const TArray<UInputMappingContext*>& ContextsToEnable, const TArray<UInputMappingContext*>& ContextsToDisable);
 
 protected:
 
@@ -162,4 +163,30 @@ protected:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "HUD")
 	void Native_InitializeHUD();
+
+	// ═══════════════════════════════════════════════════════════════════
+	// BPI_CONTROLLER INTERFACE IMPLEMENTATIONS
+	// ═══════════════════════════════════════════════════════════════════
+
+	virtual void StartRespawn_Implementation(double FadeDelay) override;
+	void CompleteRespawn(); // Called by timer after death delay
+	virtual void RequestAddToSaveData_Implementation(FGameplayTag SaveTag, const FInstancedStruct& Data) override;
+	virtual void RequestUpdateSaveData_Implementation(FGameplayTag SaveTag, TArray<FInstancedStruct>& Data) override;
+	virtual void SerializeDataForSaving_Implementation(ESLFSaveBehavior Behavior, FGameplayTag SaveTag) override;
+	virtual void SerializeAllDataForSaving_Implementation(ESLFSaveBehavior Behavior) override;
+	virtual void SetActiveWidgetForNavigation_Implementation(FGameplayTag NavigableWidgetTag) override;
+	virtual void SendBigScreenMessage_Implementation(const FText& Text, UMaterialInterface* GradientMaterial, bool bBackdrop, double PlayRate) override;
+	virtual void ShowSavingVisual_Implementation(double Length) override;
+	virtual void ToggleRadarUpdateState_Implementation(bool bUpdateEnabled) override;
+	virtual void GetPlayerHUD_Implementation(UUserWidget*& HUD) override;
+	virtual void SwitchInputContext_Implementation(TArray<UInputMappingContext*>& ContextsToEnable, TArray<UInputMappingContext*>& ContextsToDisable) override;
+	virtual void ToggleInput_Implementation(bool bEnabled) override;
+	virtual void GetCurrency_Implementation(int32& Currency) override;
+	virtual void GetProgressManager_Implementation(UActorComponent*& ProgressManager) override;
+	virtual void GetSoulslikeController_Implementation(APlayerController*& Controller) override;
+	virtual void GetPawnFromController_Implementation(APawn*& OutPawn) override;
+	virtual void GetInventoryComponent_Implementation(UActorComponent*& Inventory) override;
+	virtual void AdjustCurrency_Implementation(int32 Delta) override;
+	virtual void LootItemToInventory_Implementation(AActor* Item) override;
+	virtual void BlendViewTarget_Implementation(AActor* TargetActor, double BlendTime, double BlendExp, bool bLockOutgoing) override;
 };

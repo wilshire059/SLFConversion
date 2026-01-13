@@ -10,7 +10,7 @@
 
 #include "Components/AC_ActionManager.h"
 #include "Blueprints/SLFActionBase.h"
-#include "Components/AC_StatManager.h"
+#include "Components/StatManagerComponent.h"
 #include "Components/AC_InteractionManager.h"
 #include "Components/AC_CombatManager.h"
 #include "Blueprints/BFL_Helper.h"
@@ -78,15 +78,15 @@ void UAC_ActionManager::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 /**
  * GetStatManager - Get the stat manager component from the owner
  *
- * Blueprint Logic: GetComponentByClass(UAC_StatManager)
+ * Blueprint Logic: GetComponentByClass(UStatManagerComponent)
  */
-UAC_StatManager* UAC_ActionManager::GetStatManager_Implementation()
+UStatManagerComponent* UAC_ActionManager::GetStatManager_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_ActionManager::GetStatManager"));
 
 	if (AActor* Owner = GetOwner())
 	{
-		return Owner->FindComponentByClass<UAC_StatManager>();
+		return Owner->FindComponentByClass<UStatManagerComponent>();
 	}
 	return nullptr;
 }
@@ -391,14 +391,14 @@ void UAC_ActionManager::EventStopStaminaLoss_Implementation()
 		}
 
 		// Get stat manager and toggle regen for stamina
-		UAC_StatManager* StatManager = GetStatManager();
+		UStatManagerComponent* StatManager = GetStatManager();
 		if (StatManager)
 		{
 			// Define the stamina tag
 			FGameplayTag StaminaTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Stamina"));
 
 			// Get the stamina stat
-			UB_Stat* StaminaStat = nullptr;
+			UObject* StaminaStat = nullptr;
 			FStatInfo StaminaInfo;
 			StatManager->GetStat(StaminaTag, StaminaStat, StaminaInfo);
 
@@ -448,7 +448,7 @@ void UAC_ActionManager::ReduceStamina()
 
 	// Sequence Then_0: Check if moving in 2D and reduce stamina
 	{
-		UAC_StatManager* StatManager = GetStatManager();
+		UStatManagerComponent* StatManager = GetStatManager();
 		if (StatManager)
 		{
 			// Get owner's velocity
@@ -482,7 +482,7 @@ void UAC_ActionManager::ReduceStamina()
 
 	// Sequence Then_1: Check if out of stamina
 	{
-		UAC_StatManager* StatManager = GetStatManager();
+		UStatManagerComponent* StatManager = GetStatManager();
 		if (StatManager)
 		{
 			FGameplayTag StaminaTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Stamina"));
@@ -517,7 +517,7 @@ void UAC_ActionManager::StartStaminaRegen()
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_ActionManager::StartStaminaRegen"));
 
-	UAC_StatManager* StatManager = GetStatManager();
+	UStatManagerComponent* StatManager = GetStatManager();
 	if (StatManager)
 	{
 		FGameplayTag StaminaTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Stamina"));
@@ -569,13 +569,13 @@ void UAC_ActionManager::EventPerformAction_Implementation(const FGameplayTag& Ac
 			// Check stamina requirement if there's a cost
 			if (StaminaCost > 0.0)
 			{
-				UAC_StatManager* StatManager = GetStatManager();
+				UStatManagerComponent* StatManager = GetStatManager();
 				if (StatManager)
 				{
 					// Get stamina stat
 					FGameplayTag StaminaTag = FGameplayTag::RequestGameplayTag(
 						FName("SoulslikeFramework.Stat.Secondary.Stamina"));
-					UB_Stat* StaminaStat = nullptr;
+					UObject* StaminaStat = nullptr;
 					FStatInfo StaminaInfo;
 					StatManager->GetStat(StaminaTag, StaminaStat, StaminaInfo);
 
@@ -598,10 +598,10 @@ void UAC_ActionManager::EventPerformAction_Implementation(const FGameplayTag& Ac
 			// Check additional stat requirements (RequiredStatTag/RequiredStatAmount)
 			if (ActionData->RequiredStatTag.IsValid() && ActionData->RequiredStatAmount > 0.0)
 			{
-				UAC_StatManager* StatManager = GetStatManager();
+				UStatManagerComponent* StatManager = GetStatManager();
 				if (StatManager)
 				{
-					UB_Stat* RequiredStat = nullptr;
+					UObject* RequiredStat = nullptr;
 					FStatInfo RequiredStatInfo;
 					StatManager->GetStat(ActionData->RequiredStatTag, RequiredStat, RequiredStatInfo);
 

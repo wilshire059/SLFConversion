@@ -6,7 +6,7 @@
 
 #include "SLFBTTaskSwitchState.h"
 #include "AIController.h"
-#include "Components/AC_AI_BehaviorManager.h"
+#include "Components/AIBehaviorManagerComponent.h"
 
 USLFBTTaskSwitchState::USLFBTTaskSwitchState()
 {
@@ -24,7 +24,7 @@ EBTNodeResult::Type USLFBTTaskSwitchState::ExecuteTask(UBehaviorTreeComponent& O
 	UE_LOG(LogTemp, Log, TEXT("[BTT_SwitchState] Switching to state: %s"), *NewState.ToString());
 
 	// Get AI_BehaviorManager component and set state
-	UAC_AI_BehaviorManager* BehaviorManager = ControlledPawn->FindComponentByClass<UAC_AI_BehaviorManager>();
+	UAIBehaviorManagerComponent* BehaviorManager = ControlledPawn->FindComponentByClass<UAIBehaviorManagerComponent>();
 	if (BehaviorManager)
 	{
 		// Set current state from string name (simplified - just update property)
