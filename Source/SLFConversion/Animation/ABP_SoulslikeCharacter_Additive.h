@@ -1,4 +1,4 @@
-// ABP_SoulslikeCharacter_Additive.h
+﻿// ABP_SoulslikeCharacter_Additive.h
 // C++ AnimInstance for ABP_SoulslikeCharacter_Additive
 //
 // 20-PASS VALIDATION: 2026-01-01 Autonomous Session
@@ -44,10 +44,10 @@ public:
 	// Called when the animation instance is initialized
 	virtual void NativeInitializeAnimation() override;
 
-	// ═══════════════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 	// ANIMATION VARIABLES (23)
 	// These are updated in NativeUpdateAnimation and read by AnimGraph
-	// ═══════════════════════════════════════════════════════════════════════
+	// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	FVector WorldLocation;
@@ -82,11 +82,11 @@ public:
 	// Overlay states - populated from EquipmentManager in NativeUpdateAnimation
 	// Blueprint variables with same names are REMOVED during migration to avoid conflict
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
-	ESLFOverlayState LeftHandOverlayState = ESLFOverlayState::Default;
+	ESLFOverlayState LeftHandOverlayState = ESLFOverlayState::Unarmed;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
-	ESLFOverlayState RightHandOverlayState = ESLFOverlayState::Default;
+	ESLFOverlayState RightHandOverlayState = ESLFOverlayState::Unarmed;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
-	ESLFOverlayState ActiveOverlayState = ESLFOverlayState::Default;
+	ESLFOverlayState ActiveOverlayState = ESLFOverlayState::Unarmed;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	UAC_EquipmentManager* EquipmentManager;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")

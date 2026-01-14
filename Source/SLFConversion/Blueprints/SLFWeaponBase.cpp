@@ -65,6 +65,7 @@ ASLFWeaponBase::ASLFWeaponBase()
 
 	// Initialize debug
 	bDebugVisualizeTrace = false;
+	bHasBeenEquipped = false;
 }
 
 void ASLFWeaponBase::BeginPlay()
@@ -131,41 +132,111 @@ void ASLFWeaponBase::BeginPlay()
 		}
 	}
 
-	// Apply mesh transform offsets (from original Blueprint SCS component settings)
+	// Apply DefaultMeshRelativeLocation/Rotation to WeaponMesh component
+	// These properties store the per-weapon offset (set via Blueprint CDO or Python script)
+	// bp_only pattern: Store offset in property, apply at runtime
 	if (WeaponMesh)
 	{
-		if (!DefaultMeshRelativeLocation.IsZero())
+		UE_LOG(LogTemp, Log, TEXT("[Weapon] Applying DefaultMesh transform - Location: %s, Rotation: %s"),
+			*DefaultMeshRelativeLocation.ToString(),
+			*DefaultMeshRelativeRotation.ToString());
+
+		// Only apply if there is a non-zero offset
+		if (!DefaultMeshRelativeLocation.IsNearlyZero() || !DefaultMeshRelativeRotation.IsNearlyZero())
 		{
 			WeaponMesh->SetRelativeLocation(DefaultMeshRelativeLocation);
-			UE_LOG(LogTemp, Log, TEXT("[Weapon] Applied mesh location offset: %s"), *DefaultMeshRelativeLocation.ToString());
-		}
-		if (!DefaultMeshRelativeRotation.IsZero())
-		{
 			WeaponMesh->SetRelativeRotation(DefaultMeshRelativeRotation);
-			UE_LOG(LogTemp, Log, TEXT("[Weapon] Applied mesh rotation offset: %s"), *DefaultMeshRelativeRotation.ToString());
 		}
+
+		FVector CurrentLoc = WeaponMesh->GetRelativeLocation();
+		FRotator CurrentRot = WeaponMesh->GetRelativeRotation();
+		UE_LOG(LogTemp, Log, TEXT("[Weapon] BeginPlay mesh transform (after apply) - Location: %s, Rotation: %s"),
+			*CurrentLoc.ToString(),
+			*CurrentRot.ToString());
 	}
 
-	// NOTE: Damage is handled directly by CollisionManager, not via OnActorTraced event.
-	// The weapon's OnActorTraced was sending 0 damage because GetAttackPowerStats returns empty.
-	// CollisionManager applies correct damage values directly.
+	// NOTE: CollisionManager handles damage directly
 	if (CollisionManager)
 	{
 		UE_LOG(LogTemp, Log, TEXT("[Weapon] CollisionManager exists on %s"), *GetName());
-		// Damage handled in CollisionManager::ProcessHit directly - no event binding needed
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[Weapon] No CollisionManager found on %s!"), *GetName());
 	}
 
-	// ═══════════════════════════════════════════════════════════════════════════════
-	// SOCKET ATTACHMENT - Attach weapon to character's skeletal mesh socket
-	// ═══════════════════════════════════════════════════════════════════════════════
-	AttachToOwnerSocket();
+	// Attach weapon to character's skeletal mesh socket
+	// AC_EquipmentManager sets Instigator before calling FinishSpawning
+	AttachToOwnerSocket(IsRightHandWeapon());
 }
 
-void ASLFWeaponBase::AttachToOwnerSocket()
+
+
+// ===================================================================
+// IBPI_Item INTERFACE IMPLEMENTATION
+// ===================================================================
+
+void ASLFWeaponBase::OnWeaponEquip_Implementation(bool bRightHand)
+{
+	UE_LOG(LogTemp, Log, TEXT("[Weapon] OnWeaponEquip called: %s (RightHand: %s)"),
+		*GetName(), bRightHand ? TEXT("Yes") : TEXT("No"));
+
+	// Apply mesh settings first (mesh, location, rotation offsets)
+	ApplyMeshSettings();
+
+	// Now attach to the character socket
+	AttachToOwnerSocket(bRightHand);
+
+	bHasBeenEquipped = true;
+}
+
+void ASLFWeaponBase::OnWeaponUnequip_Implementation()
+{
+	UE_LOG(LogTemp, Log, TEXT("[Weapon] OnWeaponUnequip called: %s"), *GetName());
+
+	// Detach from parent
+	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+
+	bHasBeenEquipped = false;
+}
+
+void ASLFWeaponBase::OnUse_Implementation()
+{
+	UE_LOG(LogTemp, Log, TEXT("[Weapon] OnUse called: %s (not typically used for weapons)"), *GetName());
+}
+
+void ASLFWeaponBase::ApplyMeshSettings()
+{
+	UE_LOG(LogTemp, Log, TEXT("[Weapon] ApplyMeshSettings for %s"), *GetName());
+
+	// Apply default weapon mesh if set (from Blueprint CDO)
+	if (WeaponMesh && !DefaultWeaponMesh.IsNull())
+	{
+		UStaticMesh* MeshToApply = DefaultWeaponMesh.LoadSynchronous();
+		if (MeshToApply)
+		{
+			WeaponMesh->SetStaticMesh(MeshToApply);
+			UE_LOG(LogTemp, Log, TEXT("[Weapon] Applied DefaultWeaponMesh: %s"), *MeshToApply->GetName());
+		}
+	}
+
+	// Apply DefaultMeshRelativeLocation/Rotation to WeaponMesh component
+	// These values are set on the Blueprint CDO by apply_weapon_transforms_v5.py
+	if (WeaponMesh)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[Weapon] ApplyMeshSettings - DefaultMeshRelative: Location=%s, Rotation=%s"),
+			*DefaultMeshRelativeLocation.ToString(),
+			*DefaultMeshRelativeRotation.ToString());
+
+		// Always apply the stored transform values to the WeaponMesh component
+		WeaponMesh->SetRelativeLocation(DefaultMeshRelativeLocation);
+		WeaponMesh->SetRelativeRotation(DefaultMeshRelativeRotation);
+
+		FVector AppliedLoc = WeaponMesh->GetRelativeLocation();
+		FRotator AppliedRot = WeaponMesh->GetRelativeRotation();
+		UE_LOG(LogTemp, Log, TEXT("[Weapon] ApplyMeshSettings - Applied: Location=%s, Rotation=%s"),
+			*AppliedLoc.ToString(),
+			*AppliedRot.ToString());
+	}
+}
+
+void ASLFWeaponBase::AttachToOwnerSocket(bool bRightHand)
 {
 	// Get the character that owns this weapon (set as Instigator during spawn)
 	APawn* InstigatorPawn = GetInstigator();
@@ -178,14 +249,12 @@ void ASLFWeaponBase::AttachToOwnerSocket()
 	// Get the skeletal mesh component from the character
 	USkeletalMeshComponent* MeshComponent = nullptr;
 
-	// Try to get the mesh from Character first
 	if (ACharacter* Character = Cast<ACharacter>(InstigatorPawn))
 	{
 		MeshComponent = Character->GetMesh();
 	}
 	else
 	{
-		// Fallback: try to find any skeletal mesh component
 		MeshComponent = InstigatorPawn->FindComponentByClass<USkeletalMeshComponent>();
 	}
 
@@ -198,17 +267,19 @@ void ASLFWeaponBase::AttachToOwnerSocket()
 	// Get socket names from ItemInfo
 	const FSLFEquipmentSocketInfo& Sockets = ItemInfo.EquipmentDetails.AttachmentSockets;
 
-	UE_LOG(LogTemp, Log, TEXT("[Weapon] AttachToOwnerSocket - Sockets L=%s R=%s"),
+	UE_LOG(LogTemp, Log, TEXT("[Weapon] AttachToOwnerSocket - bRightHand=%s, Sockets L=%s R=%s"),
+		bRightHand ? TEXT("true") : TEXT("false"),
 		*Sockets.LeftHandSocketName.ToString(),
 		*Sockets.RightHandSocketName.ToString());
 
-	// Select appropriate socket based on equipment slot (right or left hand)
-	FName SocketName = IsRightHandWeapon() ? Sockets.RightHandSocketName : Sockets.LeftHandSocketName;
+	// Select appropriate socket based on bRightHand parameter from AC_EquipmentManager
+	FName SocketName = bRightHand ? Sockets.RightHandSocketName : Sockets.LeftHandSocketName;
 
 	// Use default socket if none specified
+	// NOTE: "soulslike_weapon_r/l" are proper weapon hold sockets, NOT "hand_r/l" which are wrist sockets
 	if (SocketName.IsNone())
 	{
-		SocketName = IsRightHandWeapon() ? FName("hand_r") : FName("hand_l");
+		SocketName = bRightHand ? FName("soulslike_weapon_r") : FName("soulslike_weapon_l");
 		UE_LOG(LogTemp, Log, TEXT("[Weapon] Using default socket: %s"), *SocketName.ToString());
 	}
 
@@ -218,11 +289,12 @@ void ASLFWeaponBase::AttachToOwnerSocket()
 		UE_LOG(LogTemp, Warning, TEXT("[Weapon] Socket '%s' does not exist on mesh, trying alternatives"),
 			*SocketName.ToString());
 
-		// Try common socket names
+		// Try common socket names - prioritize soulslike_weapon sockets
 		TArray<FName> AlternativeSockets = {
-			FName("weapon_r"), FName("weapon_l"),
-			FName("hand_r"), FName("hand_l"),
 			FName("soulslike_weapon_r"), FName("soulslike_weapon_l"),
+			FName("weapon_r"), FName("weapon_l"),
+			FName("Weapon_R"), FName("Weapon_L"),
+			FName("hand_r"), FName("hand_l"),
 			FName("RightHand"), FName("LeftHand")
 		};
 
@@ -237,13 +309,13 @@ void ASLFWeaponBase::AttachToOwnerSocket()
 		}
 	}
 
-	// Attach to the socket
+	// Attach to the socket (SnapToTarget for all three rules - matches original Blueprint)
 	bool bAttached = K2_AttachToComponent(
 		MeshComponent,
 		SocketName,
-		EAttachmentRule::SnapToTarget,
-		EAttachmentRule::SnapToTarget,
-		EAttachmentRule::KeepWorld,
+		EAttachmentRule::SnapToTarget,  // Location
+		EAttachmentRule::SnapToTarget,  // Rotation
+		EAttachmentRule::SnapToTarget,  // Scale (was KeepWorld, now matches Blueprint)
 		false
 	);
 
@@ -251,6 +323,31 @@ void ASLFWeaponBase::AttachToOwnerSocket()
 	{
 		UE_LOG(LogTemp, Log, TEXT("[Weapon] Attached to socket '%s' on %s"),
 			*SocketName.ToString(), *InstigatorPawn->GetName());
+
+		// Debug: Log WeaponMesh transform AFTER attachment to verify it is preserved
+		if (WeaponMesh)
+		{
+			FVector PostAttachLoc = WeaponMesh->GetRelativeLocation();
+			FRotator PostAttachRot = WeaponMesh->GetRelativeRotation();
+			UE_LOG(LogTemp, Log, TEXT("[Weapon] POST-ATTACH WeaponMesh Relative - Location: %s, Rotation: %s"),
+				*PostAttachLoc.ToString(), *PostAttachRot.ToString());
+
+			// Log WORLD position to verify the offset is actually visible
+			FVector WorldLoc = WeaponMesh->GetComponentLocation();
+			FRotator WorldRot = WeaponMesh->GetComponentRotation();
+			UE_LOG(LogTemp, Log, TEXT("[Weapon] POST-ATTACH WeaponMesh WORLD - Location: %s, Rotation: %s"),
+				*WorldLoc.ToString(), *WorldRot.ToString());
+
+			// Log socket world position for comparison
+			FVector SocketLoc = MeshComponent->GetSocketLocation(SocketName);
+			UE_LOG(LogTemp, Log, TEXT("[Weapon] Socket '%s' WORLD Location: %s"),
+				*SocketName.ToString(), *SocketLoc.ToString());
+
+			// Calculate actual offset from socket
+			FVector Offset = WorldLoc - SocketLoc;
+			UE_LOG(LogTemp, Log, TEXT("[Weapon] WeaponMesh offset from socket: %s (Expected Z: %.2f)"),
+				*Offset.ToString(), PostAttachLoc.Z);
+		}
 
 		// Apply rotation offset if specified (handles different skeleton socket orientations)
 		// First check socket info, then fall back to class default

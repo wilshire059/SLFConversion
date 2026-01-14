@@ -30,6 +30,14 @@
 // AnimBP LinkedAnimLayer node support (AAA-quality fix)
 #include "AnimGraphNode_LinkedAnimLayer.h"
 #include "Animation/AnimNode_LinkedAnimLayer.h"
+// AnimBP State Machine support for variable reference replacement
+#include "AnimStateTransitionNode.h"
+#include "AnimStateNodeBase.h"
+#include "AnimGraphNode_TransitionResult.h"
+#include "AnimGraphNode_BlendListByEnum.h"
+// K2Node types for transition graph repair
+#include "K2Node_CallFunction.h"
+#include "K2Node_CommutativeAssociativeBinaryOperator.h"
 // BehaviorTree support for AI migration
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BTCompositeNode.h"
@@ -1350,6 +1358,21 @@ static bool ProcessVariableNode(UK2Node_Variable* VarNode, FName OldVarName, FNa
 	FName RefMemberName = VarNode->VariableReference.GetMemberName();
 	bool bIsSelf = VarNode->VariableReference.IsSelfContext();
 
+	// Log ALL variable get nodes to understand the naming
+	FString CurrentStr = CurrentVarName.ToString();
+	FString RefStr = RefMemberName.ToString();
+	FString OldStr = OldVarName.ToString();
+
+	// Debug: log first few nodes with target-like names
+	if (CurrentStr.Contains(TEXT("Accelerating")) || CurrentStr.Contains(TEXT("Blocking")) ||
+		CurrentStr.Contains(TEXT("Falling")) || CurrentStr.Contains(TEXT("Resting")) ||
+		RefStr.Contains(TEXT("Accelerating")) || RefStr.Contains(TEXT("Blocking")) ||
+		RefStr.Contains(TEXT("Falling")) || RefStr.Contains(TEXT("Resting")))
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("    [DEBUG] VarNode: GetVarName='%s', MemberName='%s', looking for OldVarName='%s'"),
+			*CurrentStr, *RefStr, *OldStr);
+	}
+
 	// Check if this matches our target variable
 	bool bMatches = (CurrentVarName == OldVarName) || (RefMemberName == OldVarName);
 
@@ -1379,6 +1402,16 @@ static bool ProcessVariableNode(UK2Node_Variable* VarNode, FName OldVarName, FNa
 			Cached.Direction = Pin->Direction;
 			Cached.LinkedTo = Pin->LinkedTo;
 			CachedConnections.Add(Cached);
+
+			// Log what we're caching
+			for (UEdGraphPin* LinkedPin : Pin->LinkedTo)
+			{
+				UE_LOG(LogSLFAutomation, Warning, TEXT("    Caching connection: '%s' (%s) -> '%s' on '%s'"),
+					*Pin->PinName.ToString(),
+					Pin->Direction == EGPD_Input ? TEXT("IN") : TEXT("OUT"),
+					*LinkedPin->PinName.ToString(),
+					LinkedPin->GetOwningNode() ? *LinkedPin->GetOwningNode()->GetNodeTitle(ENodeTitleType::ListView).ToString() : TEXT("Unknown"));
+			}
 		}
 	}
 
@@ -1407,10 +1440,25 @@ static bool ProcessVariableNode(UK2Node_Variable* VarNode, FName OldVarName, FNa
 	// Reconstruct the node
 	VarNode->ReconstructNode();
 
+	// Log pins after reconstruction
+	UE_LOG(LogSLFAutomation, Warning, TEXT("    After reconstruction, node has %d pins:"), VarNode->Pins.Num());
+	for (UEdGraphPin* Pin : VarNode->Pins)
+	{
+		if (Pin)
+		{
+			UE_LOG(LogSLFAutomation, Warning, TEXT("      Pin '%s' (%s) type=%s"),
+				*Pin->PinName.ToString(),
+				Pin->Direction == EGPD_Input ? TEXT("IN") : TEXT("OUT"),
+				*Pin->PinType.PinCategory.ToString());
+		}
+	}
+
 	// Restore wire connections
 	for (const FCachedPin& Cached : CachedConnections)
 	{
 		FName NewPinName = (Cached.PinName == OldVarName) ? NewVarName : Cached.PinName;
+		UE_LOG(LogSLFAutomation, Warning, TEXT("    Looking for pin: '%s' (from cached '%s', OldVarName='%s', NewVarName='%s')"),
+			*NewPinName.ToString(), *Cached.PinName.ToString(), *OldVarName.ToString(), *NewVarName.ToString());
 
 		UEdGraphPin* NewPin = nullptr;
 		for (UEdGraphPin* Pin : VarNode->Pins)
@@ -1441,9 +1489,30 @@ static bool ProcessVariableNode(UK2Node_Variable* VarNode, FName OldVarName, FNa
 			{
 				if (OtherPin && !NewPin->LinkedTo.Contains(OtherPin))
 				{
-					Schema->TryCreateConnection(NewPin, OtherPin);
+					bool bConnected = Schema->TryCreateConnection(NewPin, OtherPin);
+					if (bConnected)
+					{
+						UE_LOG(LogSLFAutomation, Warning, TEXT("    [OK] Reconnected '%s' -> '%s' (on node '%s')"),
+							*NewPin->PinName.ToString(),
+							*OtherPin->PinName.ToString(),
+							OtherPin->GetOwningNode() ? *OtherPin->GetOwningNode()->GetNodeTitle(ENodeTitleType::ListView).ToString() : TEXT("Unknown"));
+					}
+					else
+					{
+						UE_LOG(LogSLFAutomation, Error, TEXT("    [FAIL] Could not reconnect '%s' (type: %s) -> '%s' (type: %s)"),
+							*NewPin->PinName.ToString(),
+							*NewPin->PinType.PinCategory.ToString(),
+							*OtherPin->PinName.ToString(),
+							*OtherPin->PinType.PinCategory.ToString());
+					}
 				}
 			}
+		}
+		else
+		{
+			UE_LOG(LogSLFAutomation, Error, TEXT("    [FAIL] Could not find NewPin for cached '%s' (%s)"),
+				*Cached.PinName.ToString(),
+				Cached.Direction == EGPD_Input ? TEXT("Input") : TEXT("Output"));
 		}
 	}
 
@@ -1471,6 +1540,13 @@ static int32 ProcessGraphForVariableReplace(UEdGraph* Graph, FName OldVarName, F
 			ModifiedCount += ProcessGraphForVariableReplace(CompositeNode->BoundGraph, OldVarName, NewVarName, Schema, TargetCppClass, Depth + 1);
 		}
 
+		// Process AnimBP state transition graphs (CRITICAL for locomotion state machine)
+		UAnimStateTransitionNode* TransitionNode = Cast<UAnimStateTransitionNode>(Node);
+		if (TransitionNode && TransitionNode->BoundGraph)
+		{
+			ModifiedCount += ProcessGraphForVariableReplace(TransitionNode->BoundGraph, OldVarName, NewVarName, Schema, TargetCppClass, Depth + 1);
+		}
+
 		// Process variable nodes
 		UK2Node_Variable* VarNode = Cast<UK2Node_Variable>(Node);
 		if (VarNode && ProcessVariableNode(VarNode, OldVarName, NewVarName, Schema, TargetCppClass, Graph->GetName()))
@@ -1492,6 +1568,8 @@ int32 USLFAutomationLibrary::ReplaceVariableReferences(UObject* BlueprintAsset, 
 
 	// Find the C++ class that owns the new property
 	UClass* TargetCppClass = nullptr;
+
+	// First try Blueprint->ParentClass (works for regular Blueprints)
 	if (Blueprint->ParentClass)
 	{
 		UClass* TestClass = Blueprint->ParentClass;
@@ -1506,21 +1584,89 @@ int32 USLFAutomationLibrary::ReplaceVariableReferences(UObject* BlueprintAsset, 
 		}
 	}
 
+	// For AnimBlueprints, ParentClass may be null - search through generated class's parent chain
+	if (!TargetCppClass && Blueprint->GeneratedClass)
+	{
+		UClass* TestClass = Blueprint->GeneratedClass->GetSuperClass();
+		while (TestClass)
+		{
+			if (TestClass->FindPropertyByName(NewVarName))
+			{
+				TargetCppClass = TestClass;
+				UE_LOG(LogSLFAutomation, Warning, TEXT("  Found property '%s' in class '%s' (via GeneratedClass parent chain)"),
+					*NewVarName.ToString(), *TestClass->GetName());
+				break;
+			}
+			TestClass = TestClass->GetSuperClass();
+		}
+	}
+
+	// Special case for AnimBlueprints: Try to load the matching C++ AnimInstance class
+	// (AnimBP "ABP_SoulslikeCharacter_Additive" -> C++ class "UABP_SoulslikeCharacter_Additive")
+	if (!TargetCppClass)
+	{
+		UAnimBlueprint* AnimBP = Cast<UAnimBlueprint>(Blueprint);
+		if (AnimBP)
+		{
+			// Build the expected C++ class path: /Script/SLFConversion.ABP_SoulslikeCharacter_Additive
+			FString BlueprintName = Blueprint->GetName();
+			FString CppClassPath = FString::Printf(TEXT("/Script/SLFConversion.%s"), *BlueprintName);
+
+			UClass* CppAnimInstanceClass = LoadObject<UClass>(nullptr, *CppClassPath);
+			if (CppAnimInstanceClass && CppAnimInstanceClass->FindPropertyByName(NewVarName))
+			{
+				TargetCppClass = CppAnimInstanceClass;
+				UE_LOG(LogSLFAutomation, Warning, TEXT("  Found property '%s' in C++ AnimInstance class '%s'"),
+					*NewVarName.ToString(), *CppAnimInstanceClass->GetName());
+			}
+		}
+	}
+
+	if (!TargetCppClass)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  WARNING: Could not find C++ class with property '%s' - will use self-member fallback"), *NewVarName.ToString());
+	}
+
 	UE_LOG(LogSLFAutomation, Warning, TEXT("=== ReplaceVariableReferences: '%s' -> '%s' in '%s' ==="),
 		*OldVarName.ToString(), *NewVarName.ToString(), *Blueprint->GetName());
 
-	// Process all graph types
-	for (UEdGraph* Graph : Blueprint->UbergraphPages)
+	// Check if this is an AnimBlueprint - if so, use GetAllGraphs to include transition graphs
+	UAnimBlueprint* AnimBP = Cast<UAnimBlueprint>(Blueprint);
+	if (AnimBP)
 	{
-		ModifiedCount += ProcessGraphForVariableReplace(Graph, OldVarName, NewVarName, Schema, TargetCppClass, 0);
+		// For AnimBlueprints, GetAllGraphs() returns ALL graphs including transition graphs inside state machines
+		TArray<UEdGraph*> AllGraphs;
+		AnimBP->GetAllGraphs(AllGraphs);
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  AnimBlueprint detected - processing %d total graphs (including transitions)"), AllGraphs.Num());
+
+		for (UEdGraph* Graph : AllGraphs)
+		{
+			if (Graph)
+			{
+				int32 BeforeCount = ModifiedCount;
+				ModifiedCount += ProcessGraphForVariableReplace(Graph, OldVarName, NewVarName, Schema, TargetCppClass, 0);
+				if (ModifiedCount > BeforeCount)
+				{
+					UE_LOG(LogSLFAutomation, Warning, TEXT("    Graph '%s': fixed %d references"), *Graph->GetName(), ModifiedCount - BeforeCount);
+				}
+			}
+		}
 	}
-	for (UEdGraph* Graph : Blueprint->FunctionGraphs)
+	else
 	{
-		ModifiedCount += ProcessGraphForVariableReplace(Graph, OldVarName, NewVarName, Schema, TargetCppClass, 0);
-	}
-	for (UEdGraph* Graph : Blueprint->MacroGraphs)
-	{
-		ModifiedCount += ProcessGraphForVariableReplace(Graph, OldVarName, NewVarName, Schema, TargetCppClass, 0);
+		// Regular Blueprint - process standard graph types
+		for (UEdGraph* Graph : Blueprint->UbergraphPages)
+		{
+			ModifiedCount += ProcessGraphForVariableReplace(Graph, OldVarName, NewVarName, Schema, TargetCppClass, 0);
+		}
+		for (UEdGraph* Graph : Blueprint->FunctionGraphs)
+		{
+			ModifiedCount += ProcessGraphForVariableReplace(Graph, OldVarName, NewVarName, Schema, TargetCppClass, 0);
+		}
+		for (UEdGraph* Graph : Blueprint->MacroGraphs)
+		{
+			ModifiedCount += ProcessGraphForVariableReplace(Graph, OldVarName, NewVarName, Schema, TargetCppClass, 0);
+		}
 	}
 
 	if (ModifiedCount > 0)
@@ -2770,6 +2916,451 @@ FString USLFAutomationLibrary::DiagnoseBlackboardStateKey(const FString& Blackbo
 	}
 
 	UE_LOG(LogSLFAutomation, Warning, TEXT("%s"), *Result);
+	return Result;
+}
+
+int32 USLFAutomationLibrary::RepairTransitionWiring(UObject* AnimBlueprintAsset)
+{
+	UAnimBlueprint* AnimBP = Cast<UAnimBlueprint>(AnimBlueprintAsset);
+	if (!AnimBP)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("RepairTransitionWiring: Not an AnimBlueprint"));
+		return 0;
+	}
+
+	int32 RepairedCount = 0;
+	const UEdGraphSchema_K2* Schema = GetDefault<UEdGraphSchema_K2>();
+
+	// Get all graphs in the AnimBP
+	TArray<UEdGraph*> AllGraphs;
+	AnimBP->GetAllGraphs(AllGraphs);
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("RepairTransitionWiring: Processing %d graphs"), AllGraphs.Num());
+
+	for (UEdGraph* Graph : AllGraphs)
+	{
+		if (!Graph)
+		{
+			continue;
+		}
+
+		FString GraphName = Graph->GetName();
+
+		// Only process transition graphs
+		if (!GraphName.Contains(TEXT("Transition")) && !GraphName.Contains(TEXT("AnimationTransitionGraph")))
+		{
+			continue;
+		}
+
+		// Find all nodes in this graph
+		TArray<UK2Node_VariableGet*> DisconnectedVariableGets;
+		UAnimGraphNode_TransitionResult* TransitionResultNode = nullptr;
+		UK2Node_CallFunction* NotBooleanNode = nullptr;
+		UK2Node_CommutativeAssociativeBinaryOperator* AndBooleanNode = nullptr;
+
+		for (UEdGraphNode* Node : Graph->Nodes)
+		{
+			if (!Node)
+			{
+				continue;
+			}
+
+			// Check for TransitionResult
+			if (UAnimGraphNode_TransitionResult* ResultNode = Cast<UAnimGraphNode_TransitionResult>(Node))
+			{
+				TransitionResultNode = ResultNode;
+			}
+
+			// Check for VariableGet nodes
+			if (UK2Node_VariableGet* VarGet = Cast<UK2Node_VariableGet>(Node))
+			{
+				// Check if its output is disconnected
+				bool bHasConnection = false;
+				for (UEdGraphPin* Pin : VarGet->Pins)
+				{
+					if (Pin && Pin->Direction == EGPD_Output && Pin->LinkedTo.Num() > 0)
+					{
+						bHasConnection = true;
+						break;
+					}
+				}
+
+				if (!bHasConnection)
+				{
+					DisconnectedVariableGets.Add(VarGet);
+				}
+			}
+
+			// Check for NOT Boolean
+			if (UK2Node_CallFunction* CallFunc = Cast<UK2Node_CallFunction>(Node))
+			{
+				FString FuncName = CallFunc->GetFunctionName().ToString();
+				if (FuncName.Contains(TEXT("Not")))
+				{
+					NotBooleanNode = CallFunc;
+				}
+			}
+
+			// Check for AND Boolean (commutative operator)
+			if (UK2Node_CommutativeAssociativeBinaryOperator* BinaryOp = Cast<UK2Node_CommutativeAssociativeBinaryOperator>(Node))
+			{
+				AndBooleanNode = BinaryOp;
+			}
+		}
+
+		// Now try to wire disconnected VariableGets
+		for (UK2Node_VariableGet* VarGet : DisconnectedVariableGets)
+		{
+			FName VarName = VarGet->GetVarName();
+			UE_LOG(LogSLFAutomation, Warning, TEXT("  Graph '%s': Found disconnected VariableGet '%s'"), *GraphName, *VarName.ToString());
+
+			// Get the output pin
+			UEdGraphPin* OutputPin = nullptr;
+			for (UEdGraphPin* Pin : VarGet->Pins)
+			{
+				if (Pin && Pin->Direction == EGPD_Output && Pin->PinType.PinCategory == UEdGraphSchema_K2::PC_Boolean)
+				{
+					OutputPin = Pin;
+					break;
+				}
+			}
+
+			if (!OutputPin)
+			{
+				UE_LOG(LogSLFAutomation, Warning, TEXT("    No boolean output pin found"));
+				continue;
+			}
+
+			bool bWired = false;
+
+			// Strategy 1: If there's a NOT node with disconnected A input, wire to it
+			if (NotBooleanNode && !bWired)
+			{
+				for (UEdGraphPin* Pin : NotBooleanNode->Pins)
+				{
+					if (Pin && Pin->PinName == TEXT("A") && Pin->Direction == EGPD_Input && Pin->LinkedTo.Num() == 0)
+					{
+						if (Schema->TryCreateConnection(OutputPin, Pin))
+						{
+							UE_LOG(LogSLFAutomation, Warning, TEXT("    Wired '%s' to NOT Boolean.A"), *VarName.ToString());
+							bWired = true;
+							RepairedCount++;
+						}
+						break;
+					}
+				}
+			}
+
+			// Strategy 2: If there's an AND node with disconnected B input, wire to it
+			if (AndBooleanNode && !bWired)
+			{
+				for (UEdGraphPin* Pin : AndBooleanNode->Pins)
+				{
+					if (Pin && (Pin->PinName == TEXT("B") || Pin->PinName == TEXT("A")) && Pin->Direction == EGPD_Input && Pin->LinkedTo.Num() == 0)
+					{
+						if (Schema->TryCreateConnection(OutputPin, Pin))
+						{
+							UE_LOG(LogSLFAutomation, Warning, TEXT("    Wired '%s' to AND Boolean.%s"), *VarName.ToString(), *Pin->PinName.ToString());
+							bWired = true;
+							RepairedCount++;
+						}
+						break;
+					}
+				}
+			}
+
+			// Strategy 3: Wire directly to TransitionResult.bCanEnterTransition if it's disconnected
+			if (TransitionResultNode && !bWired)
+			{
+				for (UEdGraphPin* Pin : TransitionResultNode->Pins)
+				{
+					if (Pin && Pin->PinName == TEXT("bCanEnterTransition") && Pin->Direction == EGPD_Input && Pin->LinkedTo.Num() == 0)
+					{
+						if (Schema->TryCreateConnection(OutputPin, Pin))
+						{
+							UE_LOG(LogSLFAutomation, Warning, TEXT("    Wired '%s' directly to TransitionResult.bCanEnterTransition"), *VarName.ToString());
+							bWired = true;
+							RepairedCount++;
+						}
+						break;
+					}
+				}
+			}
+
+			if (!bWired)
+			{
+				UE_LOG(LogSLFAutomation, Warning, TEXT("    Could not find appropriate target to wire '%s'"), *VarName.ToString());
+			}
+		}
+	}
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("RepairTransitionWiring: Repaired %d connections"), RepairedCount);
+	return RepairedCount;
+}
+
+
+int32 USLFAutomationLibrary::FixBrokenVariableGetNodes(UObject* AnimBlueprintAsset)
+{
+	UAnimBlueprint* AnimBP = Cast<UAnimBlueprint>(AnimBlueprintAsset);
+	if (!AnimBP)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("FixBrokenVariableGetNodes: Not an AnimBlueprint"));
+		return 0;
+	}
+
+	int32 FixedCount = 0;
+
+	// Map of variable names to their expected C++ property
+	TMap<FName, FProperty*> ValidProperties;
+	ValidProperties.Add(FName("bIsAccelerating"), FindFProperty<FProperty>(AnimBP->GeneratedClass, FName("bIsAccelerating")));
+	ValidProperties.Add(FName("bIsBlocking"), FindFProperty<FProperty>(AnimBP->GeneratedClass, FName("bIsBlocking")));
+	ValidProperties.Add(FName("bIsFalling"), FindFProperty<FProperty>(AnimBP->GeneratedClass, FName("bIsFalling")));
+	ValidProperties.Add(FName("IsResting"), FindFProperty<FProperty>(AnimBP->GeneratedClass, FName("IsResting")));
+	ValidProperties.Add(FName("IsCrouched"), FindFProperty<FProperty>(AnimBP->GeneratedClass, FName("IsCrouched")));
+
+	TArray<UEdGraph*> AllGraphs;
+	AnimBP->GetAllGraphs(AllGraphs);
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("FixBrokenVariableGetNodes: Processing %d graphs"), AllGraphs.Num());
+
+	for (UEdGraph* Graph : AllGraphs)
+	{
+		if (!Graph) continue;
+		FString GraphName = Graph->GetName();
+		if (!GraphName.Contains(TEXT("Transition"))) continue;
+
+		TArray<UK2Node_VariableGet*> NodesToFix;
+		for (UEdGraphNode* Node : Graph->Nodes)
+		{
+			UK2Node_VariableGet* VarGet = Cast<UK2Node_VariableGet>(Node);
+			if (!VarGet) continue;
+			FName VarName = VarGet->GetVarName();
+			FProperty** FoundProp = ValidProperties.Find(VarName);
+			if (!FoundProp || !*FoundProp) continue;
+			FProperty* ResolvedProp = VarGet->GetPropertyForVariable();
+			if (ResolvedProp && ResolvedProp == *FoundProp) continue;
+			NodesToFix.Add(VarGet);
+			UE_LOG(LogSLFAutomation, Warning, TEXT("  Broken: %s.%s"), *GraphName, *VarName.ToString());
+		}
+
+		for (UK2Node_VariableGet* OldNode : NodesToFix)
+		{
+			FName VarName = OldNode->GetVarName();
+			FProperty* TargetProp = *ValidProperties.Find(VarName);
+			TArray<UEdGraphPin*> OutputConnections;
+			for (UEdGraphPin* Pin : OldNode->Pins)
+			{
+				if (Pin && Pin->Direction == EGPD_Output)
+				{
+					OutputConnections = Pin->LinkedTo;
+					break;
+				}
+			}
+
+			UK2Node_VariableGet* NewNode = NewObject<UK2Node_VariableGet>(Graph);
+			NewNode->VariableReference.SetSelfMember(VarName);
+			NewNode->SetFromProperty(TargetProp, false, AnimBP->GeneratedClass);
+			NewNode->NodePosX = OldNode->NodePosX;
+			NewNode->NodePosY = OldNode->NodePosY;
+			NewNode->CreateNewGuid();
+			Graph->AddNode(NewNode, false, false);
+			NewNode->AllocateDefaultPins();
+
+			for (UEdGraphPin* Pin : NewNode->Pins)
+			{
+				if (Pin && Pin->Direction == EGPD_Output)
+				{
+					for (UEdGraphPin* Conn : OutputConnections)
+						if (Conn) Pin->MakeLinkTo(Conn);
+					break;
+				}
+			}
+
+			Graph->RemoveNode(OldNode);
+			FixedCount++;
+		}
+	}
+
+	if (FixedCount > 0)
+	{
+		FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(AnimBP);
+		FKismetEditorUtilities::CompileBlueprint(AnimBP, EBlueprintCompileOptions::SkipGarbageCollection);
+	}
+	UE_LOG(LogSLFAutomation, Warning, TEXT("FixBrokenVariableGetNodes: Fixed %d nodes"), FixedCount);
+	return FixedCount;
+}
+
+
+FString USLFAutomationLibrary::ExportAnimGraphComplete(UObject* AnimBlueprintAsset, const FString& OutputFilePath)
+{
+	UAnimBlueprint* AnimBP = Cast<UAnimBlueprint>(AnimBlueprintAsset);
+	if (!AnimBP)
+	{
+		return TEXT("ERROR: Not an AnimBlueprint");
+	}
+
+	FString Result;
+	Result += TEXT("================================================================================\n");
+	Result += FString::Printf(TEXT("COMPLETE ANIMGRAPH EXPORT: %s\n"), *AnimBP->GetName());
+	Result += TEXT("================================================================================\n\n");
+
+	// Get all graphs
+	TArray<UEdGraph*> AllGraphs;
+	AnimBP->GetAllGraphs(AllGraphs);
+
+	Result += FString::Printf(TEXT("Total Graphs: %d\n\n"), AllGraphs.Num());
+
+	int32 GraphIndex = 0;
+	for (UEdGraph* Graph : AllGraphs)
+	{
+		if (!Graph) continue;
+
+		FString GraphName = Graph->GetName();
+		FString GraphClass = Graph->GetClass()->GetName();
+
+		Result += TEXT("--------------------------------------------------------------------------------\n");
+		Result += FString::Printf(TEXT("GRAPH[%d]: %s\n"), GraphIndex, *GraphName);
+		Result += FString::Printf(TEXT("  Class: %s\n"), *GraphClass);
+		Result += FString::Printf(TEXT("  NodeCount: %d\n"), Graph->Nodes.Num());
+		Result += TEXT("--------------------------------------------------------------------------------\n\n");
+
+		int32 NodeIndex = 0;
+		for (UEdGraphNode* Node : Graph->Nodes)
+		{
+			if (!Node) continue;
+
+			FString NodeClass = Node->GetClass()->GetName();
+			FString NodeName = Node->GetName();
+			FString NodeTitle = Node->GetNodeTitle(ENodeTitleType::FullTitle).ToString();
+
+			Result += FString::Printf(TEXT("  NODE[%d]: %s\n"), NodeIndex, *NodeName);
+			Result += FString::Printf(TEXT("    Class: %s\n"), *NodeClass);
+			Result += FString::Printf(TEXT("    Title: %s\n"), *NodeTitle);
+			Result += FString::Printf(TEXT("    Position: X=%d, Y=%d\n"), Node->NodePosX, Node->NodePosY);
+			Result += FString::Printf(TEXT("    GUID: %s\n"), *Node->NodeGuid.ToString());
+			Result += FString::Printf(TEXT("    PinCount: %d\n"), Node->Pins.Num());
+
+			// VariableGet nodes
+			if (UK2Node_VariableGet* VarGet = Cast<UK2Node_VariableGet>(Node))
+			{
+				FName VarName = VarGet->GetVarName();
+				Result += FString::Printf(TEXT("    [VariableGet] VarName: %s\n"), *VarName.ToString());
+				FProperty* ResolvedProp = VarGet->VariableReference.ResolveMember<FProperty>(AnimBP->GeneratedClass);
+				if (ResolvedProp)
+				{
+					Result += FString::Printf(TEXT("    [VariableGet] ResolvedProperty: %s (Owner: %s)\n"),
+						*ResolvedProp->GetName(), *ResolvedProp->GetOwnerClass()->GetName());
+				}
+				else
+				{
+					Result += TEXT("    [VariableGet] ResolvedProperty: NULL (BROKEN!)\n");
+				}
+			}
+
+			// Transition nodes
+			if (UAnimStateTransitionNode* TransNode = Cast<UAnimStateTransitionNode>(Node))
+			{
+				Result += FString::Printf(TEXT("    [Transition] ErrorMsg: %s\n"),
+					TransNode->ErrorMsg.IsEmpty() ? TEXT("(none)") : *TransNode->ErrorMsg);
+				if (TransNode->BoundGraph)
+				{
+					Result += FString::Printf(TEXT("    [Transition] BoundGraph: %s\n"), *TransNode->BoundGraph->GetName());
+				}
+			}
+
+			// CallFunction nodes
+			if (UK2Node_CallFunction* CallFunc = Cast<UK2Node_CallFunction>(Node))
+			{
+				FName FuncName = CallFunc->GetFunctionName();
+				Result += FString::Printf(TEXT("    [CallFunction] FunctionName: %s\n"), *FuncName.ToString());
+			}
+
+			// Export ALL pins
+			Result += TEXT("    PINS:\n");
+			int32 PinIndex = 0;
+			for (UEdGraphPin* Pin : Node->Pins)
+			{
+				if (!Pin) continue;
+
+				FString PinName = Pin->PinName.ToString();
+				FString PinCategory = Pin->PinType.PinCategory.ToString();
+				FString Direction = (Pin->Direction == EGPD_Input) ? TEXT("INPUT") : TEXT("OUTPUT");
+
+				Result += FString::Printf(TEXT("      PIN[%d]: %s (%s)\n"), PinIndex, *PinName, *Direction);
+				Result += FString::Printf(TEXT("        Category: %s\n"), *PinCategory);
+
+				if (Pin->PinType.PinSubCategoryObject.IsValid())
+				{
+					Result += FString::Printf(TEXT("        SubCategoryObject: %s\n"), *Pin->PinType.PinSubCategoryObject->GetName());
+				}
+
+				if (!Pin->DefaultValue.IsEmpty())
+				{
+					Result += FString::Printf(TEXT("        DefaultValue: %s\n"), *Pin->DefaultValue);
+				}
+
+				Result += FString::Printf(TEXT("        LinkedTo (%d):\n"), Pin->LinkedTo.Num());
+				for (UEdGraphPin* LinkedPin : Pin->LinkedTo)
+				{
+					if (LinkedPin && LinkedPin->GetOwningNode())
+					{
+						Result += FString::Printf(TEXT("          -> %s.%s\n"),
+							*LinkedPin->GetOwningNode()->GetName(), *LinkedPin->PinName.ToString());
+					}
+					else
+					{
+						Result += TEXT("          -> (INVALID)\n");
+					}
+				}
+
+				if (Pin->bOrphanedPin) Result += TEXT("        *** ORPHANED ***\n");
+				if (Pin->bNotConnectable) Result += TEXT("        *** NOT CONNECTABLE ***\n");
+
+				PinIndex++;
+			}
+			Result += TEXT("\n");
+			NodeIndex++;
+		}
+		GraphIndex++;
+	}
+
+	// Blueprint variables
+	Result += TEXT("\n================================================================================\n");
+	Result += TEXT("BLUEPRINT VARIABLES\n");
+	Result += TEXT("================================================================================\n");
+	for (const FBPVariableDescription& Var : AnimBP->NewVariables)
+	{
+		Result += FString::Printf(TEXT("  %s : %s (GUID: %s)\n"),
+			*Var.VarName.ToString(), *Var.VarType.PinCategory.ToString(), *Var.VarGuid.ToString());
+	}
+
+	// Parent class properties
+	Result += TEXT("\n================================================================================\n");
+	Result += TEXT("PARENT CLASS PROPERTIES\n");
+	Result += TEXT("================================================================================\n");
+	if (AnimBP->GeneratedClass)
+	{
+		UClass* ParentClass = AnimBP->GeneratedClass->GetSuperClass();
+		if (ParentClass)
+		{
+			Result += FString::Printf(TEXT("ParentClass: %s\n"), *ParentClass->GetName());
+			for (TFieldIterator<FProperty> PropIt(ParentClass); PropIt; ++PropIt)
+			{
+				FProperty* Prop = *PropIt;
+				if (Prop->GetOwnerClass() == ParentClass)
+				{
+					Result += FString::Printf(TEXT("  %s : %s\n"), *Prop->GetName(), *Prop->GetClass()->GetName());
+				}
+			}
+		}
+	}
+
+	if (!OutputFilePath.IsEmpty())
+	{
+		FFileHelper::SaveStringToFile(Result, *OutputFilePath);
+		UE_LOG(LogSLFAutomation, Warning, TEXT("ExportAnimGraphComplete: Saved to %s (%d chars)"), *OutputFilePath, Result.Len());
+	}
+
 	return Result;
 }
 

@@ -1,4 +1,4 @@
-// ABP_SoulslikeCharacter_Additive.cpp
+﻿// ABP_SoulslikeCharacter_Additive.cpp
 // C++ AnimInstance implementation for ABP_SoulslikeCharacter_Additive
 //
 // 20-PASS VALIDATION: 2026-01-01 Autonomous Session
@@ -19,8 +19,27 @@ void UABP_SoulslikeCharacter_Additive::NativeInitializeAnimation()
 	// Cache owner reference
 	OwnerCharacter = Cast<ACharacter>(TryGetPawnOwner());
 
-	UE_LOG(LogTemp, Log, TEXT("UABP_SoulslikeCharacter_Additive::NativeInitializeAnimation - Owner: %s"),
-		OwnerCharacter ? *OwnerCharacter->GetName() : TEXT("None"));
+	// Load AnimDataAsset if not already set (required for LL implementation graphs)
+	// The AnimGraph's LinkedAnimLayer nodes (LL_OneHanded_Right, etc.) read animation
+	// sequences from this data asset via property access nodes
+	if (!AnimDataAsset)
+	{
+		static const TCHAR* AnimDataPath = TEXT("/Game/SoulslikeFramework/Data/_AnimationData/PDA_AnimData.PDA_AnimData");
+		AnimDataAsset = Cast<UPDA_AnimData>(StaticLoadObject(UPDA_AnimData::StaticClass(), nullptr, AnimDataPath));
+
+		if (AnimDataAsset)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[AnimBP] Loaded AnimDataAsset: %s"), *AnimDataAsset->GetName());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[AnimBP] Failed to load AnimDataAsset from %s"), AnimDataPath);
+		}
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("UABP_SoulslikeCharacter_Additive::NativeInitializeAnimation - Owner: %s, AnimData: %s"),
+		OwnerCharacter ? *OwnerCharacter->GetName() : TEXT("None"),
+		AnimDataAsset ? *AnimDataAsset->GetName() : TEXT("None"));
 }
 
 void UABP_SoulslikeCharacter_Additive::NativeUpdateAnimation(float DeltaSeconds)
@@ -48,13 +67,17 @@ void UABP_SoulslikeCharacter_Additive::NativeUpdateAnimation(float DeltaSeconds)
 	WorldLocation = OwnerCharacter->GetActorLocation();
 	WorldRotation = OwnerCharacter->GetActorRotation();
 
-	// Falling state
+	// Falling state and movement
 	if (UCharacterMovementComponent* MovementComp = OwnerCharacter->GetCharacterMovement())
 	{
 		bIsFalling = MovementComp->IsFalling();
 		Acceleration = MovementComp->GetCurrentAcceleration();
 		Acceleration2D = FVector(Acceleration.X, Acceleration.Y, 0.0);
-		bIsAccelerating = Acceleration2D.Size() > 0.1f;
+
+		// FIX: bIsAccelerating drives IDLE<->CYCLE transition
+		// Must use SPEED, not acceleration - at constant velocity, acceleration is 0
+		// but the character is still moving and should be in CYCLE state
+		bIsAccelerating = Speed > 3.0f;  // Small threshold to filter micro-movements
 	}
 
 	// Cache and use CombatManager for blocking state and IK data (on Character)
@@ -64,7 +87,8 @@ void UABP_SoulslikeCharacter_Additive::NativeUpdateAnimation(float DeltaSeconds)
 	}
 	if (CombatManager)
 	{
-		bIsBlocking = CombatManager->IsGuarding;
+		// Use GetIsGuarding() to include grace period (not direct IsGuarding access)
+		bIsBlocking = CombatManager->GetIsGuarding();
 		IkWeight = CombatManager->IKWeight;
 		ActiveHitNormal = CombatManager->CurrentHitNormal;
 	}
@@ -108,8 +132,9 @@ void UABP_SoulslikeCharacter_Additive::NativeUpdateAnimation(float DeltaSeconds)
 	static int32 DebugLogCounter = 0;
 	if (++DebugLogCounter % 60 == 0)  // Log every ~1 second at 60fps
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[AnimBP DEBUG] Speed=%.1f, LeftOverlay=%d, RightOverlay=%d, ActiveOverlay=%d, EquipMgr=%s"),
+		UE_LOG(LogTemp, Warning, TEXT("[AnimBP DEBUG] Speed=%.1f, bIsAccelerating=%s, LeftOverlay=%d, RightOverlay=%d, ActiveOverlay=%d, EquipMgr=%s"),
 			Speed,
+			bIsAccelerating ? TEXT("TRUE") : TEXT("FALSE"),
 			(int32)LeftHandOverlayState,
 			(int32)RightHandOverlayState,
 			(int32)ActiveOverlayState,

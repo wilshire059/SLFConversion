@@ -174,6 +174,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "SLF Automation|AnimBP")
 	static int32 FixAllBrokenTransitions(UObject* AnimBlueprintAsset);
 
+	// Repair disconnected VariableGet nodes in transition graphs
+	// Finds VariableGet nodes whose outputs are not connected and wires them to appropriate targets
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|AnimBP")
+	static int32 RepairTransitionWiring(UObject* AnimBlueprintAsset);
+
+	// Rebuild broken VariableGet nodes that reference invalid variables
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|AnimBP")
+	static int32 FixBrokenVariableGetNodes(UObject* AnimBlueprintAsset);
+
 	// Fix BlendListByEnum nodes by binding their ActiveEnumValue to a variable
 	// NodeIdentifier can be partial match on node name, position, or index
 	// VariableName is the Blueprint variable to bind to (e.g., "LeftHandOverlayState_0")
@@ -183,6 +192,24 @@ public:
 	// Auto-fix all BlendListByEnum nodes for overlay states
 	UFUNCTION(BlueprintCallable, Category = "SLF Automation|AnimBP")
 	static int32 FixAllBlendListByEnumBindings(UObject* AnimBlueprintAsset);
+
+	// Migrate BlendListByEnum nodes from Blueprint enum to C++ enum
+	// This properly replaces nodes: saves connections, clears enum, sets new enum, reconstructs, restores connections
+	// OldEnumPath: e.g., "/Game/SoulslikeFramework/Enums/E_OverlayState.E_OverlayState"
+	// NewEnumPath: e.g., "/Script/SLFConversion.ESLFOverlayState"
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|AnimBP")
+	static int32 MigrateBlendListByEnumToCpp(UObject* AnimBlueprintAsset, const FString& OldEnumPath, const FString& NewEnumPath);
+
+	// Fix disconnected boolean variable getters in AnimGraph (bIsBlocking, bIsFalling)
+	// These connect to BlendListByBool and NOT Boolean nodes in the main AnimGraph
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|AnimBP")
+	static int32 FixAnimGraphBooleanConnections(UObject* AnimBlueprintAsset);
+
+	// Fix GetAccelerationData graph - reconnects broken SET node inputs
+	// K2Node_CallFunction_2.ReturnValue -> K2Node_VariableSet_1.bIsAccelerating
+	// K2Node_PropertyAccess_1.Value -> K2Node_VariableSet_5.bIsFalling
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|AnimBP")
+	static int32 FixGetAccelerationDataGraph(UObject* AnimBlueprintAsset);
 
 	// Fix ANS_RegisterAttackSequence notify QueuedSection values on a montage
 	// Converts invalid enum values to FName section names
@@ -216,6 +243,11 @@ public:
 	// Used to diagnose incorrect State decorator values after enum migration
 	UFUNCTION(BlueprintCallable, Category = "SLF Automation|AI")
 	static FString ExportBTAllDecoratorIntValues(const FString& BehaviorTreePath);
+
+	// Export COMPLETE AnimGraph state - every node, every pin, every connection
+	// For comprehensive node-by-node, pin-by-pin comparison between AnimBPs
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|AnimBP")
+	static FString ExportAnimGraphComplete(UObject* AnimBlueprintAsset, const FString& OutputFilePath = TEXT(""));
 
 #endif // WITH_EDITOR
 };

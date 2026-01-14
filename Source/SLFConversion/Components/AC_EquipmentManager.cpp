@@ -26,9 +26,9 @@ UAC_EquipmentManager::UAC_EquipmentManager()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// Initialize defaults
-	ActiveOverlayState = ESLFOverlayState::Default;
-	LeftHandOverlayState = ESLFOverlayState::Default;
-	RightHandOverlayState = ESLFOverlayState::Default;
+	ActiveOverlayState = ESLFOverlayState::Unarmed;
+	LeftHandOverlayState = ESLFOverlayState::Unarmed;
+	RightHandOverlayState = ESLFOverlayState::Unarmed;
 	WeaponAbilitySlot = ESLFWeaponAbilityHandle::RightHand;
 	ActiveBlockSequence = nullptr;
 	IsAsyncWeaponBusy = false;
@@ -1002,14 +1002,47 @@ void UAC_EquipmentManager::RefreshActiveGuardSequence_Implementation()
 			// Check if item has block animation via moveset data
 			if (ItemData.EquipmentDetails.MovesetWeapons)
 			{
-				// Item has a moveset, check for block sequence
-				// For now, assume any left-hand weapon/shield can block
-				UE_LOG(LogTemp, Log, TEXT("  Left hand item supports guarding"));
-				// ActiveBlockSequence would be set from the item's animation data
-				break;
+				// Cast to UPDA_WeaponAnimset to get Guard_L sequence
+				UPDA_WeaponAnimset* Animset = Cast<UPDA_WeaponAnimset>(ItemData.EquipmentDetails.MovesetWeapons);
+				if (Animset && Animset->Guard_L)
+				{
+					ActiveBlockSequence = Animset->Guard_L;
+					UE_LOG(LogTemp, Log, TEXT("  Left hand Guard_L sequence set: %s"), *Animset->Guard_L->GetName());
+					return;
+				}
+				UE_LOG(LogTemp, Log, TEXT("  Left hand item has moveset but no Guard_L"));
 			}
 		}
 	}
+
+	// If no left hand guard, check right hand slots for two-handed weapons
+	for (const FGameplayTag& SlotTag : RightHandSlots)
+	{
+		if (IsSlotOccupied(SlotTag))
+		{
+			FSLFItemInfo ItemData;
+			UPrimaryDataAsset* ItemAsset = nullptr;
+			FGuid ItemId;
+			FSLFItemInfo ItemData_1;
+			UPrimaryDataAsset* ItemAsset_1 = nullptr;
+			FGuid ItemId_1;
+			GetItemAtSlot(SlotTag, ItemData, ItemAsset, ItemId, ItemData_1, ItemAsset_1, ItemId_1);
+
+			if (ItemData.EquipmentDetails.MovesetWeapons)
+			{
+				UPDA_WeaponAnimset* Animset = Cast<UPDA_WeaponAnimset>(ItemData.EquipmentDetails.MovesetWeapons);
+				if (Animset && Animset->Guard_R)
+				{
+					ActiveBlockSequence = Animset->Guard_R;
+					UE_LOG(LogTemp, Log, TEXT("  Right hand Guard_R sequence set: %s"), *Animset->Guard_R->GetName());
+					return;
+				}
+				UE_LOG(LogTemp, Log, TEXT("  Right hand item has moveset but no Guard_R"));
+			}
+		}
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("  No guard sequence found in any equipped weapon"));
 }
 
 /**
