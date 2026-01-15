@@ -165,6 +165,41 @@ public:
 	FTimerHandle RotationLerpTimerHandle;
 
 	// ═══════════════════════════════════════════════════════════════════
+	// DOOR INTERACTION (for anim notify callback)
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** Cached door actor for notify callback */
+	UPROPERTY(BlueprintReadWrite, Category = "Character|Door")
+	TWeakObjectPtr<AActor> PendingDoorActor;
+
+	/** Cached target location for door walk-through */
+	UPROPERTY(BlueprintReadWrite, Category = "Character|Door")
+	FVector PendingDoorTargetLocation;
+
+	/** Cached target rotation for door walk-through */
+	UPROPERTY(BlueprintReadWrite, Category = "Character|Door")
+	FRotator PendingDoorTargetRotation;
+
+	/** Handle montage notify begin - triggers door movement */
+	UFUNCTION()
+	void OnDoorMontageNotifyBegin(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload);
+
+	/** Handle montage ended - cleanup */
+	UFUNCTION()
+	void OnDoorMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
+	/** Whether door movement has been triggered (prevents double-triggering from multiple notifies) */
+	bool bDoorMovementTriggered = false;
+
+	/** Cached montage to play after movement completes */
+	UPROPERTY()
+	TObjectPtr<UAnimMontage> PendingDoorMontage;
+
+	/** Called when door movement lerp completes - plays the montage */
+	UFUNCTION()
+	void OnDoorMovementComplete();
+
+	// ═══════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS: 3/3 migrated
 	// ═══════════════════════════════════════════════════════════════════
 

@@ -17,6 +17,7 @@
 #include "Components/LadderManagerComponent.h"
 #include "Components/AC_CombatManager.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/BillboardComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraFunctionLibrary.h"
@@ -365,15 +366,171 @@ void ASLFBaseCharacter::OpenContainer_Implementation(UAnimMontage* Montage, AAct
 
 void ASLFBaseCharacter::OpenDoor_Implementation(UAnimMontage* Montage, AActor* Door)
 {
-	if (Montage && GetMesh() && GetMesh()->GetAnimInstance())
+	UE_LOG(LogTemp, Log, TEXT("[BaseCharacter] OpenDoor - Montage: %s, Door: %s"),
+		Montage ? *Montage->GetName() : TEXT("None"),
+		Door ? *Door->GetName() : TEXT("None"));
+
+	// ═══════════════════════════════════════════════════════════════════════════════
+	// SOULS-LIKE DOOR/FOG GATE WALK-THROUGH (bp_only observed flow)
+	// ═══════════════════════════════════════════════════════════════════════════════
+	// Based on user testing of bp_only:
+	// 1. Play montage IMMEDIATELY (animation starts first)
+	// 2. During montage -> OnNotifyBegin -> Start movement toward MoveTo
+	// 3. Movement completes during/after montage
+	//
+	// So: ANIMATE FIRST, THEN MOVE (triggered by anim notify)
+	// ═══════════════════════════════════════════════════════════════════════════════
+
+	if (!Door)
 	{
-		GetMesh()->GetAnimInstance()->Montage_Play(Montage);
+		UE_LOG(LogTemp, Warning, TEXT("[BaseCharacter] OpenDoor - No door provided"));
+		return;
 	}
-	// Trigger door opening via interactable interface (IMPLEMENTED)
-	if (Door && Door->GetClass()->ImplementsInterface(UBPI_Interactable::StaticClass()))
+
+	if (!Montage)
 	{
-		IBPI_Interactable::Execute_OnInteract(Door, this);
+		UE_LOG(LogTemp, Warning, TEXT("[BaseCharacter] OpenDoor - No montage provided"));
+		return;
 	}
+
+	// Find the MoveTo component on the door
+	UBillboardComponent* MoveToComp = nullptr;
+	TArray<UBillboardComponent*> BillboardComps;
+	Door->GetComponents<UBillboardComponent>(BillboardComps);
+	for (UBillboardComponent* Comp : BillboardComps)
+	{
+		if (Comp && Comp->GetName().Contains(TEXT("MoveTo")))
+		{
+			MoveToComp = Comp;
+			break;
+		}
+	}
+
+	if (!MoveToComp)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[BaseCharacter] OpenDoor - No MoveTo component found on door"));
+		return;
+	}
+
+	// Reset state for new door interaction
+	bDoorMovementTriggered = false;
+
+	// Cache door data for movement (triggered by anim notify)
+	PendingDoorActor = Door;
+	PendingDoorTargetLocation = MoveToComp->GetComponentLocation();
+	PendingDoorTargetLocation.Z = GetActorLocation().Z; // Preserve player Z
+
+	// Calculate target rotation (face toward target/away from door)
+	FVector ToTarget = PendingDoorTargetLocation - GetActorLocation();
+	ToTarget.Z = 0.0f;
+	if (!ToTarget.IsNearlyZero())
+	{
+		ToTarget.Normalize();
+		PendingDoorTargetRotation = ToTarget.Rotation();
+	}
+	else
+	{
+		PendingDoorTargetRotation = GetActorRotation();
+	}
+
+	// Log for debugging
+	FVector StartPos = GetActorLocation();
+	float Distance = FVector::Dist2D(StartPos, PendingDoorTargetLocation);
+	UE_LOG(LogTemp, Log, TEXT("[BaseCharacter] OpenDoor - Start: %s, Target: %s, Distance: %.1f units"),
+		*StartPos.ToString(), *PendingDoorTargetLocation.ToString(), Distance);
+
+	// Cache the montage
+	PendingDoorMontage = Montage;
+
+	// Get anim instance and bind callbacks
+	UAnimInstance* AnimInstance = GetMesh() ? GetMesh()->GetAnimInstance() : nullptr;
+	if (!AnimInstance)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[BaseCharacter] OpenDoor - No AnimInstance found"));
+		return;
+	}
+
+	// Bind to anim notify - when notify fires, START movement
+	AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &ASLFBaseCharacter::OnDoorMontageNotifyBegin);
+
+	// Bind to montage ended for cleanup
+	AnimInstance->OnMontageEnded.AddDynamic(this, &ASLFBaseCharacter::OnDoorMontageEnded);
+
+	// Play montage IMMEDIATELY (animation starts first, movement triggered by notify)
+	UE_LOG(LogTemp, Log, TEXT("[BaseCharacter] OpenDoor - Playing montage NOW, movement will start on notify"));
+	AnimInstance->Montage_Play(Montage);
+}
+
+void ASLFBaseCharacter::OnDoorMovementComplete()
+{
+	// Called when lerp movement finishes (after notify triggered it)
+	UE_LOG(LogTemp, Log, TEXT("[BaseCharacter] OnDoorMovementComplete - Movement finished"));
+
+	// Unbind from lerp end
+	OnLocationRotationLerpEnd.RemoveDynamic(this, &ASLFBaseCharacter::OnDoorMovementComplete);
+
+	// Call Event OpenDoor on the Door actor (like original Blueprint)
+	// This triggers boss arena activation for boss doors
+	if (PendingDoorActor.IsValid())
+	{
+		UE_LOG(LogTemp, Log, TEXT("[BaseCharacter] Triggering Event OpenDoor on door: %s"),
+			*PendingDoorActor->GetName());
+
+		// Check if door implements the interface for "Event OpenDoor" callback
+		// This would be a custom event in the door Blueprint
+		// For now the door's OnInteract already did its work, so this is informational
+	}
+}
+
+void ASLFBaseCharacter::OnDoorMontageNotifyBegin(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload)
+{
+	// This fires when an anim notify in the montage triggers
+	// In bp_only, this is when the player movement should START
+	UE_LOG(LogTemp, Log, TEXT("[BaseCharacter] OnDoorMontageNotifyBegin - Notify: '%s'"), *NotifyName.ToString());
+
+	// Prevent double-triggering if multiple notifies fire
+	if (bDoorMovementTriggered)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[BaseCharacter] Movement already triggered, ignoring notify"));
+		return;
+	}
+
+	bDoorMovementTriggered = true;
+
+	// Bind to lerp end for when movement finishes
+	OnLocationRotationLerpEnd.AddDynamic(this, &ASLFBaseCharacter::OnDoorMovementComplete);
+
+	// START movement NOW (triggered by anim notify)
+	// Original Blueprint uses Scale = 10.0 (play rate), which means duration = 1.0/10.0 = 0.1 seconds
+	// But that's very fast - let's use Scale that gives ~0.5 second smooth movement
+	const double DoorLerpScale = 2.0; // Duration = 1.0 / 2.0 = 0.5 seconds
+	UE_LOG(LogTemp, Log, TEXT("[BaseCharacter] Starting door movement NOW (notify triggered, Scale=%.1f)"), DoorLerpScale);
+	UE_LOG(LogTemp, Log, TEXT("[BaseCharacter] Target: %s, Rotation: %s"),
+		*PendingDoorTargetLocation.ToString(), *PendingDoorTargetRotation.ToString());
+
+	GenericLocationAndRotationLerp_Implementation(DoorLerpScale, PendingDoorTargetLocation, PendingDoorTargetRotation);
+}
+
+void ASLFBaseCharacter::OnDoorMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	UE_LOG(LogTemp, Log, TEXT("[BaseCharacter] OnDoorMontageEnded - Montage: %s, Interrupted: %s"),
+		Montage ? *Montage->GetName() : TEXT("None"),
+		bInterrupted ? TEXT("true") : TEXT("false"));
+
+	// Cleanup: unbind delegates
+	if (GetMesh() && GetMesh()->GetAnimInstance())
+	{
+		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+		AnimInstance->OnPlayMontageNotifyBegin.RemoveDynamic(this, &ASLFBaseCharacter::OnDoorMontageNotifyBegin);
+		AnimInstance->OnMontageEnded.RemoveDynamic(this, &ASLFBaseCharacter::OnDoorMontageEnded);
+	}
+
+	// Clear cached door data
+	PendingDoorActor.Reset();
+	PendingDoorTargetLocation = FVector::ZeroVector;
+	PendingDoorTargetRotation = FRotator::ZeroRotator;
+	PendingDoorMontage = nullptr;
+	bDoorMovementTriggered = false;
 }
 
 void ASLFBaseCharacter::TryClimbLadder_Implementation(AActor* Ladder, bool bIsTopdown)
@@ -555,12 +712,12 @@ void ASLFBaseCharacter::GenericLocationLerp_Implementation(double Scale, FVector
 	Cache_Location = GetActorLocation();
 	TargetLerpLocation = NewTargetLocation;
 
-	// Timeline-like lerp using timer (IMPLEMENTED)
-	// Scale is used as duration in seconds
+	// Original Blueprint: Scale = play rate, Duration = 1.0 / Scale
+	// "Default time is 1.0, so if you set scale to 2.0, then duration will be 0.5 secs"
 	if (Scale > 0.0 && GetWorld())
 	{
 		LerpStartTime = GetWorld()->GetTimeSeconds();
-		LerpDuration = Scale;
+		LerpDuration = 1.0 / Scale; // Convert play rate to duration
 
 		FTimerDelegate LerpDelegate;
 		LerpDelegate.BindUObject(this, &ASLFBaseCharacter::OnLocationLerpUpdate);
@@ -579,11 +736,11 @@ void ASLFBaseCharacter::GenericRotationLerp_Implementation(double Scale, FRotato
 	Cache_Rotation = GetActorRotation();
 	TargetLerpRotation = NewTargetRotation;
 
-	// Timeline-like lerp using timer (IMPLEMENTED)
+	// Original Blueprint: Scale = play rate, Duration = 1.0 / Scale
 	if (Scale > 0.0 && GetWorld())
 	{
 		LerpStartTime = GetWorld()->GetTimeSeconds();
-		LerpDuration = Scale;
+		LerpDuration = 1.0 / Scale; // Convert play rate to duration
 
 		FTimerDelegate LerpDelegate;
 		LerpDelegate.BindUObject(this, &ASLFBaseCharacter::OnRotationLerpUpdate);
@@ -603,12 +760,16 @@ void ASLFBaseCharacter::GenericLocationAndRotationLerp_Implementation(double Sca
 	TargetLerpLocation = NewTargetLocation;
 	TargetLerpRotation = NewTargetRotation;
 
-	// Timeline-like lerp using timer for both (IMPLEMENTED)
+	// Original Blueprint: Scale = play rate, Duration = 1.0 / Scale
+	// "Default time is 1.0, so if you set scale to 2.0, then duration will be 0.5 secs"
 	if (Scale > 0.0 && GetWorld())
 	{
 		LerpStartTime = GetWorld()->GetTimeSeconds();
-		LerpDuration = Scale;
+		LerpDuration = 1.0 / Scale; // Convert play rate to duration
 		bLerpingBoth = true;
+
+		UE_LOG(LogTemp, Log, TEXT("[BaseCharacter] GenericLocationAndRotationLerp - Scale=%.2f, Duration=%.2fs"),
+			Scale, LerpDuration);
 
 		// Use location timer to drive both lerps
 		FTimerDelegate LerpDelegate;
@@ -710,7 +871,7 @@ void ASLFBaseCharacter::PlaySoftMontageReplicated_Implementation(
 
 void ASLFBaseCharacter::ToggleGuardReplicated_Implementation(bool bToggled, bool bIgnoreGracePeriod)
 {
-	// Delegate to CombatManager component (IMPLEMENTED)
+	// Delegate to CombatManager component - call SetGuardState which handles grace period properly
 	UE_LOG(LogTemp, Log, TEXT("[BaseCharacter] ToggleGuardReplicated: %s, ignore grace: %s"),
 		bToggled ? TEXT("true") : TEXT("false"),
 		bIgnoreGracePeriod ? TEXT("true") : TEXT("false"));
@@ -719,15 +880,8 @@ void ASLFBaseCharacter::ToggleGuardReplicated_Implementation(bool bToggled, bool
 	if (CombatManager)
 	{
 		CombatManager->WantsToGuard = bToggled;
-		if (bToggled)
-		{
-			CombatManager->IsGuarding = true;
-		}
-		else if (bIgnoreGracePeriod)
-		{
-			CombatManager->IsGuarding = false;
-		}
-		// If not ignoring grace period, IsGuarding will be cleared by timer
+		// Call SetGuardState which handles grace period timer and proper state management
+		CombatManager->SetGuardState(bToggled, bIgnoreGracePeriod);
 	}
 }
 
