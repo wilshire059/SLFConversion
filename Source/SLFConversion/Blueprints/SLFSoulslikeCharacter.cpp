@@ -27,6 +27,7 @@
 #include "Components/AC_ActionManager.h"
 #include "Components/AC_CombatManager.h"
 #include "Components/AC_InteractionManager.h"
+#include "Components/StatManagerComponent.h"  // For CachedStatManager->IsStatMoreThan()
 #include "Components/AC_EquipmentManager.h"
 #include "Interfaces/SLFInteractableInterface.h"
 #include "LevelSequence.h"
@@ -36,10 +37,13 @@
 #include "SLFGameTypes.h"  // For FSLFSkeletalMeshData reflection access
 #include "SLFPrimaryDataAssets.h"
 #include "SLFPickupItemBase.h"
+#include "B_PickupItem.h"
 #include "Components/InventoryManagerComponent.h"
 #include "Framework/SLFPlayerController.h"
 #include "Widgets/W_HUD.h"
 #include "B_Interactable.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "KismetAnimationLibrary.h"
 
 ASLFSoulslikeCharacter::ASLFSoulslikeCharacter()
 {
@@ -149,6 +153,8 @@ ASLFSoulslikeCharacter::ASLFSoulslikeCharacter()
 	CachedActionManager = nullptr;
 	CachedCombatManager = nullptr;
 	CachedInteractionManager = nullptr;
+	// NOTE: CachedStatManager is inherited from ASLFBaseCharacter and initialized there
+	SprintDodgeStartTime = 0.0;
 
 	// Camera components - defined in Blueprint SCS
 	CachedCameraBoom = nullptr;
@@ -224,6 +230,10 @@ void ASLFSoulslikeCharacter::Tick(float DeltaTime)
 	// Update AnimBP overlay states from EquipmentManager
 	// This syncs C++ overlay values to Blueprint enum variables for weapon animations
 	UpdateAnimInstanceOverlayStates();
+
+	// Handle continuous target lock rotation
+	// This rotates the character towards the locked target each frame
+	TickTargetLockRotation(DeltaTime);
 }
 
 void ASLFSoulslikeCharacter::OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
@@ -272,6 +282,7 @@ void ASLFSoulslikeCharacter::CacheComponentReferences()
 	CachedActionManager = FindComponentByClass<UAC_ActionManager>();
 	CachedCombatManager = FindComponentByClass<UAC_CombatManager>();
 	CachedInteractionManager = FindComponentByClass<UAC_InteractionManager>();
+	// NOTE: CachedStatManager is already cached in ASLFBaseCharacter::BeginPlay()
 
 	// Cache camera components from Blueprint
 	CachedCameraBoom = FindComponentByClass<USpringArmComponent>();
@@ -414,15 +425,18 @@ void ASLFSoulslikeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	{
 		EnhancedInput->BindAction(IA_Jump, ETriggerEvent::Started, this, &ASLFSoulslikeCharacter::HandleJump);
 	}
+	// NOTE: IA_Sprint and IA_Dodge point to the SAME input action asset (IA_Sprint_Dodge)
+	// Sprint/Dodge behavior is determined by input timing:
+	// - TAP (<=0.2s): Dodge
+	// - HOLD (>0.2s): Sprint
+	// HandleSprintCompleted checks elapsed time and calls HandleDodge for taps
 	if (IA_Sprint)
 	{
 		EnhancedInput->BindAction(IA_Sprint, ETriggerEvent::Started, this, &ASLFSoulslikeCharacter::HandleSprintStarted);
 		EnhancedInput->BindAction(IA_Sprint, ETriggerEvent::Completed, this, &ASLFSoulslikeCharacter::HandleSprintCompleted);
 	}
-	if (IA_Dodge)
-	{
-		EnhancedInput->BindAction(IA_Dodge, ETriggerEvent::Started, this, &ASLFSoulslikeCharacter::HandleDodge);
-	}
+	// DO NOT bind IA_Dodge separately - it's the same asset as IA_Sprint!
+	// Dodge is triggered via HandleSprintCompleted when tap duration <= 0.2s
 	if (IA_Attack)
 	{
 		EnhancedInput->BindAction(IA_Attack, ETriggerEvent::Started, this, &ASLFSoulslikeCharacter::HandleAttack);
@@ -507,40 +521,130 @@ void ASLFSoulslikeCharacter::HandleLook(const FInputActionValue& Value)
 
 void ASLFSoulslikeCharacter::HandleJump()
 {
-	// From JSON: Queues SoulslikeFramework.Action.Jump
-	QueueActionToBuffer(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.Jump")));
+	// From JSON: Jump requires stamina check (RequiredStatAmount: 5.0)
+	// Original Blueprint: IsStatMoreThan(Stamina, 5.0) before QueueAction
+	static const FGameplayTag StaminaTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Stamina"));
+	static const double JumpStaminaRequired = 5.0;
+
+	if (CachedStatManager)
+	{
+		if (CachedStatManager->IsStatMoreThan(StaminaTag, JumpStaminaRequired))
+		{
+			QueueActionToBuffer(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.Jump")));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Jump blocked - insufficient stamina (need %.1f)"), JumpStaminaRequired);
+		}
+	}
+	else
+	{
+		// No stat manager - allow jump anyway (fallback for testing)
+		QueueActionToBuffer(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.Jump")));
+	}
 }
 
 void ASLFSoulslikeCharacter::HandleSprintStarted()
 {
-	// From JSON: Executes SoulslikeFramework.Action.StartSprinting immediately
+	// From JSON: IA_Sprint_Dodge handles both sprint AND dodge
+	// Record start time for tap vs hold detection
+	SprintDodgeStartTime = GetWorld()->GetTimeSeconds();
+
+	// Start sprinting (will be stopped if this turns out to be a dodge tap)
 	bCache_IsHoldingSprint = true;
 	ExecuteActionImmediately(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.StartSprinting")));
 }
 
 void ASLFSoulslikeCharacter::HandleSprintCompleted()
 {
-	// From JSON: Executes SoulslikeFramework.Action.StopSprinting immediately
+	// From JSON: IA_Sprint_Dodge Completed - check elapsed time for tap vs hold
+	// Original Blueprint: ElapsedSeconds <= 0.2 means dodge TAP, otherwise sprint RELEASE
 	bCache_IsHoldingSprint = false;
-	ExecuteActionImmediately(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.StopSprinting")));
+
+	double ElapsedSeconds = GetWorld()->GetTimeSeconds() - SprintDodgeStartTime;
+
+	if (ElapsedSeconds <= 0.2)
+	{
+		// TAP - This is a dodge, not sprint
+		// First stop the sprint that was started
+		ExecuteActionImmediately(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.StopSprinting")));
+
+		// Then try to dodge (with stamina check)
+		HandleDodge();
+	}
+	else
+	{
+		// HOLD release - stop sprinting normally
+		ExecuteActionImmediately(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.StopSprinting")));
+	}
 }
 
 void ASLFSoulslikeCharacter::HandleDodge()
 {
-	// From JSON: Queues SoulslikeFramework.Action.Dodge
-	QueueActionToBuffer(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.Dodge")));
+	// From JSON: Dodge requires stamina check (RequiredStatAmount: 5.0)
+	// Original Blueprint: IsStatMoreThan(Stamina, 5.0) before QueueAction
+	// Also checks IsCrouched - if crouched, do crouch action instead
+	static const FGameplayTag StaminaTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Stamina"));
+	static const double DodgeStaminaRequired = 5.0;
+
+	// Check if crouched - from Blueprint, crouched characters do different action
+	if (bIsCrouched)
+	{
+		// Original Blueprint: If crouched, do crouch action (crouch-dodge/roll)
+		QueueActionToBuffer(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.Crouch")));
+		return;
+	}
+
+	if (CachedStatManager)
+	{
+		if (CachedStatManager->IsStatMoreThan(StaminaTag, DodgeStaminaRequired))
+		{
+			QueueActionToBuffer(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.Dodge")));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Dodge blocked - insufficient stamina (need %.1f)"), DodgeStaminaRequired);
+			// Original Blueprint: ExecuteActionImmediately for out-of-stamina feedback
+			// This could play a "can't do" animation or sound
+		}
+	}
+	else
+	{
+		// No stat manager - allow dodge anyway (fallback for testing)
+		QueueActionToBuffer(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.Dodge")));
+	}
 }
 
 void ASLFSoulslikeCharacter::HandleAttack()
 {
-	// From JSON: Queues SoulslikeFramework.Action.LightAttackRight (right hand attack)
-	QueueActionToBuffer(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.LightAttackRight")));
+	// From Blueprint: If holding interact key, trigger two-hand stance instead of attack
+	if (bCache_IsHoldingInteract)
+	{
+		// Two-hand stance right hand (like Elden Ring - hold Y + RT)
+		UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Interact held + Attack -> TwoHandStanceRight"));
+		ExecuteActionImmediately(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.TwoHandStanceRight")));
+	}
+	else
+	{
+		// Normal attack
+		QueueActionToBuffer(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.LightAttackRight")));
+	}
 }
 
 void ASLFSoulslikeCharacter::HandleGuardStarted()
 {
-	// From JSON: Queues SoulslikeFramework.Action.GuardStart
-	QueueActionToBuffer(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.GuardStart")));
+	// From Blueprint: If holding interact key, trigger two-hand stance instead of guard
+	if (bCache_IsHoldingInteract)
+	{
+		// Two-hand stance left hand (like Elden Ring - hold Y + LT)
+		UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Interact held + Guard -> TwoHandStanceLeft"));
+		ExecuteActionImmediately(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.TwoHandStanceLeft")));
+	}
+	else
+	{
+		// Normal guard
+		QueueActionToBuffer(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.GuardStart")));
+	}
 }
 
 void ASLFSoulslikeCharacter::HandleGuardCompleted()
@@ -972,19 +1076,19 @@ void ASLFSoulslikeCharacter::InitializeModularMesh()
 		UE_LOG(LogTemp, Log, TEXT("  LowerBody has mesh: %s"), *LowerBody->GetSkeletalMeshAsset()->GetName());
 	}
 
-	// ULTIMATE FALLBACK: If still no meshes, load Manny body parts directly
+	// ULTIMATE FALLBACK: If still no meshes, load Quinn body parts directly (Quinn is default)
 	if (!bHasMeshes)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("  No meshes loaded - attempting ULTIMATE FALLBACK with hard-coded Manny paths"));
+		UE_LOG(LogTemp, Warning, TEXT("  No meshes loaded - attempting ULTIMATE FALLBACK with hard-coded Quinn paths"));
 
-		static const TCHAR* MannyHeadPath = TEXT("/Game/SoulslikeFramework/Meshes/SKM/SKM_MannyHead.SKM_MannyHead");
-		static const TCHAR* MannyUpperBodyPath = TEXT("/Game/SoulslikeFramework/Meshes/SKM/SKM_MannyUpperBody.SKM_MannyUpperBody");
-		static const TCHAR* MannyArmsPath = TEXT("/Game/SoulslikeFramework/Meshes/SKM/SKM_MannyArms.SKM_MannyArms");
-		static const TCHAR* MannyLowerBodyPath = TEXT("/Game/SoulslikeFramework/Meshes/SKM/SKM_MannyLowerBody.SKM_MannyLowerBody");
+		static const TCHAR* QuinnHeadPath = TEXT("/Game/SoulslikeFramework/Meshes/SKM/SKM_QuinnCape_Head.SKM_QuinnCape_Head");
+		static const TCHAR* QuinnUpperBodyPath = TEXT("/Game/SoulslikeFramework/Meshes/SKM/SKM_QuinnCape_UpperBody.SKM_QuinnCape_UpperBody");
+		static const TCHAR* QuinnArmsPath = TEXT("/Game/SoulslikeFramework/Meshes/SKM/SKM_Quinn_Arms.SKM_Quinn_Arms");
+		static const TCHAR* QuinnLowerBodyPath = TEXT("/Game/SoulslikeFramework/Meshes/SKM/SKM_QuinnCape_LowerBody.SKM_QuinnCape_LowerBody");
 
 		if (Head && !Head->GetSkeletalMeshAsset())
 		{
-			USkeletalMesh* LoadedMesh = Cast<USkeletalMesh>(StaticLoadObject(USkeletalMesh::StaticClass(), nullptr, MannyHeadPath));
+			USkeletalMesh* LoadedMesh = Cast<USkeletalMesh>(StaticLoadObject(USkeletalMesh::StaticClass(), nullptr, QuinnHeadPath));
 			if (LoadedMesh)
 			{
 				Head->SetSkeletalMesh(LoadedMesh);
@@ -995,7 +1099,7 @@ void ASLFSoulslikeCharacter::InitializeModularMesh()
 
 		if (UpperBody && !UpperBody->GetSkeletalMeshAsset())
 		{
-			USkeletalMesh* LoadedMesh = Cast<USkeletalMesh>(StaticLoadObject(USkeletalMesh::StaticClass(), nullptr, MannyUpperBodyPath));
+			USkeletalMesh* LoadedMesh = Cast<USkeletalMesh>(StaticLoadObject(USkeletalMesh::StaticClass(), nullptr, QuinnUpperBodyPath));
 			if (LoadedMesh)
 			{
 				UpperBody->SetSkeletalMesh(LoadedMesh);
@@ -1006,7 +1110,7 @@ void ASLFSoulslikeCharacter::InitializeModularMesh()
 
 		if (Arms && !Arms->GetSkeletalMeshAsset())
 		{
-			USkeletalMesh* LoadedMesh = Cast<USkeletalMesh>(StaticLoadObject(USkeletalMesh::StaticClass(), nullptr, MannyArmsPath));
+			USkeletalMesh* LoadedMesh = Cast<USkeletalMesh>(StaticLoadObject(USkeletalMesh::StaticClass(), nullptr, QuinnArmsPath));
 			if (LoadedMesh)
 			{
 				Arms->SetSkeletalMesh(LoadedMesh);
@@ -1017,7 +1121,7 @@ void ASLFSoulslikeCharacter::InitializeModularMesh()
 
 		if (LowerBody && !LowerBody->GetSkeletalMeshAsset())
 		{
-			USkeletalMesh* LoadedMesh = Cast<USkeletalMesh>(StaticLoadObject(USkeletalMesh::StaticClass(), nullptr, MannyLowerBodyPath));
+			USkeletalMesh* LoadedMesh = Cast<USkeletalMesh>(StaticLoadObject(USkeletalMesh::StaticClass(), nullptr, QuinnLowerBodyPath));
 			if (LoadedMesh)
 			{
 				LowerBody->SetSkeletalMesh(LoadedMesh);
@@ -1035,7 +1139,7 @@ void ASLFSoulslikeCharacter::InitializeModularMesh()
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("  CRITICAL: No modular meshes found after all fallbacks - character WILL be invisible"));
-		UE_LOG(LogTemp, Error, TEXT("  Check that SKM_Manny* meshes exist at /Game/SoulslikeFramework/Meshes/SKM/"));
+		UE_LOG(LogTemp, Error, TEXT("  Check that SKM_Quinn* meshes exist at /Game/SoulslikeFramework/Meshes/SKM/"));
 	}
 }
 
@@ -1392,48 +1496,41 @@ void ASLFSoulslikeCharacter::ChangeHeadpiece_Implementation(const TSoftObjectPtr
 
 void ASLFSoulslikeCharacter::OnTargetLocked_Implementation(bool bTargetLocked, bool bRotateTowards)
 {
-	// From JSON: Set Cache_Rotation → Branch on TargetLocked → configure controller rotation
-	// Logic: Stores current control rotation, then sets use controller rotation based on lock state
+	// Souls-like lock-on configuration:
+	// When locked: Character faces enemy (handled by TickTargetLockRotation), strafes instead of turning
+	// When unlocked: Character rotates in movement direction (normal souls-like movement)
+
 	UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] OnTargetLocked: locked=%s, rotate=%s"),
 		bTargetLocked ? TEXT("true") : TEXT("false"),
 		bRotateTowards ? TEXT("true") : TEXT("false"));
 
-	// Cache current control rotation
-	if (Controller)
-	{
-		Cache_ControlRotation = Controller->GetControlRotation();
-	}
+	UCharacterMovementComponent* MoveComp = GetCharacterMovement();
 
-	// Branch based on target locked state
 	if (bTargetLocked)
 	{
-		// Target is locked - configure for lock-on behavior
-		// When locked, character rotation is managed by the lock-on system
+		// === LOCKED ON ===
+		// Disable movement-based rotation - we manually rotate to face target in Tick
+		// This enables strafing (moving sideways while facing enemy)
+		if (MoveComp)
+		{
+			MoveComp->bOrientRotationToMovement = false;
+		}
 		bUseControllerRotationYaw = false;
 
-		// Branch on RotateTowards - if true, rotate character to face target
-		if (bRotateTowards)
-		{
-			// Rotate towards target - handled by tick or separate system
-			UE_LOG(LogTemp, Log, TEXT("  Target locked with rotation towards target"));
-		}
-		else
-		{
-			UE_LOG(LogTemp, Log, TEXT("  Target locked without rotation"));
-		}
+		UE_LOG(LogTemp, Log, TEXT("  Lock-on enabled: bOrientRotationToMovement=false, strafing mode"));
 	}
 	else
 	{
-		// Target unlocked - restore normal behavior
-		bUseControllerRotationYaw = false; // Soulslike typically doesn't use controller yaw rotation
+		// === UNLOCKED ===
+		// Re-enable movement-based rotation (character rotates toward movement direction)
+		// This is standard souls-like movement when not locked on
+		if (MoveComp)
+		{
+			MoveComp->bOrientRotationToMovement = true;
+		}
+		bUseControllerRotationYaw = false;
 
-		UE_LOG(LogTemp, Log, TEXT("  Target unlocked"));
-	}
-
-	// Notify combat manager of lock state change
-	if (CachedCombatManager)
-	{
-		// CombatManager would handle additional lock-on logic
+		UE_LOG(LogTemp, Log, TEXT("  Lock-on disabled: bOrientRotationToMovement=true, normal movement"));
 	}
 }
 
@@ -1448,33 +1545,47 @@ void ASLFSoulslikeCharacter::OnLootItem_Implementation(AActor* Item)
 		return;
 	}
 
-	// Cast to pickup item to get item data and add to inventory
-	if (ASLFPickupItemBase* PickupItem = Cast<ASLFPickupItemBase>(Item))
+	// Get inventory manager from PlayerController
+	UInventoryManagerComponent* InvMgr = nullptr;
+	if (APlayerController* PC = Cast<APlayerController>(GetController()))
 	{
-		// CRITICAL: InventoryManagerComponent is on PlayerController, NOT on Character!
-		UInventoryManagerComponent* InvMgr = nullptr;
-		if (APlayerController* PC = Cast<APlayerController>(GetController()))
-		{
-			InvMgr = PC->FindComponentByClass<UInventoryManagerComponent>();
-		}
+		InvMgr = PC->FindComponentByClass<UInventoryManagerComponent>();
+	}
 
-		if (InvMgr)
-		{
-			if (PickupItem->Item)
-			{
-				InvMgr->AddItem(PickupItem->Item, PickupItem->Count, true);
-				UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Added %s x%d to inventory"),
-					*PickupItem->Item->GetName(), PickupItem->Count);
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] OnLootItem - PickupItem->Item is null!"));
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] OnLootItem - InventoryManagerComponent NOT FOUND on PlayerController!"));
-		}
+	// Try to get item data and add to inventory
+	// Handle BOTH class hierarchies: ASLFPickupItemBase (newer) and AB_PickupItem (older/Blueprint)
+	UPrimaryDataAsset* ItemData = nullptr;
+	int32 ItemCount = 1;
+
+	if (ASLFPickupItemBase* SLFPickup = Cast<ASLFPickupItemBase>(Item))
+	{
+		// Newer hierarchy (ASLFPickupItemBase) - Item is UDataAsset*, cast to UPrimaryDataAsset*
+		ItemData = Cast<UPrimaryDataAsset>(SLFPickup->Item);
+		ItemCount = SLFPickup->Count;
+		UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Found ASLFPickupItemBase"));
+	}
+	else if (AB_PickupItem* BPickup = Cast<AB_PickupItem>(Item))
+	{
+		// Older hierarchy (AB_PickupItem from B_PickupItem Blueprint)
+		ItemData = BPickup->Item;
+		ItemCount = BPickup->Count;
+		UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Found AB_PickupItem"));
+	}
+
+	// Add to inventory if we found valid item data
+	if (InvMgr && ItemData)
+	{
+		InvMgr->AddItem(ItemData, ItemCount, true);
+		UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Added %s x%d to inventory"),
+			*ItemData->GetName(), ItemCount);
+	}
+	else if (!InvMgr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] OnLootItem - InventoryManagerComponent NOT FOUND on PlayerController!"));
+	}
+	else if (!ItemData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] OnLootItem - ItemData is null on pickup actor!"));
 	}
 
 	// Queue the pickup item montage action
@@ -1527,6 +1638,38 @@ void ASLFSoulslikeCharacter::UpdateAnimInstanceOverlayStates()
 		return;
 	}
 
+	// Get the AnimInstance class to find Blueprint properties
+	UClass* AnimClass = AnimInstance->GetClass();
+
+	// === MOVEMENT VARIABLES (Speed, Direction for locomotion/strafe animations) ===
+	// Calculate Direction using same method as Blueprint: CalculateDirection(Velocity, ActorRotation)
+	// This is needed for strafe animations during target lock
+	FVector Velocity = GetVelocity();
+	FRotator ActorRotation = GetActorRotation();
+	float Direction = UKismetAnimationLibrary::CalculateDirection(Velocity, ActorRotation);
+	float Speed = Velocity.Size2D(); // Ground speed (XY only)
+
+	// Set Direction(Angle) - note the parentheses in the Blueprint variable name
+	if (FDoubleProperty* DirectionProp = FindFProperty<FDoubleProperty>(AnimClass, TEXT("Direction(Angle)")))
+	{
+		DirectionProp->SetPropertyValue_InContainer(AnimInstance, Direction);
+	}
+	else if (FFloatProperty* DirectionPropF = FindFProperty<FFloatProperty>(AnimClass, TEXT("Direction(Angle)")))
+	{
+		DirectionPropF->SetPropertyValue_InContainer(AnimInstance, Direction);
+	}
+
+	// Set GroundSpeed
+	if (FDoubleProperty* SpeedProp = FindFProperty<FDoubleProperty>(AnimClass, TEXT("GroundSpeed")))
+	{
+		SpeedProp->SetPropertyValue_InContainer(AnimInstance, Speed);
+	}
+	else if (FFloatProperty* SpeedPropF = FindFProperty<FFloatProperty>(AnimClass, TEXT("GroundSpeed")))
+	{
+		SpeedPropF->SetPropertyValue_InContainer(AnimInstance, Speed);
+	}
+
+	// === OVERLAY STATES (weapon hold/attack animations) ===
 	// Get EquipmentManager from controller (NOT character!)
 	UAC_EquipmentManager* EquipMgr = nullptr;
 	if (AController* PC = GetController())
@@ -1537,9 +1680,6 @@ void ASLFSoulslikeCharacter::UpdateAnimInstanceOverlayStates()
 	{
 		return;
 	}
-
-	// Get the AnimInstance class to find Blueprint properties
-	UClass* AnimClass = AnimInstance->GetClass();
 
 	// Find and set LeftHandOverlayState (Blueprint enum property)
 	if (FEnumProperty* LeftProp = FindFProperty<FEnumProperty>(AnimClass, TEXT("LeftHandOverlayState")))
@@ -1565,7 +1705,7 @@ void ASLFSoulslikeCharacter::UpdateAnimInstanceOverlayStates()
 		}
 	}
 
-	// Find and set ActiveOverlayState  
+	// Find and set ActiveOverlayState
 	if (FEnumProperty* ActiveProp = FindFProperty<FEnumProperty>(AnimClass, TEXT("ActiveOverlayState")))
 	{
 		int64 Value = static_cast<int64>(EquipMgr->ActiveOverlayState);
@@ -1574,5 +1714,80 @@ void ASLFSoulslikeCharacter::UpdateAnimInstanceOverlayStates()
 		{
 			UnderlyingProp->SetIntPropertyValue(ActiveProp->ContainerPtrToValuePtr<void>(AnimInstance), Value);
 		}
+	}
+}
+
+void ASLFSoulslikeCharacter::TickTargetLockRotation(float DeltaTime)
+{
+	// Souls-like target lock rotation:
+	// - CHARACTER rotates to face enemy (strafing behavior)
+	// - CAMERA rotates to look at enemy (via control rotation + spring arm)
+	// - Movement input becomes relative to enemy direction
+
+	// Early out if no InteractionManager
+	if (!CachedInteractionManager)
+	{
+		return;
+	}
+
+	// Check if target is locked
+	if (!CachedInteractionManager->IsTargetLocked())
+	{
+		return;
+	}
+
+	// Get the locked target component (for accurate look-at position)
+	USceneComponent* LockedOnComponent = CachedInteractionManager->LockedOnComponent;
+	if (!IsValid(LockedOnComponent))
+	{
+		return;
+	}
+
+	// Get target lock strength from InteractionManager (interpolation speed)
+	float LockStrength = CachedInteractionManager->TargetLockStrength;
+
+	// Get player location (from Actor)
+	FVector PlayerLocation = GetActorLocation();
+
+	// Get target location (from locked component)
+	FVector TargetLocation = LockedOnComponent->GetComponentLocation();
+
+	// Calculate look-at rotation from player to target (full 3D for camera)
+	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(PlayerLocation, TargetLocation);
+
+	// Get current rotations
+	FRotator CurrentActorRotation = GetActorRotation();
+
+	AController* PC = GetController();
+	FRotator CurrentControlRotation = PC ? PC->GetControlRotation() : CurrentActorRotation;
+
+	// === CHARACTER ROTATION (Yaw only - face enemy horizontally) ===
+	FRotator CharacterTargetRotation = FRotator(0.0f, LookAtRotation.Yaw, 0.0f);
+	FRotator NewActorRotation = FMath::RInterpTo(
+		CurrentActorRotation,
+		CharacterTargetRotation,
+		DeltaTime,
+		LockStrength
+	);
+	SetActorRotation(FRotator(0.0f, NewActorRotation.Yaw, 0.0f));
+
+	// === CAMERA ROTATION (Yaw + Pitch - look at enemy including height) ===
+	// Camera follows control rotation via spring arm
+	// Keep current pitch within reasonable bounds, interpolate yaw to face target
+	FRotator CameraTargetRotation = FRotator(
+		FMath::Clamp(LookAtRotation.Pitch, -45.0f, 45.0f), // Clamp pitch to avoid extreme angles
+		LookAtRotation.Yaw,
+		0.0f
+	);
+	FRotator NewControlRotation = FMath::RInterpTo(
+		CurrentControlRotation,
+		CameraTargetRotation,
+		DeltaTime,
+		LockStrength
+	);
+
+	if (PC)
+	{
+		PC->SetControlRotation(NewControlRotation);
 	}
 }

@@ -68,4 +68,11 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "B_PickupItem")
 	FSLFItemInfo TryGetItemInfo();
 	virtual FSLFItemInfo TryGetItemInfo_Implementation();
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// INTERFACE OVERRIDES (ISLFInteractableInterface)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	/** OnInteract - Called when player interacts with this pickup item */
+	virtual void OnInteract_Implementation(AActor* InteractingActor) override;
 };

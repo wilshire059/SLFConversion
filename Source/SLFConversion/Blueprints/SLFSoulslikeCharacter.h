@@ -262,6 +262,13 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Character|Components")
 	UAC_InteractionManager* CachedInteractionManager;
 
+	// NOTE: CachedStatManager is inherited from ASLFBaseCharacter (UStatManagerComponent*)
+	// Use the inherited variable for stat checks like IsStatMoreThan()
+
+	// Sprint/Dodge timing (for tap vs hold detection)
+	// Original Blueprint: If ElapsedSeconds <= 0.2, it's a dodge tap
+	double SprintDodgeStartTime;
+
 	// ═══════════════════════════════════════════════════════════════════
 	// CAMERA COMPONENTS (from JSON Components section)
 	// ═══════════════════════════════════════════════════════════════════
@@ -377,4 +384,11 @@ protected:
 	 * Uses reflection to set Blueprint enum variables since AnimBP isn't reparented
 	 */
 	void UpdateAnimInstanceOverlayStates();
+
+	/** Tick-based target lock rotation
+	 * Continuously rotates the character to face the locked target
+	 * Uses RInterpTo with TargetLockStrength for smooth rotation
+	 * @param DeltaTime - Frame time for interpolation
+	 */
+	void TickTargetLockRotation(float DeltaTime);
 };
