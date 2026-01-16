@@ -346,16 +346,17 @@ void UW_InventorySlot::EventToggleEquippedVisual_Implementation(bool Show)
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_InventorySlot::EventToggleEquippedVisual - Show: %s"), Show ? TEXT("true") : TEXT("false"));
 
-	// Find and toggle equipped indicator widget
-	if (UWidget* EquippedIndicator = GetWidgetFromName(TEXT("EquippedIndicator")))
+	// bp_only: Find the EquippedIcon widget and toggle its visibility
+	// This shows an "X" or equipped indicator over the item
+	if (UWidget* EquippedIcon = GetWidgetFromName(TEXT("EquippedIcon")))
 	{
-		EquippedIndicator->SetVisibility(Show ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+		EquippedIcon->SetVisibility(Show ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+		UE_LOG(LogTemp, Log, TEXT("UW_InventorySlot::EventToggleEquippedVisual - Set EquippedIcon visibility to %s"),
+			Show ? TEXT("Visible") : TEXT("Collapsed"));
 	}
-
-	// Alternative: update border to show equipped state
-	if (UBorder* EquippedBorder = Cast<UBorder>(GetWidgetFromName(TEXT("EquippedBorder"))))
+	else
 	{
-		EquippedBorder->SetVisibility(Show ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+		UE_LOG(LogTemp, Warning, TEXT("UW_InventorySlot::EventToggleEquippedVisual - EquippedIcon widget not found!"));
 	}
 }
 

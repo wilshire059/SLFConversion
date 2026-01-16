@@ -10,6 +10,7 @@
 #include "Widgets/W_InventorySlot.h"
 #include "Widgets/W_GenericError.h"
 #include "Components/InventoryManagerComponent.h"
+#include "Components/AC_InventoryManager.h"
 #include "Components/AC_EquipmentManager.h"
 #include "Components/ScrollBox.h"
 #include "Components/UniformGridPanel.h"
@@ -31,12 +32,15 @@ UW_Equipment::UW_Equipment(const FObjectInitializer& ObjectInitializer)
 	, ErrorBorder(nullptr)
 	, W_EquipmentError(nullptr)
 	, InventoryComponent(nullptr)
+	, AC_InventoryComponent(nullptr)
 	, SelectedSlot(nullptr)
 	, ActiveEquipmentSlot(nullptr)
 	, EquipmentComponent(nullptr)
 	, ActiveItemSlot(nullptr)
 	, EquipmentSlotNavigationIndex(0)
 	, ItemNavigationIndex(0)
+	, CurrentGridRow(0)
+	, CurrentGridColumn(0)
 	, EquipmentSlotClass(nullptr)
 {
 }
@@ -104,6 +108,7 @@ void UW_Equipment::NativeConstruct()
 	if (PC)
 	{
 		InventoryComponent = PC->FindComponentByClass<UInventoryManagerComponent>();
+		AC_InventoryComponent = PC->FindComponentByClass<UAC_InventoryManager>();
 		EquipmentComponent = PC->FindComponentByClass<UAC_EquipmentManager>();
 	}
 
@@ -112,20 +117,31 @@ void UW_Equipment::NativeConstruct()
 	{
 		InventoryComponent = Pawn->FindComponentByClass<UInventoryManagerComponent>();
 	}
+	if (!AC_InventoryComponent && Pawn)
+	{
+		AC_InventoryComponent = Pawn->FindComponentByClass<UAC_InventoryManager>();
+	}
 	if (!EquipmentComponent && Pawn)
 	{
 		EquipmentComponent = Pawn->FindComponentByClass<UAC_EquipmentManager>();
 	}
 
+	// Log which inventory component we found
 	if (InventoryComponent)
 	{
-		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Found InventoryComponent on %s"),
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Found InventoryComponent (UInventoryManagerComponent) on %s"),
 			InventoryComponent->GetOwner() ? *InventoryComponent->GetOwner()->GetName() : TEXT("Unknown"));
 		InventoryComponent->OnInventoryUpdated.AddDynamic(this, &UW_Equipment::HandleInventoryUpdated);
 	}
+	else if (AC_InventoryComponent)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Found AC_InventoryComponent (UAC_InventoryManager) on %s"),
+			AC_InventoryComponent->GetOwner() ? *AC_InventoryComponent->GetOwner()->GetName() : TEXT("Unknown"));
+		AC_InventoryComponent->OnInventoryUpdated.AddDynamic(this, &UW_Equipment::HandleInventoryUpdated);
+	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] InventoryComponent NOT FOUND on PC or Pawn!"));
+		UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] NO InventoryComponent found on PC or Pawn!"));
 	}
 
 	if (EquipmentComponent)
@@ -345,8 +361,9 @@ void UW_Equipment::UpdateInputIcons()
 
 void UW_Equipment::PopulateEquipmentSlots()
 {
-	// Clear existing slots
+	// Clear existing slots and positions
 	EquipmentSlots.Empty();
+	EquipmentSlotsPositions.Empty();
 
 	if (!EquipmentSlotsUniformGrid)
 	{
@@ -435,14 +452,94 @@ void UW_Equipment::PopulateEquipmentSlots()
 		// Add to grid at specified position
 		EquipmentSlotsUniformGrid->AddChildToUniformGrid(NewSlot, SlotDef.Row, SlotDef.Column);
 
-		// Track the slot
+		// Track the slot and its position
 		EquipmentSlots.Add(NewSlot);
+		EquipmentSlotsPositions.Add(FVector2D(SlotDef.Row, SlotDef.Column));
 
 		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Created equipment slot: %s at Row=%d, Col=%d"),
 			*SlotDef.SlotTag.ToString(), SlotDef.Row, SlotDef.Column);
 	}
 
 	UE_LOG(LogTemp, Log, TEXT("[W_Equipment] PopulateEquipmentSlots - Created %d slots"), EquipmentSlots.Num());
+}
+
+UW_EquipmentSlot* UW_Equipment::GetSlotAtGridPosition(int32 Row, int32 Column) const
+{
+	for (int32 i = 0; i < EquipmentSlots.Num(); i++)
+	{
+		if (EquipmentSlotsPositions.IsValidIndex(i))
+		{
+			const FVector2D& Pos = EquipmentSlotsPositions[i];
+			if (FMath::RoundToInt(Pos.X) == Row && FMath::RoundToInt(Pos.Y) == Column)
+			{
+				return EquipmentSlots[i];
+			}
+		}
+	}
+	return nullptr;
+}
+
+void UW_Equipment::SelectSlotAtGridPosition(int32 Row, int32 Column)
+{
+	UW_EquipmentSlot* NewSlot = GetSlotAtGridPosition(Row, Column);
+	if (NewSlot)
+	{
+		// Deselect old slot
+		if (SelectedSlot && SelectedSlot != NewSlot)
+		{
+			SelectedSlot->EventOnSelected(false);
+		}
+
+		// Select new slot
+		SelectedSlot = NewSlot;
+		CurrentGridRow = Row;
+		CurrentGridColumn = Column;
+
+		// Update index for backwards compatibility
+		int32 NewIndex = EquipmentSlots.Find(NewSlot);
+		if (NewIndex != INDEX_NONE)
+		{
+			EquipmentSlotNavigationIndex = NewIndex;
+		}
+
+		SelectedSlot->EventOnSelected(true);
+		EventToggleSlotName(SelectedSlot, true);
+
+		// Update unequip icon visibility based on whether slot has an item
+		UpdateUnequipIconVisibility();
+
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Selected slot at Row=%d, Col=%d"), Row, Column);
+	}
+}
+
+int32 UW_Equipment::GetMaxRowsInColumn(int32 Column) const
+{
+	// Column layout: Right Hand (0), Left Hand (1), Armor (2), Trinkets (3), Ammo (4)
+	switch (Column)
+	{
+		case 0: return 3;  // Right Hand Weapons 1-3
+		case 1: return 3;  // Left Hand Weapons 1-3
+		case 2: return 4;  // Head, Armor, Gloves, Greaves
+		case 3: return 2;  // Trinket 1-2
+		case 4: return 2;  // Arrow, Bullet
+		default: return 0;
+	}
+}
+
+void UW_Equipment::UpdateUnequipIconVisibility()
+{
+	// Show UnequipInputIcon only when selected slot has an item equipped
+	UImage* UnequipIcon = Cast<UImage>(GetWidgetFromName(TEXT("UnequipInputIcon")));
+	if (UnequipIcon)
+	{
+		bool bShowUnequip = SelectedSlot && SelectedSlot->IsOccupied;
+		UnequipIcon->SetVisibility(bShowUnequip ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] UpdateUnequipIconVisibility: %s (SelectedSlot=%s, IsOccupied=%s)"),
+			bShowUnequip ? TEXT("Visible") : TEXT("Hidden"),
+			SelectedSlot ? TEXT("valid") : TEXT("null"),
+			(SelectedSlot && SelectedSlot->IsOccupied) ? TEXT("true") : TEXT("false"));
+	}
 }
 
 void UW_Equipment::BindEquipmentSlotEvents()
@@ -679,32 +776,22 @@ void UW_Equipment::EventNavigateUp_Implementation()
 		return;
 	}
 
-	// Otherwise navigate through equipment slots
+	// Otherwise navigate through equipment slots using grid-based navigation
 	if (EquipmentSlots.Num() == 0)
 	{
 		return;
 	}
 
-	// Deselect current
-	if (SelectedSlot)
+	// Grid-based navigation: Up decreases row in current column
+	int32 NewRow = CurrentGridRow - 1;
+	int32 MaxRows = GetMaxRowsInColumn(CurrentGridColumn);
+
+	if (NewRow < 0)
 	{
-		SelectedSlot->EventOnSelected(false);
+		NewRow = MaxRows - 1;  // Wrap to bottom of column
 	}
 
-	// Navigate to previous slot
-	EquipmentSlotNavigationIndex--;
-	if (EquipmentSlotNavigationIndex < 0)
-	{
-		EquipmentSlotNavigationIndex = EquipmentSlots.Num() - 1;
-	}
-
-	// Select new
-	SelectedSlot = EquipmentSlots[EquipmentSlotNavigationIndex];
-	if (SelectedSlot)
-	{
-		SelectedSlot->EventOnSelected(true);
-		EventToggleSlotName(SelectedSlot, true);
-	}
+	SelectSlotAtGridPosition(NewRow, CurrentGridColumn);
 }
 
 void UW_Equipment::EventNavigateDown_Implementation()
@@ -740,32 +827,22 @@ void UW_Equipment::EventNavigateDown_Implementation()
 		return;
 	}
 
-	// Otherwise navigate through equipment slots
+	// Otherwise navigate through equipment slots using grid-based navigation
 	if (EquipmentSlots.Num() == 0)
 	{
 		return;
 	}
 
-	// Deselect current
-	if (SelectedSlot)
+	// Grid-based navigation: Down increases row in current column
+	int32 NewRow = CurrentGridRow + 1;
+	int32 MaxRows = GetMaxRowsInColumn(CurrentGridColumn);
+
+	if (NewRow >= MaxRows)
 	{
-		SelectedSlot->EventOnSelected(false);
+		NewRow = 0;  // Wrap to top of column
 	}
 
-	// Navigate to next slot
-	EquipmentSlotNavigationIndex++;
-	if (EquipmentSlotNavigationIndex >= EquipmentSlots.Num())
-	{
-		EquipmentSlotNavigationIndex = 0;
-	}
-
-	// Select new
-	SelectedSlot = EquipmentSlots[EquipmentSlotNavigationIndex];
-	if (SelectedSlot)
-	{
-		SelectedSlot->EventOnSelected(true);
-		EventToggleSlotName(SelectedSlot, true);
-	}
+	SelectSlotAtGridPosition(NewRow, CurrentGridColumn);
 }
 
 void UW_Equipment::EventNavigateLeft_Implementation()
@@ -777,7 +854,7 @@ void UW_Equipment::EventNavigateLeft_Implementation()
 		return;
 	}
 
-	// If viewing item list, navigate in items
+	// If viewing item list, navigate in items (grid: move left by 1 slot)
 	if (EquipmentInventorySlots.Num() > 0)
 	{
 		// Deselect current item
@@ -797,7 +874,26 @@ void UW_Equipment::EventNavigateLeft_Implementation()
 		{
 			ActiveItemSlot->EventOnSelected(true);
 		}
+		return;
 	}
+
+	// Grid-based navigation: Left decreases column, clamping row to valid range
+	if (EquipmentSlots.Num() == 0)
+	{
+		return;
+	}
+
+	int32 NewColumn = CurrentGridColumn - 1;
+	if (NewColumn < 0)
+	{
+		NewColumn = NumColumns - 1;  // Wrap to rightmost column
+	}
+
+	// Clamp row to valid range in new column
+	int32 MaxRows = GetMaxRowsInColumn(NewColumn);
+	int32 NewRow = FMath::Min(CurrentGridRow, MaxRows - 1);
+
+	SelectSlotAtGridPosition(NewRow, NewColumn);
 }
 
 void UW_Equipment::EventNavigateRight_Implementation()
@@ -809,7 +905,7 @@ void UW_Equipment::EventNavigateRight_Implementation()
 		return;
 	}
 
-	// If viewing item list, navigate in items
+	// If viewing item list, navigate in items (grid: move right by 1 slot)
 	if (EquipmentInventorySlots.Num() > 0)
 	{
 		// Deselect current item
@@ -829,7 +925,26 @@ void UW_Equipment::EventNavigateRight_Implementation()
 		{
 			ActiveItemSlot->EventOnSelected(true);
 		}
+		return;
 	}
+
+	// Grid-based navigation: Right increases column, clamping row to valid range
+	if (EquipmentSlots.Num() == 0)
+	{
+		return;
+	}
+
+	int32 NewColumn = CurrentGridColumn + 1;
+	if (NewColumn >= NumColumns)
+	{
+		NewColumn = 0;  // Wrap to leftmost column
+	}
+
+	// Clamp row to valid range in new column
+	int32 MaxRows = GetMaxRowsInColumn(NewColumn);
+	int32 NewRow = FMath::Min(CurrentGridRow, MaxRows - 1);
+
+	SelectSlotAtGridPosition(NewRow, NewColumn);
 }
 
 void UW_Equipment::EventNavigateOk_Implementation()
@@ -841,7 +956,7 @@ void UW_Equipment::EventNavigateOk_Implementation()
 		return;
 	}
 
-	// If we have an active item slot selected, equip it
+	// If we have an active item slot selected (in item selection view), equip it
 	if (ActiveItemSlot && ActiveItemSlot->IsOccupied)
 	{
 		EquipItemAtSlot(ActiveItemSlot);
@@ -861,10 +976,21 @@ void UW_Equipment::EventNavigateOk_Implementation()
 			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Switched back to equipment slots view after equipping"));
 		}
 	}
-	// Otherwise, if we have an equipment slot selected, show items for it
+	// Otherwise, if we have an equipment slot selected (in equipment slots view)
 	else if (SelectedSlot)
 	{
-		SelectedSlot->EventEquipmentPressed();
+		// bp_only: If slot is occupied, pressing OK unequips the item
+		// If slot is empty, pressing OK opens item selection
+		if (SelectedSlot->IsOccupied)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Slot is occupied - unequipping"));
+			UnequipItemAtSlot(SelectedSlot->EquipmentSlot);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Slot is empty - showing item selection"));
+			SelectedSlot->EventEquipmentPressed();
+		}
 	}
 }
 
@@ -967,7 +1093,36 @@ void UW_Equipment::EventOnEquipmentSlotPressed_Implementation(UW_EquipmentSlot* 
 	ActiveEquipmentSlot = InSlot;
 
 	// Get items that can be equipped in this slot
-	TArray<FSLFInventoryItem> AvailableItems = InventoryComponent->GetItemsForEquipmentSlot(InSlot->EquipmentSlot);
+	TArray<FSLFInventoryItem> AvailableItems;
+
+	if (InventoryComponent)
+	{
+		// Use UInventoryManagerComponent (returns FSLFInventoryItem directly)
+		AvailableItems = InventoryComponent->GetItemsForEquipmentSlot(InSlot->EquipmentSlot);
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Using InventoryComponent, got %d items"), AvailableItems.Num());
+	}
+	else if (AC_InventoryComponent)
+	{
+		// Use UAC_InventoryManager (returns UPrimaryDataAsset*, need to convert)
+		TArray<UPrimaryDataAsset*> RawItems = AC_InventoryComponent->GetItemsForEquipmentSlot(InSlot->EquipmentSlot);
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Using AC_InventoryComponent, got %d raw items"), RawItems.Num());
+
+		// Convert to FSLFInventoryItem format
+		for (UPrimaryDataAsset* RawItem : RawItems)
+		{
+			if (UPDA_Item* ItemData = Cast<UPDA_Item>(RawItem))
+			{
+				FSLFInventoryItem InvItem;
+				InvItem.ItemAsset = RawItem;
+				InvItem.Amount = 1;  // Default amount (AC_InventoryManager doesn't track amounts in the same way)
+				AvailableItems.Add(InvItem);
+			}
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] No inventory component available to get items!"));
+	}
 
 	UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Got %d available items, UniformEquipmentItemsGrid=%s, InventorySlotClass=%s"),
 		AvailableItems.Num(),
@@ -1010,6 +1165,14 @@ void UW_Equipment::EventOnEquipmentSlotPressed_Implementation(UW_EquipmentSlot* 
 						int32 Amount = InvItem.Amount;
 
 						NewSlot->EventOccupySlot(Item, Amount);
+
+						// bp_only: Check if this item is already equipped to the active slot
+						// If so, show the equipped indicator (X overlay)
+						if (EquipmentComponent && ActiveEquipmentSlot)
+						{
+							bool bIsEquipped = EquipmentComponent->IsItemEquippedToSlot(Item->ItemInformation, ActiveEquipmentSlot->EquipmentSlot);
+							NewSlot->EventToggleEquippedVisual(bIsEquipped);
+						}
 
 						// Bind events
 						NewSlot->OnSelected.AddDynamic(this, &UW_Equipment::EventOnEquipmentSelected);
@@ -1066,8 +1229,16 @@ void UW_Equipment::EventOnEquipmentSlotSelected_Implementation(bool bSelected, U
 			EquipmentSlotNavigationIndex = Index;
 		}
 
-		// Show slot name
+		// Update grid position tracking
+		if (EquipmentSlotsPositions.IsValidIndex(Index))
+		{
+			CurrentGridRow = FMath::RoundToInt(EquipmentSlotsPositions[Index].X);
+			CurrentGridColumn = FMath::RoundToInt(EquipmentSlotsPositions[Index].Y);
+		}
+
+		// Show slot name and update unequip icon
 		EventToggleSlotName(InSlot, true);
+		UpdateUnequipIconVisibility();
 	}
 }
 
@@ -1176,11 +1347,14 @@ void UW_Equipment::EventOnVisibilityChanged_Implementation(ESlateVisibility InVi
 		if (EquipmentSlots.Num() > 0)
 		{
 			EquipmentSlotNavigationIndex = 0;
+			CurrentGridRow = 0;
+			CurrentGridColumn = 0;
 			SelectedSlot = EquipmentSlots[0];
 			if (SelectedSlot)
 			{
 				SelectedSlot->EventOnSelected(true);
 				EventToggleSlotName(SelectedSlot, true);
+				UpdateUnequipIconVisibility();
 			}
 		}
 
@@ -1263,6 +1437,12 @@ void UW_Equipment::HandleItemEquippedToSlot(FSLFCurrentEquipment ItemData, FGame
 			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] HandleItemEquippedToSlot - Updated slot visual for %s"), *Item->GetName());
 		}
 	}
+
+	// Update unequip icon visibility if this is the currently selected slot
+	if (SelectedSlot && SelectedSlot == TargetEquipSlot)
+	{
+		UpdateUnequipIconVisibility();
+	}
 }
 
 void UW_Equipment::HandleItemUnequippedFromSlot(UPrimaryDataAsset* Item, FGameplayTag TargetSlot)
@@ -1275,6 +1455,12 @@ void UW_Equipment::HandleItemUnequippedFromSlot(UPrimaryDataAsset* Item, FGamepl
 	{
 		TargetEquipSlot->EventClearEquipmentSlot();
 		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] HandleItemUnequippedFromSlot - Cleared slot visual"));
+	}
+
+	// Update unequip icon visibility if this is the currently selected slot
+	if (SelectedSlot && SelectedSlot == TargetEquipSlot)
+	{
+		UpdateUnequipIconVisibility();
 	}
 }
 
