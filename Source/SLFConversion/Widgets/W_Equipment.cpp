@@ -979,18 +979,12 @@ void UW_Equipment::EventNavigateOk_Implementation()
 	// Otherwise, if we have an equipment slot selected (in equipment slots view)
 	else if (SelectedSlot)
 	{
-		// bp_only: If slot is occupied, pressing OK unequips the item
-		// If slot is empty, pressing OK opens item selection
-		if (SelectedSlot->IsOccupied)
-		{
-			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Slot is occupied - unequipping"));
-			UnequipItemAtSlot(SelectedSlot->EquipmentSlot);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Slot is empty - showing item selection"));
-			SelectedSlot->EventEquipmentPressed();
-		}
+		// bp_only: Pressing OK always shows item selection (to equip or SWAP items)
+		// Whether slot is occupied or empty, we show the item list
+		// Unequip is a SEPARATE action via Y button (EventNavigateUnequip)
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Showing item selection for slot (IsOccupied=%s)"),
+			SelectedSlot->IsOccupied ? TEXT("true") : TEXT("false"));
+		SelectedSlot->EventEquipmentPressed();
 	}
 }
 
@@ -1279,11 +1273,9 @@ void UW_Equipment::EventOnItemUnequippedFromSlot_Implementation(UPDA_Item* InIte
 {
 	UE_LOG(LogTemp, Log, TEXT("[W_Equipment] EventOnItemUnequippedFromSlot - Slot: %s"), *TargetSlot.ToString());
 
-	// Add item back to inventory if needed
-	if (InventoryComponent && InItem)
-	{
-		InventoryComponent->AddItem(InItem, 1, false);
-	}
+	// NOTE: In Soulslike systems, items remain in inventory even when equipped.
+	// We do NOT add the item back to inventory here - it was never removed.
+	// The unequip just clears the equipment slot, the item is still in inventory.
 }
 
 void UW_Equipment::EventToggleSlotName_Implementation(UW_EquipmentSlot* InEquipmentSlot, bool bShow)
