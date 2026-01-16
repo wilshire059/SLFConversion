@@ -20,6 +20,7 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Interfaces/BPI_AIC.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/WidgetComponent.h"
 #include "Components/AICombatManagerComponent.h"
 #include "Components/AIBehaviorManagerComponent.h"
 #include "Components/LootDropManagerComponent.h"
@@ -31,6 +32,9 @@
 #include "Animation/AnimInstance.h"
 #include "SLFPrimaryDataAssets.h"
 #include "KismetAnimationLibrary.h"
+#include "Widgets/W_EnemyHealthbar.h"
+#include "Interfaces/SLFExecutionIndicatorInterface.h"
+#include "Blueprint/UserWidget.h"
 
 ASLFSoulslikeEnemy::ASLFSoulslikeEnemy()
 {
@@ -49,22 +53,31 @@ ASLFSoulslikeEnemy::ASLFSoulslikeEnemy()
 	AIControllerClass = AAIC_SoulslikeFramework::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
-	// NOTE: Components are NOT created here via CreateDefaultSubobject!
-	// The Blueprint SCS (SimpleConstructionScript) creates these components:
-	//   - AC_AI_BehaviorManager (reparented to UAIBehaviorManagerComponent)
-	//   - AC_AI_CombatManager (reparented to UAICombatManagerComponent)
-	//   - Healthbar (UWidgetComponent)
-	//   - NS_Souls (UNiagaraComponent)
-	//   - AC_LootDropManager (reparented to ULootDropManagerComponent)
-	//
-	// The member pointers will be set in BeginPlay by finding these components.
-	// This avoids creating duplicate components that conflict with Blueprint SCS.
-
-	HealthbarWidget = nullptr;
+	// Component pointers - some may come from Blueprint SCS, some created here
 	CombatManagerComponent = nullptr;
 	BehaviorManagerComponent = nullptr;
 	LootDropManagerComponent = nullptr;
 	SoulsNiagaraComponent = nullptr;
+
+	// Create Healthbar widget component - shows enemy HP bar above head
+	// This ensures healthbar exists even if Blueprint SCS lost it during migration
+	HealthbarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Healthbar"));
+	if (HealthbarWidget)
+	{
+		HealthbarWidget->SetupAttachment(RootComponent);
+		HealthbarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 120.0f)); // Above head
+		HealthbarWidget->SetWidgetSpace(EWidgetSpace::Screen);
+		HealthbarWidget->SetDrawSize(FVector2D(200.0f, 30.0f));
+		HealthbarWidget->SetVisibility(false); // Start hidden, show on damage
+
+		// Set widget class to W_EnemyHealthbar
+		static ConstructorHelpers::FClassFinder<UUserWidget> EnemyHealthbarClassFinder(
+			TEXT("/Game/SoulslikeFramework/Widgets/World/W_EnemyHealthbar"));
+		if (EnemyHealthbarClassFinder.Succeeded())
+		{
+			HealthbarWidget->SetWidgetClass(EnemyHealthbarClassFinder.Class);
+		}
+	}
 
 	// Create AI State Machine component - this replaces Behavior Tree for combat AI
 	AIStateMachine = CreateDefaultSubobject<USLFAIStateMachineComponent>(TEXT("AIStateMachine"));
@@ -82,8 +95,19 @@ void ASLFSoulslikeEnemy::BeginPlay()
 	BehaviorManagerComponent = FindComponentByClass<UAIBehaviorManagerComponent>();
 	CombatManagerComponent = FindComponentByClass<UAICombatManagerComponent>();
 	LootDropManagerComponent = FindComponentByClass<ULootDropManagerComponent>();
-	HealthbarWidget = FindComponentByClass<UWidgetComponent>();
 	SoulsNiagaraComponent = FindComponentByClass<UNiagaraComponent>();
+
+	// Find Healthbar by name - can't use FindComponentByClass because ExecutionWidget (from base class) is also a WidgetComponent
+	TArray<UWidgetComponent*> WidgetComps;
+	GetComponents<UWidgetComponent>(WidgetComps);
+	for (UWidgetComponent* Comp : WidgetComps)
+	{
+		if (Comp->GetName().Contains(TEXT("Healthbar")))
+		{
+			HealthbarWidget = Comp;
+			break;
+		}
+	}
 
 	// Log what we found
 	UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] Components found:"));
@@ -93,6 +117,20 @@ void ASLFSoulslikeEnemy::BeginPlay()
 	UE_LOG(LogTemp, Log, TEXT("  Healthbar: %s"), HealthbarWidget ? *HealthbarWidget->GetName() : TEXT("NULL"));
 	UE_LOG(LogTemp, Log, TEXT("  SoulsNiagara: %s"), SoulsNiagaraComponent ? *SoulsNiagaraComponent->GetName() : TEXT("NULL"));
 	UE_LOG(LogTemp, Log, TEXT("  AIStateMachine: %s"), AIStateMachine ? *AIStateMachine->GetName() : TEXT("NULL"));
+
+	// ═══════════════════════════════════════════════════════════════════════════════
+	// BIND TO OnPoiseBroken EVENT (bp_only B_Soulslike_Enemy.json lines 10598-10604)
+	// ═══════════════════════════════════════════════════════════════════════════════
+	// When poise breaks, we show/hide the ExecutionWidget and call ToggleExecutionIcon
+	if (CombatManagerComponent)
+	{
+		CombatManagerComponent->OnPoiseBroken.AddDynamic(this, &ASLFSoulslikeEnemy::HandleOnPoiseBroken);
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] *** BOUND to OnPoiseBroken event on CombatManager ***"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[SoulslikeEnemy] CombatManagerComponent is NULL - cannot bind OnPoiseBroken!"));
+	}
 
 	// Setup healthbar widget if WidgetClass is not set (lost during reparenting)
 	if (HealthbarWidget && !HealthbarWidget->GetWidgetClass())
@@ -924,13 +962,14 @@ void ASLFSoulslikeEnemy::OnExecuted_Implementation(FGameplayTag ExecutionTag)
 {
 	// From Blueprint:
 	// 1. Check if ExecutionTag is valid
-	// 2. Get relevant executed montage from combat manager
-	// 3. Reset stance stat
-	// 4. Play montage
-	// 5. On completed/blend out: Call SetState to change AI state
-	// 6. Call FinishPoiseBreak on combat manager
+	// 2. Clear poise break timer (prevent early recovery during execution)
+	// 3. Get relevant executed montage from combat manager
+	// 4. Reset stance stat
+	// 5. Play montage
+	// 6. On completed/blend out: Call SetState to change AI state
+	// 7. Call FinishPoiseBreak on combat manager
 
-	UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] OnExecuted: Tag=%s"), *ExecutionTag.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] OnExecuted: Tag=%s"), *ExecutionTag.ToString());
 
 	// Check if tag is valid
 	if (!ExecutionTag.IsValid())
@@ -952,8 +991,25 @@ void ASLFSoulslikeEnemy::OnExecuted_Implementation(FGameplayTag ExecutionTag)
 		return;
 	}
 
-	// Get executed montage
-	UAnimMontage* Montage = CombatManager->GetRelevantExecutedMontage();
+	// CRITICAL: Prepare for execution - stop poise break loop but DON'T resume AI yet
+	// The AI should not attack while we're playing the executed montage
+	// We'll broadcast OnPoiseBroken(false) AFTER the montage ends
+	CombatManager->ClearPoiseBreakResetTimer();
+	CombatManager->bPoiseBroken = false; // Set directly, don't broadcast yet
+
+	// Stop the poise break loop animation
+	if (USkeletalMeshComponent* MeshComp = GetMesh())
+	{
+		if (UAnimInstance* AnimInstance = MeshComp->GetAnimInstance())
+		{
+			AnimInstance->StopAllMontages(0.25f);
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] OnExecuted - Stopped all montages for execution"));
+		}
+	}
+	UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] OnExecuted - Cleared poise break, preparing for execution montage"));
+
+	// Get executed montage by looking up DataTable with ExecutionTag
+	UAnimMontage* Montage = CombatManager->GetRelevantExecutedMontage(ExecutionTag);
 
 	if (Montage)
 	{
@@ -965,22 +1021,24 @@ void ASLFSoulslikeEnemy::OnExecuted_Implementation(FGameplayTag ExecutionTag)
 				FOnMontageEnded MontageEndedDelegate;
 				MontageEndedDelegate.BindLambda([this, CombatManager](UAnimMontage* EndedMontage, bool bInterrupted)
 				{
-					UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] OnExecuted montage ended"));
+					UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] OnExecuted montage ended - NOW resuming AI"));
 
-					// After execution, enemy is dead - set to Idle (no Dead state in enum)
-					// The actual death is handled by CombatManager->FinishPoiseBreak()
+					// After execution montage ends, NOW we can resume AI
+					// Broadcast OnPoiseBroken(false) to signal recovery
+					if (CombatManager)
+					{
+						CombatManager->OnPoiseBroken.Broadcast(false);
+						UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] Broadcasted OnPoiseBroken(false) - AI can resume"));
+					}
+
+					// Set AI state to Idle
 					if (BehaviorManagerComponent)
 					{
 						BehaviorManagerComponent->SetState(ESLFAIStates::Idle);
 					}
-
-					// Finish poise break (marks enemy as dead)
-					if (CombatManager)
-					{
-						CombatManager->FinishPoiseBreak();
-					}
 				});
 
+				UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] Playing executed montage: %s"), *Montage->GetName());
 				AnimInstance->Montage_Play(Montage, 1.0f);
 				AnimInstance->Montage_SetEndDelegate(MontageEndedDelegate, Montage);
 			}
@@ -988,28 +1046,26 @@ void ASLFSoulslikeEnemy::OnExecuted_Implementation(FGameplayTag ExecutionTag)
 	}
 	else
 	{
-		// No montage, just set state and finish
+		// No montage found, broadcast immediately and set state to Idle
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] OnExecuted - No montage, resuming AI immediately"));
+		CombatManager->OnPoiseBroken.Broadcast(false);
 		if (BehaviorManagerComponent)
 		{
 			BehaviorManagerComponent->SetState(ESLFAIStates::Idle);
-		}
-		if (CombatManager)
-		{
-			CombatManager->FinishPoiseBreak();
 		}
 	}
 }
 
 void ASLFSoulslikeEnemy::OnBackstabbed_Implementation(FGameplayTag ExecutionTag)
 {
-	// From Blueprint: Same logic as OnExecuted
+	// From Blueprint: Similar to OnExecuted but for backstabs
+	// Backstab happens to unsuspecting enemies (not poise broken)
 	// 1. Check if ExecutionTag is valid
 	// 2. Get relevant executed montage
-	// 3. Reset stat
-	// 4. Play montage
-	// 5. On completed: SetState, FinishPoiseBreak
+	// 3. Play montage
+	// 4. On completed: SetState(Idle)
 
-	UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] OnBackstabbed: Tag=%s"), *ExecutionTag.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] OnBackstabbed: Tag=%s"), *ExecutionTag.ToString());
 
 	// Check if tag is valid
 	if (!ExecutionTag.IsValid())
@@ -1031,8 +1087,8 @@ void ASLFSoulslikeEnemy::OnBackstabbed_Implementation(FGameplayTag ExecutionTag)
 		return;
 	}
 
-	// Get executed montage
-	UAnimMontage* Montage = CombatManager->GetRelevantExecutedMontage();
+	// Get executed montage by looking up DataTable with ExecutionTag
+	UAnimMontage* Montage = CombatManager->GetRelevantExecutedMontage(ExecutionTag);
 
 	if (Montage)
 	{
@@ -1042,20 +1098,15 @@ void ASLFSoulslikeEnemy::OnBackstabbed_Implementation(FGameplayTag ExecutionTag)
 			if (UAnimInstance* AnimInstance = MeshComp->GetAnimInstance())
 			{
 				FOnMontageEnded MontageEndedDelegate;
-				MontageEndedDelegate.BindLambda([this, CombatManager](UAnimMontage* EndedMontage, bool bInterrupted)
+				MontageEndedDelegate.BindLambda([this](UAnimMontage* EndedMontage, bool bInterrupted)
 				{
-					UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] OnBackstabbed montage ended"));
+					UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] OnBackstabbed montage ended - setting AI state to Idle"));
 
-					// After backstab, enemy is dead - set to Idle (no Dead state in enum)
+					// After backstab montage ends, just set AI state to Idle
+					// Enemy will recover and resume normal behavior
 					if (BehaviorManagerComponent)
 					{
 						BehaviorManagerComponent->SetState(ESLFAIStates::Idle);
-					}
-
-					// Finish poise break (marks enemy as dead)
-					if (CombatManager)
-					{
-						CombatManager->FinishPoiseBreak();
 					}
 				});
 
@@ -1066,14 +1117,78 @@ void ASLFSoulslikeEnemy::OnBackstabbed_Implementation(FGameplayTag ExecutionTag)
 	}
 	else
 	{
-		// No montage, just set state and finish
+		// No montage found, just set state to Idle
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] OnBackstabbed - No montage, setting AI state to Idle"));
 		if (BehaviorManagerComponent)
 		{
 			BehaviorManagerComponent->SetState(ESLFAIStates::Idle);
 		}
-		if (CombatManager)
+	}
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// POISE BREAK / EXECUTION INDICATOR HANDLING
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void ASLFSoulslikeEnemy::HandleOnPoiseBroken(bool bBroken)
+{
+	// ═══════════════════════════════════════════════════════════════════════════════
+	// bp_only flow (B_Soulslike_Enemy.json lines 10598-10899):
+	// On Poise Broken (AC_AI_CombatManager) event fires with "Broken?" parameter
+	// then → SetVisibility(ExecutionWidget, bNewVisibility = Broken?)
+	// then → GetWidget() from ExecutionWidget → ToggleExecutionIcon(Visible = Broken?)
+	// ═══════════════════════════════════════════════════════════════════════════════
+
+	UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] *** HandleOnPoiseBroken *** - bBroken=%s - Enemy: %s"),
+		bBroken ? TEXT("true") : TEXT("false"), *GetName());
+
+	// CachedExecutionWidget is inherited from ASLFBaseCharacter
+	if (CachedExecutionWidget)
+	{
+		// Step 1: SetVisibility on the WidgetComponent based on bBroken
+		// This is the bp_only SetVisibility node (lines 10640-10674)
+		CachedExecutionWidget->SetVisibility(bBroken);
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] ExecutionWidget visibility = %s"),
+			bBroken ? TEXT("VISIBLE") : TEXT("HIDDEN"));
+
+		// Step 2: Get the UserWidget and call ToggleExecutionIcon on it
+		// This is the bp_only GetWidget → ToggleExecutionIcon flow (lines 10679-10899)
+		UUserWidget* Widget = CachedExecutionWidget->GetWidget();
+
+		// Widget may be null if component was hidden and never initialized - force init
+		if (!Widget && bBroken && CachedExecutionWidget->GetWidgetClass())
 		{
-			CombatManager->FinishPoiseBreak();
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] Widget is null, forcing InitWidget()..."));
+			CachedExecutionWidget->InitWidget();
+			Widget = CachedExecutionWidget->GetWidget();
 		}
+
+		if (Widget)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] Widget class: %s"), *Widget->GetClass()->GetName());
+
+			// W_TargetExecutionIndicator implements ISLFExecutionIndicatorInterface
+			if (Widget->GetClass()->ImplementsInterface(USLFExecutionIndicatorInterface::StaticClass()))
+			{
+				ISLFExecutionIndicatorInterface::Execute_ToggleExecutionIcon(Widget, bBroken);
+				UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] Called ToggleExecutionIcon(%s) on ExecutionWidget"),
+					bBroken ? TEXT("true") : TEXT("false"));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] Widget %s doesn't implement ISLFExecutionIndicatorInterface"),
+					*Widget->GetClass()->GetName());
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] ExecutionWidget->GetWidget() returned null - is WidgetClass set? WidgetClass=%s"),
+				CachedExecutionWidget->GetWidgetClass() ? *CachedExecutionWidget->GetWidgetClass()->GetName() : TEXT("NULL"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[SoulslikeEnemy] CachedExecutionWidget is NULL - execution indicator won't show!"));
+		UE_LOG(LogTemp, Error, TEXT("[SoulslikeEnemy] Check if ASLFBaseCharacter creates ExecutionWidget in constructor."));
 	}
 }
