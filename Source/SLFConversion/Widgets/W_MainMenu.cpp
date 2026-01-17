@@ -35,6 +35,9 @@ void UW_MainMenu::NativeConstruct()
 
 	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] NativeConstruct"));
 
+	// Make focusable for keyboard input
+	SetIsFocusable(true);
+
 	// Initialize buttons from ButtonsBox
 	InitializeButtons();
 
@@ -58,9 +61,42 @@ void UW_MainMenu::NativeConstruct()
 
 void UW_MainMenu::NativeDestruct()
 {
+	// Unbind button events before destruction
+	UnbindButtonEvents();
+
 	Super::NativeDestruct();
 
 	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] NativeDestruct"));
+}
+
+FReply UW_MainMenu::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	FKey Key = InKeyEvent.GetKey();
+
+	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] NativeOnKeyDown - Key: %s"), *Key.ToString());
+
+	// Navigate Up: W, Up Arrow, Gamepad DPad Up, Left Stick Up
+	if (Key == EKeys::W || Key == EKeys::Up || Key == EKeys::Gamepad_DPad_Up || Key == EKeys::Gamepad_LeftStick_Up)
+	{
+		EventNavigateUp();
+		return FReply::Handled();
+	}
+
+	// Navigate Down: S, Down Arrow, Gamepad DPad Down, Left Stick Down
+	if (Key == EKeys::S || Key == EKeys::Down || Key == EKeys::Gamepad_DPad_Down || Key == EKeys::Gamepad_LeftStick_Down)
+	{
+		EventNavigateDown();
+		return FReply::Handled();
+	}
+
+	// Navigate Ok/Confirm: Enter, Space, Gamepad A (FaceButton_Bottom)
+	if (Key == EKeys::Enter || Key == EKeys::SpaceBar || Key == EKeys::Gamepad_FaceButton_Bottom)
+	{
+		EventNavigateOk();
+		return FReply::Handled();
+	}
+
+	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);
 }
 
 void UW_MainMenu::InitializeButtons()
@@ -110,10 +146,79 @@ void UW_MainMenu::InitializeButtons()
 
 void UW_MainMenu::BindButtonEvents()
 {
-	// Button events are bound in Blueprint via event dispatchers
-	// The OnSelected event on each button calls back to OnButtonSelected
-	// This is handled by the Blueprint widget bindings
-	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Button events will be handled via Blueprint bindings"));
+	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Binding button events"));
+
+	// Bind OnButtonClicked events from each button
+	if (BtnContinue)
+	{
+		BtnContinue->OnButtonClicked.AddDynamic(this, &UW_MainMenu::OnContinueClicked);
+	}
+	if (BtnNewGame)
+	{
+		BtnNewGame->OnButtonClicked.AddDynamic(this, &UW_MainMenu::OnNewGameClicked);
+	}
+	if (BtnLoadGame)
+	{
+		BtnLoadGame->OnButtonClicked.AddDynamic(this, &UW_MainMenu::OnLoadGameClicked);
+	}
+	if (BtnSettings)
+	{
+		BtnSettings->OnButtonClicked.AddDynamic(this, &UW_MainMenu::OnSettingsClicked);
+	}
+	if (BtnCredits)
+	{
+		BtnCredits->OnButtonClicked.AddDynamic(this, &UW_MainMenu::OnCreditsClicked);
+	}
+	if (BtnQuitGame)
+	{
+		BtnQuitGame->OnButtonClicked.AddDynamic(this, &UW_MainMenu::OnQuitGameClicked);
+	}
+}
+
+void UW_MainMenu::UnbindButtonEvents()
+{
+	if (BtnContinue) BtnContinue->OnButtonClicked.RemoveAll(this);
+	if (BtnNewGame) BtnNewGame->OnButtonClicked.RemoveAll(this);
+	if (BtnLoadGame) BtnLoadGame->OnButtonClicked.RemoveAll(this);
+	if (BtnSettings) BtnSettings->OnButtonClicked.RemoveAll(this);
+	if (BtnCredits) BtnCredits->OnButtonClicked.RemoveAll(this);
+	if (BtnQuitGame) BtnQuitGame->OnButtonClicked.RemoveAll(this);
+}
+
+void UW_MainMenu::OnContinueClicked()
+{
+	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Continue button clicked"));
+	OnMenuButtonClicked.Broadcast(FName(TEXT("Continue")));
+}
+
+void UW_MainMenu::OnNewGameClicked()
+{
+	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] New Game button clicked"));
+	OnMenuButtonClicked.Broadcast(FName(TEXT("NewGame")));
+}
+
+void UW_MainMenu::OnLoadGameClicked()
+{
+	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Load Game button clicked"));
+	OnMenuButtonClicked.Broadcast(FName(TEXT("LoadGame")));
+}
+
+void UW_MainMenu::OnSettingsClicked()
+{
+	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Settings button clicked"));
+	OnMenuButtonClicked.Broadcast(FName(TEXT("Settings")));
+}
+
+void UW_MainMenu::OnCreditsClicked()
+{
+	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Credits button clicked"));
+	OnMenuButtonClicked.Broadcast(FName(TEXT("Credits")));
+}
+
+void UW_MainMenu::OnQuitGameClicked()
+{
+	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Quit Game button clicked"));
+	OnMenuButtonClicked.Broadcast(FName(TEXT("QuitGame")));
 }
 
 void UW_MainMenu::UpdateButtonSelection()
@@ -211,13 +316,11 @@ void UW_MainMenu::EventNavigateDown_Implementation()
 		return;
 	}
 
-	// Increment navigation index (clamped in UpdateButtonSelection)
+	// Increment navigation index with wrap-around
 	NavigationIndex++;
-
-	// Wrap around or clamp
 	if (NavigationIndex >= Buttons.Num())
 	{
-		NavigationIndex = Buttons.Num() - 1; // Clamp to last
+		NavigationIndex = 0;  // Wrap to first
 	}
 
 	UpdateButtonSelection();
@@ -237,13 +340,11 @@ void UW_MainMenu::EventNavigateUp_Implementation()
 		return;
 	}
 
-	// Decrement navigation index
+	// Decrement navigation index with wrap-around
 	NavigationIndex--;
-
-	// Clamp to first
 	if (NavigationIndex < 0)
 	{
-		NavigationIndex = 0;
+		NavigationIndex = Buttons.Num() - 1;  // Wrap to last
 	}
 
 	UpdateButtonSelection();

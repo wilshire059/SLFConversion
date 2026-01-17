@@ -15,6 +15,7 @@
 #include "AC_InteractionManager.h"
 #include "Net/UnrealNetwork.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/ChildActorComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
@@ -48,19 +49,63 @@ UAC_InteractionManager::UAC_InteractionManager()
 	LockedOnComponent = nullptr;
 
 	// Initialize default trace channels for interactables
-	// WorldStatic and WorldDynamic are common for pickups/interactables
+	// Must match all possible collision types used by interactable actors:
+	// - WorldStatic: Static props, doors, chests
+	// - WorldDynamic: Moving/physics interactables
+	// - PhysicsBody: Ragdoll/physics-enabled actors
+	// - Pawn: Character-based interactables, NPCs
+	// - Visibility: Items that use visibility channel for interaction
+	// - GameTraceChannel1: Custom "Interactable" channel used by B_PickupItem and other interactables
 	TraceChannels.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic));
 	TraceChannels.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic));
 	TraceChannels.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_PhysicsBody));
+	TraceChannels.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
+	TraceChannels.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Visibility));
+	TraceChannels.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel1)); // "Interactable" custom channel
 }
 
 void UAC_InteractionManager::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(LogTemp, Log, TEXT("UAC_InteractionManager::BeginPlay - Owner: %s, TraceChannels: %d, Radius: %.1f"),
+
+	// CRITICAL FIX: Blueprint CDO may override C++ constructor defaults with empty/incomplete array
+	// Ensure TraceChannels has required channels for interaction detection
+	// We need at least 6 channels to detect all interactable types:
+	// - WorldStatic: Static props, doors, chests
+	// - WorldDynamic: Moving/physics interactables
+	// - PhysicsBody: Ragdoll/physics-enabled actors
+	// - Pawn: Character-based interactables, NPCs
+	// - Visibility: Items that use visibility channel for interaction
+	// - GameTraceChannel1: Custom "Interactable" channel used by B_PickupItem
+	if (TraceChannels.Num() < 6)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[InteractionManager] TraceChannels only has %d entries - reinitializing to default 6 channels"), TraceChannels.Num());
+		TraceChannels.Empty();
+		TraceChannels.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic));
+		TraceChannels.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic));
+		TraceChannels.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_PhysicsBody));
+		TraceChannels.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
+		TraceChannels.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Visibility));
+		TraceChannels.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel1)); // "Interactable" custom channel
+	}
+
+	// Also ensure InteractionRadius is valid - Blueprint CDO may have too small a value
+	// C++ default is 200.0, but Blueprint may override to 100.0 which is too small
+	if (InteractionRadius < 200.0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[InteractionManager] InteractionRadius too small (%.1f) - setting to 200"), InteractionRadius);
+		InteractionRadius = 200.0;
+	}
+
+	// Debug draw disabled - interaction now working
+	// Uncomment to visualize sphere trace:
+	// DebugDraw = EDrawDebugTrace::ForDuration;
+
+	UE_LOG(LogTemp, Log, TEXT("UAC_InteractionManager::BeginPlay - Owner: %s, TraceChannels: %d, Radius: %.1f, DebugDraw: %d"),
 		GetOwner() ? *GetOwner()->GetName() : TEXT("None"),
 		TraceChannels.Num(),
-		InteractionRadius);
+		InteractionRadius,
+		(int32)DebugDraw);
 }
 
 void UAC_InteractionManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -72,9 +117,10 @@ void UAC_InteractionManager::TickComponent(float DeltaTime, ELevelTick TickType,
 	// ═══════════════════════════════════════════════════════════════════════
 	// 1. Sphere trace around player
 	// 2. For each hit, check if implements BPI_Interactable
-	// 3. Add unique to NearbyInteractables
-	// 4. Find nearest interactable
-	// 5. Notify player via BPI_Player::OnInteractableTraced
+	// 3. Check CanBeTraced property
+	// 4. Add unique to NearbyInteractables
+	// 5. Find nearest interactable
+	// 6. Notify player via BPI_Player::OnInteractableTraced
 
 	AActor* Owner = GetOwner();
 	if (!IsValid(Owner))
@@ -95,6 +141,26 @@ void UAC_InteractionManager::TickComponent(float DeltaTime, ELevelTick TickType,
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Add(Owner);
 
+	// Also ignore all child actors spawned by the owner (e.g., ChaosForceField from ChildActorComponent)
+	// These are attached to the player and would always be "nearest" otherwise
+	TArray<AActor*> AttachedActors;
+	Owner->GetAttachedActors(AttachedActors, true, true); // bResetArray=true, bRecursivelyIncludeAttachedActors=true
+	for (AActor* Attached : AttachedActors)
+	{
+		ActorsToIgnore.AddUnique(Attached);
+	}
+
+	// Also get child actors from ChildActorComponents
+	TArray<UChildActorComponent*> ChildActorComps;
+	Owner->GetComponents<UChildActorComponent>(ChildActorComps);
+	for (UChildActorComponent* ChildComp : ChildActorComps)
+	{
+		if (AActor* ChildActor = ChildComp->GetChildActor())
+		{
+			ActorsToIgnore.AddUnique(ChildActor);
+		}
+	}
+
 	TArray<FHitResult> OutHits;
 	bool bHit = UKismetSystemLibrary::SphereTraceMultiForObjects(
 		this,
@@ -112,8 +178,25 @@ void UAC_InteractionManager::TickComponent(float DeltaTime, ELevelTick TickType,
 		5.0f
 	);
 
+	// Debug: Log all nearby actors for troubleshooting (temporarily enabled)
+	static float DebugLogTimer = 0.0f;
+	DebugLogTimer += DeltaTime;
+	bool bShouldLogDebug = (DebugLogTimer > 2.0f); // Log every 2 seconds
+	if (bShouldLogDebug)
+	{
+		DebugLogTimer = 0.0f;
+		UE_LOG(LogTemp, Log, TEXT("[InteractionManager DEBUG] TraceLocation: %s, Radius: %.1f, Channels: %d, bHit: %s"),
+			*TraceLocation.ToString(), InteractionRadius, TraceChannels.Num(), bHit ? TEXT("true") : TEXT("false"));
+	}
+
 	if (bHit)
 	{
+		// Debug: Log hit count
+		if (bShouldLogDebug)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[InteractionManager DEBUG] Hit %d actors"), OutHits.Num());
+		}
+
 		// Process each hit
 		for (const FHitResult& Hit : OutHits)
 		{
@@ -121,6 +204,18 @@ void UAC_InteractionManager::TickComponent(float DeltaTime, ELevelTick TickType,
 			if (!IsValid(HitActor))
 			{
 				continue;
+			}
+
+			// Debug: Log every hit actor and its class
+			if (bShouldLogDebug)
+			{
+				UClass* ActorClass = HitActor->GetClass();
+				bool bHasInteractableInterface = ActorClass->ImplementsInterface(UBPI_Interactable::StaticClass());
+				bool bHasSLFInterface = ActorClass->ImplementsInterface(USLFInteractableInterface::StaticClass());
+				UE_LOG(LogTemp, Log, TEXT("[InteractionManager DEBUG] Hit: %s (Class: %s, BPI_Interactable: %s, SLFInteractable: %s)"),
+					*HitActor->GetName(), *ActorClass->GetName(),
+					bHasInteractableInterface ? TEXT("YES") : TEXT("NO"),
+					bHasSLFInterface ? TEXT("YES") : TEXT("NO"));
 			}
 
 			// Check if already in NearbyInteractables
@@ -131,12 +226,43 @@ void UAC_InteractionManager::TickComponent(float DeltaTime, ELevelTick TickType,
 
 			// Check if implements either BPI_Interactable or SLFInteractableInterface
 			// Both interfaces are used for interactables in the codebase
-			if (HitActor->GetClass()->ImplementsInterface(UBPI_Interactable::StaticClass()) ||
-				HitActor->GetClass()->ImplementsInterface(USLFInteractableInterface::StaticClass()))
+			bool bImplementsInterface = HitActor->GetClass()->ImplementsInterface(UBPI_Interactable::StaticClass()) ||
+				HitActor->GetClass()->ImplementsInterface(USLFInteractableInterface::StaticClass());
+
+			if (bImplementsInterface)
 			{
-				// Add unique to NearbyInteractables
-				NearbyInteractables.AddUnique(HitActor);
-				UE_LOG(LogTemp, Verbose, TEXT("[InteractionManager] Found interactable: %s"), *HitActor->GetName());
+				// Check CanBeTraced property - multiple naming conventions exist:
+				// - "CanBeTraced" (some C++ classes)
+				// - "bCanBeTraced" (standard C++ bool naming convention, e.g., ASLFBossDoor)
+				// - "CanBeTraced?" (Blueprint variable with question mark)
+				bool bCanBeTraced = true; // Default to true if property doesn't exist
+
+				// Try C++ property with 'b' prefix first (standard UE naming: ASLFBossDoor::bCanBeTraced)
+				if (FBoolProperty* CanBeTracedProp = FindFProperty<FBoolProperty>(HitActor->GetClass(), TEXT("bCanBeTraced")))
+				{
+					bCanBeTraced = CanBeTracedProp->GetPropertyValue_InContainer(HitActor);
+				}
+				// Try C++ property without 'b' prefix (AB_Interactable::CanBeTraced)
+				else if (FBoolProperty* CanBeTracedNoBProp = FindFProperty<FBoolProperty>(HitActor->GetClass(), TEXT("CanBeTraced")))
+				{
+					bCanBeTraced = CanBeTracedNoBProp->GetPropertyValue_InContainer(HitActor);
+				}
+				// Also check Blueprint variable "CanBeTraced?" (with question mark)
+				else if (FBoolProperty* CanBeTracedBPProp = FindFProperty<FBoolProperty>(HitActor->GetClass(), TEXT("CanBeTraced?")))
+				{
+					bCanBeTraced = CanBeTracedBPProp->GetPropertyValue_InContainer(HitActor);
+				}
+
+				if (bCanBeTraced)
+				{
+					// Add unique to NearbyInteractables
+					NearbyInteractables.AddUnique(HitActor);
+					UE_LOG(LogTemp, Log, TEXT("[InteractionManager] Found interactable: %s (CanBeTraced: true)"), *HitActor->GetName());
+				}
+				else
+				{
+					UE_LOG(LogTemp, Verbose, TEXT("[InteractionManager] Skipping interactable %s (CanBeTraced: false)"), *HitActor->GetName());
+				}
 			}
 		}
 

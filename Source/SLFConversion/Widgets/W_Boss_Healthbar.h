@@ -50,6 +50,22 @@ public:
 	virtual void NativeDestruct() override;
 
 	// ═══════════════════════════════════════════════════════════════════════
+	// WIDGET REFERENCES
+	// ═══════════════════════════════════════════════════════════════════════
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget, OptionalWidget = true), Category = "Widgets")
+	class UProgressBar* HealthBar_Front;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget, OptionalWidget = true), Category = "Widgets")
+	class UProgressBar* HealthBar_Back;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget, OptionalWidget = true), Category = "Widgets")
+	class UTextBlock* Txt_BossName;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget, OptionalWidget = true), Category = "Widgets")
+	class UTextBlock* Txt_DamageAmount;
+
+	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (4)
 	// ═══════════════════════════════════════════════════════════════════════
 
@@ -61,6 +77,10 @@ public:
 	FTimerHandle DamageTimer;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	double TotalDamage;
+
+	// Cached boss actor reference
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
+	AActor* CachedBossActor;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (0)

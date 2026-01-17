@@ -163,6 +163,11 @@ public:
 	void EventOnVisibilityChanged(ESlateVisibility InVisibility);
 	virtual void EventOnVisibilityChanged_Implementation(ESlateVisibility InVisibility);
 
+	// Apply and save all current settings to GameUserSettings
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Settings")
+	void ApplyAndSaveSettings();
+	virtual void ApplyAndSaveSettings_Implementation();
+
 protected:
 	// Update category selection visual state
 	void UpdateCategorySelection();

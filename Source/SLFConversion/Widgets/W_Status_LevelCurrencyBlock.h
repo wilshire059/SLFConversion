@@ -22,6 +22,8 @@
 
 #include "W_Status_LevelCurrencyBlock.generated.h"
 
+class UTextBlock;
+
 // Forward declarations for widget types
 
 
@@ -56,6 +58,16 @@ public:
 	int32 LocalCurrency;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
 	UCurveFloat* LevelRequirementCurve;
+
+	// Widget references (from Blueprint UMG)
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Widgets")
+	class UTextBlock* LevelText;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Widgets")
+	class UTextBlock* CurrencyText;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Widgets")
+	class UTextBlock* RequiredCurrencyText;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (0)

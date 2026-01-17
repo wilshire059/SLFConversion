@@ -9,6 +9,12 @@
 #include "Widgets/W_EquipmentSlot.h"
 #include "Widgets/W_InventorySlot.h"
 #include "Widgets/W_GenericError.h"
+#include "Widgets/W_Equipment_Item_AttackPower.h"
+#include "Widgets/W_Equipment_Item_StatScaling.h"
+#include "Widgets/W_Equipment_Item_RequiredStats.h"
+#include "Widgets/W_Equipment_Item_StatsGranted.h"
+#include "Widgets/W_Equipment_Item_DamageNegation.h"
+#include "Widgets/W_Equipment_Item_Resistance.h"
 #include "Components/InventoryManagerComponent.h"
 #include "Components/AC_InventoryManager.h"
 #include "Components/AC_EquipmentManager.h"
@@ -19,6 +25,7 @@
 #include "Components/Image.h"
 #include "Blueprint/WidgetTree.h"
 #include "Engine/DataTable.h"
+#include "SLFPrimaryDataAssets.h"
 
 UW_Equipment::UW_Equipment(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -27,6 +34,10 @@ UW_Equipment::UW_Equipment(const FObjectInitializer& ObjectInitializer)
 	, UniformEquipmentItemsGrid(nullptr)
 	, EquipmentSlotsUniformGrid(nullptr)
 	, ItemInfoBoxSwitcher(nullptr)
+	, InfoSwitcher(nullptr)
+	, Info_Weapon(nullptr)
+	, Info_Armor(nullptr)
+	, Info_Talisman(nullptr)
 	, SlotNameText(nullptr)
 	, EquipmentSwitcher(nullptr)
 	, ErrorBorder(nullptr)
@@ -630,15 +641,442 @@ void UW_Equipment::SetupInformationPanel_Implementation(const FSLFItemInfo& Item
 		CompareStats ? TEXT("true") : TEXT("false"),
 		*ItemInfo.DisplayName.ToString());
 
-	// The item info panel child widgets will read from the ItemInfo struct
-	// The struct contains: ItemName, ItemIcon, ItemDescription, AttackPower, DamageNegation, etc.
-	// When CompareStats is true, we show comparison with the currently equipped item
+	// ════════════════════════════════════════════════════════════════════════
+	// IMAGES - Set both compact (ItemIcon) and detailed (DetailsLargeImage) views
+	// bp_only: Uses SetBrushFromSoftTexture which accepts TSoftObjectPtr directly
+	// ════════════════════════════════════════════════════════════════════════
 
-	// For now, just show the item info panel - child widgets should bind to display the data
-	// In a full implementation, we would set properties on child widgets here
+	// Set ItemIcon (compact view - small icon)
+	if (UImage* ItemIcon = Cast<UImage>(GetWidgetFromName(TEXT("ItemIcon"))))
+	{
+		if (!ItemInfo.IconSmall.IsNull())
+		{
+			ItemIcon->SetBrushFromSoftTexture(ItemInfo.IconSmall, false);
+			ItemIcon->SetVisibility(ESlateVisibility::Visible);
+			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Set ItemIcon from IconSmall: %s"), *ItemInfo.IconSmall.ToString());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] ItemInfo.IconSmall is null!"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] ItemIcon widget not found!"));
+	}
 
-	// Show the item info panel
-	EventToggleItemInfo(true);
+	// Set DetailsLargeImage (detailed view - use large icon if available, else small)
+	if (UImage* LargeImage = Cast<UImage>(GetWidgetFromName(TEXT("DetailsLargeImage"))))
+	{
+		TSoftObjectPtr<UTexture2D> IconToUse = ItemInfo.IconLargeOptional.IsNull() ? ItemInfo.IconSmall : ItemInfo.IconLargeOptional;
+		if (!IconToUse.IsNull())
+		{
+			LargeImage->SetBrushFromSoftTexture(IconToUse, false);
+			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Set DetailsLargeImage"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] DetailsLargeImage widget not found!"));
+	}
+
+	// ════════════════════════════════════════════════════════════════════════
+	// TEXT WIDGETS - Populate both compact and detailed view text
+	// ════════════════════════════════════════════════════════════════════════
+
+	// Detailed view widgets (ItemLongInfo)
+	if (UTextBlock* ItemNameText = Cast<UTextBlock>(GetWidgetFromName(TEXT("ItemNameText_LongDetails"))))
+	{
+		ItemNameText->SetText(ItemInfo.DisplayName);
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Set ItemNameText_LongDetails to: %s"), *ItemInfo.DisplayName.ToString());
+	}
+
+	if (UTextBlock* DescText = Cast<UTextBlock>(GetWidgetFromName(TEXT("ItemLongDescription"))))
+	{
+		DescText->SetText(ItemInfo.LongDescription);
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Set ItemLongDescription"));
+	}
+
+	// Compact view widgets (ItemInfoOverlay)
+	if (UTextBlock* ItemNameDetails = Cast<UTextBlock>(GetWidgetFromName(TEXT("ItemNameText_Details"))))
+	{
+		ItemNameDetails->SetText(ItemInfo.DisplayName);
+	}
+
+	// bp_only: Blueprint sets ALL FOUR text widgets with DisplayName at once:
+	// ItemNameText_Details, ItemNameText_LongDetails, ItemNameText, ItemNameText_Grid
+	// The regular view ItemNameText shows on the LEFT panel
+	if (UTextBlock* ItemNameRegular = Cast<UTextBlock>(GetWidgetFromName(TEXT("ItemNameText"))))
+	{
+		ItemNameRegular->SetText(ItemInfo.DisplayName);
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Set ItemNameText (regular view) to: %s"), *ItemInfo.DisplayName.ToString());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] ItemNameText widget not found!"));
+	}
+
+	// Grid view text
+	if (UTextBlock* ItemNameGrid = Cast<UTextBlock>(GetWidgetFromName(TEXT("ItemNameText_Grid"))))
+	{
+		ItemNameGrid->SetText(ItemInfo.DisplayName);
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Set ItemNameText_Grid to: %s"), *ItemInfo.DisplayName.ToString());
+	}
+
+	if (UTextBlock* CategoryText = Cast<UTextBlock>(GetWidgetFromName(TEXT("ItemCategoryText"))))
+	{
+		FString ItemCategoryName = UEnum::GetDisplayValueAsText(ItemInfo.Category.Category).ToString();
+		CategoryText->SetText(FText::FromString(ItemCategoryName));
+	}
+
+	// ════════════════════════════════════════════════════════════════════════
+	// STAT SUB-WIDGETS - Call setup functions on child stat widgets
+	// bp_only: W_Equipment has child widgets for attack power, required stats, etc.
+	// bp_only: Uses "Switch on E_ItemCategory" to show different stats per category
+	// ════════════════════════════════════════════════════════════════════════
+
+	// Get equipment stat data
+	const FSLFEquipmentInfo& EquipInfo = ItemInfo.EquipmentDetails;
+	const FSLFEquipmentWeaponStatInfo& WeaponStats = EquipInfo.WeaponStatInfo;
+	const ESLFItemCategory ItemCategory = ItemInfo.Category.Category;
+
+	UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Item category: %d"), static_cast<int32>(ItemCategory));
+
+	// Check if this is a weapon-type item (Weapons, Shields)
+	bool bIsWeaponType = (ItemCategory == ESLFItemCategory::Weapons || ItemCategory == ESLFItemCategory::Shields);
+	// Check if this is armor
+	bool bIsArmor = (ItemCategory == ESLFItemCategory::Armor);
+	// Check if this is a talisman/bolstering item
+	bool bIsTalisman = (ItemCategory == ESLFItemCategory::Bolstering);
+
+	// ════════════════════════════════════════════════════════════════════════
+	// INFO SWITCHER - Switch to correct panel based on item category
+	// bp_only: Uses InfoSwitcher->SetActiveWidget() to show Info_Weapon, Info_Armor, or Info_Talisman
+	// This is CRITICAL - without this, the stats panels won't be visible
+	// ════════════════════════════════════════════════════════════════════════
+	if (InfoSwitcher)
+	{
+		UWidget* TargetPanel = nullptr;
+		FString PanelName;
+
+		if (bIsWeaponType)
+		{
+			TargetPanel = Info_Weapon;
+			PanelName = TEXT("Info_Weapon");
+		}
+		else if (bIsArmor)
+		{
+			TargetPanel = Info_Armor;
+			PanelName = TEXT("Info_Armor");
+		}
+		else if (bIsTalisman)
+		{
+			TargetPanel = Info_Talisman;
+			PanelName = TEXT("Info_Talisman");
+		}
+		else
+		{
+			// Default to weapon panel for other item types
+			TargetPanel = Info_Weapon;
+			PanelName = TEXT("Info_Weapon (default)");
+		}
+
+		if (TargetPanel)
+		{
+			InfoSwitcher->SetActiveWidget(TargetPanel);
+			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] InfoSwitcher->SetActiveWidget(%s)"), *PanelName);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] %s panel is NULL, cannot set active widget"), *PanelName);
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] InfoSwitcher is NULL - stats panels won't switch correctly!"));
+	}
+
+	// Get widget references for visibility control
+	UW_Equipment_Item_AttackPower* AttackPowerWidget = Cast<UW_Equipment_Item_AttackPower>(GetWidgetFromName(TEXT("W_Equipment_Item_AttackPower")));
+	UW_Equipment_Item_RequiredStats* RequiredStatsWidget = Cast<UW_Equipment_Item_RequiredStats>(GetWidgetFromName(TEXT("W_Equipment_Item_RequiredStats")));
+	UW_Equipment_Item_StatScaling* StatScalingWidget = Cast<UW_Equipment_Item_StatScaling>(GetWidgetFromName(TEXT("W_Equipment_Item_StatScaling")));
+	UW_Equipment_Item_StatsGranted* StatsGrantedWidget = Cast<UW_Equipment_Item_StatsGranted>(GetWidgetFromName(TEXT("W_Equipment_Item_StatsGranted")));
+
+	// ════════════════════════════════════════════════════════════════════════
+	// WEAPON-SPECIFIC STATS (AttackPower, RequiredStats, StatScaling)
+	// ════════════════════════════════════════════════════════════════════════
+	if (bIsWeaponType)
+	{
+		// Build attack power map from StatChanges (which contains damage values like Physical: 34)
+		TMap<FGameplayTag, int32> TargetAttackPowerMap;
+		for (const auto& StatPair : EquipInfo.StatChanges)
+		{
+			// StatChanges contains damage types - convert Delta to int32
+			TargetAttackPowerMap.Add(StatPair.Key, static_cast<int32>(StatPair.Value.Delta));
+		}
+
+		// TODO: Get currently equipped item's stats for comparison
+		TMap<FGameplayTag, int32> CurrentAttackPowerMap;
+
+		// W_Equipment_Item_AttackPower - Setup attack power stats
+		if (AttackPowerWidget)
+		{
+			AttackPowerWidget->SetVisibility(ESlateVisibility::Visible);
+			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Found W_Equipment_Item_AttackPower widget - StatChanges: %d"),
+				TargetAttackPowerMap.Num());
+
+			if (TargetAttackPowerMap.Num() > 0)
+			{
+				AttackPowerWidget->EventSetupAttackPowerStats(TargetAttackPowerMap, CurrentAttackPowerMap, CompareStats);
+				UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Called EventSetupAttackPowerStats with %d stats"), TargetAttackPowerMap.Num());
+			}
+		}
+
+		// W_Equipment_Item_RequiredStats - Always setup for weapons (shows all primary stats, with 0 for no requirement)
+		if (RequiredStatsWidget)
+		{
+			RequiredStatsWidget->SetVisibility(ESlateVisibility::Visible);
+			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Found W_Equipment_Item_RequiredStats widget - has requirement: %s, count: %d"),
+				WeaponStats.bHasStatRequirement ? TEXT("true") : TEXT("false"), WeaponStats.StatRequirementInfo.Num());
+
+			// Always call - widget shows all primary stats; pass empty map if no requirements
+			RequiredStatsWidget->EventSetupRequiredStats(WeaponStats.StatRequirementInfo);
+			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Called EventSetupRequiredStats with %d requirements"), WeaponStats.StatRequirementInfo.Num());
+		}
+
+		// W_Equipment_Item_StatScaling - Always setup for weapons (shows all primary stats, with "-" for no scaling)
+		if (StatScalingWidget)
+		{
+			StatScalingWidget->SetVisibility(ESlateVisibility::Visible);
+			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Found W_Equipment_Item_StatScaling widget - has scaling: %s, count: %d"),
+				WeaponStats.bHasStatScaling ? TEXT("true") : TEXT("false"), WeaponStats.ScalingInfo.Num());
+
+			// Always call - widget shows all primary stats; pass empty map if no scaling
+			StatScalingWidget->EventSetupStatScaling(WeaponStats.ScalingInfo);
+			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Called EventSetupStatScaling with %d scaling stats"), WeaponStats.ScalingInfo.Num());
+		}
+
+		// Hide armor-specific widgets for weapons
+		if (StatsGrantedWidget)
+		{
+			StatsGrantedWidget->SetVisibility(ESlateVisibility::Collapsed);
+		}
+
+		// Also hide DamageNegation, Resistance, and Weight widgets for weapons
+		if (UW_Equipment_Item_DamageNegation* DamageNegationWidget = Cast<UW_Equipment_Item_DamageNegation>(GetWidgetFromName(TEXT("W_Equipment_Item_DamageNegation"))))
+		{
+			DamageNegationWidget->SetVisibility(ESlateVisibility::Collapsed);
+		}
+		if (UW_Equipment_Item_Resistance* ResistanceWidget = Cast<UW_Equipment_Item_Resistance>(GetWidgetFromName(TEXT("W_Equipment_Item_Resistance"))))
+		{
+			ResistanceWidget->SetVisibility(ESlateVisibility::Collapsed);
+		}
+		if (UWidget* ArmorWeightBox = GetWidgetFromName(TEXT("ArmorWeightBox")))
+		{
+			ArmorWeightBox->SetVisibility(ESlateVisibility::Collapsed);
+		}
+	}
+	// ════════════════════════════════════════════════════════════════════════
+	// ARMOR-SPECIFIC STATS (DamageNegation, Resistances, Weight)
+	// bp_only shows: Weight, Damage Negation (Physical/Magic/Fire/Frost/Lightning/Holy),
+	//                Resistances (Immunity/Focus/Robustness/Vitality)
+	// ════════════════════════════════════════════════════════════════════════
+	else if (bIsArmor)
+	{
+		// Hide weapon-specific widgets for armor
+		if (AttackPowerWidget)
+		{
+			AttackPowerWidget->SetVisibility(ESlateVisibility::Collapsed);
+		}
+		if (RequiredStatsWidget)
+		{
+			RequiredStatsWidget->SetVisibility(ESlateVisibility::Collapsed);
+		}
+		if (StatScalingWidget)
+		{
+			StatScalingWidget->SetVisibility(ESlateVisibility::Collapsed);
+		}
+		// StatsGranted is not shown for armor in bp_only (armor shows DamageNegation/Resistances instead)
+		if (StatsGrantedWidget)
+		{
+			StatsGrantedWidget->SetVisibility(ESlateVisibility::Collapsed);
+		}
+
+		// Get DamageNegation and Resistance widget references
+		UW_Equipment_Item_DamageNegation* DamageNegationWidget = Cast<UW_Equipment_Item_DamageNegation>(GetWidgetFromName(TEXT("W_Equipment_Item_DamageNegation")));
+		UW_Equipment_Item_Resistance* ResistanceWidget = Cast<UW_Equipment_Item_Resistance>(GetWidgetFromName(TEXT("W_Equipment_Item_Resistance")));
+
+		// ════════════════════════════════════════════════════════════════════════════════
+		// AAA PATTERN: Build maps from item's StatChanges
+		// The child widgets (DamageNegation, Resistance) define their own stat type arrays
+		// and iterate over them, looking up values from these maps (default 0 if not found)
+		// ════════════════════════════════════════════════════════════════════════════════
+		TMap<FGameplayTag, int32> TargetDamageNegationStats;
+		TMap<FGameplayTag, int32> TargetResistanceStats;
+		int32 ItemWeight = 0;
+
+		// Populate maps from item's StatChanges
+		for (const auto& StatPair : EquipInfo.StatChanges)
+		{
+			FString TagString = StatPair.Key.ToString();
+			int32 Value = static_cast<int32>(StatPair.Value.Delta);
+
+			if (TagString.Contains(TEXT("Defense.Negation")))
+			{
+				TargetDamageNegationStats.Add(StatPair.Key, Value);
+				UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Armor DamageNegation stat: %s = %d"), *TagString, Value);
+			}
+			else if (TagString.Contains(TEXT("Stat.Resistance")))
+			{
+				TargetResistanceStats.Add(StatPair.Key, Value);
+				UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Armor Resistance stat: %s = %d"), *TagString, Value);
+			}
+			else if (TagString.Contains(TEXT("Misc.Weight")))
+			{
+				ItemWeight = Value;
+				UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Armor Weight: %d"), Value);
+			}
+		}
+
+		// TODO: Get currently equipped armor stats for comparison
+		TMap<FGameplayTag, int32> CurrentDamageNegationStats;
+		TMap<FGameplayTag, int32> CurrentResistanceStats;
+
+		// W_Equipment_Item_DamageNegation - Setup damage negation stats
+		if (DamageNegationWidget)
+		{
+			DamageNegationWidget->SetVisibility(ESlateVisibility::Visible);
+			DamageNegationWidget->EventSetupDamageNegationStats(TargetDamageNegationStats, CurrentDamageNegationStats, CompareStats);
+			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Called EventSetupDamageNegationStats with %d stats"), TargetDamageNegationStats.Num());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] W_Equipment_Item_DamageNegation widget not found!"));
+		}
+
+		// W_Equipment_Item_Resistance - Setup resistance stats
+		if (ResistanceWidget)
+		{
+			ResistanceWidget->SetVisibility(ESlateVisibility::Visible);
+			ResistanceWidget->EventSetupResistanceEntries(TargetResistanceStats, CurrentResistanceStats, CompareStats);
+			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Called EventSetupResistanceEntries with %d stats"), TargetResistanceStats.Num());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] W_Equipment_Item_Resistance widget not found!"));
+		}
+
+		// Weight display - ArmorWeightBox with ArmorWeightText
+		if (UWidget* ArmorWeightBox = GetWidgetFromName(TEXT("ArmorWeightBox")))
+		{
+			ArmorWeightBox->SetVisibility(ESlateVisibility::Visible);
+
+			// Set the weight value text
+			if (UTextBlock* WeightValueText = Cast<UTextBlock>(GetWidgetFromName(TEXT("ArmorWeightText"))))
+			{
+				WeightValueText->SetText(FText::AsNumber(ItemWeight));
+				UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Set ArmorWeightText to: %d"), ItemWeight);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] ArmorWeightText widget not found!"));
+			}
+		}
+	}
+	// ════════════════════════════════════════════════════════════════════════
+	// OTHER ITEM TYPES - Hide all stat widgets
+	// ════════════════════════════════════════════════════════════════════════
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Other item category - hiding all stat widgets"));
+		if (AttackPowerWidget) AttackPowerWidget->SetVisibility(ESlateVisibility::Collapsed);
+		if (RequiredStatsWidget) RequiredStatsWidget->SetVisibility(ESlateVisibility::Collapsed);
+		if (StatScalingWidget) StatScalingWidget->SetVisibility(ESlateVisibility::Collapsed);
+		if (StatsGrantedWidget) StatsGrantedWidget->SetVisibility(ESlateVisibility::Collapsed);
+
+		// Also hide armor widgets for non-armor items
+		if (UW_Equipment_Item_DamageNegation* DamageNegationWidget = Cast<UW_Equipment_Item_DamageNegation>(GetWidgetFromName(TEXT("W_Equipment_Item_DamageNegation"))))
+		{
+			DamageNegationWidget->SetVisibility(ESlateVisibility::Collapsed);
+		}
+		if (UW_Equipment_Item_Resistance* ResistanceWidget = Cast<UW_Equipment_Item_Resistance>(GetWidgetFromName(TEXT("W_Equipment_Item_Resistance"))))
+		{
+			ResistanceWidget->SetVisibility(ESlateVisibility::Collapsed);
+		}
+		if (UWidget* ArmorWeightBox = GetWidgetFromName(TEXT("ArmorWeightBox")))
+		{
+			ArmorWeightBox->SetVisibility(ESlateVisibility::Collapsed);
+		}
+	}
+
+	// ════════════════════════════════════════════════════════════════════════
+	// ABILITY SECTION - Set ability icon, name, and cost from WeaponAbility
+	// bp_only: If weapon has a WeaponAbility, display its icon and info
+	// IMPORTANT: Only show for weapon types (not armor!)
+	// ════════════════════════════════════════════════════════════════════════
+
+	// Get ability overlay widget to control visibility
+	UWidget* AbilityOverlay = GetWidgetFromName(TEXT("AbilityImageOverlay"));
+
+	// Only show ability section for weapon types that have an ability
+	if (bIsWeaponType && EquipInfo.WeaponAbility)
+	{
+		// Cast to UPDA_WeaponAbility to access Icon, AbilityName, Cost
+		UPDA_WeaponAbility* WeaponAbility = Cast<UPDA_WeaponAbility>(EquipInfo.WeaponAbility);
+		if (WeaponAbility)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Setting up ability section - Name: %s"), *WeaponAbility->AbilityName.ToString());
+
+			// Set AbilityIcon
+			if (UImage* AbilityIcon = Cast<UImage>(GetWidgetFromName(TEXT("AbilityIcon"))))
+			{
+				if (!WeaponAbility->Icon.IsNull())
+				{
+					AbilityIcon->SetBrushFromSoftTexture(WeaponAbility->Icon, false);
+					AbilityIcon->SetVisibility(ESlateVisibility::Visible);
+					UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Set AbilityIcon from: %s"), *WeaponAbility->Icon.ToString());
+				}
+			}
+
+			// Set AbilityNameText
+			if (UTextBlock* AbilityNameText = Cast<UTextBlock>(GetWidgetFromName(TEXT("AbilityNameText"))))
+			{
+				AbilityNameText->SetText(WeaponAbility->AbilityName);
+			}
+
+			// Set AbilityCostText
+			if (UTextBlock* AbilityCostText = Cast<UTextBlock>(GetWidgetFromName(TEXT("AbilityCostText"))))
+			{
+				AbilityCostText->SetText(FText::AsNumber(WeaponAbility->Cost));
+			}
+
+			// Show the ability overlay
+			if (AbilityOverlay)
+			{
+				AbilityOverlay->SetVisibility(ESlateVisibility::Visible);
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] WeaponAbility failed to cast to UPDA_WeaponAbility"));
+			if (AbilityOverlay)
+			{
+				AbilityOverlay->SetVisibility(ESlateVisibility::Collapsed);
+			}
+		}
+	}
+	else
+	{
+		// Not a weapon or no ability - hide the ability overlay
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Not a weapon or no WeaponAbility, hiding ability section"));
+		if (AbilityOverlay)
+		{
+			AbilityOverlay->SetVisibility(ESlateVisibility::Collapsed);
+		}
+	}
+
+	// NOTE: Don't call EventToggleItemInfo here - that controls VISIBILITY of the info panel,
+	// which is managed separately. This function just populates the content.
 }
 
 void UW_Equipment::EquipItemAtSlot_Implementation(UW_InventorySlot* InSlot)
@@ -1029,14 +1467,105 @@ void UW_Equipment::EventNavigateDetailedView_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("[W_Equipment] EventNavigateDetailedView"));
 
-	// Show detailed item info for selected item
-	if (ActiveItemSlot && ActiveItemSlot->IsOccupied)
+	if (!CanNavigate())
 	{
-		if (UPDA_Item* Item = Cast<UPDA_Item>(ActiveItemSlot->AssignedItem))
+		return;
+	}
+
+	// bp_only: Check if ErrorBorder is visible - don't toggle if showing an error
+	if (ErrorBorder && ErrorBorder->IsVisible())
+	{
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] EventNavigateDetailedView - ErrorBorder is visible, not toggling"));
+		return;
+	}
+
+	// Try to find ItemInfoBoxSwitcher if not bound
+	if (!ItemInfoBoxSwitcher)
+	{
+		ItemInfoBoxSwitcher = Cast<UWidgetSwitcher>(GetWidgetFromName(TEXT("ItemInfoBoxSwitcher")));
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] EventNavigateDetailedView - Manual find ItemInfoBoxSwitcher: %s"),
+			ItemInfoBoxSwitcher ? TEXT("FOUND") : TEXT("NULL"));
+	}
+
+	// bp_only: Toggle ItemInfoBoxSwitcher between index 0 (compact view) and index 1 (detailed view)
+	if (ItemInfoBoxSwitcher)
+	{
+		int32 CurrentIndex = ItemInfoBoxSwitcher->GetActiveWidgetIndex();
+		int32 NewIndex = (CurrentIndex == 0) ? 1 : 0;
+		int32 NumChildren = ItemInfoBoxSwitcher->GetNumWidgets();
+
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] EventNavigateDetailedView - ItemInfoBoxSwitcher has %d children, CurrentIndex=%d, NewIndex=%d, IsVisible=%s"),
+			NumChildren, CurrentIndex, NewIndex,
+			ItemInfoBoxSwitcher->IsVisible() ? TEXT("yes") : TEXT("no"));
+
+		// Log children info
+		for (int32 i = 0; i < NumChildren; i++)
 		{
-			// Get item info from UPDA_Item and show panel
-			SetupInformationPanel(Item->ItemInformation, true);
+			UWidget* Child = ItemInfoBoxSwitcher->GetWidgetAtIndex(i);
+			if (Child)
+			{
+				UE_LOG(LogTemp, Log, TEXT("[W_Equipment]   Child[%d]: %s, Visible: %s"),
+					i, *Child->GetName(),
+					Child->IsVisible() ? TEXT("yes") : TEXT("no"));
+			}
 		}
+
+		// Toggle the active widget index
+		ItemInfoBoxSwitcher->SetActiveWidgetIndex(NewIndex);
+
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] EventNavigateDetailedView - Toggled ItemInfoBoxSwitcher from %d to %d"), CurrentIndex, NewIndex);
+
+		// If showing detailed view (index 1), populate with current selected item info
+		if (NewIndex == 1)
+		{
+			// Get item from active item slot (in item selection view) or selected equipment slot
+			UPDA_Item* ItemToShow = nullptr;
+
+			if (ActiveItemSlot && ActiveItemSlot->IsOccupied)
+			{
+				ItemToShow = Cast<UPDA_Item>(ActiveItemSlot->AssignedItem);
+			}
+			else if (SelectedSlot && SelectedSlot->IsOccupied)
+			{
+				ItemToShow = Cast<UPDA_Item>(SelectedSlot->AssignedItem);
+			}
+
+			if (ItemToShow)
+			{
+				// Populate the detailed view widgets directly (don't call SetupInformationPanel
+				// as that also calls EventToggleItemInfo which affects visibility, not index)
+				if (UTextBlock* ItemNameText = Cast<UTextBlock>(GetWidgetFromName(TEXT("ItemNameText_LongDetails"))))
+				{
+					ItemNameText->SetText(ItemToShow->ItemInformation.DisplayName);
+				}
+				if (UTextBlock* DescText = Cast<UTextBlock>(GetWidgetFromName(TEXT("ItemLongDescription"))))
+				{
+					DescText->SetText(ItemToShow->ItemInformation.LongDescription);
+				}
+				if (UImage* LargeImage = Cast<UImage>(GetWidgetFromName(TEXT("DetailsLargeImage"))))
+				{
+					// Use SetBrushFromSoftTexture (matches Blueprint pattern)
+					TSoftObjectPtr<UTexture2D> IconToUse = ItemToShow->ItemInformation.IconLargeOptional.IsNull()
+						? ItemToShow->ItemInformation.IconSmall
+						: ItemToShow->ItemInformation.IconLargeOptional;
+					if (!IconToUse.IsNull())
+					{
+						LargeImage->SetBrushFromSoftTexture(IconToUse, false);
+					}
+				}
+				UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Populated detailed view for item: %s"), *ItemToShow->GetName());
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] No item to show in detailed view (ActiveItemSlot=%s, SelectedSlot=%s)"),
+					ActiveItemSlot ? TEXT("valid") : TEXT("null"),
+					SelectedSlot ? TEXT("valid") : TEXT("null"));
+			}
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_Equipment] EventNavigateDetailedView - ItemInfoBoxSwitcher not found!"));
 	}
 }
 
@@ -1187,7 +1716,7 @@ void UW_Equipment::EventOnEquipmentSlotPressed_Implementation(UW_EquipmentSlot* 
 		}
 	}
 
-	// Select first item if available
+	// Select first item if available and show item info panel
 	if (EquipmentInventorySlots.Num() > 0)
 	{
 		ItemNavigationIndex = 0;
@@ -1195,6 +1724,21 @@ void UW_Equipment::EventOnEquipmentSlotPressed_Implementation(UW_EquipmentSlot* 
 		if (ActiveItemSlot)
 		{
 			ActiveItemSlot->EventOnSelected(true);
+
+			// Show the item info panel (compact view by default)
+			EventToggleItemInfo(true);
+
+			// Make sure switcher is at index 0 (compact view) when entering item selection
+			if (ItemInfoBoxSwitcher)
+			{
+				ItemInfoBoxSwitcher->SetActiveWidgetIndex(0);
+			}
+
+			// Populate compact view with first item's info
+			if (UPDA_Item* FirstItem = Cast<UPDA_Item>(ActiveItemSlot->AssignedItem))
+			{
+				SetupInformationPanel(FirstItem->ItemInformation, false);
+			}
 		}
 	}
 
@@ -1265,6 +1809,16 @@ void UW_Equipment::EventOnEquipmentSelected_Implementation(bool bSelected, UW_In
 		if (Index != INDEX_NONE)
 		{
 			ItemNavigationIndex = Index;
+		}
+
+		// Update item info panel with newly selected item
+		if (InSlot->IsOccupied)
+		{
+			if (UPDA_Item* SelectedItem = Cast<UPDA_Item>(InSlot->AssignedItem))
+			{
+				SetupInformationPanel(SelectedItem->ItemInformation, false);
+				UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Updated info panel for item: %s"), *SelectedItem->GetName());
+			}
 		}
 	}
 }
@@ -1363,11 +1917,26 @@ void UW_Equipment::EventToggleItemInfo_Implementation(bool bVisible)
 {
 	UE_LOG(LogTemp, Log, TEXT("[W_Equipment] EventToggleItemInfo: %s"), bVisible ? TEXT("true") : TEXT("false"));
 
-	// Toggle item info panel visibility using the widget switcher
-	// Index 0 = hidden/empty, Index 1 = showing item info
+	// bp_only: EventToggleItemInfo controls VISIBILITY of the info panel widgets
+	// NOT the active index (that's controlled by EventNavigateDetailedView)
+	ESlateVisibility NewVisibility = bVisible ? ESlateVisibility::Visible : ESlateVisibility::Collapsed;
+
+	// Set visibility on ItemInfoBoxSwitcher
 	if (ItemInfoBoxSwitcher)
 	{
-		ItemInfoBoxSwitcher->SetActiveWidgetIndex(bVisible ? 1 : 0);
+		ItemInfoBoxSwitcher->SetVisibility(NewVisibility);
+		UE_LOG(LogTemp, Log, TEXT("[W_Equipment] EventToggleItemInfo - Set ItemInfoBoxSwitcher visibility to %s"),
+			bVisible ? TEXT("Visible") : TEXT("Collapsed"));
+	}
+
+	// Also set visibility on ItemNameText widgets (compact info labels)
+	if (UTextBlock* ItemNameText = Cast<UTextBlock>(GetWidgetFromName(TEXT("ItemNameText"))))
+	{
+		ItemNameText->SetVisibility(NewVisibility);
+	}
+	if (UTextBlock* ItemNameTextGrid = Cast<UTextBlock>(GetWidgetFromName(TEXT("ItemNameText_Grid"))))
+	{
+		ItemNameTextGrid->SetVisibility(NewVisibility);
 	}
 }
 

@@ -76,6 +76,14 @@ void UAC_CombatManager::BeginPlay()
 void UAC_CombatManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	// Decay IKWeight back to 0 over time (simulates the TL_IK_HitReact timeline)
+	// Original Blueprint used a timeline with ~0.5 second duration
+	if (IKWeight > 0.0)
+	{
+		const double IKDecayRate = 2.0; // Decay from 1.0 to 0.0 in ~0.5 seconds
+		IKWeight = FMath::Max(0.0, IKWeight - (DeltaTime * IKDecayRate));
+	}
 }
 
 
@@ -409,23 +417,37 @@ void UAC_CombatManager::HandleIncomingWeaponDamage_Implementation(AActor* Weapon
 	FGameplayTag HealthTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
 	StatManager->AdjustStat(HealthTag, ESLFValueType::CurrentValue, -IncomingDamage, false, true);
 
-	// Apply poise damage (if not hyper armor)
-	if (!HyperArmor)
+	// ELDEN RING STYLE POISE SYSTEM:
+	// 1. Apply poise damage (accumulates with each hit)
+	// 2. If poise reaches 0: Trigger POISE BREAK (big stagger + knockback)
+	// 3. Reset poise regen timer (poise won't regenerate for a while after hit)
+	// 4. HyperArmor prevents stagger but poise damage still accumulates
+
+	// Reset poise regen timer (poise won't start regenerating until this delay passes)
+	ResetPoiseRegenTimer();
+
+	// Apply poise damage (always, even with HyperArmor - they just won't stagger)
+	FGameplayTag PoiseTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Poise"));
+
+	UObject* PoiseStat = nullptr;
+	FStatInfo PoiseInfo;
+	StatManager->GetStat(PoiseTag, PoiseStat, PoiseInfo);
+
+	double OldPoise = PoiseInfo.CurrentValue;
+	double NewPoise = OldPoise - IncomingPoiseDamage;
+	StatManager->AdjustStat(PoiseTag, ESLFValueType::CurrentValue, -IncomingPoiseDamage, false, true);
+
+	UE_LOG(LogTemp, Log, TEXT("  Poise damage: %.1f -> %.1f (damage: %.1f, HyperArmor: %d)"),
+		OldPoise, NewPoise, IncomingPoiseDamage, HyperArmor);
+
+	// Check if poise just broke (was > 0 and is now <= 0)
+	bool bJustBrokePoise = (OldPoise > 0 && NewPoise <= 0);
+
+	if (bJustBrokePoise && !HyperArmor && !PoiseBroken)
 	{
-		FGameplayTag PoiseTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Poise"));
-
-		UObject* PoiseStat = nullptr;
-		FStatInfo PoiseInfo;
-		StatManager->GetStat(PoiseTag, PoiseStat, PoiseInfo);
-
-		double NewPoise = PoiseInfo.CurrentValue - IncomingPoiseDamage;
-		StatManager->AdjustStat(PoiseTag, ESLFValueType::CurrentValue, -IncomingPoiseDamage, false, true);
-
-		// Check if poise broken
-		if (NewPoise <= 0)
-		{
-			PoiseBroken = true;
-		}
+		// POISE BREAK! Trigger big stagger
+		UE_LOG(LogTemp, Log, TEXT("  *** POISE BROKEN! Triggering stagger ***"));
+		TriggerPoiseBreakStagger(HitInfo);
 	}
 
 	// Apply status effects
@@ -718,6 +740,37 @@ void UAC_CombatManager::HandleHitReaction_Implementation(const FHitResult& HitIn
 	{
 		return;
 	}
+
+	// ELDEN RING STYLE POISE SYSTEM:
+	// - Normal hits: Minor flinch (IK only), NO knockback
+	// - Poise break: BIG knockback + stagger (handled separately in HandleIncomingWeaponDamage)
+	// - HyperArmor: No reaction at all (protected during attacks)
+	// - PoiseBroken state: No reaction (recovery period, prevents chain-staggering)
+	//
+	// The knockback condition was INVERTED in the original port:
+	// WRONG: if (PoiseBroken || !HyperArmor) - triggers almost always
+	// RIGHT: if (!HyperArmor && !PoiseBroken) - only when vulnerable AND not recovering
+	//
+	// NOTE: Poise break knockback is now handled separately in TriggerPoiseBreakStagger()
+	// This function only handles NORMAL hit flinch (IK reaction, no knockback)
+
+	if (HyperArmor)
+	{
+		UE_LOG(LogTemp, Log, TEXT("  Hit reaction blocked by HyperArmor"));
+		return; // No reaction during attacks (Elden Ring style)
+	}
+
+	if (PoiseBroken)
+	{
+		UE_LOG(LogTemp, Log, TEXT("  Hit reaction blocked - PoiseBroken (recovery period)"));
+		return; // No reaction during poise break recovery (prevents chain-stagger)
+	}
+
+	// Activate IK hit react - set weight to 1.0, will decay over time in TickComponent
+	// This replicates the Blueprint's TL_IK_HitReact timeline behavior
+	IKWeight = 1.0;
+	CurrentHitNormal = HitInfo.ImpactNormal;
+	UE_LOG(LogTemp, Log, TEXT("  IK HitReact activated - IKWeight=1.0, Normal=%s"), *CurrentHitNormal.ToString());
 
 	// Play camera shake
 	if (IsValid(GenericReactionShake))
@@ -1450,4 +1503,218 @@ void UAC_CombatManager::EventOnDeath(bool bRagdoll, ESLFDirection KillingBlowDir
 	}
 
 	UE_LOG(LogTemp, Log, TEXT("  Character died"));
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// POISE SYSTEM (Elden Ring Style)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * TriggerPoiseBreakStagger - Called when poise reaches 0
+ *
+ * Elden Ring Style:
+ * 1. Set PoiseBroken = true (prevents chain-staggering)
+ * 2. Apply BIG knockback
+ * 3. Play stagger animation (if available)
+ * 4. Start recovery timer
+ * 5. When recovery ends: Reset poise, PoiseBroken = false
+ */
+void UAC_CombatManager::TriggerPoiseBreakStagger(const FHitResult& HitInfo)
+{
+	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager::TriggerPoiseBreakStagger"));
+
+	// Set poise broken state (prevents further stagger during recovery)
+	PoiseBroken = true;
+
+	AActor* Owner = GetOwner();
+	if (!IsValid(Owner))
+	{
+		return;
+	}
+
+	// Apply BIG knockback (larger than normal hits)
+	if (ACharacter* Character = Cast<ACharacter>(Owner))
+	{
+		FVector Knockback = GetKnockbackAmountForDamage(HitInfo, PoiseBreakKnockbackMin, PoiseBreakKnockbackMax);
+		Character->LaunchCharacter(Knockback, false, false);
+		UE_LOG(LogTemp, Log, TEXT("  Applied POISE BREAK knockback: %s"), *Knockback.ToString());
+	}
+
+	// Activate IK hit react with full intensity
+	IKWeight = 1.0;
+	CurrentHitNormal = HitInfo.ImpactNormal;
+
+	// Play camera shake (more intense than normal)
+	if (IsValid(GenericReactionShake))
+	{
+		UGameplayStatics::PlayWorldCameraShake(
+			GetWorld(),
+			GenericReactionShake,
+			Owner->GetActorLocation(),
+			600.0f,  // Larger inner radius
+			1200.0f); // Larger outer radius
+	}
+
+	// Play stagger animation (using reaction montage)
+	if (IsValid(ReactionAnimset) && IsValid(Mesh))
+	{
+		UAnimMontage* ReactionMontage = ReactionAnimset->ReactionMontage.LoadSynchronous();
+		if (IsValid(ReactionMontage))
+		{
+			UAnimInstance* AnimInstance = Mesh->GetAnimInstance();
+			if (IsValid(AnimInstance))
+			{
+				AnimInstance->Montage_Play(ReactionMontage);
+				UE_LOG(LogTemp, Log, TEXT("  Playing poise break stagger montage: %s"), *ReactionMontage->GetName());
+			}
+		}
+	}
+
+	// Start poise break recovery timer
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(PoiseBreakRecoveryTimer);
+		World->GetTimerManager().SetTimer(
+			PoiseBreakRecoveryTimer,
+			this,
+			&UAC_CombatManager::OnPoiseBreakRecoveryEnd,
+			PoiseBreakRecoveryDuration,
+			false
+		);
+		UE_LOG(LogTemp, Log, TEXT("  Poise break recovery timer started: %.2f seconds"), PoiseBreakRecoveryDuration);
+	}
+}
+
+/**
+ * OnPoiseBreakRecoveryEnd - Called when poise break recovery period ends
+ *
+ * Resets poise and allows player to be staggered again
+ */
+void UAC_CombatManager::OnPoiseBreakRecoveryEnd()
+{
+	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager::OnPoiseBreakRecoveryEnd - Can be staggered again"));
+
+	// Reset poise broken state
+	PoiseBroken = false;
+
+	// Reset poise to full
+	AActor* Owner = GetOwner();
+	if (!IsValid(Owner))
+	{
+		return;
+	}
+
+	UStatManagerComponent* StatManager = Owner->FindComponentByClass<UStatManagerComponent>();
+	if (IsValid(StatManager))
+	{
+		FGameplayTag PoiseTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Poise"));
+
+		UObject* PoiseStat = nullptr;
+		FStatInfo PoiseInfo;
+		StatManager->GetStat(PoiseTag, PoiseStat, PoiseInfo);
+
+		// Reset poise to max
+		double PoiseToRestore = PoiseInfo.MaxValue - PoiseInfo.CurrentValue;
+		if (PoiseToRestore > 0)
+		{
+			StatManager->AdjustStat(PoiseTag, ESLFValueType::CurrentValue, PoiseToRestore, false, false);
+			UE_LOG(LogTemp, Log, TEXT("  Poise reset to max: %.1f"), PoiseInfo.MaxValue);
+		}
+	}
+}
+
+/**
+ * ResetPoiseRegenTimer - Reset the poise regeneration delay timer
+ *
+ * Called when taking damage. Poise won't start regenerating until
+ * PoiseRegenDelay seconds have passed without taking damage.
+ */
+void UAC_CombatManager::ResetPoiseRegenTimer()
+{
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return;
+	}
+
+	// Stop any active regen
+	World->GetTimerManager().ClearTimer(PoiseRegenTickTimer);
+	World->GetTimerManager().ClearTimer(PoiseRegenDelayTimer);
+
+	// Start the delay timer (poise will start regenerating after this)
+	World->GetTimerManager().SetTimer(
+		PoiseRegenDelayTimer,
+		this,
+		&UAC_CombatManager::OnPoiseRegenDelayExpired,
+		PoiseRegenDelay,
+		false
+	);
+}
+
+/**
+ * OnPoiseRegenDelayExpired - Called after PoiseRegenDelay seconds without damage
+ *
+ * Starts the poise regeneration tick timer
+ */
+void UAC_CombatManager::OnPoiseRegenDelayExpired()
+{
+	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager::OnPoiseRegenDelayExpired - Starting poise regen"));
+
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return;
+	}
+
+	// Start regenerating poise (tick every 0.1 seconds)
+	World->GetTimerManager().SetTimer(
+		PoiseRegenTickTimer,
+		this,
+		&UAC_CombatManager::OnPoiseRegenTick,
+		0.1f,
+		true // Looping
+	);
+}
+
+/**
+ * OnPoiseRegenTick - Called periodically to regenerate poise
+ *
+ * Regenerates poise at PoiseRegenRate points per second
+ */
+void UAC_CombatManager::OnPoiseRegenTick()
+{
+	AActor* Owner = GetOwner();
+	if (!IsValid(Owner))
+	{
+		return;
+	}
+
+	UStatManagerComponent* StatManager = Owner->FindComponentByClass<UStatManagerComponent>();
+	if (!IsValid(StatManager))
+	{
+		return;
+	}
+
+	FGameplayTag PoiseTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Poise"));
+
+	UObject* PoiseStat = nullptr;
+	FStatInfo PoiseInfo;
+	StatManager->GetStat(PoiseTag, PoiseStat, PoiseInfo);
+
+	// Check if poise is already full
+	if (PoiseInfo.CurrentValue >= PoiseInfo.MaxValue)
+	{
+		// Stop regenerating
+		if (UWorld* World = GetWorld())
+		{
+			World->GetTimerManager().ClearTimer(PoiseRegenTickTimer);
+		}
+		return;
+	}
+
+	// Regenerate poise (PoiseRegenRate per second, tick every 0.1s)
+	double RegenAmount = PoiseRegenRate * 0.1;
+	double NewPoise = FMath::Min(PoiseInfo.CurrentValue + RegenAmount, PoiseInfo.MaxValue);
+
+	StatManager->AdjustStat(PoiseTag, ESLFValueType::CurrentValue, RegenAmount, false, false);
 }

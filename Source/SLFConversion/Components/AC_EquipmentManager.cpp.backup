@@ -384,42 +384,14 @@ void UAC_EquipmentManager::IsItemEquipped_Implementation(const FSLFItemInfo& Tar
  */
 bool UAC_EquipmentManager::IsItemEquippedToSlot_Implementation(const FSLFItemInfo& TargetItem, const FGameplayTag& ActiveEquipmentSlot)
 {
-	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::IsItemEquippedToSlot - Slot: %s, TargetDisplayName: %s, AllEquippedItems count: %d"),
-		*ActiveEquipmentSlot.ToString(),
-		*TargetItem.DisplayName.ToString(),
-		AllEquippedItems.Num());
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::IsItemEquippedToSlot - Slot: %s"), *ActiveEquipmentSlot.ToString());
 
 	if (TObjectPtr<UPrimaryDataAsset>* ItemPtr = AllEquippedItems.Find(ActiveEquipmentSlot))
 	{
-		UE_LOG(LogTemp, Log, TEXT("  Found item in slot, ItemPtr valid: %s"), ItemPtr->Get() ? TEXT("yes") : TEXT("no"));
 		if (UPDA_Item* EquippedItem = Cast<UPDA_Item>(ItemPtr->Get()))
 		{
-			UE_LOG(LogTemp, Log, TEXT("  EquippedItem: %s, EquippedDisplayName: %s"),
-				*EquippedItem->GetName(),
-				*EquippedItem->ItemInformation.DisplayName.ToString());
-
-			// Compare by DisplayName since ItemTag may not be set
-			// Also try comparing by ItemTag if both are valid
-			bool bMatches = false;
-
-			// First try ItemTag comparison if both are valid
-			if (TargetItem.ItemTag.IsValid() && EquippedItem->ItemInformation.ItemTag.IsValid())
-			{
-				bMatches = EquippedItem->ItemInformation.ItemTag.MatchesTagExact(TargetItem.ItemTag);
-			}
-			// Fallback: compare by DisplayName
-			else if (!TargetItem.DisplayName.IsEmpty() && !EquippedItem->ItemInformation.DisplayName.IsEmpty())
-			{
-				bMatches = EquippedItem->ItemInformation.DisplayName.EqualTo(TargetItem.DisplayName);
-			}
-
-			UE_LOG(LogTemp, Log, TEXT("  Matches: %s"), bMatches ? TEXT("YES") : TEXT("NO"));
-			return bMatches;
+			return EquippedItem->ItemInformation.ItemTag.MatchesTagExact(TargetItem.ItemTag);
 		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Log, TEXT("  Slot NOT found in AllEquippedItems"));
 	}
 	return false;
 }
@@ -524,45 +496,20 @@ FGameplayTag UAC_EquipmentManager::GetActiveWheelSlotForWeapon_Implementation(bo
  */
 void UAC_EquipmentManager::ApplyStatChanges_Implementation(const FSLFItemInfo& Item, bool Equipped)
 {
-	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::ApplyStatChanges - Equipped: %s, ItemTag: %s"),
-		Equipped ? TEXT("true") : TEXT("false"), *Item.ItemTag.ToString());
+	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::ApplyStatChanges - Equipped: %s"),
+		Equipped ? TEXT("true") : TEXT("false"));
 
-	UE_LOG(LogTemp, Log, TEXT("  StatChanges count: %d"), Item.EquipmentDetails.StatChanges.Num());
-
-	// EquipmentManager is on the Controller, but StatManager is on the Character (Pawn)
-	// Get the Pawn from the Controller to find StatManager
 	AActor* Owner = GetOwner();
 	if (!IsValid(Owner))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("  Owner is invalid!"));
 		return;
 	}
 
-	APawn* OwnerPawn = nullptr;
-	if (AController* Controller = Cast<AController>(Owner))
-	{
-		OwnerPawn = Controller->GetPawn();
-	}
-	else if (APawn* Pawn = Cast<APawn>(Owner))
-	{
-		// Owner might be the pawn directly in some cases
-		OwnerPawn = Pawn;
-	}
-
-	if (!IsValid(OwnerPawn))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("  Could not get Pawn from Owner!"));
-		return;
-	}
-
-	UStatManagerComponent* StatManager = OwnerPawn->FindComponentByClass<UStatManagerComponent>();
+	UStatManagerComponent* StatManager = Owner->FindComponentByClass<UStatManagerComponent>();
 	if (!IsValid(StatManager))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("  StatManager not found on Pawn %s!"), *OwnerPawn->GetName());
 		return;
 	}
-
-	UE_LOG(LogTemp, Log, TEXT("  Found StatManager on Pawn: %s"), *OwnerPawn->GetName());
 
 	// Apply stat changes from equipment
 	double Multiplier = Equipped ? 1.0 : -1.0;
@@ -570,10 +517,7 @@ void UAC_EquipmentManager::ApplyStatChanges_Implementation(const FSLFItemInfo& I
 	// Apply each stat change from equipment details
 	for (const auto& StatChange : Item.EquipmentDetails.StatChanges)
 	{
-		double FinalDelta = StatChange.Value.Delta * Multiplier;
-		UE_LOG(LogTemp, Log, TEXT("  Adjusting stat: %s by %f (Delta: %f, Multiplier: %f)"),
-			*StatChange.Key.ToString(), FinalDelta, StatChange.Value.Delta, Multiplier);
-		StatManager->AdjustStat(StatChange.Key, ESLFValueType::CurrentValue, FinalDelta, false, false);
+		StatManager->AdjustStat(StatChange.Key, ESLFValueType::CurrentValue, StatChange.Value.Delta * Multiplier, false, false);
 	}
 
 	// Reinitialize movement with new weight
@@ -1163,94 +1107,24 @@ void UAC_EquipmentManager::UnwieldItemAtSlot_Implementation(const FGameplayTag& 
 
 /**
  * AdjustForTwoHandStance - Switch to two-handed grip
- *
- * Blueprint Logic:
- * 1. Get current overlay state for the target hand
- * 2. Toggle: If currently OneHanded -> switch to TwoHanded; if TwoHanded -> switch to OneHanded
- * 3. UnwieldItemAtSlot - Hide the opposite hand's weapon when going to TwoHanded
- * 4. OverrideOverlayStates - Update animation overlay state
- * 5. Broadcast OnStanceChanged
  */
 void UAC_EquipmentManager::AdjustForTwoHandStance_Implementation(bool RightHand)
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::AdjustForTwoHandStance - RightHand: %s"),
 		RightHand ? TEXT("true") : TEXT("false"));
 
-	// Get the current overlay state for the target hand
-	ESLFOverlayState CurrentHandState = RightHand ? RightHandOverlayState : LeftHandOverlayState;
-	UE_LOG(LogTemp, Log, TEXT("  Current overlay state: %d"), static_cast<int32>(CurrentHandState));
-
-	// Determine new overlay state - toggle between OneHanded and TwoHanded
-	ESLFOverlayState NewTargetHandState;
-	if (CurrentHandState == ESLFOverlayState::TwoHanded)
-	{
-		// Currently TwoHanded -> switch back to OneHanded
-		NewTargetHandState = ESLFOverlayState::OneHanded;
-		UE_LOG(LogTemp, Log, TEXT("  Switching from TwoHanded to OneHanded"));
-	}
-	else
-	{
-		// Currently OneHanded (or other) -> switch to TwoHanded
-		NewTargetHandState = ESLFOverlayState::TwoHanded;
-		UE_LOG(LogTemp, Log, TEXT("  Switching from %d to TwoHanded"), static_cast<int32>(CurrentHandState));
-	}
-
-	// Update stance boolean
+	// Update stance state
 	if (RightHand)
 	{
-		bRightHandTwoHandStance = (NewTargetHandState == ESLFOverlayState::TwoHanded);
+		bRightHandTwoHandStance = !bRightHandTwoHandStance;  // Toggle
 	}
 	else
 	{
-		bLeftHandTwoHandStance = (NewTargetHandState == ESLFOverlayState::TwoHanded);
+		bLeftHandTwoHandStance = !bLeftHandTwoHandStance;  // Toggle
 	}
-
-	// When going to TwoHanded, unwield (hide) the opposite hand's weapon
-	if (NewTargetHandState == ESLFOverlayState::TwoHanded)
-	{
-		// Get the opposite hand's active weapon slot and unwield it
-		FGameplayTag OppositeHandSlot = GetActiveWeaponSlot(!RightHand);  // !RightHand = LeftHand if RightHand
-		if (OppositeHandSlot.IsValid())
-		{
-			UnwieldItemAtSlot(OppositeHandSlot);
-			UE_LOG(LogTemp, Log, TEXT("  Unwielded opposite hand slot: %s"), *OppositeHandSlot.ToString());
-		}
-	}
-	else
-	{
-		// When going back to OneHanded, rewield the opposite hand's weapon
-		FGameplayTag OppositeHandSlot = GetActiveWeaponSlot(!RightHand);
-		if (OppositeHandSlot.IsValid())
-		{
-			WieldItemAtSlot(OppositeHandSlot);
-			UE_LOG(LogTemp, Log, TEXT("  Rewielded opposite hand slot: %s"), *OppositeHandSlot.ToString());
-		}
-	}
-
-	// Override overlay states based on which hand is being adjusted
-	if (RightHand)
-	{
-		// Right hand two-hand stance: Set left hand state based on toggle, keep right hand state
-		ESLFOverlayState NewLeftState = (NewTargetHandState == ESLFOverlayState::TwoHanded)
-			? ESLFOverlayState::TwoHanded  // When going 2H, left is also considered 2H (hidden)
-			: LeftHandOverlayState;  // When going back, restore original left hand state
-		OverrideOverlayStates(NewLeftState, NewTargetHandState);
-	}
-	else
-	{
-		// Left hand two-hand stance: Set right hand state based on toggle, keep left hand state
-		ESLFOverlayState NewRightState = (NewTargetHandState == ESLFOverlayState::TwoHanded)
-			? ESLFOverlayState::TwoHanded  // When going 2H, right is also considered 2H (hidden)
-			: RightHandOverlayState;  // When going back, restore original right hand state
-		OverrideOverlayStates(NewTargetHandState, NewRightState);
-	}
-
-	UE_LOG(LogTemp, Log, TEXT("  Final States - Left: %d, Right: %d, Active: %d"),
-		static_cast<int32>(LeftHandOverlayState), static_cast<int32>(RightHandOverlayState), static_cast<int32>(ActiveOverlayState));
 
 	// Broadcast stance change
-	bool bIsTwoHandStance = (NewTargetHandState == ESLFOverlayState::TwoHanded);
-	OnStanceChanged.Broadcast(RightHand, bIsTwoHandStance);
+	OnStanceChanged.Broadcast(RightHand, RightHand ? bRightHandTwoHandStance : bLeftHandTwoHandStance);
 }
 
 /**
@@ -1621,15 +1495,13 @@ void UAC_EquipmentManager::SpawnEquipmentActor(UPDA_Item* Item, const FGameplayT
 		return;
 	}
 
-	// Set the ItemInfo and EquippedSlotTag BEFORE finishing spawn (so BeginPlay can read it)
+	// Set the ItemInfo BEFORE finishing spawn (so BeginPlay can read it)
 	if (AB_Item* ItemActor = Cast<AB_Item>(SpawnedActor))
 	{
 		ItemActor->ItemInfo = Item->ItemInformation;
-		ItemActor->EquippedSlotTag = SlotTag; // Store actual equipped slot for left/right hand determination
-		UE_LOG(LogTemp, Log, TEXT("SpawnEquipmentActor - Set ItemInfo with sockets L=%s R=%s, EquippedSlot=%s"),
+		UE_LOG(LogTemp, Log, TEXT("SpawnEquipmentActor - Set ItemInfo with sockets L=%s R=%s"),
 			*ItemActor->ItemInfo.EquipmentDetails.AttachmentSockets.LeftHandSocketName.ToString(),
-			*ItemActor->ItemInfo.EquipmentDetails.AttachmentSockets.RightHandSocketName.ToString(),
-			*SlotTag.ToString());
+			*ItemActor->ItemInfo.EquipmentDetails.AttachmentSockets.RightHandSocketName.ToString());
 	}
 
 	// Now finish spawning - this will call BeginPlay with ItemInfo populated

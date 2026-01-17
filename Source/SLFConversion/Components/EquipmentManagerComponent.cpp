@@ -26,9 +26,9 @@ UEquipmentManagerComponent::UEquipmentManagerComponent()
 	WeaponAbilitySlot = ESLFWeaponAbilityHandle::RightHand;
 
 	// Initialize overlay states
-	ActiveOverlayState = ESLFOverlayState::Default;
-	LeftHandOverlayState = ESLFOverlayState::Default;
-	RightHandOverlayState = ESLFOverlayState::Default;
+	ActiveOverlayState = ESLFOverlayState::Unarmed;
+	LeftHandOverlayState = ESLFOverlayState::Unarmed;
+	RightHandOverlayState = ESLFOverlayState::Unarmed;
 
 	// Initialize runtime
 	ActiveBlockSequence = nullptr;
@@ -348,7 +348,7 @@ void UEquipmentManagerComponent::UpdateOverlayStates_Implementation()
 			{
 				// Check overlay tag to determine state
 				FString OverlayStr = WeaponOverlay.ToString();
-				ESLFOverlayState ItemOverlay = ESLFOverlayState::Default;
+				ESLFOverlayState ItemOverlay = ESLFOverlayState::Unarmed;
 
 				if (OverlayStr.Contains(TEXT("Shield")))
 					ItemOverlay = ESLFOverlayState::Shield;

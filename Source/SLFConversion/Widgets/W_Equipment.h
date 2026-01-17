@@ -36,6 +36,7 @@ class UBorder;
 
 // Forward declarations for Blueprint types
 class UAC_EquipmentManager;
+class UAC_InventoryManager;
 class UPDA_Item;
 class UInventoryManagerComponent;
 
@@ -80,6 +81,22 @@ public:
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
 	UWidgetSwitcher* ItemInfoBoxSwitcher;
 
+	/** Info panel switcher - switches between Info_Weapon, Info_Armor, Info_Talisman panels based on item type */
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UWidgetSwitcher* InfoSwitcher;
+
+	/** Weapon info panel (child of InfoSwitcher) */
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UCanvasPanel* Info_Weapon;
+
+	/** Armor info panel (child of InfoSwitcher) */
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UCanvasPanel* Info_Armor;
+
+	/** Talisman info panel (child of InfoSwitcher) */
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UCanvasPanel* Info_Talisman;
+
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
 	UTextBlock* SlotNameText;
 
@@ -101,6 +118,10 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	UInventoryManagerComponent* InventoryComponent;
+
+	// Fallback inventory component (AC_InventoryManager from Blueprint)
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
+	UAC_InventoryManager* AC_InventoryComponent;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	UW_EquipmentSlot* SelectedSlot;
@@ -128,6 +149,17 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	int32 ItemNavigationIndex;
+
+	// Grid navigation state
+	UPROPERTY(BlueprintReadWrite, Category = "Navigation")
+	int32 CurrentGridRow;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Navigation")
+	int32 CurrentGridColumn;
+
+	// Grid layout constants
+	static constexpr int32 NumColumns = 5;
+	static constexpr int32 MaxRowsPerColumn[5] = {3, 3, 4, 2, 2};  // Right/Left weapons, Armor, Trinkets, Ammo
 
 	// Slot class for creating inventory slots dynamically
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
@@ -258,6 +290,14 @@ protected:
 
 	// Bind equipment slot events
 	void BindEquipmentSlotEvents();
+
+	// Grid navigation helpers
+	UW_EquipmentSlot* GetSlotAtGridPosition(int32 Row, int32 Column) const;
+	void SelectSlotAtGridPosition(int32 Row, int32 Column);
+	int32 GetMaxRowsInColumn(int32 Column) const;
+
+	// Update unequip icon visibility based on selected slot state
+	void UpdateUnequipIconVisibility();
 
 	/** Sync equipment slot visuals with EquipmentManager actual state */
 	void SyncEquipmentSlotsFromManager();

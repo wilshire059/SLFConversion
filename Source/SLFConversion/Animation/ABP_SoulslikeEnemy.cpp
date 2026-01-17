@@ -66,32 +66,17 @@ void UABP_SoulslikeEnemy::NativeUpdateAnimation(float DeltaSeconds)
 	// Calculate direction relative to actor rotation
 	Direction = CalculateDirection(Velocity, OwnerCharacter->GetActorRotation());
 
-	// Default physics weight for IK blending
-	PhysicsWeight = 1.0f;
-
-	// Default IK weight
-	IkWeight = 1.0f;
-
 	// Get AI Combat Manager component if not cached
 	if (!CachedCombatManager)
 	{
-		CachedCombatManager = OwnerCharacter->FindComponentByClass<UActorComponent>();
-		// Try to find AC_AI_CombatManager specifically
-		for (UActorComponent* Comp : OwnerCharacter->GetComponents())
-		{
-			if (Comp && Comp->GetClass()->GetName().Contains(TEXT("AI_CombatManager")))
-			{
-				CachedCombatManager = Comp;
-				ACAICombatManager = Comp;
-				break;
-			}
-		}
+		// Find specifically by type - this is the correct way
+		CachedCombatManager = OwnerCharacter->FindComponentByClass<UAICombatManagerComponent>();
 	}
 
 	// Update component reference
 	ACAICombatManager = CachedCombatManager;
 
-	// Get PoiseBreakAsset and PoiseBroken from combat manager
+	// Get properties from combat manager for AnimGraph
 	if (UAICombatManagerComponent* AICombatMgr = Cast<UAICombatManagerComponent>(CachedCombatManager))
 	{
 		// Get PoiseBreakAsset from combat manager
@@ -101,11 +86,19 @@ void UABP_SoulslikeEnemy::NativeUpdateAnimation(float DeltaSeconds)
 		}
 		// Get PoiseBroken state
 		PoiseBroken = AICombatMgr->bPoiseBroken;
-		// Get IkWeight from combat manager
+		// Get IkWeight from combat manager - THIS DRIVES THE IK FLINCH
 		IkWeight = AICombatMgr->IkWeight;
+		// CRITICAL: Copy IkWeight to PhysicsWeight - AnimGraph reads PhysicsWeight!
+		PhysicsWeight = AICombatMgr->IkWeight;
 		// Get CurrentHitNormal from combat manager
 		CurrentHitNormal = AICombatMgr->CurrentHitNormal;
 		HitLocation = AICombatMgr->CurrentHitNormal;
+	}
+	else
+	{
+		// Default values when no combat manager
+		PhysicsWeight = 0.0f;
+		IkWeight = 0.0f;
 	}
 
 	// Get equipment component

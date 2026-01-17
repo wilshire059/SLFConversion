@@ -179,6 +179,28 @@ void UB_Action::CheckStatRequirement_Implementation(ESLFActionWeaponSlot Stamina
 	UAC_StatManager* StatManager = GetStatManager();
 	if (!StatManager)
 	{
+		// No stat manager - fail safe by allowing action
+		OutSuccess = true;
+		OutSuccess1 = true;
+		return;
+	}
+
+	// Check if we have the PDA_Action with stat requirements
+	UPDA_ActionBase* ActionData = Cast<UPDA_ActionBase>(Action);
+	if (!ActionData)
+	{
+		// No action data - allow action
+		OutSuccess = true;
+		OutSuccess1 = true;
+		return;
+	}
+
+	// From Blueprint: Uses RequiredStatTag and RequiredStatAmount (NOT StaminaCost)
+	// If no RequiredStatTag is set, action has no stat requirement
+	if (!ActionData->RequiredStatTag.IsValid() || ActionData->RequiredStatAmount <= 0.0)
+	{
+		OutSuccess = true;
+		OutSuccess1 = true;
 		return;
 	}
 
@@ -186,22 +208,22 @@ void UB_Action::CheckStatRequirement_Implementation(ESLFActionWeaponSlot Stamina
 	double Multiplier, M1, M2, M3, M4, M5;
 	GetWeaponStaminaMultiplier(StaminaMultiplierWeaponSlot, Multiplier, M1, M2, M3, M4, M5);
 
-	// Check if we have the PDA_Action with stamina cost
-	UPDA_ActionBase* ActionData = Cast<UPDA_ActionBase>(Action);
-	if (!ActionData)
+	// Calculate threshold: RequiredStatAmount * Multiplier
+	double Threshold = ActionData->RequiredStatAmount * Multiplier;
+
+	// Use StatManager's IsStatMoreThan to check if we meet the requirement
+	bool bMeetsRequirement = StatManager->IsStatMoreThan(ActionData->RequiredStatTag, Threshold);
+
+	if (!bMeetsRequirement)
 	{
-		OutSuccess = true;
-		OutSuccess1 = true;
-		return;
+		UE_LOG(LogTemp, Log, TEXT("[B_Action] CheckStatRequirement FAILED: %s requires %.1f %s"),
+			Action ? *Action->GetName() : TEXT("Unknown"),
+			Threshold,
+			*ActionData->RequiredStatTag.ToString());
 	}
 
-	// Calculate required stamina (base cost * multiplier)
-	double RequiredStamina = ActionData->StaminaCost * Multiplier;
-
-	// Get current stamina from stat manager (using Stamina stat tag)
-	// For now, assume success if stat manager exists - actual implementation depends on StatManager API
-	OutSuccess = true;
-	OutSuccess1 = true;
+	OutSuccess = bMeetsRequirement;
+	OutSuccess1 = bMeetsRequirement;
 }
 
 void UB_Action::AdjustStatByRequirement_Implementation(ESLFActionWeaponSlot StaminaMultiplierWeaponSlot)

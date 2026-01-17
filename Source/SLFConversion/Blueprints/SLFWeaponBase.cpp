@@ -162,8 +162,12 @@ void ASLFWeaponBase::BeginPlay()
 	}
 
 	// Attach weapon to character's skeletal mesh socket
-	// AC_EquipmentManager sets Instigator before calling FinishSpawning
-	AttachToOwnerSocket(IsRightHandWeapon());
+	// AC_EquipmentManager sets EquippedSlotTag and Instigator before calling FinishSpawning
+	// Use EquippedSlotTag to determine left vs right hand (not IsRightHandWeapon which checks possible slots)
+	bool bIsRightHandSlot = !EquippedSlotTag.ToString().Contains(TEXT("Left Hand"));
+	UE_LOG(LogTemp, Log, TEXT("[Weapon] EquippedSlotTag=%s, bIsRightHandSlot=%s"),
+		*EquippedSlotTag.ToString(), bIsRightHandSlot ? TEXT("true") : TEXT("false"));
+	AttachToOwnerSocket(bIsRightHandSlot);
 }
 
 

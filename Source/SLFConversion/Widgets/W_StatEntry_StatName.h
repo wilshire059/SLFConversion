@@ -43,6 +43,7 @@ public:
 	UW_StatEntry_StatName(const FObjectInitializer& ObjectInitializer);
 
 	// Widget lifecycle
+	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 

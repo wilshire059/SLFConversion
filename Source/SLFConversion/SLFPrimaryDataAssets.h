@@ -639,6 +639,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
 	UDataAsset* DefaultMeshAsset;
 
+	/** Base stat values for this character class (maps stat class -> starting value)
+	 *  Used to initialize Primary stats (Vigor, Mind, etc.) when character is created.
+	 *  Example: USLFStatVigor -> 10.0 means this class starts with 10 Vigor */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	TMap<UClass*, double> BaseStats;
+
 	UPDA_BaseCharacterInfo()
 		: DefaultMeshAsset(nullptr)
 	{}

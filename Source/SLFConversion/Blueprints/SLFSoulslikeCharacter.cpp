@@ -33,6 +33,7 @@
 #include "LevelSequence.h"
 #include "LevelSequenceActor.h"
 #include "LevelSequencePlayer.h"
+#include "DefaultLevelSequenceInstanceData.h"
 #include "UObject/ConstructorHelpers.h"
 #include "SLFGameTypes.h"  // For FSLFSkeletalMeshData reflection access
 #include "SLFPrimaryDataAssets.h"
@@ -44,6 +45,7 @@
 #include "B_Interactable.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "KismetAnimationLibrary.h"
+#include "BFL_Helper.h"
 
 ASLFSoulslikeCharacter::ASLFSoulslikeCharacter()
 {
@@ -623,12 +625,42 @@ void ASLFSoulslikeCharacter::HandleAttack()
 		// Two-hand stance right hand (like Elden Ring - hold Y + RT)
 		UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Interact held + Attack -> TwoHandStanceRight"));
 		ExecuteActionImmediately(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.TwoHandStanceRight")));
+		return;
 	}
-	else
+
+	// ═══════════════════════════════════════════════════════════════════════════════
+	// CHECK FOR EXECUTION TARGET (poise-broken enemy)
+	// bp_only: B_Soulslike_Character checks if target is poise-broken and chooses:
+	//   - Backstab (if behind enemy)
+	//   - Frontal Execution (if in front of enemy)
+	//   - Normal attack (if no poise-broken target)
+	// ═══════════════════════════════════════════════════════════════════════════════
+	if (CachedCombatManager && CachedCombatManager->ExecutionTarget)
 	{
-		// Normal attack
-		QueueActionToBuffer(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.LightAttackRight")));
+		AActor* Target = CachedCombatManager->ExecutionTarget;
+
+		// Check if player is behind target (backstab) or in front (frontal execution)
+		// bp_only uses 0.9 tolerance (very precise - only directly behind counts as backstab)
+		// 0.9 means dot product must be < -0.9, which is a ~25 degree cone directly behind
+		bool bIsBehind = UBFL_Helper::GetIsBehindTarget(this, Target, 0.9, GetWorld());
+
+		if (bIsBehind)
+		{
+			// BACKSTAB - player is behind the poise-broken enemy
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] *** BACKSTAB *** Target: %s"), *Target->GetName());
+			ExecuteActionImmediately(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.Backstab")));
+		}
+		else
+		{
+			// FRONTAL EXECUTION - player is in front of poise-broken enemy
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] *** FRONTAL EXECUTION *** Target: %s"), *Target->GetName());
+			ExecuteActionImmediately(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.Execute")));
+		}
+		return;
 	}
+
+	// Normal attack (no execution target)
+	QueueActionToBuffer(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.LightAttackRight")));
 }
 
 void ASLFSoulslikeCharacter::HandleGuardStarted()
@@ -1174,10 +1206,12 @@ void ASLFSoulslikeCharacter::StopActiveCameraSequence_Implementation()
 
 void ASLFSoulslikeCharacter::PlayCameraSequence_Implementation(ULevelSequence* Sequence, FMovieSceneSequencePlaybackSettings Settings)
 {
-	UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] PlayCameraSequence"));
+	UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] PlayCameraSequence called with: %s"),
+		Sequence ? *Sequence->GetName() : TEXT("NULL"));
 
 	if (!Sequence)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] PlayCameraSequence - Sequence is NULL, aborting"));
 		return;
 	}
 
@@ -1189,9 +1223,37 @@ void ASLFSoulslikeCharacter::PlayCameraSequence_Implementation(ULevelSequence* S
 	Cache_ActiveCameraSequence = ULevelSequencePlayer::CreateLevelSequencePlayer(
 		GetWorld(), Sequence, Settings, SequenceActor);
 
+	UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] CreateLevelSequencePlayer result: Player=%s, Actor=%s"),
+		Cache_ActiveCameraSequence ? TEXT("Valid") : TEXT("NULL"),
+		SequenceActor ? *SequenceActor->GetName() : TEXT("NULL"));
+
+	// bp_only: Set TransformOriginActor to player so camera movements are relative to player position
+	// This is CRITICAL - without this, the sequence uses absolute world coordinates
+	if (SequenceActor)
+	{
+		// Enable instance data override
+		SequenceActor->bOverrideInstanceData = true;
+
+		// Get or create the instance data and set the transform origin to self (player)
+		if (UDefaultLevelSequenceInstanceData* InstanceData = Cast<UDefaultLevelSequenceInstanceData>(SequenceActor->DefaultInstanceData))
+		{
+			InstanceData->TransformOriginActor = this;
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] Set TransformOriginActor to player"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] DefaultInstanceData is not UDefaultLevelSequenceInstanceData"));
+		}
+	}
+
 	if (Cache_ActiveCameraSequence)
 	{
 		Cache_ActiveCameraSequence->Play();
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] Camera sequence PLAYING"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] Failed to create LevelSequencePlayer!"));
 	}
 }
 

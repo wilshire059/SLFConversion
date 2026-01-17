@@ -3,56 +3,24 @@
 //
 // 20-PASS VALIDATION: 2026-01-01 Autonomous Session
 // Source: BlueprintDNA/Blueprint/CS_Boss_Roar.json
-// Parent: LegacyCameraShake -> UObject
+// Parent: LegacyCameraShake (UMatineeCameraShake in UE5)
 // Variables: 0 | Functions: 0 | Dispatchers: 0
 
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CoreMinimal.h"
-#include "GameplayTagContainer.h"
-#include "SLFEnums.h"
-#include "SLFGameTypes.h"
-#include "SLFPrimaryDataAssets.h"
-#include "InputMappingContext.h"
-#include "LevelSequence.h"
-#include "LevelSequencePlayer.h"
-#include "MovieSceneSequencePlaybackSettings.h"
-#include "SkeletalMergingLibrary.h"
-#include "GeometryCollection/GeometryCollectionObject.h"
-#include "Field/FieldSystemObjects.h"
+#include "Shakes/LegacyCameraShake.h"
 #include "CS_Boss_Roar.generated.h"
 
-// Forward declarations
-class UAnimMontage;
-class UDataTable;
-
-
-// Event Dispatchers
-
-
+/**
+ * Boss Roar Camera Shake
+ * Applied when boss roars/enters combat
+ */
 UCLASS(Blueprintable, BlueprintType)
-class SLFCONVERSION_API UCS_Boss_Roar : public UObject
+class SLFCONVERSION_API UCS_Boss_Roar : public ULegacyCameraShake
 {
 	GENERATED_BODY()
 
 public:
 	UCS_Boss_Roar();
-
-	// ═══════════════════════════════════════════════════════════════════════
-	// VARIABLES (0)
-	// ═══════════════════════════════════════════════════════════════════════
-
-
-
-	// ═══════════════════════════════════════════════════════════════════════
-	// EVENT DISPATCHERS (0)
-	// ═══════════════════════════════════════════════════════════════════════
-
-
-
-	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (0)
-	// ═══════════════════════════════════════════════════════════════════════
-
 };

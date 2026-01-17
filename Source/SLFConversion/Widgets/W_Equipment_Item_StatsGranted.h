@@ -1,38 +1,24 @@
 // W_Equipment_Item_StatsGranted.h
 // C++ Widget class for W_Equipment_Item_StatsGranted
 //
-// 20-PASS VALIDATION: 2026-01-01 Autonomous Session
+// 20-PASS VALIDATION: 2026-01-16 - Fixed to use TMap for granted stat values
 // Source: BlueprintDNA/WidgetBlueprint/W_Equipment_Item_StatsGranted.json
 // Parent: UUserWidget
-// Variables: 0 | Functions: 0 | Dispatchers: 0
+// The widget displays stats granted by equipment (e.g., +5 Vigor)
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "GameplayTagContainer.h"
+#include "Components/VerticalBox.h"
 #include "SLFEnums.h"
 #include "SLFGameTypes.h"
 #include "SLFPrimaryDataAssets.h"
-#include "InputMappingContext.h"
-#include "GameFramework/InputSettings.h"
-#include "GenericPlatform/GenericWindow.h"
-#include "MediaPlayer.h"
-
 
 #include "W_Equipment_Item_StatsGranted.generated.h"
 
-// Forward declarations for widget types
-
-
-// Forward declarations for Blueprint types
-
-
-// Forward declarations for SaveGame types
-
-
-// Event Dispatchers
-
+class UW_ItemInfoEntry;
 
 UCLASS()
 class SLFCONVERSION_API UW_Equipment_Item_StatsGranted : public UUserWidget
@@ -47,27 +33,30 @@ public:
 	virtual void NativeDestruct() override;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// VARIABLES (0)
+	// VARIABLES
 	// ═══════════════════════════════════════════════════════════════════════
 
+	// Vertical box for granted stat entries (Blueprint uses StatScalingEntriesBox name)
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidgetOptional), Category = "W_Equipment_Item_StatsGranted")
+	UVerticalBox* StatScalingEntriesBox;
 
+	// Widget class for granted stat entries (reuses W_ItemInfoEntry)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "W_Equipment_Item_StatsGranted")
+	TSubclassOf<UW_ItemInfoEntry> GrantedStatEntryWidgetClass;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// EVENT DISPATCHERS (0)
+	// FUNCTIONS
 	// ═══════════════════════════════════════════════════════════════════════
 
-
-
-	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (0)
-	// ═══════════════════════════════════════════════════════════════════════
-
-
-
-	// Event Handlers (1 events)
+	// Setup granted stats - receives TMap of GameplayTag->double (stat -> bonus value)
+	// TargetGrantedStats = stats granted by the item being viewed
+	// CurrentGrantedStats = stats granted by currently equipped item (for comparison)
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Equipment_Item_StatsGranted")
-	void EventSetupGrantedStats(const FGameplayTag& TargetGrantedStats, const FGameplayTag& CurrentGrantedStats);
-	virtual void EventSetupGrantedStats_Implementation(const FGameplayTag& TargetGrantedStats, const FGameplayTag& CurrentGrantedStats);
+	void EventSetupGrantedStats(const TMap<FGameplayTag, double>& TargetGrantedStats, const TMap<FGameplayTag, double>& CurrentGrantedStats);
+	virtual void EventSetupGrantedStats_Implementation(const TMap<FGameplayTag, double>& TargetGrantedStats, const TMap<FGameplayTag, double>& CurrentGrantedStats);
+
+	// Helper to get display name from stat tag
+	FText GetStatDisplayName(const FGameplayTag& StatTag) const;
 
 protected:
 	// Cache references

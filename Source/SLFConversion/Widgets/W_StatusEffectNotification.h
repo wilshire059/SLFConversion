@@ -23,7 +23,7 @@
 #include "W_StatusEffectNotification.generated.h"
 
 // Forward declarations for widget types
-
+class UTextBlock;
 
 // Forward declarations for Blueprint types
 
@@ -54,6 +54,13 @@ public:
 	double NotificationDuration;
 
 	// ═══════════════════════════════════════════════════════════════════════
+	// WIDGET REFERENCES - from UMG hierarchy
+	// ═══════════════════════════════════════════════════════════════════════
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget, OptionalWidget = true), Category = "Widgets")
+	UTextBlock* TxtStatusEffect;
+
+	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (0)
 	// ═══════════════════════════════════════════════════════════════════════
 
@@ -77,4 +84,7 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Timer handle for notification duration
+	FTimerHandle NotificationTimerHandle;
 };

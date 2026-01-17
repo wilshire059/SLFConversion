@@ -33,6 +33,7 @@ public:
 	// Widget lifecycle
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (6)
@@ -127,6 +128,16 @@ public:
 	void EventNavigateUp();
 	virtual void EventNavigateUp_Implementation();
 
+	// ═══════════════════════════════════════════════════════════════════════
+	// EVENT DISPATCHERS
+	// ═══════════════════════════════════════════════════════════════════════
+
+	// Broadcast when a main menu button is clicked (with button name for routing)
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMainMenuButtonClicked, FName, ButtonName);
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnMainMenuButtonClicked OnMenuButtonClicked;
+
 protected:
 	// Initialize buttons from ButtonsBox
 	void InitializeButtons();
@@ -136,4 +147,26 @@ protected:
 
 	// Bind button events
 	void BindButtonEvents();
+
+	// Unbind button events
+	void UnbindButtonEvents();
+
+	// Button click handlers
+	UFUNCTION()
+	void OnContinueClicked();
+
+	UFUNCTION()
+	void OnNewGameClicked();
+
+	UFUNCTION()
+	void OnLoadGameClicked();
+
+	UFUNCTION()
+	void OnSettingsClicked();
+
+	UFUNCTION()
+	void OnCreditsClicked();
+
+	UFUNCTION()
+	void OnQuitGameClicked();
 };

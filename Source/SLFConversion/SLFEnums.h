@@ -442,16 +442,18 @@ enum class ESLFNpcState : uint8
 //////////////////////////////////////////////////////////////////////////
 // ESLFOverlayState
 // Replaces: /Game/SoulslikeFramework/Enums/E_OverlayState
+// CRITICAL: Values MUST match Blueprint E_OverlayState enum order!
+// Blueprint enum order (from E_OverlayState.json):
+//   0 = Unarmed, 1 = Shield, 2 = OneHanded, 3 = TwoHanded, 4 = DualWield
 //////////////////////////////////////////////////////////////////////////
 UENUM(BlueprintType)
 enum class ESLFOverlayState : uint8
 {
-	Default = 0		UMETA(DisplayName = "Default"),
-	Unarmed = 1		UMETA(DisplayName = "Unarmed"),
-	Shield = 2		UMETA(DisplayName = "Shield"),
-	OneHanded = 3	UMETA(DisplayName = "OneHanded"),
-	TwoHanded = 4	UMETA(DisplayName = "TwoHanded"),
-	DualWield = 5	UMETA(DisplayName = "DualWield")
+	Unarmed = 0		UMETA(DisplayName = "Unarmed"),
+	Shield = 1		UMETA(DisplayName = "Shield"),
+	OneHanded = 2	UMETA(DisplayName = "OneHanded"),
+	TwoHanded = 3	UMETA(DisplayName = "TwoHanded"),
+	DualWield = 4	UMETA(DisplayName = "DualWield")
 };
 
 //////////////////////////////////////////////////////////////////////////

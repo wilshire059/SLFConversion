@@ -15,6 +15,7 @@
 #include "SLFGameTypes.h"
 #include "Interfaces/BPI_Enemy.h"
 #include "Interfaces/BPI_Executable.h"
+#include "Interfaces/BPI_ExecutionIndicator.h"
 #include "B_Soulslike_Enemy.generated.h"
 
 // Forward declarations
@@ -29,12 +30,13 @@ class UArrowComponent;
 class UBillboardComponent;
 class AB_PatrolPath;
 class UTimelineComponent;
+class USLFAIStateMachineComponent;
 
 // Event Dispatchers
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FB_Soulslike_Enemy_OnAttackEnd);
 
 UCLASS(Blueprintable, BlueprintType)
-class SLFCONVERSION_API AB_Soulslike_Enemy : public ASLFBaseCharacter, public IBPI_Enemy, public IBPI_Executable
+class SLFCONVERSION_API AB_Soulslike_Enemy : public ASLFBaseCharacter, public IBPI_Enemy, public IBPI_Executable, public IBPI_ExecutionIndicator
 {
 	GENERATED_BODY()
 
@@ -93,6 +95,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UTimelineComponent* TL_RotateTowardsTarget;
 
+	/** AI State Machine - replaces Behavior Tree for better performance */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	USLFAIStateMachineComponent* AIStateMachine;
+
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (1)
 	// ═══════════════════════════════════════════════════════════════════════
@@ -132,6 +138,12 @@ public:
 	virtual void OnExecuted_Implementation(FGameplayTag ExecutionTag) override;
 	virtual void OnBackstabbed_Implementation(FGameplayTag ExecutionTag) override;
 
+	// ═══════════════════════════════════════════════════════════════════════
+	// BPI_ExecutionIndicator INTERFACE (1 function)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	virtual void ToggleExecutionIcon_Implementation(bool bVisible) override;
+
 protected:
 	// Timer handle for rotation
 	FTimerHandle RotateToTargetTimerHandle;
@@ -139,4 +151,18 @@ protected:
 	// Perception handling
 	UFUNCTION()
 	void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// POISE BREAK / EXECUTION INDICATOR - bp_only flow node-by-node
+	// ═══════════════════════════════════════════════════════════════════════
+
+	/**
+	 * Handler for OnPoiseBroken event from AC_AI_CombatManager
+	 * Blueprint flow (B_Soulslike_Enemy.json lines 10598-10899):
+	 * 1. OnPoiseBroken(Broken?) event fires
+	 * 2. SetVisibility(ExecutionWidget, bNewVisibility = Broken?)
+	 * 3. GetWidget() from ExecutionWidget → ToggleExecutionIcon(Visible = Broken?)
+	 */
+	UFUNCTION()
+	void HandleOnPoiseBroken(bool bBroken);
 };

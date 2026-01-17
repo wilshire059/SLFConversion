@@ -14,7 +14,8 @@ UB_Weight::UB_Weight()
 	ShowMaxValueOnLevelUp = true;
 
 	// Set default stat info
-	StatInfo.Tag = FGameplayTag::RequestGameplayTag(FName("Stat.Weight"), false);
+	// Must match the tag used in armor StatChanges: SoulslikeFramework.Stat.Misc.Weight
+	StatInfo.Tag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Misc.Weight"), false);
 	StatInfo.DisplayName = FText::FromString(TEXT("Equip Load"));
 	StatInfo.Description = FText::FromString(TEXT("Current equipment weight vs maximum carry capacity"));
 	StatInfo.bDisplayAsPercent = false;

@@ -212,6 +212,11 @@ public:
 	void EventScrollDropdownRight();
 	virtual void EventScrollDropdownRight_Implementation();
 
+	// Called when OK/Enter is pressed on this entry
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Settings_Entry")
+	void EventActivateEntry();
+	virtual void EventActivateEntry_Implementation();
+
 protected:
 	// Update visuals based on configuration
 	void ApplyVisualConfig();

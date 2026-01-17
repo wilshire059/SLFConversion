@@ -141,6 +141,44 @@ public:
 	FAC_AI_CombatManager_OnDeath OnDeath;
 
 	// ═══════════════════════════════════════════════════════════════════════
+	// POISE SYSTEM (Elden Ring Style)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	/** Timer for poise regeneration delay */
+	UPROPERTY(BlueprintReadWrite, Category = "Runtime|Poise")
+	FTimerHandle PoiseRegenDelayTimer;
+
+	/** Timer for poise regeneration tick */
+	UPROPERTY(BlueprintReadWrite, Category = "Runtime|Poise")
+	FTimerHandle PoiseRegenTickTimer;
+
+	/** Delay before poise starts regenerating (seconds) */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config|Poise")
+	double PoiseRegenDelay = 2.0;
+
+	/** Poise regeneration rate (points per second) */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config|Poise")
+	double PoiseRegenRate = 30.0;
+
+	/** Trigger poise break stagger */
+	void TriggerPoiseBreakStagger(const FHitResult& HitInfo);
+
+	/** Called when poise break recovery ends */
+	UFUNCTION()
+	void OnPoiseBreakRecoveryEnd();
+
+	/** Reset poise regen timer (called on damage) */
+	void ResetPoiseRegenTimer();
+
+	/** Called when poise regen delay expires */
+	UFUNCTION()
+	void OnPoiseRegenDelayExpired();
+
+	/** Called to regenerate poise */
+	UFUNCTION()
+	void OnPoiseRegenTick();
+
+	// ═══════════════════════════════════════════════════════════════════════
 	// FUNCTIONS (15)
 	// ═══════════════════════════════════════════════════════════════════════
 

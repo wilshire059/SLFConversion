@@ -10,8 +10,10 @@
 #include "AC_CollisionManager.h"
 #include "GameFramework/Character.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Engine/EngineTypes.h"
 
 UAC_CollisionManager::UAC_CollisionManager()
 {
@@ -29,6 +31,12 @@ UAC_CollisionManager::UAC_CollisionManager()
 	LastStartPosition = FVector::ZeroVector;
 	LastEndPosition = FVector::ZeroVector;
 	bTraceActive = false;
+
+	// CRITICAL: Initialize TraceTypes to detect hittable objects
+	// Without this, SphereTraceMultiForObjects will never hit anything!
+	TraceTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));           // Characters
+	TraceTypes.Add(UEngineTypes::ConvertToObjectType(ECC_WorldDynamic));   // Destructibles, physics props
+	TraceTypes.Add(UEngineTypes::ConvertToObjectType(ECC_PhysicsBody));    // Physics-simulated bodies
 }
 
 void UAC_CollisionManager::BeginPlay()

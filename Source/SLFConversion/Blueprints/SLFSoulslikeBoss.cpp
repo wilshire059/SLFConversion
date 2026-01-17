@@ -13,6 +13,7 @@
 #include "SLFSoulslikeBoss.h"
 #include "Components/AIBossComponent.h"
 #include "Components/SphereComponent.h"
+#include "Components/SLFAIStateMachineComponent.h"
 
 ASLFSoulslikeBoss::ASLFSoulslikeBoss()
 {
@@ -36,6 +37,30 @@ ASLFSoulslikeBoss::ASLFSoulslikeBoss()
 void ASLFSoulslikeBoss::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Configure AIStateMachine for boss behavior (inherited from enemy)
+	if (AIStateMachine)
+	{
+		AIStateMachine->Config.bIsBoss = true;
+
+		// Pull phase thresholds from BossComponent if available
+		if (BossComponent && BossComponent->Phases.Num() > 0)
+		{
+			// Use first phase transition as Phase2 threshold
+			if (BossComponent->Phases.Num() >= 2)
+			{
+				AIStateMachine->Config.Phase2HealthThreshold = BossComponent->Phases[1].HealthThreshold;
+			}
+			// Use second phase transition as Phase3 threshold
+			if (BossComponent->Phases.Num() >= 3)
+			{
+				AIStateMachine->Config.Phase3HealthThreshold = BossComponent->Phases[2].HealthThreshold;
+			}
+		}
+
+		UE_LOG(LogTemp, Log, TEXT("[SoulslikeBoss] Configured AIStateMachine for boss: bIsBoss=true, Phase2=%.2f, Phase3=%.2f"),
+			AIStateMachine->Config.Phase2HealthThreshold, AIStateMachine->Config.Phase3HealthThreshold);
+	}
 
 	UE_LOG(LogTemp, Log, TEXT("[SoulslikeBoss] BeginPlay: %s"), *GetName());
 }
@@ -70,11 +95,26 @@ void ASLFSoulslikeBoss::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedCom
 	// If both conditions met, start the fight
 	if (bIsPlayer && bIsTriggerEncounterType)
 	{
+		// Validate OtherActor before setting (per Gemini peer review - actor could be destroyed same frame)
+		if (!IsValid(OtherActor))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeBoss] Player trigger - but actor no longer valid"));
+			return;
+		}
+
 		UE_LOG(LogTemp, Log, TEXT("[SoulslikeBoss] Player entered trigger - starting boss encounter"));
 
 		if (BossComponent)
 		{
 			BossComponent->SetFightActive(true);
+		}
+
+		// Also inform AIStateMachine about the target to start combat state
+		// This replaces the old BehaviorManager->SetTarget pattern
+		if (AIStateMachine)
+		{
+			AIStateMachine->SetTarget(OtherActor);  // This automatically transitions to Combat state
+			UE_LOG(LogTemp, Log, TEXT("[SoulslikeBoss] Set target on AIStateMachine: %s"), *GetNameSafe(OtherActor));
 		}
 	}
 }

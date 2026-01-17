@@ -152,6 +152,11 @@ public:
 	void RemoveItem(UDataAsset* Item, int32 Count);
 	virtual void RemoveItem_Implementation(UDataAsset* Item, int32 Count);
 
+	/** Remove item from inventory by gameplay tag (for crafting material consumption) */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory|Items")
+	bool RemoveItemWithTag(const FGameplayTag& Tag, int32 Count);
+	virtual bool RemoveItemWithTag_Implementation(const FGameplayTag& Tag, int32 Count);
+
 	/** [3/35] Remove item at specific slot */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory|Items")
 	void RemoveItemAtSlot(int32 SlotIndex, int32 Amount);

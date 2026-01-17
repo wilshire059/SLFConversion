@@ -30,6 +30,7 @@ class UW_Status_StatBlock;
 // Forward declarations for Blueprint types
 class UInventoryManagerComponent;
 class UStatManagerComponent;
+class UB_Stat;
 
 // Event Dispatchers
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FW_Status_OnStatusClosed);
@@ -55,6 +56,25 @@ public:
 
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
 	UW_Status_LevelCurrencyBlock* W_Status_LevelCurrencyBlock;
+
+	// Stat block widgets (6 blocks for different stat categories)
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UW_Status_StatBlock* W_StatBlock_Status;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UW_Status_StatBlock* W_StatBlock_Status_1;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UW_Status_StatBlock* W_StatBlock_Status_3;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UW_Status_StatBlock* W_StatBlock_Status_5;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UW_Status_StatBlock* W_StatBlock_Status_7;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UW_Status_StatBlock* W_StatBlock_Status_8;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (4)
@@ -105,4 +125,11 @@ public:
 protected:
 	// Initialize child widgets with current values
 	void InitializeLevelCurrencyBlock();
+
+	// Called when stats are initialized - populates all stat blocks
+	UFUNCTION()
+	void OnStatsInitializedHandler();
+
+	// Populates all stat blocks with current stat data
+	void PopulateStatBlocks();
 };

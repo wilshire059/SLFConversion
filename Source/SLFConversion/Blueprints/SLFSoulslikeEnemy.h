@@ -35,6 +35,7 @@ class UAICombatManagerComponent;
 class UAIBehaviorManagerComponent;
 class ULootDropManagerComponent;
 class USLFAIStateMachineComponent;
+class ISLFExecutionIndicatorInterface;
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // EVENT DISPATCHERS: 1/1 migrated
@@ -147,6 +148,20 @@ public:
 	/** Handle perception update from AI controller */
 	UFUNCTION()
 	void OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
+
+	// ═══════════════════════════════════════════════════════════════════
+	// POISE BREAK / EXECUTION INDICATOR HANDLING
+	// ═══════════════════════════════════════════════════════════════════
+
+	/**
+	 * Handler for OnPoiseBroken event from CombatManagerComponent
+	 * bp_only flow (B_Soulslike_Enemy.json lines 10598-10899):
+	 * 1. OnPoiseBroken(Broken?) event fires
+	 * 2. SetVisibility(ExecutionWidget, bNewVisibility = Broken?)
+	 * 3. GetWidget() from ExecutionWidget → ToggleExecutionIcon(Visible = Broken?)
+	 */
+	UFUNCTION()
+	void HandleOnPoiseBroken(bool bBroken);
 
 	// ═══════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS: 1/1 migrated

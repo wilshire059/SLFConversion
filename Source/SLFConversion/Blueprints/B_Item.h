@@ -41,11 +41,16 @@ public:
 	AB_Item();
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// VARIABLES (1)
+	// VARIABLES (2)
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Do Not Touch")
 	FSLFItemInfo ItemInfo;
+
+	// The actual equipment slot this item was equipped to (set by AC_EquipmentManager)
+	// Used to determine left vs right hand attachment socket
+	UPROPERTY(BlueprintReadWrite, Category = "Equipment")
+	FGameplayTag EquippedSlotTag;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (0)

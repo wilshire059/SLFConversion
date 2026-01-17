@@ -11,7 +11,10 @@
 
 #include "StatManagerComponent.h"
 #include "Engine/DataTable.h"
+#include "Engine/GameInstance.h"
 #include "Blueprints/SLFStatBase.h"
+#include "SLFPrimaryDataAssets.h"
+#include "Interfaces/BPI_GameInstance.h"
 #include "UObject/ConstructorHelpers.h"
 #include "UObject/UnrealType.h"  // For TFieldIterator, FProperty, FClassProperty
 
@@ -231,6 +234,10 @@ void UStatManagerComponent::BeginPlay()
 		}
 	}
 
+	// Apply base stats from character class (e.g., Vigor=10 for Warrior class)
+	// This must happen after stats are created but before they're used
+	ApplyBaseStatsFromCharacterClass();
+
 	UE_LOG(LogTemp, Warning, TEXT("[StatManager] Broadcasting OnStatsInitialized..."));
 	OnStatsInitialized.Broadcast();
 	UE_LOG(LogTemp, Warning, TEXT("═══════════════════════════════════════════════════════════════"));
@@ -251,15 +258,20 @@ bool UStatManagerComponent::GetStat_Implementation(FGameplayTag StatTag, UObject
 		if (Stat)
 		{
 			OutStatInfo = Stat->StatInfo;
+			UE_LOG(LogTemp, Log, TEXT("[StatManager] GetStat %s: Stat=%p, CurrentValue=%.2f, MaxValue=%.2f"),
+				*StatTag.ToString(), Stat, Stat->StatInfo.CurrentValue, Stat->StatInfo.MaxValue);
 		}
 		else
 		{
 			OutStatInfo.Tag = StatTag;
+			UE_LOG(LogTemp, Warning, TEXT("[StatManager] GetStat %s: Found object but NOT USLFStatBase (class=%s)"),
+				*StatTag.ToString(), *(*Found)->GetClass()->GetName());
 		}
 
 		return true;
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("[StatManager] GetStat %s: NOT FOUND in ActiveStats"), *StatTag.ToString());
 	OutStatObject = nullptr;
 	return false;
 }
@@ -545,4 +557,74 @@ void UStatManagerComponent::EventOnLevelUpRequested(FGameplayTag StatTag)
 			UE_LOG(LogTemp, Log, TEXT("[StatManager] Leveled up stat: %s"), *StatTag.ToString());
 		}
 	}
+}
+
+void UStatManagerComponent::ApplyBaseStatsFromCharacterClass()
+{
+	UE_LOG(LogTemp, Warning, TEXT("[StatManager] ApplyBaseStatsFromCharacterClass - SelectedClassAsset: %s"),
+		SelectedClassAsset ? *SelectedClassAsset->GetName() : TEXT("NULL"));
+
+	// If SelectedClassAsset is not set, try to get it from GameInstance
+	if (!SelectedClassAsset)
+	{
+		UGameInstance* GI = GetOwner() ? GetOwner()->GetGameInstance() : nullptr;
+		if (GI && GI->Implements<UBPI_GameInstance>())
+		{
+			UPrimaryDataAsset* SelectedClass = nullptr;
+			IBPI_GameInstance::Execute_GetSelectedClass(GI, SelectedClass);
+			if (SelectedClass)
+			{
+				SelectedClassAsset = SelectedClass;
+				UE_LOG(LogTemp, Warning, TEXT("[StatManager] Got SelectedClassAsset from GameInstance: %s"), *SelectedClass->GetName());
+			}
+		}
+	}
+
+	// Check if we have a selected character class
+	if (!SelectedClassAsset)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[StatManager] No SelectedClassAsset set - cannot apply base stats"));
+		return;
+	}
+
+	// Cast to UPDA_BaseCharacterInfo to access BaseStats
+	UPDA_BaseCharacterInfo* CharacterInfo = Cast<UPDA_BaseCharacterInfo>(SelectedClassAsset);
+	if (!CharacterInfo)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[StatManager] SelectedClassAsset is not UPDA_BaseCharacterInfo (class: %s)"),
+			*SelectedClassAsset->GetClass()->GetName());
+		return;
+	}
+
+	// Check if BaseStats map has any entries
+	if (CharacterInfo->BaseStats.Num() == 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[StatManager] BaseStats map is empty for %s"), *CharacterInfo->GetName());
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[StatManager] Applying %d base stats from character class %s"),
+		CharacterInfo->BaseStats.Num(), *CharacterInfo->GetName());
+
+	// Debug: Log what's in BaseStats
+	for (const auto& BasePair : CharacterInfo->BaseStats)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[StatManager]   BaseStats key: %s -> %.2f"),
+			BasePair.Key ? *BasePair.Key->GetName() : TEXT("NULL"), BasePair.Value);
+	}
+
+	// Apply base stats to each active stat using InitializeBaseClassValue
+	for (const auto& StatPair : ActiveStats)
+	{
+		USLFStatBase* Stat = Cast<USLFStatBase>(StatPair.Value);
+		if (Stat)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[StatManager] Applying BaseStats to stat %s (class: %s)"),
+				*Stat->StatInfo.DisplayName.ToString(), *Stat->GetClass()->GetName());
+			// Call InitializeBaseClassValue on the stat
+			Stat->InitializeBaseClassValue(CharacterInfo->BaseStats);
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[StatManager] Base stats applied successfully"));
 }

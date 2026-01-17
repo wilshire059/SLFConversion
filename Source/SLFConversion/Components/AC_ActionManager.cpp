@@ -558,63 +558,69 @@ void UAC_ActionManager::EventPerformAction_Implementation(const FGameplayTag& Ac
 	// STAMINA VALIDATION - Check and consume stamina before action execution
 	// ═══════════════════════════════════════════════════════════════════════
 
-	// Get action data to check stamina cost
+	// Get action data to check stamina cost and requirements
+	// IMPORTANT: Check ALL requirements BEFORE consuming any resources
 	UPrimaryDataAsset** ActionDataPtr = Actions.Find(ActionTag);
 	if (ActionDataPtr && *ActionDataPtr)
 	{
 		if (UPDA_ActionBase* ActionData = Cast<UPDA_ActionBase>(*ActionDataPtr))
 		{
 			double StaminaCost = ActionData->StaminaCost;
+			UStatManagerComponent* StatManager = GetStatManager();
+
+			// ═══════════════════════════════════════════════════════════════
+			// PHASE 1: CHECK ALL REQUIREMENTS (before consuming anything)
+			// ═══════════════════════════════════════════════════════════════
 
 			// Check stamina requirement if there's a cost
-			if (StaminaCost > 0.0)
+			if (StaminaCost > 0.0 && StatManager)
 			{
-				UStatManagerComponent* StatManager = GetStatManager();
-				if (StatManager)
+				FGameplayTag StaminaTag = FGameplayTag::RequestGameplayTag(
+					FName("SoulslikeFramework.Stat.Secondary.Stamina"));
+				UObject* StaminaStat = nullptr;
+				FStatInfo StaminaInfo;
+				StatManager->GetStat(StaminaTag, StaminaStat, StaminaInfo);
+
+				// Check if enough stamina
+				if (StaminaInfo.CurrentValue < StaminaCost)
 				{
-					// Get stamina stat
-					FGameplayTag StaminaTag = FGameplayTag::RequestGameplayTag(
-						FName("SoulslikeFramework.Stat.Secondary.Stamina"));
-					UObject* StaminaStat = nullptr;
-					FStatInfo StaminaInfo;
-					StatManager->GetStat(StaminaTag, StaminaStat, StaminaInfo);
-
-					// Check if enough stamina
-					if (StaminaInfo.CurrentValue < StaminaCost)
-					{
-						UE_LOG(LogTemp, Log, TEXT("  NOT ENOUGH STAMINA for action %s (need %.1f, have %.1f)"),
-							*ActionTag.ToString(), StaminaCost, StaminaInfo.CurrentValue);
-						return;  // Block action execution
-					}
-
-					// Consume stamina (trigger regen after)
-					StatManager->AdjustStat(StaminaTag, ESLFValueType::CurrentValue,
-						-StaminaCost, false, true);
-					UE_LOG(LogTemp, Log, TEXT("  Consumed %.1f stamina for action %s"),
-						StaminaCost, *ActionTag.ToString());
+					UE_LOG(LogTemp, Log, TEXT("  NOT ENOUGH STAMINA for action %s (need %.1f, have %.1f)"),
+						*ActionTag.ToString(), StaminaCost, StaminaInfo.CurrentValue);
+					return;  // Block action execution
 				}
 			}
 
 			// Check additional stat requirements (RequiredStatTag/RequiredStatAmount)
-			if (ActionData->RequiredStatTag.IsValid() && ActionData->RequiredStatAmount > 0.0)
+			if (ActionData->RequiredStatTag.IsValid() && ActionData->RequiredStatAmount > 0.0 && StatManager)
 			{
-				UStatManagerComponent* StatManager = GetStatManager();
-				if (StatManager)
-				{
-					UObject* RequiredStat = nullptr;
-					FStatInfo RequiredStatInfo;
-					StatManager->GetStat(ActionData->RequiredStatTag, RequiredStat, RequiredStatInfo);
+				UObject* RequiredStat = nullptr;
+				FStatInfo RequiredStatInfo;
+				StatManager->GetStat(ActionData->RequiredStatTag, RequiredStat, RequiredStatInfo);
 
-					if (RequiredStatInfo.CurrentValue < ActionData->RequiredStatAmount)
-					{
-						UE_LOG(LogTemp, Log, TEXT("  STAT REQUIREMENT NOT MET for action %s (need %.1f %s, have %.1f)"),
-							*ActionTag.ToString(),
-							ActionData->RequiredStatAmount,
-							*ActionData->RequiredStatTag.ToString(),
-							RequiredStatInfo.CurrentValue);
-						return;  // Block action execution
-					}
+				if (RequiredStatInfo.CurrentValue < ActionData->RequiredStatAmount)
+				{
+					UE_LOG(LogTemp, Log, TEXT("  STAT REQUIREMENT NOT MET for action %s (need %.1f %s, have %.1f)"),
+						*ActionTag.ToString(),
+						ActionData->RequiredStatAmount,
+						*ActionData->RequiredStatTag.ToString(),
+						RequiredStatInfo.CurrentValue);
+					return;  // Block action execution
 				}
+			}
+
+			// ═══════════════════════════════════════════════════════════════
+			// PHASE 2: CONSUME RESOURCES (only after all checks pass)
+			// ═══════════════════════════════════════════════════════════════
+
+			// Consume stamina now that we know action can proceed
+			if (StaminaCost > 0.0 && StatManager)
+			{
+				FGameplayTag StaminaTag = FGameplayTag::RequestGameplayTag(
+					FName("SoulslikeFramework.Stat.Secondary.Stamina"));
+				StatManager->AdjustStat(StaminaTag, ESLFValueType::CurrentValue,
+					-StaminaCost, false, true);
+				UE_LOG(LogTemp, Log, TEXT("  Consumed %.1f stamina for action %s"),
+					StaminaCost, *ActionTag.ToString());
 			}
 		}
 	}
@@ -668,7 +674,11 @@ void UAC_ActionManager::EventPerformAction_Implementation(const FGameplayTag& Ac
 	}
 
 	// Set the owner actor
-	ActionInstance->OwnerActor = GetOwner();
+	AActor* Owner = GetOwner();
+	ActionInstance->OwnerActor = Owner;
+	UE_LOG(LogTemp, Warning, TEXT("  ActionManager Owner: %s, Setting OwnerActor: %s"),
+		Owner ? *Owner->GetName() : TEXT("NULL"),
+		ActionInstance->OwnerActor ? *ActionInstance->OwnerActor->GetName() : TEXT("NULL"));
 
 	// Execute the action
 	UE_LOG(LogTemp, Log, TEXT("  Executing action..."));

@@ -300,6 +300,78 @@ void UAC_InventoryManager::RemoveItem_Implementation(UPrimaryDataAsset* Item, in
 }
 
 /**
+ * RemoveItemWithTag - Remove item from inventory by gameplay tag (for crafting material consumption)
+ * Uses atomic check-then-commit pattern to prevent partial consumption on failure.
+ */
+bool UAC_InventoryManager::RemoveItemWithTag_Implementation(const FGameplayTag& Tag, int32 Count)
+{
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::RemoveItemWithTag - Tag: %s, Count: %d"),
+		*Tag.ToString(), Count);
+
+	if (!Tag.IsValid() || Count <= 0)
+	{
+		return false;
+	}
+
+	// ═══════════════════════════════════════════════════════════════════
+	// PASS 1: Dry run - Check if we have enough BEFORE modifying anything
+	// In this implementation, Items is TMap<FGameplayTag, UPrimaryDataAsset*>
+	// Each entry is a single item (no stacks), so we count matching entries
+	// ═══════════════════════════════════════════════════════════════════
+	int32 TotalAvailable = 0;
+	for (const auto& ItemEntry : Items)
+	{
+		UPDA_Item* ItemData = Cast<UPDA_Item>(ItemEntry.Value);
+		if (ItemData && ItemData->ItemInformation.ItemTag.MatchesTag(Tag))
+		{
+			TotalAvailable++;
+		}
+	}
+
+	if (TotalAvailable < Count)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  ATOMIC CHECK FAILED: Need %d but only have %d - no items removed"),
+			Count, TotalAvailable);
+		return false; // Fail gracefully, touch nothing
+	}
+
+	// ═══════════════════════════════════════════════════════════════════
+	// PASS 2: Commit - Actually remove (we verified we have enough)
+	// ═══════════════════════════════════════════════════════════════════
+	TArray<FGameplayTag> TagsToRemove;
+	int32 RemainingToRemove = Count;
+
+	for (const auto& ItemEntry : Items)
+	{
+		if (RemainingToRemove <= 0)
+		{
+			break;
+		}
+
+		UPDA_Item* ItemData = Cast<UPDA_Item>(ItemEntry.Value);
+		if (ItemData && ItemData->ItemInformation.ItemTag.MatchesTag(Tag))
+		{
+			TagsToRemove.Add(ItemEntry.Key);
+			RemainingToRemove--;
+			UE_LOG(LogTemp, Log, TEXT("  Removing: %s"), *ItemData->GetName());
+		}
+	}
+
+	// Remove the found items
+	for (const FGameplayTag& TagToRemove : TagsToRemove)
+	{
+		if (UPrimaryDataAsset** ItemPtr = Items.Find(TagToRemove))
+		{
+			OnItemAmountUpdated.Broadcast(*ItemPtr, 0);
+		}
+		Items.Remove(TagToRemove);
+	}
+
+	OnInventoryUpdated.Broadcast();
+	return true;
+}
+
+/**
  * RemoveStoredItem - Remove item from storage
  */
 void UAC_InventoryManager::RemoveStoredItem_Implementation(UPrimaryDataAsset* Item, int32 Count)
@@ -449,25 +521,127 @@ void UAC_InventoryManager::RemoveItemAtStorageSlot_Implementation(UW_InventorySl
 
 /**
  * GetItemsForEquipmentSlot - Get items that can equip to slot
+ *
+ * Filters inventory items based on equipment slot compatibility.
+ * First checks explicit EquipSlots tags, then falls back to Category/SubCategory matching.
  */
 TArray<UPrimaryDataAsset*> UAC_InventoryManager::GetItemsForEquipmentSlot_Implementation(const FGameplayTag& EquipmentSlotTag)
 {
-	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::GetItemsForEquipmentSlot - Slot: %s"),
-		*EquipmentSlotTag.ToString());
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::GetItemsForEquipmentSlot - Slot: %s, Items in inventory: %d"),
+		*EquipmentSlotTag.ToString(), Items.Num());
+
+	// Parse slot type from tag (e.g., "Right Hand Weapon 1" from full tag path)
+	FString SlotTagStr = EquipmentSlotTag.ToString();
+	bool bIsRightHand = SlotTagStr.Contains(TEXT("Right Hand"));
+	bool bIsLeftHand = SlotTagStr.Contains(TEXT("Left Hand"));
+	bool bIsHead = SlotTagStr.Contains(TEXT("Head"));
+	bool bIsArmor = SlotTagStr.Contains(TEXT("Armor"));
+	bool bIsGloves = SlotTagStr.Contains(TEXT("Gloves"));
+	bool bIsGreaves = SlotTagStr.Contains(TEXT("Greaves"));
+	bool bIsTrinket = SlotTagStr.Contains(TEXT("Trinket"));
+	bool bIsArrow = SlotTagStr.Contains(TEXT("Arrow"));
+	bool bIsBullet = SlotTagStr.Contains(TEXT("Bullet"));
 
 	TArray<UPrimaryDataAsset*> Result;
 
 	// Filter items that can equip to this slot
 	for (const auto& ItemEntry : Items)
 	{
-		if (IsValid(ItemEntry.Value))
+		if (UPDA_Item* ItemData = Cast<UPDA_Item>(ItemEntry.Value))
 		{
-			// Check if item can equip to this slot
-			// This requires checking ItemInfo.EquipmentDetails.EquipSlots
-			Result.Add(ItemEntry.Value);
+			bool bMatches = false;
+
+			// First check explicit EquipSlots tags
+			if (ItemData->ItemInformation.EquipmentDetails.EquipSlots.Num() > 0)
+			{
+				bMatches = ItemData->ItemInformation.EquipmentDetails.EquipSlots.HasTag(EquipmentSlotTag);
+			}
+			else
+			{
+				// Fallback: Match by Category/SubCategory since EquipSlots are empty
+				ESLFItemCategory Category = ItemData->ItemInformation.Category.Category;
+				ESLFItemSubCategory SubCategory = ItemData->ItemInformation.Category.SubCategory;
+
+				UE_LOG(LogTemp, Log, TEXT("[AC_InventoryManager]   Checking %s: Category=%d, SubCat=%d"),
+					*ItemData->GetName(),
+					static_cast<int32>(Category),
+					static_cast<int32>(SubCategory));
+
+				// Right Hand slots: Weapons, Swords, Katanas, Axes, Maces, Staffs
+				if (bIsRightHand)
+				{
+					bMatches = (Category == ESLFItemCategory::Weapons) ||
+					           (Category == ESLFItemCategory::Abilities) ||  // Abilities category used for weapons in test data
+					           (SubCategory == ESLFItemSubCategory::Sword) ||
+					           (SubCategory == ESLFItemSubCategory::Katana) ||
+					           (SubCategory == ESLFItemSubCategory::Axe) ||
+					           (SubCategory == ESLFItemSubCategory::Mace) ||
+					           (SubCategory == ESLFItemSubCategory::Staff);
+				}
+				// Left Hand slots: Shields AND Weapons (for dual-wielding)
+				else if (bIsLeftHand)
+				{
+					bMatches = (Category == ESLFItemCategory::Shields) ||
+					           (Category == ESLFItemCategory::Weapons) ||
+					           (SubCategory == ESLFItemSubCategory::Sword) ||
+					           (SubCategory == ESLFItemSubCategory::Katana) ||
+					           (SubCategory == ESLFItemSubCategory::Axe) ||
+					           (SubCategory == ESLFItemSubCategory::Mace) ||
+					           (SubCategory == ESLFItemSubCategory::Staff);
+				}
+				// Head slot: Head subcategory OR Armor category with Head subcategory
+				else if (bIsHead)
+				{
+					bMatches = (SubCategory == ESLFItemSubCategory::Head) ||
+					           (Category == ESLFItemCategory::Armor && SubCategory == ESLFItemSubCategory::Head);
+				}
+				// Armor/Chest slot: Chest subcategory OR Armor category
+				else if (bIsArmor)
+				{
+					bMatches = (SubCategory == ESLFItemSubCategory::Chest) ||
+					           (Category == ESLFItemCategory::Armor && SubCategory == ESLFItemSubCategory::Chest);
+				}
+				// Gloves/Arms slot
+				else if (bIsGloves)
+				{
+					bMatches = (SubCategory == ESLFItemSubCategory::Arms) ||
+					           (Category == ESLFItemCategory::Armor && SubCategory == ESLFItemSubCategory::Arms);
+				}
+				// Greaves/Legs slot
+				else if (bIsGreaves)
+				{
+					bMatches = (SubCategory == ESLFItemSubCategory::Legs) ||
+					           (Category == ESLFItemCategory::Armor && SubCategory == ESLFItemSubCategory::Legs);
+				}
+				// Trinket slots: Talismans
+				else if (bIsTrinket)
+				{
+					bMatches = (SubCategory == ESLFItemSubCategory::Talismans);
+				}
+				// Arrow slot: Projectiles
+				else if (bIsArrow)
+				{
+					bMatches = (SubCategory == ESLFItemSubCategory::Projectiles);
+				}
+				// Bullet slot: Projectiles (same as arrows - both are ammo types)
+				else if (bIsBullet)
+				{
+					bMatches = (SubCategory == ESLFItemSubCategory::Projectiles);
+				}
+			}
+
+			if (bMatches)
+			{
+				Result.Add(ItemData);
+				UE_LOG(LogTemp, Log, TEXT("[AC_InventoryManager]   MATCH: %s (Category=%d, SubCat=%d)"),
+					*ItemData->GetName(),
+					static_cast<int32>(ItemData->ItemInformation.Category.Category),
+					static_cast<int32>(ItemData->ItemInformation.Category.SubCategory));
+			}
 		}
 	}
 
+	UE_LOG(LogTemp, Log, TEXT("UAC_InventoryManager::GetItemsForEquipmentSlot - Found %d matching items"), Result.Num());
 	return Result;
 }
 

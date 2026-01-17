@@ -116,6 +116,85 @@ void UInventoryManagerComponent::RemoveItem_Implementation(UDataAsset* Item, int
 	}
 }
 
+bool UInventoryManagerComponent::RemoveItemWithTag_Implementation(const FGameplayTag& Tag, int32 Count)
+{
+	if (!Tag.IsValid() || Count <= 0)
+	{
+		return false;
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[InventoryManager] RemoveItemWithTag: %s x%d"), *Tag.ToString(), Count);
+
+	// ═══════════════════════════════════════════════════════════════════
+	// PASS 1: Dry run - Check if we have enough BEFORE modifying anything
+	// (Atomic check to prevent partial consumption on failure)
+	// ═══════════════════════════════════════════════════════════════════
+	int32 TotalAvailable = 0;
+	for (const auto& Pair : Items)
+	{
+		UPDA_Item* ItemData = Cast<UPDA_Item>(Pair.Value.ItemAsset);
+		if (ItemData && ItemData->ItemInformation.ItemTag.MatchesTag(Tag))
+		{
+			TotalAvailable += Pair.Value.Amount;
+		}
+	}
+
+	if (TotalAvailable < Count)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  ATOMIC CHECK FAILED: Need %d but only have %d - no items removed"),
+			Count, TotalAvailable);
+		return false; // Fail gracefully, touch nothing
+	}
+
+	// ═══════════════════════════════════════════════════════════════════
+	// PASS 2: Commit - Actually remove (we verified we have enough)
+	// ═══════════════════════════════════════════════════════════════════
+	int32 RemainingToRemove = Count;
+	TArray<int32> KeysToRemove;
+
+	for (auto& Pair : Items)
+	{
+		if (RemainingToRemove <= 0)
+		{
+			break;
+		}
+
+		UPDA_Item* ItemData = Cast<UPDA_Item>(Pair.Value.ItemAsset);
+		if (ItemData && ItemData->ItemInformation.ItemTag.MatchesTag(Tag))
+		{
+			int32 OldAmount = Pair.Value.Amount;
+			int32 ToRemoveFromThis = FMath::Min(RemainingToRemove, Pair.Value.Amount);
+			UDataAsset* ItemAsDataAsset = Cast<UDataAsset>(Pair.Value.ItemAsset);
+
+			if (Pair.Value.Amount <= ToRemoveFromThis)
+			{
+				// Remove entire stack
+				KeysToRemove.Add(Pair.Key);
+				OnItemAmountUpdated.Broadcast(ItemAsDataAsset, OldAmount, 0);
+			}
+			else
+			{
+				// Reduce stack
+				Pair.Value.Amount -= ToRemoveFromThis;
+				OnItemAmountUpdated.Broadcast(ItemAsDataAsset, OldAmount, Pair.Value.Amount);
+			}
+
+			RemainingToRemove -= ToRemoveFromThis;
+			UE_LOG(LogTemp, Log, TEXT("  Removed %d from %s, %d remaining"),
+				ToRemoveFromThis, *ItemData->GetName(), RemainingToRemove);
+		}
+	}
+
+	// Remove empty stacks
+	for (int32 Key : KeysToRemove)
+	{
+		Items.Remove(Key);
+	}
+
+	OnInventoryUpdated.Broadcast();
+	return true;
+}
+
 void UInventoryManagerComponent::RemoveItemAtSlot_Implementation(int32 SlotIndex, int32 Amount)
 {
 	if (FSLFInventoryItem* Item = Items.Find(SlotIndex))
@@ -515,10 +594,16 @@ TArray<FSLFInventoryItem> UInventoryManagerComponent::GetItemsForEquipmentSlot_I
 					           (SubCategory == ESLFItemSubCategory::Mace) ||
 					           (SubCategory == ESLFItemSubCategory::Staff);
 				}
-				// Left Hand slots: Shields
+				// Left Hand slots: Shields AND Weapons (for dual-wielding)
 				else if (bIsLeftHand)
 				{
-					bMatches = (Category == ESLFItemCategory::Shields);
+					bMatches = (Category == ESLFItemCategory::Shields) ||
+					           (Category == ESLFItemCategory::Weapons) ||
+					           (SubCategory == ESLFItemSubCategory::Sword) ||
+					           (SubCategory == ESLFItemSubCategory::Katana) ||
+					           (SubCategory == ESLFItemSubCategory::Axe) ||
+					           (SubCategory == ESLFItemSubCategory::Mace) ||
+					           (SubCategory == ESLFItemSubCategory::Staff);
 				}
 				// Head slot: Head subcategory OR Armor category with Head subcategory
 				else if (bIsHead)

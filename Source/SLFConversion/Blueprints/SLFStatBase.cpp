@@ -23,27 +23,32 @@ UWorld* USLFStatBase::GetWorld() const
 
 void USLFStatBase::AdjustValue_Implementation(ESLFValueType ValueType, double Change, bool LevelUp, bool TriggerRegen)
 {
-	UE_LOG(LogTemp, Log, TEXT("[B_Stat] AdjustValue - Tag: %s, ValueType: %s, Change: %.2f"),
+	UE_LOG(LogTemp, Log, TEXT("[B_Stat] AdjustValue - Tag: %s, ValueType: %s, Change: %.2f, this=%p"),
 		*StatInfo.Tag.ToString(),
 		ValueType == ESLFValueType::CurrentValue ? TEXT("Current") : TEXT("Max"),
-		Change);
+		Change, this);
 
 	double OldCurrentValue = StatInfo.CurrentValue;
 	double OldMaxValue = StatInfo.MaxValue;
+
+	UE_LOG(LogTemp, Log, TEXT("[B_Stat] BEFORE: CurrentValue=%.2f, MaxValue=%.2f, MinValue=%.2f, bOnlyMaxValueRelevant=%s"),
+		StatInfo.CurrentValue, StatInfo.MaxValue, MinValue,
+		bOnlyMaxValueRelevant ? TEXT("true") : TEXT("false"));
 
 	if (ValueType == ESLFValueType::CurrentValue)
 	{
 		if (bOnlyMaxValueRelevant)
 		{
 			StatInfo.CurrentValue = StatInfo.MaxValue;
+			UE_LOG(LogTemp, Log, TEXT("[B_Stat] bOnlyMaxValueRelevant=true, setting CurrentValue to MaxValue"));
 		}
 		else
 		{
-			StatInfo.CurrentValue = FMath::Clamp(
-				StatInfo.CurrentValue + Change,
-				MinValue,
-				StatInfo.MaxValue
-			);
+			double NewValue = StatInfo.CurrentValue + Change;
+			double ClampedValue = FMath::Clamp(NewValue, MinValue, StatInfo.MaxValue);
+			UE_LOG(LogTemp, Log, TEXT("[B_Stat] Clamp(%.2f + %.2f = %.2f, min=%.2f, max=%.2f) = %.2f"),
+				StatInfo.CurrentValue, Change, NewValue, MinValue, StatInfo.MaxValue, ClampedValue);
+			StatInfo.CurrentValue = ClampedValue;
 		}
 
 		if (Change < 0.0 && TriggerRegen)
@@ -64,6 +69,9 @@ void USLFStatBase::AdjustValue_Implementation(ESLFValueType ValueType, double Ch
 			StatInfo.CurrentValue = FMath::Min(StatInfo.CurrentValue, StatInfo.MaxValue);
 		}
 	}
+
+	UE_LOG(LogTemp, Log, TEXT("[B_Stat] AFTER: CurrentValue=%.2f, MaxValue=%.2f"),
+		StatInfo.CurrentValue, StatInfo.MaxValue);
 
 	OnStatUpdated.Broadcast(this, Change, true, ValueType);
 
@@ -153,14 +161,18 @@ void USLFStatBase::InitializeBaseClassValue_Implementation(const TMap<UClass*, d
 		if (Pair.Key && MyClass->IsChildOf(Pair.Key))
 		{
 			double BaseValue = Pair.Value;
-			double Change = BaseValue - StatInfo.MaxValue;
 
-			UE_LOG(LogTemp, Log, TEXT("[B_Stat] Found base value %.2f for class %s"),
-				BaseValue, *Pair.Key->GetName());
+			UE_LOG(LogTemp, Log, TEXT("[B_Stat] Found base value %.2f for class %s (Current was: %.2f, Max: %.2f)"),
+				BaseValue, *Pair.Key->GetName(), StatInfo.CurrentValue, StatInfo.MaxValue);
 
+			// Set CURRENT value to the base value (e.g., Vigor = 10)
+			// MaxValue stays at its default (e.g., 99 for Primary stats)
+			double Change = BaseValue - StatInfo.CurrentValue;
 			if (!FMath::IsNearlyZero(Change))
 			{
-				AdjustValue(ESLFValueType::MaxValue, Change, false, false);
+				AdjustValue(ESLFValueType::CurrentValue, Change, false, false);
+				UE_LOG(LogTemp, Log, TEXT("[B_Stat] Set CurrentValue to %.2f (was %.2f)"),
+					StatInfo.CurrentValue, StatInfo.CurrentValue - Change);
 			}
 			return;
 		}

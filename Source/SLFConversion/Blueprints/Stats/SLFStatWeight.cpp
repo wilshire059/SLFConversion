@@ -14,12 +14,15 @@
 
 USLFStatWeight::USLFStatWeight()
 {
-	StatInfo.Tag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Weight"));
+	// bp_only: Weight stat uses X/Y format (e.g., "1/23"), NOT percentage
+	// Tag matches armor StatChanges: SoulslikeFramework.Stat.Misc.Weight
+	StatInfo.Tag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Misc.Weight"));
 	StatInfo.DisplayName = FText::FromString(TEXT("Equip Load"));
+	StatInfo.Description = FText::FromString(TEXT("Current equipment weight vs maximum carry capacity"));
 	StatInfo.CurrentValue = 0.0;   // Current equipment weight
-	StatInfo.MaxValue = 100.0;     // Max carry capacity
-	StatInfo.bShowMaxValue = true;
-	StatInfo.bDisplayAsPercent = true;
+	StatInfo.MaxValue = 50.0;      // Max carry capacity (matches B_Weight default)
+	StatInfo.bShowMaxValue = true; // Show as X/Y format
+	StatInfo.bDisplayAsPercent = false; // NOT percentage, shows as "X / Y"
 
 	StatInfo.RegenInfo.bCanRegenerate = false;
 
@@ -27,5 +30,5 @@ USLFStatWeight::USLFStatWeight()
 	bOnlyMaxValueRelevant = false;
 	MinValue = 0.0;
 
-	UE_LOG(LogTemp, Log, TEXT("[StatWeight] Initialized with %.0f/%.0f"), StatInfo.CurrentValue, StatInfo.MaxValue);
+	UE_LOG(LogTemp, Log, TEXT("[StatWeight] Initialized with %.0f/%.0f (X/Y format)"), StatInfo.CurrentValue, StatInfo.MaxValue);
 }

@@ -48,6 +48,13 @@ void UAIBehaviorManagerComponent::BeginPlay()
 	UE_LOG(LogTemp, Log, TEXT("[AIBehaviorManager] BeginPlay on %s - Initial state: %d"),
 		*GetOwner()->GetName(), static_cast<int32>(CurrentState));
 
+	// Per documentation: "If a Patrol Path is present, the AI starts in a Patrolling state immediately"
+	if (PatrolPath)
+	{
+		CurrentState = ESLFAIStates::Patrolling;
+		UE_LOG(LogTemp, Log, TEXT("[AIBehaviorManager] PatrolPath assigned, starting in Patrolling state"));
+	}
+
 	// Initialize behavior tree on the AI controller
 	if (APawn* OwnerPawn = Cast<APawn>(GetOwner()))
 	{

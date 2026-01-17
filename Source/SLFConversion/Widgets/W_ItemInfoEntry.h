@@ -11,14 +11,10 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "GameplayTagContainer.h"
+#include "Components/TextBlock.h"
 #include "SLFEnums.h"
 #include "SLFGameTypes.h"
 #include "SLFPrimaryDataAssets.h"
-#include "InputMappingContext.h"
-#include "GameFramework/InputSettings.h"
-#include "GenericPlatform/GenericWindow.h"
-#include "MediaPlayer.h"
-
 
 #include "W_ItemInfoEntry.generated.h"
 
@@ -47,9 +43,10 @@ public:
 	virtual void NativeDestruct() override;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// VARIABLES (4)
+	// VARIABLES
 	// ═══════════════════════════════════════════════════════════════════════
 
+	// Data properties (set by parent widget before adding to UI)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
 	FText EntryNameText;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
@@ -58,6 +55,12 @@ public:
 	double CurrentStatValue;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
 	bool CanCompare;
+
+	// UI TextBlock widgets (bound from Blueprint)
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidgetOptional), Category = "UI")
+	UTextBlock* EntryText;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidgetOptional), Category = "UI")
+	UTextBlock* ValueText;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (0)

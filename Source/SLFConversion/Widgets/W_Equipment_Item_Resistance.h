@@ -11,28 +11,15 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "GameplayTagContainer.h"
+#include "Components/VerticalBox.h"
 #include "SLFEnums.h"
 #include "SLFGameTypes.h"
 #include "SLFPrimaryDataAssets.h"
-#include "InputMappingContext.h"
-#include "GameFramework/InputSettings.h"
-#include "GenericPlatform/GenericWindow.h"
-#include "MediaPlayer.h"
-
 
 #include "W_Equipment_Item_Resistance.generated.h"
 
-// Forward declarations for widget types
-
-
-// Forward declarations for Blueprint types
-
-
-// Forward declarations for SaveGame types
-
-
-// Event Dispatchers
-
+// Forward declarations
+class UW_ItemInfoEntry;
 
 UCLASS()
 class SLFCONVERSION_API UW_Equipment_Item_Resistance : public UUserWidget
@@ -46,30 +33,30 @@ public:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 
-	// ═══════════════════════════════════════════════════════════════════════
-	// VARIABLES (0)
-	// ═══════════════════════════════════════════════════════════════════════
+	// Container for stat entry widgets (Blueprint name: ResistanceEntriesBox)
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidgetOptional), Category = "UI")
+	UVerticalBox* ResistanceEntriesBox;
 
+	// Alias for code clarity
+	UVerticalBox* StatsContainer;
 
-
-	// ═══════════════════════════════════════════════════════════════════════
-	// EVENT DISPATCHERS (0)
-	// ═══════════════════════════════════════════════════════════════════════
-
-
-
-	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (0)
-	// ═══════════════════════════════════════════════════════════════════════
-
-
+	// Widget class for creating stat entries
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UW_ItemInfoEntry> ItemInfoEntryClass;
 
 	// Event Handlers (1 events)
+	// Signature: TMap<FGameplayTag, int32> for resistance values (Immunity, Focus, Robustness, Vitality)
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Equipment_Item_Resistance")
-	void EventSetupResistanceEntries(const FGameplayTag& TargetResistanceStats, const FGameplayTag& CurrentResistanceStats, bool CanCompare);
-	virtual void EventSetupResistanceEntries_Implementation(const FGameplayTag& TargetResistanceStats, const FGameplayTag& CurrentResistanceStats, bool CanCompare);
+	void EventSetupResistanceEntries(const TMap<FGameplayTag, int32>& TargetResistanceStats, const TMap<FGameplayTag, int32>& CurrentResistanceStats, bool CanCompare);
+	virtual void EventSetupResistanceEntries_Implementation(const TMap<FGameplayTag, int32>& TargetResistanceStats, const TMap<FGameplayTag, int32>& CurrentResistanceStats, bool CanCompare);
 
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Helper to extract display name from gameplay tag
+	FText GetDisplayNameFromTag(const FGameplayTag& Tag) const;
+
+	// Helper to create entries from map directly (fallback when no StatManager)
+	void CreateEntriesFromMap(const TMap<FGameplayTag, int32>& TargetStats, const TMap<FGameplayTag, int32>& CurrentStats, bool CanCompare);
 };

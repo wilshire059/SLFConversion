@@ -24,6 +24,8 @@
 
 // Forward declarations for widget types
 class UW_StatEntry_Status;
+class UVerticalBox;
+class USLFStatBase;
 
 // Forward declarations for Blueprint types
 
@@ -47,6 +49,13 @@ public:
 	virtual void NativeDestruct() override;
 
 	// ═══════════════════════════════════════════════════════════════════════
+	// BIND WIDGETS
+	// ═══════════════════════════════════════════════════════════════════════
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UVerticalBox* StatBox;
+
+	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (3)
 	// ═══════════════════════════════════════════════════════════════════════
 
@@ -68,8 +77,8 @@ public:
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Status_StatBlock")
-	void SetupCurrentStats(const TArray<UB_Stat*>& StatObjects, const TMap<FGameplayTag, TSubclassOf<UB_Stat>>& StatClassesAndCategories);
-	virtual void SetupCurrentStats_Implementation(const TArray<UB_Stat*>& StatObjects, const TMap<FGameplayTag, TSubclassOf<UB_Stat>>& StatClassesAndCategories);
+	void SetupCurrentStats(const TArray<USLFStatBase*>& StatObjects, const TMap<FGameplayTag, TSubclassOf<USLFStatBase>>& StatClassesAndCategories);
+	virtual void SetupCurrentStats_Implementation(const TArray<USLFStatBase*>& StatObjects, const TMap<FGameplayTag, TSubclassOf<USLFStatBase>>& StatClassesAndCategories);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Status_StatBlock")
 	TArray<UW_StatEntry_Status*> GetAllStatsInBlock();
 	virtual TArray<UW_StatEntry_Status*> GetAllStatsInBlock_Implementation();

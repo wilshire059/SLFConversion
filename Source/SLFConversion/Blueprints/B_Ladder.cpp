@@ -7,6 +7,8 @@
 
 #include "Blueprints/B_Ladder.h"
 #include "Engine/StaticMesh.h"
+#include "Components/AC_LadderManager.h"
+#include "Interfaces/SLFGenericCharacterInterface.h"
 
 AB_Ladder::AB_Ladder()
 {
@@ -230,4 +232,174 @@ void AB_Ladder::CreateLadder_Implementation()
 	}
 
 	UE_LOG(LogTemp, Verbose, TEXT("AB_Ladder::CreateLadder - Ladder creation complete"));
+}
+
+void AB_Ladder::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// Bind overlap events for ladder collision zones
+	if (ClimbingCollision)
+	{
+		ClimbingCollision->OnComponentEndOverlap.AddDynamic(this, &AB_Ladder::OnClimbingCollisionEndOverlap);
+	}
+
+	if (BottomCollision)
+	{
+		BottomCollision->OnComponentBeginOverlap.AddDynamic(this, &AB_Ladder::OnBottomCollisionBeginOverlap);
+		BottomCollision->OnComponentEndOverlap.AddDynamic(this, &AB_Ladder::OnBottomCollisionEndOverlap);
+	}
+
+	if (TopCollision)
+	{
+		TopCollision->OnComponentBeginOverlap.AddDynamic(this, &AB_Ladder::OnTopCollisionBeginOverlap);
+		TopCollision->OnComponentEndOverlap.AddDynamic(this, &AB_Ladder::OnTopCollisionEndOverlap);
+	}
+
+	if (TopdownCollision)
+	{
+		TopdownCollision->OnComponentEndOverlap.AddDynamic(this, &AB_Ladder::OnTopdownCollisionEndOverlap);
+	}
+
+	UE_LOG(LogTemp, Verbose, TEXT("AB_Ladder::BeginPlay - Overlap events bound"));
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// INTERFACE IMPLEMENTATION
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void AB_Ladder::OnInteract_Implementation(AActor* InteractingActor)
+{
+	UE_LOG(LogTemp, Log, TEXT("[B_Ladder] OnInteract by %s"), InteractingActor ? *InteractingActor->GetName() : TEXT("None"));
+
+	if (!InteractingActor)
+	{
+		return;
+	}
+
+	// Check if interacting actor implements BPI_GenericCharacter interface
+	if (!InteractingActor->GetClass()->ImplementsInterface(USLFGenericCharacterInterface::StaticClass()))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[B_Ladder] InteractingActor does not implement BPI_GenericCharacter"));
+		return;
+	}
+
+	// Calculate if this is a topdown approach (actor is above ladder midpoint)
+	// Blueprint compares distance from actor to top vs distance threshold
+	FVector ActorLocation = InteractingActor->GetActorLocation();
+	FVector LadderTopLocation = GetActorLocation() + FVector(0.0, 0.0, LadderHeight);
+	double DistanceToTop = FVector::Dist(ActorLocation, LadderTopLocation);
+
+	// If actor is closer to top than to bottom (distance to top < half ladder height), it's topdown
+	bool bIsTopdown = DistanceToTop < (LadderHeight * 0.5);
+
+	UE_LOG(LogTemp, Log, TEXT("[B_Ladder] TryClimbLadder - IsTopdown: %s, DistanceToTop: %f"),
+		bIsTopdown ? TEXT("true") : TEXT("false"), DistanceToTop);
+
+	// Call TryClimbLadder on the interacting actor via interface
+	ISLFGenericCharacterInterface::Execute_TryClimbLadder(InteractingActor, this, bIsTopdown);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// OVERLAP EVENT HANDLERS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void AB_Ladder::OnClimbingCollisionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (!OtherActor)
+	{
+		return;
+	}
+
+	// Get ladder manager from other actor
+	UAC_LadderManager* LadderManager = OtherActor->FindComponentByClass<UAC_LadderManager>();
+	if (LadderManager)
+	{
+		UE_LOG(LogTemp, Verbose, TEXT("AB_Ladder::OnClimbingCollisionEndOverlap - Setting IsClimbing=false, CurrentLadder=null"));
+		LadderManager->SetIsClimbing(false);
+		LadderManager->SetCurrentLadder(nullptr);
+	}
+}
+
+void AB_Ladder::OnBottomCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (!OtherActor)
+	{
+		return;
+	}
+
+	UAC_LadderManager* LadderManager = OtherActor->FindComponentByClass<UAC_LadderManager>();
+	if (LadderManager)
+	{
+		UE_LOG(LogTemp, Verbose, TEXT("AB_Ladder::OnBottomCollisionBeginOverlap - Setting IsOnGround=true, CurrentLadder=%s"), *GetName());
+		LadderManager->SetIsOnGround(true);
+		LadderManager->SetCurrentLadder(this);
+	}
+}
+
+void AB_Ladder::OnBottomCollisionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (!OtherActor)
+	{
+		return;
+	}
+
+	UAC_LadderManager* LadderManager = OtherActor->FindComponentByClass<UAC_LadderManager>();
+	if (LadderManager)
+	{
+		UE_LOG(LogTemp, Verbose, TEXT("AB_Ladder::OnBottomCollisionEndOverlap - Setting IsOnGround=false"));
+		LadderManager->SetIsOnGround(false);
+	}
+}
+
+void AB_Ladder::OnTopCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (!OtherActor)
+	{
+		return;
+	}
+
+	UAC_LadderManager* LadderManager = OtherActor->FindComponentByClass<UAC_LadderManager>();
+	if (LadderManager)
+	{
+		UE_LOG(LogTemp, Verbose, TEXT("AB_Ladder::OnTopCollisionBeginOverlap - Setting IsClimbingOffTop=true"));
+		LadderManager->SetIsClimbingOffTop(true);
+	}
+}
+
+void AB_Ladder::OnTopCollisionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (!OtherActor)
+	{
+		return;
+	}
+
+	UAC_LadderManager* LadderManager = OtherActor->FindComponentByClass<UAC_LadderManager>();
+	if (LadderManager)
+	{
+		UE_LOG(LogTemp, Verbose, TEXT("AB_Ladder::OnTopCollisionEndOverlap - Setting IsClimbingOffTop=false"));
+		LadderManager->SetIsClimbingOffTop(false);
+	}
+}
+
+void AB_Ladder::OnTopdownCollisionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (!OtherActor)
+	{
+		return;
+	}
+
+	UAC_LadderManager* LadderManager = OtherActor->FindComponentByClass<UAC_LadderManager>();
+	if (LadderManager)
+	{
+		UE_LOG(LogTemp, Verbose, TEXT("AB_Ladder::OnTopdownCollisionEndOverlap - Setting IsClimbingDownFromTop=true, CurrentLadder=%s"), *GetName());
+		LadderManager->SetIsClimbingDownFromTop(true);
+		LadderManager->SetCurrentLadder(this);
+	}
 }

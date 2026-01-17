@@ -9,6 +9,7 @@
 #include "Widgets/W_CraftingAction.h"
 #include "Widgets/W_InventorySlot.h"
 #include "Components/AC_InventoryManager.h"
+#include "Components/InventoryManagerComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 UW_CraftingAction::UW_CraftingAction(const FObjectInitializer& ObjectInitializer)
@@ -67,21 +68,6 @@ int32 UW_CraftingAction::GetMaxPossibleAmount_Implementation()
 		return 0;
 	}
 
-	// Get inventory manager
-	UAC_InventoryManager* InventoryManager = nullptr;
-	if (APlayerController* PC = GetOwningPlayer())
-	{
-		if (APawn* Pawn = PC->GetPawn())
-		{
-			InventoryManager = Pawn->FindComponentByClass<UAC_InventoryManager>();
-		}
-	}
-
-	if (!IsValid(InventoryManager))
-	{
-		return 0;
-	}
-
 	// Get required items - TMap<FGameplayTag, int32> where Key=ItemTag, Value=RequiredCount
 	const TMap<FGameplayTag, int32>& RequiredItems = Item->ItemInformation.CraftingDetails.RequiredItems;
 
@@ -90,6 +76,33 @@ int32 UW_CraftingAction::GetMaxPossibleAmount_Implementation()
 		// No requirements = unlimited (cap at 99)
 		MaxPossibleAmount = 99;
 		return MaxPossibleAmount;
+	}
+
+	// Get pawn for inventory component lookup
+	APawn* Pawn = nullptr;
+	if (APlayerController* PC = GetOwningPlayer())
+	{
+		Pawn = PC->GetPawn();
+	}
+
+	if (!Pawn)
+	{
+		return 0;
+	}
+
+	// Try AC_InventoryManager first
+	UAC_InventoryManager* InventoryManager = Pawn->FindComponentByClass<UAC_InventoryManager>();
+
+	// Fallback to InventoryManagerComponent
+	UInventoryManagerComponent* InvManagerComp = nullptr;
+	if (!InventoryManager)
+	{
+		InvManagerComp = Pawn->FindComponentByClass<UInventoryManagerComponent>();
+	}
+
+	if (!InventoryManager && !InvManagerComp)
+	{
+		return 0;
 	}
 
 	int32 MinCraftable = INT32_MAX;
@@ -104,10 +117,17 @@ int32 UW_CraftingAction::GetMaxPossibleAmount_Implementation()
 			continue;
 		}
 
-		// Get owned amount
+		// Get owned amount from whichever inventory manager exists
 		int32 OwnedAmount = 0;
 		bool bSuccess = false;
-		InventoryManager->GetAmountOfItemWithTag(ItemTag, OwnedAmount, bSuccess);
+		if (InventoryManager)
+		{
+			InventoryManager->GetAmountOfItemWithTag(ItemTag, OwnedAmount, bSuccess);
+		}
+		else if (InvManagerComp)
+		{
+			InvManagerComp->GetAmountOfItemWithTag(ItemTag, OwnedAmount, bSuccess);
+		}
 
 		// Calculate how many times we can craft
 		int32 CraftableFromThis = OwnedAmount / RequiredAmount;
@@ -192,17 +212,30 @@ void UW_CraftingAction::CraftItem_Implementation()
 		return;
 	}
 
-	// Get inventory manager
-	UAC_InventoryManager* InventoryManager = nullptr;
+	// Get pawn for inventory component lookup
+	APawn* Pawn = nullptr;
 	if (APlayerController* PC = GetOwningPlayer())
 	{
-		if (APawn* Pawn = PC->GetPawn())
-		{
-			InventoryManager = Pawn->FindComponentByClass<UAC_InventoryManager>();
-		}
+		Pawn = PC->GetPawn();
 	}
 
-	if (!IsValid(InventoryManager))
+	if (!Pawn)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  No pawn"));
+		return;
+	}
+
+	// Try AC_InventoryManager first
+	UAC_InventoryManager* InventoryManager = Pawn->FindComponentByClass<UAC_InventoryManager>();
+
+	// Fallback to InventoryManagerComponent
+	UInventoryManagerComponent* InvManagerComp = nullptr;
+	if (!InventoryManager)
+	{
+		InvManagerComp = Pawn->FindComponentByClass<UInventoryManagerComponent>();
+	}
+
+	if (!InventoryManager && !InvManagerComp)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("  No inventory manager"));
 		return;
@@ -211,6 +244,42 @@ void UW_CraftingAction::CraftItem_Implementation()
 	// Consume required materials - TMap<FGameplayTag, int32>
 	const TMap<FGameplayTag, int32>& RequiredItems = Item->ItemInformation.CraftingDetails.RequiredItems;
 
+	// PASS 1: VALIDATION - Check ALL materials are available BEFORE consuming any
+	// This ensures atomic crafting: either all materials consumed or none
+	for (const auto& Requirement : RequiredItems)
+	{
+		FGameplayTag ItemTag = Requirement.Key;
+		int32 RequiredAmount = Requirement.Value;
+
+		if (!ItemTag.IsValid())
+		{
+			continue;
+		}
+
+		int32 TotalNeeded = RequiredAmount * CurrentAmount;
+		int32 OwnedAmount = 0;
+		bool bHasItem = false;
+
+		if (InventoryManager)
+		{
+			InventoryManager->GetAmountOfItemWithTag(ItemTag, OwnedAmount, bHasItem);
+		}
+		else if (InvManagerComp)
+		{
+			InvManagerComp->GetAmountOfItemWithTag(ItemTag, OwnedAmount, bHasItem);
+		}
+
+		if (OwnedAmount < TotalNeeded)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("  CRAFT FAILED: Need %d of %s but only have %d - aborting craft (no materials consumed)"),
+				TotalNeeded, *ItemTag.ToString(), OwnedAmount);
+			return; // Fail entire craft BEFORE removing anything
+		}
+
+		UE_LOG(LogTemp, Log, TEXT("  Validated: %s - need %d, have %d"), *ItemTag.ToString(), TotalNeeded, OwnedAmount);
+	}
+
+	// PASS 2: EXECUTION - Only if all materials verified, now consume them
 	for (const auto& Requirement : RequiredItems)
 	{
 		FGameplayTag ItemTag = Requirement.Key;
@@ -225,15 +294,35 @@ void UW_CraftingAction::CraftItem_Implementation()
 
 		UE_LOG(LogTemp, Log, TEXT("  Consuming %s x%d"), *ItemTag.ToString(), TotalToConsume);
 
-		// Find item by tag and remove from inventory
-		// Note: This uses the tag-based removal - the inventory manager needs to support this
-		// For now, broadcast that materials need to be consumed
-		// In a full implementation, would look up the item asset by tag and call RemoveItem
+		// Remove materials by tag - should always succeed since we validated above
+		bool bSuccess = false;
+		if (InventoryManager)
+		{
+			bSuccess = InventoryManager->RemoveItemWithTag(ItemTag, TotalToConsume);
+		}
+		else if (InvManagerComp)
+		{
+			bSuccess = InvManagerComp->RemoveItemWithTag(ItemTag, TotalToConsume);
+		}
+
+		if (!bSuccess)
+		{
+			// This should never happen since we validated, but log if it does
+			UE_LOG(LogTemp, Error, TEXT("  UNEXPECTED: Failed to consume %s x%d after validation!"),
+				*ItemTag.ToString(), TotalToConsume);
+		}
 	}
 
 	// Add crafted item to inventory
 	UE_LOG(LogTemp, Log, TEXT("  Adding crafted item: %s x%d"), *AssignedItem->GetName(), CurrentAmount);
-	InventoryManager->AddItem(AssignedItem, CurrentAmount, true);
+	if (InventoryManager)
+	{
+		InventoryManager->AddItem(AssignedItem, CurrentAmount, true);
+	}
+	else if (InvManagerComp)
+	{
+		InvManagerComp->AddItem(AssignedItem, CurrentAmount, true);
+	}
 
 	// Close crafting action dialog
 	OnCraftingActionClosed.Broadcast();

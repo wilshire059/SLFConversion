@@ -14,6 +14,8 @@
 #include "Blueprints/B_Stat.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Engine/DataTable.h"
+#include "GameFramework/Character.h"
+#include "Interfaces/BPI_GenericCharacter.h"
 
 UAC_AI_CombatManager::UAC_AI_CombatManager()
 {
@@ -242,14 +244,35 @@ double UAC_AI_CombatManager::CalculateStatPercent(const FStatInfo& StatInfo)
 
 /**
  * HandleHitReaction - Process hit reaction animation
+ *
+ * Based on Blueprint logic for E_HitReactType:
+ * - None: Skip all reactions
+ * - Light: Full montage only (stagger - used for poise break)
+ * - Heavy: IK flinch only (small chest reaction - used for normal hits)
+ * - IK: IK flinch only (same as Heavy)
+ * - Montage: IK flinch + full montage (both)
+ * - Both: IK flinch + full montage (both)
  */
 void UAC_AI_CombatManager::HandleHitReaction_Implementation(const FHitResult& HitInfo)
 {
-	UE_LOG(LogTemp, Log, TEXT("UAC_AI_CombatManager::HandleHitReaction"));
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_CombatManager::HandleHitReaction - Type: %d"), static_cast<int32>(HitReactType));
 
-	if (HyperArmor || IsDead)
+	// ELDEN RING STYLE POISE SYSTEM:
+	// Skip hit reaction if:
+	// - HyperArmor is active (mid-attack protection)
+	// - IsDead (can't react when dead)
+	// - PoiseBroken is true (recovery period, prevents chain-staggering)
+	if (HyperArmor || IsDead || PoiseBroken)
 	{
-		return; // No hit reaction during hyper armor or if dead
+		UE_LOG(LogTemp, Log, TEXT("  Hit reaction blocked (HyperArmor=%d, IsDead=%d, PoiseBroken=%d)"),
+			HyperArmor, IsDead, PoiseBroken);
+		return;
+	}
+
+	// Skip if HitReactType is None
+	if (HitReactType == ESLFHitReactType::None)
+	{
+		return;
 	}
 
 	// Store hit normal for directional hit reaction
@@ -260,74 +283,94 @@ void UAC_AI_CombatManager::HandleHitReaction_Implementation(const FHitResult& Hi
 
 	UE_LOG(LogTemp, Log, TEXT("UAC_AI_CombatManager::HandleHitReaction - Direction: %d"), static_cast<int32>(HitDirection));
 
-	// Play hit reaction based on type and direction
 	AActor* Owner = GetOwner();
 	if (!IsValid(Owner))
 	{
 		return;
 	}
 
-	// Get the owner's skeletal mesh component for animation
-	USkeletalMeshComponent* OwnerMesh = Mesh;
-	if (!OwnerMesh)
+	// STEP 1: Play IK flinch for Heavy, IK, Montage, or Both types
+	// This is the small chest movement that doesn't interrupt the AI
+	if (HitReactType == ESLFHitReactType::Heavy ||
+		HitReactType == ESLFHitReactType::IK ||
+		HitReactType == ESLFHitReactType::Montage ||
+		HitReactType == ESLFHitReactType::Both)
 	{
-		OwnerMesh = Owner->FindComponentByClass<USkeletalMeshComponent>();
-	}
-
-	if (!IsValid(OwnerMesh))
-	{
-		return;
-	}
-
-	// Get anim instance to play montage
-	UAnimInstance* AnimInstance = OwnerMesh->GetAnimInstance();
-	if (!IsValid(AnimInstance))
-	{
-		return;
-	}
-
-	// Get hit reaction montage from ReactionAnimset if available
-	if (IsValid(ReactionAnimset))
-	{
-		// ReactionAnimset is expected to have montage properties for different hit react types
-		// Try to get the montage via reflection based on the HitReactType
-		FName MontagePropertyName;
-		switch (HitReactType)
+		// Call PlayIkReaction via BPI_GenericCharacter interface
+		if (Owner->GetClass()->ImplementsInterface(UBPI_GenericCharacter::StaticClass()))
 		{
-		case ESLFHitReactType::Light:
-			MontagePropertyName = TEXT("LightHitReaction");
-			break;
-		case ESLFHitReactType::Heavy:
-			MontagePropertyName = TEXT("HeavyHitReaction");
-			break;
-		case ESLFHitReactType::Montage:
-			MontagePropertyName = TEXT("MontageHitReaction");
-			break;
-		case ESLFHitReactType::IK:
-			MontagePropertyName = TEXT("IKHitReaction");
-			break;
-		case ESLFHitReactType::Both:
-			MontagePropertyName = TEXT("BothHitReaction");
-			break;
-		default:
-			MontagePropertyName = TEXT("DefaultHitReaction");
-			break;
+			IBPI_GenericCharacter::Execute_PlayIkReaction(Owner, IkWeight);
+			UE_LOG(LogTemp, Log, TEXT("  IK flinch reaction (weight: %.2f)"), IkWeight);
+		}
+	}
+
+	// STEP 2: Play full montage for Light, Montage, or Both types
+	// This is the bigger stagger animation with potential knockback
+	// For normal hits with Heavy type, we SKIP the montage (only IK flinch)
+	if (HitReactType == ESLFHitReactType::Light ||
+		HitReactType == ESLFHitReactType::Montage ||
+		HitReactType == ESLFHitReactType::Both)
+	{
+		// Get the owner's skeletal mesh component for animation
+		USkeletalMeshComponent* OwnerMesh = Mesh;
+		if (!OwnerMesh)
+		{
+			OwnerMesh = Owner->FindComponentByClass<USkeletalMeshComponent>();
 		}
 
-		// Try to get montage via property access
-		if (FSoftObjectProperty* MontageProperty = CastField<FSoftObjectProperty>(ReactionAnimset->GetClass()->FindPropertyByName(MontagePropertyName)))
+		if (!IsValid(OwnerMesh))
 		{
-			TSoftObjectPtr<UAnimMontage>* SoftMontagePtr = MontageProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UAnimMontage>>(ReactionAnimset);
-			if (SoftMontagePtr && !SoftMontagePtr->IsNull())
+			return;
+		}
+
+		// Get anim instance to play montage
+		UAnimInstance* AnimInstance = OwnerMesh->GetAnimInstance();
+		if (!IsValid(AnimInstance))
+		{
+			return;
+		}
+
+		// Get hit reaction montage from ReactionAnimset if available
+		if (IsValid(ReactionAnimset))
+		{
+			// ReactionAnimset is expected to have montage properties for different hit react types
+			// Try to get the montage via reflection based on the HitReactType
+			FName MontagePropertyName;
+			switch (HitReactType)
 			{
-				UAnimMontage* HitReactMontage = SoftMontagePtr->LoadSynchronous();
-				if (IsValid(HitReactMontage))
+			case ESLFHitReactType::Light:
+				MontagePropertyName = TEXT("LightHitReaction");
+				break;
+			case ESLFHitReactType::Montage:
+				MontagePropertyName = TEXT("MontageHitReaction");
+				break;
+			case ESLFHitReactType::Both:
+				MontagePropertyName = TEXT("BothHitReaction");
+				break;
+			default:
+				MontagePropertyName = TEXT("DefaultHitReaction");
+				break;
+			}
+
+			// Try to get montage via property access
+			if (FSoftObjectProperty* MontageProperty = CastField<FSoftObjectProperty>(ReactionAnimset->GetClass()->FindPropertyByName(MontagePropertyName)))
+			{
+				TSoftObjectPtr<UAnimMontage>* SoftMontagePtr = MontageProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UAnimMontage>>(ReactionAnimset);
+				if (SoftMontagePtr && !SoftMontagePtr->IsNull())
 				{
-					AnimInstance->Montage_Play(HitReactMontage, 1.0f);
-					UE_LOG(LogTemp, Log, TEXT("  Playing hit react montage: %s"), *HitReactMontage->GetName());
+					UAnimMontage* HitReactMontage = SoftMontagePtr->LoadSynchronous();
+					if (IsValid(HitReactMontage))
+					{
+						AnimInstance->Montage_Play(HitReactMontage, 1.0f);
+						UE_LOG(LogTemp, Log, TEXT("  Playing hit react montage: %s"), *HitReactMontage->GetName());
+					}
 				}
 			}
 		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("  IK flinch only (no montage for Heavy/IK type)"));
 	}
 }
 
@@ -420,6 +463,9 @@ void UAC_AI_CombatManager::HandleIncomingWeaponDamage_AI_Implementation(AActor* 
 	// Store damaging actor
 	DamagingActor = WeaponOwnerActor;
 
+	// Reset poise regen timer (won't regenerate until delay passes)
+	ResetPoiseRegenTimer();
+
 	// Get stat manager and apply damage
 	AActor* Owner = GetOwner();
 	if (IsValid(Owner))
@@ -431,9 +477,23 @@ void UAC_AI_CombatManager::HandleIncomingWeaponDamage_AI_Implementation(AActor* 
 			FGameplayTag HPTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
 			StatManager->AdjustStat(HPTag, ESLFValueType::CurrentValue, -IncomingDamage, false, false);
 
-			// Apply poise damage
+			// ELDEN RING STYLE POISE SYSTEM:
+			// Apply poise damage and check if poise just broke
 			FGameplayTag PoiseTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Poise"));
+
+			UB_Stat* PoiseStat = nullptr;
+			FStatInfo PoiseInfo;
+			StatManager->GetStat(PoiseTag, PoiseStat, PoiseInfo);
+
+			double OldPoise = PoiseInfo.CurrentValue;
 			StatManager->AdjustStat(PoiseTag, ESLFValueType::CurrentValue, -IncomingPoiseDamage, false, false);
+			double NewPoise = OldPoise - IncomingPoiseDamage;
+
+			UE_LOG(LogTemp, Log, TEXT("  AI Poise damage: %.1f -> %.1f (damage: %.1f, HyperArmor: %d)"),
+				OldPoise, NewPoise, IncomingPoiseDamage, HyperArmor);
+
+			// Check if poise just broke (was > 0 and is now <= 0)
+			bool bJustBrokePoise = (OldPoise > 0 && NewPoise <= 0);
 
 			// Check for death
 			UB_Stat* HPStat = nullptr;
@@ -444,9 +504,15 @@ void UAC_AI_CombatManager::HandleIncomingWeaponDamage_AI_Implementation(AActor* 
 			{
 				HandleDeath(StatManager, HitInfo);
 			}
-			else
+			else if (bJustBrokePoise && !HyperArmor && !PoiseBroken)
 			{
-				// Handle hit reaction
+				// POISE BREAK! Trigger big stagger
+				UE_LOG(LogTemp, Log, TEXT("  *** AI POISE BROKEN! Triggering stagger ***"));
+				TriggerPoiseBreakStagger(HitInfo);
+			}
+			else if (!PoiseBroken)
+			{
+				// Normal hit reaction (only if not in poise break recovery)
 				HandleHitReaction(HitInfo);
 			}
 		}
@@ -607,4 +673,193 @@ void UAC_AI_CombatManager::OverrideAbilities_Implementation(const TArray<UPrimar
 
 	Abilities = InAbilities;
 	SelectedAbility = nullptr;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// POISE SYSTEM (Elden Ring Style)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * TriggerPoiseBreakStagger - Called when poise reaches 0
+ */
+void UAC_AI_CombatManager::TriggerPoiseBreakStagger(const FHitResult& HitInfo)
+{
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_CombatManager::TriggerPoiseBreakStagger"));
+
+	// Set poise broken state
+	PoiseBroken = true;
+
+	// Broadcast event
+	OnPoiseBroken.Broadcast(true);
+
+	AActor* Owner = GetOwner();
+	if (!IsValid(Owner))
+	{
+		return;
+	}
+
+	// Apply knockback (using the existing GetKnockbackAmountForDamage)
+	if (ACharacter* Character = Cast<ACharacter>(Owner))
+	{
+		FVector Knockback = GetKnockbackAmountForDamage(HitInfo, 400.0, 600.0);
+		if (CanBePushed)
+		{
+			Character->LaunchCharacter(Knockback, false, false);
+			UE_LOG(LogTemp, Log, TEXT("  Applied AI POISE BREAK knockback: %s"), *Knockback.ToString());
+		}
+	}
+
+	// Play stagger animation if poise break asset exists
+	if (IsValid(PoiseBreakAsset) && IsValid(Mesh))
+	{
+		UAnimInstance* AnimInstance = Mesh->GetAnimInstance();
+		if (IsValid(AnimInstance))
+		{
+			// Try to get stagger montage from poise break asset via reflection
+			if (FSoftObjectProperty* MontageProperty = CastField<FSoftObjectProperty>(PoiseBreakAsset->GetClass()->FindPropertyByName(TEXT("StaggerMontage"))))
+			{
+				TSoftObjectPtr<UAnimMontage>* SoftMontagePtr = MontageProperty->ContainerPtrToValuePtr<TSoftObjectPtr<UAnimMontage>>(PoiseBreakAsset);
+				if (SoftMontagePtr && !SoftMontagePtr->IsNull())
+				{
+					UAnimMontage* StaggerMontage = SoftMontagePtr->LoadSynchronous();
+					if (IsValid(StaggerMontage))
+					{
+						AnimInstance->Montage_Play(StaggerMontage);
+						UE_LOG(LogTemp, Log, TEXT("  Playing AI poise break stagger montage: %s"), *StaggerMontage->GetName());
+					}
+				}
+			}
+		}
+	}
+
+	// Start poise break recovery timer
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(PoiseBreakTimer);
+		World->GetTimerManager().SetTimer(
+			PoiseBreakTimer,
+			this,
+			&UAC_AI_CombatManager::OnPoiseBreakRecoveryEnd,
+			BrokenPoiseDuration,
+			false
+		);
+		UE_LOG(LogTemp, Log, TEXT("  AI Poise break recovery timer: %.2f seconds"), BrokenPoiseDuration);
+	}
+}
+
+/**
+ * OnPoiseBreakRecoveryEnd - Called when poise break recovery ends
+ */
+void UAC_AI_CombatManager::OnPoiseBreakRecoveryEnd()
+{
+	UE_LOG(LogTemp, Log, TEXT("UAC_AI_CombatManager::OnPoiseBreakRecoveryEnd - AI can be staggered again"));
+
+	// Reset poise broken state
+	PoiseBroken = false;
+	OnPoiseBroken.Broadcast(false);
+
+	// Reset poise to full
+	AActor* Owner = GetOwner();
+	if (!IsValid(Owner))
+	{
+		return;
+	}
+
+	UAC_StatManager* StatManager = Owner->FindComponentByClass<UAC_StatManager>();
+	if (IsValid(StatManager))
+	{
+		FGameplayTag PoiseTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Poise"));
+
+		UB_Stat* PoiseStat = nullptr;
+		FStatInfo PoiseInfo;
+		StatManager->GetStat(PoiseTag, PoiseStat, PoiseInfo);
+
+		double PoiseToRestore = PoiseInfo.MaxValue - PoiseInfo.CurrentValue;
+		if (PoiseToRestore > 0)
+		{
+			StatManager->AdjustStat(PoiseTag, ESLFValueType::CurrentValue, PoiseToRestore, false, false);
+			UE_LOG(LogTemp, Log, TEXT("  AI Poise reset to max: %.1f"), PoiseInfo.MaxValue);
+		}
+	}
+}
+
+/**
+ * ResetPoiseRegenTimer - Reset poise regen delay timer
+ */
+void UAC_AI_CombatManager::ResetPoiseRegenTimer()
+{
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return;
+	}
+
+	World->GetTimerManager().ClearTimer(PoiseRegenTickTimer);
+	World->GetTimerManager().ClearTimer(PoiseRegenDelayTimer);
+
+	World->GetTimerManager().SetTimer(
+		PoiseRegenDelayTimer,
+		this,
+		&UAC_AI_CombatManager::OnPoiseRegenDelayExpired,
+		PoiseRegenDelay,
+		false
+	);
+}
+
+/**
+ * OnPoiseRegenDelayExpired - Start regenerating poise
+ */
+void UAC_AI_CombatManager::OnPoiseRegenDelayExpired()
+{
+	UE_LOG(LogTemp, Verbose, TEXT("UAC_AI_CombatManager::OnPoiseRegenDelayExpired - Starting AI poise regen"));
+
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return;
+	}
+
+	World->GetTimerManager().SetTimer(
+		PoiseRegenTickTimer,
+		this,
+		&UAC_AI_CombatManager::OnPoiseRegenTick,
+		0.1f,
+		true
+	);
+}
+
+/**
+ * OnPoiseRegenTick - Regenerate poise periodically
+ */
+void UAC_AI_CombatManager::OnPoiseRegenTick()
+{
+	AActor* Owner = GetOwner();
+	if (!IsValid(Owner))
+	{
+		return;
+	}
+
+	UAC_StatManager* StatManager = Owner->FindComponentByClass<UAC_StatManager>();
+	if (!IsValid(StatManager))
+	{
+		return;
+	}
+
+	FGameplayTag PoiseTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Poise"));
+
+	UB_Stat* PoiseStat = nullptr;
+	FStatInfo PoiseInfo;
+	StatManager->GetStat(PoiseTag, PoiseStat, PoiseInfo);
+
+	if (PoiseInfo.CurrentValue >= PoiseInfo.MaxValue)
+	{
+		if (UWorld* World = GetWorld())
+		{
+			World->GetTimerManager().ClearTimer(PoiseRegenTickTimer);
+		}
+		return;
+	}
+
+	double RegenAmount = PoiseRegenRate * 0.1;
+	StatManager->AdjustStat(PoiseTag, ESLFValueType::CurrentValue, RegenAmount, false, false);
 }

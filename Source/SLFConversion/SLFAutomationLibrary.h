@@ -249,5 +249,39 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "SLF Automation|AnimBP")
 	static FString ExportAnimGraphComplete(UObject* AnimBlueprintAsset, const FString& OutputFilePath = TEXT(""));
 
+	// EXECUTION ANIMATION DATA
+	// Set ExecuteFront/ExecuteBack animation on UPDA_ExecutionAnimData assets
+	// AnimationPath: e.g., "/Game/SoulslikeFramework/Demo/_Animations/Combat/Generic/AM_SLF_Generic_Execute"
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|DataAsset")
+	static bool SetExecutionAnimData(const FString& ExecutionDataAssetPath, const FString& FrontAnimPath, const FString& BackAnimPath);
+
+	// Extract execution animation paths from a data asset (for debugging)
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|DataAsset")
+	static FString GetExecutionAnimData(const FString& ExecutionDataAssetPath);
+
+	// Apply weapon stat data to a weapon item data asset
+	// ScalingStats format: "Dexterity:A,Strength:S" (stat name : scaling grade)
+	// RequirementStats format: "Dexterity:10,Strength:15" (stat name : required value)
+	// StatChanges format: "Physical:34,Magic:10" (attack type : damage value)
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|DataAsset")
+	static bool ApplyWeaponStatData(
+		const FString& ItemAssetPath,
+		bool bHasStatScaling,
+		const TArray<FString>& ScalingStats,
+		bool bHasStatRequirement,
+		const TArray<FString>& RequirementStats,
+		const TArray<FString>& StatChanges
+	);
+
+	// Apply armor stat changes to an armor item data asset
+	// StatChanges format: Full tag strings like "SoulslikeFramework.Stat.Defense.Negation.Physical:5"
+	// EquipSlots format: "SoulslikeFramework.Equipment.SlotType.Armor"
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|DataAsset")
+	static bool ApplyArmorStatChanges(
+		const FString& ItemAssetPath,
+		const TArray<FString>& StatChanges,
+		const TArray<FString>& EquipSlots
+	);
+
 #endif // WITH_EDITOR
 };

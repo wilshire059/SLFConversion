@@ -27,6 +27,7 @@
 
 // Forward declarations for Blueprint types
 class UB_Stat;
+class USLFStatBase;
 
 // Forward declarations for SaveGame types
 
@@ -47,11 +48,17 @@ public:
 	virtual void NativeDestruct() override;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// VARIABLES (2)
+	// VARIABLES (3)
 	// ═══════════════════════════════════════════════════════════════════════
 
+	// Legacy stat reference (UB_Stat hierarchy)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
 	UB_Stat* Stat;
+
+	// New stat reference (USLFStatBase hierarchy - preferred)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
+	USLFStatBase* StatBase;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	UObject* Tooltip;
 
@@ -73,8 +80,8 @@ public:
 
 	// Event Handlers (1 events)
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_StatEntry_Status")
-	void EventOnStatUpdated(UB_Stat* UpdatedStat, double Change, bool UpdateAffectedStats, uint8 ValueType);
-	virtual void EventOnStatUpdated_Implementation(UB_Stat* UpdatedStat, double Change, bool UpdateAffectedStats, uint8 ValueType);
+	void EventOnStatUpdated(UB_Stat* UpdatedStat, double Change, bool UpdateAffectedStats, ESLFValueType ValueType);
+	virtual void EventOnStatUpdated_Implementation(UB_Stat* UpdatedStat, double Change, bool UpdateAffectedStats, ESLFValueType ValueType);
 
 protected:
 	// Cache references

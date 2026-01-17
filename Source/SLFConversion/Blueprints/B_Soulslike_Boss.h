@@ -4,33 +4,22 @@
 // 20-PASS VALIDATION: 2026-01-01 Autonomous Session
 // Source: BlueprintDNA/Blueprint/B_Soulslike_Boss.json
 // Parent: B_Soulslike_Enemy_C -> AB_Soulslike_Enemy
-// Variables: 0 | Functions: 1 | Dispatchers: 0
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Blueprints/B_Soulslike_Enemy.h"
-#include "GameplayTagContainer.h"
-#include "SLFEnums.h"
-#include "SLFGameTypes.h"
-#include "SLFPrimaryDataAssets.h"
-#include "InputMappingContext.h"
-#include "LevelSequence.h"
-#include "LevelSequencePlayer.h"
-#include "MovieSceneSequencePlaybackSettings.h"
-#include "SkeletalMergingLibrary.h"
-#include "GeometryCollection/GeometryCollectionObject.h"
-#include "Field/FieldSystemObjects.h"
+#include "Components/SphereComponent.h"
+#include "Perception/AIPerceptionTypes.h"
 #include "B_Soulslike_Boss.generated.h"
 
 // Forward declarations
-class UAnimMontage;
-class UDataTable;
+class UAIBossComponent;
 
-
-// Event Dispatchers
-
-
+/**
+ * Boss Character - Base class for boss enemies
+ * Has trigger collision for fight activation and boss component for phase management
+ */
 UCLASS(Blueprintable, BlueprintType)
 class SLFCONVERSION_API AB_Soulslike_Boss : public AB_Soulslike_Enemy
 {
@@ -40,19 +29,39 @@ public:
 	AB_Soulslike_Boss();
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// VARIABLES (0)
+	// COMPONENTS
 	// ═══════════════════════════════════════════════════════════════════════
 
+	// Boss AI component for phase management, boss doors, etc.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UAIBossComponent* AC_AI_Boss;
 
+	// Trigger collision for entering boss arena
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USphereComponent* TriggerCollision;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// EVENT DISPATCHERS (0)
+	// FUNCTIONS
 	// ═══════════════════════════════════════════════════════════════════════
 
+protected:
+	virtual void BeginPlay() override;
 
+	// Called when player enters trigger collision
+	UFUNCTION()
+	void OnTriggerCollisionBeginOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult);
 
-	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (1)
-	// ═══════════════════════════════════════════════════════════════════════
+	// Called when AI perception senses actors
+	UFUNCTION()
+	void OnControllerPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
 
+private:
+	// Try to start the boss fight with a target
+	void TryStartFight(AActor* Target);
 };

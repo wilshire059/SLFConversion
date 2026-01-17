@@ -8,6 +8,7 @@
 #include "Widgets/W_Settings_CategoryEntry.h"
 #include "Widgets/W_Settings_Entry.h"
 #include "Components/PanelWidget.h"
+#include "GameFramework/GameUserSettings.h"
 
 UW_Settings::UW_Settings(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -245,9 +246,13 @@ void UW_Settings::EventCancelConfirmation_Implementation()
 
 void UW_Settings::EventNavigateCancel_Implementation()
 {
-	UE_LOG(LogTemp, Log, TEXT("[W_Settings] EventNavigateCancel"));
+	UE_LOG(LogTemp, Log, TEXT("[W_Settings] EventNavigateCancel - discarding unsaved changes"));
 
-	// Broadcast settings closed event
+	// Cancel should NOT save - it discards changes
+	// If user wants to save, they should use an explicit Apply button or rely on
+	// immediate apply behavior in EventNavigateLeft/Right
+
+	// Broadcast settings closed event (without saving)
 	OnSettingsClosed.Broadcast();
 }
 
@@ -347,8 +352,8 @@ void UW_Settings::EventNavigateOk_Implementation()
 		UW_Settings_Entry* Entry = SettingEntries[EntryNavigationIndex];
 		if (Entry)
 		{
-			// For button entries, this would trigger their action
-			UE_LOG(LogTemp, Log, TEXT("[W_Settings] OK pressed on entry: %s"), *Entry->GetName());
+			UE_LOG(LogTemp, Log, TEXT("[W_Settings] Activating entry: %s"), *Entry->GetName());
+			Entry->EventActivateEntry();
 		}
 	}
 }
@@ -566,4 +571,82 @@ void UW_Settings::HandleCategorySelected(UW_Settings_CategoryEntry* CategoryEntr
 void UW_Settings::HandleEntrySelected(UW_Settings_Entry* Entry)
 {
 	EventOnEntrySelected(Entry);
+}
+
+void UW_Settings::ApplyAndSaveSettings_Implementation()
+{
+	UE_LOG(LogTemp, Log, TEXT("[W_Settings] ApplyAndSaveSettings"));
+
+	UGameUserSettings* GameSettings = UGameUserSettings::GetGameUserSettings();
+	if (!GameSettings)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_Settings] Failed to get GameUserSettings!"));
+		return;
+	}
+
+	// Iterate through all setting entries and apply their values
+	// This is a generic implementation - specific settings should be handled by SettingTag
+	for (UW_Settings_Entry* Entry : SettingEntries)
+	{
+		if (!Entry)
+		{
+			continue;
+		}
+
+		FGameplayTag Tag = Entry->SettingTag;
+		FString Value = Entry->CurrentValue;
+
+		UE_LOG(LogTemp, Log, TEXT("[W_Settings] Applying setting: %s = %s"), *Tag.ToString(), *Value);
+
+		// Handle specific setting tags
+		// Note: Add more cases as needed for your specific settings tags
+		if (Tag.MatchesTag(FGameplayTag::RequestGameplayTag(TEXT("Settings.Graphics.Resolution"))))
+		{
+			// Parse resolution string "WxH" or "W x H" (handles spaces)
+			FString Width, Height;
+			if (Value.Split(TEXT("x"), &Width, &Height))
+			{
+				// Trim whitespace from both parts to handle "1920 x 1080" format
+				Width.TrimStartAndEndInline();
+				Height.TrimStartAndEndInline();
+
+				int32 WidthInt = FCString::Atoi(*Width);
+				int32 HeightInt = FCString::Atoi(*Height);
+
+				// Only apply if we got valid values
+				if (WidthInt > 0 && HeightInt > 0)
+				{
+					FIntPoint Resolution(WidthInt, HeightInt);
+					GameSettings->SetScreenResolution(Resolution);
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("[W_Settings] Invalid resolution format: %s"), *Value);
+				}
+			}
+		}
+		else if (Tag.MatchesTag(FGameplayTag::RequestGameplayTag(TEXT("Settings.Graphics.WindowMode"))))
+		{
+			int32 ModeInt = FCString::Atoi(*Value);
+			EWindowMode::Type WindowMode = static_cast<EWindowMode::Type>(ModeInt);
+			GameSettings->SetFullscreenMode(WindowMode);
+		}
+		else if (Tag.MatchesTag(FGameplayTag::RequestGameplayTag(TEXT("Settings.Graphics.VSync"))))
+		{
+			bool bVSync = (Value == TEXT("1") || Value.ToLower() == TEXT("true"));
+			GameSettings->SetVSyncEnabled(bVSync);
+		}
+		else if (Tag.MatchesTag(FGameplayTag::RequestGameplayTag(TEXT("Settings.Graphics.FrameRateLimit"))))
+		{
+			float FrameRate = FCString::Atof(*Value);
+			GameSettings->SetFrameRateLimit(FrameRate);
+		}
+		// Add audio, gameplay, and other settings as needed
+	}
+
+	// Apply and save all changes
+	GameSettings->ApplySettings(false);  // false = don't check for command line overrides
+	GameSettings->SaveSettings();
+
+	UE_LOG(LogTemp, Log, TEXT("[W_Settings] Settings applied and saved"));
 }

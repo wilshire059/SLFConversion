@@ -394,6 +394,46 @@ void UW_Settings_Entry::EventScrollDropdownRight_Implementation()
 	SetCurrentValue(FString::FromInt(NewValue));
 }
 
+void UW_Settings_Entry::EventActivateEntry_Implementation()
+{
+	UE_LOG(LogTemp, Log, TEXT("[W_Settings_Entry] EventActivateEntry - Type: %d"), static_cast<int32>(EntryType));
+
+	// Handle activation based on entry type
+	switch (EntryType)
+	{
+	case ESLFSettingEntry::SingleButton:
+		// Broadcast the single button pressed event
+		OnSingleButtonEntryPressed.Broadcast();
+		UE_LOG(LogTemp, Log, TEXT("[W_Settings_Entry] Broadcast OnSingleButtonEntryPressed"));
+		break;
+
+	case ESLFSettingEntry::DoubleButton:
+		// For double buttons, toggle the value (On/Off)
+		{
+			bool bCurrentBool = (CurrentValue == TEXT("1") || CurrentValue.ToLower() == TEXT("true"));
+			SetCurrentBoolValue(!bCurrentBool);
+		}
+		break;
+
+	case ESLFSettingEntry::DropDown:
+		// For dropdowns, cycle to next option
+		EventScrollDropdownRight();
+		break;
+
+	case ESLFSettingEntry::Slider:
+		// For sliders, OK typically does nothing (use left/right to adjust)
+		break;
+
+	case ESLFSettingEntry::InputKeySelector:
+		// For key selectors, this would start listening for key input
+		UE_LOG(LogTemp, Log, TEXT("[W_Settings_Entry] InputKeySelector activation - would start key listening"));
+		break;
+
+	default:
+		break;
+	}
+}
+
 void UW_Settings_Entry::OnLeftArrowClicked()
 {
 	UE_LOG(LogTemp, Log, TEXT("[W_Settings_Entry] OnLeftArrowClicked"));

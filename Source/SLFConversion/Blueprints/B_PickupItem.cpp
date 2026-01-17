@@ -9,6 +9,9 @@
 
 AB_PickupItem::AB_PickupItem()
 {
+	// Components (Support Collision, World Niagara) are created via Blueprint SCS
+	// and use the custom "Interactable" collision channel (ECC_GameTraceChannel1)
+	// AC_InteractionManager must trace for this channel to detect pickup items
 }
 
 FSLFItemInfo AB_PickupItem::TryGetItemInfo_Implementation()

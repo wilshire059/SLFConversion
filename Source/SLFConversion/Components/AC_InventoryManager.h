@@ -132,6 +132,9 @@ public:
 	void RemoveItem(UPrimaryDataAsset* Item, int32 Count);
 	virtual void RemoveItem_Implementation(UPrimaryDataAsset* Item, int32 Count);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_InventoryManager")
+	bool RemoveItemWithTag(const FGameplayTag& Tag, int32 Count);
+	virtual bool RemoveItemWithTag_Implementation(const FGameplayTag& Tag, int32 Count);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_InventoryManager")
 	void RemoveStoredItem(UPrimaryDataAsset* Item, int32 Count);
 	virtual void RemoveStoredItem_Implementation(UPrimaryDataAsset* Item, int32 Count);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_InventoryManager")

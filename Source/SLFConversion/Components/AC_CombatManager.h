@@ -132,6 +132,60 @@ public:
 	FTimerHandle GuardGracePeriodTimer;
 
 	// ═══════════════════════════════════════════════════════════════════════
+	// POISE SYSTEM (Elden Ring Style)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	/** Timer for poise regeneration delay (poise starts regenerating after this delay from last hit) */
+	UPROPERTY(BlueprintReadWrite, Category = "Runtime|Poise")
+	FTimerHandle PoiseRegenDelayTimer;
+
+	/** Timer for poise regeneration tick */
+	UPROPERTY(BlueprintReadWrite, Category = "Runtime|Poise")
+	FTimerHandle PoiseRegenTickTimer;
+
+	/** Timer for poise break recovery (can't be staggered again during this) */
+	UPROPERTY(BlueprintReadWrite, Category = "Runtime|Poise")
+	FTimerHandle PoiseBreakRecoveryTimer;
+
+	/** Delay before poise starts regenerating after last damage (seconds) */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config|Poise")
+	double PoiseRegenDelay = 3.0;
+
+	/** Rate of poise regeneration (points per second) */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config|Poise")
+	double PoiseRegenRate = 20.0;
+
+	/** Duration of poise break recovery state (can't be chain-staggered during this) */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config|Poise")
+	double PoiseBreakRecoveryDuration = 1.5;
+
+	/** Knockback magnitude when poise breaks (larger than normal hit) */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config|Poise")
+	double PoiseBreakKnockbackMin = 400.0;
+
+	/** Knockback magnitude when poise breaks (larger than normal hit) */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config|Poise")
+	double PoiseBreakKnockbackMax = 600.0;
+
+	/** Called when poise regen delay expires - starts regenerating poise */
+	UFUNCTION()
+	void OnPoiseRegenDelayExpired();
+
+	/** Called periodically to regenerate poise */
+	UFUNCTION()
+	void OnPoiseRegenTick();
+
+	/** Called when poise break recovery ends - can be staggered again */
+	UFUNCTION()
+	void OnPoiseBreakRecoveryEnd();
+
+	/** Trigger poise break stagger (called when poise reaches 0) */
+	void TriggerPoiseBreakStagger(const FHitResult& HitInfo);
+
+	/** Reset poise regen timer (called when taking damage) */
+	void ResetPoiseRegenTimer();
+
+	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (0)
 	// ═══════════════════════════════════════════════════════════════════════
 

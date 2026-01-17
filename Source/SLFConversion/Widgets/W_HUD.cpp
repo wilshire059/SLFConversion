@@ -12,6 +12,7 @@
 #include "Blueprints/B_Interactable.h"
 #include "Blueprints/B_RestingPoint.h"
 #include "Blueprints/Actors/SLFInteractableBase.h"
+#include "Blueprints/Actors/SLFBossDoor.h"
 #include "Blueprints/SLFPickupItemBase.h"
 #include "SLFPrimaryDataAssets.h"
 #include "Interfaces/SLFInteractableInterface.h"
@@ -801,11 +802,15 @@ void UW_HUD::EventShowInteractableWidget_Implementation(AActor* Interactable)
 		}
 	}
 
-	// Get interaction text from the actor - check if it's an ASLFInteractableBase
+	// Get interaction text from the actor - check multiple types
 	FText InteractionText = FText::GetEmpty();
 	if (ASLFInteractableBase* InteractableBase = Cast<ASLFInteractableBase>(Interactable))
 	{
 		InteractionText = InteractableBase->InteractionText;
+	}
+	else if (ASLFBossDoor* BossDoor = Cast<ASLFBossDoor>(Interactable))
+	{
+		InteractionText = BossDoor->InteractionText;
 	}
 
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowInteractableWidget - Showing interactable overlap for text: %s"),

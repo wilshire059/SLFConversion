@@ -1,38 +1,26 @@
 // W_Equipment_Item_AttackPower.h
 // C++ Widget class for W_Equipment_Item_AttackPower
 //
-// 20-PASS VALIDATION: 2026-01-01 Autonomous Session
+// 20-PASS VALIDATION: 2026-01-16 - Fixed to use TMap for stat values
 // Source: BlueprintDNA/WidgetBlueprint/W_Equipment_Item_AttackPower.json
 // Parent: UUserWidget
-// Variables: 0 | Functions: 0 | Dispatchers: 0
+// The widget iterates over attack power stats and creates W_ItemInfoEntry for each
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "GameplayTagContainer.h"
+#include "Components/VerticalBox.h"
 #include "SLFEnums.h"
 #include "SLFGameTypes.h"
 #include "SLFPrimaryDataAssets.h"
-#include "InputMappingContext.h"
-#include "GameFramework/InputSettings.h"
-#include "GenericPlatform/GenericWindow.h"
-#include "MediaPlayer.h"
-
 
 #include "W_Equipment_Item_AttackPower.generated.h"
 
-// Forward declarations for widget types
-
-
-// Forward declarations for Blueprint types
-
-
-// Forward declarations for SaveGame types
-
-
-// Event Dispatchers
-
+class UW_ItemInfoEntry;
+class UAC_StatManager;
+class UStatManagerComponent;
 
 UCLASS()
 class SLFCONVERSION_API UW_Equipment_Item_AttackPower : public UUserWidget
@@ -47,29 +35,40 @@ public:
 	virtual void NativeDestruct() override;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// VARIABLES (0)
+	// VARIABLES
 	// ═══════════════════════════════════════════════════════════════════════
 
+	// Vertical box that holds entry widgets - matches Blueprint's AttackPowerEntriesBox
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "W_Equipment_Item_AttackPower")
+	UVerticalBox* AttackPowerEntriesBox;
 
+	// Widget class for entry items - Blueprint uses W_ItemInfoEntry
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "W_Equipment_Item_AttackPower")
+	TSubclassOf<UW_ItemInfoEntry> EntryWidgetClass;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// EVENT DISPATCHERS (0)
+	// FUNCTIONS
 	// ═══════════════════════════════════════════════════════════════════════
 
-
-
-	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (0)
-	// ═══════════════════════════════════════════════════════════════════════
-
-
-
-	// Event Handlers (1 events)
+	// Setup attack power stats - receives TMap of GameplayTag->int32 for damage values
+	// TargetAttackPowerStats = stats on the item being viewed
+	// CurrentAttackPowerStats = stats on currently equipped item (for comparison)
+	// CanCompare = whether to show comparison arrows
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Equipment_Item_AttackPower")
-	void EventSetupAttackPowerStats(const FGameplayTag& TargetAttackPowerStats, const FGameplayTag& CurrentAttackPowerStats, bool CanCompare);
-	virtual void EventSetupAttackPowerStats_Implementation(const FGameplayTag& TargetAttackPowerStats, const FGameplayTag& CurrentAttackPowerStats, bool CanCompare);
+	void EventSetupAttackPowerStats(const TMap<FGameplayTag, int32>& TargetAttackPowerStats, const TMap<FGameplayTag, int32>& CurrentAttackPowerStats, bool CanCompare);
+	virtual void EventSetupAttackPowerStats_Implementation(const TMap<FGameplayTag, int32>& TargetAttackPowerStats, const TMap<FGameplayTag, int32>& CurrentAttackPowerStats, bool CanCompare);
+
+	// Helper to get display name from stat tag
+	FText GetStatDisplayName(const FGameplayTag& StatTag) const;
+
+	// Category tag for attack power stats (SoulslikeFramework.Stat.Secondary.AttackPower)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "W_Equipment_Item_AttackPower")
+	FGameplayTag AttackPowerCategoryTag;
 
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Get all attack power stat tags from StatManager
+	FGameplayTagContainer GetAttackPowerStatTags() const;
 };

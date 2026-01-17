@@ -21,11 +21,13 @@
 #include "SkeletalMergingLibrary.h"
 #include "GeometryCollection/GeometryCollectionObject.h"
 #include "Field/FieldSystemObjects.h"
+#include "Components/BillboardComponent.h"
 #include "B_Door.generated.h"
 
 // Forward declarations
 class UAnimMontage;
 class UDataTable;
+class UStaticMeshComponent;
 
 
 // Event Dispatchers
@@ -38,6 +40,20 @@ class SLFCONVERSION_API AB_Door : public AB_Interactable
 
 public:
 	AB_Door();
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// COMPONENTS
+	// ═══════════════════════════════════════════════════════════════════════
+
+	/** Door Frame - Decorative arch/frame around the door opening
+	 * Uses SM_PrisonDoorArch by default, can be customized per instance */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Door Components")
+	UStaticMeshComponent* DoorFrame;
+
+	/** MoveTo - Target location for player teleportation after passing through door
+	 * Position is updated based on player approach direction */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Door Components")
+	UBillboardComponent* MoveTo;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (9)
@@ -70,13 +86,34 @@ public:
 	FB_Door_OnDoorOpened OnDoorOpened;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (3)
+	// FUNCTIONS
 	// ═══════════════════════════════════════════════════════════════════════
+
+	// Interface override
+	virtual void OnInteract_Implementation(AActor* InteractingActor) override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "B_Door")
 	void ValidateUnlockRequirements(AActor* Actor, bool& OutSuccess, bool& OutSuccess1, bool& OutSuccess2, bool& OutSuccess3);
 	virtual void ValidateUnlockRequirements_Implementation(AActor* Actor, bool& OutSuccess, bool& OutSuccess1, bool& OutSuccess2, bool& OutSuccess3);
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "B_Door")
 	FText GetRequiredItemsParsed();
 	virtual FText GetRequiredItemsParsed_Implementation();
+
+	// Custom event to open the door
+	UFUNCTION(BlueprintCallable, Category = "B_Door")
+	void OpenDoor();
+
+protected:
+	// Timer handle for door interpolation
+	FTimerHandle DoorInterpTimerHandle;
+
+	// Door interpolation progress (0 to 1)
+	float DoorInterpAlpha;
+
+	// Target rotation for door opening
+	FRotator TargetRotation;
+
+	// Interp tick function
+	void DoorInterpTick();
 };

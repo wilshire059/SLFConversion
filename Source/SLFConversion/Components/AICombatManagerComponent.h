@@ -53,8 +53,8 @@ struct FSLFAIAbility
 // EVENT DISPATCHERS: 2/2 migrated
 // ═══════════════════════════════════════════════════════════════════════════════
 
-/** [1/2] Called when poise is broken */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAIPoiseBroken);
+/** [1/2] Called when poise is broken - bBroken indicates poise break state */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAIPoiseBroken, bool, bBroken);
 
 /** [2/2] Called when AI dies */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAIDeath, AActor*, Killer);
@@ -129,6 +129,33 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "AI Combat|Poise")
 	FTimerHandle PoiseBreakTimer;
 
+	/** Active poise break loop montage (for stopping when recovery happens) */
+	UPROPERTY(BlueprintReadWrite, Category = "AI Combat|Poise")
+	UAnimMontage* PoiseBreakLoopMontage;
+
+	/** Timer for poise regeneration delay */
+	FTimerHandle PoiseRegenDelayTimer;
+
+	/** Timer for poise regeneration tick */
+	FTimerHandle PoiseRegenTickTimer;
+
+	/** Delay before poise starts regenerating (seconds) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Combat|Poise")
+	float PoiseRegenDelay;
+
+	/** Poise regeneration rate (points per second) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Combat|Poise")
+	float PoiseRegenRate;
+
+	/** Reset poise regen timer (called when taking damage) */
+	void ResetPoiseRegenTimer();
+
+	/** Called when poise regen delay expires - starts regenerating poise */
+	void OnPoiseRegenDelayExpired();
+
+	/** Called periodically to regenerate poise */
+	void OnPoiseRegenTick();
+
 	// --- Combat Config (7) ---
 
 	/** [13/41] Line of sight check interval */
@@ -169,6 +196,25 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "AI Combat|Runtime")
 	float IkWeight;
 
+	/** Timer handle for IK flinch animation */
+	FTimerHandle IKReactionTimerHandle;
+
+	/** IK flinch animation start time */
+	double IKReactionStartTime = 0.0;
+
+	/** IK flinch animation duration (seconds) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Combat|HitReact")
+	double IKReactionDuration = 0.3;
+
+	/** Peak IK weight during flinch */
+	double IKReactionPeakWeight = 1.0;
+
+	/** Update IK reaction animation (called by timer) */
+	void UpdateIKReaction();
+
+	/** Start IK flinch animation */
+	void PlayIKFlinch(double Scale);
+
 	/** [22/41] Current hit normal vector */
 	UPROPERTY(BlueprintReadWrite, Category = "AI Combat|Runtime")
 	FVector CurrentHitNormal;
@@ -183,9 +229,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Combat|HitReact")
 	UDataAsset* ReactionAnimset;
 
-	/** [25/41] Executed montages for critical hits */
+	/** [25/41] DataTable of executed montages (FExecutionInfo rows with Tag + Animation) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Combat|HitReact")
-	TArray<UAnimMontage*> ExecutedMontages;
+	UDataTable* ExecutedMontagesTable;
 
 	// --- Effects (3) ---
 
@@ -302,10 +348,10 @@ public:
 	void HandleHitReaction(ESLFHitReactType ReactionType, const FVector& HitDirection);
 	virtual void HandleHitReaction_Implementation(ESLFHitReactType ReactionType, const FVector& HitDirection);
 
-	/** [6/25] Get relevant executed montage for critical state */
+	/** [6/25] Get relevant executed montage for critical state by tag lookup in DataTable */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AI Combat|HitReact")
-	UAnimMontage* GetRelevantExecutedMontage();
-	virtual UAnimMontage* GetRelevantExecutedMontage_Implementation();
+	UAnimMontage* GetRelevantExecutedMontage(const FGameplayTag& ExecutionTag);
+	virtual UAnimMontage* GetRelevantExecutedMontage_Implementation(const FGameplayTag& ExecutionTag);
 
 	// --- Death (2) ---
 

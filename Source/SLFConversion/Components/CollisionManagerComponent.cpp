@@ -15,6 +15,7 @@
 #include "Components/AC_CombatManager.h"
 #include "Components/AICombatManagerComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Engine/EngineTypes.h"
 
 UCollisionManagerComponent::UCollisionManagerComponent()
 {
@@ -33,6 +34,12 @@ UCollisionManagerComponent::UCollisionManagerComponent()
 	TraceSizeMultiplier = 1.0;
 	LastStartPosition = FVector::ZeroVector;
 	LastEndPosition = FVector::ZeroVector;
+
+	// CRITICAL: Initialize TraceTypes to detect hittable objects
+	// Without this, SphereTraceMultiForObjects will never hit anything!
+	TraceTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));           // Characters
+	TraceTypes.Add(UEngineTypes::ConvertToObjectType(ECC_WorldDynamic));   // Destructibles, physics props
+	TraceTypes.Add(UEngineTypes::ConvertToObjectType(ECC_PhysicsBody));    // Physics-simulated bodies
 }
 
 void UCollisionManagerComponent::BeginPlay()

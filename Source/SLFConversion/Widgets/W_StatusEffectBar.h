@@ -27,6 +27,7 @@
 
 // Forward declarations for Blueprint types
 class UB_StatusEffect;
+class UProgressBar;
 
 // Forward declarations for SaveGame types
 
@@ -52,6 +53,13 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
 	UB_StatusEffect* Effect;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// WIDGET REFERENCES - from UMG hierarchy
+	// ═══════════════════════════════════════════════════════════════════════
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget, OptionalWidget = true), Category = "Widgets")
+	UProgressBar* Bar;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (0)

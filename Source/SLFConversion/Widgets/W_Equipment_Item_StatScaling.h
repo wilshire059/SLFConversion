@@ -1,38 +1,26 @@
 // W_Equipment_Item_StatScaling.h
 // C++ Widget class for W_Equipment_Item_StatScaling
 //
-// 20-PASS VALIDATION: 2026-01-01 Autonomous Session
+// 20-PASS VALIDATION: 2026-01-16 - Fixed to use TMap for scaling grades
 // Source: BlueprintDNA/WidgetBlueprint/W_Equipment_Item_StatScaling.json
 // Parent: UUserWidget
-// Variables: 0 | Functions: 0 | Dispatchers: 0
+// The widget displays stat scaling grades (S, A, B, C, D, E)
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "GameplayTagContainer.h"
+#include "Components/UniformGridPanel.h"
 #include "SLFEnums.h"
 #include "SLFGameTypes.h"
 #include "SLFPrimaryDataAssets.h"
-#include "InputMappingContext.h"
-#include "GameFramework/InputSettings.h"
-#include "GenericPlatform/GenericWindow.h"
-#include "MediaPlayer.h"
-
 
 #include "W_Equipment_Item_StatScaling.generated.h"
 
-// Forward declarations for widget types
-
-
-// Forward declarations for Blueprint types
-
-
-// Forward declarations for SaveGame types
-
-
-// Event Dispatchers
-
+class UW_ItemInfoEntry_StatScaling;
+class UAC_StatManager;
+class UStatManagerComponent;
 
 UCLASS()
 class SLFCONVERSION_API UW_Equipment_Item_StatScaling : public UUserWidget
@@ -47,29 +35,41 @@ public:
 	virtual void NativeDestruct() override;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// VARIABLES (0)
+	// VARIABLES
 	// ═══════════════════════════════════════════════════════════════════════
 
+	// UniformGridPanel for scaling entries (2 columns layout)
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidgetOptional), Category = "W_Equipment_Item_StatScaling")
+	UUniformGridPanel* StatScalingEntriesBox;
 
+	// Widget class for scaling entries
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "W_Equipment_Item_StatScaling")
+	TSubclassOf<UUserWidget> ScalingEntryWidgetClass;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// EVENT DISPATCHERS (0)
+	// FUNCTIONS
 	// ═══════════════════════════════════════════════════════════════════════
 
-
-
-	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (0)
-	// ═══════════════════════════════════════════════════════════════════════
-
-
-
-	// Event Handlers (1 events)
+	// Setup stat scaling - receives TMap of GameplayTag->ESLFStatScaling
+	// Maps stats like Dexterity, Strength to scaling grades like A, S, B, etc.
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Equipment_Item_StatScaling")
-	void EventSetupStatScaling(const FGameplayTag& StatScaling);
-	virtual void EventSetupStatScaling_Implementation(const FGameplayTag& StatScaling);
+	void EventSetupStatScaling(const TMap<FGameplayTag, ESLFStatScaling>& ScalingInfo);
+	virtual void EventSetupStatScaling_Implementation(const TMap<FGameplayTag, ESLFStatScaling>& ScalingInfo);
+
+	// Helper to get display name from stat tag
+	FText GetStatDisplayName(const FGameplayTag& StatTag) const;
+
+	// Helper to convert scaling enum to letter grade text
+	FText GetScalingGradeText(ESLFStatScaling ScalingGrade) const;
+
+	// Category tag for primary stats (SoulslikeFramework.Stat.Primary)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "W_Equipment_Item_StatScaling")
+	FGameplayTag PrimaryStatCategoryTag;
 
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Get all primary stat tags from StatManager
+	FGameplayTagContainer GetPrimaryStatTags() const;
 };

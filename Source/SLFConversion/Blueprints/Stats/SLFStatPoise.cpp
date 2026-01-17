@@ -26,7 +26,7 @@ USLFStatPoise::USLFStatPoise()
 	StatInfo.RegenInfo.RegenInterval = 0.5;
 
 	bShowMaxValueOnLevelUp = false;
-	bOnlyMaxValueRelevant = true;  // Only max matters for display
+	bOnlyMaxValueRelevant = false;  // Poise MUST track CurrentValue for poise break detection
 	MinValue = 0.0;
 
 	UE_LOG(LogTemp, Log, TEXT("[StatPoise] Initialized with %.0f/%.0f"), StatInfo.CurrentValue, StatInfo.MaxValue);

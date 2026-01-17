@@ -18,6 +18,7 @@
 #include "Components/AC_CombatManager.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/BillboardComponent.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraFunctionLibrary.h"
@@ -28,6 +29,7 @@
 #include "Interfaces/BPI_Interactable.h"
 #include "Blueprints/B_PickupItem.h"
 #include "TimerManager.h"
+#include "Widgets/W_TargetExecutionIndicator.h"
 
 ASLFBaseCharacter::ASLFBaseCharacter()
 {
@@ -60,7 +62,6 @@ ASLFBaseCharacter::ASLFBaseCharacter()
 	CachedTargetLockonComponent = nullptr;
 	CachedProjectileHomingPosition = nullptr;
 	CachedTargetLockonWidget = nullptr;
-	CachedExecutionWidget = nullptr;
 	CachedTL_GenericRotation = nullptr;
 	CachedTL_GenericLocation = nullptr;
 
@@ -68,6 +69,24 @@ ASLFBaseCharacter::ASLFBaseCharacter()
 	// This provides the parent component that Blueprint-defined components expect
 	DefaultSceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("DefaultSceneRoot"));
 	DefaultSceneRoot->SetupAttachment(GetCapsuleComponent());
+
+	// Create ExecutionWidget - shows execution indicator when enemy poise is broken
+	// Position above character head (Z offset), facing camera (Screen space)
+	CachedExecutionWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("ExecutionWidget"));
+	CachedExecutionWidget->SetupAttachment(GetMesh());
+	CachedExecutionWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 200.0f)); // Above head
+	CachedExecutionWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	CachedExecutionWidget->SetDrawAtDesiredSize(true);
+	CachedExecutionWidget->SetVisibility(false); // Start hidden
+
+	// Set widget class to W_TargetExecutionIndicator
+	// NOTE: bp_only has this in Widgets/World/, not Widgets/HUD/
+	static ConstructorHelpers::FClassFinder<UUserWidget> ExecutionWidgetClassFinder(
+		TEXT("/Game/SoulslikeFramework/Widgets/World/W_TargetExecutionIndicator"));
+	if (ExecutionWidgetClassFinder.Succeeded())
+	{
+		CachedExecutionWidget->SetWidgetClass(ExecutionWidgetClassFinder.Class);
+	}
 }
 
 void ASLFBaseCharacter::BeginPlay()
@@ -96,10 +115,9 @@ void ASLFBaseCharacter::BeginPlay()
 	// Other manager components may be added by Blueprint SCS
 	CachedStatusEffectManager = FindComponentByClass<UStatusEffectManagerComponent>();
 	CachedBuffManager = FindComponentByClass<UBuffManagerComponent>();
-	CachedTargetLockonComponent = FindComponentByClass<UBillboardComponent>();
-	CachedTargetLockonWidget = FindComponentByClass<UWidgetComponent>();
-	
+
 	// Find specific components by iterating (since we have multiple of same type)
+	// Don't use FindComponentByClass for these - it grabs the first one which may be wrong
 	TArray<UBillboardComponent*> BillboardComps;
 	GetComponents<UBillboardComponent>(BillboardComps);
 	for (UBillboardComponent* Comp : BillboardComps)
@@ -113,7 +131,8 @@ void ASLFBaseCharacter::BeginPlay()
 			CachedProjectileHomingPosition = Comp;
 		}
 	}
-	
+
+	// Widget components - ExecutionWidget is created in C++ constructor, TargetLockon may come from Blueprint SCS
 	TArray<UWidgetComponent*> WidgetComps;
 	GetComponents<UWidgetComponent>(WidgetComps);
 	for (UWidgetComponent* Comp : WidgetComps)
@@ -122,10 +141,7 @@ void ASLFBaseCharacter::BeginPlay()
 		{
 			CachedTargetLockonWidget = Comp;
 		}
-		else if (Comp->GetName().Contains(TEXT("Execution")))
-		{
-			CachedExecutionWidget = Comp;
-		}
+		// ExecutionWidget is already set in constructor - just verify it's in the component list
 	}
 	
 	TArray<UTimelineComponent*> TimelineComps;
@@ -146,6 +162,11 @@ void ASLFBaseCharacter::BeginPlay()
 		CachedStatManager ? TEXT("OK") : TEXT("NULL"),
 		CachedStatusEffectManager ? TEXT("OK") : TEXT("NULL"),
 		CachedBuffManager ? TEXT("OK") : TEXT("NULL"));
+
+	UE_LOG(LogTemp, Log, TEXT("[BaseCharacter] Widget caching - WidgetComponents found: %d, ExecutionWidget: %s, TargetLockonWidget: %s"),
+		WidgetComps.Num(),
+		CachedExecutionWidget ? *CachedExecutionWidget->GetName() : TEXT("NULL"),
+		CachedTargetLockonWidget ? *CachedTargetLockonWidget->GetName() : TEXT("NULL"));
 
 	// Cache initial values
 	Cache_Location = GetActorLocation();
@@ -799,7 +820,51 @@ void ASLFBaseCharacter::SetSpeedReplicated_Implementation(double NewSpeed)
 
 void ASLFBaseCharacter::PlayIkReaction_Implementation(double IKScale)
 {
+	// Start IK flinch animation
+	// The animation ramps IK_Weight up to IKScale, then back down to 0
+	IKReactionPeakWeight = IKScale;
+	IKReactionStartTime = GetWorld()->GetTimeSeconds();
+
+	// Set initial weight immediately for instant visual feedback
 	IK_Weight = IKScale;
+
+	UE_LOG(LogTemp, Log, TEXT("[SLFBaseCharacter] PlayIkReaction - Starting IK flinch (peak weight: %.2f, duration: %.2f)"),
+		IKScale, IKReactionDuration);
+
+	// Clear any existing timer and start a new one
+	GetWorld()->GetTimerManager().ClearTimer(IKReactionTimerHandle);
+	GetWorld()->GetTimerManager().SetTimer(
+		IKReactionTimerHandle,
+		this,
+		&ASLFBaseCharacter::UpdateIKReaction,
+		0.016f, // ~60fps update rate
+		true,   // loop
+		0.0f    // no delay
+	);
+}
+
+void ASLFBaseCharacter::UpdateIKReaction()
+{
+	// Calculate elapsed time
+	float ElapsedTime = GetWorld()->GetTimeSeconds() - IKReactionStartTime;
+	float Alpha = ElapsedTime / IKReactionDuration;
+
+	if (Alpha >= 1.0f)
+	{
+		// Animation complete - reset IK_Weight and stop timer
+		IK_Weight = 0.0;
+		GetWorld()->GetTimerManager().ClearTimer(IKReactionTimerHandle);
+		UE_LOG(LogTemp, Log, TEXT("[SLFBaseCharacter] IK flinch complete"));
+		return;
+	}
+
+	// Use a bell curve (sin^2) for natural flinch motion
+	// Ramps up quickly then back down
+	// sin^2(pi * alpha) gives: 0 -> 1 -> 0 over alpha [0, 1]
+	float CurveValue = FMath::Sin(PI * Alpha);
+	CurveValue = CurveValue * CurveValue; // sin^2 for sharper peak
+
+	IK_Weight = IKReactionPeakWeight * CurveValue;
 }
 
 void ASLFBaseCharacter::StopActiveMontage_Implementation(double BlendOutDuration)

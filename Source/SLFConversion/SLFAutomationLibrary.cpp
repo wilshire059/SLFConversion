@@ -48,6 +48,8 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Enum.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Int.h"
 #include "SLFEnums.h"
+#include "SLFPrimaryDataAssets.h"
+#include "EditorAssetLibrary.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogSLFAutomation, Log, All);
 
@@ -3362,6 +3364,380 @@ FString USLFAutomationLibrary::ExportAnimGraphComplete(UObject* AnimBlueprintAss
 	}
 
 	return Result;
+}
+
+// ============================================================================
+// EXECUTION ANIMATION DATA
+// ============================================================================
+
+bool USLFAutomationLibrary::SetExecutionAnimData(const FString& ExecutionDataAssetPath, const FString& FrontAnimPath, const FString& BackAnimPath)
+{
+	// Load the execution data asset
+	UObject* Asset = LoadObject<UObject>(nullptr, *ExecutionDataAssetPath);
+	if (!Asset)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("SetExecutionAnimData: Failed to load asset: %s"), *ExecutionDataAssetPath);
+		return false;
+	}
+
+	// Cast to UPDA_ExecutionAnimData
+	UPDA_ExecutionAnimData* ExecData = Cast<UPDA_ExecutionAnimData>(Asset);
+	if (!ExecData)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("SetExecutionAnimData: Asset is not UPDA_ExecutionAnimData: %s (class: %s)"),
+			*ExecutionDataAssetPath, *Asset->GetClass()->GetName());
+		return false;
+	}
+
+	bool bModified = false;
+
+	// Set ExecuteFront animation
+	if (!FrontAnimPath.IsEmpty())
+	{
+		ExecData->ExecuteFront.Animation = FSoftObjectPath(FrontAnimPath);
+		UE_LOG(LogSLFAutomation, Warning, TEXT("SetExecutionAnimData: Set ExecuteFront.Animation = %s"), *FrontAnimPath);
+		bModified = true;
+	}
+
+	// Set ExecuteBack animation
+	if (!BackAnimPath.IsEmpty())
+	{
+		ExecData->ExecuteBack.Animation = FSoftObjectPath(BackAnimPath);
+		UE_LOG(LogSLFAutomation, Warning, TEXT("SetExecutionAnimData: Set ExecuteBack.Animation = %s"), *BackAnimPath);
+		bModified = true;
+	}
+
+	if (bModified)
+	{
+		// Mark package dirty and save
+		ExecData->MarkPackageDirty();
+
+		// Save the asset
+		UPackage* Package = ExecData->GetOutermost();
+		FString PackageFilename;
+		if (FPackageName::TryConvertLongPackageNameToFilename(Package->GetName(), PackageFilename, FPackageName::GetAssetPackageExtension()))
+		{
+			FSavePackageArgs SaveArgs;
+			SaveArgs.TopLevelFlags = RF_Standalone;
+			SaveArgs.Error = GError;
+			UPackage::SavePackage(Package, ExecData, *PackageFilename, SaveArgs);
+			UE_LOG(LogSLFAutomation, Warning, TEXT("SetExecutionAnimData: Saved %s"), *ExecutionDataAssetPath);
+		}
+	}
+
+	return true;
+}
+
+FString USLFAutomationLibrary::GetExecutionAnimData(const FString& ExecutionDataAssetPath)
+{
+	FString Result;
+
+	// Load the execution data asset
+	UObject* Asset = LoadObject<UObject>(nullptr, *ExecutionDataAssetPath);
+	if (!Asset)
+	{
+		return FString::Printf(TEXT("ERROR: Failed to load asset: %s"), *ExecutionDataAssetPath);
+	}
+
+	Result += FString::Printf(TEXT("Asset: %s\n"), *ExecutionDataAssetPath);
+	Result += FString::Printf(TEXT("Class: %s\n"), *Asset->GetClass()->GetName());
+
+	// Try to cast to UPDA_ExecutionAnimData
+	UPDA_ExecutionAnimData* ExecData = Cast<UPDA_ExecutionAnimData>(Asset);
+	if (ExecData)
+	{
+		Result += TEXT("Cast to UPDA_ExecutionAnimData: SUCCESS\n");
+
+		// ExecuteFront
+		Result += TEXT("\nExecuteFront:\n");
+		Result += FString::Printf(TEXT("  Tag: %s\n"), *ExecData->ExecuteFront.Tag.ToString());
+		if (ExecData->ExecuteFront.Animation.IsNull())
+		{
+			Result += TEXT("  Animation: NULL\n");
+		}
+		else
+		{
+			Result += FString::Printf(TEXT("  Animation: %s\n"), *ExecData->ExecuteFront.Animation.ToString());
+		}
+
+		// ExecuteBack
+		Result += TEXT("\nExecuteBack:\n");
+		Result += FString::Printf(TEXT("  Tag: %s\n"), *ExecData->ExecuteBack.Tag.ToString());
+		if (ExecData->ExecuteBack.Animation.IsNull())
+		{
+			Result += TEXT("  Animation: NULL\n");
+		}
+		else
+		{
+			Result += FString::Printf(TEXT("  Animation: %s\n"), *ExecData->ExecuteBack.Animation.ToString());
+		}
+	}
+	else
+	{
+		Result += TEXT("Cast to UPDA_ExecutionAnimData: FAILED\n");
+		Result += TEXT("Checking if it's still a Blueprint class...\n");
+
+		// Try to get generated class
+		if (UBlueprint* BP = Cast<UBlueprint>(Asset))
+		{
+			Result += FString::Printf(TEXT("It's a Blueprint: %s\n"), *BP->GetName());
+			if (BP->GeneratedClass)
+			{
+				Result += FString::Printf(TEXT("GeneratedClass: %s\n"), *BP->GeneratedClass->GetName());
+				Result += FString::Printf(TEXT("ParentClass: %s\n"), *BP->ParentClass->GetName());
+			}
+		}
+	}
+
+	return Result;
+}
+
+bool USLFAutomationLibrary::ApplyWeaponStatData(
+	const FString& ItemAssetPath,
+	bool bHasStatScaling,
+	const TArray<FString>& ScalingStats,
+	bool bHasStatRequirement,
+	const TArray<FString>& RequirementStats,
+	const TArray<FString>& StatChanges)
+{
+	// Load the item asset
+	UObject* Asset = LoadObject<UObject>(nullptr, *ItemAssetPath);
+	if (!Asset)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[ApplyWeaponStatData] Failed to load asset: %s"), *ItemAssetPath);
+		return false;
+	}
+
+	// Cast to UPDA_Item
+	UPDA_Item* ItemData = Cast<UPDA_Item>(Asset);
+	if (!ItemData)
+	{
+		// Try to get generated class if it's a Blueprint
+		if (UBlueprint* BP = Cast<UBlueprint>(Asset))
+		{
+			if (BP->GeneratedClass)
+			{
+				ItemData = Cast<UPDA_Item>(BP->GeneratedClass->GetDefaultObject());
+			}
+		}
+	}
+
+	if (!ItemData)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[ApplyWeaponStatData] Asset is not UPDA_Item: %s"), *ItemAssetPath);
+		return false;
+	}
+
+	// Get reference to the equipment info
+	FSLFEquipmentInfo& EquipInfo = ItemData->ItemInformation.EquipmentDetails;
+
+	// Set scaling info
+	EquipInfo.WeaponStatInfo.bHasStatScaling = bHasStatScaling;
+	EquipInfo.WeaponStatInfo.ScalingInfo.Empty();
+
+	for (const FString& ScalingStat : ScalingStats)
+	{
+		// Format: "Dexterity:A" or "Strength:S"
+		FString StatName, GradeStr;
+		if (ScalingStat.Split(TEXT(":"), &StatName, &GradeStr))
+		{
+			// Build the gameplay tag for this stat
+			FString TagString = FString::Printf(TEXT("SoulslikeFramework.Stat.Primary.%s"), *StatName);
+			FGameplayTag StatTag = FGameplayTag::RequestGameplayTag(FName(*TagString), false);
+
+			if (!StatTag.IsValid())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[ApplyWeaponStatData] Invalid stat tag: %s"), *TagString);
+				continue;
+			}
+
+			// Convert grade string to enum
+			ESLFStatScaling Grade = ESLFStatScaling::C; // Default
+			if (GradeStr == TEXT("S")) Grade = ESLFStatScaling::S;
+			else if (GradeStr == TEXT("A")) Grade = ESLFStatScaling::A;
+			else if (GradeStr == TEXT("B")) Grade = ESLFStatScaling::B;
+			else if (GradeStr == TEXT("C")) Grade = ESLFStatScaling::C;
+			else if (GradeStr == TEXT("D")) Grade = ESLFStatScaling::D;
+			else if (GradeStr == TEXT("E")) Grade = ESLFStatScaling::E;
+
+			EquipInfo.WeaponStatInfo.ScalingInfo.Add(StatTag, Grade);
+			UE_LOG(LogTemp, Log, TEXT("[ApplyWeaponStatData] Added scaling: %s -> %s"), *StatName, *GradeStr);
+		}
+	}
+
+	// Set requirement info
+	EquipInfo.WeaponStatInfo.bHasStatRequirement = bHasStatRequirement;
+	EquipInfo.WeaponStatInfo.StatRequirementInfo.Empty();
+
+	for (const FString& ReqStat : RequirementStats)
+	{
+		// Format: "Dexterity:10"
+		FString StatName, ValueStr;
+		if (ReqStat.Split(TEXT(":"), &StatName, &ValueStr))
+		{
+			// Build the gameplay tag for this stat
+			FString TagString = FString::Printf(TEXT("SoulslikeFramework.Stat.Primary.%s"), *StatName);
+			FGameplayTag StatTag = FGameplayTag::RequestGameplayTag(FName(*TagString), false);
+
+			if (!StatTag.IsValid())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[ApplyWeaponStatData] Invalid stat tag: %s"), *TagString);
+				continue;
+			}
+
+			int32 Value = FCString::Atoi(*ValueStr);
+			EquipInfo.WeaponStatInfo.StatRequirementInfo.Add(StatTag, Value);
+			UE_LOG(LogTemp, Log, TEXT("[ApplyWeaponStatData] Added requirement: %s -> %d"), *StatName, Value);
+		}
+	}
+
+	// Set stat changes (attack power)
+	EquipInfo.StatChanges.Empty();
+
+	for (const FString& Change : StatChanges)
+	{
+		// Format: "Physical:34" or "Magic:10"
+		FString DamageType, ValueStr;
+		if (Change.Split(TEXT(":"), &DamageType, &ValueStr))
+		{
+			// Build the gameplay tag for attack power
+			FString TagString = FString::Printf(TEXT("SoulslikeFramework.Stat.Secondary.AttackPower.%s"), *DamageType);
+			FGameplayTag StatTag = FGameplayTag::RequestGameplayTag(FName(*TagString), false);
+
+			if (!StatTag.IsValid())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[ApplyWeaponStatData] Invalid attack power tag: %s"), *TagString);
+				continue;
+			}
+
+			double Value = FCString::Atod(*ValueStr);
+
+			// Create equipment stat entry
+			FSLFEquipmentStat StatEntry;
+			StatEntry.StatTag = StatTag;
+			StatEntry.Delta = Value;
+
+			EquipInfo.StatChanges.Add(StatTag, StatEntry);
+			UE_LOG(LogTemp, Log, TEXT("[ApplyWeaponStatData] Added stat change: %s -> %.0f"), *DamageType, Value);
+		}
+	}
+
+	// Mark dirty and save
+	ItemData->MarkPackageDirty();
+
+	// Save the asset
+	FString PackagePath = ItemData->GetPackage()->GetPathName();
+	if (UEditorAssetLibrary::SaveAsset(PackagePath, false))
+	{
+		UE_LOG(LogTemp, Log, TEXT("[ApplyWeaponStatData] Saved: %s"), *ItemAssetPath);
+		return true;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[ApplyWeaponStatData] Failed to save: %s"), *ItemAssetPath);
+		return false;
+	}
+}
+
+bool USLFAutomationLibrary::ApplyArmorStatChanges(
+	const FString& ItemAssetPath,
+	const TArray<FString>& StatChanges,
+	const TArray<FString>& EquipSlots)
+{
+	UE_LOG(LogTemp, Log, TEXT("[ApplyArmorStatChanges] Processing: %s"), *ItemAssetPath);
+
+	// Load the item asset
+	UObject* Asset = LoadObject<UObject>(nullptr, *ItemAssetPath);
+	if (!Asset)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[ApplyArmorStatChanges] Failed to load asset: %s"), *ItemAssetPath);
+		return false;
+	}
+
+	// Cast to UPDA_Item
+	UPDA_Item* ItemData = Cast<UPDA_Item>(Asset);
+	if (!ItemData)
+	{
+		// Try to get generated class if it's a Blueprint
+		if (UBlueprint* BP = Cast<UBlueprint>(Asset))
+		{
+			if (BP->GeneratedClass)
+			{
+				ItemData = Cast<UPDA_Item>(BP->GeneratedClass->GetDefaultObject());
+			}
+		}
+	}
+
+	if (!ItemData)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[ApplyArmorStatChanges] Asset is not UPDA_Item: %s"), *ItemAssetPath);
+		return false;
+	}
+
+	// Get reference to the equipment info
+	FSLFEquipmentInfo& EquipInfo = ItemData->ItemInformation.EquipmentDetails;
+
+	// Clear and set stat changes
+	EquipInfo.StatChanges.Empty();
+
+	for (const FString& Change : StatChanges)
+	{
+		// Format: "SoulslikeFramework.Stat.Defense.Negation.Physical:5"
+		FString TagString, ValueStr;
+		if (Change.Split(TEXT(":"), &TagString, &ValueStr))
+		{
+			FGameplayTag StatTag = FGameplayTag::RequestGameplayTag(FName(*TagString), false);
+
+			if (!StatTag.IsValid())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[ApplyArmorStatChanges] Invalid tag: %s"), *TagString);
+				continue;
+			}
+
+			double Value = FCString::Atod(*ValueStr);
+
+			// Create equipment stat entry
+			FSLFEquipmentStat StatEntry;
+			StatEntry.StatTag = StatTag;
+			StatEntry.Delta = Value;
+
+			EquipInfo.StatChanges.Add(StatTag, StatEntry);
+			UE_LOG(LogTemp, Log, TEXT("[ApplyArmorStatChanges] Added stat: %s -> %.1f"), *TagString, Value);
+		}
+	}
+
+	// Set equip slots
+	EquipInfo.EquipSlots.Reset();
+	for (const FString& SlotTag : EquipSlots)
+	{
+		FGameplayTag Tag = FGameplayTag::RequestGameplayTag(FName(*SlotTag), false);
+		if (Tag.IsValid())
+		{
+			EquipInfo.EquipSlots.AddTag(Tag);
+			UE_LOG(LogTemp, Log, TEXT("[ApplyArmorStatChanges] Added equip slot: %s"), *SlotTag);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[ApplyArmorStatChanges] Invalid equip slot tag: %s"), *SlotTag);
+		}
+	}
+
+	// Mark dirty and save
+	ItemData->MarkPackageDirty();
+
+	// Save the asset
+	FString PackagePath = ItemData->GetPackage()->GetPathName();
+	if (UEditorAssetLibrary::SaveAsset(PackagePath, false))
+	{
+		UE_LOG(LogTemp, Log, TEXT("[ApplyArmorStatChanges] Saved: %s with %d stats, %d slots"),
+			*ItemAssetPath, EquipInfo.StatChanges.Num(), EquipInfo.EquipSlots.Num());
+		return true;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[ApplyArmorStatChanges] Failed to save: %s"), *ItemAssetPath);
+		return false;
+	}
 }
 
 #endif // WITH_EDITOR

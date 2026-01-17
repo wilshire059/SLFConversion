@@ -6,12 +6,20 @@
 
 #include "Widgets/W_Status.h"
 #include "Widgets/W_Status_LevelCurrencyBlock.h"
+#include "Widgets/W_Status_StatBlock.h"
 #include "Components/InventoryManagerComponent.h"
 #include "Components/StatManagerComponent.h"
+#include "Blueprints/SLFStatBase.h"
 
 UW_Status::UW_Status(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 	, W_Status_LevelCurrencyBlock(nullptr)
+	, W_StatBlock_Status(nullptr)
+	, W_StatBlock_Status_1(nullptr)
+	, W_StatBlock_Status_3(nullptr)
+	, W_StatBlock_Status_5(nullptr)
+	, W_StatBlock_Status_7(nullptr)
+	, W_StatBlock_Status_8(nullptr)
 	, InventoryComponent(nullptr)
 	, CurrentPlayerCurrency(0)
 	, StatManagerComponent(nullptr)
@@ -77,8 +85,17 @@ void UW_Status::NativeConstruct()
 	if (StatManagerComponent)
 	{
 		StatManagerComponent->OnLevelUpdated.AddDynamic(this, &UW_Status::EventOnLevelUpdated);
+		StatManagerComponent->OnStatsInitialized.AddDynamic(this, &UW_Status::OnStatsInitializedHandler);
 		CurrentPlayerLevel = StatManagerComponent->Level;
 		UE_LOG(LogTemp, Log, TEXT("[W_Status] Bound to StatManagerComponent, Level=%d"), CurrentPlayerLevel);
+
+		// If stats are already initialized (ActiveStats is populated), populate stat blocks now
+		if (StatManagerComponent->ActiveStats.Num() > 0)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[W_Status] Stats already initialized (%d stats), populating immediately"),
+				StatManagerComponent->ActiveStats.Num());
+			PopulateStatBlocks();
+		}
 	}
 	else
 	{
@@ -114,6 +131,7 @@ void UW_Status::NativeDestruct()
 	if (StatManagerComponent)
 	{
 		StatManagerComponent->OnLevelUpdated.RemoveAll(this);
+		StatManagerComponent->OnStatsInitialized.RemoveAll(this);
 	}
 	if (InventoryComponent)
 	{
@@ -220,4 +238,103 @@ void UW_Status::EventOnVisibilityChanged_Implementation(ESlateVisibility InVisib
 	{
 		UE_LOG(LogTemp, Log, TEXT("[W_Status] Visibility changed to %d"), static_cast<int32>(InVisibility));
 	}
+}
+
+void UW_Status::OnStatsInitializedHandler()
+{
+	UE_LOG(LogTemp, Log, TEXT("[W_Status] OnStatsInitializedHandler - Stats are ready, populating stat blocks"));
+	PopulateStatBlocks();
+}
+
+void UW_Status::PopulateStatBlocks()
+{
+	if (!StatManagerComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_Status] PopulateStatBlocks - No StatManagerComponent!"));
+		return;
+	}
+
+	// Get all stats from StatManager
+	TArray<UObject*> StatObjects;
+	TMap<TSubclassOf<UObject>, FGameplayTag> StatClassesAndCategories;
+	StatManagerComponent->GetAllStats(StatObjects, StatClassesAndCategories);
+
+	UE_LOG(LogTemp, Log, TEXT("[W_Status] PopulateStatBlocks - Got %d stats from StatManager"), StatObjects.Num());
+
+	// Convert to USLFStatBase array (StatManagerComponent creates USLFStatBase objects)
+	TArray<USLFStatBase*> Stats;
+	for (UObject* Obj : StatObjects)
+	{
+		if (USLFStatBase* StatObj = Cast<USLFStatBase>(Obj))
+		{
+			Stats.Add(StatObj);
+			UE_LOG(LogTemp, Log, TEXT("[W_Status] - Stat: %s (Tag: %s, Current: %.0f, Max: %.0f)"),
+				*StatObj->StatInfo.DisplayName.ToString(),
+				*StatObj->StatInfo.Tag.ToString(),
+				StatObj->StatInfo.CurrentValue,
+				StatObj->StatInfo.MaxValue);
+		}
+	}
+
+	// Convert TSubclassOf<UObject> map to TSubclassOf<USLFStatBase> map for SetupCurrentStats
+	TMap<FGameplayTag, TSubclassOf<USLFStatBase>> StatTagToClass;
+	for (const auto& Pair : StatClassesAndCategories)
+	{
+		if (Pair.Key && Pair.Key->IsChildOf(USLFStatBase::StaticClass()))
+		{
+			StatTagToClass.Add(Pair.Value, TSubclassOf<USLFStatBase>(Pair.Key));
+		}
+	}
+
+	// Define correct category tags that match actual stat tags
+	// Actual stat tags use: Primary, Secondary, AttackPower, DamageNegation, Resistance, Derived
+	// Blueprint had wrong categories like Defense.Negation, Defense.Resistances, Secondary.AttackPower
+	static const FGameplayTag PrimaryTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Primary"));
+	static const FGameplayTag SecondaryTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary"));
+	static const FGameplayTag AttackPowerTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.AttackPower"));
+	static const FGameplayTag DamageNegationTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.DamageNegation"));
+	static const FGameplayTag ResistanceTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Resistance"));
+	static const FGameplayTag DerivedTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Derived"));
+
+	// Map each stat block to correct category
+	// W_StatBlock_Status = Primary stats (Vigor, Mind, Endurance, etc.)
+	// W_StatBlock_Status_1 = Damage Negation stats
+	// W_StatBlock_Status_3 = Resistance stats
+	// W_StatBlock_Status_5 = Secondary stats (HP, FP, Stamina, etc.)
+	// W_StatBlock_Status_7 = Derived/Misc stats
+	// W_StatBlock_Status_8 = Attack Power stats
+	struct FStatBlockConfig
+	{
+		UW_Status_StatBlock* Block;
+		FGameplayTag CorrectCategory;
+		const TCHAR* Name;
+	};
+
+	TArray<FStatBlockConfig> BlockConfigs = {
+		{ W_StatBlock_Status, PrimaryTag, TEXT("Primary") },
+		{ W_StatBlock_Status_1, DamageNegationTag, TEXT("DamageNegation") },
+		{ W_StatBlock_Status_3, ResistanceTag, TEXT("Resistance") },
+		{ W_StatBlock_Status_5, SecondaryTag, TEXT("Secondary") },
+		{ W_StatBlock_Status_7, DerivedTag, TEXT("Derived") },
+		{ W_StatBlock_Status_8, AttackPowerTag, TEXT("AttackPower") }
+	};
+
+	for (const FStatBlockConfig& Config : BlockConfigs)
+	{
+		if (Config.Block)
+		{
+			// Override the category with the correct value
+			Config.Block->Category = Config.CorrectCategory;
+
+			UE_LOG(LogTemp, Log, TEXT("[W_Status] Calling SetupCurrentStats on %s block with Category: %s"),
+				Config.Name, *Config.CorrectCategory.ToString());
+			Config.Block->SetupCurrentStats(Stats, StatTagToClass);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[W_Status] %s stat block is NULL!"), Config.Name);
+		}
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[W_Status] PopulateStatBlocks complete"));
 }

@@ -49,7 +49,8 @@ public class SLFConversion : ModuleRules
 			"FieldSystemEngine",  // For UOperatorField
 			"GeometryCollectionEngine",  // For UGeometryCollection
 			"MediaAssets",        // For UMediaPlayer
-			"PhysicsCore"         // For EPhysicalSurface
+			"PhysicsCore",        // For EPhysicalSurface
+			"EngineCameras"       // For ULegacyCameraShake
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
@@ -66,7 +67,8 @@ public class SLFConversion : ModuleRules
 				"AssetRegistry",    // For dependency analysis
 				"UMGEditor",        // For WidgetBlueprint access
 				"Json",             // For JSON serialization
-				"JsonUtilities"     // For JSON helpers
+				"JsonUtilities",    // For JSON helpers
+				"EditorScriptingUtilities"  // For UEditorAssetLibrary
 			});
 		}
 

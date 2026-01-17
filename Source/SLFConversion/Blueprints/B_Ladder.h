@@ -116,7 +116,49 @@ public:
 	void CreateLadder();
 	virtual void CreateLadder_Implementation();
 
+	// ═══════════════════════════════════════════════════════════════════════
+	// INTERFACE OVERRIDES
+	// ═══════════════════════════════════════════════════════════════════════
+
+	/** Override OnInteract to call TryClimbLadder on the interacting actor */
+	virtual void OnInteract_Implementation(AActor* InteractingActor) override;
+
 protected:
 	// Called when construction script runs
 	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void BeginPlay() override;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// OVERLAP EVENT HANDLERS - Controls ladder climbing state
+	// ═══════════════════════════════════════════════════════════════════════
+
+	/** Called when something overlaps the climbing collision zone */
+	UFUNCTION()
+	void OnClimbingCollisionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	/** Called when something begins overlapping the bottom zone */
+	UFUNCTION()
+	void OnBottomCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	/** Called when something ends overlapping the bottom zone */
+	UFUNCTION()
+	void OnBottomCollisionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	/** Called when something begins overlapping the top zone */
+	UFUNCTION()
+	void OnTopCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	/** Called when something ends overlapping the top zone */
+	UFUNCTION()
+	void OnTopCollisionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	/** Called when something ends overlapping the topdown zone */
+	UFUNCTION()
+	void OnTopdownCollisionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 };

@@ -164,6 +164,22 @@ public:
 	/** Timer handle for rotation lerp */
 	FTimerHandle RotationLerpTimerHandle;
 
+	/** Timer handle for IK flinch reaction animation */
+	FTimerHandle IKReactionTimerHandle;
+
+	/** IK flinch animation start time */
+	double IKReactionStartTime = 0.0;
+
+	/** IK flinch animation duration (seconds) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|IK")
+	double IKReactionDuration = 0.3;
+
+	/** Peak IK weight during flinch */
+	double IKReactionPeakWeight = 1.0;
+
+	/** Update IK reaction animation (called by timer) */
+	void UpdateIKReaction();
+
 	// ═══════════════════════════════════════════════════════════════════
 	// DOOR INTERACTION (for anim notify callback)
 	// ═══════════════════════════════════════════════════════════════════

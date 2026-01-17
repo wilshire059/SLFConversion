@@ -239,4 +239,11 @@ public:
 	/** Handle level up request */
 	UFUNCTION(BlueprintCallable, Category = "Stat Manager|Level")
 	void EventOnLevelUpRequested(FGameplayTag StatTag);
+
+	/** Apply base stat values from the selected character class data asset
+	 *  Reads BaseStats TMap from UPDA_BaseCharacterInfo and applies to ActiveStats
+	 *  Primary stats (Vigor, Mind, etc.) start at 0 and get their initial value from character class
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Stat Manager|Init")
+	void ApplyBaseStatsFromCharacterClass();
 };

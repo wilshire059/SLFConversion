@@ -13,6 +13,7 @@
 #include "Components/ArrowComponent.h"
 #include "Components/BillboardComponent.h"
 #include "Components/TimelineComponent.h"
+#include "Components/SLFAIStateMachineComponent.h"
 #include "NiagaraComponent.h"
 #include "Components/AICombatManagerComponent.h"
 #include "Components/AIBehaviorManagerComponent.h"
@@ -23,6 +24,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Blueprint/UserWidget.h"
+#include "Interfaces/SLFExecutionIndicatorInterface.h"
 
 AB_Soulslike_Enemy::AB_Soulslike_Enemy()
 {
@@ -61,6 +63,9 @@ AB_Soulslike_Enemy::AB_Soulslike_Enemy()
 	}
 
 	TL_RotateTowardsTarget = CreateDefaultSubobject<UTimelineComponent>(TEXT("TL_RotateTowardsTarget"));
+
+	// Create AI State Machine component - replaces Behavior Tree for better performance
+	AIStateMachine = CreateDefaultSubobject<USLFAIStateMachineComponent>(TEXT("AIStateMachine"));
 }
 
 void AB_Soulslike_Enemy::BeginPlay()
@@ -68,6 +73,28 @@ void AB_Soulslike_Enemy::BeginPlay()
 	Super::BeginPlay();
 
 	UE_LOG(LogTemp, Log, TEXT("[B_Soulslike_Enemy] BeginPlay - %s"), *GetName());
+
+	// Enable debug logging on state machine for testing
+	if (AIStateMachine)
+	{
+		AIStateMachine->bDebugEnabled = true;
+		UE_LOG(LogTemp, Log, TEXT("[B_Soulslike_Enemy] AI State Machine enabled"));
+	}
+
+	// ═══════════════════════════════════════════════════════════════════════════════
+	// BIND TO OnPoiseBroken EVENT (bp_only B_Soulslike_Enemy.json lines 10598-10604)
+	// ═══════════════════════════════════════════════════════════════════════════════
+	// Blueprint uses K2Node_ComponentBoundEvent to bind to AC_AI_CombatManager's OnPoiseBroken
+	// When poise breaks, we show/hide the ExecutionWidget and call ToggleExecutionIcon
+	if (AC_AI_CombatManager)
+	{
+		AC_AI_CombatManager->OnPoiseBroken.AddDynamic(this, &AB_Soulslike_Enemy::HandleOnPoiseBroken);
+		UE_LOG(LogTemp, Log, TEXT("[B_Soulslike_Enemy] Bound to OnPoiseBroken event"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[B_Soulslike_Enemy] AC_AI_CombatManager is NULL - cannot bind OnPoiseBroken!"));
+	}
 
 	// NOTE: Perception handling moved to parent class ASLFSoulslikeEnemy::OnPerceptionUpdated
 	// which uses OnTargetPerceptionUpdated and properly checks all senses before changing state.
@@ -285,6 +312,62 @@ void AB_Soulslike_Enemy::OnBackstabbed_Implementation(FGameplayTag ExecutionTag)
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// BPI_ExecutionIndicator INTERFACE IMPLEMENTATION (1 function)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void AB_Soulslike_Enemy::ToggleExecutionIcon_Implementation(bool bVisible)
+{
+	// ═══════════════════════════════════════════════════════════════════════════════
+	// bp_only flow (B_Soulslike_Enemy.json lines 10679-10899):
+	// 1. Get ExecutionWidget (WidgetComponent inherited from B_BaseCharacter)
+	// 2. SetVisibility on ExecutionWidget based on bVisible
+	// 3. GetWidget() from ExecutionWidget → ToggleExecutionIcon(Visible = bVisible)
+	// ═══════════════════════════════════════════════════════════════════════════════
+
+	UE_LOG(LogTemp, Warning, TEXT("[B_Soulslike_Enemy] ToggleExecutionIcon - %s - Enemy: %s"),
+		bVisible ? TEXT("SHOWING") : TEXT("HIDING"), *GetName());
+
+	// CachedExecutionWidget is inherited from ASLFBaseCharacter
+	if (CachedExecutionWidget)
+	{
+		// Step 2: SetVisibility on the WidgetComponent
+		CachedExecutionWidget->SetVisibility(bVisible);
+		UE_LOG(LogTemp, Log, TEXT("[B_Soulslike_Enemy] ExecutionWidget visibility = %s"),
+			bVisible ? TEXT("true") : TEXT("false"));
+
+		// Step 3: Get the UserWidget and call ToggleExecutionIcon on it
+		UUserWidget* Widget = CachedExecutionWidget->GetWidget();
+		if (Widget)
+		{
+			// W_TargetExecutionIndicator implements ISLFExecutionIndicatorInterface
+			if (ISLFExecutionIndicatorInterface* ExecutionIndicatorWidget = Cast<ISLFExecutionIndicatorInterface>(Widget))
+			{
+				ExecutionIndicatorWidget->Execute_ToggleExecutionIcon(Widget, bVisible);
+				UE_LOG(LogTemp, Log, TEXT("[B_Soulslike_Enemy] Called ToggleExecutionIcon on widget (direct cast)"));
+			}
+			else if (Widget->GetClass()->ImplementsInterface(USLFExecutionIndicatorInterface::StaticClass()))
+			{
+				ISLFExecutionIndicatorInterface::Execute_ToggleExecutionIcon(Widget, bVisible);
+				UE_LOG(LogTemp, Log, TEXT("[B_Soulslike_Enemy] Called ToggleExecutionIcon on widget (interface execute)"));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[B_Soulslike_Enemy] Widget %s doesn't implement ISLFExecutionIndicatorInterface"),
+					*Widget->GetClass()->GetName());
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[B_Soulslike_Enemy] ExecutionWidget->GetWidget() returned null"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[B_Soulslike_Enemy] CachedExecutionWidget is NULL - execution indicator won't show!"));
+	}
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // PERCEPTION HANDLING
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -294,12 +377,6 @@ void AB_Soulslike_Enemy::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActor
 	// Comment from Blueprint: "Generic perception component behavior: based on detected sense, set AI state."
 
 	UE_LOG(LogTemp, Log, TEXT("[B_Soulslike_Enemy] OnPerceptionUpdated - %d actors"), UpdatedActors.Num());
-
-	if (!AC_AI_BehaviorManager)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[B_Soulslike_Enemy] No BehaviorManager!"));
-		return;
-	}
 
 	AAIController* AIC = UAIBlueprintHelperLibrary::GetAIController(this);
 	if (!AIC)
@@ -329,9 +406,18 @@ void AB_Soulslike_Enemy::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActor
 		{
 			UE_LOG(LogTemp, Log, TEXT("[B_Soulslike_Enemy] Detected via Sight: %s"), *Actor->GetName());
 
-			// Set target and change to combat state
-			AC_AI_BehaviorManager->SetTarget(Actor);
-			AC_AI_BehaviorManager->SetState(ESLFAIStates::Combat);
+			// Prefer AIStateMachine if available (replaces BehaviorManager)
+			if (AIStateMachine)
+			{
+				AIStateMachine->SetTarget(Actor);  // This automatically transitions to Combat state
+				UE_LOG(LogTemp, Log, TEXT("[B_Soulslike_Enemy] Set target on AIStateMachine"));
+			}
+			else if (AC_AI_BehaviorManager)
+			{
+				// Fallback to BehaviorManager
+				AC_AI_BehaviorManager->SetTarget(Actor);
+				AC_AI_BehaviorManager->SetState(ESLFAIStates::Combat);
+			}
 			return; // Found a target, stop searching
 		}
 
@@ -344,10 +430,74 @@ void AB_Soulslike_Enemy::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActor
 		{
 			UE_LOG(LogTemp, Log, TEXT("[B_Soulslike_Enemy] Detected via Hearing: %s"), *Actor->GetName());
 
-			// Set target and change to investigating state
-			AC_AI_BehaviorManager->SetTarget(Actor);
-			AC_AI_BehaviorManager->SetState(ESLFAIStates::Investigating);
+			// Prefer AIStateMachine if available
+			if (AIStateMachine)
+			{
+				AIStateMachine->SetState(ESLFAIState::Investigating);
+				UE_LOG(LogTemp, Log, TEXT("[B_Soulslike_Enemy] Set Investigating state on AIStateMachine"));
+			}
+			else if (AC_AI_BehaviorManager)
+			{
+				// Fallback to BehaviorManager
+				AC_AI_BehaviorManager->SetTarget(Actor);
+				AC_AI_BehaviorManager->SetState(ESLFAIStates::Investigating);
+			}
 			return; // Found a target, stop searching
 		}
+	}
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// POISE BREAK / EXECUTION INDICATOR HANDLING
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void AB_Soulslike_Enemy::HandleOnPoiseBroken(bool bBroken)
+{
+	// ═══════════════════════════════════════════════════════════════════════════════
+	// bp_only flow (B_Soulslike_Enemy.json lines 10598-10899):
+	// On Poise Broken (AC_AI_CombatManager) event fires with "Broken?" parameter
+	// then → SetVisibility(ExecutionWidget, bNewVisibility = Broken?)
+	// then → GetWidget() from ExecutionWidget → ToggleExecutionIcon(Visible = Broken?)
+	// ═══════════════════════════════════════════════════════════════════════════════
+
+	UE_LOG(LogTemp, Warning, TEXT("[B_Soulslike_Enemy] HandleOnPoiseBroken - bBroken=%s - Enemy: %s"),
+		bBroken ? TEXT("true") : TEXT("false"), *GetName());
+
+	// CachedExecutionWidget is inherited from ASLFBaseCharacter
+	if (CachedExecutionWidget)
+	{
+		// Step 1: SetVisibility on the WidgetComponent based on bBroken
+		// This is the bp_only SetVisibility node (lines 10640-10674)
+		CachedExecutionWidget->SetVisibility(bBroken);
+		UE_LOG(LogTemp, Log, TEXT("[B_Soulslike_Enemy] ExecutionWidget visibility = %s"),
+			bBroken ? TEXT("true") : TEXT("false"));
+
+		// Step 2: Get the UserWidget and call ToggleExecutionIcon on it
+		// This is the bp_only GetWidget → ToggleExecutionIcon flow (lines 10679-10899)
+		UUserWidget* Widget = CachedExecutionWidget->GetWidget();
+		if (Widget)
+		{
+			// W_TargetExecutionIndicator implements ISLFExecutionIndicatorInterface
+			if (Widget->GetClass()->ImplementsInterface(USLFExecutionIndicatorInterface::StaticClass()))
+			{
+				ISLFExecutionIndicatorInterface::Execute_ToggleExecutionIcon(Widget, bBroken);
+				UE_LOG(LogTemp, Log, TEXT("[B_Soulslike_Enemy] Called ToggleExecutionIcon(%s) on ExecutionWidget"),
+					bBroken ? TEXT("true") : TEXT("false"));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[B_Soulslike_Enemy] Widget %s doesn't implement ISLFExecutionIndicatorInterface"),
+					*Widget->GetClass()->GetName());
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[B_Soulslike_Enemy] ExecutionWidget->GetWidget() returned null - is WidgetClass set?"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[B_Soulslike_Enemy] CachedExecutionWidget is NULL - execution indicator won't show!"));
+		UE_LOG(LogTemp, Warning, TEXT("[B_Soulslike_Enemy] Check if B_BaseCharacter has ExecutionWidget component or if SLFBaseCharacter creates it."));
 	}
 }
