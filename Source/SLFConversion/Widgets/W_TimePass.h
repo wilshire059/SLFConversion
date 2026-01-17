@@ -86,4 +86,16 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Timer tick for clock animation
+	void AnimationTick();
+
+	// Cached widget references (NOT UPROPERTY to avoid Blueprint conflicts)
+	class UWidget* ClockInnerWidget;
+
+	// Current angle during animation
+	double CurrentAngle;
+
+	// Angle increment per tick
+	double AngleIncrement;
 };

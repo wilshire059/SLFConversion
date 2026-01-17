@@ -19,15 +19,18 @@
 #include "GenericPlatform/GenericWindow.h"
 #include "MediaPlayer.h"
 #include "Components/Button.h"
+#include "Components/VerticalBox.h"
 
 #include "W_RestMenu.generated.h"
 
 // Forward declarations for widget types
 class UW_RestMenu_Button;
 class UW_RestMenu_TimeEntry;
+class UW_TimePass;
 
 // Forward declarations for Blueprint types
 class AB_RestingPoint;
+class ASLFRestingPointBase;
 
 // Forward declarations for SaveGame types
 
@@ -47,12 +50,15 @@ public:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 
+	// Input handling - intercepts keyboard/gamepad input for navigation
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+
 	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (6)
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
-	AB_RestingPoint* CurrentRestingPoint;
+	AActor* CurrentRestingPoint;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	UPrimaryDataAsset* LocalTimeInfo;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
@@ -128,10 +134,63 @@ public:
 	virtual void EventOnTimeEntrySelected_Implementation(UW_RestMenu_TimeEntry* TimeEntry);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_RestMenu")
-	void EventSetupRestingPoint(AB_RestingPoint* CurrentCampfire);
-	virtual void EventSetupRestingPoint_Implementation(AB_RestingPoint* CurrentCampfire);
+	void EventSetupRestingPoint(AActor* CurrentCampfire);
+	virtual void EventSetupRestingPoint_Implementation(AActor* CurrentCampfire);
 
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+	void BindButtonEvents();
+
+	// Individual button press handlers (matches Blueprint pattern - each button has its own handler)
+	UFUNCTION()
+	void HandleRestButtonPressed();
+	UFUNCTION()
+	void HandleLevelUpButtonPressed();
+	UFUNCTION()
+	void HandleStorageButtonPressed();
+	UFUNCTION()
+	void HandleLeaveButtonPressed();
+
+	// Button selection handler (generic - updates navigation index)
+	UFUNCTION()
+	void HandleButtonSelected(UW_RestMenu_Button* Button);
+
+	// Time entry event handler
+	UFUNCTION()
+	void HandleTimeEntryPressed(FSLFDayNightInfo TimeInfo);
+
+	UFUNCTION()
+	void HandleTimeEntrySelected(UW_RestMenu_TimeEntry* TimeEntry);
+
+	// Time pass completion handler
+	UFUNCTION()
+	void HandleTimePassEnd();
+
+	// Cached widget references (named differently from Blueprint's BindWidgets to avoid conflict)
+	UPROPERTY()
+	class UWidgetSwitcher* CachedSwitcher;
+	UPROPERTY()
+	class UTextBlock* CachedLocationText;
+	// These are NOT UPROPERTY to avoid conflict with Blueprint widget bindings
+	class UVerticalBox* TimeEntriesBoxWidget;
+	UW_TimePass* TimePassWidgetRef;
+	class UTextBlock* TimeOfDayTextWidget;
+
+	// Class for creating time entry widgets
+	UPROPERTY()
+	TSubclassOf<UW_RestMenu_TimeEntry> TimeEntryWidgetClass;
+
+	// Individual button references for binding
+	UPROPERTY()
+	UW_RestMenu_Button* RestButton;
+	UPROPERTY()
+	UW_RestMenu_Button* LevelUpButton;
+	UPROPERTY()
+	UW_RestMenu_Button* StorageButton;
+	UPROPERTY()
+	UW_RestMenu_Button* LeaveButton;
+
+	// Current view index (0 = main buttons, 1 = time selection)
+	int32 CurrentViewIndex;
 };
