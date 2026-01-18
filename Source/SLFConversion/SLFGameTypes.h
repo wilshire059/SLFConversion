@@ -890,8 +890,9 @@ struct SLFCONVERSION_API FSLFLootItem
 };
 
 // Replaces: /Game/SoulslikeFramework/Structures/Items/FWeightedLoot
+// Inherits from FTableRowBase to be usable as DataTable row struct
 USTRUCT(BlueprintType)
-struct SLFCONVERSION_API FSLFWeightedLoot
+struct SLFCONVERSION_API FSLFWeightedLoot : public FTableRowBase
 {
 	GENERATED_BODY()
 

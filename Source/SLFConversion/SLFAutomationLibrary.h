@@ -283,5 +283,54 @@ public:
 		const TArray<FString>& EquipSlots
 	);
 
+	// CONTAINER LOOT EXTRACTION
+	// Extract loot configuration from all container instances in the current level
+	// Returns JSON string with container name, location, override item, and loot table
+	// OutputFilePath: if provided, saves to file; otherwise just returns JSON string
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Export")
+	static FString ExtractContainerLootConfig(const FString& OutputFilePath = TEXT(""));
+
+	// Apply loot configuration to container instances from JSON file
+	// JsonFilePath: path to container_loot_config.json from extraction
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
+	static int32 ApplyContainerLootConfig(const FString& JsonFilePath);
+
+	// Set loot item on a container in the currently loaded level by index
+	// ContainerIndex: 0-based index of container (sorted by location)
+	// ItemAssetPath: full path to item data asset (e.g., "/Game/.../DA_Sword01")
+	// MinAmount, MaxAmount: item count range
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
+	static bool SetContainerLoot(int32 ContainerIndex, const FString& ItemAssetPath, int32 MinAmount = 1, int32 MaxAmount = 1);
+
+	// Configure all containers in level with default demo items
+	// Loads level, sets different items on each container, saves level
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
+	static int32 ConfigureDefaultContainerLoot();
+
+	// Diagnose loot configuration for all containers in the current level
+	// Shows OverrideItem and LootTable settings for each container
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Export")
+	static FString DiagnoseContainerLoot();
+
+	// Set a container to use LootTable instead of OverrideItem
+	// ContainerIndex: 0-based index of container (sorted by location)
+	// LootTablePath: full path to data table (e.g., "/Game/.../DT_ExampleChestTier")
+	// bClearOverride: if true, clears OverrideItem to ensure LootTable is used
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
+	static bool SetContainerLootTable(int32 ContainerIndex, const FString& LootTablePath, bool bClearOverride = true);
+
+	// Configure all containers to use the default loot table (DT_ExampleChestTier)
+	// Clears OverrideItem on all containers so they use random loot selection
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
+	static int32 ConfigureContainersToUseLootTable();
+
+	// DATATABLE MIGRATION
+	// Migrate a DataTable from Blueprint struct (FWeightedLoot) to C++ struct (FSLFWeightedLoot)
+	// This reads the Blueprint struct data using property iteration and creates a new DataTable with C++ struct
+	// SourceTablePath: path to DataTable using Blueprint struct (e.g., "/Game/.../DT_ExampleChestTier")
+	// Returns: JSON string with migration result (row count, success/failure)
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
+	static FString MigrateWeightedLootDataTable(const FString& SourceTablePath);
+
 #endif // WITH_EDITOR
 };

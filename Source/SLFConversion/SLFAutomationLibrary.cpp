@@ -48,8 +48,17 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Enum.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Int.h"
 #include "SLFEnums.h"
+#include "SLFGameTypes.h" // FSLFWeightedLoot, FSLFLootItem for DataTable migration
+// LootDropManager for container loot functions
+#include "Components/AC_LootDropManager.h"
 #include "SLFPrimaryDataAssets.h"
+#include "Components/LootDropManagerComponent.h"
 #include "EditorAssetLibrary.h"
+#include "FileHelpers.h" // For FEditorFileUtils
+#include "EngineUtils.h" // For TActorIterator
+#include "Dom/JsonObject.h"
+#include "Serialization/JsonSerializer.h"
+#include "Misc/FileHelper.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogSLFAutomation, Log, All);
 
@@ -3738,6 +3747,1106 @@ bool USLFAutomationLibrary::ApplyArmorStatChanges(
 		UE_LOG(LogTemp, Warning, TEXT("[ApplyArmorStatChanges] Failed to save: %s"), *ItemAssetPath);
 		return false;
 	}
+}
+
+// ============================================================================
+// CONTAINER LOOT EXTRACTION
+// ============================================================================
+
+FString USLFAutomationLibrary::ExtractContainerLootConfig(const FString& OutputFilePath)
+{
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+	UE_LOG(LogTemp, Warning, TEXT("EXTRACTING CONTAINER LOOT CONFIGURATION"));
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+
+	// Get editor world
+	UWorld* World = GEditor ? GEditor->GetEditorWorldContext().World() : nullptr;
+	if (!World)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[ExtractContainerLootConfig] No editor world"));
+		return TEXT("{}");
+	}
+
+	TSharedPtr<FJsonObject> RootObject = MakeShareable(new FJsonObject);
+	int32 ContainerCount = 0;
+
+	// Iterate all actors
+	for (TActorIterator<AActor> It(World); It; ++It)
+	{
+		AActor* Actor = *It;
+		if (!Actor) continue;
+
+		FString ClassName = Actor->GetClass()->GetName();
+		if (!ClassName.Contains(TEXT("Container"), ESearchCase::IgnoreCase))
+		{
+			continue;
+		}
+
+		FString ActorName = Actor->GetName();
+		FVector Location = Actor->GetActorLocation();
+
+		UE_LOG(LogTemp, Warning, TEXT("\nFound container: %s"), *ActorName);
+		UE_LOG(LogTemp, Warning, TEXT("  Location: X=%.1f Y=%.1f Z=%.1f"), Location.X, Location.Y, Location.Z);
+
+		TSharedPtr<FJsonObject> ContainerObj = MakeShareable(new FJsonObject);
+		ContainerObj->SetStringField(TEXT("name"), ActorName);
+
+		TSharedPtr<FJsonObject> LocObj = MakeShareable(new FJsonObject);
+		LocObj->SetNumberField(TEXT("x"), Location.X);
+		LocObj->SetNumberField(TEXT("y"), Location.Y);
+		LocObj->SetNumberField(TEXT("z"), Location.Z);
+		ContainerObj->SetObjectField(TEXT("location"), LocObj);
+
+		// Find LootDropManager component
+		TArray<UActorComponent*> Components;
+		Actor->GetComponents(Components);
+
+		for (UActorComponent* Comp : Components)
+		{
+			if (!Comp) continue;
+
+			FString CompClass = Comp->GetClass()->GetName();
+			if (!CompClass.Contains(TEXT("LootDropManager"), ESearchCase::IgnoreCase))
+			{
+				continue;
+			}
+
+			UE_LOG(LogTemp, Warning, TEXT("  LootDropManager: %s"), *Comp->GetName());
+
+			// Try to get OverrideItem via reflection
+			FProperty* OverrideItemProp = Comp->GetClass()->FindPropertyByName(TEXT("OverrideItem"));
+			if (OverrideItemProp)
+			{
+				if (FStructProperty* StructProp = CastField<FStructProperty>(OverrideItemProp))
+				{
+					const void* StructData = StructProp->ContainerPtrToValuePtr<void>(Comp);
+
+					// Find Item property in the struct
+					FProperty* ItemProp = StructProp->Struct->FindPropertyByName(TEXT("Item"));
+					if (ItemProp)
+					{
+						if (FObjectProperty* ObjProp = CastField<FObjectProperty>(ItemProp))
+						{
+							UObject* ItemObj = ObjProp->GetObjectPropertyValue(ObjProp->ContainerPtrToValuePtr<void>(StructData));
+							if (ItemObj)
+							{
+								FString ItemPath = ItemObj->GetPathName();
+								ContainerObj->SetStringField(TEXT("override_item"), ItemPath);
+								UE_LOG(LogTemp, Warning, TEXT("    -> Item: %s"), *ItemPath);
+							}
+						}
+					}
+
+					// Find ItemClass property
+					FProperty* ItemClassProp = StructProp->Struct->FindPropertyByName(TEXT("ItemClass"));
+					if (ItemClassProp)
+					{
+						if (FClassProperty* ClassProp = CastField<FClassProperty>(ItemClassProp))
+						{
+							UClass* ItemClass = Cast<UClass>(ClassProp->GetObjectPropertyValue(ClassProp->ContainerPtrToValuePtr<void>(StructData)));
+							if (ItemClass)
+							{
+								FString ClassPath = ItemClass->GetPathName();
+								ContainerObj->SetStringField(TEXT("override_item_class"), ClassPath);
+								UE_LOG(LogTemp, Warning, TEXT("    -> ItemClass: %s"), *ClassPath);
+							}
+						}
+					}
+
+					// Find MinAmount/MaxAmount
+					FProperty* MinProp = StructProp->Struct->FindPropertyByName(TEXT("MinAmount"));
+					FProperty* MaxProp = StructProp->Struct->FindPropertyByName(TEXT("MaxAmount"));
+					if (MinProp && MaxProp)
+					{
+						if (FIntProperty* MinInt = CastField<FIntProperty>(MinProp))
+						{
+							int32 MinVal = MinInt->GetPropertyValue(MinInt->ContainerPtrToValuePtr<void>(StructData));
+							ContainerObj->SetNumberField(TEXT("min_amount"), MinVal);
+						}
+						if (FIntProperty* MaxInt = CastField<FIntProperty>(MaxProp))
+						{
+							int32 MaxVal = MaxInt->GetPropertyValue(MaxInt->ContainerPtrToValuePtr<void>(StructData));
+							ContainerObj->SetNumberField(TEXT("max_amount"), MaxVal);
+						}
+					}
+				}
+			}
+
+			// Try to get LootTable
+			FProperty* LootTableProp = Comp->GetClass()->FindPropertyByName(TEXT("LootTable"));
+			if (LootTableProp)
+			{
+				if (FSoftObjectProperty* SoftProp = CastField<FSoftObjectProperty>(LootTableProp))
+				{
+					FSoftObjectPtr SoftPtr = SoftProp->GetPropertyValue(SoftProp->ContainerPtrToValuePtr<void>(Comp));
+					if (!SoftPtr.IsNull())
+					{
+						FString TablePath = SoftPtr.ToString();
+						ContainerObj->SetStringField(TEXT("loot_table"), TablePath);
+						UE_LOG(LogTemp, Warning, TEXT("    -> LootTable: %s"), *TablePath);
+					}
+				}
+			}
+		}
+
+		// Only add if we have loot config
+		if (ContainerObj->HasField(TEXT("override_item")) || ContainerObj->HasField(TEXT("loot_table")))
+		{
+			RootObject->SetObjectField(ActorName, ContainerObj);
+			ContainerCount++;
+			UE_LOG(LogTemp, Warning, TEXT("  => Saved loot config"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("  => No loot configured"));
+		}
+	}
+
+	// Serialize to JSON string
+	FString OutputString;
+	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutputString);
+	FJsonSerializer::Serialize(RootObject.ToSharedRef(), Writer);
+
+	// Save to file if path provided
+	if (!OutputFilePath.IsEmpty())
+	{
+		if (FFileHelper::SaveStringToFile(OutputString, *OutputFilePath))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("\nSaved %d container configs to: %s"), ContainerCount, *OutputFilePath);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Failed to save to: %s"), *OutputFilePath);
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+	return OutputString;
+}
+
+int32 USLFAutomationLibrary::ApplyContainerLootConfig(const FString& JsonFilePath)
+{
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+	UE_LOG(LogTemp, Warning, TEXT("APPLYING CONTAINER LOOT CONFIGURATION"));
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+
+	// Load JSON file
+	FString JsonContent;
+	if (!FFileHelper::LoadFileToString(JsonContent, *JsonFilePath))
+	{
+		UE_LOG(LogTemp, Error, TEXT("[ApplyContainerLootConfig] Failed to load: %s"), *JsonFilePath);
+		return 0;
+	}
+
+	TSharedPtr<FJsonObject> RootObject;
+	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonContent);
+	if (!FJsonSerializer::Deserialize(Reader, RootObject) || !RootObject.IsValid())
+	{
+		UE_LOG(LogTemp, Error, TEXT("[ApplyContainerLootConfig] Failed to parse JSON"));
+		return 0;
+	}
+
+	// Get editor world
+	UWorld* World = GEditor ? GEditor->GetEditorWorldContext().World() : nullptr;
+	if (!World)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[ApplyContainerLootConfig] No editor world"));
+		return 0;
+	}
+
+	int32 AppliedCount = 0;
+
+	// Build a map of container names to actors
+	TMap<FString, AActor*> ContainerActors;
+	for (TActorIterator<AActor> It(World); It; ++It)
+	{
+		AActor* Actor = *It;
+		if (!Actor) continue;
+
+		FString ClassName = Actor->GetClass()->GetName();
+		if (ClassName.Contains(TEXT("Container"), ESearchCase::IgnoreCase))
+		{
+			ContainerActors.Add(Actor->GetName(), Actor);
+		}
+	}
+
+	// Apply config to each container
+	for (const auto& Pair : RootObject->Values)
+	{
+		FString ContainerName = Pair.Key;
+		TSharedPtr<FJsonObject> ConfigObj = Pair.Value->AsObject();
+		if (!ConfigObj.IsValid()) continue;
+
+		// Find matching actor (by name or by location)
+		AActor* TargetActor = nullptr;
+
+		// First try exact name match
+		if (AActor** Found = ContainerActors.Find(ContainerName))
+		{
+			TargetActor = *Found;
+		}
+		else
+		{
+			// Try location-based match
+			const TSharedPtr<FJsonObject>* LocObj = nullptr;
+			if (ConfigObj->TryGetObjectField(TEXT("location"), LocObj))
+			{
+				FVector ConfigLoc(
+					(*LocObj)->GetNumberField(TEXT("x")),
+					(*LocObj)->GetNumberField(TEXT("y")),
+					(*LocObj)->GetNumberField(TEXT("z"))
+				);
+
+				// Find closest container
+				float ClosestDist = 100.0f; // 100 unit tolerance
+				for (const auto& ActorPair : ContainerActors)
+				{
+					float Dist = FVector::Dist(ActorPair.Value->GetActorLocation(), ConfigLoc);
+					if (Dist < ClosestDist)
+					{
+						ClosestDist = Dist;
+						TargetActor = ActorPair.Value;
+					}
+				}
+			}
+		}
+
+		if (!TargetActor)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Could not find container: %s"), *ContainerName);
+			continue;
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("\nApplying config to: %s"), *TargetActor->GetName());
+
+		// Find LootDropManager component
+		TArray<UActorComponent*> Components;
+		TargetActor->GetComponents(Components);
+
+		for (UActorComponent* Comp : Components)
+		{
+			if (!Comp) continue;
+
+			FString CompClass = Comp->GetClass()->GetName();
+			if (!CompClass.Contains(TEXT("LootDropManager"), ESearchCase::IgnoreCase))
+			{
+				continue;
+			}
+
+			// Apply override item
+			FString OverrideItemPath;
+			if (ConfigObj->TryGetStringField(TEXT("override_item"), OverrideItemPath))
+			{
+				UObject* ItemObj = LoadObject<UObject>(nullptr, *OverrideItemPath);
+				if (ItemObj)
+				{
+					FProperty* OverrideItemProp = Comp->GetClass()->FindPropertyByName(TEXT("OverrideItem"));
+					if (OverrideItemProp)
+					{
+						if (FStructProperty* StructProp = CastField<FStructProperty>(OverrideItemProp))
+						{
+							void* StructData = StructProp->ContainerPtrToValuePtr<void>(Comp);
+
+							FProperty* ItemProp = StructProp->Struct->FindPropertyByName(TEXT("Item"));
+							if (ItemProp)
+							{
+								if (FObjectProperty* ObjProp = CastField<FObjectProperty>(ItemProp))
+								{
+									ObjProp->SetObjectPropertyValue(ObjProp->ContainerPtrToValuePtr<void>(StructData), ItemObj);
+									UE_LOG(LogTemp, Warning, TEXT("  Set OverrideItem.Item: %s"), *ItemObj->GetName());
+								}
+							}
+						}
+					}
+				}
+			}
+
+			// Apply loot table
+			FString LootTablePath;
+			if (ConfigObj->TryGetStringField(TEXT("loot_table"), LootTablePath))
+			{
+				FProperty* LootTableProp = Comp->GetClass()->FindPropertyByName(TEXT("LootTable"));
+				if (LootTableProp)
+				{
+					if (FSoftObjectProperty* SoftProp = CastField<FSoftObjectProperty>(LootTableProp))
+					{
+						FSoftObjectPath SoftPath(LootTablePath);
+						FSoftObjectPtr SoftPtr(SoftPath);
+						SoftProp->SetPropertyValue(SoftProp->ContainerPtrToValuePtr<void>(Comp), SoftPtr);
+						UE_LOG(LogTemp, Warning, TEXT("  Set LootTable: %s"), *LootTablePath);
+					}
+				}
+			}
+
+			AppliedCount++;
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("\nApplied loot config to %d containers"), AppliedCount);
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+
+	return AppliedCount;
+}
+
+bool USLFAutomationLibrary::SetContainerLoot(int32 ContainerIndex, const FString& ItemAssetPath, int32 MinAmount, int32 MaxAmount)
+{
+	UE_LOG(LogTemp, Warning, TEXT("[SetContainerLoot] Container %d -> %s (x%d-%d)"),
+		ContainerIndex, *ItemAssetPath, MinAmount, MaxAmount);
+
+	// Get editor world
+	UWorld* World = GEditor ? GEditor->GetEditorWorldContext().World() : nullptr;
+	if (!World)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[SetContainerLoot] No editor world - load a level first"));
+		return false;
+	}
+
+	// Load the item asset
+	UObject* ItemObj = LoadObject<UObject>(nullptr, *ItemAssetPath);
+	if (!ItemObj)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[SetContainerLoot] Failed to load item: %s"), *ItemAssetPath);
+		return false;
+	}
+
+	// Collect all containers sorted by location
+	TArray<AActor*> Containers;
+	for (TActorIterator<AActor> It(World); It; ++It)
+	{
+		AActor* Actor = *It;
+		if (!Actor) continue;
+
+		FString ClassName = Actor->GetClass()->GetName();
+		if (ClassName.Contains(TEXT("Container"), ESearchCase::IgnoreCase) &&
+			!ClassName.Contains(TEXT("Currency"), ESearchCase::IgnoreCase))
+		{
+			Containers.Add(Actor);
+		}
+	}
+
+	// Sort by X location for consistent ordering
+	Containers.Sort([](const AActor& A, const AActor& B) {
+		return A.GetActorLocation().X < B.GetActorLocation().X;
+	});
+
+	UE_LOG(LogTemp, Warning, TEXT("[SetContainerLoot] Found %d containers"), Containers.Num());
+
+	if (ContainerIndex < 0 || ContainerIndex >= Containers.Num())
+	{
+		UE_LOG(LogTemp, Error, TEXT("[SetContainerLoot] Invalid index %d (have %d containers)"),
+			ContainerIndex, Containers.Num());
+		return false;
+	}
+
+	AActor* TargetContainer = Containers[ContainerIndex];
+	UE_LOG(LogTemp, Warning, TEXT("[SetContainerLoot] Target: %s at (%.1f, %.1f, %.1f)"),
+		*TargetContainer->GetName(),
+		TargetContainer->GetActorLocation().X,
+		TargetContainer->GetActorLocation().Y,
+		TargetContainer->GetActorLocation().Z);
+
+	// Find LootDropManager component
+	TArray<UActorComponent*> Components;
+	TargetContainer->GetComponents(Components);
+
+	for (UActorComponent* Comp : Components)
+	{
+		if (!Comp) continue;
+
+		FString CompClass = Comp->GetClass()->GetName();
+		if (!CompClass.Contains(TEXT("LootDropManager"), ESearchCase::IgnoreCase))
+		{
+			continue;
+		}
+
+		// Try to cast to C++ LootDropManagerComponent
+		if (ULootDropManagerComponent* LootMgr = Cast<ULootDropManagerComponent>(Comp))
+		{
+			LootMgr->OverrideItem.Item = ItemObj;
+			LootMgr->OverrideItem.MinAmount = MinAmount;
+			LootMgr->OverrideItem.MaxAmount = MaxAmount;
+
+			UE_LOG(LogTemp, Warning, TEXT("[SetContainerLoot] Set OverrideItem.Item = %s"), *ItemObj->GetName());
+
+			// Mark the actor as modified
+			TargetContainer->MarkPackageDirty();
+			return true;
+		}
+
+		// Fallback: use reflection for Blueprint component
+		FProperty* OverrideItemProp = Comp->GetClass()->FindPropertyByName(TEXT("OverrideItem"));
+		if (!OverrideItemProp)
+		{
+			OverrideItemProp = Comp->GetClass()->FindPropertyByName(TEXT("Override Item"));
+		}
+
+		if (OverrideItemProp)
+		{
+			if (FStructProperty* StructProp = CastField<FStructProperty>(OverrideItemProp))
+			{
+				void* StructData = StructProp->ContainerPtrToValuePtr<void>(Comp);
+
+				// Set Item property
+				FProperty* ItemProp = StructProp->Struct->FindPropertyByName(TEXT("Item"));
+				if (ItemProp)
+				{
+					if (FObjectProperty* ObjProp = CastField<FObjectProperty>(ItemProp))
+					{
+						ObjProp->SetObjectPropertyValue(ObjProp->ContainerPtrToValuePtr<void>(StructData), ItemObj);
+					}
+				}
+
+				// Set MinAmount
+				FProperty* MinProp = StructProp->Struct->FindPropertyByName(TEXT("MinAmount"));
+				if (MinProp)
+				{
+					if (FIntProperty* IntProp = CastField<FIntProperty>(MinProp))
+					{
+						IntProp->SetPropertyValue(IntProp->ContainerPtrToValuePtr<void>(StructData), MinAmount);
+					}
+				}
+
+				// Set MaxAmount
+				FProperty* MaxProp = StructProp->Struct->FindPropertyByName(TEXT("MaxAmount"));
+				if (MaxProp)
+				{
+					if (FIntProperty* IntProp = CastField<FIntProperty>(MaxProp))
+					{
+						IntProp->SetPropertyValue(IntProp->ContainerPtrToValuePtr<void>(StructData), MaxAmount);
+					}
+				}
+
+				UE_LOG(LogTemp, Warning, TEXT("[SetContainerLoot] Set via reflection: %s"), *ItemObj->GetName());
+				TargetContainer->MarkPackageDirty();
+				return true;
+			}
+		}
+	}
+
+	UE_LOG(LogTemp, Error, TEXT("[SetContainerLoot] No LootDropManager component found on %s"),
+		*TargetContainer->GetName());
+	return false;
+}
+
+int32 USLFAutomationLibrary::ConfigureDefaultContainerLoot()
+{
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+	UE_LOG(LogTemp, Warning, TEXT("CONFIGURING DEFAULT CONTAINER LOOT"));
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+
+	// Load the demo level
+	const FString LevelPath = TEXT("/Game/SoulslikeFramework/Maps/L_Demo_Showcase");
+
+	FEditorFileUtils::LoadMap(LevelPath, false, true);
+	UE_LOG(LogTemp, Warning, TEXT("Loaded level: %s"), *LevelPath);
+
+	// Define different items for each container
+	struct FContainerConfig
+	{
+		FString ItemPath;
+		int32 MinAmount;
+		int32 MaxAmount;
+	};
+
+	TArray<FContainerConfig> Configs;
+	// Container 0 (first by X location): Katana
+	Configs.Add({TEXT("/Game/SoulslikeFramework/Data/Items/DA_Katana"), 1, 1});
+	// Container 1 (second by X location): Health Flask
+	Configs.Add({TEXT("/Game/SoulslikeFramework/Data/Items/DA_HealthFlask"), 2, 3});
+	// Add more configs as needed for additional containers
+
+	int32 ConfiguredCount = 0;
+
+	for (int32 i = 0; i < Configs.Num(); i++)
+	{
+		if (SetContainerLoot(i, Configs[i].ItemPath, Configs[i].MinAmount, Configs[i].MaxAmount))
+		{
+			ConfiguredCount++;
+		}
+	}
+
+	// Save the level
+	if (ConfiguredCount > 0)
+	{
+		UWorld* World = GEditor ? GEditor->GetEditorWorldContext().World() : nullptr;
+		if (World)
+		{
+			FEditorFileUtils::SaveCurrentLevel();
+			UE_LOG(LogTemp, Warning, TEXT("Saved level with %d configured containers"), ConfiguredCount);
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+	UE_LOG(LogTemp, Warning, TEXT("Configured %d containers with default loot"), ConfiguredCount);
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+
+	return ConfiguredCount;
+}
+
+FString USLFAutomationLibrary::DiagnoseContainerLoot()
+{
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+	UE_LOG(LogTemp, Warning, TEXT("DIAGNOSING CONTAINER LOOT CONFIGURATION"));
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+
+	FString Result;
+
+	// Get editor world
+	UWorld* World = GEditor ? GEditor->GetEditorWorldContext().World() : nullptr;
+	if (!World)
+	{
+		Result = TEXT("ERROR: No editor world - load a level first");
+		UE_LOG(LogTemp, Error, TEXT("%s"), *Result);
+		return Result;
+	}
+
+	// Collect all containers
+	TArray<AActor*> Containers;
+	for (TActorIterator<AActor> It(World); It; ++It)
+	{
+		AActor* Actor = *It;
+		FString ClassName = Actor->GetClass()->GetName();
+		if (ClassName.Contains(TEXT("B_Container")))
+		{
+			Containers.Add(Actor);
+		}
+	}
+
+	// Sort by X location
+	Containers.Sort([](const AActor& A, const AActor& B) {
+		return A.GetActorLocation().X < B.GetActorLocation().X;
+	});
+
+	Result = FString::Printf(TEXT("Found %d containers\n"), Containers.Num());
+	UE_LOG(LogTemp, Warning, TEXT("Found %d containers"), Containers.Num());
+
+	for (int32 i = 0; i < Containers.Num(); i++)
+	{
+		AActor* Container = Containers[i];
+		FVector Loc = Container->GetActorLocation();
+
+		FString ContainerInfo = FString::Printf(TEXT("\n[Container %d] %s at (%.1f, %.1f, %.1f)\n"),
+			i, *Container->GetName(), Loc.X, Loc.Y, Loc.Z);
+		Result += ContainerInfo;
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *ContainerInfo);
+
+		// Find LootDropManager component
+		UAC_LootDropManager* LootMgr = Container->FindComponentByClass<UAC_LootDropManager>();
+		if (LootMgr)
+		{
+			// Check OverrideItem
+			FString OverrideInfo;
+			if (LootMgr->OverrideItem.Item)
+			{
+				OverrideInfo = FString::Printf(TEXT("  OverrideItem: %s (x%d-%d)"),
+					*LootMgr->OverrideItem.Item->GetName(),
+					LootMgr->OverrideItem.MinAmount,
+					LootMgr->OverrideItem.MaxAmount);
+			}
+			else if (LootMgr->OverrideItem.ItemClass.Get())
+			{
+				OverrideInfo = FString::Printf(TEXT("  OverrideItem: ItemClass=%s (x%d-%d)"),
+					*LootMgr->OverrideItem.ItemClass->GetName(),
+					LootMgr->OverrideItem.MinAmount,
+					LootMgr->OverrideItem.MaxAmount);
+			}
+			else
+			{
+				OverrideInfo = TEXT("  OverrideItem: EMPTY (will use LootTable)");
+			}
+			Result += OverrideInfo + TEXT("\n");
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *OverrideInfo);
+
+			// Check LootTable
+			FString TableInfo;
+			if (!LootMgr->LootTable.IsNull())
+			{
+				TableInfo = FString::Printf(TEXT("  LootTable: %s"), *LootMgr->LootTable.GetAssetName());
+			}
+			else
+			{
+				TableInfo = TEXT("  LootTable: NOT SET");
+			}
+			Result += TableInfo + TEXT("\n");
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *TableInfo);
+		}
+		else
+		{
+			// Try via reflection for Blueprint component
+			UActorComponent* BPLootMgr = nullptr;
+			for (UActorComponent* Comp : Container->GetComponents())
+			{
+				if (Comp && Comp->GetName().Contains(TEXT("LootDropManager")))
+				{
+					BPLootMgr = Comp;
+					break;
+				}
+			}
+
+			if (BPLootMgr)
+			{
+				Result += FString::Printf(TEXT("  LootDropManager (BP): %s\n"), *BPLootMgr->GetClass()->GetName());
+				UE_LOG(LogTemp, Warning, TEXT("  LootDropManager (BP): %s"), *BPLootMgr->GetClass()->GetName());
+
+				// Try to get properties via reflection
+				UClass* CompClass = BPLootMgr->GetClass();
+				for (TFieldIterator<FProperty> PropIt(CompClass); PropIt; ++PropIt)
+				{
+					FProperty* Prop = *PropIt;
+					FString PropName = Prop->GetName();
+					if (PropName.Contains(TEXT("LootTable")) || PropName.Contains(TEXT("OverrideItem")))
+					{
+						FString PropInfo = FString::Printf(TEXT("    Property: %s (%s)"), *PropName, *Prop->GetClass()->GetName());
+						Result += PropInfo + TEXT("\n");
+						UE_LOG(LogTemp, Warning, TEXT("%s"), *PropInfo);
+					}
+				}
+			}
+			else
+			{
+				Result += TEXT("  No LootDropManager component found\n");
+				UE_LOG(LogTemp, Warning, TEXT("  No LootDropManager component found"));
+			}
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+	return Result;
+}
+
+bool USLFAutomationLibrary::SetContainerLootTable(int32 ContainerIndex, const FString& LootTablePath, bool bClearOverride)
+{
+	UE_LOG(LogTemp, Warning, TEXT("[SetContainerLootTable] Container %d -> %s (ClearOverride: %s)"),
+		ContainerIndex, *LootTablePath, bClearOverride ? TEXT("true") : TEXT("false"));
+
+	// Get editor world
+	UWorld* World = GEditor ? GEditor->GetEditorWorldContext().World() : nullptr;
+	if (!World)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[SetContainerLootTable] No editor world - load a level first"));
+		return false;
+	}
+
+	// Collect all containers sorted by location
+	TArray<AActor*> Containers;
+	for (TActorIterator<AActor> It(World); It; ++It)
+	{
+		AActor* Actor = *It;
+		FString ClassName = Actor->GetClass()->GetName();
+		if (ClassName.Contains(TEXT("B_Container")))
+		{
+			Containers.Add(Actor);
+		}
+	}
+
+	// Sort by X location
+	Containers.Sort([](const AActor& A, const AActor& B) {
+		return A.GetActorLocation().X < B.GetActorLocation().X;
+	});
+
+	if (ContainerIndex < 0 || ContainerIndex >= Containers.Num())
+	{
+		UE_LOG(LogTemp, Error, TEXT("[SetContainerLootTable] Invalid index %d (have %d containers)"),
+			ContainerIndex, Containers.Num());
+		return false;
+	}
+
+	AActor* TargetContainer = Containers[ContainerIndex];
+
+	// First try C++ type
+	UAC_LootDropManager* LootMgr = TargetContainer->FindComponentByClass<UAC_LootDropManager>();
+	if (LootMgr)
+	{
+		// Clear OverrideItem if requested
+		if (bClearOverride)
+		{
+			LootMgr->OverrideItem.Item = nullptr;
+			LootMgr->OverrideItem.ItemClass = nullptr;
+			LootMgr->OverrideItem.MinAmount = 1;
+			LootMgr->OverrideItem.MaxAmount = 1;
+			UE_LOG(LogTemp, Warning, TEXT("[SetContainerLootTable] Cleared OverrideItem"));
+		}
+
+		// Set LootTable
+		LootMgr->LootTable = TSoftObjectPtr<UDataTable>(FSoftObjectPath(LootTablePath));
+		UE_LOG(LogTemp, Warning, TEXT("[SetContainerLootTable] Set LootTable = %s"), *LootTablePath);
+
+		TargetContainer->MarkPackageDirty();
+		return true;
+	}
+
+	// Fallback: Find by name and use reflection for Blueprint components
+	UActorComponent* BPLootMgr = nullptr;
+	for (UActorComponent* Comp : TargetContainer->GetComponents())
+	{
+		if (Comp && Comp->GetName().Contains(TEXT("LootDropManager")))
+		{
+			BPLootMgr = Comp;
+			break;
+		}
+	}
+
+	if (BPLootMgr)
+	{
+		UClass* CompClass = BPLootMgr->GetClass();
+		UE_LOG(LogTemp, Warning, TEXT("[SetContainerLootTable] Found BP component: %s"), *CompClass->GetName());
+
+		bool bSuccess = false;
+
+		// Clear OverrideItem via reflection
+		if (bClearOverride)
+		{
+			FStructProperty* OverrideProp = CastField<FStructProperty>(CompClass->FindPropertyByName(TEXT("OverrideItem")));
+			if (OverrideProp)
+			{
+				void* OverrideData = OverrideProp->ContainerPtrToValuePtr<void>(BPLootMgr);
+				// Find Item property within struct and set to nullptr
+				FObjectPropertyBase* ItemProp = CastField<FObjectPropertyBase>(OverrideProp->Struct->FindPropertyByName(TEXT("Item")));
+				if (ItemProp)
+				{
+					ItemProp->SetObjectPropertyValue(ItemProp->ContainerPtrToValuePtr<void>(OverrideData), nullptr);
+					UE_LOG(LogTemp, Warning, TEXT("[SetContainerLootTable] Cleared OverrideItem.Item via reflection"));
+				}
+			}
+		}
+
+		// Set LootTable via reflection
+		FSoftObjectProperty* TableProp = CastField<FSoftObjectProperty>(CompClass->FindPropertyByName(TEXT("LootTable")));
+		if (TableProp)
+		{
+			void* PropData = TableProp->ContainerPtrToValuePtr<void>(BPLootMgr);
+			TSoftObjectPtr<UDataTable>* SoftPtr = reinterpret_cast<TSoftObjectPtr<UDataTable>*>(PropData);
+			*SoftPtr = TSoftObjectPtr<UDataTable>(FSoftObjectPath(LootTablePath));
+			UE_LOG(LogTemp, Warning, TEXT("[SetContainerLootTable] Set LootTable = %s via reflection"), *LootTablePath);
+			bSuccess = true;
+		}
+
+		if (bSuccess)
+		{
+			TargetContainer->MarkPackageDirty();
+			return true;
+		}
+	}
+
+	UE_LOG(LogTemp, Error, TEXT("[SetContainerLootTable] No LootDropManager found on %s"),
+		*TargetContainer->GetName());
+	return false;
+}
+
+int32 USLFAutomationLibrary::ConfigureContainersToUseLootTable()
+{
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+	UE_LOG(LogTemp, Warning, TEXT("CONFIGURING CONTAINERS TO USE LOOT TABLE"));
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+
+	// Default loot table path - FSoftObjectPath format requires AssetPath.AssetName
+	const FString DefaultLootTable = TEXT("/Game/SoulslikeFramework/Data/_Datatables/DT_ExampleChestTier.DT_ExampleChestTier");
+
+	// Get editor world
+	UWorld* World = GEditor ? GEditor->GetEditorWorldContext().World() : nullptr;
+	if (!World)
+	{
+		UE_LOG(LogTemp, Error, TEXT("No editor world - load a level first"));
+		return 0;
+	}
+
+	// Collect all containers
+	TArray<AActor*> Containers;
+	for (TActorIterator<AActor> It(World); It; ++It)
+	{
+		AActor* Actor = *It;
+		FString ClassName = Actor->GetClass()->GetName();
+		if (ClassName.Contains(TEXT("B_Container")))
+		{
+			Containers.Add(Actor);
+		}
+	}
+
+	// Sort by X location
+	Containers.Sort([](const AActor& A, const AActor& B) {
+		return A.GetActorLocation().X < B.GetActorLocation().X;
+	});
+
+	UE_LOG(LogTemp, Warning, TEXT("Found %d containers"), Containers.Num());
+
+	int32 ConfiguredCount = 0;
+	for (int32 i = 0; i < Containers.Num(); i++)
+	{
+		if (SetContainerLootTable(i, DefaultLootTable, true))
+		{
+			ConfiguredCount++;
+		}
+	}
+
+	// Save the level
+	if (ConfiguredCount > 0)
+	{
+		FEditorFileUtils::SaveCurrentLevel();
+		UE_LOG(LogTemp, Warning, TEXT("Saved level with %d configured containers"), ConfiguredCount);
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+	UE_LOG(LogTemp, Warning, TEXT("Configured %d containers to use LootTable: %s"), ConfiguredCount, *DefaultLootTable);
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+
+	return ConfiguredCount;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// DATATABLE MIGRATION - Blueprint struct to C++ struct
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// Helper: Strip GUID suffix from Blueprint property name
+// "Item_10_589DC6564563A35CDB3A35BAEAD8377D" -> "Item"
+static FString StripGuidSuffix(const FString& PropertyName)
+{
+	// Look for pattern: Name_Number_GUID
+	int32 FirstUnderscore = INDEX_NONE;
+	if (PropertyName.FindChar('_', FirstUnderscore))
+	{
+		// Check if there's another underscore after (indicates GUID pattern)
+		FString AfterFirst = PropertyName.Mid(FirstUnderscore + 1);
+		int32 SecondUnderscore = INDEX_NONE;
+		if (AfterFirst.FindChar('_', SecondUnderscore))
+		{
+			// Check if what's after the second underscore looks like a GUID (32 hex chars)
+			FString PossibleGuid = AfterFirst.Mid(SecondUnderscore + 1);
+			if (PossibleGuid.Len() == 32)
+			{
+				// This looks like a GUID-suffixed property - return base name
+				return PropertyName.Left(FirstUnderscore);
+			}
+		}
+	}
+	return PropertyName;
+}
+
+FString USLFAutomationLibrary::MigrateWeightedLootDataTable(const FString& SourceTablePath)
+{
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+	UE_LOG(LogTemp, Warning, TEXT("MIGRATING DATATABLE: Blueprint struct -> C++ struct"));
+	UE_LOG(LogTemp, Warning, TEXT("Source: %s"), *SourceTablePath);
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+
+	// Load the source DataTable
+	UDataTable* SourceTable = LoadObject<UDataTable>(nullptr, *SourceTablePath);
+	if (!SourceTable)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to load DataTable: %s"), *SourceTablePath);
+		return TEXT("{\"success\": false, \"error\": \"Failed to load source DataTable\"}");
+	}
+
+	// Get the row struct (this is the Blueprint struct FWeightedLoot)
+	const UScriptStruct* RowStruct = SourceTable->GetRowStruct();
+	if (!RowStruct)
+	{
+		UE_LOG(LogTemp, Error, TEXT("DataTable has no row struct"));
+		return TEXT("{\"success\": false, \"error\": \"No row struct\"}");
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Row Struct: %s"), *RowStruct->GetPathName());
+
+	// Get all row names
+	TArray<FName> RowNames = SourceTable->GetRowNames();
+	UE_LOG(LogTemp, Warning, TEXT("Row Count: %d"), RowNames.Num());
+
+	if (RowNames.Num() == 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("DataTable is empty"));
+		return TEXT("{\"success\": true, \"rows\": 0, \"message\": \"Table is empty\"}");
+	}
+
+	// Extract data from Blueprint struct rows
+	TArray<TPair<FName, FSLFWeightedLoot>> ExtractedRows;
+
+	for (const FName& RowName : RowNames)
+	{
+		// Get raw row data
+		const uint8* RowData = SourceTable->FindRowUnchecked(RowName);
+		if (!RowData)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("  Row %s: no data"), *RowName.ToString());
+			continue;
+		}
+
+		FSLFWeightedLoot ExtractedLoot;
+		bool bFoundWeight = false;
+		bool bFoundItem = false;
+
+		// Iterate through properties of the Blueprint struct
+		for (TFieldIterator<FProperty> PropIt(RowStruct); PropIt; ++PropIt)
+		{
+			FProperty* Prop = *PropIt;
+			FString PropName = Prop->GetName();
+			FString BaseName = StripGuidSuffix(PropName);
+
+			UE_LOG(LogTemp, Log, TEXT("  Property: %s -> BaseName: %s"), *PropName, *BaseName);
+
+			if (BaseName.Equals(TEXT("Weight"), ESearchCase::IgnoreCase))
+			{
+				// Extract Weight (double)
+				if (FDoubleProperty* DoubleProp = CastField<FDoubleProperty>(Prop))
+				{
+					ExtractedLoot.Weight = DoubleProp->GetPropertyValue_InContainer(RowData);
+					bFoundWeight = true;
+					UE_LOG(LogTemp, Warning, TEXT("  Row %s: Weight = %.2f"), *RowName.ToString(), ExtractedLoot.Weight);
+				}
+				else if (FFloatProperty* FloatProp = CastField<FFloatProperty>(Prop))
+				{
+					ExtractedLoot.Weight = (double)FloatProp->GetPropertyValue_InContainer(RowData);
+					bFoundWeight = true;
+					UE_LOG(LogTemp, Warning, TEXT("  Row %s: Weight = %.2f (from float)"), *RowName.ToString(), ExtractedLoot.Weight);
+				}
+			}
+			else if (BaseName.Equals(TEXT("Item"), ESearchCase::IgnoreCase))
+			{
+				// Extract Item (nested struct FLootItem -> FSLFLootItem)
+				if (FStructProperty* StructProp = CastField<FStructProperty>(Prop))
+				{
+					const uint8* ItemData = Prop->ContainerPtrToValuePtr<uint8>(RowData);
+					const UScriptStruct* ItemStruct = StructProp->Struct;
+
+					// Extract nested struct properties
+					for (TFieldIterator<FProperty> ItemPropIt(ItemStruct); ItemPropIt; ++ItemPropIt)
+					{
+						FProperty* ItemProp = *ItemPropIt;
+						FString ItemPropName = ItemProp->GetName();
+						FString ItemBaseName = StripGuidSuffix(ItemPropName);
+
+						UE_LOG(LogTemp, Log, TEXT("    Item Property: %s -> BaseName: %s"), *ItemPropName, *ItemBaseName);
+
+						if (ItemBaseName.Equals(TEXT("ItemClass"), ESearchCase::IgnoreCase))
+						{
+							if (FClassProperty* ClassProp = CastField<FClassProperty>(ItemProp))
+							{
+								UClass* ItemClass = Cast<UClass>(ClassProp->GetObjectPropertyValue_InContainer(ItemData));
+								ExtractedLoot.Item.ItemClass = ItemClass;
+								if (ItemClass)
+								{
+									UE_LOG(LogTemp, Warning, TEXT("  Row %s: ItemClass = %s"), *RowName.ToString(), *ItemClass->GetName());
+								}
+							}
+						}
+						else if (ItemBaseName.Equals(TEXT("Item"), ESearchCase::IgnoreCase))
+						{
+							if (FObjectPropertyBase* ObjProp = CastField<FObjectPropertyBase>(ItemProp))
+							{
+								UObject* ItemObj = ObjProp->GetObjectPropertyValue_InContainer(ItemData);
+								ExtractedLoot.Item.Item = ItemObj;
+								if (ItemObj)
+								{
+									UE_LOG(LogTemp, Warning, TEXT("  Row %s: Item = %s"), *RowName.ToString(), *ItemObj->GetName());
+								}
+							}
+							else if (FSoftObjectProperty* SoftProp = CastField<FSoftObjectProperty>(ItemProp))
+							{
+								FSoftObjectPtr SoftPtr = SoftProp->GetPropertyValue_InContainer(ItemData);
+								ExtractedLoot.Item.Item = SoftPtr.Get();
+								if (ExtractedLoot.Item.Item)
+								{
+									UE_LOG(LogTemp, Warning, TEXT("  Row %s: Item = %s (from soft ptr)"), *RowName.ToString(), *ExtractedLoot.Item.Item->GetName());
+								}
+							}
+						}
+						else if (ItemBaseName.Equals(TEXT("MinAmount"), ESearchCase::IgnoreCase))
+						{
+							if (FIntProperty* IntProp = CastField<FIntProperty>(ItemProp))
+							{
+								ExtractedLoot.Item.MinAmount = IntProp->GetPropertyValue_InContainer(ItemData);
+							}
+						}
+						else if (ItemBaseName.Equals(TEXT("MaxAmount"), ESearchCase::IgnoreCase))
+						{
+							if (FIntProperty* IntProp = CastField<FIntProperty>(ItemProp))
+							{
+								ExtractedLoot.Item.MaxAmount = IntProp->GetPropertyValue_InContainer(ItemData);
+							}
+						}
+					}
+					bFoundItem = true;
+				}
+			}
+		}
+
+		if (bFoundWeight || bFoundItem)
+		{
+			ExtractedRows.Add(TPair<FName, FSLFWeightedLoot>(RowName, ExtractedLoot));
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Extracted %d rows"), ExtractedRows.Num());
+
+	if (ExtractedRows.Num() == 0)
+	{
+		return TEXT("{\"success\": false, \"error\": \"Failed to extract any data from rows\"}");
+	}
+
+	// Create new DataTable with C++ struct
+	// We'll modify the existing table's row struct and repopulate it
+
+	// Get the C++ struct
+	UScriptStruct* CppStruct = FSLFWeightedLoot::StaticStruct();
+	if (!CppStruct)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to get FSLFWeightedLoot static struct"));
+		return TEXT("{\"success\": false, \"error\": \"Failed to get C++ struct\"}");
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("C++ Struct: %s"), *CppStruct->GetPathName());
+
+	// Clear existing rows from source table
+	SourceTable->EmptyTable();
+
+	// Change the row struct to C++
+	// Note: This is a private property, but we can access it via reflection for migration
+	FProperty* RowStructProp = UDataTable::StaticClass()->FindPropertyByName(TEXT("RowStruct"));
+	if (RowStructProp)
+	{
+		FObjectPropertyBase* ObjProp = CastField<FObjectPropertyBase>(RowStructProp);
+		if (ObjProp)
+		{
+			ObjProp->SetObjectPropertyValue_InContainer(SourceTable, CppStruct);
+			UE_LOG(LogTemp, Warning, TEXT("Set RowStruct to FSLFWeightedLoot"));
+		}
+	}
+
+	// Add rows with extracted data
+	for (const TPair<FName, FSLFWeightedLoot>& Row : ExtractedRows)
+	{
+		// AddRow requires the struct data
+		SourceTable->AddRow(Row.Key, Row.Value);
+		UE_LOG(LogTemp, Warning, TEXT("Added row: %s (Weight=%.2f, Item=%s)"),
+			*Row.Key.ToString(),
+			Row.Value.Weight,
+			Row.Value.Item.Item ? *Row.Value.Item.Item->GetName() : TEXT("null"));
+	}
+
+	// Mark dirty and save
+	SourceTable->MarkPackageDirty();
+
+	// Save the asset
+	FString PackagePath = SourceTable->GetOutermost()->GetPathName();
+	UPackage* Package = SourceTable->GetOutermost();
+	FString PackageFilename = FPackageName::LongPackageNameToFilename(PackagePath, FPackageName::GetAssetPackageExtension());
+
+	bool bSaved = UPackage::SavePackage(Package, SourceTable, *PackageFilename, FSavePackageArgs());
+
+	if (bSaved)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Saved migrated DataTable: %s"), *PackageFilename);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to save DataTable"));
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+	UE_LOG(LogTemp, Warning, TEXT("MIGRATION COMPLETE: %d rows migrated"), ExtractedRows.Num());
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+
+	return FString::Printf(TEXT("{\"success\": %s, \"rows\": %d}"),
+		bSaved ? TEXT("true") : TEXT("false"),
+		ExtractedRows.Num());
 }
 
 #endif // WITH_EDITOR

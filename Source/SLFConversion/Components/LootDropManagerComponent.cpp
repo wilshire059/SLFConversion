@@ -96,7 +96,12 @@ void ULootDropManagerComponent::GetRandomItemFromTable_Implementation(const UDat
 
 void ULootDropManagerComponent::PickItem_Implementation()
 {
-	UE_LOG(LogTemp, Log, TEXT("[LootDropManager] PickItem"));
+	UE_LOG(LogTemp, Warning, TEXT("[LootDropManager] PickItem called"));
+	UE_LOG(LogTemp, Warning, TEXT("[LootDropManager] OverrideItem.ItemClass: %s, OverrideItem.Item: %s"),
+		OverrideItem.ItemClass ? *OverrideItem.ItemClass->GetName() : TEXT("NULL"),
+		OverrideItem.Item ? *OverrideItem.Item->GetName() : TEXT("NULL"));
+	UE_LOG(LogTemp, Warning, TEXT("[LootDropManager] LootTable: %s"),
+		LootTable.IsNull() ? TEXT("NULL") : *LootTable.ToString());
 
 	FSLFLootItem SelectedItem;
 
@@ -104,15 +109,22 @@ void ULootDropManagerComponent::PickItem_Implementation()
 	if (IsOverrideItemValid())
 	{
 		SelectedItem = OverrideItem;
-		UE_LOG(LogTemp, Log, TEXT("[LootDropManager] Using override item"));
+		UE_LOG(LogTemp, Warning, TEXT("[LootDropManager] Using override item"));
 	}
-	else if (!LootTable.IsNull()) // TSoftObjectPtr has IsNull()
+	else if (OverrideItem.Item != nullptr)
 	{
-		// Load the data table synchronously (or async if needed)
+		// Override has Item but not ItemClass - still use it
+		SelectedItem = OverrideItem;
+		UE_LOG(LogTemp, Warning, TEXT("[LootDropManager] Using override item (has Item but no ItemClass)"));
+	}
+	else if (!LootTable.IsNull())
+	{
+		// Load the data table synchronously
 		UDataTable* LoadedTable = LootTable.LoadSynchronous();
 		if (LoadedTable)
 		{
 			GetRandomItemFromTable(LoadedTable, SelectedItem);
+			UE_LOG(LogTemp, Warning, TEXT("[LootDropManager] Got item from table"));
 		}
 		else
 		{
@@ -122,14 +134,24 @@ void ULootDropManagerComponent::PickItem_Implementation()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[LootDropManager] No loot table or override set"));
+		UE_LOG(LogTemp, Warning, TEXT("[LootDropManager] No loot table or override set - nothing to spawn!"));
 		return;
 	}
 
-	// Broadcast the selected item
-	if (SelectedItem.ItemClass != nullptr)
+	// Log selected item details
+	UE_LOG(LogTemp, Warning, TEXT("[LootDropManager] SelectedItem - ItemClass: %s, Item: %s"),
+		SelectedItem.ItemClass ? *SelectedItem.ItemClass->GetName() : TEXT("NULL"),
+		SelectedItem.Item ? *SelectedItem.Item->GetName() : TEXT("NULL"));
+
+	// Broadcast the selected item - broadcast if we have EITHER ItemClass OR Item
+	if (SelectedItem.ItemClass != nullptr || SelectedItem.Item != nullptr)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[LootDropManager] Broadcasting OnItemReadyForSpawn"));
 		OnItemReadyForSpawn.Broadcast(SelectedItem);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[LootDropManager] NOT broadcasting - no ItemClass and no Item"));
 	}
 }
 
