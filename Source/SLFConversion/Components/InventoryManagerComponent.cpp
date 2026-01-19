@@ -344,6 +344,9 @@ void UInventoryManagerComponent::AddItemAtSlotToStorage_Implementation(int32 Slo
 	NewItem.Amount = Amount;
 	NewItem.UniqueId = FGuid::NewGuid();
 	StoredItems.Add(SlotIndex, NewItem);
+
+	// Broadcast inventory updated so UI refreshes (storage shares the same delegate)
+	OnInventoryUpdated.Broadcast();
 }
 
 bool UInventoryManagerComponent::AddItemToStorage_Implementation(UDataAsset* ItemAsset, int32 Amount)
@@ -364,6 +367,9 @@ void UInventoryManagerComponent::RemoveItemAtStorageSlot_Implementation(int32 Sl
 	{
 		if (Item->Amount <= Amount) StoredItems.Remove(SlotIndex);
 		else Item->Amount -= Amount;
+
+		// Broadcast inventory updated so UI refreshes (storage shares the same delegate)
+		OnInventoryUpdated.Broadcast();
 	}
 }
 
@@ -519,6 +525,17 @@ TArray<FSLFInventoryItem> UInventoryManagerComponent::GetAllItems_Implementation
 {
 	TArray<FSLFInventoryItem> Result;
 	for (const auto& Pair : Items) Result.Add(Pair.Value);
+	return Result;
+}
+
+TArray<FSLFInventoryItem> UInventoryManagerComponent::GetStoredItems_Implementation()
+{
+	TArray<FSLFInventoryItem> Result;
+	for (const auto& Pair : StoredItems)
+	{
+		Result.Add(Pair.Value);
+	}
+	UE_LOG(LogTemp, Log, TEXT("[InventoryManager] GetStoredItems - Returning %d stored items"), Result.Num());
 	return Result;
 }
 

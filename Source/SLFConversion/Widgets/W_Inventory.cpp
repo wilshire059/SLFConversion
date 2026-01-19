@@ -16,6 +16,8 @@
 #include "Components/Image.h"
 #include "Components/HorizontalBox.h"
 #include "Components/WidgetSwitcher.h"
+#include "Components/Overlay.h"
+#include "Components/SizeBox.h"
 #include "Components/InventoryManagerComponent.h"
 #include "Blueprint/WidgetTree.h"
 #include "Blueprint/UserWidget.h"
@@ -34,7 +36,22 @@ UW_Inventory::UW_Inventory(const FObjectInitializer& ObjectInitializer)
 	, StorageMode(false)
 	, CategoryNavigationIndex(0)
 	, ItemNavigationIndex(0)
+	, bFocusedOnStoragePanel(false)
 {
+}
+
+bool UW_Inventory::IsActionMenuBlockingNavigation() const
+{
+	// Check if either action widget is visible AND in amount selection mode
+	if (W_InventoryAction && W_InventoryAction->IsVisible() && W_InventoryAction->IsInAmountSelectionMode())
+	{
+		return true;
+	}
+	if (W_StorageAction && W_StorageAction->IsVisible() && W_StorageAction->IsInAmountSelectionMode())
+	{
+		return true;
+	}
+	return false;
 }
 
 void UW_Inventory::NativeConstruct()
@@ -52,6 +69,13 @@ void UW_Inventory::NativeConstruct()
 
 	// Cache widget references (gets InventoryComponent from PlayerController)
 	CacheWidgetReferences();
+
+	// Bind to OnInventoryUpdated so we can refresh UI after store/retrieve operations
+	if (InventoryComponent)
+	{
+		InventoryComponent->OnInventoryUpdated.AddUniqueDynamic(this, &UW_Inventory::HandleInventoryUpdated);
+		UE_LOG(LogTemp, Log, TEXT("[W_Inventory] Bound to InventoryComponent->OnInventoryUpdated"));
+	}
 
 	// Create category entries dynamically (Weapons, Shields, Armor, Tools, etc.)
 	CreateCategoryEntries();
@@ -89,6 +113,12 @@ void UW_Inventory::NativeDestruct()
 {
 	// Unbind visibility event
 	OnVisibilityChanged.RemoveAll(this);
+
+	// Unbind inventory update event
+	if (InventoryComponent)
+	{
+		InventoryComponent->OnInventoryUpdated.RemoveAll(this);
+	}
 
 	Super::NativeDestruct();
 
@@ -258,7 +288,7 @@ void UW_Inventory::CacheWidgetReferences()
 			CategoryEntry->SetupCategoryIcon();
 
 			// Bind OnSelected event
-			CategoryEntry->OnSelected.AddDynamic(this, &UW_Inventory::EventOnCategorySelected);
+			CategoryEntry->OnSelected.AddUniqueDynamic(this, &UW_Inventory::EventOnCategorySelected);
 
 			UE_LOG(LogTemp, Log, TEXT("[W_Inventory] Found and bound AllItemsCategoryEntry with icon"));
 		}
@@ -277,7 +307,7 @@ void UW_Inventory::CacheWidgetReferences()
 				if (!CategoryEntries.Contains(CategoryEntry))
 				{
 					CategoryEntries.Add(CategoryEntry);
-					CategoryEntry->OnSelected.AddDynamic(this, &UW_Inventory::EventOnCategorySelected);
+					CategoryEntry->OnSelected.AddUniqueDynamic(this, &UW_Inventory::EventOnCategorySelected);
 					UE_LOG(LogTemp, Log, TEXT("[W_Inventory] Found and bound CategoryEntry: %s"), *Child->GetName());
 				}
 			}
@@ -496,6 +526,11 @@ void UW_Inventory::CreateStorageSlots()
 		NewSlot->CraftingRelated = false;
 		NewSlot->EquipmentRelated = false;
 
+		// bp_only: Storage slots use a darker color than inventory slots
+		// Inventory color: (R=0.105882, G=0.090196, B=0.074510, A=0.901961) - brownish
+		// Storage color: (R=0.039216, G=0.043137, B=0.066667, A=0.901961) - darker bluish
+		NewSlot->SlotColor = FLinearColor(0.039216f, 0.043137f, 0.066667f, 0.901961f);
+
 		int32 Row = Index / SlotsPerRow;
 		int32 Column = Index % SlotsPerRow;
 
@@ -511,6 +546,61 @@ void UW_Inventory::CreateStorageSlots()
 	}
 
 	UE_LOG(LogTemp, Log, TEXT("[W_Inventory] Created %d storage slots"), StorageSlots.Num());
+}
+
+/**
+ * PopulateStorageSlotsWithItems - Populate storage slots with items from StoredItems map
+ * This is the CRITICAL function that was missing - storage slots were created but never populated!
+ */
+void UW_Inventory::PopulateStorageSlotsWithItems()
+{
+	if (!InventoryComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_Inventory] PopulateStorageSlotsWithItems - No InventoryComponent!"));
+		return;
+	}
+
+	// Clear storage slots first
+	for (UW_InventorySlot* StorageSlot : StorageSlots)
+	{
+		if (StorageSlot && StorageSlot->IsOccupied)
+		{
+			StorageSlot->EventClearSlot(false);
+		}
+	}
+
+	// Get stored items using the new GetStoredItems() function
+	TArray<FSLFInventoryItem> StoredItemsList = InventoryComponent->GetStoredItems();
+
+	UE_LOG(LogTemp, Log, TEXT("[W_Inventory] PopulateStorageSlotsWithItems - %d stored items, %d slots"),
+		StoredItemsList.Num(), StorageSlots.Num());
+
+	int32 SlotIndex = 0;
+	for (const FSLFInventoryItem& StoredItem : StoredItemsList)
+	{
+		if (SlotIndex >= StorageSlots.Num())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[W_Inventory] Not enough storage slots for all stored items!"));
+			break;
+		}
+
+		UPDA_Item* Item = Cast<UPDA_Item>(StoredItem.ItemAsset);
+		if (!Item)
+		{
+			continue;
+		}
+
+		if (StorageSlots[SlotIndex])
+		{
+			int32 ItemCount = StoredItem.Amount > 0 ? StoredItem.Amount : 1;
+			StorageSlots[SlotIndex]->EventOccupySlot(Item, ItemCount);
+			UE_LOG(LogTemp, Log, TEXT("[W_Inventory] Populated storage slot %d with %s x%d"),
+				SlotIndex, *Item->GetName(), ItemCount);
+		}
+		SlotIndex++;
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[W_Inventory] PopulateStorageSlotsWithItems complete - populated %d slots"), SlotIndex);
 }
 
 /**
@@ -779,25 +869,77 @@ FVector2D UW_Inventory::GetTranslationForActionMenu_Implementation(UScrollBox* T
 
 /**
  * SetStorageMode - Toggle between inventory and storage view
+ * Per bp_only: Shows StorageOverlay when in storage mode, keeps inventory visible
+ * Both sections are shown side-by-side in storage mode with narrower widths
  */
 void UW_Inventory::SetStorageMode_Implementation(bool InStorageMode)
 {
 	StorageMode = InStorageMode;
 
-	// Reset navigation index when switching modes
+	// Reset navigation index and focus when switching modes
+	// In storage mode, start focused on inventory panel (left side)
 	ItemNavigationIndex = 0;
+	bFocusedOnStoragePanel = false;
+
+	// Update title text (Sort Chest vs Inventory)
+	if (UTextBlock* TitleText = Cast<UTextBlock>(GetWidgetFromName(TEXT("TitleText"))))
+	{
+		TitleText->SetText(StorageMode ? FText::FromString(TEXT("Sort Chest")) : FText::FromString(TEXT("Inventory")));
+	}
+
+	// CRITICAL: Toggle StorageOverlay visibility (per bp_only SetStorageMode graph)
+	// When StorageMode=true: StorageOverlay is Visible
+	// When StorageMode=false: StorageOverlay is Collapsed
+	if (StorageOverlay)
+	{
+		StorageOverlay->SetVisibility(StorageMode ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+		UE_LOG(LogTemp, Log, TEXT("[W_Inventory] StorageOverlay visibility set to: %s"),
+			StorageMode ? TEXT("Visible") : TEXT("Collapsed"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_Inventory] StorageOverlay is NULL - cannot toggle visibility!"));
+	}
+
+	// Set width overrides for sizers (per bp_only: 700 when not storage, 630 when storage)
+	// This makes sections narrower when both are visible
+	float WidthOverride = StorageMode ? 630.0f : 700.0f;
+	if (InventorySizer)
+	{
+		InventorySizer->SetWidthOverride(WidthOverride);
+	}
+	if (StorageSizer)
+	{
+		StorageSizer->SetWidthOverride(WidthOverride);
+	}
+
+	// Create storage slots if they don't exist yet and we're entering storage mode
+	if (StorageMode && StorageSlots.Num() == 0)
+	{
+		CreateStorageSlots();
+	}
+
+	// Populate storage slots with stored items when entering storage mode
+	if (StorageMode)
+	{
+		PopulateStorageSlotsWithItems();
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("UW_Inventory::SetStorageMode - StorageMode: %s, StorageOverlay: %s, Width: %.0f"),
+		StorageMode ? TEXT("true") : TEXT("false"),
+		StorageOverlay ? (StorageMode ? TEXT("Visible") : TEXT("Collapsed")) : TEXT("NULL"),
+		WidthOverride);
 
 	// Rebuild occupied slots for the new mode
 	ReinitOccupiedInventorySlots();
 
-	// Select first slot if available
-	TArray<UW_InventorySlot*>& ActiveSlots = StorageMode ? StorageSlots : InventorySlots;
+	// Select first slot in the appropriate section
+	// When in storage mode, start with inventory slots since those are where items to transfer are
+	TArray<UW_InventorySlot*>& ActiveSlots = InventorySlots;  // Always start with inventory
 	if (ActiveSlots.Num() > 0)
 	{
 		EventOnSlotSelected(true, ActiveSlots[0]);
 	}
-
-	UE_LOG(LogTemp, Log, TEXT("UW_Inventory::SetStorageMode - StorageMode: %s"), StorageMode ? TEXT("true") : TEXT("false"));
 }
 
 /**
@@ -935,12 +1077,31 @@ void UW_Inventory::ResetCategorization_Implementation()
 
 /**
  * EventNavigateUp - Move selection up in grid
+ *
+ * bp_only Logic: If action menu is visible, forward navigation to it.
+ * Otherwise, navigate inventory slots.
  */
 void UW_Inventory::EventNavigateUp_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_Inventory::EventNavigateUp"));
 
-	TArray<UW_InventorySlot*>& ActiveSlots = StorageMode ? StorageSlots : InventorySlots;
+	// Check if action menu is visible - forward navigation to it
+	if (W_InventoryAction && W_InventoryAction->IsVisible())
+	{
+		UE_LOG(LogTemp, Log, TEXT("  W_InventoryAction is visible - forwarding to EventNavigateActionUp"));
+		W_InventoryAction->EventNavigateActionUp();
+		return;
+	}
+	if (W_StorageAction && W_StorageAction->IsVisible())
+	{
+		UE_LOG(LogTemp, Log, TEXT("  W_StorageAction is visible - forwarding to EventNavigateActionUp"));
+		W_StorageAction->EventNavigateActionUp();
+		return;
+	}
+
+	// In storage mode, use bFocusedOnStoragePanel to determine which panel is active
+	// Otherwise, InventorySlots is always the active panel
+	TArray<UW_InventorySlot*>& ActiveSlots = (StorageMode && bFocusedOnStoragePanel) ? StorageSlots : InventorySlots;
 
 	if (ActiveSlots.Num() == 0)
 	{
@@ -977,12 +1138,30 @@ void UW_Inventory::EventNavigateUp_Implementation()
 
 /**
  * EventNavigateDown - Move selection down in grid
+ *
+ * bp_only Logic: If action menu is visible, forward navigation to it.
+ * Otherwise, navigate inventory slots.
  */
 void UW_Inventory::EventNavigateDown_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_Inventory::EventNavigateDown"));
 
-	TArray<UW_InventorySlot*>& ActiveSlots = StorageMode ? StorageSlots : InventorySlots;
+	// Check if action menu is visible - forward navigation to it
+	if (W_InventoryAction && W_InventoryAction->IsVisible())
+	{
+		UE_LOG(LogTemp, Log, TEXT("  W_InventoryAction is visible - forwarding to EventNavigateActionDown"));
+		W_InventoryAction->EventNavigateActionDown();
+		return;
+	}
+	if (W_StorageAction && W_StorageAction->IsVisible())
+	{
+		UE_LOG(LogTemp, Log, TEXT("  W_StorageAction is visible - forwarding to EventNavigateActionDown"));
+		W_StorageAction->EventNavigateActionDown();
+		return;
+	}
+
+	// In storage mode, use bFocusedOnStoragePanel to determine which panel is active
+	TArray<UW_InventorySlot*>& ActiveSlots = (StorageMode && bFocusedOnStoragePanel) ? StorageSlots : InventorySlots;
 
 	if (ActiveSlots.Num() == 0)
 	{
@@ -1018,12 +1197,32 @@ void UW_Inventory::EventNavigateDown_Implementation()
 
 /**
  * EventNavigateLeft - Move selection left in grid
+ *
+ * bp_only Logic: If action menu is visible, forward navigation to it.
+ * Otherwise, navigate inventory slots.
  */
 void UW_Inventory::EventNavigateLeft_Implementation()
 {
-	UE_LOG(LogTemp, Log, TEXT("UW_Inventory::EventNavigateLeft"));
+	UE_LOG(LogTemp, Log, TEXT("UW_Inventory::EventNavigateLeft - StorageMode: %s, FocusedOnStorage: %s"),
+		StorageMode ? TEXT("true") : TEXT("false"),
+		bFocusedOnStoragePanel ? TEXT("true") : TEXT("false"));
 
-	TArray<UW_InventorySlot*>& ActiveSlots = StorageMode ? StorageSlots : InventorySlots;
+	// Check if action menu is visible - forward horizontal navigation to it
+	if (W_InventoryAction && W_InventoryAction->IsVisible())
+	{
+		UE_LOG(LogTemp, Log, TEXT("  W_InventoryAction is visible - forwarding to EventNavigateActionConfirmHorizontal"));
+		W_InventoryAction->EventNavigateActionConfirmHorizontal();
+		return;
+	}
+	if (W_StorageAction && W_StorageAction->IsVisible())
+	{
+		UE_LOG(LogTemp, Log, TEXT("  W_StorageAction is visible - forwarding to EventNavigateActionConfirmHorizontal"));
+		W_StorageAction->EventNavigateActionConfirmHorizontal();
+		return;
+	}
+
+	// In storage mode, use bFocusedOnStoragePanel to determine which panel is active
+	TArray<UW_InventorySlot*>& ActiveSlots = (StorageMode && bFocusedOnStoragePanel) ? StorageSlots : InventorySlots;
 
 	if (ActiveSlots.Num() == 0)
 	{
@@ -1032,8 +1231,46 @@ void UW_Inventory::EventNavigateLeft_Implementation()
 
 	int32 SlotsPerRow = InventoryComponent ? InventoryComponent->SlotsPerRow : 8;
 
-	// Don't wrap to previous row
+	// Check if at left edge of row
 	int32 CurrentRow = ItemNavigationIndex / SlotsPerRow;
+	int32 ColumnInRow = ItemNavigationIndex % SlotsPerRow;
+
+	// If at left edge and on storage panel in storage mode, switch to inventory panel
+	if (ColumnInRow == 0 && StorageMode && bFocusedOnStoragePanel)
+	{
+		UE_LOG(LogTemp, Log, TEXT("  At left edge of storage panel - switching to inventory panel"));
+
+		// Deselect current slot in storage
+		if (ActiveSlots.IsValidIndex(ItemNavigationIndex))
+		{
+			ActiveSlots[ItemNavigationIndex]->EventOnSelected(false);
+		}
+
+		// Switch focus to inventory panel
+		bFocusedOnStoragePanel = false;
+
+		// Select last slot in same row of inventory panel (or last slot if row doesn't exist)
+		int32 TargetRow = CurrentRow;
+		int32 TargetIndex = (TargetRow * SlotsPerRow) + (SlotsPerRow - 1);
+		if (TargetIndex >= InventorySlots.Num())
+		{
+			TargetIndex = InventorySlots.Num() - 1;
+		}
+
+		ItemNavigationIndex = TargetIndex >= 0 ? TargetIndex : 0;
+
+		if (InventorySlots.IsValidIndex(ItemNavigationIndex))
+		{
+			InventorySlots[ItemNavigationIndex]->EventOnSelected(true);
+			SelectedSlot = InventorySlots[ItemNavigationIndex];
+			EventSetupItemInfoPanel(SelectedSlot);
+		}
+
+		UE_LOG(LogTemp, Log, TEXT("  Switched to inventory panel, new index: %d"), ItemNavigationIndex);
+		return;
+	}
+
+	// Normal left navigation within panel
 	int32 NewIndex = ItemNavigationIndex - 1;
 	int32 NewRow = NewIndex / SlotsPerRow;
 
@@ -1061,12 +1298,32 @@ void UW_Inventory::EventNavigateLeft_Implementation()
 
 /**
  * EventNavigateRight - Move selection right in grid
+ *
+ * bp_only Logic: If action menu is visible, forward navigation to it.
+ * Otherwise, navigate inventory slots. In storage mode, switch panels at edges.
  */
 void UW_Inventory::EventNavigateRight_Implementation()
 {
-	UE_LOG(LogTemp, Log, TEXT("UW_Inventory::EventNavigateRight"));
+	UE_LOG(LogTemp, Log, TEXT("UW_Inventory::EventNavigateRight - StorageMode: %s, FocusedOnStorage: %s"),
+		StorageMode ? TEXT("true") : TEXT("false"),
+		bFocusedOnStoragePanel ? TEXT("true") : TEXT("false"));
 
-	TArray<UW_InventorySlot*>& ActiveSlots = StorageMode ? StorageSlots : InventorySlots;
+	// Check if action menu is visible - forward horizontal navigation to it
+	if (W_InventoryAction && W_InventoryAction->IsVisible())
+	{
+		UE_LOG(LogTemp, Log, TEXT("  W_InventoryAction is visible - forwarding to EventNavigateActionConfirmHorizontal"));
+		W_InventoryAction->EventNavigateActionConfirmHorizontal();
+		return;
+	}
+	if (W_StorageAction && W_StorageAction->IsVisible())
+	{
+		UE_LOG(LogTemp, Log, TEXT("  W_StorageAction is visible - forwarding to EventNavigateActionConfirmHorizontal"));
+		W_StorageAction->EventNavigateActionConfirmHorizontal();
+		return;
+	}
+
+	// In storage mode, use bFocusedOnStoragePanel to determine which panel is active
+	TArray<UW_InventorySlot*>& ActiveSlots = (StorageMode && bFocusedOnStoragePanel) ? StorageSlots : InventorySlots;
 
 	if (ActiveSlots.Num() == 0)
 	{
@@ -1075,12 +1332,52 @@ void UW_Inventory::EventNavigateRight_Implementation()
 
 	int32 SlotsPerRow = InventoryComponent ? InventoryComponent->SlotsPerRow : 8;
 
-	// Don't wrap to next row
+	// Check if at right edge of row
 	int32 CurrentRow = ItemNavigationIndex / SlotsPerRow;
+	int32 ColumnInRow = ItemNavigationIndex % SlotsPerRow;
 	int32 NewIndex = ItemNavigationIndex + 1;
 	int32 NewRow = NewIndex / SlotsPerRow;
 
-	if (NewIndex < ActiveSlots.Num() && NewRow == CurrentRow)
+	// Check if we would wrap to next row (at right edge)
+	bool bAtRightEdge = (NewRow != CurrentRow) || (NewIndex >= ActiveSlots.Num());
+
+	// If at right edge and on inventory panel in storage mode, switch to storage panel
+	if (bAtRightEdge && StorageMode && !bFocusedOnStoragePanel)
+	{
+		UE_LOG(LogTemp, Log, TEXT("  At right edge of inventory panel - switching to storage panel"));
+
+		// Deselect current slot in inventory
+		if (ActiveSlots.IsValidIndex(ItemNavigationIndex))
+		{
+			ActiveSlots[ItemNavigationIndex]->EventOnSelected(false);
+		}
+
+		// Switch focus to storage panel
+		bFocusedOnStoragePanel = true;
+
+		// Select first slot in same row of storage panel (or first slot if row doesn't exist)
+		int32 TargetRow = CurrentRow;
+		int32 TargetIndex = TargetRow * SlotsPerRow;
+		if (TargetIndex >= StorageSlots.Num())
+		{
+			TargetIndex = 0;
+		}
+
+		ItemNavigationIndex = TargetIndex;
+
+		if (StorageSlots.IsValidIndex(ItemNavigationIndex))
+		{
+			StorageSlots[ItemNavigationIndex]->EventOnSelected(true);
+			SelectedSlot = StorageSlots[ItemNavigationIndex];
+			EventSetupItemInfoPanel(SelectedSlot);
+		}
+
+		UE_LOG(LogTemp, Log, TEXT("  Switched to storage panel, new index: %d"), ItemNavigationIndex);
+		return;
+	}
+
+	// Normal right navigation within panel (don't wrap to next row)
+	if (!bAtRightEdge)
 	{
 		// Deselect current
 		if (ActiveSlots.IsValidIndex(ItemNavigationIndex))
@@ -1170,13 +1467,36 @@ void UW_Inventory::EventNavigateCategoryRight_Implementation()
 
 /**
  * EventNavigateOk - Confirm selection / open action menu
+ *
+ * bp_only Logic (Get Active Action Widget macro):
+ * 1. If W_InventoryAction is visible → call EventActionButtonPressed (execute the selected action)
+ * 2. If W_StorageAction is visible → call EventActionButtonPressed (execute the selected action)
+ * 3. If neither is visible → call SelectedSlot->EventSlotPressed (open action menu)
  */
 void UW_Inventory::EventNavigateOk_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_Inventory::EventNavigateOk"));
 
+	// Check if W_InventoryAction is visible - forward OK to execute action
+	if (W_InventoryAction && W_InventoryAction->IsVisible())
+	{
+		UE_LOG(LogTemp, Log, TEXT("  W_InventoryAction is visible - calling EventActionButtonPressed"));
+		W_InventoryAction->EventActionButtonPressed();
+		return;
+	}
+
+	// Check if W_StorageAction is visible - forward OK to execute action
+	if (W_StorageAction && W_StorageAction->IsVisible())
+	{
+		UE_LOG(LogTemp, Log, TEXT("  W_StorageAction is visible - calling EventActionButtonPressed"));
+		W_StorageAction->EventActionButtonPressed();
+		return;
+	}
+
+	// Neither action menu visible - open action menu for selected slot
 	if (SelectedSlot && SelectedSlot->IsOccupied)
 	{
+		UE_LOG(LogTemp, Log, TEXT("  Opening action menu for selected slot"));
 		// Trigger slot pressed event which opens action menu
 		SelectedSlot->EventSlotPressed();
 	}
@@ -1184,12 +1504,41 @@ void UW_Inventory::EventNavigateOk_Implementation()
 
 /**
  * EventNavigateCancel - Close inventory or go back
+ * When in storage mode (opened from rest menu), closing returns to rest menu.
+ *
+ * bp_only Logic:
+ * 1. If W_InventoryAction is visible → collapse it (close action menu)
+ * 2. If W_StorageAction is visible → collapse it (close action menu)
+ * 3. If neither is visible → close the inventory widget
  */
 void UW_Inventory::EventNavigateCancel_Implementation()
 {
-	UE_LOG(LogTemp, Log, TEXT("UW_Inventory::EventNavigateCancel"));
+	UE_LOG(LogTemp, Log, TEXT("UW_Inventory::EventNavigateCancel - StorageMode: %s"),
+		StorageMode ? TEXT("true") : TEXT("false"));
 
-	// Broadcast that inventory is closing
+	// Check if W_InventoryAction is visible - close it first
+	if (W_InventoryAction && W_InventoryAction->IsVisible())
+	{
+		UE_LOG(LogTemp, Log, TEXT("  W_InventoryAction is visible - closing action menu"));
+		W_InventoryAction->SetVisibility(ESlateVisibility::Collapsed);
+		return;
+	}
+
+	// Check if W_StorageAction is visible - close it first
+	if (W_StorageAction && W_StorageAction->IsVisible())
+	{
+		UE_LOG(LogTemp, Log, TEXT("  W_StorageAction is visible - closing action menu"));
+		W_StorageAction->SetVisibility(ESlateVisibility::Collapsed);
+		return;
+	}
+
+	// CRITICAL: Do NOT reset StorageMode here!
+	// The HUD's OnInventoryClosedHandler checks StorageMode to decide whether to return
+	// to the rest menu (if StorageMode was true) or the game menu (if false).
+	// The HUD handler will reset StorageMode after checking it.
+
+	// Close the inventory - broadcast and hide
+	// This returns control to whatever opened the inventory (rest menu, etc.)
 	OnInventoryClosed.Broadcast();
 
 	// Hide the inventory widget
@@ -1253,9 +1602,24 @@ void UW_Inventory::EventOnSlotPressed_Implementation(UW_InventorySlot* InSlot)
 	SelectedSlot = InSlot;
 	InSlot->SetSlotSelected(true);
 
-	// Find index of this slot
-	TArray<UW_InventorySlot*>& ActiveSlots = StorageMode ? StorageSlots : InventorySlots;
-	ItemNavigationIndex = ActiveSlots.Find(InSlot);
+	// Find index of this slot - use correct panel based on which array contains the slot
+	TArray<UW_InventorySlot*>& ActiveSlots = StorageSlots.Contains(InSlot) ? StorageSlots : InventorySlots;
+	int32 FoundIndex = ActiveSlots.Find(InSlot);
+
+	// DEFENSIVE: Never set ItemNavigationIndex to -1
+	if (FoundIndex >= 0)
+	{
+		ItemNavigationIndex = FoundIndex;
+		// Also update focus tracking if in storage mode
+		if (StorageMode)
+		{
+			bFocusedOnStoragePanel = StorageSlots.Contains(InSlot);
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_Inventory] EventOnSlotPressed - Slot not found in any array, keeping ItemNavigationIndex at %d"), ItemNavigationIndex);
+	}
 
 	// CRITICAL: Update the item info panel to show the item details
 	if (InSlot->IsOccupied)
@@ -1268,25 +1632,47 @@ void UW_Inventory::EventOnSlotPressed_Implementation(UW_InventorySlot* InSlot)
 
 		if (ActionWidget)
 		{
+			// CRITICAL: Hide the OTHER action widget to prevent navigation confusion
+			// When showing W_StorageAction, collapse W_InventoryAction and vice versa
+			UW_InventoryAction* OtherActionWidget = StorageMode ? W_InventoryAction : W_StorageAction;
+			if (OtherActionWidget)
+			{
+				OtherActionWidget->SetVisibility(ESlateVisibility::Collapsed);
+				OtherActionWidget->ResetAmountSelectionMode();  // Reset state
+			}
+
 			// Position the action menu relative to the scrollbox
 			FVector2D Translation = GetTranslationForActionMenu(TargetScrollBox);
 			ActionWidget->SetRenderTranslation(Translation);
+
+			// CRITICAL: Set bInStorageMode so action menu knows the context
+			// This affects whether "Leave" becomes "Store" for inventory slots
+			ActionWidget->bInStorageMode = StorageMode;
+
+			// Set the slot index for inventory manager operations
+			ActionWidget->SlotIndex = ItemNavigationIndex;
 
 			// Show the action menu
 			ActionWidget->SetVisibility(ESlateVisibility::Visible);
 
 			// Setup the action menu for the selected slot
-			if (StorageMode)
+			// Check if this is a STORAGE slot (in StorageSlots array), not just if we're in StorageMode
+			bool bIsStorageSlot = StorageSlots.Contains(InSlot);
+			if (bIsStorageSlot)
 			{
+				// Storage slot - show Retrieve/Discard options
 				ActionWidget->EventSetupForStorage(InSlot);
 			}
 			else
 			{
+				// Inventory slot - show Use/Leave/Discard options
+				// Note: When bInStorageMode is true, "Leave" will become "Store"
 				ActionWidget->EventSetupForInventory(InSlot);
 			}
 
-			UE_LOG(LogTemp, Log, TEXT("[W_Inventory] Showing action menu at translation (%.1f, %.1f)"),
-				Translation.X, Translation.Y);
+			UE_LOG(LogTemp, Log, TEXT("[W_Inventory] Showing action menu - StorageMode: %s, IsStorageSlot: %s"),
+				StorageMode ? TEXT("true") : TEXT("false"),
+				bIsStorageSlot ? TEXT("true") : TEXT("false"));
 		}
 
 		UE_LOG(LogTemp, Log, TEXT("[W_Inventory] Slot pressed - item info panel updated for %s"),
@@ -1338,9 +1724,24 @@ void UW_Inventory::EventOnSlotSelected_Implementation(bool bSelected, UW_Invento
 		// Update item info panel
 		EventSetupItemInfoPanel(InSlot);
 
-		// Update navigation index
-		TArray<UW_InventorySlot*>& ActiveSlots = StorageMode ? StorageSlots : InventorySlots;
-		ItemNavigationIndex = ActiveSlots.Find(InSlot);
+		// Update navigation index - use correct panel based on which array contains the slot
+		TArray<UW_InventorySlot*>& ActiveSlots = StorageSlots.Contains(InSlot) ? StorageSlots : InventorySlots;
+		int32 FoundIndex = ActiveSlots.Find(InSlot);
+
+		// DEFENSIVE: Never set ItemNavigationIndex to -1
+		if (FoundIndex >= 0)
+		{
+			ItemNavigationIndex = FoundIndex;
+			// Also update focus tracking if in storage mode
+			if (StorageMode)
+			{
+				bFocusedOnStoragePanel = StorageSlots.Contains(InSlot);
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[W_Inventory] EventOnSlotSelected - Slot not found in any array, keeping ItemNavigationIndex at %d"), ItemNavigationIndex);
+		}
 	}
 	else
 	{
@@ -1796,9 +2197,19 @@ void UW_Inventory::HandleSlotSelected(bool bSelected, UW_InventorySlot* InSlot)
 		// Update selected slot reference
 		SelectedSlot = InSlot;
 
-		// Update navigation index
-		TArray<UW_InventorySlot*>& ActiveSlots = StorageMode ? StorageSlots : InventorySlots;
-		ItemNavigationIndex = ActiveSlots.Find(InSlot);
+		// Update navigation index - use correct panel based on storage mode and focus
+		TArray<UW_InventorySlot*>& ActiveSlots = (StorageMode && bFocusedOnStoragePanel) ? StorageSlots : InventorySlots;
+		int32 FoundIndex = ActiveSlots.Find(InSlot);
+
+		// DEFENSIVE: Never set ItemNavigationIndex to -1
+		if (FoundIndex >= 0)
+		{
+			ItemNavigationIndex = FoundIndex;
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[W_Inventory] HandleSlotSelected - Slot not found in ActiveSlots, keeping ItemNavigationIndex at %d"), ItemNavigationIndex);
+		}
 
 		// Update item info panel
 		EventSetupItemInfoPanel(InSlot);
@@ -1827,6 +2238,52 @@ void UW_Inventory::HandleSlotCleared(UW_InventorySlot* InSlot, bool bTriggerShif
 void UW_Inventory::HandleSlotAssigned(UW_InventorySlot* InSlot)
 {
 	EventOnInventorySlotAssigned(InSlot);
+}
+
+/**
+ * HandleInventoryUpdated - Handler for OnInventoryUpdated from InventoryComponent
+ *
+ * Called when items are added/removed from inventory OR storage.
+ * Refreshes both inventory and storage slot displays to reflect the change.
+ */
+void UW_Inventory::HandleInventoryUpdated()
+{
+	UE_LOG(LogTemp, Log, TEXT("[W_Inventory] HandleInventoryUpdated - Refreshing slots..."));
+
+	// Refresh inventory slots with current items
+	PopulateSlotsWithItems();
+
+	// If in storage mode, also refresh storage slots
+	if (StorageMode)
+	{
+		PopulateStorageSlotsWithItems();
+	}
+
+	// Rebuild occupied slots list for navigation
+	ReinitOccupiedInventorySlots();
+
+	// CRITICAL: Validate ItemNavigationIndex after refresh
+	// The index may be invalid if the previously selected slot was cleared
+	TArray<UW_InventorySlot*>& ActiveSlots = (StorageMode && bFocusedOnStoragePanel) ? StorageSlots : InventorySlots;
+
+	if (ItemNavigationIndex < 0 || ItemNavigationIndex >= ActiveSlots.Num())
+	{
+		UE_LOG(LogTemp, Log, TEXT("[W_Inventory] HandleInventoryUpdated - ItemNavigationIndex %d is invalid, resetting to 0"), ItemNavigationIndex);
+		ItemNavigationIndex = 0;
+	}
+
+	// Update SelectedSlot to match the validated index
+	if (ActiveSlots.IsValidIndex(ItemNavigationIndex))
+	{
+		SelectedSlot = ActiveSlots[ItemNavigationIndex];
+		if (SelectedSlot)
+		{
+			SelectedSlot->EventOnSelected(true);
+			EventSetupItemInfoPanel(SelectedSlot);
+		}
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[W_Inventory] HandleInventoryUpdated - Refresh complete, ItemNavigationIndex: %d"), ItemNavigationIndex);
 }
 
 /**

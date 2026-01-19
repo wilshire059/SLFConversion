@@ -32,6 +32,8 @@ class UScrollBox;
 class UImage;
 class UUniformGridPanel;
 class UWidgetSwitcher;
+class UOverlay;
+class USizeBox;
 
 // Forward declarations for Blueprint types
 class UInventoryManagerComponent;
@@ -79,6 +81,18 @@ public:
 
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
 	UW_InventoryAction* W_StorageAction;
+
+	// Overlay widgets for inventory/storage sections
+	// StorageOverlay is toggled visible/collapsed based on StorageMode
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UOverlay* StorageOverlay;
+
+	// SizeBox widgets for controlling section widths
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	USizeBox* InventorySizer;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	USizeBox* StorageSizer;
 
 	// ScrollBox widgets for positioning action menus
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
@@ -278,6 +292,9 @@ protected:
 	// Populate slots with items from InventoryComponent
 	void PopulateSlotsWithItems();
 
+	// Populate storage slots with items from StoredItems
+	void PopulateStorageSlotsWithItems();
+
 	// Refresh display with filtered items (used when category changes)
 	void RefreshFilteredDisplay();
 
@@ -304,4 +321,14 @@ protected:
 	// Handler for slot OnSlotAssigned event
 	UFUNCTION()
 	void HandleSlotAssigned(UW_InventorySlot* InSlot);
+
+	// Check if any action widget is in amount selection mode (blocks navigation)
+	bool IsActionMenuBlockingNavigation() const;
+
+	// Handler for OnInventoryUpdated from InventoryComponent - refreshes slots after store/retrieve
+	UFUNCTION()
+	void HandleInventoryUpdated();
+
+	// Track which panel has focus when in storage mode (true = storage slots, false = inventory slots)
+	bool bFocusedOnStoragePanel;
 };

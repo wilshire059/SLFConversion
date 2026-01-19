@@ -26,6 +26,8 @@
 // Forward declarations for widget types
 class UW_InventorySlot;
 class UW_Inventory_ActionButton;
+class UW_InventoryActionAmount;
+class UWidgetSwitcher;
 
 // Forward declarations for Blueprint types
 
@@ -59,6 +61,20 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	int32 NavigationIndex;
 
+	// True when the action menu is for a storage slot (set by EventSetupForStorage)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+	bool bIsStorageSlot;
+
+	// True when the parent inventory widget is in storage mode
+	// Set by W_Inventory before opening action menu
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+	bool bInStorageMode;
+
+	// The index of the selected slot in the inventory/storage array
+	// Set by W_Inventory when showing the action menu
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+	int32 SlotIndex;
+
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (0)
 	// ═══════════════════════════════════════════════════════════════════════
@@ -73,6 +89,11 @@ public:
 	bool AreAllButtonsDisabled();
 	virtual bool AreAllButtonsDisabled_Implementation();
 
+	// Getter for amount selection mode (used by W_Inventory to block navigation)
+	FORCEINLINE bool IsInAmountSelectionMode() const { return bInAmountSelectionMode; }
+
+	// Reset the amount selection mode (used when hiding/switching action widgets)
+	FORCEINLINE void ResetAmountSelectionMode() { bInAmountSelectionMode = false; }
 
 	// Event Handlers (10 events)
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_InventoryAction")
@@ -118,4 +139,33 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Handler for button's OnActionButtonPressed delegate
+	UFUNCTION()
+	void OnActionButtonPressedHandler();
+
+	// Handler for button's OnActionButtonSelected delegate
+	UFUNCTION()
+	void OnActionButtonSelectedHandler(UW_Inventory_ActionButton* Button);
+
+	// Handler for AmountActionPanel's OnRequestConfirmed delegate
+	UFUNCTION()
+	void OnAmountConfirmedHandler(int32 Amount, ESLFInventoryAmountedActionType Operation);
+
+	// Handler for AmountActionPanel's OnRequestCanceled delegate
+	UFUNCTION()
+	void OnAmountCanceledHandler(ESLFInventoryAmountedActionType Operation);
+
+	// Show the amount selector panel for the specified operation
+	void ShowAmountSelector(ESLFInventoryAmountedActionType Operation);
+
+	// Cached widget references
+	UPROPERTY()
+	UWidgetSwitcher* CachedSwitcher;
+
+	UPROPERTY()
+	UW_InventoryActionAmount* CachedAmountPanel;
+
+	// Flag to track if we're currently in amount selection mode
+	bool bInAmountSelectionMode;
 };

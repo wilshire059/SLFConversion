@@ -290,6 +290,11 @@ public:
 	TArray<FSLFInventoryItem> GetAllItems();
 	virtual TArray<FSLFInventoryItem> GetAllItems_Implementation();
 
+	/** Get all stored items (from StoredItems map - for storage/sort box) */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory|Query")
+	TArray<FSLFInventoryItem> GetStoredItems();
+	virtual TArray<FSLFInventoryItem> GetStoredItems_Implementation();
+
 	/** [28/35] Get items for specific category */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory|Query")
 	TArray<FSLFInventoryItem> GetItemsForCategory(FGameplayTag CategoryTag);
