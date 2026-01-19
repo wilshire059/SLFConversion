@@ -332,5 +332,85 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
 	static FString MigrateWeightedLootDataTable(const FString& SourceTablePath);
 
+	// STAT DEFAULTS EXPORT
+	// Export stat default values from Blueprint CDOs to JSON file
+	// Extracts CurrentValue, MaxValue, DisplayName, Tag from each stat Blueprint's StatInfo
+	// OutputFilePath: path to write JSON (e.g., "C:/scripts/SLFConversion/migration_cache/stat_defaults.json")
+	// Returns: JSON string with extracted values
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Export")
+	static FString ExportStatDefaults(const FString& OutputFilePath);
+
+	// DESTRUCTIBLE DIAGNOSTICS
+	// Diagnose B_Destructible GeometryCollection and physics settings
+	// Spawns the actor, checks RestCollection, physics state, collision settings
+	// Returns: Detailed diagnostic string with all settings
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Diagnostics")
+	static FString DiagnoseDestructible(const FString& BlueprintPath);
+
+	// Compare GeometryCollectionComponent settings with expected values
+	// BlueprintPath: path to destructible Blueprint
+	// Returns: Comparison report showing differences from expected working values
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Diagnostics")
+	static FString CompareDestructibleSettings(const FString& BlueprintPath);
+
+	// Fix B_Destructible by ensuring GeometryCollection CDO property is set and saved
+	// BlueprintPath: path to B_Destructible Blueprint
+	// GeometryCollectionPath: path to GC asset (e.g., "/Game/.../GC_Barrel")
+	// Returns: Result string
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
+	static FString FixDestructibleGeometryCollection(const FString& BlueprintPath, const FString& GeometryCollectionPath);
+
+	// COMPREHENSIVE VALIDATION
+	// Validate a complete migration by checking parent class, variables, functions, event graphs, SCS
+	// Returns JSON string with all validation results
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Validation")
+	static FString ValidateBlueprintMigration(
+		const FString& BlueprintPath,
+		const FString& ExpectedParentClassPath,
+		bool bExpectClearedEventGraphs,
+		bool bExpectClearedFunctions
+	);
+
+	// Export detailed AnimNotifyState information for comparison
+	// Shows parent class, functions with node counts, variables, and whether logic exists
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Validation")
+	static FString ExportAnimNotifyStateDetails(const FString& BlueprintPath);
+
+	// Validate chaos destruction system migration (ANS_ToggleChaosField, B_Chaos_ForceField, B_Destructible)
+	// Checks parent classes, event graphs cleared, C++ class exists
+	// Returns comprehensive validation report
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Validation")
+	static FString ValidateChaosDestructionMigration();
+
+	// Force reparent a Blueprint and verify it worked
+	// Returns detailed result including before/after state
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
+	static FString ForceReparentAndValidate(const FString& BlueprintPath, const FString& NewParentClassPath);
+
+	// Clear ALL event graph nodes including Event nodes for interface functions
+	// This is needed when C++ implements BlueprintNativeEvent functions that Blueprint was overriding
+	// Returns JSON with cleared node counts
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
+	static FString ClearAllEventGraphNodes(const FString& BlueprintPath, bool bIncludeEventNodes = true);
+
+	// Diagnose interface implementation for a Blueprint
+	// Returns JSON with parent class, implemented interfaces, and whether C++ _Implementation exists
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Validation")
+	static FString DiagnoseInterfaceImplementation(const FString& BlueprintPath);
+
+	// Check if an event graph has any nodes (excluding standard entry points)
+	// Returns true if the graph has logic nodes, false if empty
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Query")
+	static bool HasEventGraphLogic(UObject* BlueprintAsset);
+
+	// Get count of logic nodes in all function graphs
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Query")
+	static int32 GetFunctionGraphNodeCount(UObject* BlueprintAsset, const FString& FunctionName);
+
+	// Compare Blueprint to bp_only reference and report differences
+	// Uses JSON exports from both projects
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Validation")
+	static FString CompareToBpOnly(const FString& BlueprintPath, const FString& BpOnlyExportJsonPath);
+
 #endif // WITH_EDITOR
 };

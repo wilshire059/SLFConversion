@@ -59,6 +59,11 @@
 #include "Dom/JsonObject.h"
 #include "Serialization/JsonSerializer.h"
 #include "Misc/FileHelper.h"
+// Destructible diagnostics
+#include "GeometryCollection/GeometryCollectionComponent.h"
+#include "GeometryCollection/GeometryCollectionObject.h"
+// Interface diagnostics
+#include "Interfaces/SLFDestructibleHelperInterface.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogSLFAutomation, Log, All);
 
@@ -4847,6 +4852,1691 @@ FString USLFAutomationLibrary::MigrateWeightedLootDataTable(const FString& Sourc
 	return FString::Printf(TEXT("{\"success\": %s, \"rows\": %d}"),
 		bSaved ? TEXT("true") : TEXT("false"),
 		ExtractedRows.Num());
+}
+
+// ============================================================================
+// STAT DEFAULTS EXPORT - Extract stat CDO values via C++ property iteration
+// ============================================================================
+
+FString USLFAutomationLibrary::ExportStatDefaults(const FString& OutputFilePath)
+{
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+	UE_LOG(LogTemp, Warning, TEXT("EXPORTING STAT DEFAULTS TO: %s"), *OutputFilePath);
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+
+	// Map of stat name -> asset path
+	TMap<FString, FString> StatPaths;
+
+	// Defense (Damage Negation)
+	StatPaths.Add(TEXT("B_DN_Physical"), TEXT("/Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Physical"));
+	StatPaths.Add(TEXT("B_DN_Fire"), TEXT("/Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Fire"));
+	StatPaths.Add(TEXT("B_DN_Frost"), TEXT("/Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Frost"));
+	StatPaths.Add(TEXT("B_DN_Holy"), TEXT("/Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Holy"));
+	StatPaths.Add(TEXT("B_DN_Lightning"), TEXT("/Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Lightning"));
+	StatPaths.Add(TEXT("B_DN_Magic"), TEXT("/Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Magic"));
+
+	// Resistances
+	StatPaths.Add(TEXT("B_Resistance_Focus"), TEXT("/Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Focus"));
+	StatPaths.Add(TEXT("B_Resistance_Immunity"), TEXT("/Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Immunity"));
+	StatPaths.Add(TEXT("B_Resistance_Robustness"), TEXT("/Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Robustness"));
+	StatPaths.Add(TEXT("B_Resistance_Vitality"), TEXT("/Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Vitality"));
+
+	// Attack Power
+	StatPaths.Add(TEXT("B_AP_Physical"), TEXT("/Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Physical"));
+	StatPaths.Add(TEXT("B_AP_Fire"), TEXT("/Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Fire"));
+	StatPaths.Add(TEXT("B_AP_Frost"), TEXT("/Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Frost"));
+	StatPaths.Add(TEXT("B_AP_Holy"), TEXT("/Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Holy"));
+	StatPaths.Add(TEXT("B_AP_Lightning"), TEXT("/Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Lightning"));
+	StatPaths.Add(TEXT("B_AP_Magic"), TEXT("/Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Magic"));
+
+	// Backend stats
+	StatPaths.Add(TEXT("B_Poise"), TEXT("/Game/SoulslikeFramework/Data/Stats/_Backend/B_Poise"));
+	StatPaths.Add(TEXT("B_Stance"), TEXT("/Game/SoulslikeFramework/Data/Stats/_Backend/B_Stance"));
+	StatPaths.Add(TEXT("B_IncantationPower"), TEXT("/Game/SoulslikeFramework/Data/Stats/_Backend/B_IncantationPower"));
+
+	// Misc
+	StatPaths.Add(TEXT("B_Weight"), TEXT("/Game/SoulslikeFramework/Data/Stats/Misc/B_Weight"));
+
+	// Primary
+	StatPaths.Add(TEXT("B_Vigor"), TEXT("/Game/SoulslikeFramework/Data/Stats/Primary/B_Vigor"));
+	StatPaths.Add(TEXT("B_Strength"), TEXT("/Game/SoulslikeFramework/Data/Stats/Primary/B_Strength"));
+	StatPaths.Add(TEXT("B_Dexterity"), TEXT("/Game/SoulslikeFramework/Data/Stats/Primary/B_Dexterity"));
+	StatPaths.Add(TEXT("B_Intelligence"), TEXT("/Game/SoulslikeFramework/Data/Stats/Primary/B_Intelligence"));
+	StatPaths.Add(TEXT("B_Faith"), TEXT("/Game/SoulslikeFramework/Data/Stats/Primary/B_Faith"));
+	StatPaths.Add(TEXT("B_Arcane"), TEXT("/Game/SoulslikeFramework/Data/Stats/Primary/B_Arcane"));
+	StatPaths.Add(TEXT("B_Mind"), TEXT("/Game/SoulslikeFramework/Data/Stats/Primary/B_Mind"));
+	StatPaths.Add(TEXT("B_Endurance"), TEXT("/Game/SoulslikeFramework/Data/Stats/Primary/B_Endurance"));
+
+	// Secondary
+	StatPaths.Add(TEXT("B_HP"), TEXT("/Game/SoulslikeFramework/Data/Stats/Secondary/B_HP"));
+	StatPaths.Add(TEXT("B_Stamina"), TEXT("/Game/SoulslikeFramework/Data/Stats/Secondary/B_Stamina"));
+	StatPaths.Add(TEXT("B_FP"), TEXT("/Game/SoulslikeFramework/Data/Stats/Secondary/B_FP"));
+
+	// Build JSON
+	TSharedRef<FJsonObject> RootJson = MakeShared<FJsonObject>();
+	int32 ExportCount = 0;
+
+	for (const TPair<FString, FString>& StatEntry : StatPaths)
+	{
+		const FString& StatName = StatEntry.Key;
+		const FString& StatPath = StatEntry.Value;
+
+		UE_LOG(LogTemp, Warning, TEXT("Processing: %s (%s)"), *StatName, *StatPath);
+
+		// Load the Blueprint asset
+		UObject* LoadedObj = StaticLoadObject(UBlueprint::StaticClass(), nullptr, *StatPath);
+		UBlueprint* BP = Cast<UBlueprint>(LoadedObj);
+		if (!BP)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("  Could not load Blueprint: %s"), *StatPath);
+			continue;
+		}
+
+		// Get generated class
+		UClass* GenClass = BP->GeneratedClass;
+		if (!GenClass)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("  No generated class"));
+			continue;
+		}
+
+		// Get CDO
+		UObject* CDO = GenClass->GetDefaultObject();
+		if (!CDO)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("  No CDO"));
+			continue;
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("  CDO class: %s"), *CDO->GetClass()->GetName());
+
+		// Create JSON object for this stat
+		TSharedRef<FJsonObject> StatJson = MakeShared<FJsonObject>();
+		StatJson->SetStringField(TEXT("path"), StatPath);
+
+		// Find StatInfo property by iterating through class properties
+		// Blueprint property names have GUID suffixes, so we search for "StatInfo" prefix
+		for (TFieldIterator<FProperty> PropIt(GenClass, EFieldIteratorFlags::IncludeSuper); PropIt; ++PropIt)
+		{
+			FProperty* Prop = *PropIt;
+			FString PropName = Prop->GetName();
+
+			if (PropName.StartsWith(TEXT("StatInfo")))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("  Found property: %s"), *PropName);
+
+				// This is a struct property - get its internal properties
+				FStructProperty* StructProp = CastField<FStructProperty>(Prop);
+				if (!StructProp)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("    Not a struct property"));
+					continue;
+				}
+
+				void* StructData = Prop->ContainerPtrToValuePtr<void>(CDO);
+				UScriptStruct* StructType = StructProp->Struct;
+
+				UE_LOG(LogTemp, Warning, TEXT("    Struct type: %s"), *StructType->GetName());
+
+				// Iterate through struct members
+				for (TFieldIterator<FProperty> StructIt(StructType); StructIt; ++StructIt)
+				{
+					FProperty* MemberProp = *StructIt;
+					FString MemberName = MemberProp->GetName();
+
+					// Extract CurrentValue
+					if (MemberName.StartsWith(TEXT("CurrentValue")))
+					{
+						if (FDoubleProperty* DoubleProp = CastField<FDoubleProperty>(MemberProp))
+						{
+							double Value = DoubleProp->GetPropertyValue(MemberProp->ContainerPtrToValuePtr<void>(StructData));
+							StatJson->SetNumberField(TEXT("current_value"), Value);
+							UE_LOG(LogTemp, Warning, TEXT("    CurrentValue: %.2f"), Value);
+						}
+					}
+					// Extract MaxValue
+					else if (MemberName.StartsWith(TEXT("MaxValue")))
+					{
+						if (FDoubleProperty* DoubleProp = CastField<FDoubleProperty>(MemberProp))
+						{
+							double Value = DoubleProp->GetPropertyValue(MemberProp->ContainerPtrToValuePtr<void>(StructData));
+							StatJson->SetNumberField(TEXT("max_value"), Value);
+							UE_LOG(LogTemp, Warning, TEXT("    MaxValue: %.2f"), Value);
+						}
+					}
+					// Extract DisplayName
+					else if (MemberName.StartsWith(TEXT("DisplayName")))
+					{
+						if (FTextProperty* TextProp = CastField<FTextProperty>(MemberProp))
+						{
+							FText Value = TextProp->GetPropertyValue(MemberProp->ContainerPtrToValuePtr<void>(StructData));
+							StatJson->SetStringField(TEXT("display_name"), Value.ToString());
+							UE_LOG(LogTemp, Warning, TEXT("    DisplayName: %s"), *Value.ToString());
+						}
+					}
+					// Extract Tag
+					else if (MemberName.StartsWith(TEXT("Tag")))
+					{
+						if (FStructProperty* TagStructProp = CastField<FStructProperty>(MemberProp))
+						{
+							void* TagData = MemberProp->ContainerPtrToValuePtr<void>(StructData);
+							FGameplayTag* Tag = static_cast<FGameplayTag*>(TagData);
+							if (Tag)
+							{
+								StatJson->SetStringField(TEXT("tag"), Tag->ToString());
+								UE_LOG(LogTemp, Warning, TEXT("    Tag: %s"), *Tag->ToString());
+							}
+						}
+					}
+					// Extract ShowMaxValue
+					else if (MemberName.StartsWith(TEXT("ShowMaxValue")))
+					{
+						if (FBoolProperty* BoolProp = CastField<FBoolProperty>(MemberProp))
+						{
+							bool Value = BoolProp->GetPropertyValue(MemberProp->ContainerPtrToValuePtr<void>(StructData));
+							StatJson->SetBoolField(TEXT("show_max_value"), Value);
+						}
+					}
+					// Extract DisplayAsPercent
+					else if (MemberName.StartsWith(TEXT("DisplayasPercent")) || MemberName.StartsWith(TEXT("DisplayAsPercent")))
+					{
+						if (FBoolProperty* BoolProp = CastField<FBoolProperty>(MemberProp))
+						{
+							bool Value = BoolProp->GetPropertyValue(MemberProp->ContainerPtrToValuePtr<void>(StructData));
+							StatJson->SetBoolField(TEXT("display_as_percent"), Value);
+						}
+					}
+				}
+
+				break; // Found StatInfo, no need to continue
+			}
+		}
+
+		RootJson->SetObjectField(StatName, StatJson);
+		ExportCount++;
+	}
+
+	// Serialize to string
+	FString JsonString;
+	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&JsonString);
+	FJsonSerializer::Serialize(RootJson, Writer);
+
+	// Write to file
+	if (!OutputFilePath.IsEmpty())
+	{
+		if (FFileHelper::SaveStringToFile(JsonString, *OutputFilePath))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Saved to: %s"), *OutputFilePath);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Failed to save to: %s"), *OutputFilePath);
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+	UE_LOG(LogTemp, Warning, TEXT("EXPORTED %d STAT DEFAULTS"), ExportCount);
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+
+	return JsonString;
+}
+
+// ============================================================================
+// DESTRUCTIBLE DIAGNOSTICS
+// ============================================================================
+
+FString USLFAutomationLibrary::DiagnoseDestructible(const FString& BlueprintPath)
+{
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+	UE_LOG(LogTemp, Warning, TEXT("DIAGNOSING DESTRUCTIBLE: %s"), *BlueprintPath);
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+
+	FString Result;
+	Result += TEXT("=== DESTRUCTIBLE DIAGNOSIS ===\n");
+	Result += FString::Printf(TEXT("Blueprint: %s\n\n"), *BlueprintPath);
+
+	// Load the Blueprint
+	UObject* LoadedObj = StaticLoadObject(UBlueprint::StaticClass(), nullptr, *BlueprintPath);
+	UBlueprint* BP = Cast<UBlueprint>(LoadedObj);
+	if (!BP)
+	{
+		Result += TEXT("ERROR: Could not load Blueprint\n");
+		UE_LOG(LogTemp, Error, TEXT("Could not load Blueprint: %s"), *BlueprintPath);
+		return Result;
+	}
+
+	// Check parent class
+	UClass* ParentClass = BP->ParentClass;
+	Result += FString::Printf(TEXT("Parent Class: %s\n"), ParentClass ? *ParentClass->GetPathName() : TEXT("None"));
+	UE_LOG(LogTemp, Warning, TEXT("Parent Class: %s"), ParentClass ? *ParentClass->GetPathName() : TEXT("None"));
+
+	// Get generated class
+	UClass* GenClass = BP->GeneratedClass;
+	if (!GenClass)
+	{
+		Result += TEXT("ERROR: No generated class\n");
+		return Result;
+	}
+
+	// Get CDO
+	UObject* CDO = GenClass->GetDefaultObject();
+	if (!CDO)
+	{
+		Result += TEXT("ERROR: No CDO\n");
+		return Result;
+	}
+
+	Result += TEXT("\n=== CDO PROPERTIES ===\n");
+	UE_LOG(LogTemp, Warning, TEXT("CDO Class: %s"), *CDO->GetClass()->GetName());
+
+	// Check for GeometryCollection property
+	FProperty* GCProp = GenClass->FindPropertyByName(TEXT("GeometryCollection"));
+	if (GCProp)
+	{
+		FObjectProperty* ObjProp = CastField<FObjectProperty>(GCProp);
+		if (ObjProp)
+		{
+			UObject* GCValue = ObjProp->GetObjectPropertyValue(ObjProp->ContainerPtrToValuePtr<void>(CDO));
+			FString GCPath = GCValue ? GCValue->GetPathName() : TEXT("None");
+			Result += FString::Printf(TEXT("GeometryCollection (CDO): %s\n"), *GCPath);
+			UE_LOG(LogTemp, Warning, TEXT("GeometryCollection (CDO): %s"), *GCPath);
+		}
+	}
+	else
+	{
+		Result += TEXT("GeometryCollection property NOT FOUND on CDO!\n");
+		UE_LOG(LogTemp, Warning, TEXT("GeometryCollection property NOT FOUND"));
+	}
+
+	// Check for DestructionSound property
+	FProperty* SoundProp = GenClass->FindPropertyByName(TEXT("DestructionSound"));
+	if (SoundProp)
+	{
+		// Soft object pointer
+		FSoftObjectProperty* SoftProp = CastField<FSoftObjectProperty>(SoundProp);
+		if (SoftProp)
+		{
+			FSoftObjectPtr SoftPtr = SoftProp->GetPropertyValue(SoftProp->ContainerPtrToValuePtr<void>(CDO));
+			Result += FString::Printf(TEXT("DestructionSound (CDO): %s\n"), *SoftPtr.ToString());
+			UE_LOG(LogTemp, Warning, TEXT("DestructionSound (CDO): %s"), *SoftPtr.ToString());
+		}
+	}
+
+	// Now spawn and check runtime state
+	Result += TEXT("\n=== SPAWN TEST ===\n");
+
+	UWorld* World = GEditor ? GEditor->GetEditorWorldContext().World() : nullptr;
+	if (!World)
+	{
+		Result += TEXT("ERROR: No editor world for spawn test\n");
+		return Result;
+	}
+
+	FVector SpawnLocation(0.0f, 0.0f, 10000.0f);
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	AActor* SpawnedActor = World->SpawnActor<AActor>(GenClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
+	if (!SpawnedActor)
+	{
+		Result += TEXT("ERROR: Failed to spawn actor\n");
+		return Result;
+	}
+
+	Result += FString::Printf(TEXT("Spawned: %s\n"), *SpawnedActor->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("Spawned: %s"), *SpawnedActor->GetName());
+
+	// Check GeometryCollection property on spawned instance
+	if (GCProp)
+	{
+		FObjectProperty* ObjProp = CastField<FObjectProperty>(GCProp);
+		if (ObjProp)
+		{
+			UObject* GCValue = ObjProp->GetObjectPropertyValue(ObjProp->ContainerPtrToValuePtr<void>(SpawnedActor));
+			FString GCPath = GCValue ? GCValue->GetPathName() : TEXT("None");
+			Result += FString::Printf(TEXT("GeometryCollection (Spawned): %s\n"), *GCPath);
+			UE_LOG(LogTemp, Warning, TEXT("GeometryCollection (Spawned): %s"), *GCPath);
+		}
+	}
+
+	// Find GeometryCollectionComponent
+	TArray<UGeometryCollectionComponent*> GCComponents;
+	SpawnedActor->GetComponents<UGeometryCollectionComponent>(GCComponents);
+
+	Result += FString::Printf(TEXT("\nGeometryCollectionComponents: %d\n"), GCComponents.Num());
+	UE_LOG(LogTemp, Warning, TEXT("GeometryCollectionComponents: %d"), GCComponents.Num());
+
+	for (int32 i = 0; i < GCComponents.Num(); i++)
+	{
+		UGeometryCollectionComponent* GC = GCComponents[i];
+		Result += FString::Printf(TEXT("\n--- Component %d: %s ---\n"), i, *GC->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Component %d: %s"), i, *GC->GetName());
+
+		// Check RestCollection
+		const UGeometryCollection* RestColl = GC->GetRestCollection();
+		FString RestPath = RestColl ? RestColl->GetPathName() : TEXT("None!");
+		Result += FString::Printf(TEXT("RestCollection: %s\n"), *RestPath);
+		UE_LOG(LogTemp, Warning, TEXT("  RestCollection: %s"), *RestPath);
+
+		// Physics state
+		bool bIsActive = GC->IsActive();
+		bool bSimPhysics = GC->IsSimulatingPhysics();
+		bool bIsVisible = GC->IsVisible();
+
+		Result += FString::Printf(TEXT("IsActive: %s\n"), bIsActive ? TEXT("Yes") : TEXT("No"));
+		Result += FString::Printf(TEXT("IsSimulatingPhysics: %s\n"), bSimPhysics ? TEXT("Yes") : TEXT("No"));
+		Result += FString::Printf(TEXT("IsVisible: %s\n"), bIsVisible ? TEXT("Yes") : TEXT("No"));
+
+		UE_LOG(LogTemp, Warning, TEXT("  IsActive: %s, SimPhysics: %s, Visible: %s"),
+			bIsActive ? TEXT("Yes") : TEXT("No"),
+			bSimPhysics ? TEXT("Yes") : TEXT("No"),
+			bIsVisible ? TEXT("Yes") : TEXT("No"));
+
+		// Collision settings
+		ECollisionEnabled::Type CollisionEnabled = GC->GetCollisionEnabled();
+		Result += FString::Printf(TEXT("CollisionEnabled: %d\n"), (int32)CollisionEnabled);
+
+		// Check BodyInstance
+		const FBodyInstance* BodyInst = GC->GetBodyInstance();
+		if (BodyInst)
+		{
+			Result += FString::Printf(TEXT("BodyInstance.bSimulatePhysics: %s\n"),
+				BodyInst->bSimulatePhysics ? TEXT("true") : TEXT("false"));
+			Result += FString::Printf(TEXT("BodyInstance.MassInKg: %.2f\n"), BodyInst->GetMassOverride());
+
+			UE_LOG(LogTemp, Warning, TEXT("  BodyInstance: SimPhysics=%s"),
+				BodyInst->bSimulatePhysics ? TEXT("true") : TEXT("false"));
+		}
+
+		// Chaos-specific settings - access directly via property
+		bool bNotifyBreaks = GC->bNotifyBreaks;
+		bool bNotifyCollisions = GC->bNotifyCollisions;
+		Result += FString::Printf(TEXT("NotifyBreaks: %s\n"), bNotifyBreaks ? TEXT("Yes") : TEXT("No"));
+		Result += FString::Printf(TEXT("NotifyCollisions: %s\n"), bNotifyCollisions ? TEXT("Yes") : TEXT("No"));
+
+		UE_LOG(LogTemp, Warning, TEXT("  NotifyBreaks: %s, NotifyCollisions: %s"),
+			bNotifyBreaks ? TEXT("Yes") : TEXT("No"),
+			bNotifyCollisions ? TEXT("Yes") : TEXT("No"));
+	}
+
+	// Cleanup
+	SpawnedActor->Destroy();
+
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+	UE_LOG(LogTemp, Warning, TEXT("DIAGNOSIS COMPLETE"));
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+
+	return Result;
+}
+
+FString USLFAutomationLibrary::CompareDestructibleSettings(const FString& BlueprintPath)
+{
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+	UE_LOG(LogTemp, Warning, TEXT("COMPARING DESTRUCTIBLE SETTINGS: %s"), *BlueprintPath);
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+
+	FString Result;
+	Result += TEXT("=== DESTRUCTIBLE COMPARISON ===\n\n");
+
+	// Expected working values (from bp_only analysis)
+	struct FExpectedSettings
+	{
+		bool bSimulatePhysics = true;
+		bool bEnableGravity = true;
+		bool bNotifyBreaks = true;
+		bool bNotifyCollisions = false;
+		ECollisionEnabled::Type CollisionEnabled = ECollisionEnabled::QueryAndPhysics;
+		float MassInKg = 100.0f;
+	};
+	FExpectedSettings Expected;
+
+	// Load and spawn
+	UObject* LoadedObj = StaticLoadObject(UBlueprint::StaticClass(), nullptr, *BlueprintPath);
+	UBlueprint* BP = Cast<UBlueprint>(LoadedObj);
+	if (!BP || !BP->GeneratedClass)
+	{
+		Result += TEXT("ERROR: Could not load Blueprint\n");
+		return Result;
+	}
+
+	UWorld* World = GEditor ? GEditor->GetEditorWorldContext().World() : nullptr;
+	if (!World)
+	{
+		Result += TEXT("ERROR: No editor world\n");
+		return Result;
+	}
+
+	FVector SpawnLocation(0.0f, 0.0f, 10000.0f);
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	AActor* SpawnedActor = World->SpawnActor<AActor>(BP->GeneratedClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
+	if (!SpawnedActor)
+	{
+		Result += TEXT("ERROR: Failed to spawn\n");
+		return Result;
+	}
+
+	// Find GC component
+	TArray<UGeometryCollectionComponent*> GCComponents;
+	SpawnedActor->GetComponents<UGeometryCollectionComponent>(GCComponents);
+
+	if (GCComponents.Num() == 0)
+	{
+		Result += TEXT("ERROR: No GeometryCollectionComponent found!\n");
+		SpawnedActor->Destroy();
+		return Result;
+	}
+
+	UGeometryCollectionComponent* GC = GCComponents[0];
+
+	// Check RestCollection FIRST - this is critical
+	const UGeometryCollection* RestColl = GC->GetRestCollection();
+	if (!RestColl)
+	{
+		Result += TEXT("*** CRITICAL: RestCollection is NULL! ***\n");
+		Result += TEXT("This means OnConstruction isn't setting the GeometryCollection.\n");
+		Result += TEXT("Check: 1) GeometryCollection property is set on Blueprint CDO\n");
+		Result += TEXT("       2) OnConstruction calls SetRestCollection(GC, true)\n\n");
+		UE_LOG(LogTemp, Error, TEXT("CRITICAL: RestCollection is NULL!"));
+	}
+	else
+	{
+		Result += FString::Printf(TEXT("RestCollection: %s (OK)\n\n"), *RestColl->GetPathName());
+	}
+
+	// Compare physics settings
+	Result += TEXT("Setting                  | Actual    | Expected  | Status\n");
+	Result += TEXT("-------------------------|-----------|-----------|-------\n");
+
+	// SimulatePhysics
+	const FBodyInstance* BodyInst = GC->GetBodyInstance();
+	bool bActualSimPhysics = BodyInst ? BodyInst->bSimulatePhysics : false;
+	Result += FString::Printf(TEXT("SimulatePhysics          | %-9s | %-9s | %s\n"),
+		bActualSimPhysics ? TEXT("true") : TEXT("false"),
+		Expected.bSimulatePhysics ? TEXT("true") : TEXT("false"),
+		bActualSimPhysics == Expected.bSimulatePhysics ? TEXT("OK") : TEXT("MISMATCH"));
+
+	// Collision
+	ECollisionEnabled::Type ActualCollision = GC->GetCollisionEnabled();
+	Result += FString::Printf(TEXT("CollisionEnabled         | %-9d | %-9d | %s\n"),
+		(int32)ActualCollision,
+		(int32)Expected.CollisionEnabled,
+		ActualCollision == Expected.CollisionEnabled ? TEXT("OK") : TEXT("MISMATCH"));
+
+	// NotifyBreaks
+	bool bActualNotifyBreaks = GC->bNotifyBreaks;
+	Result += FString::Printf(TEXT("NotifyBreaks             | %-9s | %-9s | %s\n"),
+		bActualNotifyBreaks ? TEXT("true") : TEXT("false"),
+		Expected.bNotifyBreaks ? TEXT("true") : TEXT("false"),
+		bActualNotifyBreaks == Expected.bNotifyBreaks ? TEXT("OK") : TEXT("MISMATCH"));
+
+	// NotifyCollisions
+	bool bActualNotifyCollisions = GC->bNotifyCollisions;
+	Result += FString::Printf(TEXT("NotifyCollisions         | %-9s | %-9s | %s\n"),
+		bActualNotifyCollisions ? TEXT("true") : TEXT("false"),
+		Expected.bNotifyCollisions ? TEXT("true") : TEXT("false"),
+		bActualNotifyCollisions == Expected.bNotifyCollisions ? TEXT("OK") : TEXT("MISMATCH"));
+
+	// IsActive
+	bool bIsActive = GC->IsActive();
+	Result += FString::Printf(TEXT("IsActive                 | %-9s | %-9s | %s\n"),
+		bIsActive ? TEXT("true") : TEXT("false"),
+		TEXT("true"),
+		bIsActive ? TEXT("OK") : TEXT("MISMATCH"));
+
+	// IsSimulatingPhysics (runtime)
+	bool bSimPhysics = GC->IsSimulatingPhysics();
+	Result += FString::Printf(TEXT("IsSimulatingPhysics      | %-9s | %-9s | %s\n"),
+		bSimPhysics ? TEXT("true") : TEXT("false"),
+		TEXT("true"),
+		bSimPhysics ? TEXT("OK") : TEXT("MISMATCH"));
+
+	SpawnedActor->Destroy();
+
+	UE_LOG(LogTemp, Warning, TEXT("\n%s"), *Result);
+	return Result;
+}
+
+FString USLFAutomationLibrary::FixDestructibleGeometryCollection(const FString& BlueprintPath, const FString& GeometryCollectionPath)
+{
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+	UE_LOG(LogTemp, Warning, TEXT("FIXING DESTRUCTIBLE: %s"), *BlueprintPath);
+	UE_LOG(LogTemp, Warning, TEXT("GC Asset: %s"), *GeometryCollectionPath);
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+
+	FString Result;
+
+	// Load the GeometryCollection asset
+	UGeometryCollection* GCAsset = LoadObject<UGeometryCollection>(nullptr, *GeometryCollectionPath);
+	if (!GCAsset)
+	{
+		Result = FString::Printf(TEXT("ERROR: Could not load GeometryCollection: %s"), *GeometryCollectionPath);
+		UE_LOG(LogTemp, Error, TEXT("%s"), *Result);
+		return Result;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Loaded GC Asset: %s"), *GCAsset->GetPathName());
+
+	// Load the Blueprint
+	UObject* LoadedObj = StaticLoadObject(UBlueprint::StaticClass(), nullptr, *BlueprintPath);
+	UBlueprint* BP = Cast<UBlueprint>(LoadedObj);
+	if (!BP)
+	{
+		Result = FString::Printf(TEXT("ERROR: Could not load Blueprint: %s"), *BlueprintPath);
+		UE_LOG(LogTemp, Error, TEXT("%s"), *Result);
+		return Result;
+	}
+
+	UClass* GenClass = BP->GeneratedClass;
+	if (!GenClass)
+	{
+		Result = TEXT("ERROR: No generated class");
+		return Result;
+	}
+
+	// Get CDO
+	UObject* CDO = GenClass->GetDefaultObject();
+	if (!CDO)
+	{
+		Result = TEXT("ERROR: No CDO");
+		return Result;
+	}
+
+	// Find and set GeometryCollection property
+	FProperty* GCProp = GenClass->FindPropertyByName(TEXT("GeometryCollection"));
+	if (!GCProp)
+	{
+		Result = TEXT("ERROR: GeometryCollection property not found on CDO");
+		UE_LOG(LogTemp, Error, TEXT("%s"), *Result);
+		return Result;
+	}
+
+	FObjectProperty* ObjProp = CastField<FObjectProperty>(GCProp);
+	if (!ObjProp)
+	{
+		Result = TEXT("ERROR: GeometryCollection is not an object property");
+		return Result;
+	}
+
+	// Check current value
+	UObject* CurrentValue = ObjProp->GetObjectPropertyValue(ObjProp->ContainerPtrToValuePtr<void>(CDO));
+	UE_LOG(LogTemp, Warning, TEXT("Current GeometryCollection: %s"), CurrentValue ? *CurrentValue->GetPathName() : TEXT("None"));
+
+	// Set the new value
+	ObjProp->SetObjectPropertyValue(ObjProp->ContainerPtrToValuePtr<void>(CDO), GCAsset);
+
+	// Verify
+	UObject* NewValue = ObjProp->GetObjectPropertyValue(ObjProp->ContainerPtrToValuePtr<void>(CDO));
+	UE_LOG(LogTemp, Warning, TEXT("Set GeometryCollection to: %s"), NewValue ? *NewValue->GetPathName() : TEXT("None"));
+
+	// Mark dirty
+	CDO->MarkPackageDirty();
+	BP->MarkPackageDirty();
+
+	// Compile the Blueprint
+	FKismetEditorUtilities::CompileBlueprint(BP);
+	UE_LOG(LogTemp, Warning, TEXT("Compiled Blueprint"));
+
+	// Save the Blueprint
+	FString PackagePath = BP->GetOutermost()->GetPathName();
+	UPackage* Package = BP->GetOutermost();
+	FString PackageFilename = FPackageName::LongPackageNameToFilename(PackagePath, FPackageName::GetAssetPackageExtension());
+
+	bool bSaved = UPackage::SavePackage(Package, BP, *PackageFilename, FSavePackageArgs());
+
+	if (bSaved)
+	{
+		Result = FString::Printf(TEXT("SUCCESS: Set GeometryCollection to %s and saved"), *GCAsset->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *Result);
+	}
+	else
+	{
+		Result = TEXT("WARNING: Set property but failed to save package");
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *Result);
+	}
+
+	// Spawn test to verify
+	UWorld* World = GEditor ? GEditor->GetEditorWorldContext().World() : nullptr;
+	if (World)
+	{
+		FVector SpawnLocation(0.0f, 0.0f, 10000.0f);
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		AActor* TestActor = World->SpawnActor<AActor>(GenClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
+		if (TestActor)
+		{
+			TArray<UGeometryCollectionComponent*> GCComponents;
+			TestActor->GetComponents<UGeometryCollectionComponent>(GCComponents);
+
+			if (GCComponents.Num() > 0)
+			{
+				const UGeometryCollection* RestColl = GCComponents[0]->GetRestCollection();
+				Result += FString::Printf(TEXT("\nVerification - RestCollection: %s"),
+					RestColl ? *RestColl->GetPathName() : TEXT("STILL NULL - OnConstruction may not be running!"));
+				UE_LOG(LogTemp, Warning, TEXT("Verification - RestCollection: %s"),
+					RestColl ? *RestColl->GetPathName() : TEXT("STILL NULL"));
+			}
+
+			TestActor->Destroy();
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("======================================================================"));
+	return Result;
+}
+
+// ============================================================================
+// COMPREHENSIVE VALIDATION FUNCTIONS
+// ============================================================================
+
+FString USLFAutomationLibrary::ValidateBlueprintMigration(
+	const FString& BlueprintPath,
+	const FString& ExpectedParentClassPath,
+	bool bExpectClearedEventGraphs,
+	bool bExpectClearedFunctions)
+{
+	TSharedRef<FJsonObject> ResultJson = MakeShared<FJsonObject>();
+	ResultJson->SetStringField(TEXT("BlueprintPath"), BlueprintPath);
+	ResultJson->SetBoolField(TEXT("Success"), false);
+
+	UBlueprint* BP = Cast<UBlueprint>(StaticLoadObject(UBlueprint::StaticClass(), nullptr, *BlueprintPath));
+	if (!BP)
+	{
+		ResultJson->SetStringField(TEXT("Error"), TEXT("Failed to load Blueprint"));
+		FString OutputString;
+		TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutputString);
+		FJsonSerializer::Serialize(ResultJson, Writer);
+		return OutputString;
+	}
+
+	// Check parent class
+	FString ActualParent = BP->ParentClass ? BP->ParentClass->GetPathName() : TEXT("None");
+	bool bParentMatches = ActualParent.Contains(ExpectedParentClassPath) || ActualParent == ExpectedParentClassPath;
+	ResultJson->SetStringField(TEXT("ExpectedParent"), ExpectedParentClassPath);
+	ResultJson->SetStringField(TEXT("ActualParent"), ActualParent);
+	ResultJson->SetBoolField(TEXT("ParentCorrect"), bParentMatches);
+
+	// Check event graphs
+	int32 EventGraphNodeCount = 0;
+	for (UEdGraph* Graph : BP->UbergraphPages)
+	{
+		if (Graph)
+		{
+			// Count non-entry nodes
+			for (UEdGraphNode* Node : Graph->Nodes)
+			{
+				if (Node && !Node->IsA<UK2Node_Event>())
+				{
+					EventGraphNodeCount++;
+				}
+			}
+		}
+	}
+	bool bEventGraphsCleared = (EventGraphNodeCount == 0);
+	ResultJson->SetNumberField(TEXT("EventGraphNodeCount"), EventGraphNodeCount);
+	ResultJson->SetBoolField(TEXT("EventGraphsCleared"), bEventGraphsCleared);
+	ResultJson->SetBoolField(TEXT("EventGraphsClearedAsExpected"), bExpectClearedEventGraphs ? bEventGraphsCleared : true);
+
+	// Check function graphs
+	int32 TotalFunctionNodes = 0;
+	TArray<TSharedPtr<FJsonValue>> FunctionArray;
+	for (UEdGraph* Graph : BP->FunctionGraphs)
+	{
+		if (Graph)
+		{
+			TSharedRef<FJsonObject> FuncObj = MakeShared<FJsonObject>();
+			FuncObj->SetStringField(TEXT("Name"), Graph->GetName());
+			int32 NodeCount = 0;
+			for (UEdGraphNode* Node : Graph->Nodes)
+			{
+				if (Node && !Node->IsA<UK2Node_FunctionEntry>())
+				{
+					NodeCount++;
+				}
+			}
+			FuncObj->SetNumberField(TEXT("NodeCount"), NodeCount);
+			FunctionArray.Add(MakeShared<FJsonValueObject>(FuncObj));
+			TotalFunctionNodes += NodeCount;
+		}
+	}
+	ResultJson->SetArrayField(TEXT("Functions"), FunctionArray);
+	bool bFunctionsCleared = (TotalFunctionNodes == 0);
+	ResultJson->SetBoolField(TEXT("FunctionsCleared"), bFunctionsCleared);
+	ResultJson->SetBoolField(TEXT("FunctionsClearedAsExpected"), bExpectClearedFunctions ? bFunctionsCleared : true);
+
+	// Check variables
+	TArray<TSharedPtr<FJsonValue>> VarArray;
+	for (const FBPVariableDescription& Var : BP->NewVariables)
+	{
+		TSharedRef<FJsonObject> VarObj = MakeShared<FJsonObject>();
+		VarObj->SetStringField(TEXT("Name"), Var.VarName.ToString());
+		VarObj->SetStringField(TEXT("Type"), Var.VarType.PinCategory.ToString());
+		VarArray.Add(MakeShared<FJsonValueObject>(VarObj));
+	}
+	ResultJson->SetArrayField(TEXT("Variables"), VarArray);
+	ResultJson->SetNumberField(TEXT("VariableCount"), BP->NewVariables.Num());
+
+	// Check SCS components
+	TArray<TSharedPtr<FJsonValue>> SCSArray;
+	if (USimpleConstructionScript* SCS = BP->SimpleConstructionScript)
+	{
+		for (USCS_Node* Node : SCS->GetAllNodes())
+		{
+			if (Node && Node->ComponentTemplate)
+			{
+				TSharedRef<FJsonObject> CompObj = MakeShared<FJsonObject>();
+				CompObj->SetStringField(TEXT("Name"), Node->GetVariableName().ToString());
+				CompObj->SetStringField(TEXT("Class"), Node->ComponentTemplate->GetClass()->GetName());
+				SCSArray.Add(MakeShared<FJsonValueObject>(CompObj));
+			}
+		}
+	}
+	ResultJson->SetArrayField(TEXT("SCSComponents"), SCSArray);
+
+	// Overall success
+	bool bSuccess = bParentMatches &&
+		(bExpectClearedEventGraphs ? bEventGraphsCleared : true) &&
+		(bExpectClearedFunctions ? bFunctionsCleared : true);
+	ResultJson->SetBoolField(TEXT("Success"), bSuccess);
+
+	// Serialize to string
+	FString OutputString;
+	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutputString);
+	FJsonSerializer::Serialize(ResultJson, Writer);
+
+	UE_LOG(LogTemp, Warning, TEXT("ValidateBlueprintMigration: %s - Success=%s, Parent=%s"),
+		*BlueprintPath, bSuccess ? TEXT("YES") : TEXT("NO"), *ActualParent);
+
+	return OutputString;
+}
+
+FString USLFAutomationLibrary::ExportAnimNotifyStateDetails(const FString& BlueprintPath)
+{
+	TSharedRef<FJsonObject> ResultJson = MakeShared<FJsonObject>();
+	ResultJson->SetStringField(TEXT("BlueprintPath"), BlueprintPath);
+
+	UBlueprint* BP = Cast<UBlueprint>(StaticLoadObject(UBlueprint::StaticClass(), nullptr, *BlueprintPath));
+	if (!BP)
+	{
+		ResultJson->SetStringField(TEXT("Error"), TEXT("Failed to load Blueprint"));
+		FString OutputString;
+		TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutputString);
+		FJsonSerializer::Serialize(ResultJson, Writer);
+		return OutputString;
+	}
+
+	ResultJson->SetStringField(TEXT("BlueprintName"), BP->GetName());
+
+	// Parent class
+	FString ParentPath = BP->ParentClass ? BP->ParentClass->GetPathName() : TEXT("None");
+	ResultJson->SetStringField(TEXT("ParentClass"), ParentPath);
+
+	// Check if parent is C++ native
+	bool bParentIsNative = BP->ParentClass && !BP->ParentClass->HasAnyClassFlags(CLASS_CompiledFromBlueprint);
+	ResultJson->SetBoolField(TEXT("ParentIsNative"), bParentIsNative);
+
+	// Event graphs with details
+	TArray<TSharedPtr<FJsonValue>> EventGraphArray;
+	for (UEdGraph* Graph : BP->UbergraphPages)
+	{
+		if (Graph)
+		{
+			TSharedRef<FJsonObject> GraphObj = MakeShared<FJsonObject>();
+			GraphObj->SetStringField(TEXT("Name"), Graph->GetName());
+
+			int32 TotalNodes = Graph->Nodes.Num();
+			int32 EventNodes = 0;
+			int32 LogicNodes = 0;
+			TArray<FString> NodeTypes;
+
+			for (UEdGraphNode* Node : Graph->Nodes)
+			{
+				if (Node)
+				{
+					NodeTypes.AddUnique(Node->GetClass()->GetName());
+					if (Node->IsA<UK2Node_Event>() || Node->IsA<UK2Node_CustomEvent>())
+					{
+						EventNodes++;
+					}
+					else
+					{
+						LogicNodes++;
+					}
+				}
+			}
+
+			GraphObj->SetNumberField(TEXT("TotalNodes"), TotalNodes);
+			GraphObj->SetNumberField(TEXT("EventNodes"), EventNodes);
+			GraphObj->SetNumberField(TEXT("LogicNodes"), LogicNodes);
+			GraphObj->SetBoolField(TEXT("HasLogic"), LogicNodes > 0);
+
+			TArray<TSharedPtr<FJsonValue>> TypesArray;
+			for (const FString& Type : NodeTypes)
+			{
+				TypesArray.Add(MakeShared<FJsonValueString>(Type));
+			}
+			GraphObj->SetArrayField(TEXT("NodeTypes"), TypesArray);
+
+			EventGraphArray.Add(MakeShared<FJsonValueObject>(GraphObj));
+		}
+	}
+	ResultJson->SetArrayField(TEXT("EventGraphs"), EventGraphArray);
+
+	// Check for NotifyBegin/NotifyEnd/NotifyTick implementations
+	bool bHasNotifyBeginImpl = false;
+	bool bHasNotifyEndImpl = false;
+	bool bHasNotifyTickImpl = false;
+
+	for (UEdGraph* Graph : BP->FunctionGraphs)
+	{
+		if (Graph)
+		{
+			FString GraphName = Graph->GetName();
+			int32 LogicNodeCount = 0;
+			for (UEdGraphNode* Node : Graph->Nodes)
+			{
+				if (Node && !Node->IsA<UK2Node_FunctionEntry>())
+				{
+					LogicNodeCount++;
+				}
+			}
+
+			if (GraphName.Contains(TEXT("NotifyBegin")) || GraphName.Contains(TEXT("Received_NotifyBegin")))
+			{
+				bHasNotifyBeginImpl = LogicNodeCount > 0;
+				ResultJson->SetNumberField(TEXT("NotifyBeginNodeCount"), LogicNodeCount);
+			}
+			else if (GraphName.Contains(TEXT("NotifyEnd")) || GraphName.Contains(TEXT("Received_NotifyEnd")))
+			{
+				bHasNotifyEndImpl = LogicNodeCount > 0;
+				ResultJson->SetNumberField(TEXT("NotifyEndNodeCount"), LogicNodeCount);
+			}
+			else if (GraphName.Contains(TEXT("NotifyTick")) || GraphName.Contains(TEXT("Received_NotifyTick")))
+			{
+				bHasNotifyTickImpl = LogicNodeCount > 0;
+				ResultJson->SetNumberField(TEXT("NotifyTickNodeCount"), LogicNodeCount);
+			}
+		}
+	}
+
+	ResultJson->SetBoolField(TEXT("HasNotifyBeginLogic"), bHasNotifyBeginImpl);
+	ResultJson->SetBoolField(TEXT("HasNotifyEndLogic"), bHasNotifyEndImpl);
+	ResultJson->SetBoolField(TEXT("HasNotifyTickLogic"), bHasNotifyTickImpl);
+
+	// Serialize
+	FString OutputString;
+	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutputString);
+	FJsonSerializer::Serialize(ResultJson, Writer);
+
+	return OutputString;
+}
+
+FString USLFAutomationLibrary::ValidateChaosDestructionMigration()
+{
+	UE_LOG(LogTemp, Warning, TEXT("=== ValidateChaosDestructionMigration ==="));
+
+	TSharedRef<FJsonObject> ResultJson = MakeShared<FJsonObject>();
+	ResultJson->SetBoolField(TEXT("OverallSuccess"), true);
+
+	// ---- ANS_ToggleChaosField ----
+	{
+		TSharedRef<FJsonObject> ANSJson = MakeShared<FJsonObject>();
+
+		FString BPPath = TEXT("/Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/ANS_ToggleChaosField");
+		FString ExpectedParent = TEXT("/Script/SLFConversion.ANS_ToggleChaosField");
+
+		UBlueprint* BP = Cast<UBlueprint>(StaticLoadObject(UBlueprint::StaticClass(), nullptr, *BPPath));
+		if (BP)
+		{
+			FString ActualParent = BP->ParentClass ? BP->ParentClass->GetPathName() : TEXT("None");
+			bool bParentCorrect = ActualParent.Contains(TEXT("ANS_ToggleChaosField")) &&
+				ActualParent.Contains(TEXT("/Script/SLFConversion"));
+
+			ANSJson->SetStringField(TEXT("ActualParent"), ActualParent);
+			ANSJson->SetBoolField(TEXT("ParentCorrect"), bParentCorrect);
+
+			// Check event graph
+			int32 LogicNodes = 0;
+			for (UEdGraph* Graph : BP->UbergraphPages)
+			{
+				if (Graph)
+				{
+					for (UEdGraphNode* Node : Graph->Nodes)
+					{
+						if (Node && !Node->IsA<UK2Node_Event>())
+						{
+							LogicNodes++;
+						}
+					}
+				}
+			}
+			ANSJson->SetNumberField(TEXT("EventGraphLogicNodes"), LogicNodes);
+			ANSJson->SetBoolField(TEXT("EventGraphCleared"), LogicNodes == 0);
+
+			// Check function graphs (should have NotifyBegin/NotifyEnd with NO logic after reparent)
+			int32 NotifyBeginNodes = 0;
+			int32 NotifyEndNodes = 0;
+			for (UEdGraph* Graph : BP->FunctionGraphs)
+			{
+				if (Graph)
+				{
+					FString Name = Graph->GetName();
+					int32 NodeCount = 0;
+					for (UEdGraphNode* Node : Graph->Nodes)
+					{
+						if (Node && !Node->IsA<UK2Node_FunctionEntry>())
+						{
+							NodeCount++;
+						}
+					}
+					if (Name.Contains(TEXT("NotifyBegin")))
+					{
+						NotifyBeginNodes = NodeCount;
+					}
+					else if (Name.Contains(TEXT("NotifyEnd")))
+					{
+						NotifyEndNodes = NodeCount;
+					}
+				}
+			}
+			ANSJson->SetNumberField(TEXT("NotifyBeginNodes"), NotifyBeginNodes);
+			ANSJson->SetNumberField(TEXT("NotifyEndNodes"), NotifyEndNodes);
+
+			bool bANSSuccess = bParentCorrect && LogicNodes == 0;
+			ANSJson->SetBoolField(TEXT("Success"), bANSSuccess);
+			if (!bANSSuccess) ResultJson->SetBoolField(TEXT("OverallSuccess"), false);
+
+			UE_LOG(LogTemp, Warning, TEXT("ANS_ToggleChaosField: Parent=%s, EventGraphNodes=%d, Success=%s"),
+				*ActualParent, LogicNodes, bANSSuccess ? TEXT("YES") : TEXT("NO"));
+		}
+		else
+		{
+			ANSJson->SetStringField(TEXT("Error"), TEXT("Failed to load"));
+			ANSJson->SetBoolField(TEXT("Success"), false);
+			ResultJson->SetBoolField(TEXT("OverallSuccess"), false);
+			UE_LOG(LogTemp, Error, TEXT("ANS_ToggleChaosField: FAILED TO LOAD"));
+		}
+
+		ResultJson->SetObjectField(TEXT("ANS_ToggleChaosField"), ANSJson);
+	}
+
+	// ---- B_Chaos_ForceField ----
+	{
+		TSharedRef<FJsonObject> CFJson = MakeShared<FJsonObject>();
+
+		FString BPPath = TEXT("/Game/SoulslikeFramework/Blueprints/_WorldActors/B_Chaos_ForceField");
+		FString ExpectedParent = TEXT("/Script/SLFConversion.B_Chaos_ForceField");
+
+		UBlueprint* BP = Cast<UBlueprint>(StaticLoadObject(UBlueprint::StaticClass(), nullptr, *BPPath));
+		if (BP)
+		{
+			FString ActualParent = BP->ParentClass ? BP->ParentClass->GetPathName() : TEXT("None");
+			bool bParentCorrect = ActualParent.Contains(TEXT("B_Chaos_ForceField")) &&
+				ActualParent.Contains(TEXT("/Script/SLFConversion"));
+
+			CFJson->SetStringField(TEXT("ActualParent"), ActualParent);
+			CFJson->SetBoolField(TEXT("ParentCorrect"), bParentCorrect);
+
+			// Event graph
+			int32 LogicNodes = 0;
+			for (UEdGraph* Graph : BP->UbergraphPages)
+			{
+				if (Graph)
+				{
+					for (UEdGraphNode* Node : Graph->Nodes)
+					{
+						if (Node && !Node->IsA<UK2Node_Event>())
+						{
+							LogicNodes++;
+						}
+					}
+				}
+			}
+			CFJson->SetNumberField(TEXT("EventGraphLogicNodes"), LogicNodes);
+			CFJson->SetBoolField(TEXT("EventGraphCleared"), LogicNodes == 0);
+
+			bool bCFSuccess = bParentCorrect && LogicNodes == 0;
+			CFJson->SetBoolField(TEXT("Success"), bCFSuccess);
+			if (!bCFSuccess) ResultJson->SetBoolField(TEXT("OverallSuccess"), false);
+
+			UE_LOG(LogTemp, Warning, TEXT("B_Chaos_ForceField: Parent=%s, EventGraphNodes=%d, Success=%s"),
+				*ActualParent, LogicNodes, bCFSuccess ? TEXT("YES") : TEXT("NO"));
+		}
+		else
+		{
+			CFJson->SetStringField(TEXT("Error"), TEXT("Failed to load"));
+			CFJson->SetBoolField(TEXT("Success"), false);
+			ResultJson->SetBoolField(TEXT("OverallSuccess"), false);
+			UE_LOG(LogTemp, Error, TEXT("B_Chaos_ForceField: FAILED TO LOAD"));
+		}
+
+		ResultJson->SetObjectField(TEXT("B_Chaos_ForceField"), CFJson);
+	}
+
+	// ---- B_Destructible ----
+	{
+		TSharedRef<FJsonObject> BDJson = MakeShared<FJsonObject>();
+
+		FString BPPath = TEXT("/Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_Destructible");
+		FString ExpectedParent = TEXT("/Script/SLFConversion.B_Destructible");
+
+		UBlueprint* BP = Cast<UBlueprint>(StaticLoadObject(UBlueprint::StaticClass(), nullptr, *BPPath));
+		if (BP)
+		{
+			FString ActualParent = BP->ParentClass ? BP->ParentClass->GetPathName() : TEXT("None");
+			bool bParentCorrect = ActualParent.Contains(TEXT("B_Destructible")) &&
+				ActualParent.Contains(TEXT("/Script/SLFConversion"));
+
+			BDJson->SetStringField(TEXT("ActualParent"), ActualParent);
+			BDJson->SetBoolField(TEXT("ParentCorrect"), bParentCorrect);
+
+			// Event graph
+			int32 LogicNodes = 0;
+			for (UEdGraph* Graph : BP->UbergraphPages)
+			{
+				if (Graph)
+				{
+					for (UEdGraphNode* Node : Graph->Nodes)
+					{
+						if (Node && !Node->IsA<UK2Node_Event>())
+						{
+							LogicNodes++;
+						}
+					}
+				}
+			}
+			BDJson->SetNumberField(TEXT("EventGraphLogicNodes"), LogicNodes);
+			BDJson->SetBoolField(TEXT("EventGraphCleared"), LogicNodes == 0);
+
+			bool bBDSuccess = bParentCorrect && LogicNodes == 0;
+			BDJson->SetBoolField(TEXT("Success"), bBDSuccess);
+			if (!bBDSuccess) ResultJson->SetBoolField(TEXT("OverallSuccess"), false);
+
+			UE_LOG(LogTemp, Warning, TEXT("B_Destructible: Parent=%s, EventGraphNodes=%d, Success=%s"),
+				*ActualParent, LogicNodes, bBDSuccess ? TEXT("YES") : TEXT("NO"));
+		}
+		else
+		{
+			BDJson->SetStringField(TEXT("Error"), TEXT("Failed to load"));
+			BDJson->SetBoolField(TEXT("Success"), false);
+			ResultJson->SetBoolField(TEXT("OverallSuccess"), false);
+			UE_LOG(LogTemp, Error, TEXT("B_Destructible: FAILED TO LOAD"));
+		}
+
+		ResultJson->SetObjectField(TEXT("B_Destructible"), BDJson);
+	}
+
+	// ---- Check C++ classes exist ----
+	{
+		TSharedRef<FJsonObject> CppJson = MakeShared<FJsonObject>();
+
+		UClass* ANSClass = FindObject<UClass>(nullptr, TEXT("/Script/SLFConversion.ANS_ToggleChaosField"));
+		UClass* CFClass = FindObject<UClass>(nullptr, TEXT("/Script/SLFConversion.B_Chaos_ForceField"));
+		UClass* BDClass = FindObject<UClass>(nullptr, TEXT("/Script/SLFConversion.B_Destructible"));
+
+		CppJson->SetBoolField(TEXT("ANS_ToggleChaosField_Exists"), ANSClass != nullptr);
+		CppJson->SetBoolField(TEXT("B_Chaos_ForceField_Exists"), CFClass != nullptr);
+		CppJson->SetBoolField(TEXT("B_Destructible_Exists"), BDClass != nullptr);
+
+		UE_LOG(LogTemp, Warning, TEXT("C++ Classes: ANS=%s, CF=%s, BD=%s"),
+			ANSClass ? TEXT("EXISTS") : TEXT("MISSING"),
+			CFClass ? TEXT("EXISTS") : TEXT("MISSING"),
+			BDClass ? TEXT("EXISTS") : TEXT("MISSING"));
+
+		if (!ANSClass || !CFClass || !BDClass)
+		{
+			ResultJson->SetBoolField(TEXT("OverallSuccess"), false);
+		}
+
+		ResultJson->SetObjectField(TEXT("CppClasses"), CppJson);
+	}
+
+	// Serialize
+	FString OutputString;
+	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutputString);
+	FJsonSerializer::Serialize(ResultJson, Writer);
+
+	UE_LOG(LogTemp, Warning, TEXT("=== Validation Complete: %s ==="),
+		ResultJson->GetBoolField(TEXT("OverallSuccess")) ? TEXT("ALL PASSED") : TEXT("ISSUES FOUND"));
+
+	return OutputString;
+}
+
+FString USLFAutomationLibrary::ForceReparentAndValidate(const FString& BlueprintPath, const FString& NewParentClassPath)
+{
+	TSharedRef<FJsonObject> ResultJson = MakeShared<FJsonObject>();
+	ResultJson->SetStringField(TEXT("BlueprintPath"), BlueprintPath);
+	ResultJson->SetStringField(TEXT("NewParentClassPath"), NewParentClassPath);
+
+	UBlueprint* BP = Cast<UBlueprint>(StaticLoadObject(UBlueprint::StaticClass(), nullptr, *BlueprintPath));
+	if (!BP)
+	{
+		ResultJson->SetStringField(TEXT("Error"), TEXT("Failed to load Blueprint"));
+		ResultJson->SetBoolField(TEXT("Success"), false);
+		FString OutputString;
+		TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutputString);
+		FJsonSerializer::Serialize(ResultJson, Writer);
+		return OutputString;
+	}
+
+	// Store before state
+	FString BeforeParent = BP->ParentClass ? BP->ParentClass->GetPathName() : TEXT("None");
+	ResultJson->SetStringField(TEXT("BeforeParent"), BeforeParent);
+
+	// Find new parent class
+	UClass* NewParentClass = FindObject<UClass>(nullptr, *NewParentClassPath);
+	if (!NewParentClass)
+	{
+		// Try loading it
+		NewParentClass = LoadClass<UObject>(nullptr, *NewParentClassPath);
+	}
+
+	if (!NewParentClass)
+	{
+		ResultJson->SetStringField(TEXT("Error"), FString::Printf(TEXT("Failed to find new parent class: %s"), *NewParentClassPath));
+		ResultJson->SetBoolField(TEXT("Success"), false);
+		FString OutputString;
+		TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutputString);
+		FJsonSerializer::Serialize(ResultJson, Writer);
+		return OutputString;
+	}
+
+	// Reparent using FBlueprintEditorUtils
+	BP->ParentClass = NewParentClass;
+	FBlueprintEditorUtils::RefreshAllNodes(BP);
+
+	// Clear event graphs
+	int32 ClearedNodes = 0;
+	for (UEdGraph* Graph : BP->UbergraphPages)
+	{
+		if (Graph)
+		{
+			TArray<UEdGraphNode*> NodesToRemove;
+			for (UEdGraphNode* Node : Graph->Nodes)
+			{
+				if (Node && !Node->IsA<UK2Node_Event>())
+				{
+					NodesToRemove.Add(Node);
+				}
+			}
+			for (UEdGraphNode* Node : NodesToRemove)
+			{
+				Graph->RemoveNode(Node);
+				ClearedNodes++;
+			}
+		}
+	}
+	ResultJson->SetNumberField(TEXT("ClearedEventGraphNodes"), ClearedNodes);
+
+	// Compile
+	FKismetEditorUtilities::CompileBlueprint(BP);
+
+	// Save
+	FString PackagePath = BP->GetOutermost()->GetPathName();
+	UPackage* Package = BP->GetOutermost();
+	FString PackageFilename = FPackageName::LongPackageNameToFilename(PackagePath, FPackageName::GetAssetPackageExtension());
+	bool bSaved = UPackage::SavePackage(Package, BP, *PackageFilename, FSavePackageArgs());
+	ResultJson->SetBoolField(TEXT("Saved"), bSaved);
+
+	// Validate after state
+	FString AfterParent = BP->ParentClass ? BP->ParentClass->GetPathName() : TEXT("None");
+	ResultJson->SetStringField(TEXT("AfterParent"), AfterParent);
+
+	bool bSuccess = AfterParent.Contains(NewParentClassPath) || AfterParent == NewParentClassPath;
+	ResultJson->SetBoolField(TEXT("Success"), bSuccess);
+
+	UE_LOG(LogTemp, Warning, TEXT("ForceReparentAndValidate: %s -> %s (Success=%s)"),
+		*BeforeParent, *AfterParent, bSuccess ? TEXT("YES") : TEXT("NO"));
+
+	FString OutputString;
+	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutputString);
+	FJsonSerializer::Serialize(ResultJson, Writer);
+
+	return OutputString;
+}
+
+FString USLFAutomationLibrary::ClearAllEventGraphNodes(const FString& BlueprintPath, bool bIncludeEventNodes)
+{
+	TSharedRef<FJsonObject> ResultJson = MakeShared<FJsonObject>();
+	ResultJson->SetStringField(TEXT("BlueprintPath"), BlueprintPath);
+	ResultJson->SetBoolField(TEXT("IncludeEventNodes"), bIncludeEventNodes);
+
+	UBlueprint* BP = Cast<UBlueprint>(StaticLoadObject(UBlueprint::StaticClass(), nullptr, *BlueprintPath));
+	if (!BP)
+	{
+		ResultJson->SetStringField(TEXT("Error"), TEXT("Failed to load Blueprint"));
+		ResultJson->SetBoolField(TEXT("Success"), false);
+		FString OutputString;
+		TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutputString);
+		FJsonSerializer::Serialize(ResultJson, Writer);
+		return OutputString;
+	}
+
+	int32 EventNodesCleared = 0;
+	int32 OtherNodesCleared = 0;
+	TArray<FString> ClearedEventNames;
+
+	// Clear all nodes from event graphs
+	for (UEdGraph* Graph : BP->UbergraphPages)
+	{
+		if (Graph)
+		{
+			TArray<UEdGraphNode*> NodesToRemove;
+			for (UEdGraphNode* Node : Graph->Nodes)
+			{
+				if (!Node) continue;
+
+				// Check if this is an Event node
+				bool bIsEventNode = Node->IsA<UK2Node_Event>() || Node->IsA<UK2Node_CustomEvent>();
+
+				if (bIsEventNode)
+				{
+					if (bIncludeEventNodes)
+					{
+						// Get event name for logging
+						if (UK2Node_Event* EventNode = Cast<UK2Node_Event>(Node))
+						{
+							FString EventName = EventNode->GetFunctionName().ToString();
+							ClearedEventNames.Add(EventName);
+							UE_LOG(LogTemp, Warning, TEXT("[ClearAllEventGraphNodes] Removing Event node: %s"), *EventName);
+						}
+						NodesToRemove.Add(Node);
+						EventNodesCleared++;
+					}
+				}
+				else
+				{
+					// Not an event node, always remove
+					NodesToRemove.Add(Node);
+					OtherNodesCleared++;
+				}
+			}
+
+			for (UEdGraphNode* Node : NodesToRemove)
+			{
+				Graph->RemoveNode(Node);
+			}
+		}
+	}
+
+	ResultJson->SetNumberField(TEXT("EventNodesCleared"), EventNodesCleared);
+	ResultJson->SetNumberField(TEXT("OtherNodesCleared"), OtherNodesCleared);
+
+	// Convert ClearedEventNames to JSON array
+	TArray<TSharedPtr<FJsonValue>> EventNamesArray;
+	for (const FString& Name : ClearedEventNames)
+	{
+		EventNamesArray.Add(MakeShared<FJsonValueString>(Name));
+	}
+	ResultJson->SetArrayField(TEXT("ClearedEventNames"), EventNamesArray);
+
+	// Compile and save
+	FKismetEditorUtilities::CompileBlueprint(BP);
+
+	FString PackagePath = BP->GetOutermost()->GetPathName();
+	UPackage* Package = BP->GetOutermost();
+	FString PackageFilename = FPackageName::LongPackageNameToFilename(PackagePath, FPackageName::GetAssetPackageExtension());
+	bool bSaved = UPackage::SavePackage(Package, BP, *PackageFilename, FSavePackageArgs());
+	ResultJson->SetBoolField(TEXT("Saved"), bSaved);
+
+	bool bSuccess = (EventNodesCleared + OtherNodesCleared) > 0 || bSaved;
+	ResultJson->SetBoolField(TEXT("Success"), bSuccess);
+
+	UE_LOG(LogTemp, Warning, TEXT("[ClearAllEventGraphNodes] %s - EventNodes=%d, OtherNodes=%d, Saved=%s"),
+		*BlueprintPath, EventNodesCleared, OtherNodesCleared, bSaved ? TEXT("YES") : TEXT("NO"));
+
+	FString OutputString;
+	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutputString);
+	FJsonSerializer::Serialize(ResultJson, Writer);
+
+	return OutputString;
+}
+
+bool USLFAutomationLibrary::HasEventGraphLogic(UObject* BlueprintAsset)
+{
+	UBlueprint* Blueprint = GetBlueprintFromAsset(BlueprintAsset);
+	if (!Blueprint) return false;
+
+	for (UEdGraph* Graph : Blueprint->UbergraphPages)
+	{
+		if (Graph)
+		{
+			for (UEdGraphNode* Node : Graph->Nodes)
+			{
+				if (Node && !Node->IsA<UK2Node_Event>() && !Node->IsA<UK2Node_CustomEvent>())
+				{
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+int32 USLFAutomationLibrary::GetFunctionGraphNodeCount(UObject* BlueprintAsset, const FString& FunctionName)
+{
+	UBlueprint* Blueprint = GetBlueprintFromAsset(BlueprintAsset);
+	if (!Blueprint) return -1;
+
+	for (UEdGraph* Graph : Blueprint->FunctionGraphs)
+	{
+		if (Graph && Graph->GetName().Contains(FunctionName))
+		{
+			int32 Count = 0;
+			for (UEdGraphNode* Node : Graph->Nodes)
+			{
+				if (Node && !Node->IsA<UK2Node_FunctionEntry>())
+				{
+					Count++;
+				}
+			}
+			return Count;
+		}
+	}
+	return -1;
+}
+
+FString USLFAutomationLibrary::CompareToBpOnly(const FString& BlueprintPath, const FString& BpOnlyExportJsonPath)
+{
+	// Load bp_only JSON
+	FString BpOnlyJson;
+	if (!FFileHelper::LoadFileToString(BpOnlyJson, *BpOnlyExportJsonPath))
+	{
+		return FString::Printf(TEXT("Error: Failed to load bp_only export: %s"), *BpOnlyExportJsonPath);
+	}
+
+	TSharedPtr<FJsonObject> BpOnlyObj;
+	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(BpOnlyJson);
+	if (!FJsonSerializer::Deserialize(Reader, BpOnlyObj) || !BpOnlyObj.IsValid())
+	{
+		return TEXT("Error: Failed to parse bp_only JSON");
+	}
+
+	// Load current Blueprint
+	UBlueprint* BP = Cast<UBlueprint>(StaticLoadObject(UBlueprint::StaticClass(), nullptr, *BlueprintPath));
+	if (!BP)
+	{
+		return FString::Printf(TEXT("Error: Failed to load Blueprint: %s"), *BlueprintPath);
+	}
+
+	TSharedRef<FJsonObject> CompareJson = MakeShared<FJsonObject>();
+	CompareJson->SetStringField(TEXT("BlueprintPath"), BlueprintPath);
+	CompareJson->SetStringField(TEXT("BpOnlyExportPath"), BpOnlyExportJsonPath);
+
+	// Compare variables
+	TArray<FString> CurrentVars;
+	for (const FBPVariableDescription& Var : BP->NewVariables)
+	{
+		CurrentVars.Add(Var.VarName.ToString());
+	}
+	CompareJson->SetNumberField(TEXT("CurrentVariableCount"), CurrentVars.Num());
+
+	// Compare functions
+	TArray<FString> CurrentFuncs;
+	for (UEdGraph* Graph : BP->FunctionGraphs)
+	{
+		if (Graph)
+		{
+			CurrentFuncs.Add(Graph->GetName());
+		}
+	}
+	CompareJson->SetNumberField(TEXT("CurrentFunctionCount"), CurrentFuncs.Num());
+
+	// Event graph status
+	int32 EventGraphNodes = 0;
+	for (UEdGraph* Graph : BP->UbergraphPages)
+	{
+		if (Graph)
+		{
+			for (UEdGraphNode* Node : Graph->Nodes)
+			{
+				if (Node && !Node->IsA<UK2Node_Event>())
+				{
+					EventGraphNodes++;
+				}
+			}
+		}
+	}
+	CompareJson->SetNumberField(TEXT("CurrentEventGraphLogicNodes"), EventGraphNodes);
+
+	FString OutputString;
+	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutputString);
+	FJsonSerializer::Serialize(CompareJson, Writer);
+
+	return OutputString;
+}
+
+FString USLFAutomationLibrary::DiagnoseInterfaceImplementation(const FString& BlueprintPath)
+{
+	UE_LOG(LogTemp, Warning, TEXT("=== DiagnoseInterfaceImplementation: %s ==="), *BlueprintPath);
+
+	TSharedRef<FJsonObject> ResultJson = MakeShared<FJsonObject>();
+	ResultJson->SetStringField(TEXT("BlueprintPath"), BlueprintPath);
+
+	// Load the Blueprint
+	UBlueprint* BP = Cast<UBlueprint>(StaticLoadObject(UBlueprint::StaticClass(), nullptr, *BlueprintPath));
+	if (!BP)
+	{
+		ResultJson->SetStringField(TEXT("Error"), TEXT("Failed to load Blueprint"));
+		UE_LOG(LogTemp, Error, TEXT("Failed to load Blueprint: %s"), *BlueprintPath);
+
+		FString OutputString;
+		TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutputString);
+		FJsonSerializer::Serialize(ResultJson, Writer);
+		return OutputString;
+	}
+
+	// Get the generated class
+	UBlueprintGeneratedClass* GenClass = Cast<UBlueprintGeneratedClass>(BP->GeneratedClass);
+	if (!GenClass)
+	{
+		ResultJson->SetStringField(TEXT("Error"), TEXT("No GeneratedClass"));
+		UE_LOG(LogTemp, Error, TEXT("No GeneratedClass for: %s"), *BlueprintPath);
+
+		FString OutputString;
+		TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutputString);
+		FJsonSerializer::Serialize(ResultJson, Writer);
+		return OutputString;
+	}
+
+	ResultJson->SetStringField(TEXT("GeneratedClass"), GenClass->GetPathName());
+	UE_LOG(LogTemp, Warning, TEXT("GeneratedClass: %s"), *GenClass->GetPathName());
+
+	// Get parent class
+	UClass* ParentClass = BP->ParentClass;
+	if (ParentClass)
+	{
+		ResultJson->SetStringField(TEXT("ParentClass"), ParentClass->GetPathName());
+		UE_LOG(LogTemp, Warning, TEXT("ParentClass: %s"), *ParentClass->GetPathName());
+
+		// Check if parent is native C++ or Blueprint
+		bool bParentIsNative = !ParentClass->HasAnyClassFlags(CLASS_CompiledFromBlueprint);
+		ResultJson->SetBoolField(TEXT("ParentIsNativeC++"), bParentIsNative);
+		UE_LOG(LogTemp, Warning, TEXT("ParentIsNativeC++: %s"), bParentIsNative ? TEXT("YES") : TEXT("NO"));
+	}
+
+	// Check interfaces implemented by the Blueprint itself
+	TArray<TSharedPtr<FJsonValue>> BlueprintInterfaceArray;
+	for (const FBPInterfaceDescription& InterfaceDesc : BP->ImplementedInterfaces)
+	{
+		if (InterfaceDesc.Interface)
+		{
+			TSharedRef<FJsonObject> InterfaceObj = MakeShared<FJsonObject>();
+			InterfaceObj->SetStringField(TEXT("Interface"), InterfaceDesc.Interface->GetPathName());
+			InterfaceObj->SetNumberField(TEXT("GraphCount"), InterfaceDesc.Graphs.Num());
+
+			UE_LOG(LogTemp, Warning, TEXT("Blueprint Implements Interface: %s (Graphs: %d)"),
+				*InterfaceDesc.Interface->GetPathName(), InterfaceDesc.Graphs.Num());
+
+			BlueprintInterfaceArray.Add(MakeShared<FJsonValueObject>(InterfaceObj));
+		}
+	}
+	ResultJson->SetArrayField(TEXT("BlueprintImplementedInterfaces"), BlueprintInterfaceArray);
+
+	// Check interfaces on the generated class hierarchy (includes C++ parent interfaces)
+	TArray<TSharedPtr<FJsonValue>> ClassInterfaceArray;
+	for (const FImplementedInterface& ImplementedInterface : GenClass->Interfaces)
+	{
+		if (ImplementedInterface.Class)
+		{
+			TSharedRef<FJsonObject> InterfaceObj = MakeShared<FJsonObject>();
+			InterfaceObj->SetStringField(TEXT("Interface"), ImplementedInterface.Class->GetPathName());
+
+			bool bIsNativeInterface = !ImplementedInterface.Class->HasAnyClassFlags(CLASS_CompiledFromBlueprint);
+			InterfaceObj->SetBoolField(TEXT("IsNativeC++"), bIsNativeInterface);
+			InterfaceObj->SetBoolField(TEXT("bImplementedByK2"), ImplementedInterface.bImplementedByK2);
+
+			UE_LOG(LogTemp, Warning, TEXT("Class Hierarchy Implements: %s (Native: %s, ImplementedByK2: %s)"),
+				*ImplementedInterface.Class->GetPathName(),
+				bIsNativeInterface ? TEXT("YES") : TEXT("NO"),
+				ImplementedInterface.bImplementedByK2 ? TEXT("YES") : TEXT("NO"));
+
+			ClassInterfaceArray.Add(MakeShared<FJsonValueObject>(InterfaceObj));
+		}
+	}
+	ResultJson->SetArrayField(TEXT("ClassHierarchyInterfaces"), ClassInterfaceArray);
+
+	// Specifically check for ISLFDestructibleHelperInterface
+	bool bImplementsDestructibleHelper = GenClass->ImplementsInterface(USLFDestructibleHelperInterface::StaticClass());
+	ResultJson->SetBoolField(TEXT("ImplementsISLFDestructibleHelperInterface"), bImplementsDestructibleHelper);
+	UE_LOG(LogTemp, Warning, TEXT("ImplementsISLFDestructibleHelperInterface: %s"),
+		bImplementsDestructibleHelper ? TEXT("YES") : TEXT("NO"));
+
+	// Check if the C++ parent class itself implements the interface
+	if (ParentClass)
+	{
+		bool bParentImplementsInterface = ParentClass->ImplementsInterface(USLFDestructibleHelperInterface::StaticClass());
+		ResultJson->SetBoolField(TEXT("ParentImplementsISLFDestructibleHelperInterface"), bParentImplementsInterface);
+		UE_LOG(LogTemp, Warning, TEXT("ParentImplementsISLFDestructibleHelperInterface: %s"),
+			bParentImplementsInterface ? TEXT("YES") : TEXT("NO"));
+	}
+
+	// Check if Blueprint has its OWN interface implementation graphs for EnableChaosDestroy/DisableChaosDestroy
+	// These would override the C++ _Implementation
+	bool bHasEnableChaosDestroyGraph = false;
+	bool bHasDisableChaosDestroyGraph = false;
+
+	for (const FBPInterfaceDescription& InterfaceDesc : BP->ImplementedInterfaces)
+	{
+		for (UEdGraph* Graph : InterfaceDesc.Graphs)
+		{
+			if (Graph)
+			{
+				FString GraphName = Graph->GetName();
+				UE_LOG(LogTemp, Warning, TEXT("Interface Function Graph: %s (Nodes: %d)"),
+					*GraphName, Graph->Nodes.Num());
+
+				if (GraphName.Contains(TEXT("EnableChaosDestroy")))
+				{
+					bHasEnableChaosDestroyGraph = true;
+					int32 LogicNodes = 0;
+					for (UEdGraphNode* Node : Graph->Nodes)
+					{
+						if (Node && !Node->IsA<UK2Node_FunctionEntry>())
+						{
+							LogicNodes++;
+						}
+					}
+					UE_LOG(LogTemp, Warning, TEXT("  -> EnableChaosDestroy Graph has %d logic nodes"), LogicNodes);
+				}
+				if (GraphName.Contains(TEXT("DisableChaosDestroy")))
+				{
+					bHasDisableChaosDestroyGraph = true;
+					int32 LogicNodes = 0;
+					for (UEdGraphNode* Node : Graph->Nodes)
+					{
+						if (Node && !Node->IsA<UK2Node_FunctionEntry>())
+						{
+							LogicNodes++;
+						}
+					}
+					UE_LOG(LogTemp, Warning, TEXT("  -> DisableChaosDestroy Graph has %d logic nodes"), LogicNodes);
+				}
+			}
+		}
+	}
+
+	ResultJson->SetBoolField(TEXT("HasEnableChaosDestroyGraph"), bHasEnableChaosDestroyGraph);
+	ResultJson->SetBoolField(TEXT("HasDisableChaosDestroyGraph"), bHasDisableChaosDestroyGraph);
+
+	// Check FunctionGraphs for interface functions as well
+	for (UEdGraph* Graph : BP->FunctionGraphs)
+	{
+		if (Graph)
+		{
+			FString GraphName = Graph->GetName();
+			if (GraphName.Contains(TEXT("EnableChaosDestroy")) || GraphName.Contains(TEXT("DisableChaosDestroy")))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("FunctionGraph Found: %s (Nodes: %d)"),
+					*GraphName, Graph->Nodes.Num());
+			}
+		}
+	}
+
+	// Test: Try to call the interface function on a spawned actor
+	UE_LOG(LogTemp, Warning, TEXT("--- Testing Interface Call ---"));
+
+	// Try spawning an actor and testing the interface
+	UWorld* World = GEditor ? GEditor->GetEditorWorldContext().World() : nullptr;
+	if (World && GenClass)
+	{
+		// Spawn the actor
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		AActor* TestActor = World->SpawnActor<AActor>(GenClass, FVector(0, 0, -10000), FRotator::ZeroRotator, SpawnParams);
+
+		if (TestActor)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Spawned test actor: %s"), *TestActor->GetName());
+
+			// Check if actor implements the interface
+			bool bActorImplements = TestActor->GetClass()->ImplementsInterface(USLFDestructibleHelperInterface::StaticClass());
+			ResultJson->SetBoolField(TEXT("SpawnedActorImplementsInterface"), bActorImplements);
+			UE_LOG(LogTemp, Warning, TEXT("SpawnedActorImplementsInterface: %s"), bActorImplements ? TEXT("YES") : TEXT("NO"));
+
+			if (bActorImplements)
+			{
+				// Try calling the interface function via Execute_
+				UE_LOG(LogTemp, Warning, TEXT("Calling ISLFDestructibleHelperInterface::Execute_EnableChaosDestroy..."));
+				ISLFDestructibleHelperInterface::Execute_EnableChaosDestroy(TestActor);
+				UE_LOG(LogTemp, Warning, TEXT("Execute_ call completed"));
+
+				// Also try direct cast to see if _Implementation can be called directly
+				ISLFDestructibleHelperInterface* DirectInterface = Cast<ISLFDestructibleHelperInterface>(TestActor);
+				if (DirectInterface)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Direct cast to ISLFDestructibleHelperInterface succeeded"));
+					UE_LOG(LogTemp, Warning, TEXT("Calling _Implementation directly..."));
+					DirectInterface->EnableChaosDestroy_Implementation();
+					UE_LOG(LogTemp, Warning, TEXT("Direct _Implementation call completed"));
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Direct cast to ISLFDestructibleHelperInterface FAILED"));
+				}
+			}
+
+			// Destroy test actor
+			TestActor->Destroy();
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to spawn test actor"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No World available for spawn test"));
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("=== END DiagnoseInterfaceImplementation ==="));
+
+	FString OutputString;
+	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutputString);
+	FJsonSerializer::Serialize(ResultJson, Writer);
+	return OutputString;
 }
 
 #endif // WITH_EDITOR

@@ -30,6 +30,7 @@
 #include "Components/StatManagerComponent.h"  // For CachedStatManager->IsStatMoreThan()
 #include "Components/AC_EquipmentManager.h"
 #include "Interfaces/SLFInteractableInterface.h"
+#include "Interfaces/SLFDestructibleHelperInterface.h"  // For EnableChaosDestroy/DisableChaosDestroy
 #include "LevelSequence.h"
 #include "LevelSequenceActor.h"
 #include "LevelSequencePlayer.h"
@@ -1293,13 +1294,53 @@ void ASLFSoulslikeCharacter::TriggerChaosField_Implementation(bool Enable)
 {
 	UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] TriggerChaosField: %s"), Enable ? TEXT("true") : TEXT("false"));
 
-	// Find the ChaosForceField child actor component and toggle its physics
-	UChildActorComponent* ChaosFieldComp = FindComponentByClass<UChildActorComponent>();
-	if (ChaosFieldComp && ChaosFieldComp->GetChildActor())
+	// Find the ChaosForceField child actor component by name (Blueprint has it named "ChaosForceField")
+	// Must search by name since character may have multiple ChildActorComponents
+	UChildActorComponent* ChaosFieldComp = nullptr;
+	TArray<UChildActorComponent*> ChildActorComps;
+	GetComponents<UChildActorComponent>(ChildActorComps);
+	for (UChildActorComponent* Comp : ChildActorComps)
 	{
-		AActor* ChaosActor = ChaosFieldComp->GetChildActor();
-		ChaosActor->SetActorEnableCollision(Enable);
-		ChaosActor->SetActorHiddenInGame(!Enable);
+		if (Comp && Comp->GetName().Contains(TEXT("ChaosForceField")))
+		{
+			ChaosFieldComp = Comp;
+			break;
+		}
+	}
+
+	if (!ChaosFieldComp)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] TriggerChaosField - ChaosForceField component not found!"));
+		return;
+	}
+
+	AActor* ChaosActor = ChaosFieldComp->GetChildActor();
+	if (!ChaosActor)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] TriggerChaosField - ChaosForceField has no child actor!"));
+		return;
+	}
+
+	// Call EnableChaosDestroy or DisableChaosDestroy via direct cast to ISLFDestructibleHelperInterface
+	// NOTE: We use direct _Implementation() call because Execute_() dispatch doesn't route to C++
+	// when the Blueprint generated class has stale function overrides from old BPI interface
+	ISLFDestructibleHelperInterface* DestructibleInterface = Cast<ISLFDestructibleHelperInterface>(ChaosActor);
+	if (DestructibleInterface)
+	{
+		if (Enable)
+		{
+			DestructibleInterface->EnableChaosDestroy_Implementation();
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] TriggerChaosField - Called EnableChaosDestroy_Implementation on %s"), *ChaosActor->GetName());
+		}
+		else
+		{
+			DestructibleInterface->DisableChaosDestroy_Implementation();
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] TriggerChaosField - Called DisableChaosDestroy_Implementation on %s"), *ChaosActor->GetName());
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] TriggerChaosField - ChaosActor %s does not implement ISLFDestructibleHelperInterface!"), *ChaosActor->GetName());
 	}
 }
 
@@ -1329,11 +1370,21 @@ void ASLFSoulslikeCharacter::OnRest_Implementation(AActor* TargetCampfire)
 	// - Restore stats (health, FP, stamina) via StatManager
 	// - Save game via SaveLoadManager
 	// - Refill flasks
-	// These are all handled by the AC_InteractionManager's EventOnRest
+	// - Open rest menu via HUD
+	// All handled by AC_InteractionManager::EventOnRest
 	if (TargetCampfire)
 	{
-		UE_LOG(LogTemp, Log, TEXT("  Player resting - triggering rest behavior"));
-		// The actual restore/save logic is in AC_InteractionManager::EventOnRest
+		// Get InteractionManager component and call EventOnRest
+		UAC_InteractionManager* InteractionMgr = FindComponentByClass<UAC_InteractionManager>();
+		if (InteractionMgr)
+		{
+			InteractionMgr->EventOnRest(TargetCampfire);
+			UE_LOG(LogTemp, Log, TEXT("  Called AC_InteractionManager::EventOnRest"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("  No AC_InteractionManager found on player!"));
+		}
 	}
 }
 
