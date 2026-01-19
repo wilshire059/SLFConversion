@@ -25,6 +25,7 @@
 // Forward declarations for widget types
 class UW_Buff;
 class UProgressBar;
+class USizeBox;
 
 // Forward declarations for Blueprint types
 
@@ -74,6 +75,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Bar Sizing")
 	double BaseWidthStamina;
 
+	// Height settings for thin bars (matching bp_only visual)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Bar Sizing")
+	double BaseHeightHp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Bar Sizing")
+	double BaseHeightFp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Bar Sizing")
+	double BaseHeightStamina;
+
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (0)
 	// ═══════════════════════════════════════════════════════════════════════
@@ -85,8 +94,8 @@ public:
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Resources")
-	void AdjustBarWidth(const FStatInfo& InStat);
-	virtual void AdjustBarWidth_Implementation(const FStatInfo& InStat);
+	void AdjustBarWidth(FStatInfo Stat);
+	virtual void AdjustBarWidth_Implementation(FStatInfo Stat);
 
 
 	// Event Handlers (7 events)
@@ -119,14 +128,29 @@ public:
 	virtual void EventUpdateStat_Implementation(FStatInfo InStat);
 
 protected:
+	// Widget lifecycle - NativePreConstruct for initial bar sizing
+	virtual void NativePreConstruct() override;
+
 	// Cache references
 	void CacheWidgetReferences();
 
+	// Hide white separator lines between bars
+	void HideBarSeparators();
+
 	// Cached widget references for stat bars (no UPROPERTY to avoid Blueprint conflict)
+	// NOTE: Widget names from Blueprint use lowercase 'b' (Focusbar, Staminabar)
 	UProgressBar* CachedHealthBar_Front;
 	UProgressBar* CachedHealthBar_Back;
 	UProgressBar* CachedFocusBar_Front;
 	UProgressBar* CachedFocusBar_Back;
 	UProgressBar* CachedStaminaBar_Front;
 	UProgressBar* CachedStaminaBar_Back;
+
+	// SizeBox widgets that control bar widths (from Blueprint hierarchy)
+	USizeBox* CachedHealthbarSizer;
+	USizeBox* CachedFocusbarSizer;
+	USizeBox* CachedStaminabarSizer;
+
+	// Scaling factor for bar width calculation (800.0 from bp_only Blueprint)
+	static constexpr double ScalingFactor = 800.0;
 };
