@@ -24,9 +24,13 @@
 
 // Forward declarations for widget types
 class UW_StatEntry_LevelUp;
+class UVerticalBox;
+
+// Forward declarations for component types
+class UStatManagerComponent;
 
 // Forward declarations for Blueprint types
-
+class USLFStatBase;
 
 // Forward declarations for SaveGame types
 
@@ -72,8 +76,8 @@ public:
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_StatBlock_LevelUp")
-	void SetupStatsByCategory(const TArray<UB_Stat*>& StatObjects, const TMap<FGameplayTag, TSubclassOf<UB_Stat>>& StatClassesAndCategories);
-	virtual void SetupStatsByCategory_Implementation(const TArray<UB_Stat*>& StatObjects, const TMap<FGameplayTag, TSubclassOf<UB_Stat>>& StatClassesAndCategories);
+	void SetupStatsByCategory(const TArray<USLFStatBase*>& StatObjects, const TMap<FGameplayTag, TSubclassOf<USLFStatBase>>& StatClassesAndCategories);
+	virtual void SetupStatsByCategory_Implementation(const TArray<USLFStatBase*>& StatObjects, const TMap<FGameplayTag, TSubclassOf<USLFStatBase>>& StatClassesAndCategories);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_StatBlock_LevelUp")
 	TArray<UW_StatEntry_LevelUp*> GetAllStatsInBlock();
 	virtual TArray<UW_StatEntry_LevelUp*> GetAllStatsInBlock_Implementation();
@@ -87,4 +91,22 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Initialize stats from player's StatManager
+	void InitializeFromStatManager();
+
+	// Called when StatManager finishes initializing stats
+	UFUNCTION()
+	void OnStatsInitialized();
+
+	// Cached widget references (NOT UPROPERTY - conflicts with Blueprint BindWidget)
+	UVerticalBox* CachedStatBox;
+
+	// Cached StatManager component
+	UPROPERTY()
+	UStatManagerComponent* CachedStatManager;
+
+	// Stat entry widget class (loaded dynamically)
+	UPROPERTY()
+	TSubclassOf<UW_StatEntry_LevelUp> StatEntryWidgetClass;
 };

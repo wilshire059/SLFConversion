@@ -225,6 +225,10 @@ void UW_Status::EventOnVisibilityChanged_Implementation(ESlateVisibility InVisib
 		// Initialize the level/currency block
 		InitializeLevelCurrencyBlock();
 
+		// CRITICAL FIX: Refresh stat blocks to show updated stat values
+		// This ensures stats updated in Level-Up menu are reflected in Status menu
+		PopulateStatBlocks();
+
 		// Set focus to this widget for keyboard input
 		if (APlayerController* PC = GetOwningPlayer())
 		{
@@ -232,7 +236,7 @@ void UW_Status::EventOnVisibilityChanged_Implementation(ESlateVisibility InVisib
 			UE_LOG(LogTemp, Log, TEXT("[W_Status] Set user focus"));
 		}
 
-		UE_LOG(LogTemp, Log, TEXT("[W_Status] Visibility changed to Visible - Refreshed Level=%d, Currency=%d"), CurrentPlayerLevel, CurrentPlayerCurrency);
+		UE_LOG(LogTemp, Log, TEXT("[W_Status] Visibility changed to Visible - Refreshed Level=%d, Currency=%d, Stats refreshed"), CurrentPlayerLevel, CurrentPlayerCurrency);
 	}
 	else
 	{

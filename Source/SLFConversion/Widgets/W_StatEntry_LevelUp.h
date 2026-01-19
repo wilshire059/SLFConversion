@@ -13,6 +13,7 @@
 #include "GameplayTagContainer.h"
 #include "SLFEnums.h"
 #include "SLFGameTypes.h"
+#include "SLFStatTypes.h"  // For FAffectedStat, FStatInfo
 #include "SLFPrimaryDataAssets.h"
 #include "InputMappingContext.h"
 #include "GameFramework/InputSettings.h"
@@ -26,13 +27,13 @@
 
 
 // Forward declarations for Blueprint types
-class UB_Stat;
+class USLFStatBase;
 
 // Forward declarations for SaveGame types
 
 
 // Event Dispatchers
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FW_StatEntry_LevelUp_OnStatChangeRequest, UB_Stat*, StatObject, bool, Increase);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FW_StatEntry_LevelUp_OnStatChangeRequest, USLFStatBase*, StatObject, bool, Increase);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FW_StatEntry_LevelUp_OnStatEntrySelected, TArray<FGameplayTag>, AffectedStats, bool, Selected);
 
 UCLASS()
@@ -52,7 +53,7 @@ public:
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
-	UB_Stat* Stat;
+	USLFStatBase* Stat;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
 	FGameplayTag StatCategory;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
@@ -65,6 +66,9 @@ public:
 	FLinearColor Color;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
 	FLinearColor SelectedColor;
+	// GOLD color for text when there's a pending stat change (R=0.858824, G=0.745098, B=0.619608)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
+	FLinearColor PendingChangeTextColor;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	bool Selected;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
@@ -105,8 +109,8 @@ public:
 	virtual void EventIncreaseStat_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_StatEntry_LevelUp")
-	void EventOnStatUpdated(UB_Stat* UpdatedStat, double Change, bool UpdateAffectedStats, uint8 ValueType);
-	virtual void EventOnStatUpdated_Implementation(UB_Stat* UpdatedStat, double Change, bool UpdateAffectedStats, uint8 ValueType);
+	void EventOnStatUpdated(USLFStatBase* UpdatedStat, double Change, bool UpdateAffectedStats, uint8 ValueType);
+	virtual void EventOnStatUpdated_Implementation(USLFStatBase* UpdatedStat, double Change, bool UpdateAffectedStats, uint8 ValueType);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_StatEntry_LevelUp")
 	void EventRemoveHighlight();
@@ -123,4 +127,15 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Button click handlers (bound to UButton::OnClicked)
+	UFUNCTION()
+	void OnButtonIncreaseClicked();
+	UFUNCTION()
+	void OnButtonDecreaseClicked();
+
+	// Handler for Stat->OnStatUpdated delegate binding
+	// Signature must match FOnStatValueUpdated exactly for dynamic delegate binding
+	UFUNCTION()
+	void OnStatValueUpdatedHandler(USLFStatBase* UpdatedStat, double Change, bool UpdateAffectedStats, ESLFValueType ValueType);
 };

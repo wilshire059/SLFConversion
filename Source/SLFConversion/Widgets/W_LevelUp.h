@@ -13,6 +13,7 @@
 #include "GameplayTagContainer.h"
 #include "SLFEnums.h"
 #include "SLFGameTypes.h"
+#include "SLFStatTypes.h"  // For FLevelChangeData
 #include "SLFPrimaryDataAssets.h"
 #include "InputMappingContext.h"
 #include "GameFramework/InputSettings.h"
@@ -24,11 +25,13 @@
 
 // Forward declarations for widget types
 class UW_StatEntry_LevelUp;
+class UW_StatBlock_LevelUp;
 
 // Forward declarations for Blueprint types
 class UAC_InventoryManager;
-class UAC_StatManager;
-class UB_Stat;
+class UInventoryManagerComponent;  // On PlayerController
+class UStatManagerComponent;
+class USLFStatBase;
 
 // Forward declarations for SaveGame types
 
@@ -48,27 +51,39 @@ public:
 	// Widget lifecycle
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (8)
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
-	UAC_InventoryManager* InventoryComponent;
+	UAC_InventoryManager* InventoryComponent;  // On Pawn (fallback)
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
-	UAC_StatManager* StatManagerComponent;
+	UInventoryManagerComponent* ControllerInventoryComponent;  // On PlayerController (primary)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+	UStatManagerComponent* StatManagerComp;  // Use different name to avoid conflict with header name
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	int32 CurrentPlayerCurrency;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	int32 CurrentPlayerLevel;
+
+	// Stat change tracking - key is USLFStatBase object, value is the change data
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
-	TMap<FGameplayTag, UB_Stat*> CurrentChanges;
+	TMap<USLFStatBase*, FLevelChangeData> CurrentChanges;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
-	TMap<FGameplayTag, UB_Stat*> DefaultValues;
+	TMap<USLFStatBase*, FLevelChangeData> DefaultValues;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	TArray<UW_StatEntry_LevelUp*> AllStatEntries;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	int32 NavigationIndex;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// STAT BLOCK WIDGETS
+	// NOTE: These are cached at runtime from Blueprint UMG designer widgets.
+	// DO NOT declare as UPROPERTY - causes conflict with Blueprint variables!
+	// ═══════════════════════════════════════════════════════════════════════
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (2)
@@ -84,8 +99,8 @@ public:
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_LevelUp")
-	void HandleStatChanges(UB_Stat* StatObject, bool Increase);
-	virtual void HandleStatChanges_Implementation(UB_Stat* StatObject, bool Increase);
+	void HandleStatChanges(USLFStatBase* StatObject, bool Increase);
+	virtual void HandleStatChanges_Implementation(USLFStatBase* StatObject, bool Increase);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_LevelUp")
 	void SetAllStatEntries();
 	virtual void SetAllStatEntries_Implementation();
@@ -145,12 +160,16 @@ public:
 	virtual void EventOnPlayerLevelUpdated_Implementation(int32 NewLevel);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_LevelUp")
-	void EventOnStatChangeRequested(UB_Stat* StatObject, bool Increase);
-	virtual void EventOnStatChangeRequested_Implementation(UB_Stat* StatObject, bool Increase);
+	void EventOnStatChangeRequested(USLFStatBase* StatObject, bool Increase);
+	virtual void EventOnStatChangeRequested_Implementation(USLFStatBase* StatObject, bool Increase);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_LevelUp")
 	void EventOnStatEntrySelected(const TArray<FGameplayTag>& AffectedStats, bool Selected);
 	virtual void EventOnStatEntrySelected_Implementation(const TArray<FGameplayTag>& AffectedStats, bool Selected);
+
+	// Non-UFUNCTION handler for delegate binding (dynamic delegates require value types)
+	UFUNCTION()
+	void OnStatEntrySelectedHandler(TArray<FGameplayTag> AffectedStats, bool Selected);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_LevelUp")
 	void EventOnVisibilityChanged(uint8 InVisibility);
@@ -163,4 +182,33 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Callback when StatManager stats are initialized
+	UFUNCTION()
+	void OnStatsInitialized();
+
+	// Callback when level-up cost affordability changes
+	UFUNCTION()
+	void OnLevelUpCostChanged(bool bCanAfford);
+
+	// Callback when currency changes (from InventoryComponent)
+	// This ensures W_LevelUp updates when death currency is picked up
+	UFUNCTION()
+	void OnCurrencyUpdatedFromInventory(int32 NewAmount);
+
+	// Callback when ConfirmButton is clicked
+	UFUNCTION()
+	void OnConfirmButtonClicked();
+
+	// Track if player can currently afford to level up
+	bool bCanAffordLevelUp;
+
+	// Cached stat block widgets (set at runtime from Blueprint UMG designer)
+	// These cannot be UPROPERTY due to conflict with Blueprint variables
+	UW_StatBlock_LevelUp* CachedPrimaryAttributes;
+	UW_StatBlock_LevelUp* CachedSecondaryStats;
+	UW_StatBlock_LevelUp* CachedMiscStats;
+	UW_StatBlock_LevelUp* CachedAttackStats;
+	UW_StatBlock_LevelUp* CachedNegationStats;
+	UW_StatBlock_LevelUp* CachedResistanceStats;
 };

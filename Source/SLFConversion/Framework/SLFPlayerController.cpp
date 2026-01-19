@@ -16,6 +16,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "Interfaces/BPI_GenericCharacter.h"
 #include "Components/StatManagerComponent.h"
+#include "Components/InventoryManagerComponent.h"
 #include "GameplayTagContainer.h"
 #include "SLFGameTypes.h"
 
@@ -643,7 +644,29 @@ void ASLFPlayerController::ToggleInput_Implementation(bool bEnabled)
 
 void ASLFPlayerController::GetCurrency_Implementation(int32& Currency)
 {
-	Currency = 0; // TODO: Get from progress manager
+	// Try to find InventoryManager component on the controller first
+	UActorComponent* InventoryComp = FindComponentByClass<UInventoryManagerComponent>();
+
+	// If not on controller, try to find on pawn
+	if (!InventoryComp)
+	{
+		if (APawn* ControlledPawn = GetPawn())
+		{
+			InventoryComp = ControlledPawn->FindComponentByClass<UInventoryManagerComponent>();
+		}
+	}
+
+	// Get currency from the inventory manager
+	if (UInventoryManagerComponent* InvMgr = Cast<UInventoryManagerComponent>(InventoryComp))
+	{
+		Currency = InvMgr->GetCurrentCurrency();
+		UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] GetCurrency - Got %d from InventoryManager"), Currency);
+	}
+	else
+	{
+		Currency = 0;
+		UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] GetCurrency - No InventoryManagerComponent found, returning 0"));
+	}
 }
 
 void ASLFPlayerController::GetProgressManager_Implementation(UActorComponent*& ProgressManager)
@@ -669,6 +692,29 @@ void ASLFPlayerController::GetInventoryComponent_Implementation(UActorComponent*
 void ASLFPlayerController::AdjustCurrency_Implementation(int32 Delta)
 {
 	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] AdjustCurrency - Delta: %d"), Delta);
+
+	// Try to find InventoryManager component on the controller first
+	UActorComponent* InventoryComp = FindComponentByClass<UInventoryManagerComponent>();
+
+	// If not on controller, try to find on pawn
+	if (!InventoryComp)
+	{
+		if (APawn* ControlledPawn = GetPawn())
+		{
+			InventoryComp = ControlledPawn->FindComponentByClass<UInventoryManagerComponent>();
+		}
+	}
+
+	// Call AdjustCurrency on the inventory manager
+	if (UInventoryManagerComponent* InvMgr = Cast<UInventoryManagerComponent>(InventoryComp))
+	{
+		InvMgr->AdjustCurrency(Delta);
+		UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] Called InventoryManager->AdjustCurrency(%d)"), Delta);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] No InventoryManagerComponent found on controller or pawn"));
+	}
 }
 
 void ASLFPlayerController::LootItemToInventory_Implementation(AActor* Item)
