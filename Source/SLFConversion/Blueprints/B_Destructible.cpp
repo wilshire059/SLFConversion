@@ -17,37 +17,76 @@ AB_Destructible::AB_Destructible()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	// Create GeometryCollection component (root)
-	GC_DestructibleMesh = CreateDefaultSubobject<UGeometryCollectionComponent>(TEXT("GC_DestructibleMesh"));
-	RootComponent = GC_DestructibleMesh;
-
-	// Create Billboard component for editor visualization
-	Billboard = CreateDefaultSubobject<UBillboardComponent>(TEXT("Billboard"));
-	Billboard->SetupAttachment(RootComponent);
+	// Initialize pointers to nullptr - components come from Blueprint SCS
+	CachedGC_DestructibleMesh = nullptr;
+	CachedBillboard = nullptr;
 
 	// Initialize state
 	bHasPlayedDestructionSound = false;
+
+	// NOTE: Components (GC_DestructibleMesh, Billboard) are created in Blueprint SCS,
+	// not in C++ constructor. This avoids name collisions.
 }
 
 void AB_Destructible::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Bind to chaos break event
-	if (GC_DestructibleMesh)
+	// Cache component references from Blueprint SCS
+	const TSet<UActorComponent*>& AllComponents = GetComponents();
+	for (UActorComponent* Component : AllComponents)
 	{
-		GC_DestructibleMesh->OnChaosBreakEvent.AddDynamic(this, &AB_Destructible::OnChaosBreakEvent);
+		if (!Component) continue;
+		FString CompName = Component->GetName();
+
+		if (CompName.Contains(TEXT("GC_Destructible")) && !CachedGC_DestructibleMesh)
+		{
+			CachedGC_DestructibleMesh = Cast<UGeometryCollectionComponent>(Component);
+		}
+		else if (CompName.Contains(TEXT("Billboard")) && !CachedBillboard)
+		{
+			CachedBillboard = Cast<UBillboardComponent>(Component);
+		}
 	}
+
+	// Bind to chaos break event and ensure physics is active
+	if (CachedGC_DestructibleMesh)
+	{
+		CachedGC_DestructibleMesh->OnChaosBreakEvent.AddDynamic(this, &AB_Destructible::OnChaosBreakEvent);
+
+		// Ensure the component is activated for Chaos physics to work
+		if (!CachedGC_DestructibleMesh->IsActive())
+		{
+			CachedGC_DestructibleMesh->Activate(true);
+		}
+
+		// Log physics state for debugging
+		UE_LOG(LogTemp, Log, TEXT("[B_Destructible] BeginPlay - Physics state: IsActive=%s, IsSimulatingPhysics=%s"),
+			CachedGC_DestructibleMesh->IsActive() ? TEXT("Yes") : TEXT("No"),
+			CachedGC_DestructibleMesh->IsSimulatingPhysics() ? TEXT("Yes") : TEXT("No"));
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[B_Destructible] BeginPlay - GC=%s, Billboard=%s"),
+		CachedGC_DestructibleMesh ? TEXT("Yes") : TEXT("No"),
+		CachedBillboard ? TEXT("Yes") : TEXT("No"));
 }
 
 void AB_Destructible::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
+	// OnConstruction runs before BeginPlay, so we need to find the component directly
 	// Set the GeometryCollection on the component (from Blueprint UserConstructionScript)
-	if (GC_DestructibleMesh && GeometryCollection)
+	if (GeometryCollection)
 	{
-		GC_DestructibleMesh->SetRestCollection(GeometryCollection);
+		// Find GC component directly since CachedGC_DestructibleMesh isn't populated yet
+		UGeometryCollectionComponent* GC = FindComponentByClass<UGeometryCollectionComponent>();
+		if (GC)
+		{
+			// CRITICAL: bApplyAssetDefaults=true is required to apply physics settings from the GC asset
+			// This enables physics simulation, collision, and break thresholds defined in the asset
+			GC->SetRestCollection(GeometryCollection, true);
+		}
 	}
 }
 

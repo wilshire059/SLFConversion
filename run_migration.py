@@ -94,7 +94,7 @@ MIGRATION_MAP = {
     "B_Item": "/Script/SLFConversion.SLFItemBase",
     "B_Item_Weapon": "/Script/SLFConversion.SLFWeaponBase",
     # B_Interactable and B_Door: Now in KEEP_VARS_MAP to preserve SCS (DefaultSceneRoot needed by child Blueprints)
-    "B_Container": "/Script/SLFConversion.SLFContainer",
+    "B_Container": "/Script/SLFConversion.B_Container",
     "B_BaseProjectile": "/Script/SLFConversion.SLFProjectileBase",
     "B_SkyManager": "/Script/SLFConversion.SLFSkyManager",
     "B_AbilityEffectBase": "/Script/SLFConversion.SLFAbilityEffectBase",
@@ -153,7 +153,7 @@ MIGRATION_MAP = {
     "B_Action_ScrollWheel_RightHand": "/Script/SLFConversion.SLFActionScrollWheelRightHand",
     "B_Action_ScrollWheel_Tools": "/Script/SLFConversion.SLFActionScrollWheelTools",
     # Additional Interactables
-    "B_BossDoor": "/Script/SLFConversion.SLFInteractableBase",
+    # B_BossDoor MOVED to PRIORITY_INTERACTABLE_MAP (uses IsActivated?, CanBeTraced? vars)
     "B_DeathCurrency": "/Script/SLFConversion.SLFInteractableBase",
     "B_Door_Demo": "/Script/SLFConversion.SLFDoorDemo",  # Inherits B_Door (KEEP_VARS) - reparent may fail but logic is cleared
     # Additional Items
@@ -174,7 +174,7 @@ MIGRATION_MAP = {
     # Blueprint Function Library
     "BFL_Helper": "/Script/SLFConversion.BFL_Helper",
     "B_DeathTrigger": "/Script/SLFConversion.SLFInteractableBase",
-    "B_Destructible": "/Script/SLFConversion.SLFInteractableBase",
+    "B_Destructible": "/Script/SLFConversion.B_Destructible",
     "B_LocationActor": "/Script/SLFConversion.SLFInteractableBase",
     "B_Torch": "/Script/SLFConversion.SLFInteractableBase",
     "B_Projectile_Boss_Fireball": "/Script/SLFConversion.SLFProjectileBase",
@@ -600,6 +600,13 @@ PRIORITY_CHARACTER_MAP = {
     "B_Soulslike_Character": "/Script/SLFConversion.SLFSoulslikeCharacter",
     "B_Soulslike_Enemy": "/Script/SLFConversion.SLFSoulslikeEnemy",
     "B_Soulslike_Boss": "/Script/SLFConversion.SLFSoulslikeBoss",
+}
+
+# CRITICAL: Interactable actors that use variables with "?" suffix pins
+# These MUST be cleared before anything loads them
+# B_BossDoor uses: IsActivated?, CanBeTraced?, Interactable SM component refs
+PRIORITY_INTERACTABLE_MAP = {
+    "B_BossDoor": "/Script/SLFConversion.SLFBossDoor",
 }
 
 # REPARENT ONLY: Blueprints that should inherit C++ parent but KEEP their EventGraph
@@ -1089,6 +1096,26 @@ def run():
             print("  " + name + ": load error - " + str(e))
     print("Loaded " + str(priority_char_loaded) + " priority characters")
 
+    # 1C2: Load Priority Interactables (B_BossDoor, etc.)
+    print("")
+    print("=== Loading Priority Interactables ===")
+    priority_interactable_loaded = 0
+    for name, cpp in PRIORITY_INTERACTABLE_MAP.items():
+        if name in LOAD_SKIP_LIST:
+            print("  " + name + ": SKIPPED (crash prevention)")
+            continue
+        try:
+            bp = find_bp(name)
+            if bp:
+                all_bps.append((bp, name, cpp, "priority_interactable"))
+                priority_interactable_loaded += 1
+                print("  " + name + ": loaded")
+            else:
+                print("  " + name + ": not found")
+        except Exception as e:
+            print("  " + name + ": load error - " + str(e))
+    print("Loaded " + str(priority_interactable_loaded) + " priority interactables")
+
     # 1D: Load NPC Characters
     print("")
     print("=== Loading NPC Characters ===")
@@ -1247,6 +1274,7 @@ def run():
     # Count by type
     priority_cleared = len([x for x in all_bps if x[3] == "priority_ans"])
     priority_char_cleared = len([x for x in all_bps if x[3] == "priority_character"])
+    priority_interactable_cleared = len([x for x in all_bps if x[3] == "priority_interactable"])
     anim_bp_cleared = len([x for x in all_bps if x[3] == "anim_bp"])
     npc_cleared = len([x for x in all_bps if x[3] == "npc_character"])
     regular_cleared = len([x for x in all_bps if x[3] == "regular"])

@@ -32,16 +32,17 @@ public:
 	AB_Destructible();
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// COMPONENTS (2) - From Blueprint SCS
+	// COMPONENTS (Cached from Blueprint SCS at runtime)
+	// NOTE: Named with "Cached" prefix to avoid collision with Blueprint SCS component names
 	// ═══════════════════════════════════════════════════════════════════════
 
-	/** GeometryCollection mesh for chaos destruction */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UGeometryCollectionComponent* GC_DestructibleMesh;
+	/** GeometryCollection mesh for chaos destruction (cached from SCS) */
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components")
+	UGeometryCollectionComponent* CachedGC_DestructibleMesh;
 
-	/** Billboard for editor visualization */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UBillboardComponent* Billboard;
+	/** Billboard for editor visualization (cached from SCS) */
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components")
+	UBillboardComponent* CachedBillboard;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (2) - From Blueprint Variables
