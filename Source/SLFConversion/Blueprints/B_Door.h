@@ -43,17 +43,35 @@ public:
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// COMPONENTS
+	// Created in constructor, may be overridden by Blueprint SCS components
+	// BeginPlay will re-cache to find the correct component to animate
 	// ═══════════════════════════════════════════════════════════════════════
 
+	/** Door Mesh - The actual door panel that opens/closes
+	 * Only this component rotates when door opens */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Door Components")
+	UStaticMeshComponent* DoorMesh;
+
 	/** Door Frame - Decorative arch/frame around the door opening
-	 * Uses SM_PrisonDoorArch by default, can be customized per instance */
+	 * This component does NOT rotate */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Door Components")
 	UStaticMeshComponent* DoorFrame;
 
-	/** MoveTo - Target location for player teleportation after passing through door
-	 * Position is updated based on player approach direction */
+	/** MoveTo - Target location for player teleportation after passing through door */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Door Components")
 	UBillboardComponent* MoveTo;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// MESH PROPERTIES (for Blueprint CDO persistence)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	/** Default mesh for the door panel - persists in Blueprint CDO */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Door|Mesh")
+	TSoftObjectPtr<UStaticMesh> DefaultDoorMesh;
+
+	/** Default mesh for the door frame - persists in Blueprint CDO */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Door|Mesh")
+	TSoftObjectPtr<UStaticMesh> DefaultDoorFrameMesh;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (9)
@@ -103,6 +121,12 @@ public:
 	// Custom event to open the door
 	UFUNCTION(BlueprintCallable, Category = "B_Door")
 	void OpenDoor();
+
+	// OnConstruction - applies DefaultDoorMesh if set (runs in editor AND runtime)
+	virtual void OnConstruction(const FTransform& Transform) override;
+
+	// BeginPlay - cache component references from Blueprint SCS
+	virtual void BeginPlay() override;
 
 protected:
 	// Timer handle for door interpolation

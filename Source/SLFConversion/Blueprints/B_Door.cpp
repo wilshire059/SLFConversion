@@ -15,40 +15,105 @@
 
 AB_Door::AB_Door()
 {
+	// ============================================================
+	// COMPONENT SETUP
+	// Creates fallback components for C++ instantiation.
+	// BeginPlay will re-cache to Blueprint SCS components if they exist.
+	// ============================================================
+
 	MoveToDistance = 100.0;
 	YawRotationAmount = 90.0;
 	PlayRate = 1.0;
 	OpenForwards = true;
 	DoorInterpAlpha = 0.0f;
 
-	// ============================================================
-	// CREATE DOOR FRAME COMPONENT
-	// Decorative arch/frame around the door opening
-	// Uses SM_PrisonDoorArch by default (can be changed per Blueprint/instance)
-	// ============================================================
-	DoorFrame = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Door Frame"));
-	DoorFrame->SetupAttachment(RootComponent);
-	DoorFrame->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
-	DoorFrame->SetRelativeRotation(FRotator(0.0f, 90.0f, 0.0f)); // Rotated to face forward
-	DoorFrame->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	// Create root component
+	USceneComponent* DefaultRoot = CreateDefaultSubobject<USceneComponent>(TEXT("DefaultSceneRoot"));
+	SetRootComponent(DefaultRoot);
 
-	// Load default door frame mesh (SM_PrisonDoorArch)
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> DoorFrameMeshFinder(
-		TEXT("/Game/SoulslikeFramework/Meshes/SM/PrisonDoor/SM_PrisonDoorArch.SM_PrisonDoorArch"));
-	if (DoorFrameMeshFinder.Succeeded())
+	// Create door mesh component (the actual door that rotates)
+	// Transforms match bp_only: Location Y=-75, Rotation Yaw=90
+	DoorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Interactable SM"));
+	DoorMesh->SetupAttachment(DefaultRoot);
+	DoorMesh->SetRelativeLocation(FVector(0.0f, -75.0f, 0.0f));
+	DoorMesh->SetRelativeRotation(FRotator(0.0f, 90.0f, 0.0f));
+	DoorMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	DoorMesh->SetCollisionObjectType(ECollisionChannel::ECC_WorldStatic);
+	DoorMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+
+	// Load default door mesh
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> DoorMeshFinder(
+		TEXT("/Game/SoulslikeFramework/Meshes/SM/PrisonDoor/SM_PrisonDoor.SM_PrisonDoor"));
+	if (DoorMeshFinder.Succeeded())
 	{
-		DoorFrame->SetStaticMesh(DoorFrameMeshFinder.Object);
-		UE_LOG(LogTemp, Log, TEXT("[B_Door] Door Frame mesh set to SM_PrisonDoorArch"));
+		DoorMesh->SetStaticMesh(DoorMeshFinder.Object);
+	}
+
+	// Create door frame component (static, does NOT rotate)
+	// Transforms match bp_only: Rotation Yaw=90, NO mesh (child blueprints add mesh)
+	DoorFrame = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Door Frame"));
+	DoorFrame->SetupAttachment(DefaultRoot);
+	DoorFrame->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
+	DoorFrame->SetRelativeRotation(FRotator(0.0f, 90.0f, 0.0f));
+	DoorFrame->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	// NOTE: No default mesh - child blueprints can set their own door frame mesh
+
+	// Create MoveTo billboard
+	// Transforms match bp_only: Location X=100, Z=60, Scale=0.5
+	MoveTo = CreateDefaultSubobject<UBillboardComponent>(TEXT("MoveTo"));
+	MoveTo->SetupAttachment(DefaultRoot);
+	MoveTo->SetRelativeLocation(FVector(100.0f, 0.0f, 60.0f));
+	MoveTo->SetRelativeScale3D(FVector(0.5f, 0.5f, 0.5f));
+}
+
+void AB_Door::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+
+	// Apply DefaultDoorMesh if set (allows Blueprint CDO override)
+	if (DoorMesh && !DefaultDoorMesh.IsNull())
+	{
+		if (UStaticMesh* MeshToApply = DefaultDoorMesh.LoadSynchronous())
+		{
+			DoorMesh->SetStaticMesh(MeshToApply);
+		}
+	}
+
+	// Apply DefaultDoorFrameMesh if set
+	if (DoorFrame && !DefaultDoorFrameMesh.IsNull())
+	{
+		if (UStaticMesh* MeshToApply = DefaultDoorFrameMesh.LoadSynchronous())
+		{
+			DoorFrame->SetStaticMesh(MeshToApply);
+		}
+	}
+}
+
+void AB_Door::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// Log component state for debugging
+	UE_LOG(LogTemp, Log, TEXT("[B_Door] BeginPlay - %s"), *GetName());
+
+	if (DoorMesh)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[B_Door]   DoorMesh: %s, Mesh: %s, Rotation: %s"),
+			*DoorMesh->GetName(),
+			DoorMesh->GetStaticMesh() ? *DoorMesh->GetStaticMesh()->GetName() : TEXT("None"),
+			*DoorMesh->GetRelativeRotation().ToString());
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[B_Door] Could not find SM_PrisonDoorArch mesh"));
+		UE_LOG(LogTemp, Warning, TEXT("[B_Door]   DoorMesh is NULL!"));
 	}
 
-	// Create MoveTo component - marks where player teleports to after passing through door
-	MoveTo = CreateDefaultSubobject<UBillboardComponent>(TEXT("MoveTo"));
-	MoveTo->SetupAttachment(RootComponent);
-	MoveTo->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f)); // Position updated in OnInteract based on direction
+	if (DoorFrame)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[B_Door]   DoorFrame: %s, Mesh: %s"),
+			*DoorFrame->GetName(),
+			DoorFrame->GetStaticMesh() ? *DoorFrame->GetStaticMesh()->GetName() : TEXT("None"));
+	}
 }
 
 void AB_Door::OnInteract_Implementation(AActor* InteractingActor)
@@ -233,13 +298,25 @@ FText AB_Door::GetRequiredItemsParsed_Implementation()
 
 void AB_Door::OpenDoor()
 {
-	// Cache current rotation
-	Cache_Rotation = GetActorRotation();
+	// Cache COMPONENT's relative rotation (not actor rotation!)
+	// This is critical - only the door mesh rotates, not the frame
+	if (DoorMesh)
+	{
+		Cache_Rotation = DoorMesh->GetRelativeRotation();
+	}
+	else
+	{
+		Cache_Rotation = FRotator::ZeroRotator;
+	}
 
 	// Calculate target rotation based on direction
 	float YawDirection = OpenForwards ? YawRotationAmount : -YawRotationAmount;
 	TargetRotation = Cache_Rotation;
 	TargetRotation.Yaw += YawDirection;
+
+	UE_LOG(LogTemp, Log, TEXT("[B_Door] OpenDoor - From: %s To: %s, Direction: %s"),
+		*Cache_Rotation.ToString(), *TargetRotation.ToString(),
+		OpenForwards ? TEXT("Forwards") : TEXT("Backwards"));
 
 	// Reset interpolation
 	DoorInterpAlpha = 0.0f;
@@ -259,6 +336,16 @@ void AB_Door::OpenDoor()
 
 void AB_Door::DoorInterpTick()
 {
+	// Safety check - DoorMesh must exist
+	if (!DoorMesh)
+	{
+		if (GetWorld())
+		{
+			GetWorld()->GetTimerManager().ClearTimer(DoorInterpTimerHandle);
+		}
+		return;
+	}
+
 	// Increment alpha based on play rate
 	DoorInterpAlpha += 0.016f * PlayRate;
 
@@ -266,7 +353,9 @@ void AB_Door::DoorInterpTick()
 	{
 		// Finished interpolation
 		DoorInterpAlpha = 1.0f;
-		SetActorRotation(TargetRotation);
+
+		// Set COMPONENT rotation (only door mesh rotates, not the frame!)
+		DoorMesh->SetRelativeRotation(TargetRotation);
 
 		// Stop timer
 		if (GetWorld())
@@ -276,11 +365,13 @@ void AB_Door::DoorInterpTick()
 
 		// Broadcast door opened
 		OnDoorOpened.Broadcast();
+
+		UE_LOG(LogTemp, Log, TEXT("[B_Door] Door finished opening at rotation: %s"), *TargetRotation.ToString());
 	}
 	else
 	{
-		// Interpolate rotation
+		// Interpolate rotation - only the door mesh rotates
 		FRotator NewRotation = UKismetMathLibrary::RLerp(Cache_Rotation, TargetRotation, DoorInterpAlpha, true);
-		SetActorRotation(NewRotation);
+		DoorMesh->SetRelativeRotation(NewRotation);
 	}
 }
