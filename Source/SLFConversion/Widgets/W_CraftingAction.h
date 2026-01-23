@@ -102,7 +102,28 @@ public:
 	void EventSetupCraftingAction(UW_InventorySlot* InSelectedSlot);
 	virtual void EventSetupCraftingAction_Implementation(UW_InventorySlot* InSelectedSlot);
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_CraftingAction")
+	void EventCancelButtonPressed();
+	virtual void EventCancelButtonPressed_Implementation();
+
 protected:
-	// Cache references
+	// Cache references and bind button events
 	void CacheWidgetReferences();
+	void BindButtonEvents();
+
+	// Button click handlers
+	UFUNCTION()
+	void HandleOKButtonPressed();
+	UFUNCTION()
+	void HandleCancelButtonPressed();
+
+	// Cached widget references
+	UPROPERTY(Transient)
+	class UW_GenericButton* CachedOKButton;
+	UPROPERTY(Transient)
+	class UW_GenericButton* CachedCancelButton;
+	UPROPERTY(Transient)
+	class UTextBlock* CachedItemNameText;
+	UPROPERTY(Transient)
+	class UImage* CachedItemIcon;
 };

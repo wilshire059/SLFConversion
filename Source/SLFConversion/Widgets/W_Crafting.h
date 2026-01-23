@@ -184,4 +184,8 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Handler for W_CraftingAction's OnCraftingActionClosed delegate
+	UFUNCTION()
+	void HandleCraftingActionClosed();
 };

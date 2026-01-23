@@ -102,4 +102,18 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Button event handlers
+	UFUNCTION()
+	void HandleButtonClicked();
+
+	UFUNCTION()
+	void HandleButtonHovered();
+
+	UFUNCTION()
+	void HandleButtonUnhovered();
+
+	// Cached button reference
+	UPROPERTY(Transient)
+	class UButton* CachedButton;
 };

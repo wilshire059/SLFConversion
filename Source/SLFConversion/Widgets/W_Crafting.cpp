@@ -17,6 +17,10 @@
 #include "Components/UniformGridPanel.h"
 #include "Blueprint/WidgetTree.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/AssetManager.h"
+#include "Engine/StreamableManager.h"
+#include "AssetRegistry/AssetRegistryModule.h"
+#include "GameplayTagsManager.h"
 
 UW_Crafting::UW_Crafting(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -86,8 +90,8 @@ void UW_Crafting::NativeConstruct()
 	// Bind visibility changed
 	OnVisibilityChanged.AddDynamic(this, &UW_Crafting::EventOnVisibilityChanged);
 
-	// Refresh craftables list
-	RefreshCraftables();
+	// Load and refresh craftables list
+	EventAsyncLoadCraftables();
 }
 
 void UW_Crafting::NativeDestruct()
@@ -105,6 +109,54 @@ FReply UW_Crafting::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent
 
 	UE_LOG(LogTemp, Log, TEXT("[W_Crafting] NativeOnKeyDown - Key: %s"), *Key.ToString());
 
+	// Check if CraftingActionPopup is visible - if so, handle input for popup
+	bool bPopupVisible = CraftingActionPopup && CraftingActionPopup->GetVisibility() == ESlateVisibility::Visible;
+
+	if (bPopupVisible && W_CraftingAction)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[W_Crafting] Popup visible - delegating input to W_CraftingAction"));
+
+		// Navigate Up: Increase craft amount
+		if (Key == EKeys::W || Key == EKeys::Up || Key == EKeys::Gamepad_DPad_Up || Key == EKeys::Gamepad_LeftStick_Up)
+		{
+			W_CraftingAction->EventNavigateCraftingActionUp();
+			return FReply::Handled();
+		}
+
+		// Navigate Down: Decrease craft amount
+		if (Key == EKeys::S || Key == EKeys::Down || Key == EKeys::Gamepad_DPad_Down || Key == EKeys::Gamepad_LeftStick_Down)
+		{
+			W_CraftingAction->EventNavigateCraftingActionDown();
+			return FReply::Handled();
+		}
+
+		// Navigate Left/Right: Switch between Craft and Cancel buttons
+		if (Key == EKeys::A || Key == EKeys::Left || Key == EKeys::Gamepad_DPad_Left || Key == EKeys::Gamepad_LeftStick_Left ||
+			Key == EKeys::D || Key == EKeys::Right || Key == EKeys::Gamepad_DPad_Right || Key == EKeys::Gamepad_LeftStick_Right)
+		{
+			W_CraftingAction->EventNavigateConfirmButtonsHorizontal();
+			return FReply::Handled();
+		}
+
+		// Navigate Ok/Confirm: Execute craft
+		if (Key == EKeys::Enter || Key == EKeys::SpaceBar || Key == EKeys::Gamepad_FaceButton_Bottom)
+		{
+			W_CraftingAction->EventCraftButtonPressed();
+			return FReply::Handled();
+		}
+
+		// Navigate Cancel/Back: Close popup (not entire menu)
+		if (Key == EKeys::Escape || Key == EKeys::Gamepad_FaceButton_Right || Key == EKeys::Tab)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[W_Crafting] Closing CraftingAction popup"));
+			EventToggleCraftingAction(false);
+			return FReply::Handled();
+		}
+
+		return FReply::Handled();
+	}
+
+	// Normal navigation when popup is not visible
 	// Navigate Up: W, Up Arrow, Gamepad DPad Up
 	if (Key == EKeys::W || Key == EKeys::Up || Key == EKeys::Gamepad_DPad_Up || Key == EKeys::Gamepad_LeftStick_Up)
 	{
@@ -190,6 +242,10 @@ void UW_Crafting::CacheWidgetReferences()
 		if (W_CraftingAction)
 		{
 			UE_LOG(LogTemp, Log, TEXT("[W_Crafting] Found W_CraftingAction"));
+
+			// Bind to OnCraftingActionClosed to close popup when craft completes or cancel is pressed
+			W_CraftingAction->OnCraftingActionClosed.AddDynamic(this, &UW_Crafting::HandleCraftingActionClosed);
+			UE_LOG(LogTemp, Log, TEXT("[W_Crafting] Bound OnCraftingActionClosed delegate"));
 		}
 	}
 }
@@ -457,8 +513,137 @@ void UW_Crafting::EventAsyncLoadCraftables_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_Crafting::EventAsyncLoadCraftables"));
 
-	// Async load all craftable item assets
-	// Once loaded, call RefreshCraftables
+	// Clear existing unlocked craftables
+	UnlockedCraftables.Empty();
+
+	// Get the asset manager
+	UAssetManager& AssetManager = UAssetManager::Get();
+
+	// Get all PDA_Item assets using the primary asset type
+	// The Blueprint uses "PDA_Item_C" as the PrimaryAssetType
+	FPrimaryAssetType ItemType = FPrimaryAssetType(TEXT("PDA_Item"));
+
+	TArray<FPrimaryAssetId> AssetIdList;
+	AssetManager.GetPrimaryAssetIdList(ItemType, AssetIdList);
+
+	UE_LOG(LogTemp, Log, TEXT("[W_Crafting] Found %d PDA_Item assets"), AssetIdList.Num());
+
+	if (AssetIdList.Num() == 0)
+	{
+		// Fallback: Scan content folders for PDA_Item data assets
+		// This handles cases where assets aren't registered with AssetManager
+		UE_LOG(LogTemp, Log, TEXT("[W_Crafting] AssetManager found no items, using fallback scan"));
+
+		IAssetRegistry& AssetRegistry = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry").Get();
+
+		// Get all assets in the Items folder and its subfolders
+		TArray<FAssetData> AssetDataList;
+		AssetRegistry.GetAssetsByPath(TEXT("/Game/SoulslikeFramework/Data/Items"), AssetDataList, true);
+
+		UE_LOG(LogTemp, Log, TEXT("[W_Crafting] Fallback: Found %d assets in Items folder"), AssetDataList.Num());
+
+		// Load each asset and check if it's a craftable UPDA_Item
+		for (const FAssetData& AssetData : AssetDataList)
+		{
+			// Only process DataAsset types (PDA_Item inherits from UPrimaryDataAsset)
+			if (!AssetData.AssetClassPath.GetAssetName().ToString().Contains(TEXT("PDA_Item")))
+			{
+				// Quick check - skip if obviously not an item
+				// But still try to load to be sure
+			}
+
+			UObject* LoadedAsset = AssetData.GetAsset();
+			if (UPDA_Item* ItemAsset = Cast<UPDA_Item>(LoadedAsset))
+			{
+				if (ItemAsset->bCrafingUnlocked)
+				{
+					FGameplayTag ItemTag = ItemAsset->ItemInformation.ItemTag;
+
+					// If ItemTag is missing, generate one from the asset name
+					if (!ItemTag.IsValid())
+					{
+						// Generate tag like "SoulslikeFramework.Item.DA_Sword01"
+						FString GeneratedTagName = FString::Printf(TEXT("SoulslikeFramework.Item.%s"), *ItemAsset->GetName());
+						ItemTag = FGameplayTag::RequestGameplayTag(FName(*GeneratedTagName), false);
+
+						// If tag doesn't exist in the tag table, we can still use it as a unique key
+						if (!ItemTag.IsValid())
+						{
+							// Create a native tag - this works without needing a tag table entry
+							ItemTag = UGameplayTagsManager::Get().RequestGameplayTag(FName(*GeneratedTagName), false);
+						}
+
+						UE_LOG(LogTemp, Log, TEXT("[W_Crafting] Generated temp tag for %s: %s"),
+							*ItemAsset->GetName(), *GeneratedTagName);
+					}
+
+					// Add to craftables map - use asset name as fallback key if tag still invalid
+					if (ItemTag.IsValid())
+					{
+						UnlockedCraftables.Add(ItemTag, ItemAsset);
+						UE_LOG(LogTemp, Log, TEXT("[W_Crafting] Added craftable: %s (Tag: %s)"),
+							*ItemAsset->GetName(), *ItemTag.ToString());
+					}
+					else
+					{
+						// Last resort - create a unique tag just for this session
+						FString UniqueTagName = FString::Printf(TEXT("SoulslikeFramework.TempItem.%s"), *ItemAsset->GetName());
+						FGameplayTag TempTag = FGameplayTag::RequestGameplayTag(FName(*UniqueTagName), false);
+						if (!TempTag.IsValid())
+						{
+							// Force add to gameplay tags manager as a dynamic tag
+							TempTag = UGameplayTagsManager::Get().AddNativeGameplayTag(FName(*UniqueTagName));
+						}
+						UnlockedCraftables.Add(TempTag, ItemAsset);
+						UE_LOG(LogTemp, Log, TEXT("[W_Crafting] Added craftable with temp tag: %s"), *ItemAsset->GetName());
+					}
+				}
+			}
+		}
+
+		// Extended fallback is no longer needed since we now handle items without ItemTags
+		// The Items folder scan above should find all craftable items
+	}
+	else
+	{
+		// Use the asset ID list from AssetManager
+		TArray<FSoftObjectPath> ItemsToLoad;
+		for (const FPrimaryAssetId& AssetId : AssetIdList)
+		{
+			FSoftObjectPath AssetPath = AssetManager.GetPrimaryAssetPath(AssetId);
+			if (!AssetPath.IsNull())
+			{
+				ItemsToLoad.Add(AssetPath);
+			}
+		}
+
+		// Synchronously load all items (async would be better but simpler for now)
+		FStreamableManager& StreamableManager = UAssetManager::GetStreamableManager();
+		StreamableManager.RequestSyncLoad(ItemsToLoad);
+
+		// Now get the loaded assets and filter for craftables
+		for (const FPrimaryAssetId& AssetId : AssetIdList)
+		{
+			UObject* LoadedAsset = AssetManager.GetPrimaryAssetObject(AssetId);
+			if (UPDA_Item* ItemAsset = Cast<UPDA_Item>(LoadedAsset))
+			{
+				if (ItemAsset->bCrafingUnlocked)
+				{
+					FGameplayTag ItemTag = ItemAsset->ItemInformation.ItemTag;
+					if (ItemTag.IsValid())
+					{
+						UnlockedCraftables.Add(ItemTag, ItemAsset);
+						UE_LOG(LogTemp, Log, TEXT("[W_Crafting] Added craftable: %s (Tag: %s)"),
+							*ItemAsset->GetName(), *ItemTag.ToString());
+					}
+				}
+			}
+		}
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[W_Crafting] Total craftables loaded: %d"), UnlockedCraftables.Num());
+
+	// Now refresh the UI
 	RefreshCraftables();
 }
 
@@ -630,8 +815,8 @@ void UW_Crafting::EventOnVisibilityChanged_Implementation(ESlateVisibility InVis
 	if (InVisibility == ESlateVisibility::Visible ||
 		InVisibility == ESlateVisibility::SelfHitTestInvisible)
 	{
-		// Refresh when becoming visible
-		RefreshCraftables();
+		// Load and refresh when becoming visible
+		EventAsyncLoadCraftables();
 
 		// Set focus to this widget for keyboard input
 		if (APlayerController* PC = GetOwningPlayer())
@@ -660,8 +845,13 @@ void UW_Crafting::EventToggleCraftingAction_Implementation(bool Show)
 	// Setup the crafting action widget with current slot
 	if (Show && W_CraftingAction && IsValid(ActiveSlot))
 	{
-		// W_CraftingAction would have a setup function to configure for the selected item
-		UE_LOG(LogTemp, Log, TEXT("  Setting up W_CraftingAction for slot"));
+		UE_LOG(LogTemp, Log, TEXT("  Setting up W_CraftingAction for slot: %s"), *ActiveSlot->GetName());
+
+		// Set the assigned item on W_CraftingAction
+		W_CraftingAction->AssignedItem = ActiveSlot->AssignedItem;
+
+		// Call EventSetupCraftingAction to initialize the popup
+		W_CraftingAction->EventSetupCraftingAction(ActiveSlot);
 	}
 }
 
@@ -679,4 +869,12 @@ void UW_Crafting::EventToggleItemInfo_Implementation(bool Visible)
 		UE_LOG(LogTemp, Log, TEXT("  Set ItemInfoBoxSwitcher visibility to %s"),
 			Visible ? TEXT("SelfHitTestInvisible") : TEXT("Collapsed"));
 	}
+}
+
+void UW_Crafting::HandleCraftingActionClosed()
+{
+	UE_LOG(LogTemp, Log, TEXT("[W_Crafting] HandleCraftingActionClosed - Closing popup"));
+
+	// Close the crafting action popup
+	EventToggleCraftingAction(false);
 }
