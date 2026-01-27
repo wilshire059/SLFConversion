@@ -30,31 +30,36 @@ void USLFActionPickupItemMontage::ExecuteAction_Implementation()
 		return;
 	}
 
-	// 2. Get RelevantData (FInstancedStruct containing FSLFMontage)
-	const FInstancedStruct& RelevantData = ActionData->RelevantData;
+	TSoftObjectPtr<UObject> SoftMontage;
 
-	// 3. Extract FSLFMontage from the FInstancedStruct
-	const FSLFMontage* MontageData = RelevantData.GetPtr<FSLFMontage>();
-	if (!MontageData)
+	// 2. FIRST try direct ActionMontage property (simple and reliable)
+	if (!ActionData->ActionMontage.IsNull())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[ActionPickupItemMontage] RelevantData does not contain FSLFMontage"));
-		return;
+		SoftMontage = TSoftObjectPtr<UObject>(ActionData->ActionMontage.ToSoftObjectPath());
+		UE_LOG(LogTemp, Log, TEXT("[ActionPickupItemMontage] Found montage via ActionMontage: %s"), *SoftMontage.ToString());
+	}
+	// 3. FALLBACK: Try RelevantData (FInstancedStruct containing FSLFMontage)
+	else
+	{
+		const FInstancedStruct& RelevantData = ActionData->RelevantData;
+		const FSLFMontage* MontageData = RelevantData.GetPtr<FSLFMontage>();
+		if (MontageData && !MontageData->AnimMontage.IsNull())
+		{
+			SoftMontage = TSoftObjectPtr<UObject>(MontageData->AnimMontage.ToSoftObjectPath());
+			UE_LOG(LogTemp, Log, TEXT("[ActionPickupItemMontage] Found montage via RelevantData: %s"), *SoftMontage.ToString());
+		}
 	}
 
-	// 4. Get the AnimMontage soft pointer from FSLFMontage
-	const TSoftObjectPtr<UAnimMontage>& AnimMontageSoft = MontageData->AnimMontage;
-	if (AnimMontageSoft.IsNull())
+	// 4. Check if we found a valid montage
+	if (SoftMontage.IsNull())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[ActionPickupItemMontage] AnimMontage soft pointer is null"));
+		UE_LOG(LogTemp, Warning, TEXT("[ActionPickupItemMontage] No valid montage found in ActionMontage or RelevantData"));
 		return;
 	}
 
 	// 5. Call PlaySoftMontageReplicated on OwnerActor via BPI_GenericCharacter interface
 	if (OwnerActor && OwnerActor->Implements<UBPI_GenericCharacter>())
 	{
-		// Convert TSoftObjectPtr<UAnimMontage> to TSoftObjectPtr<UObject> for interface call
-		TSoftObjectPtr<UObject> SoftMontage(AnimMontageSoft.ToSoftObjectPath());
-
 		IBPI_GenericCharacter::Execute_PlaySoftMontageReplicated(
 			OwnerActor,
 			SoftMontage,
