@@ -33,10 +33,11 @@ void UW_ItemWheelSlot::NativeConstruct()
 	// Cache widget references
 	CacheWidgetReferences();
 
-	// Get EquipmentManager from owning pawn
-	if (APawn* Pawn = GetOwningPlayerPawn())
+	// Get EquipmentManager from owning PlayerController (not Pawn!)
+	// Blueprint: GetOwningPlayer() -> GetComponentByClass(AC_EquipmentManager)
+	if (APlayerController* PC = GetOwningPlayer())
 	{
-		EquipmentComponent = Pawn->FindComponentByClass<UAC_EquipmentManager>();
+		EquipmentComponent = PC->FindComponentByClass<UAC_EquipmentManager>();
 	}
 
 	// Bind to EquipmentManager events (matching bp_only Event Construct logic)
@@ -51,7 +52,7 @@ void UW_ItemWheelSlot::NativeConstruct()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[W_ItemWheelSlot] EquipmentManager not found on pawn"));
+		UE_LOG(LogTemp, Warning, TEXT("[W_ItemWheelSlot] EquipmentManager not found on PlayerController"));
 	}
 
 	// Initialize Length from SlotsToTrack
@@ -74,9 +75,10 @@ void UW_ItemWheelSlot::NativeDestruct()
 void UW_ItemWheelSlot::CacheWidgetReferences()
 {
 	// Cache UI widget references by name (matching Blueprint widget tree)
-	CachedItemIcon = Cast<UImage>(GetWidgetFromName(TEXT("CachedItemIcon")));
-	CachedDebugIndexText = Cast<UTextBlock>(GetWidgetFromName(TEXT("CachedDebugIndexText")));
-	CachedSlotSizeBox = Cast<USizeBox>(GetWidgetFromName(TEXT("CachedSlotSizeBox")));
+	// Widget names match Blueprint UMG tree (not C++ variable names)
+	CachedItemIcon = Cast<UImage>(GetWidgetFromName(TEXT("ItemIcon")));
+	CachedDebugIndexText = Cast<UTextBlock>(GetWidgetFromName(TEXT("Debug_IndexText")));
+	CachedSlotSizeBox = Cast<USizeBox>(GetWidgetFromName(TEXT("SlotSizeBox")));
 
 	if (!CachedItemIcon)
 	{

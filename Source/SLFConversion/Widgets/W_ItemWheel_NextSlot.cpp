@@ -37,7 +37,8 @@ void UW_ItemWheel_NextSlot::NativeDestruct()
 void UW_ItemWheel_NextSlot::CacheWidgetReferences()
 {
 	// Cache UI widget references by name (matching Blueprint widget tree)
-	CachedItemIcon = Cast<UImage>(GetWidgetFromName(TEXT("CachedItemIcon")));
+	// Widget name matches Blueprint UMG tree (not C++ variable name)
+	CachedItemIcon = Cast<UImage>(GetWidgetFromName(TEXT("ItemIcon")));
 
 	if (!CachedItemIcon)
 	{
