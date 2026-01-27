@@ -7,6 +7,7 @@
 #include "Blueprints/B_Action_PickupItemMontage.h"
 #include "Interfaces/BPI_GenericCharacter.h"
 #include "StructUtils/InstancedStruct.h"
+#include "SLFPrimaryDataAssets.h"
 
 UB_Action_PickupItemMontage::UB_Action_PickupItemMontage()
 {
@@ -28,37 +29,49 @@ void UB_Action_PickupItemMontage::ExecuteAction_Implementation()
 		return;
 	}
 
-	// Get RelevantData from Action (FInstancedStruct containing FMontage)
 	TSoftObjectPtr<UObject> MontageRef;
 
-	// Try to extract montage from Action->RelevantData
-	FProperty* RelevantDataProp = Action->GetClass()->FindPropertyByName(FName("RelevantData"));
-	if (RelevantDataProp)
+	// First try direct ActionMontage property (simpler and more reliable)
+	if (UPDA_ActionBase* ActionData = Cast<UPDA_ActionBase>(Action))
 	{
-		FStructProperty* StructProp = CastField<FStructProperty>(RelevantDataProp);
-		if (StructProp && StructProp->Struct->GetFName() == FName("InstancedStruct"))
+		if (!ActionData->ActionMontage.IsNull())
 		{
-			void* PropAddr = RelevantDataProp->ContainerPtrToValuePtr<void>(Action);
-			FInstancedStruct* InstancedStruct = static_cast<FInstancedStruct*>(PropAddr);
-			if (InstancedStruct && InstancedStruct->IsValid())
-			{
-				const UScriptStruct* StoredStructType = InstancedStruct->GetScriptStruct();
-				const void* StructData = InstancedStruct->GetMemory();
+			MontageRef = TSoftObjectPtr<UObject>(ActionData->ActionMontage.ToSoftObjectPath());
+			UE_LOG(LogTemp, Log, TEXT("[ActionPickupItemMontage] Found montage via ActionMontage: %s"), *MontageRef.ToString());
+		}
+	}
 
-				// Find the AnimMontage soft reference in the FMontage struct
-				for (TFieldIterator<FProperty> PropIt(StoredStructType); PropIt; ++PropIt)
+	// Fallback: Try to extract montage from Action->RelevantData (FInstancedStruct containing FMontage)
+	if (MontageRef.IsNull())
+	{
+		FProperty* RelevantDataProp = Action->GetClass()->FindPropertyByName(FName("RelevantData"));
+		if (RelevantDataProp)
+		{
+			FStructProperty* StructProp = CastField<FStructProperty>(RelevantDataProp);
+			if (StructProp && StructProp->Struct->GetFName() == FName("InstancedStruct"))
+			{
+				void* PropAddr = RelevantDataProp->ContainerPtrToValuePtr<void>(Action);
+				FInstancedStruct* InstancedStruct = static_cast<FInstancedStruct*>(PropAddr);
+				if (InstancedStruct && InstancedStruct->IsValid())
 				{
-					FProperty* Prop = *PropIt;
-					if (FSoftObjectProperty* SoftObjProp = CastField<FSoftObjectProperty>(Prop))
+					const UScriptStruct* StoredStructType = InstancedStruct->GetScriptStruct();
+					const void* StructData = InstancedStruct->GetMemory();
+
+					// Find the AnimMontage soft reference in the FMontage struct
+					for (TFieldIterator<FProperty> PropIt(StoredStructType); PropIt; ++PropIt)
 					{
-						// Found soft object property - extract it
-						void* PropValueAddr = Prop->ContainerPtrToValuePtr<void>(const_cast<void*>(StructData));
-						FSoftObjectPtr* SoftPtr = static_cast<FSoftObjectPtr*>(PropValueAddr);
-						if (SoftPtr && !SoftPtr->IsNull())
+						FProperty* Prop = *PropIt;
+						if (FSoftObjectProperty* SoftObjProp = CastField<FSoftObjectProperty>(Prop))
 						{
-							MontageRef = TSoftObjectPtr<UObject>(SoftPtr->ToSoftObjectPath());
-							UE_LOG(LogTemp, Log, TEXT("[ActionPickupItemMontage] Found montage: %s"), *MontageRef.ToString());
-							break;
+							// Found soft object property - extract it
+							void* PropValueAddr = Prop->ContainerPtrToValuePtr<void>(const_cast<void*>(StructData));
+							FSoftObjectPtr* SoftPtr = static_cast<FSoftObjectPtr*>(PropValueAddr);
+							if (SoftPtr && !SoftPtr->IsNull())
+							{
+								MontageRef = TSoftObjectPtr<UObject>(SoftPtr->ToSoftObjectPath());
+								UE_LOG(LogTemp, Log, TEXT("[ActionPickupItemMontage] Found montage via RelevantData: %s"), *MontageRef.ToString());
+								break;
+							}
 						}
 					}
 				}
@@ -88,6 +101,6 @@ void UB_Action_PickupItemMontage::ExecuteAction_Implementation()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[ActionPickupItemMontage] No valid montage found in RelevantData"));
+		UE_LOG(LogTemp, Warning, TEXT("[ActionPickupItemMontage] No valid montage found in ActionMontage or RelevantData"));
 	}
 }

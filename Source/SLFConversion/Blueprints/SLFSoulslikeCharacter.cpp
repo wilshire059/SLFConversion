@@ -185,6 +185,11 @@ void ASLFSoulslikeCharacter::BeginPlay()
 
 	UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] ===== BeginPlay START: %s (Class: %s) ====="), *GetName(), *GetClass()->GetName());
 
+	// Add "Player" tag - required for B_StatusEffectArea overlap detection
+	// Blueprint checks ActorHasTag("Player") before applying status effects
+	Tags.AddUnique(FName("Player"));
+	UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Added 'Player' tag"));
+
 	// Enable crouching on the CharacterMovementComponent
 	// Must be done in BeginPlay because Blueprint SCS components override constructor settings
 	if (UCharacterMovementComponent* MovementComp = GetCharacterMovement())
@@ -1704,8 +1709,20 @@ void ASLFSoulslikeCharacter::OnLootItem_Implementation(AActor* Item)
 	// Queue the pickup item montage action
 	if (CachedInputBuffer)
 	{
-		CachedInputBuffer->QueueAction(
-			FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.PickupItemMontage")));
+		FGameplayTag PickupTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.PickupItemMontage"), false);
+		if (PickupTag.IsValid())
+		{
+			UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Queuing PickupItemMontage action"));
+			CachedInputBuffer->QueueAction(PickupTag);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] PickupItemMontage action tag is NOT VALID!"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] OnLootItem - CachedInputBuffer is NULL! Cannot queue pickup animation."));
 	}
 }
 
