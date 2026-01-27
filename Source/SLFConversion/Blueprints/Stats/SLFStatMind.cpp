@@ -26,5 +26,24 @@ USLFStatMind::USLFStatMind()
 	bOnlyMaxValueRelevant = false;
 	MinValue = 1.0;
 
-	UE_LOG(LogTemp, Log, TEXT("[StatMind] Initialized with %.0f"), StatInfo.CurrentValue);
+	// Mind affects FP: each point of Mind adds 3 to FP Max
+	// BP_ONLY: Mind=10 -> FP=130 (base 100 + 10*3 = 130)
+	FGameplayTag FPTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.FP"));
+	FAffectedStat FPAffect;
+	FPAffect.FromLevel = 0;
+	FPAffect.UntilLevel = 99;
+	FPAffect.bAffectMaxValue = true;
+	FPAffect.Modifier = 3.0;
+	FPAffect.Calculation = nullptr;
+	FPAffect.ChangeByCurve = nullptr;
+
+	FAffectedStats FPAffectedStats;
+	FPAffectedStats.SoftcapData.Add(FPAffect);
+
+	// CRITICAL: Must set StatInfo.StatModifiers.StatsToAffect (not StatBehavior.StatsToAffect)
+	// W_StatEntry_LevelUp reads from StatInfo.StatModifiers to get affected stats for highlighting
+	StatInfo.StatModifiers.StatsToAffect.Add(FPTag, FPAffectedStats);
+	UE_LOG(LogTemp, Log, TEXT("[SLFStatMind] Added FP to StatsToAffect in StatInfo.StatModifiers"));
+
+	UE_LOG(LogTemp, Log, TEXT("[StatMind] Initialized with %.0f, affects FP with modifier 3"), StatInfo.CurrentValue);
 }

@@ -1,0 +1,58 @@
+================================================================================
+STAT DERIVATION TEST
+================================================================================
+
+--- PRIMARY STATS: Checking StatsToAffect ---
+  B_Strength_C
+    StatsToAffect count: 1
+      -> <Struct 'GameplayTag' (0x000002608F0200F0) {}>: modifier=5.0
+  B_Intelligence_C
+    StatsToAffect count: 1
+      -> <Struct 'GameplayTag' (0x000002608F0203B0) {}>: modifier=4.0
+  B_Dexterity_C
+    StatsToAffect count: 1
+      -> <Struct 'GameplayTag' (0x000002608F020340) {}>: modifier=3.0
+  B_Faith_C
+    StatsToAffect count: 2
+      -> <Struct 'GameplayTag' (0x000002608F0201B0) {}>: modifier=4.0
+      -> <Struct 'GameplayTag' (0x000002608F020080) {}>: modifier=3.0
+  B_Arcane_C
+    StatsToAffect count: 1
+      -> <Struct 'GameplayTag' (0x000002608F020570) {}>: modifier=3.0
+  B_Vigor_C
+    StatsToAffect count: 1
+      -> <Struct 'GameplayTag' (0x000002608F0201F0) {}>: modifier=26.0
+  B_Endurance_C
+    StatsToAffect count: 1
+      -> <Struct 'GameplayTag' (0x000002608F0200A0) {}>: modifier=2.0
+  B_Mind_C
+    StatsToAffect count: 1
+      -> <Struct 'GameplayTag' (0x000002608F020410) {}>: modifier=3.0
+
+--- ATTACK POWER STATS: Checking Tags ---
+  B_AP_Physical_C
+    Tag: <Struct 'GameplayTag' (0x000002606530C040) {}>
+    DisplayName: 
+    CurrentValue: 0.0
+  B_AP_Magic_C
+    Tag: <Struct 'GameplayTag' (0x000002606530BBC0) {}>
+    DisplayName: 
+    CurrentValue: 0.0
+  B_AP_Lightning_C
+    Tag: <Struct 'GameplayTag' (0x000002606530ACC0) {}>
+    DisplayName: 
+    CurrentValue: 0.0
+  B_AP_Fire_C
+    Tag: <Struct 'GameplayTag' (0x000002606530A240) {}>
+    DisplayName: 
+    CurrentValue: 0.0
+  B_AP_Holy_C
+    Tag: <Struct 'GameplayTag' (0x000002606530AFC0) {}>
+    DisplayName: 
+    CurrentValue: 0.0
+  B_AP_Frost_C
+    Tag: <Struct 'GameplayTag' (0x000002606530A840) {}>
+    DisplayName: 
+    CurrentValue: 0.0
+
+================================================================================

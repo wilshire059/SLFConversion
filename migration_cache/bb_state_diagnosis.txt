@@ -1,0 +1,30 @@
+=== BB_Standard State Key Diagnosis ===
+
+Loaded: BB_Standard
+Class: BlackboardData
+
+Found 12 keys:
+  Error reading key: 'BlackboardEntry' object has no attribute 'get_class'
+  Error reading key: 'BlackboardEntry' object has no attribute 'get_class'
+  Error reading key: 'BlackboardEntry' object has no attribute 'get_class'
+  Error reading key: 'BlackboardEntry' object has no attribute 'get_class'
+  Error reading key: 'BlackboardEntry' object has no attribute 'get_class'
+  Error reading key: 'BlackboardEntry' object has no attribute 'get_class'
+  Error reading key: 'BlackboardEntry' object has no attribute 'get_class'
+  Error reading key: 'BlackboardEntry' object has no attribute 'get_class'
+  Error reading key: 'BlackboardEntry' object has no attribute 'get_class'
+  Error reading key: 'BlackboardEntry' object has no attribute 'get_class'
+  Error reading key: 'BlackboardEntry' object has no attribute 'get_class'
+  Error reading key: 'BlackboardEntry' object has no attribute 'get_class'
+
+
+=== E_AI_States Enum Check ===
+Loaded enum: E_AI_States
+Class: UserDefinedEnum
+
+
+=== C++ ESLFAIStates Check ===
+Could not import ESLFAIStates: cannot import name 'ESLFAIStates' from 'unreal' (unknown location)
+
+
+Diagnosis complete!

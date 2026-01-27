@@ -50,6 +50,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "PIE Testing")
 	void RunInteractionTest();
 
+	/** Run save/load test - tests save data serialization and persistence */
+	UFUNCTION(BlueprintCallable, Category = "PIE Testing")
+	void RunSaveLoadTest();
+
 	/** Event fired when a test completes */
 	UPROPERTY(BlueprintAssignable, Category = "PIE Testing")
 	FOnTestCompleted OnTestCompleted;

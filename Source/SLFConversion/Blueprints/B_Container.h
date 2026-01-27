@@ -35,32 +35,35 @@ public:
 	AB_Container();
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// COMPONENTS (6) - From Blueprint SCS
+	// COMPONENT REFERENCES (found at runtime from Blueprint SCS)
+	// NOTE: Blueprint SCS owns the actual components (has mesh assignments)
+	// C++ caches references in BeginPlay for runtime access
+	// Names prefixed with "Cached" to avoid collision with Blueprint SCS component names
 	// ═══════════════════════════════════════════════════════════════════════
 
-	/** Lid mesh that rotates when chest opens */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UStaticMeshComponent* Lid;
+	/** Cached reference to Lid mesh component (from Blueprint SCS "Lid") */
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components")
+	UStaticMeshComponent* CachedLid;
 
-	/** Location where items spawn */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UBillboardComponent* ItemSpawn;
+	/** Cached reference to ItemSpawn location (from Blueprint SCS "ItemSpawn") */
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components")
+	UBillboardComponent* CachedItemSpawn;
 
-	/** Point light for chest glow effect */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UPointLightComponent* PointLight;
+	/** Cached reference to PointLight (from Blueprint SCS "PointLight") */
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components")
+	UPointLightComponent* CachedPointLight;
 
-	/** Loot drop manager for spawning items */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UAC_LootDropManager* AC_LootDropManager;
+	/** Cached reference to LootDropManager (from Blueprint SCS "AC_LootDropManager") */
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components")
+	UAC_LootDropManager* CachedLootDropManager;
 
-	/** Target location for move animation */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UBillboardComponent* MoveToLocation;
+	/** Cached reference to MoveToLocation (from Blueprint SCS "MoveToLocation") */
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components")
+	UBillboardComponent* CachedMoveToLocation;
 
-	/** Location where VFX spawns */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UBillboardComponent* NiagaraLocation;
+	/** Cached reference to NiagaraLocation (from Blueprint SCS "NiagaraLocation") */
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components")
+	UBillboardComponent* CachedNiagaraLocation;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (5) - From Blueprint Variables

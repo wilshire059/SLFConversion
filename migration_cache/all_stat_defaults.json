@@ -1,0 +1,110 @@
+{
+  "B_Vigor": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Vigor",
+    "class": "B_Vigor_C"
+  },
+  "B_Strength": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Strength",
+    "class": "B_Strength_C"
+  },
+  "B_Dexterity": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Dexterity",
+    "class": "B_Dexterity_C"
+  },
+  "B_Intelligence": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Intelligence",
+    "class": "B_Intelligence_C"
+  },
+  "B_Faith": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Faith",
+    "class": "B_Faith_C"
+  },
+  "B_Mind": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Mind",
+    "class": "B_Mind_C"
+  },
+  "B_Endurance": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Endurance",
+    "class": "B_Endurance_C"
+  },
+  "B_Arcane": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Arcane",
+    "class": "B_Arcane_C"
+  },
+  "B_HP": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Secondary/B_HP",
+    "class": "B_HP_C"
+  },
+  "B_Stamina": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Secondary/B_Stamina",
+    "class": "B_Stamina_C"
+  },
+  "B_FP": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Secondary/B_FP",
+    "class": "B_FP_C"
+  },
+  "B_AP_Physical": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Physical",
+    "class": "B_AP_Physical_C"
+  },
+  "B_AP_Magic": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Magic",
+    "class": "B_AP_Magic_C"
+  },
+  "B_AP_Fire": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Fire",
+    "class": "B_AP_Fire_C"
+  },
+  "B_AP_Frost": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Frost",
+    "class": "B_AP_Frost_C"
+  },
+  "B_AP_Lightning": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Lightning",
+    "class": "B_AP_Lightning_C"
+  },
+  "B_AP_Holy": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Holy",
+    "class": "B_AP_Holy_C"
+  },
+  "B_DN_Physical": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Physical",
+    "class": "B_DN_Physical_C"
+  },
+  "B_DN_Magic": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Magic",
+    "class": "B_DN_Magic_C"
+  },
+  "B_DN_Fire": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Fire",
+    "class": "B_DN_Fire_C"
+  },
+  "B_DN_Frost": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Frost",
+    "class": "B_DN_Frost_C"
+  },
+  "B_DN_Lightning": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Lightning",
+    "class": "B_DN_Lightning_C"
+  },
+  "B_DN_Holy": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Holy",
+    "class": "B_DN_Holy_C"
+  },
+  "B_Resistance_Focus": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Focus",
+    "class": "B_Resistance_Focus_C"
+  },
+  "B_Resistance_Immunity": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Immunity",
+    "class": "B_Resistance_Immunity_C"
+  },
+  "B_Resistance_Robustness": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Robustness",
+    "class": "B_Resistance_Robustness_C"
+  },
+  "B_Resistance_Vitality": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Vitality",
+    "class": "B_Resistance_Vitality_C"
+  }
+}

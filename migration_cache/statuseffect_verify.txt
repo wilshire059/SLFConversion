@@ -1,0 +1,14 @@
+============================================================
+Verifying B_StatusEffectArea Configuration
+============================================================
+Loaded: /Game/SoulslikeFramework/Maps/L_Demo_Showcase
+
+Found 7 instances
+
+B_StatusEffectArea_C_1 (X=10091): DA_StatusEffect_Poison (Rank 1)
+B_StatusEffectArea_C_2 (X=10391): DA_StatusEffect_Bleed (Rank 1)
+B_StatusEffectArea_C_3 (X=10691): DA_StatusEffect_Burn (Rank 1)
+B_StatusEffectArea_C_4 (X=10991): DA_StatusEffect_Frostbite (Rank 1)
+B_StatusEffectArea_C_5 (X=11291): DA_StatusEffect_Corruption (Rank 1)
+B_StatusEffectArea_C_6 (X=11591): DA_StatusEffect_Madness (Rank 1)
+B_StatusEffectArea_C_7 (X=11891): DA_StatusEffect_Plague (Rank 1)

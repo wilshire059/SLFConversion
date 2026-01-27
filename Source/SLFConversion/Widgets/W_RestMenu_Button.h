@@ -84,4 +84,16 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Cached widget references (use "Cached" prefix to avoid Blueprint BindWidget conflict)
+	UPROPERTY()
+	class UBorder* CachedBtnBorder;
+	UPROPERTY()
+	class UTextBlock* CachedTxt;
+	UPROPERTY()
+	class UButton* CachedBtn;
+
+	// Button click handler
+	UFUNCTION()
+	void OnBtnClicked();
 };

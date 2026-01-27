@@ -29,7 +29,7 @@ void UW_Debug_HUD::NativeDestruct()
 
 void UW_Debug_HUD::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 
 UW_DebugWindow* UW_Debug_HUD::FindWindowForComponentWithTag_Implementation(const FGameplayTag& Tag)

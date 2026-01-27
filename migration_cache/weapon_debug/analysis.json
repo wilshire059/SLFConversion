@@ -1,0 +1,28 @@
+{
+  "B_Item_Weapon_SwordExample01": {
+    "blueprint": "B_Item_Weapon_SwordExample01",
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_SwordExample01",
+    "parent_class": "Unknown",
+    "generated_class": "B_Item_Weapon_SwordExample01_C",
+    "cdo_properties": {
+      "default_mesh_relative_location": "Actor: Failed to find property 'default_mesh_relative_location' for attribute 'default_mesh_relative_location' on 'B_Item_Weapon_SwordExample01_C'",
+      "default_mesh_relative_rotation": "Actor: Failed to find property 'default_mesh_relative_rotation' for attribute 'default_mesh_relative_rotation' on 'B_Item_Weapon_SwordExample01_C'",
+      "default_weapon_mesh": "Actor: Failed to find property 'default_weapon_mesh' for attribute 'default_weapon_mesh' on 'B_Item_Weapon_SwordExample01_C'"
+    },
+    "static_mesh_components": [],
+    "weapon_mesh_property": "Actor: Failed to find property 'weapon_mesh' for attribute 'weapon_mesh' on 'B_Item_Weapon_SwordExample01_C'"
+  },
+  "B_Item_Weapon_Shield": {
+    "blueprint": "B_Item_Weapon_Shield",
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Shield",
+    "parent_class": "Unknown",
+    "generated_class": "B_Item_Weapon_Shield_C",
+    "cdo_properties": {
+      "default_mesh_relative_location": "Actor: Failed to find property 'default_mesh_relative_location' for attribute 'default_mesh_relative_location' on 'B_Item_Weapon_Shield_C'",
+      "default_mesh_relative_rotation": "Actor: Failed to find property 'default_mesh_relative_rotation' for attribute 'default_mesh_relative_rotation' on 'B_Item_Weapon_Shield_C'",
+      "default_weapon_mesh": "Actor: Failed to find property 'default_weapon_mesh' for attribute 'default_weapon_mesh' on 'B_Item_Weapon_Shield_C'"
+    },
+    "static_mesh_components": [],
+    "weapon_mesh_property": "Actor: Failed to find property 'weapon_mesh' for attribute 'weapon_mesh' on 'B_Item_Weapon_Shield_C'"
+  }
+}

@@ -170,6 +170,11 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_InventoryManager")
 	int32 GetCurrentCurency();
 	virtual int32 GetCurrentCurency_Implementation();
+
+	// Correctly spelled version (GetCurrentCurency has typo from bp_only)
+	UFUNCTION(BlueprintCallable, Category = "AC_InventoryManager")
+	int32 GetCurrentCurrency() const { return Currency; }
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_InventoryManager")
 	void GetItemsForCategory(ESLFItemCategory ItemCategory, ESLFInventorySlotType Type, TMap<FGameplayTag, UPrimaryDataAsset*>& OutStackableItems, TArray<UPrimaryDataAsset*>& OutNonStackableItems);
 	virtual void GetItemsForCategory_Implementation(ESLFItemCategory ItemCategory, ESLFInventorySlotType Type, TMap<FGameplayTag, UPrimaryDataAsset*>& OutStackableItems, TArray<UPrimaryDataAsset*>& OutNonStackableItems);

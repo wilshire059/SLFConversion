@@ -34,6 +34,13 @@ void UW_GameMenu::NativeConstruct()
 
 	UE_LOG(LogTemp, Log, TEXT("[W_GameMenu] NativeConstruct - Initializing menu"));
 
+	// CRITICAL: Hide MainBlur widget - it's a BackgroundBlur at highest ZOrder that blurs everything
+	if (UWidget* MainBlur = GetWidgetFromName(TEXT("MainBlur")))
+	{
+		MainBlur->SetVisibility(ESlateVisibility::Collapsed);
+		UE_LOG(LogTemp, Log, TEXT("[W_GameMenu] Hidden MainBlur widget"));
+	}
+
 	// Populate MenuButtons array from children
 	PopulateMenuButtons();
 

@@ -25,6 +25,10 @@
 // Forward declarations for widget types
 class UW_Radar_Cardinal;
 class UW_Radar_TrackedElement;
+class UOverlay;
+class UImage;
+class USizeBox;
+class UHorizontalBox;
 
 // Forward declarations for Blueprint types
 
@@ -55,6 +59,19 @@ public:
 	TArray<UW_Radar_Cardinal*> Cardinals;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	TArray<UW_Radar_TrackedElement*> Elements;
+
+	// Widget references (from UMG designer)
+	UPROPERTY(BlueprintReadOnly, Category = "Widgets", meta = (BindWidgetOptional))
+	class UOverlay* RadarOL;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Widgets", meta = (BindWidgetOptional))
+	class UImage* PlayerIcon;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Widgets", meta = (BindWidgetOptional))
+	class USizeBox* IconSizer;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Widgets", meta = (BindWidgetOptional))
+	class UHorizontalBox* CardinalContainer;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (0)

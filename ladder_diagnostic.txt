@@ -1,0 +1,31 @@
+================================================================================
+B_LADDER VISIBILITY DIAGNOSTIC
+================================================================================
+Loaded: /Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Ladder
+CDO: Default__B_Ladder_C
+Parent Class: /Script/SLFConversion.SLFLadderBase
+
+------------------------------------------------------------
+ISM COMPONENTS ON CDO:
+------------------------------------------------------------
+Total ISM Components: 0
+
+------------------------------------------------------------
+STATIC MESH ASSETS:
+------------------------------------------------------------
+
+/Game/SoulslikeFramework/Meshes/SM/Ladder/SM_LadderBar
+  Name: SM_LadderBar
+  NumLODs: 1
+  Bounds - Origin: <Struct 'Vector' (0x0000012758FE3F00) {x: 0.000000, y: 0.000000, z: 0.000000}>, BoxExtent: <Struct 'Vector' (0x0000012758FE3F18) {x: 3.868336, y: 42.665977, z: 5.221849}>
+  Material[0]: MI_Prototype_Grid_Shiny_Gray
+
+/Game/SoulslikeFramework/Meshes/SM/Ladder/SM_LadderPole
+  Name: SM_LadderPole
+  NumLODs: 1
+  Bounds - Origin: <Struct 'Vector' (0x0000012758FE3640) {x: 0.000000, y: 0.000000, z: 4.202129}>, BoxExtent: <Struct 'Vector' (0x0000012758FE3658) {x: 3.007865, y: 41.778111, z: 4.202129}>
+  Material[0]: MI_Prototype_Grid_Shiny_Gray
+
+================================================================================
+DIAGNOSTIC COMPLETE - Results saved to: C:/scripts/slfconversion/ladder_diagnostic.txt
+================================================================================

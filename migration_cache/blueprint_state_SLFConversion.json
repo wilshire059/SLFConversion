@@ -1,0 +1,488 @@
+{
+  "B_Soulslike_Enemy": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy",
+    "blueprint_name": "B_Soulslike_Enemy",
+    "generated_class": "B_Soulslike_Enemy_C",
+    "generated_class_path": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy.B_Soulslike_Enemy_C",
+    "class_hierarchy": [
+      {
+        "name": "B_Soulslike_Enemy_C",
+        "path": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy.B_Soulslike_Enemy_C"
+      }
+    ],
+    "components": [
+      {
+        "name": "CollisionCylinder",
+        "class": "CapsuleComponent",
+        "class_path": "/Script/Engine.CapsuleComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)"
+      },
+      {
+        "name": "Arrow",
+        "class": "ArrowComponent",
+        "class_path": "/Script/Engine.ArrowComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)",
+        "attach_parent": "CollisionCylinder"
+      },
+      {
+        "name": "CharMoveComp",
+        "class": "CharacterMovementComponent",
+        "class_path": "/Script/Engine.CharacterMovementComponent"
+      },
+      {
+        "name": "CharacterMesh0",
+        "class": "SkeletalMeshComponent",
+        "class_path": "/Script/Engine.SkeletalMeshComponent",
+        "relative_location": "(0.0, 0.0, -89.0)",
+        "relative_rotation": "(0.0, 270.0, -0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)",
+        "attach_parent": "CollisionCylinder",
+        "skeletal_mesh": "SKM_Manny_Simple",
+        "skeletal_mesh_path": "/Game/SoulslikeFramework/Demo/SKM/Mannequins/Meshes/SKM_Manny_Simple.SKM_Manny_Simple"
+      },
+      {
+        "name": "StatManagerComponent",
+        "class": "StatManagerComponent",
+        "class_path": "/Script/SLFConversion.StatManagerComponent"
+      },
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "class_path": "/Script/Engine.SceneComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)",
+        "attach_parent": "CollisionCylinder"
+      },
+      {
+        "name": "AIStateMachine",
+        "class": "SLFAIStateMachineComponent",
+        "class_path": "/Script/SLFConversion.SLFAIStateMachineComponent"
+      },
+      {
+        "name": "HealthbarWidget",
+        "class": "WidgetComponent",
+        "class_path": "/Script/UMG.WidgetComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)",
+        "attach_parent": "CollisionCylinder"
+      },
+      {
+        "name": "CombatManagerComponent",
+        "class": "AICombatManagerComponent",
+        "class_path": "/Script/SLFConversion.AICombatManagerComponent"
+      },
+      {
+        "name": "BehaviorManagerComponent",
+        "class": "AIBehaviorManagerComponent",
+        "class_path": "/Script/SLFConversion.AIBehaviorManagerComponent"
+      },
+      {
+        "name": "SoulsNiagaraComponent",
+        "class": "NiagaraComponent",
+        "class_path": "/Script/Niagara.NiagaraComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)",
+        "attach_parent": "CollisionCylinder"
+      },
+      {
+        "name": "LootDropManagerComponent",
+        "class": "LootDropManagerComponent",
+        "class_path": "/Script/SLFConversion.LootDropManagerComponent"
+      }
+    ],
+    "scs_components": []
+  },
+  "B_Soulslike_Enemy_Guard": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Guard",
+    "blueprint_name": "B_Soulslike_Enemy_Guard",
+    "generated_class": "B_Soulslike_Enemy_Guard_C",
+    "generated_class_path": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Guard.B_Soulslike_Enemy_Guard_C",
+    "class_hierarchy": [
+      {
+        "name": "B_Soulslike_Enemy_Guard_C",
+        "path": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Guard.B_Soulslike_Enemy_Guard_C"
+      }
+    ],
+    "components": [
+      {
+        "name": "CollisionCylinder",
+        "class": "CapsuleComponent",
+        "class_path": "/Script/Engine.CapsuleComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)"
+      },
+      {
+        "name": "Arrow",
+        "class": "ArrowComponent",
+        "class_path": "/Script/Engine.ArrowComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)",
+        "attach_parent": "CollisionCylinder"
+      },
+      {
+        "name": "CharMoveComp",
+        "class": "CharacterMovementComponent",
+        "class_path": "/Script/Engine.CharacterMovementComponent"
+      },
+      {
+        "name": "CharacterMesh0",
+        "class": "SkeletalMeshComponent",
+        "class_path": "/Script/Engine.SkeletalMeshComponent",
+        "relative_location": "(0.0, 0.0, -89.0)",
+        "relative_rotation": "(0.0, 270.0, -0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)",
+        "attach_parent": "CollisionCylinder",
+        "skeletal_mesh": "SKM_Manny_Simple",
+        "skeletal_mesh_path": "/Game/SoulslikeFramework/Demo/SKM/Mannequins/Meshes/SKM_Manny_Simple.SKM_Manny_Simple",
+        "anim_class": "ABP_SoulslikeEnemy_C"
+      },
+      {
+        "name": "StatManagerComponent",
+        "class": "StatManagerComponent",
+        "class_path": "/Script/SLFConversion.StatManagerComponent"
+      },
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "class_path": "/Script/Engine.SceneComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)",
+        "attach_parent": "CollisionCylinder"
+      },
+      {
+        "name": "AIStateMachine",
+        "class": "SLFAIStateMachineComponent",
+        "class_path": "/Script/SLFConversion.SLFAIStateMachineComponent"
+      },
+      {
+        "name": "HealthbarWidget",
+        "class": "WidgetComponent",
+        "class_path": "/Script/UMG.WidgetComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)",
+        "attach_parent": "CollisionCylinder"
+      },
+      {
+        "name": "CombatManagerComponent",
+        "class": "AICombatManagerComponent",
+        "class_path": "/Script/SLFConversion.AICombatManagerComponent"
+      },
+      {
+        "name": "BehaviorManagerComponent",
+        "class": "AIBehaviorManagerComponent",
+        "class_path": "/Script/SLFConversion.AIBehaviorManagerComponent"
+      },
+      {
+        "name": "SoulsNiagaraComponent",
+        "class": "NiagaraComponent",
+        "class_path": "/Script/Niagara.NiagaraComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)",
+        "attach_parent": "CollisionCylinder"
+      },
+      {
+        "name": "LootDropManagerComponent",
+        "class": "LootDropManagerComponent",
+        "class_path": "/Script/SLFConversion.LootDropManagerComponent"
+      }
+    ],
+    "scs_components": []
+  },
+  "B_Soulslike_Enemy_Showcase": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Showcase",
+    "blueprint_name": "B_Soulslike_Enemy_Showcase",
+    "generated_class": "B_Soulslike_Enemy_Showcase_C",
+    "generated_class_path": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Showcase.B_Soulslike_Enemy_Showcase_C",
+    "class_hierarchy": [
+      {
+        "name": "B_Soulslike_Enemy_Showcase_C",
+        "path": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Showcase.B_Soulslike_Enemy_Showcase_C"
+      }
+    ],
+    "components": [
+      {
+        "name": "CollisionCylinder",
+        "class": "CapsuleComponent",
+        "class_path": "/Script/Engine.CapsuleComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)"
+      },
+      {
+        "name": "Arrow",
+        "class": "ArrowComponent",
+        "class_path": "/Script/Engine.ArrowComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)",
+        "attach_parent": "CollisionCylinder"
+      },
+      {
+        "name": "CharMoveComp",
+        "class": "CharacterMovementComponent",
+        "class_path": "/Script/Engine.CharacterMovementComponent"
+      },
+      {
+        "name": "CharacterMesh0",
+        "class": "SkeletalMeshComponent",
+        "class_path": "/Script/Engine.SkeletalMeshComponent",
+        "relative_location": "(0.0, 0.0, -89.0)",
+        "relative_rotation": "(0.0, 270.0, -0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)",
+        "attach_parent": "CollisionCylinder",
+        "skeletal_mesh": "SKM_Manny_Simple",
+        "skeletal_mesh_path": "/Game/SoulslikeFramework/Demo/SKM/Mannequins/Meshes/SKM_Manny_Simple.SKM_Manny_Simple",
+        "anim_class": "ABP_SoulslikeEnemy_C"
+      },
+      {
+        "name": "StatManagerComponent",
+        "class": "StatManagerComponent",
+        "class_path": "/Script/SLFConversion.StatManagerComponent"
+      },
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "class_path": "/Script/Engine.SceneComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)",
+        "attach_parent": "CollisionCylinder"
+      },
+      {
+        "name": "AIStateMachine",
+        "class": "SLFAIStateMachineComponent",
+        "class_path": "/Script/SLFConversion.SLFAIStateMachineComponent"
+      },
+      {
+        "name": "HealthbarWidget",
+        "class": "WidgetComponent",
+        "class_path": "/Script/UMG.WidgetComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)",
+        "attach_parent": "CollisionCylinder"
+      },
+      {
+        "name": "CombatManagerComponent",
+        "class": "AICombatManagerComponent",
+        "class_path": "/Script/SLFConversion.AICombatManagerComponent"
+      },
+      {
+        "name": "BehaviorManagerComponent",
+        "class": "AIBehaviorManagerComponent",
+        "class_path": "/Script/SLFConversion.AIBehaviorManagerComponent"
+      },
+      {
+        "name": "SoulsNiagaraComponent",
+        "class": "NiagaraComponent",
+        "class_path": "/Script/Niagara.NiagaraComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)",
+        "attach_parent": "CollisionCylinder"
+      },
+      {
+        "name": "LootDropManagerComponent",
+        "class": "LootDropManagerComponent",
+        "class_path": "/Script/SLFConversion.LootDropManagerComponent"
+      }
+    ],
+    "scs_components": []
+  },
+  "B_Item_AI_Weapon": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/B_Item_AI_Weapon",
+    "blueprint_name": "B_Item_AI_Weapon",
+    "generated_class": "B_Item_AI_Weapon_C",
+    "generated_class_path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/B_Item_AI_Weapon.B_Item_AI_Weapon_C",
+    "class_hierarchy": [
+      {
+        "name": "B_Item_AI_Weapon_C",
+        "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/B_Item_AI_Weapon.B_Item_AI_Weapon_C"
+      }
+    ],
+    "components": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "class_path": "/Script/Engine.SceneComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)"
+      },
+      {
+        "name": "WeaponMesh",
+        "class": "StaticMeshComponent",
+        "class_path": "/Script/Engine.StaticMeshComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)",
+        "attach_parent": "DefaultSceneRoot"
+      },
+      {
+        "name": "TrailComponent",
+        "class": "NiagaraComponent",
+        "class_path": "/Script/Niagara.NiagaraComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)",
+        "attach_parent": "DefaultSceneRoot"
+      },
+      {
+        "name": "CollisionManager",
+        "class": "CollisionManagerComponent",
+        "class_path": "/Script/SLFConversion.CollisionManagerComponent"
+      }
+    ],
+    "scs_components": []
+  },
+  "B_Item_AI_Weapon_Sword": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/AI/B_Item_AI_Weapon_Sword",
+    "blueprint_name": "B_Item_AI_Weapon_Sword",
+    "generated_class": "B_Item_AI_Weapon_Sword_C",
+    "generated_class_path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/AI/B_Item_AI_Weapon_Sword.B_Item_AI_Weapon_Sword_C",
+    "class_hierarchy": [
+      {
+        "name": "B_Item_AI_Weapon_Sword_C",
+        "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/AI/B_Item_AI_Weapon_Sword.B_Item_AI_Weapon_Sword_C"
+      }
+    ],
+    "components": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "class_path": "/Script/Engine.SceneComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)"
+      },
+      {
+        "name": "WeaponMesh",
+        "class": "StaticMeshComponent",
+        "class_path": "/Script/Engine.StaticMeshComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)",
+        "attach_parent": "DefaultSceneRoot"
+      },
+      {
+        "name": "TrailComponent",
+        "class": "NiagaraComponent",
+        "class_path": "/Script/Niagara.NiagaraComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)",
+        "attach_parent": "DefaultSceneRoot"
+      },
+      {
+        "name": "CollisionManager",
+        "class": "CollisionManagerComponent",
+        "class_path": "/Script/SLFConversion.CollisionManagerComponent"
+      }
+    ],
+    "scs_components": []
+  },
+  "B_Item_AI_Weapon_Greatsword": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/AI/B_Item_AI_Weapon_Greatsword",
+    "blueprint_name": "B_Item_AI_Weapon_Greatsword",
+    "generated_class": "B_Item_AI_Weapon_Greatsword_C",
+    "generated_class_path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/AI/B_Item_AI_Weapon_Greatsword.B_Item_AI_Weapon_Greatsword_C",
+    "class_hierarchy": [
+      {
+        "name": "B_Item_AI_Weapon_Greatsword_C",
+        "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/AI/B_Item_AI_Weapon_Greatsword.B_Item_AI_Weapon_Greatsword_C"
+      }
+    ],
+    "components": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "class_path": "/Script/Engine.SceneComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)"
+      },
+      {
+        "name": "WeaponMesh",
+        "class": "StaticMeshComponent",
+        "class_path": "/Script/Engine.StaticMeshComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)",
+        "attach_parent": "DefaultSceneRoot"
+      },
+      {
+        "name": "TrailComponent",
+        "class": "NiagaraComponent",
+        "class_path": "/Script/Niagara.NiagaraComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)",
+        "attach_parent": "DefaultSceneRoot"
+      },
+      {
+        "name": "CollisionManager",
+        "class": "CollisionManagerComponent",
+        "class_path": "/Script/SLFConversion.CollisionManagerComponent"
+      }
+    ],
+    "scs_components": []
+  },
+  "B_Item_AI_Weapon_BossMace": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/AI/B_Item_AI_Weapon_BossMace",
+    "blueprint_name": "B_Item_AI_Weapon_BossMace",
+    "generated_class": "B_Item_AI_Weapon_BossMace_C",
+    "generated_class_path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/AI/B_Item_AI_Weapon_BossMace.B_Item_AI_Weapon_BossMace_C",
+    "class_hierarchy": [
+      {
+        "name": "B_Item_AI_Weapon_BossMace_C",
+        "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/AI/B_Item_AI_Weapon_BossMace.B_Item_AI_Weapon_BossMace_C"
+      }
+    ],
+    "components": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "class_path": "/Script/Engine.SceneComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)"
+      },
+      {
+        "name": "WeaponMesh",
+        "class": "StaticMeshComponent",
+        "class_path": "/Script/Engine.StaticMeshComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)",
+        "attach_parent": "DefaultSceneRoot"
+      },
+      {
+        "name": "TrailComponent",
+        "class": "NiagaraComponent",
+        "class_path": "/Script/Niagara.NiagaraComponent",
+        "relative_location": "(0.0, 0.0, 0.0)",
+        "relative_rotation": "(0.0, 0.0, 0.0)",
+        "relative_scale": "(1.0, 1.0, 1.0)",
+        "attach_parent": "DefaultSceneRoot"
+      },
+      {
+        "name": "CollisionManager",
+        "class": "CollisionManagerComponent",
+        "class_path": "/Script/SLFConversion.CollisionManagerComponent"
+      }
+    ],
+    "scs_components": []
+  }
+}

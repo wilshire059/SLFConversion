@@ -16,6 +16,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
 #include "Interfaces/BPI_BossDoor.h"
+#include "Interfaces/BPI_Controller.h"
+#include "Widgets/W_HUD.h"
 
 UAIBossComponent::UAIBossComponent()
 {
@@ -74,11 +76,55 @@ void UAIBossComponent::SetFightActive_Implementation(bool bActive)
 {
 	bFightActive = bActive;
 
-	UE_LOG(LogTemp, Log, TEXT("[AIBoss] SetFightActive: %s"), bActive ? TEXT("true") : TEXT("false"));
+	UE_LOG(LogTemp, Log, TEXT("[AIBoss] SetFightActive: %s, bShowBossBar: %s"),
+		bActive ? TEXT("true") : TEXT("false"),
+		bShowBossBar ? TEXT("true") : TEXT("false"));
+
+	// Get player HUD for boss bar display
+	UW_HUD* PlayerHUD = nullptr;
+	if (UWorld* World = GetWorld())
+	{
+		if (APlayerController* PC = World->GetFirstPlayerController())
+		{
+			UE_LOG(LogTemp, Log, TEXT("[AIBoss] Found PC: %s"), *PC->GetClass()->GetName());
+
+			// Check if controller implements IBPI_Controller (the correct interface)
+			if (PC->GetClass()->ImplementsInterface(UBPI_Controller::StaticClass()))
+			{
+				UUserWidget* HUDWidget = nullptr;
+				IBPI_Controller::Execute_GetPlayerHUD(PC, HUDWidget);
+				PlayerHUD = Cast<UW_HUD>(HUDWidget);
+				UE_LOG(LogTemp, Log, TEXT("[AIBoss] GetPlayerHUD returned: %s"),
+					PlayerHUD ? *PlayerHUD->GetName() : TEXT("null"));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[AIBoss] PC does not implement IBPI_Controller!"));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[AIBoss] No PlayerController found!"));
+		}
+	}
 
 	if (bActive)
 	{
-		// Start fight - play phase music, show boss bar, close doors
+		// Start fight - show boss bar, play phase music, close doors
+		if (bShowBossBar && PlayerHUD)
+		{
+			AActor* Owner = GetOwner();
+			UE_LOG(LogTemp, Log, TEXT("[AIBoss] Showing boss bar for: %s"), *Name.ToString());
+			PlayerHUD->EventShowBossBar(Name, Owner);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[AIBoss] Cannot show boss bar - bShowBossBar: %s, PlayerHUD: %s"),
+				bShowBossBar ? TEXT("true") : TEXT("false"),
+				PlayerHUD ? TEXT("valid") : TEXT("null"));
+		}
+
+		// Play phase music
 		if (!ActivePhase.PhaseMusic.IsNull() && !ActiveMusicComponent)
 		{
 			if (USoundBase* Music = ActivePhase.PhaseMusic.LoadSynchronous())
@@ -89,6 +135,13 @@ void UAIBossComponent::SetFightActive_Implementation(bool bActive)
 	}
 	else
 	{
+		// End fight - hide boss bar
+		if (PlayerHUD)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[AIBoss] Hiding boss bar"));
+			PlayerHUD->EventHideBossBar();
+		}
+
 		EndFight();
 	}
 }

@@ -1707,17 +1707,18 @@ void ASLFSoulslikeCharacter::OnLootItem_Implementation(AActor* Item)
 	}
 
 	// Queue the pickup item montage action
+	// NOTE: The tag is "PickupItem" which maps to "DA_Action_PickupItemMontage" in AC_ActionManager
 	if (CachedInputBuffer)
 	{
-		FGameplayTag PickupTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.PickupItemMontage"), false);
+		FGameplayTag PickupTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.PickupItem"), false);
 		if (PickupTag.IsValid())
 		{
-			UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Queuing PickupItemMontage action"));
+			UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Queuing PickupItem action (plays pickup montage)"));
 			CachedInputBuffer->QueueAction(PickupTag);
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] PickupItemMontage action tag is NOT VALID!"));
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] PickupItem action tag is NOT VALID!"));
 		}
 	}
 	else

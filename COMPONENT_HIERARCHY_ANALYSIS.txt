@@ -1,0 +1,133 @@
+================================================================================
+BOSSDOOR COMPONENT HIERARCHY ANALYSIS
+================================================================================
+Generated: 2026-01-15
+Analysis Focus: Identify duplicate/extra components causing dual fog walls
+
+================================================================================
+INHERITANCE CHAIN (Top-Down)
+================================================================================
+
+1. B_Interactable (Actor)
+   ├─ DefaultSceneRoot (SceneComponent) [ROOT]
+   ├─ Interactable SM (StaticMeshComponent) [child of ROOT]
+   └─ Interactable SK (SkeletalMeshComponent) [child of ROOT]
+       
+2. B_Door (inherits from B_Interactable)
+   ├─ Door Frame (StaticMeshComponent) [child of DefaultSceneRoot]
+   ├─ DEBUG_OpeningDirection (ArrowComponent) [child of DefaultSceneRoot]
+   └─ MoveTo (BillboardComponent) [child of DefaultSceneRoot]
+   
+3. B_BossDoor (inherits from B_Door)
+   ├─ Portal_Front (NiagaraComponent) [child of Interactable SM]
+   ├─ Portal_Back (NiagaraComponent) [child of Interactable SM]
+   └─ DeathCurrencyDropLocation (BillboardComponent) [child of DefaultSceneRoot]
+
+================================================================================
+COMPLETE RUNTIME HIERARCHY (Flattened)
+================================================================================
+
+ROOT: DefaultSceneRoot
+├── Interactable SM (StaticMeshComponent)
+│   ├── Portal_Front (NiagaraComponent)
+│   └── Portal_Back (NiagaraComponent)
+├── Interactable SK (SkeletalMeshComponent)
+├── Door Frame (StaticMeshComponent)
+├── DEBUG_OpeningDirection (ArrowComponent)
+├── MoveTo (BillboardComponent)
+└── DeathCurrencyDropLocation (BillboardComponent)
+
+TOTAL COMPONENTS: 8
+
+================================================================================
+COMPONENT ANALYSIS
+================================================================================
+
+EXPECTED COMPONENTS (Per Design):
+✓ Interactable SM      - Base mesh from B_Interactable
+✓ Interactable SK      - Alternative skeletal mesh from B_Interactable  
+✓ Door Frame           - Door visual from B_Door
+✓ DEBUG_OpeningDirection - Debug helper from B_Door
+✓ MoveTo              - Debug marker from B_Door
+✓ Portal_Front        - Boss door portal effect from B_BossDoor
+✓ Portal_Back         - Boss door portal effect from B_BossDoor
+✓ DeathCurrencyDropLocation - Loot spawn point from B_BossDoor
+
+DUPLICATE/EXTRA COMPONENTS:
+✗ NONE FOUND
+
+NO DUPLICATE "Interactable SM" COMPONENTS
+NO DUPLICATE PORTAL COMPONENTS
+NO UNEXPLAINED FOG WALLS
+
+================================================================================
+KEY FINDINGS
+================================================================================
+
+1. COMPONENT COUNT
+   - B_Interactable: 3 components (DefaultSceneRoot, Interactable SM, Interactable SK)
+   - B_Door adds: 3 components (Door Frame, DEBUG_OpeningDirection, MoveTo)
+   - B_BossDoor adds: 3 components (Portal_Front, Portal_Back, DeathCurrencyDropLocation)
+   - TOTAL: 9 components (3 + 3 + 3)
+   - Wait, DefaultSceneRoot is counted once, not per class, so:
+   - TOTAL: 8 unique components (9 minus 1 for shared root)
+
+2. ATTACHMENT STRUCTURE
+   - Portal_Front and Portal_Back are BOTH attached to "Interactable SM"
+   - This means BOTH portals should appear at the same location
+   - If you see TWO fog walls, they are likely the two portal effects
+
+3. MESH ASSIGNMENTS
+   - Interactable SM: No default mesh assignment in JSON (must be set at runtime via C++ or Blueprint setter)
+   - Interactable SK: No default mesh assignment in JSON (must be set at runtime via C++ or Blueprint setter)
+   - Door Frame: Has a mesh assignment (likely set in Editor or C++)
+   - Portals: Likely have their Niagara system assignments set at runtime
+
+4. DUPLICATE FOG WALL MYSTERY
+   The two fog walls you're seeing are LIKELY:
+   - Portal_Front (front-facing portal effect)
+   - Portal_Back (back-facing portal effect)
+   
+   This is BY DESIGN for a boss door with a magical portal on both sides.
+   NOT a bug or duplication error.
+
+================================================================================
+VARIABLES & PROPERTIES
+================================================================================
+
+B_BossDoor Variables: NONE (empty)
+B_Door Variables: 
+  - InteractMontage_RH
+  - InteractMontage_LH
+  - LockInfo
+  - Cache_Rotation
+  - MoveToDistance
+  - YawRotationAmount
+  - PlayRate
+  - OpenForwards?
+  - SelectedMontage
+  - OnDoorOpened (event dispatcher)
+
+B_Interactable Variables:
+  - ID
+  - CanBeTraced?
+  - IsActivated?
+  - InteractableDisplayName
+  - InteractionText
+
+================================================================================
+RECOMMENDATION
+================================================================================
+
+The component hierarchy is CLEAN and has NO duplicates. The two fog walls 
+are the intended Portal_Front and Portal_Back effects, both attached to 
+Interactable SM.
+
+If you need to hide one portal effect, modify:
+1. Portal_Front visibility in Constructor
+2. Portal_Back visibility in Constructor
+3. Or conditionally enable/disable based on a variable
+
+Do NOT remove either component - they are part of the intended design.
+
+================================================================================

@@ -1,0 +1,21 @@
+================================================================================
+bp_only B_Destructible Analysis
+================================================================================
+Spawned: B_Destructible_C_0
+Parent Class: Error - Blueprint: Failed to find property 'parent_class' for attribute 'parent_class' on 'Blueprint'
+
+GeometryCollectionComponents: 1
+
+--- Component: GC_DestructibleMesh ---
+RestCollection: None!
+IsActive: False
+IsSimulatingPhysics: False
+IsVisible: True
+BodyInstance.simulate_physics: True
+CollisionEnabled: <CollisionEnabled.QUERY_AND_PHYSICS: 3>
+NotifyBreaks: True
+
+--- Blueprint Variables ---
+GeometryCollection var: Not found - Actor: Failed to find property 'geometry_collection' for attribute 'geometry_collection' on 'B_Destructible_C'
+
+Done.

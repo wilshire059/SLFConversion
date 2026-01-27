@@ -29,7 +29,7 @@ void UW_Equipment_Item_OnUseEffect::NativeDestruct()
 
 void UW_Equipment_Item_OnUseEffect::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 void UW_Equipment_Item_OnUseEffect::EventSetupOnUseText_Implementation(const FText& OnUseDescription)
 {

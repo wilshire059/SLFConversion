@@ -1,0 +1,9 @@
+{
+  "path": "/Game/SoulslikeFramework/Blueprints/_AI/BB_Standard",
+  "exists": true,
+  "keys": [],
+  "error": null,
+  "name": "BB_Standard",
+  "diagnosis": "=== DIAGNOSE BB STATE KEY: /Game/SoulslikeFramework/Blueprints/_AI/BB_Standard ===\nLoaded: /Game/SoulslikeFramework/Blueprints/_AI/BB_Standard.BB_Standard\nTotal Keys: 12\n\nKey: SelfActor (Type: BlackboardKeyType_Object)\nKey: Target (Type: BlackboardKeyType_Object)\nKey: InCombat (Type: BlackboardKeyType_Bool)\nKey: POI (Type: BlackboardKeyType_Vector)\nKey: State (Type: BlackboardKeyType_Enum)\n  >>> THIS IS THE STATE KEY <<<\n  KeyType is Enum\n  EnumType: /Game/SoulslikeFramework/Enums/E_AI_States.E_AI_States\n  Enum Values:\n    [0] Value=0 Name=NewEnumerator0 Display=Idle\n    [1] Value=1 Name=NewEnumerator4 Display=Random Roam\n    [2] Value=2 Name=NewEnumerator1 Display=Patrolling\n    [3] Value=3 Name=NewEnumerator5 Display=Investigating\n    [4] Value=4 Name=NewEnumerator2 Display=Combat\n    [5] Value=5 Name=NewEnumerator6 Display=Poise Broken\n    [6] Value=6 Name=NewEnumerator7 Display=Uninterruptable\n    [7] Value=7 Name=NewEnumerator3 Display=Out of Bounds\nKey: StartPosition (Type: BlackboardKeyType_Vector)\nKey: AttackRadius (Type: BlackboardKeyType_Float)\nKey: StrafeRadius (Type: BlackboardKeyType_Float)\nKey: CanAttack (Type: BlackboardKeyType_Bool)\nKey: ChaseDistance (Type: BlackboardKeyType_Float)\nKey: CanStrafe (Type: BlackboardKeyType_Bool)\nKey: SpeedAdjustDistance (Type: BlackboardKeyType_Float)\n",
+  "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'"
+}

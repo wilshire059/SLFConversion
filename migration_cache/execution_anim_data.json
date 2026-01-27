@@ -1,0 +1,13 @@
+{
+  "DA_Execute_Generic": {
+    "path": "/Game/SoulslikeFramework/Data/_AnimationData/Executions/DA_Execute_Generic",
+    "ExecuteFront": {
+      "Tag": "",
+      "Animation": ""
+    },
+    "ExecuteBack": {
+      "Tag": "",
+      "Animation": ""
+    }
+  }
+}

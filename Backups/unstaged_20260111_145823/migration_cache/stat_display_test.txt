@@ -1,0 +1,4 @@
+=== Stat Display & Equipment Detailed Test ===
+
+[TEST 1] Checking StatManagerComponent class hierarchy
+[PASS] UStatManagerComponent class found: StatManagerComponent

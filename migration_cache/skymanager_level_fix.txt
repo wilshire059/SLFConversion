@@ -1,0 +1,41 @@
+======================================================================
+COMPLETE SKYMANAGER LEVEL INSTANCE FIX
+======================================================================
+
+Loading level: /Game/SoulslikeFramework/Maps/L_Demo_Showcase
+Loaded: <Object '/Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase' (0x0000020FA2C63800) Class 'World'>
+
+Found: B_SkyManager_C_1 (B_SkyManager_C)
+
+  Fixing DirectionalLight_Sun:
+    Current ForwardShadingPriority: 0
+    Set ForwardShadingPriority to: 0 (highest)
+
+  Fixing DirectionalLight_Moon:
+    Current ForwardShadingPriority: 0
+    Set ForwardShadingPriority to: 1 (lower than sun)
+
+  Fixing SM_SkySphere:
+    Current scale: (1.0, 1.0, 1.0)
+    Set scale to: (100, 100, 100)
+    Mesh: SM_SkySphere
+    Material[0]: M_SkySphere
+
+======================================================================
+SAVING LEVEL
+======================================================================
+Level saved!
+
+======================================================================
+VERIFYING FIXES
+======================================================================
+  DirectionalLight_Sun ForwardShadingPriority: 0
+  DirectionalLight_Moon ForwardShadingPriority: 1
+
+  SM_SkySphere final scale: (100.0, 100.0, 100.0)
+
+======================================================================
+FIX COMPLETE
+======================================================================
+
+Results: C:/scripts/SLFConversion/migration_cache/skymanager_level_fix.txt

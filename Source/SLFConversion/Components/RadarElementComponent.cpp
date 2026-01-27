@@ -3,6 +3,7 @@
 
 #include "RadarElementComponent.h"
 #include "RadarManagerComponent.h"
+#include "Widgets/W_Radar_TrackedElement.h"
 #include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogRadarElement, Log, All);

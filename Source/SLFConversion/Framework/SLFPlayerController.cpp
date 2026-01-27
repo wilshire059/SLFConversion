@@ -10,15 +10,39 @@
 #include "Components/WidgetSwitcher.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/PanelWidget.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Widgets/W_HUD.h"
 #include "Engine/Engine.h"
 #include "TimerManager.h"
 #include "GameFramework/GameModeBase.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Camera/PlayerCameraManager.h"
 #include "Interfaces/BPI_GenericCharacter.h"
 #include "Components/StatManagerComponent.h"
 #include "Components/InventoryManagerComponent.h"
+#include "Components/AC_InventoryManager.h"
+#include "Components/AC_ProgressManager.h"
+#include "Components/AC_CombatManager.h"
+#include "Components/RadarManagerComponent.h"
+#include "Widgets/W_Radar.h"
 #include "GameplayTagContainer.h"
 #include "SLFGameTypes.h"
+// Includes for enemy reset on player death
+#include "EngineUtils.h"
+#include "Blueprints/SLFSoulslikeEnemy.h"
+#include "Blueprints/B_Soulslike_Enemy.h"
+#include "Blueprints/Actors/SLFBossDoor.h"
+#include "Components/AICombatManagerComponent.h"
+#include "Components/SLFAIStateMachineComponent.h"
+#include "AIController.h"
+#include "BrainComponent.h"
+#include "Interfaces/BPI_ExecutionIndicator.h"
+#include "Interfaces/SLFExecutionIndicatorInterface.h"
+#include "Blueprints/SLFBaseCharacter.h"
+#include "Components/WidgetComponent.h"
+#include "Perception/AIPerceptionComponent.h"
 
 ASLFPlayerController::ASLFPlayerController()
 {
@@ -288,6 +312,15 @@ void ASLFPlayerController::Native_InitializeHUD()
 			{
 				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("W_HUD created and added to viewport!"));
 			}
+
+			// Step 6: Schedule radar initialization after widget tree is fully constructed
+			if (UWorld* World = GetWorld())
+			{
+				FTimerHandle RadarInitTimer;
+				World->GetTimerManager().SetTimer(RadarInitTimer, this,
+					&ASLFPlayerController::EventInitializeRadar, 0.2f, false);
+				UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] Scheduled radar initialization in 0.2s"));
+			}
 		}
 		else
 		{
@@ -297,6 +330,40 @@ void ASLFPlayerController::Native_InitializeHUD()
 				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("FAILED to create W_HUD widget instance!"));
 			}
 		}
+	}
+}
+
+void ASLFPlayerController::EventInitializeRadar()
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] EventInitializeRadar"));
+
+	// Get the W_Radar widget from the HUD
+	if (!HUDWidgetRef)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] EventInitializeRadar - No HUDWidgetRef!"));
+		return;
+	}
+
+	UW_Radar* RadarWidget = HUDWidgetRef->GetCachedRadar();
+	if (!RadarWidget)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] EventInitializeRadar - No W_Radar widget in HUD!"));
+		return;
+	}
+
+	// Find the RadarManager component on this controller
+	URadarManagerComponent* RadarManager = FindComponentByClass<URadarManagerComponent>();
+	if (RadarManager)
+	{
+		RadarManager->RadarWidget = RadarWidget;
+		UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] EventInitializeRadar - Set RadarWidget on RadarManager"));
+
+		// Call LateInitialize to complete full setup (player icon + cardinal markers)
+		RadarManager->LateInitialize();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] EventInitializeRadar - No RadarManager component found!"));
 	}
 }
 
@@ -517,17 +584,49 @@ void ASLFPlayerController::StartRespawn_Implementation(double FadeDelay)
 	SetIgnoreMoveInput(true);
 	SetIgnoreLookInput(true);
 
+	// Calculate timings for death sequence:
+	// 1. Player dies, ragdoll/animation starts, "You Died" appears (0s)
+	// 2. Wait for death animation to play (~1.5-2s)
+	// 3. Start fade to black
+	// 4. Complete respawn after fade finishes
+	float TotalDelay = FadeDelay > 0 ? FadeDelay : 3.0f;
+	float FadeOutDuration = 1.0f; // Fade to black over 1 second
+	float TimeBeforeFade = 1.5f; // Wait 1.5 seconds for ragdoll/death animation before fade starts
+
+	// Ensure total delay is long enough for animation + fade
+	if (TotalDelay < TimeBeforeFade + FadeOutDuration + 0.5f)
+	{
+		TotalDelay = TimeBeforeFade + FadeOutDuration + 0.5f; // animation wait + fade + 0.5s buffer
+	}
+
+	// Start fade to black timer (before respawn completes)
+	FTimerHandle FadeTimerHandle;
+	GetWorldTimerManager().SetTimer(
+		FadeTimerHandle,
+		[this, FadeOutDuration]()
+		{
+			// Fade camera to black
+			if (APlayerCameraManager* CameraMgr = PlayerCameraManager)
+			{
+				CameraMgr->StartCameraFade(0.0f, 1.0f, FadeOutDuration, FLinearColor::Black, false, true);
+				UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] StartRespawn - Started camera fade to black"));
+			}
+		},
+		TimeBeforeFade,
+		false
+	);
+
 	// Start respawn timer
 	FTimerHandle RespawnTimerHandle;
 	GetWorldTimerManager().SetTimer(
 		RespawnTimerHandle,
 		this,
 		&ASLFPlayerController::CompleteRespawn,
-		FadeDelay > 0 ? FadeDelay : 3.0f, // Default 3 second delay
+		TotalDelay,
 		false
 	);
 
-	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] StartRespawn - Respawn timer set for %.2f seconds"), FadeDelay > 0 ? FadeDelay : 3.0f);
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] StartRespawn - Respawn timer set for %.2f seconds, fade starts at %.2f"), TotalDelay, TimeBeforeFade);
 }
 
 void ASLFPlayerController::CompleteRespawn()
@@ -541,10 +640,6 @@ void ASLFPlayerController::CompleteRespawn()
 		UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] CompleteRespawn - Hid death screen"));
 	}
 
-	// Re-enable player input
-	SetIgnoreMoveInput(false);
-	SetIgnoreLookInput(false);
-
 	// Get the pawn and reset its state
 	APawn* ControlledPawn = GetPawn();
 	if (ControlledPawn)
@@ -553,10 +648,51 @@ void ASLFPlayerController::CompleteRespawn()
 		AActor* PlayerStart = GetWorld()->GetAuthGameMode()->FindPlayerStart(this);
 		if (PlayerStart)
 		{
-			// Teleport pawn to player start
+			// Teleport pawn to player start (screen is black from fade)
 			ControlledPawn->SetActorLocation(PlayerStart->GetActorLocation());
 			ControlledPawn->SetActorRotation(PlayerStart->GetActorRotation());
 			UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] CompleteRespawn - Teleported to %s"), *PlayerStart->GetName());
+		}
+
+		// CRITICAL: Reset IsDead flag on combat manager BEFORE restoring HP
+		// This allows the player to attack again after respawning
+		if (UAC_CombatManager* CombatManager = ControlledPawn->FindComponentByClass<UAC_CombatManager>())
+		{
+			CombatManager->IsDead = false;
+			UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] CompleteRespawn - Reset IsDead flag on AC_CombatManager"));
+		}
+
+		// Reset ragdoll state - restore character mesh to normal physics mode
+		if (ACharacter* CharacterPawn = Cast<ACharacter>(ControlledPawn))
+		{
+			// STEP 1: Re-enable capsule collision (disabled during ragdoll)
+			if (UCapsuleComponent* Capsule = CharacterPawn->GetCapsuleComponent())
+			{
+				Capsule->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+				UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] CompleteRespawn - Re-enabled capsule collision"));
+			}
+
+			// STEP 2: Re-enable character movement (disabled during ragdoll)
+			if (UCharacterMovementComponent* MovementComp = CharacterPawn->GetCharacterMovement())
+			{
+				MovementComp->SetMovementMode(MOVE_Walking);
+				UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] CompleteRespawn - Re-enabled movement component"));
+			}
+
+			// STEP 3: Reset mesh from ragdoll state
+			if (USkeletalMeshComponent* Mesh = CharacterPawn->GetMesh())
+			{
+				// Disable physics simulation and reset to kinematic
+				Mesh->SetSimulatePhysics(false);
+				Mesh->SetCollisionProfileName(FName("CharacterMesh"));
+
+				// Reset mesh transform relative to capsule
+				Mesh->AttachToComponent(CharacterPawn->GetCapsuleComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+				Mesh->SetRelativeLocation(FVector(0.0f, 0.0f, -90.0f)); // Standard UE character offset
+				Mesh->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f)); // Standard UE character rotation
+
+				UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] CompleteRespawn - Reset mesh from ragdoll state"));
+			}
 		}
 
 		// Reset character health via stat manager
@@ -581,6 +717,285 @@ void ASLFPlayerController::CompleteRespawn()
 			}
 		}
 	}
+
+	// ═══════════════════════════════════════════════════════════════════════════════
+	// RESET ALL ENEMIES (Souls-like behavior - Elden Ring)
+	// When player respawns, reset all enemies to their spawn locations
+	// This happens while screen is black, so player sees fresh world when it fades in
+	// ═══════════════════════════════════════════════════════════════════════════════
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		int32 EnemiesReset = 0;
+
+		// Reset enemies using both class hierarchies
+		auto ResetEnemyCharacter = [&](ACharacter* EnemyChar)
+		{
+			// NOTE: Do NOT check IsHidden() here! Killed enemies ARE hidden by HandleDeath
+			// and we need to respawn them. Only skip invalid actors.
+			if (!IsValid(EnemyChar))
+			{
+				return;
+			}
+
+			// Reset combat manager state and teleport to spawn location
+			if (UAICombatManagerComponent* AICombatMgr = EnemyChar->FindComponentByClass<UAICombatManagerComponent>())
+			{
+				AICombatMgr->bIsDead = false;
+				AICombatMgr->bPoiseBroken = false;
+				AICombatMgr->bHyperArmor = false;
+				AICombatMgr->bInvincible = false;
+				AICombatMgr->bHealthbarActive = false;
+
+				// CRITICAL: Hide the execution indicator widget if poise was broken
+				// The ExecutionWidget is a UWidgetComponent on ASLFBaseCharacter, not an interface on the actor
+				if (ASLFBaseCharacter* BaseChar = Cast<ASLFBaseCharacter>(EnemyChar))
+				{
+					if (BaseChar->CachedExecutionWidget)
+					{
+						BaseChar->CachedExecutionWidget->SetVisibility(false);
+
+						// Also call ToggleExecutionIcon on the internal widget to reset its state
+						if (UUserWidget* Widget = BaseChar->CachedExecutionWidget->GetWidget())
+						{
+							if (Widget->GetClass()->ImplementsInterface(USLFExecutionIndicatorInterface::StaticClass()))
+							{
+								ISLFExecutionIndicatorInterface::Execute_ToggleExecutionIcon(Widget, false);
+							}
+						}
+						UE_LOG(LogTemp, Log, TEXT("[Respawn] Hid execution indicator widget for %s"), *EnemyChar->GetName());
+					}
+				}
+
+				// CRITICAL: Disable healthbar so it doesn't show stale damage
+				// Will be re-enabled when enemy takes new damage
+				AICombatMgr->DisableHealthbar();
+				UE_LOG(LogTemp, Log, TEXT("[Respawn] Disabled healthbar for %s"), *EnemyChar->GetName());
+
+				// Teleport enemy back to original spawn location
+				FTransform OriginalSpawn = AICombatMgr->SpawnTransform;
+				if (!OriginalSpawn.GetLocation().IsNearlyZero())
+				{
+					EnemyChar->SetActorTransform(OriginalSpawn);
+					UE_LOG(LogTemp, Log, TEXT("[Respawn] Teleported %s to spawn: %s"),
+						*EnemyChar->GetName(), *OriginalSpawn.GetLocation().ToString());
+				}
+
+				AICombatMgr->bHasBeenRespawned = true;
+			}
+
+			// Reset HP/Poise
+			if (UStatManagerComponent* EnemyStatMgr = EnemyChar->FindComponentByClass<UStatManagerComponent>())
+			{
+				// Use false for bErrorIfNotFound to avoid crashing if tag doesn't exist
+				FGameplayTag HPTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"), false);
+				if (HPTag.IsValid())
+				{
+					EnemyStatMgr->ResetStat(HPTag);
+				}
+
+				FGameplayTag PoiseTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Poise"), false);
+				if (PoiseTag.IsValid())
+				{
+					EnemyStatMgr->ResetStat(PoiseTag);
+				}
+			}
+
+			// CRITICAL: Reset AI state machine using ResetFromDeath()
+			// SetState(Idle) silently fails because the state machine blocks leaving Dead state
+			// ResetFromDeath() bypasses this check and properly reinitializes everything
+			if (USLFAIStateMachineComponent* AIStateMachine = EnemyChar->FindComponentByClass<USLFAIStateMachineComponent>())
+			{
+				AIStateMachine->ResetFromDeath();
+				UE_LOG(LogTemp, Log, TEXT("[Respawn] Reset AI state machine for %s"), *EnemyChar->GetName());
+			}
+
+			// CRITICAL: Restart AI brain component (was stopped during HandleDeath)
+			// Without this, the AI won't process perception or behavior tree
+			if (AAIController* AIController = Cast<AAIController>(EnemyChar->GetController()))
+			{
+				if (UBrainComponent* BrainComp = AIController->GetBrainComponent())
+				{
+					BrainComp->RestartLogic();
+					UE_LOG(LogTemp, Log, TEXT("[Respawn] Restarted AI brain for %s"), *EnemyChar->GetName());
+				}
+
+				// CRITICAL: Force perception component to re-scan for targets
+				// After respawn, perception may have stale data or not re-detect the new player position
+				if (UAIPerceptionComponent* PerceptionComp = AIController->GetAIPerceptionComponent())
+				{
+					PerceptionComp->RequestStimuliListenerUpdate();
+					UE_LOG(LogTemp, Log, TEXT("[Respawn] Requested perception refresh for %s"), *EnemyChar->GetName());
+				}
+			}
+
+			// CRITICAL: Make sure enemy is visible and fully functional (matches W_RestMenu::RespawnAllEnemies)
+			EnemyChar->SetActorHiddenInGame(false);
+			EnemyChar->SetActorEnableCollision(true);
+			EnemyChar->SetActorTickEnabled(true);
+
+			UE_LOG(LogTemp, Warning, TEXT("[Respawn] Set actor visible for %s - Hidden=%s, Collision=%s, Tick=%s"),
+				*EnemyChar->GetName(),
+				EnemyChar->IsHidden() ? TEXT("true") : TEXT("false"),
+				EnemyChar->GetActorEnableCollision() ? TEXT("true") : TEXT("false"),
+				EnemyChar->IsActorTickEnabled() ? TEXT("true") : TEXT("false"));
+
+			// Re-enable collision on mesh and FULLY DISABLE RAGDOLL (matches W_RestMenu::RespawnAllEnemies)
+			if (USkeletalMeshComponent* EnemyMesh = EnemyChar->GetMesh())
+			{
+				// Log mesh state BEFORE reset
+				UE_LOG(LogTemp, Warning, TEXT("[Respawn] %s mesh BEFORE reset - Visible=%s, SimPhysics=%s, Location=%s"),
+					*EnemyChar->GetName(),
+					EnemyMesh->IsVisible() ? TEXT("true") : TEXT("false"),
+					EnemyMesh->IsSimulatingPhysics() ? TEXT("true") : TEXT("false"),
+					*EnemyMesh->GetComponentLocation().ToString());
+
+				// CRITICAL: Disable ragdoll physics completely
+				EnemyMesh->SetSimulatePhysics(false);
+				EnemyMesh->SetAllBodiesSimulatePhysics(false);
+				EnemyMesh->ResetAllBodiesSimulatePhysics();
+
+				EnemyMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+				EnemyMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+
+				// CRITICAL: Explicitly set mesh visibility - SetActorHiddenInGame may not propagate to mesh
+				EnemyMesh->SetVisibility(true, true);  // true = propagate to children
+				EnemyMesh->SetHiddenInGame(false, true);  // true = propagate to children
+
+				// Reattach mesh to capsule if it was detached for ragdoll
+				if (UCapsuleComponent* Capsule = EnemyChar->GetCapsuleComponent())
+				{
+					EnemyMesh->AttachToComponent(Capsule, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+
+					// Also reset the relative transform to standard character offset
+					EnemyMesh->SetRelativeLocation(FVector(0.0f, 0.0f, -90.0f));
+					EnemyMesh->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
+				}
+
+				// Log mesh state AFTER reset
+				UE_LOG(LogTemp, Warning, TEXT("[Respawn] %s mesh AFTER reset - Visible=%s, SimPhysics=%s, RelLoc=%s"),
+					*EnemyChar->GetName(),
+					EnemyMesh->IsVisible() ? TEXT("true") : TEXT("false"),
+					EnemyMesh->IsSimulatingPhysics() ? TEXT("true") : TEXT("false"),
+					*EnemyMesh->GetRelativeLocation().ToString());
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("[Respawn] %s has NO MESH!"), *EnemyChar->GetName());
+			}
+
+			// Re-enable capsule collision
+			if (UCapsuleComponent* Capsule = EnemyChar->GetCapsuleComponent())
+			{
+				Capsule->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
+				Capsule->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+			}
+
+			// Re-enable collision on ALL primitive components (like RestMenu does)
+			TArray<UPrimitiveComponent*> PrimitiveComponents;
+			EnemyChar->GetComponents<UPrimitiveComponent>(PrimitiveComponents);
+			for (UPrimitiveComponent* PrimComp : PrimitiveComponents)
+			{
+				if (PrimComp)
+				{
+					PrimComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+				}
+			}
+
+			EnemiesReset++;
+		};
+
+		// Iterate both enemy class hierarchies
+		for (TActorIterator<ASLFSoulslikeEnemy> It(World); It; ++It)
+		{
+			ResetEnemyCharacter(*It);
+		}
+
+		for (TActorIterator<AB_Soulslike_Enemy> It(World); It; ++It)
+		{
+			ResetEnemyCharacter(*It);
+		}
+
+		// CRITICAL: Clear player's execution target (the pink circle on HUD)
+		// This must be done after resetting enemies so the player doesn't still think an enemy is staggered
+		if (ControlledPawn)
+		{
+			if (UAC_CombatManager* PlayerCombatMgr = ControlledPawn->FindComponentByClass<UAC_CombatManager>())
+			{
+				PlayerCombatMgr->SetExecutionTarget(nullptr);
+				UE_LOG(LogTemp, Log, TEXT("[Respawn] Cleared player execution target"));
+			}
+		}
+
+		// SECOND PASS: Hide execution indicator widgets AFTER all resets complete
+		// This is needed because the mesh/collision resets can cause widgets to reinitialize
+		auto HideExecutionWidget = [](ACharacter* EnemyChar)
+		{
+			if (!IsValid(EnemyChar)) return;
+
+			if (ASLFBaseCharacter* BaseChar = Cast<ASLFBaseCharacter>(EnemyChar))
+			{
+				if (BaseChar->CachedExecutionWidget)
+				{
+					// Force the widget component to be hidden
+					BaseChar->CachedExecutionWidget->SetVisibility(false);
+
+					// Also ensure the internal widget's icon is collapsed
+					if (UUserWidget* Widget = BaseChar->CachedExecutionWidget->GetWidget())
+					{
+						if (Widget->GetClass()->ImplementsInterface(USLFExecutionIndicatorInterface::StaticClass()))
+						{
+							ISLFExecutionIndicatorInterface::Execute_ToggleExecutionIcon(Widget, false);
+						}
+					}
+					UE_LOG(LogTemp, Log, TEXT("[Respawn] SECOND PASS: Hid execution widget for %s"), *EnemyChar->GetName());
+				}
+			}
+		};
+
+		for (TActorIterator<ASLFSoulslikeEnemy> It(World); It; ++It)
+		{
+			HideExecutionWidget(*It);
+		}
+		for (TActorIterator<AB_Soulslike_Enemy> It(World); It; ++It)
+		{
+			HideExecutionWidget(*It);
+		}
+
+		// Unseal boss doors
+		for (TActorIterator<ASLFBossDoor> DoorIt(World); DoorIt; ++DoorIt)
+		{
+			if (IsValid(*DoorIt) && (*DoorIt)->bSealed)
+			{
+				(*DoorIt)->UnsealDoor();
+				UE_LOG(LogTemp, Log, TEXT("[Respawn] Unsealed boss door: %s"), *(*DoorIt)->GetName());
+			}
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("[Respawn] Reset %d enemies on player respawn"), EnemiesReset);
+	}
+
+	// Fade camera back from black AFTER teleporting and resetting enemies
+	float FadeInDuration = 1.0f;
+	if (APlayerCameraManager* CameraMgr = PlayerCameraManager)
+	{
+		CameraMgr->StartCameraFade(1.0f, 0.0f, FadeInDuration, FLinearColor::Black, false, false);
+		UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] CompleteRespawn - Started camera fade from black"));
+	}
+
+	// Re-enable player input after a short delay (let fade complete)
+	FTimerHandle InputEnableTimerHandle;
+	GetWorldTimerManager().SetTimer(
+		InputEnableTimerHandle,
+		[this]()
+		{
+			SetIgnoreMoveInput(false);
+			SetIgnoreLookInput(false);
+			UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] CompleteRespawn - Re-enabled player input"));
+		},
+		FadeInDuration * 0.5f, // Re-enable input halfway through fade
+		false
+	);
 
 	UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] CompleteRespawn - Respawn complete!"));
 }
@@ -671,7 +1086,17 @@ void ASLFPlayerController::GetCurrency_Implementation(int32& Currency)
 
 void ASLFPlayerController::GetProgressManager_Implementation(UActorComponent*& ProgressManager)
 {
-	ProgressManager = nullptr; // TODO: Find progress manager component
+	// Try to find AC_ProgressManager on the controller first
+	ProgressManager = FindComponentByClass<UAC_ProgressManager>();
+
+	// If not on controller, try to find on pawn
+	if (!ProgressManager)
+	{
+		if (APawn* ControlledPawn = GetPawn())
+		{
+			ProgressManager = ControlledPawn->FindComponentByClass<UAC_ProgressManager>();
+		}
+	}
 }
 
 void ASLFPlayerController::GetSoulslikeController_Implementation(APlayerController*& Controller)
@@ -686,7 +1111,27 @@ void ASLFPlayerController::GetPawnFromController_Implementation(APawn*& OutPawn)
 
 void ASLFPlayerController::GetInventoryComponent_Implementation(UActorComponent*& Inventory)
 {
-	Inventory = FindComponentByClass<UActorComponent>(); // TODO: Find specific inventory component
+	// Try to find AC_InventoryManager on the controller first
+	Inventory = FindComponentByClass<UAC_InventoryManager>();
+
+	// If not on controller, try the legacy InventoryManagerComponent
+	if (!Inventory)
+	{
+		Inventory = FindComponentByClass<UInventoryManagerComponent>();
+	}
+
+	// If not on controller, try to find on pawn
+	if (!Inventory)
+	{
+		if (APawn* ControlledPawn = GetPawn())
+		{
+			Inventory = ControlledPawn->FindComponentByClass<UAC_InventoryManager>();
+			if (!Inventory)
+			{
+				Inventory = ControlledPawn->FindComponentByClass<UInventoryManagerComponent>();
+			}
+		}
+	}
 }
 
 void ASLFPlayerController::AdjustCurrency_Implementation(int32 Delta)

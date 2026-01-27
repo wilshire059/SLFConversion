@@ -544,6 +544,15 @@ void UAC_ActionManager::EventPerformAction_Implementation(const FGameplayTag& Ac
 		return;
 	}
 
+	// LADDER CHECK: Block ALL actions while climbing (except ladder-specific ones)
+	// bp_only uses IsOnLadder flag to prevent dodge, attack, etc. during climb
+	if (IsOnLadder)
+	{
+		UE_LOG(LogTemp, Log, TEXT("  ACTION BLOCKED - IsOnLadder=true, cannot perform %s while climbing"),
+			*ActionTag.ToString());
+		return;
+	}
+
 	// Debug: Log all keys in AvailableActions if it has entries
 	if (AvailableActions.Num() > 0 && AvailableActions.Num() < 30)
 	{

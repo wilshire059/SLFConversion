@@ -1,0 +1,16 @@
+=== ACTION STAMINA COSTS ===
+
+  DA_Action_Dodge: StaminaCost = 20.0
+  DA_Action_ComboLight_L: StaminaCost = 15.0
+  DA_Action_ComboLight_R: StaminaCost = 15.0
+  DA_Action_ComboHeavy: StaminaCost = 30.0
+  DA_Action_Jump: StaminaCost = 10.0
+  DA_Action_JumpAttack: StaminaCost = 25.0
+  DA_Action_SprintAttack: StaminaCost = 25.0
+  DA_Action_Backstab: StaminaCost = 20.0
+  DA_Action_DualWieldAttack: StaminaCost = 20.0
+  DA_Action_Projectile: StaminaCost = 10.0
+  DA_Action_UseEquippedTool: StaminaCost = 5.0
+  DA_Action_WeaponAbility: StaminaCost = 30.0
+
+=== END ===

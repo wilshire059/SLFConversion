@@ -815,8 +815,31 @@ void UW_Equipment::SetupInformationPanel_Implementation(const FSLFItemInfo& Item
 			TargetAttackPowerMap.Add(StatPair.Key, static_cast<int32>(StatPair.Value.Delta));
 		}
 
-		// TODO: Get currently equipped item's stats for comparison
+		// Get currently equipped item's stats for comparison
 		TMap<FGameplayTag, int32> CurrentAttackPowerMap;
+
+		// If we have an equipment slot selected, get the currently equipped item's stats
+		if (ActiveEquipmentSlot && EquipmentComponent)
+		{
+			FGameplayTag SlotTag = ActiveEquipmentSlot->EquipmentSlot;
+			if (SlotTag.IsValid())
+			{
+				// Get currently equipped item from the slot
+				if (TObjectPtr<UPrimaryDataAsset>* ItemPtr = EquipmentComponent->AllEquippedItems.Find(SlotTag))
+				{
+					if (UPDA_Item* CurrentItem = Cast<UPDA_Item>(*ItemPtr))
+					{
+						// Extract stats from currently equipped item
+						const FSLFEquipmentInfo& CurrentEquipInfo = CurrentItem->ItemInformation.EquipmentDetails;
+						for (const auto& StatPair : CurrentEquipInfo.StatChanges)
+						{
+							CurrentAttackPowerMap.Add(StatPair.Key, static_cast<int32>(StatPair.Value.Delta));
+						}
+						UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Got %d attack power stats from currently equipped item"), CurrentAttackPowerMap.Num());
+					}
+				}
+			}
+		}
 
 		// W_Equipment_Item_AttackPower - Setup attack power stats
 		if (AttackPowerWidget)
@@ -938,9 +961,43 @@ void UW_Equipment::SetupInformationPanel_Implementation(const FSLFItemInfo& Item
 			}
 		}
 
-		// TODO: Get currently equipped armor stats for comparison
+		// Get currently equipped armor stats for comparison
 		TMap<FGameplayTag, int32> CurrentDamageNegationStats;
 		TMap<FGameplayTag, int32> CurrentResistanceStats;
+
+		// If we have an equipment slot selected, get the currently equipped armor's stats
+		if (ActiveEquipmentSlot && EquipmentComponent)
+		{
+			FGameplayTag SlotTag = ActiveEquipmentSlot->EquipmentSlot;
+			if (SlotTag.IsValid())
+			{
+				// Get currently equipped armor from the slot
+				if (TObjectPtr<UPrimaryDataAsset>* ItemPtr = EquipmentComponent->AllEquippedItems.Find(SlotTag))
+				{
+					if (UPDA_Item* CurrentItem = Cast<UPDA_Item>(*ItemPtr))
+					{
+						// Extract stats from currently equipped armor
+						const FSLFEquipmentInfo& CurrentEquipInfo = CurrentItem->ItemInformation.EquipmentDetails;
+						for (const auto& StatPair : CurrentEquipInfo.StatChanges)
+						{
+							FString TagString = StatPair.Key.ToString();
+							int32 Value = static_cast<int32>(StatPair.Value.Delta);
+
+							if (TagString.Contains(TEXT("DamageNegation")))
+							{
+								CurrentDamageNegationStats.Add(StatPair.Key, Value);
+							}
+							else if (TagString.Contains(TEXT("Resistance")))
+							{
+								CurrentResistanceStats.Add(StatPair.Key, Value);
+							}
+						}
+						UE_LOG(LogTemp, Log, TEXT("[W_Equipment] Got %d DN stats and %d resistance stats from currently equipped armor"),
+							CurrentDamageNegationStats.Num(), CurrentResistanceStats.Num());
+					}
+				}
+			}
+		}
 
 		// W_Equipment_Item_DamageNegation - Setup damage negation stats
 		if (DamageNegationWidget)

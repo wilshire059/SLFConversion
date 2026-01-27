@@ -32,7 +32,7 @@ void UW_CraftingEntry::NativeDestruct()
 
 void UW_CraftingEntry::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 
 int32 UW_CraftingEntry::GetOwnedAmount_Implementation()

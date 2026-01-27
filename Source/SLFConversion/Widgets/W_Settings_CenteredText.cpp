@@ -4,9 +4,11 @@
 // 20-PASS VALIDATION: 2026-01-01 Autonomous Session
 
 #include "Widgets/W_Settings_CenteredText.h"
+#include "Components/TextBlock.h"
 
 UW_Settings_CenteredText::UW_Settings_CenteredText(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
+	, CenteredText(nullptr)
 {
 }
 
@@ -29,9 +31,14 @@ void UW_Settings_CenteredText::NativeDestruct()
 
 void UW_Settings_CenteredText::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 void UW_Settings_CenteredText::EventSetText_Implementation(const FText& InText)
 {
-	UE_LOG(LogTemp, Log, TEXT("UW_Settings_CenteredText::EventSetText_Implementation"));
+	UE_LOG(LogTemp, Log, TEXT("UW_Settings_CenteredText::EventSetText_Implementation: %s"), *InText.ToString());
+
+	if (CenteredText)
+	{
+		CenteredText->SetText(InText);
+	}
 }

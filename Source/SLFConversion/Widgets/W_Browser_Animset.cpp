@@ -29,7 +29,7 @@ void UW_Browser_Animset::NativeDestruct()
 
 void UW_Browser_Animset::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 
 UWidget* UW_Browser_Animset::GetToolTipWidget_Implementation()

@@ -1,0 +1,601 @@
+{
+  "project": "SLFConversion",
+  "characters": {
+    "B_Soulslike_Character": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_Characters/B_Soulslike_Character",
+      "name": "B_Soulslike_Character",
+      "parent_class": null,
+      "class_hierarchy": [
+        "B_Soulslike_Character_C"
+      ],
+      "components": [
+        {
+          "name": "CollisionCylinder",
+          "class": "CapsuleComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 20000.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        {
+          "name": "Arrow",
+          "class": "ArrowComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        {
+          "name": "CharMoveComp",
+          "class": "CharacterMovementComponent"
+        },
+        {
+          "name": "CharacterMesh0",
+          "class": "SkeletalMeshComponent",
+          "location": {
+            "x": 1.4164911006250775e-14,
+            "y": 2.878354621316248e-08,
+            "z": -91.0020755525255
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 270.0,
+            "roll": -0.0
+          },
+          "anim_class": "ABP_SoulslikeCharacter_Additive_C"
+        },
+        {
+          "name": "StatManagerComponent",
+          "class": "StatManagerComponent"
+        },
+        {
+          "name": "DefaultSceneRoot",
+          "class": "SceneComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        {
+          "name": "CameraBoom",
+          "class": "SpringArmComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 20.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        {
+          "name": "FollowCamera",
+          "class": "CameraComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        {
+          "name": "AC_InteractionManager",
+          "class": "AC_InteractionManager_C"
+        },
+        {
+          "name": "AC_CombatManager",
+          "class": "AC_CombatManager_C"
+        },
+        {
+          "name": "TargetSwapTracer",
+          "class": "BillboardComponent",
+          "location": {
+            "x": 142.512268,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        {
+          "name": "AC_InputBuffer",
+          "class": "AC_InputBuffer_C"
+        },
+        {
+          "name": "Head",
+          "class": "SkeletalMeshComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        {
+          "name": "UpperBody",
+          "class": "SkeletalMeshComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        {
+          "name": "LowerBody",
+          "class": "SkeletalMeshComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        {
+          "name": "Arms",
+          "class": "SkeletalMeshComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        {
+          "name": "AC_ActionManager",
+          "class": "AC_ActionManager_C"
+        },
+        {
+          "name": "NPC LookAt Point",
+          "class": "SphereComponent",
+          "location": {
+            "x": 1.0313158611552353e-06,
+            "y": 0.0,
+            "z": 70.94934702051789
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        {
+          "name": "LookAtPoint",
+          "class": "BillboardComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        {
+          "name": "ChaosForceField",
+          "class": "ChildActorComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        {
+          "name": "AC_LadderManager",
+          "class": "AC_LadderManager_C"
+        },
+        {
+          "name": "ControlRotationArrow",
+          "class": "ArrowComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        {
+          "name": "AC_DebugCentral",
+          "class": "AC_DebugCentral_C"
+        }
+      ],
+      "mesh_info": {
+        "mesh": null,
+        "skeleton": null,
+        "anim_class": null,
+        "sockets": []
+      },
+      "anim_instance": "ABP_SoulslikeCharacter_Additive_C",
+      "ik_settings": {}
+    },
+    "B_BaseCharacter": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_Characters/B_BaseCharacter",
+      "name": "B_BaseCharacter",
+      "parent_class": null,
+      "class_hierarchy": [
+        "B_BaseCharacter_C"
+      ],
+      "components": [
+        {
+          "name": "CollisionCylinder",
+          "class": "CapsuleComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 20000.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        {
+          "name": "Arrow",
+          "class": "ArrowComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        {
+          "name": "CharMoveComp",
+          "class": "CharacterMovementComponent"
+        }
+      ],
+      "mesh_info": {},
+      "anim_instance": null,
+      "ik_settings": {},
+      "spawn_error": "type object 'RelativeTransformSpace' has no attribute 'WORLD'"
+    }
+  },
+  "weapons": {
+    "B_Item_Weapon": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/B_Item_Weapon",
+      "name": "B_Item_Weapon",
+      "class_hierarchy": [
+        "B_Item_Weapon_C"
+      ],
+      "cdo_properties": {
+        "default_mesh_relative_location": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "default_mesh_relative_rotation": {
+          "pitch": 0.0,
+          "yaw": 0.0,
+          "roll": 0.0
+        },
+        "default_attachment_rotation_offset": {
+          "pitch": 0.0,
+          "yaw": 0.0,
+          "roll": 0.0
+        },
+        "item_info": "<Struct 'SLFItemInfo' (0x000001AFA56E1078) {item_tag: {}, category: {category: None, sub_category: Miscellaneous}, display_name: \"\", short_description: \"\", long_description: \"\", discovery_description: \"\", usable: False, rechargeable: False, on_use_description: \"\", icon_small: None, icon_large_optional: None, max_amount: 1, action_to_trigger: {}, item_class: None, world_pickup_info: {world_display_style: ShowMesh, world_niagara_system: None, world_static_mesh: None, world_skeletal_mesh: None}, equipment_details: {equip_slots: {gameplay_tags: }, granted_tags: {gameplay_tags: }, weapon_overlay: {}, weapon_ability: None, weapon_stat_info: {has_stat_scaling: False, scaling_info: (), has_stat_requirement: False, stat_requirement_info: ()}, weapon_status_effect_info: (), stat_changes: (), skeletal_mesh_info: (), attachment_sockets: {left_hand_socket_name: \"\", right_hand_socket_name: \"\", holster_socket_name: \"\", attachment_rotation_offset: {pitch: 0.000000, yaw: 0.000000, roll: 0.000000}}, moveset_weapons: None, item_buff_description: \"\", granted_buff_rank: (), stamina_multiplier: 1.000000, min_poise_damage: 0.000000, max_poise_damage: 0.000000}, crafting_details: {can_be_crafted: False, required_items: ()}}>"
+      },
+      "runtime_components": [
+        {
+          "name": "DefaultSceneRoot",
+          "class": "SceneComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 20000.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        {
+          "name": "WeaponMesh",
+          "class": "StaticMeshComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          },
+          "mesh": "None"
+        },
+        {
+          "name": "TrailComponent",
+          "class": "NiagaraComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        {
+          "name": "StaticMesh",
+          "class": "StaticMeshComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          },
+          "mesh": "None"
+        },
+        {
+          "name": "Trail",
+          "class": "NiagaraComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        {
+          "name": "DEBUG_HandleVisualizer",
+          "class": "BillboardComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        {
+          "name": "DEBUG_FacingDirection",
+          "class": "ArrowComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        }
+      ]
+    },
+    "B_Item_Weapon_SwordExample01": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_SwordExample01",
+      "name": "B_Item_Weapon_SwordExample01",
+      "class_hierarchy": [
+        "B_Item_Weapon_SwordExample01_C"
+      ],
+      "cdo_properties": {
+        "default_weapon_mesh": "SM_ExampleSword01",
+        "default_mesh_relative_location": {
+          "x": -2.842170943040401e-14,
+          "y": -8.634133296615484e-07,
+          "z": 36.49442056137028
+        },
+        "default_mesh_relative_rotation": {
+          "pitch": 0.0,
+          "yaw": 0.0,
+          "roll": 179.9999986056543
+        },
+        "default_attachment_rotation_offset": {
+          "pitch": 0.0,
+          "yaw": 0.0,
+          "roll": 0.0
+        },
+        "item_info": "<Struct 'SLFItemInfo' (0x000001AFA56E7078) {item_tag: {}, category: {category: None, sub_category: Miscellaneous}, display_name: \"\", short_description: \"\", long_description: \"\", discovery_description: \"\", usable: False, rechargeable: False, on_use_description: \"\", icon_small: None, icon_large_optional: None, max_amount: 1, action_to_trigger: {}, item_class: None, world_pickup_info: {world_display_style: ShowMesh, world_niagara_system: None, world_static_mesh: None, world_skeletal_mesh: None}, equipment_details: {equip_slots: {gameplay_tags: }, granted_tags: {gameplay_tags: }, weapon_overlay: {}, weapon_ability: None, weapon_stat_info: {has_stat_scaling: False, scaling_info: (), has_stat_requirement: False, stat_requirement_info: ()}, weapon_status_effect_info: (), stat_changes: (), skeletal_mesh_info: (), attachment_sockets: {left_hand_socket_name: \"\", right_hand_socket_name: \"\", holster_socket_name: \"\", attachment_rotation_offset: {pitch: 0.000000, yaw: 0.000000, roll: 0.000000}}, moveset_weapons: None, item_buff_description: \"\", granted_buff_rank: (), stamina_multiplier: 1.000000, min_poise_damage: 0.000000, max_poise_damage: 0.000000}, crafting_details: {can_be_crafted: False, required_items: ()}}>"
+      },
+      "runtime_components": [
+        {
+          "name": "DefaultSceneRoot",
+          "class": "SceneComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 20000.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        {
+          "name": "WeaponMesh",
+          "class": "StaticMeshComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          },
+          "mesh": "None"
+        },
+        {
+          "name": "TrailComponent",
+          "class": "NiagaraComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        }
+      ]
+    },
+    "B_Item_Weapon_Shield": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Shield",
+      "name": "B_Item_Weapon_Shield",
+      "class_hierarchy": [
+        "B_Item_Weapon_Shield_C"
+      ],
+      "cdo_properties": {
+        "default_weapon_mesh": "SM_Shield",
+        "default_mesh_relative_location": {
+          "x": 2.7569058147491887e-12,
+          "y": -3.2270420778808513e-07,
+          "z": 0.22653895153354076
+        },
+        "default_mesh_relative_rotation": {
+          "pitch": 0.0,
+          "yaw": 0.0,
+          "roll": -359.9999972113078
+        },
+        "default_attachment_rotation_offset": {
+          "pitch": 0.0,
+          "yaw": 0.0,
+          "roll": 0.0
+        },
+        "item_info": "<Struct 'SLFItemInfo' (0x000001AFA56EC478) {item_tag: {}, category: {category: None, sub_category: Miscellaneous}, display_name: \"\", short_description: \"\", long_description: \"\", discovery_description: \"\", usable: False, rechargeable: False, on_use_description: \"\", icon_small: None, icon_large_optional: None, max_amount: 1, action_to_trigger: {}, item_class: None, world_pickup_info: {world_display_style: ShowMesh, world_niagara_system: None, world_static_mesh: None, world_skeletal_mesh: None}, equipment_details: {equip_slots: {gameplay_tags: }, granted_tags: {gameplay_tags: }, weapon_overlay: {}, weapon_ability: None, weapon_stat_info: {has_stat_scaling: False, scaling_info: (), has_stat_requirement: False, stat_requirement_info: ()}, weapon_status_effect_info: (), stat_changes: (), skeletal_mesh_info: (), attachment_sockets: {left_hand_socket_name: \"\", right_hand_socket_name: \"\", holster_socket_name: \"\", attachment_rotation_offset: {pitch: 0.000000, yaw: 0.000000, roll: 0.000000}}, moveset_weapons: None, item_buff_description: \"\", granted_buff_rank: (), stamina_multiplier: 1.000000, min_poise_damage: 0.000000, max_poise_damage: 0.000000}, crafting_details: {can_be_crafted: False, required_items: ()}}>"
+      },
+      "runtime_components": [
+        {
+          "name": "DefaultSceneRoot",
+          "class": "SceneComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 20000.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        {
+          "name": "WeaponMesh",
+          "class": "StaticMeshComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          },
+          "mesh": "None"
+        },
+        {
+          "name": "TrailComponent",
+          "class": "NiagaraComponent",
+          "location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        }
+      ]
+    }
+  },
+  "animbps": {
+    "ABP_SoulslikeCharacter_Additive": {
+      "path": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive",
+      "name": "ABP_SoulslikeCharacter_Additive",
+      "parent_class": null,
+      "target_skeleton": "SK_Mannequin",
+      "variables": [],
+      "target_skeleton_path": "/Game/SoulslikeFramework/Demo/SKM/Mannequins/Meshes/SK_Mannequin.SK_Mannequin"
+    }
+  },
+  "skeletons": {
+    "SKM_Quinn": {
+      "error": "Could not load mesh: /Game/SoulslikeFramework/Demo/_Animations/Mannequin/SKM_Quinn"
+    },
+    "SKM_Manny": {
+      "error": "Could not load mesh: /Game/SoulslikeFramework/Demo/_Animations/Mannequin/SKM_Manny"
+    }
+  }
+}

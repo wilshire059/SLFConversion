@@ -1,0 +1,114 @@
+[
+  {
+    "actor_name": "B_StatusEffectArea_C_1",
+    "class_name": "B_StatusEffectArea_C",
+    "location": {
+      "x": 10091.408435843698,
+      "y": 563.0147226679157,
+      "z": 38.09882288002376
+    },
+    "rotation": {
+      "pitch": 0.0,
+      "yaw": -89.99999930282684,
+      "roll": 0.0
+    },
+    "status_effect_to_apply": null,
+    "effect_rank": 0
+  },
+  {
+    "actor_name": "B_StatusEffectArea_C_2",
+    "class_name": "B_StatusEffectArea_C",
+    "location": {
+      "x": 10391.408436,
+      "y": 563.014723,
+      "z": 38.098823
+    },
+    "rotation": {
+      "pitch": 0.0,
+      "yaw": -89.999999,
+      "roll": 0.0
+    },
+    "status_effect_to_apply": null,
+    "effect_rank": 0
+  },
+  {
+    "actor_name": "B_StatusEffectArea_C_3",
+    "class_name": "B_StatusEffectArea_C",
+    "location": {
+      "x": 10691.408436,
+      "y": 563.014723,
+      "z": 38.098823
+    },
+    "rotation": {
+      "pitch": 0.0,
+      "yaw": -89.999999,
+      "roll": 0.0
+    },
+    "status_effect_to_apply": null,
+    "effect_rank": 0
+  },
+  {
+    "actor_name": "B_StatusEffectArea_C_4",
+    "class_name": "B_StatusEffectArea_C",
+    "location": {
+      "x": 10991.408436,
+      "y": 563.014723,
+      "z": 38.098823
+    },
+    "rotation": {
+      "pitch": 0.0,
+      "yaw": -89.999999,
+      "roll": 0.0
+    },
+    "status_effect_to_apply": null,
+    "effect_rank": 0
+  },
+  {
+    "actor_name": "B_StatusEffectArea_C_5",
+    "class_name": "B_StatusEffectArea_C",
+    "location": {
+      "x": 11291.408436,
+      "y": 563.014723,
+      "z": 38.098823
+    },
+    "rotation": {
+      "pitch": 0.0,
+      "yaw": -89.999999,
+      "roll": 0.0
+    },
+    "status_effect_to_apply": null,
+    "effect_rank": 0
+  },
+  {
+    "actor_name": "B_StatusEffectArea_C_6",
+    "class_name": "B_StatusEffectArea_C",
+    "location": {
+      "x": 11591.408436,
+      "y": 563.014723,
+      "z": 38.098823
+    },
+    "rotation": {
+      "pitch": 0.0,
+      "yaw": -89.999999,
+      "roll": 0.0
+    },
+    "status_effect_to_apply": null,
+    "effect_rank": 0
+  },
+  {
+    "actor_name": "B_StatusEffectArea_C_7",
+    "class_name": "B_StatusEffectArea_C",
+    "location": {
+      "x": 11891.408436,
+      "y": 563.014723,
+      "z": 38.098823
+    },
+    "rotation": {
+      "pitch": 0.0,
+      "yaw": -89.999999,
+      "roll": 0.0
+    },
+    "status_effect_to_apply": null,
+    "effect_rank": 0
+  }
+]

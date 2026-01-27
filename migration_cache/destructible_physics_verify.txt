@@ -1,0 +1,28 @@
+
+================================================================================
+B_Destructible Physics Verification (After Fix)
+================================================================================
+
+Spawned actor: B_Destructible_C_0
+GeometryCollectionComponents: 1
+
+  Component: GC_DestructibleMesh
+
+  Physics Settings:
+    is_simulating_physics(): False
+    BodyInstance found
+      bSimulatePhysics: True
+    IsActive: False
+    FAIL: Component still not active
+
+  RestCollection: /Game/SoulslikeFramework/Meshes/SM/Barrel/Destructible/GC_Barrel.GC_Barrel
+
+  Collision Settings:
+    CollisionEnabled: <CollisionEnabled.QUERY_AND_PHYSICS: 3>
+    CollisionObjectType: <CollisionChannel.ECC_DESTRUCTIBLE: 7>
+
+Cleaning up test actor...
+
+================================================================================
+Verification Complete
+================================================================================

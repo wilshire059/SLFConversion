@@ -1,0 +1,10 @@
+{
+  "path": "/Game/SoulslikeFramework/Blueprints/_Components/AI/AC_AI_BehaviorManager",
+  "exists": false,
+  "parent_class": null,
+  "variables": [],
+  "functions": [],
+  "has_eventgraph": false,
+  "export_text": null,
+  "error": "Asset not found"
+}

@@ -3,14 +3,14 @@
 
 USLFDamageNegationMagic::USLFDamageNegationMagic()
 {
-	StatInfo.Tag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.DamageNegation.Magic"));
-	StatInfo.DisplayName = FText::FromString(TEXT("Magic Defense"));
+	// Defaults from bp_only B_DN_Magic CDO
+	StatInfo.Tag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Defense.Negation.Magic"));
+	StatInfo.DisplayName = FText::FromString(TEXT("Magic Negation"));
 	StatInfo.CurrentValue = 0.0;
-	StatInfo.MaxValue = 100.0;
+	StatInfo.MaxValue = 9999.0;
 	StatInfo.bShowMaxValue = false;
-	StatInfo.bDisplayAsPercent = true;
+	StatInfo.bDisplayAsPercent = false;
 	StatInfo.RegenInfo.bCanRegenerate = false;
 	bShowMaxValueOnLevelUp = false;
-	MinValue = -100.0;
-	UE_LOG(LogTemp, Log, TEXT("[DN_Magic] Initialized with %.1f%%"), StatInfo.CurrentValue);
+	MinValue = 0.0;
 }

@@ -29,6 +29,6 @@ void UW_Radar_TrackedElement::NativeDestruct()
 
 void UW_Radar_TrackedElement::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 

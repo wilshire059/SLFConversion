@@ -1,0 +1,86 @@
+{
+  "B_Item_Weapon_SwordExample01": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_SwordExample01",
+    "name": "B_Item_Weapon_SwordExample01",
+    "location": {
+      "x": -2.842170943040401e-14,
+      "y": -8.634133296615484e-07,
+      "z": 36.49442056137028
+    },
+    "rotation": {
+      "pitch": 0.0,
+      "yaw": 0.0,
+      "roll": 180.0
+    }
+  },
+  "B_Item_Weapon_SwordExample02": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_SwordExample02",
+    "name": "B_Item_Weapon_SwordExample02",
+    "location": {
+      "x": 2.7142732506035827e-12,
+      "y": 1.4119568306839028e-06,
+      "z": 50.087473125172025
+    },
+    "rotation": {
+      "pitch": 0.0,
+      "yaw": 0.0,
+      "roll": -130.0
+    }
+  },
+  "B_Item_Weapon_Greatsword": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Greatsword",
+    "name": "B_Item_Weapon_Greatsword",
+    "location": {
+      "x": 2.2303051928433817,
+      "y": 0.0,
+      "z": -2.716989641271539e-06
+    },
+    "rotation": {
+      "pitch": -0.8985376954078674,
+      "yaw": -65.85131072998047,
+      "roll": -4.450833797454834
+    }
+  },
+  "B_Item_Weapon_Katana": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Katana",
+    "name": "B_Item_Weapon_Katana",
+    "location": {
+      "x": 2.7144818608953874e-12,
+      "y": 1.3721270946190358e-06,
+      "z": -1.6439001851942407
+    },
+    "rotation": {
+      "pitch": 0.0,
+      "yaw": -103.24034881591797,
+      "roll": 0.0
+    }
+  },
+  "B_Item_Weapon_Shield": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Shield",
+    "name": "B_Item_Weapon_Shield",
+    "location": {
+      "x": 2.7569058147491887e-12,
+      "y": -3.2270420778808513e-07,
+      "z": 0.22653895153354076
+    },
+    "rotation": {
+      "pitch": 0.0,
+      "yaw": 0.0,
+      "roll": -360.0
+    }
+  },
+  "B_Item_Weapon_PoisonSword": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_PoisonSword",
+    "name": "B_Item_Weapon_PoisonSword",
+    "location": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "rotation": {
+      "pitch": 0.0,
+      "yaw": -90.0,
+      "roll": 0.0
+    }
+  }
+}

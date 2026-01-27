@@ -1,0 +1,78 @@
+=== Status Effect VFX Application Log ===
+
+=== Starting Status Effect VFX Application ===
+
+Processing: /Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Poison
+  Loaded: PDA_StatusEffect_C
+  Loaded trigger VFX: NS_Poison
+  Loaded loop VFX: NS_PoisonLoop
+  Current rank_info keys: [1]
+  Set RankInfo[1]:
+    TriggerVFX: NS_Poison
+    LoopVFX: NS_PoisonLoop
+    Socket: Chest
+  SAVED successfully
+
+Processing: /Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Burn
+  Loaded: PDA_StatusEffect_C
+  Loaded trigger VFX: NS_Burn
+  Loaded loop VFX: NS_BurnLoop
+  Current rank_info keys: [1]
+  Set RankInfo[1]:
+    TriggerVFX: NS_Burn
+    LoopVFX: NS_BurnLoop
+    Socket: Chest
+  SAVED successfully
+
+Processing: /Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Bleed
+  Loaded: PDA_StatusEffect_C
+  Loaded trigger VFX: NS_BleedExplode
+  Current rank_info keys: [1]
+  Set RankInfo[1]:
+    TriggerVFX: NS_BleedExplode
+    LoopVFX: None
+    Socket: Chest
+  SAVED successfully
+
+Processing: /Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Frostbite
+  Loaded: PDA_StatusEffect_C
+  Loaded trigger VFX: NS_FrostBite
+  Current rank_info keys: [1]
+  Set RankInfo[1]:
+    TriggerVFX: NS_FrostBite
+    LoopVFX: None
+    Socket: Chest
+  SAVED successfully
+
+Processing: /Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Madness
+  Loaded: PDA_StatusEffect_C
+  Loaded trigger VFX: NS_Madness
+  Current rank_info keys: [1]
+  Set RankInfo[1]:
+    TriggerVFX: NS_Madness
+    LoopVFX: None
+    Socket: Head
+  SAVED successfully
+
+Processing: /Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Corruption
+  Loaded: PDA_StatusEffect_C
+  Loaded trigger VFX: NS_Corruption
+  Current rank_info keys: [1]
+  Set RankInfo[1]:
+    TriggerVFX: NS_Corruption
+    LoopVFX: None
+    Socket: Chest
+  SAVED successfully
+
+Processing: /Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Plague
+  Loaded: PDA_StatusEffect_C
+  Loaded trigger VFX: NS_Poison
+  Loaded loop VFX: NS_PoisonLoop
+  Current rank_info keys: [1]
+  Set RankInfo[1]:
+    TriggerVFX: NS_Poison
+    LoopVFX: NS_PoisonLoop
+    Socket: Chest
+  SAVED successfully
+
+=== Summary: 7 succeeded, 0 failed ===

@@ -1,0 +1,99 @@
+=== STATE MACHINE: Locomotion ===
+
+Graph: Locomotion
+  [AnimStateEntryNode] Locomotion
+    Position: X=0, Y=0
+    Pin [OUT] Entry --> IDLE
+  [AnimStateNode] IDLE
+    Position: X=128, Y=0
+    Pin [IN] In --> Locomotion, CYCLE to IDLE, SITTING to IDLE, CROUCH IDLE to IDLE
+    Pin [OUT] Out --> IDLE to CYCLE, IDLE to SITTING, IDLE to CROUCH IDLE
+  [AnimStateNode] CYCLE
+    Position: X=640, Y=0
+    Pin [IN] In --> IDLE to CYCLE, SITTING to CYCLE, CROUCH CYCLE to CYCLE
+    Pin [OUT] Out --> CYCLE to IDLE, CYCLE to SITTING, CYCLE to CROUCH CYCLE
+  [AnimStateTransitionNode] IDLE to CYCLE
+    Position: X=417, Y=-18
+    Pin [IN] In --> IDLE
+    Pin [OUT] Out --> CYCLE
+  [AnimStateTransitionNode] CYCLE to IDLE
+    Position: X=417, Y=41
+    Pin [IN] In --> CYCLE
+    Pin [OUT] Out --> IDLE
+  [AnimStateNode] SITTING
+    Position: X=368, Y=176
+    Pin [IN] In --> IDLE to SITTING, CYCLE to SITTING, CROUCH IDLE to SITTING, CROUCH CYCLE to SITTING
+    Pin [OUT] Out --> SITTING to IDLE, SITTING to CYCLE, SITTING to CROUCH IDLE, SITTING to CROUCH CYCLE
+  [AnimStateTransitionNode] IDLE to SITTING
+    Position: X=300, Y=76
+    Pin [IN] In --> IDLE
+    Pin [OUT] Out --> SITTING
+  [AnimStateTransitionNode] CYCLE to SITTING
+    Position: X=571, Y=122
+    Pin [IN] In --> CYCLE
+    Pin [OUT] Out --> SITTING
+  [AnimStateTransitionNode] SITTING to IDLE
+    Position: X=261, Y=122
+    Pin [IN] In --> SITTING
+    Pin [OUT] Out --> IDLE
+  [AnimStateTransitionNode] SITTING to CYCLE
+    Position: X=533, Y=76
+    Pin [IN] In --> SITTING
+    Pin [OUT] Out --> CYCLE
+  [AnimStateNode] CROUCH IDLE
+    Position: X=96, Y=384
+    Pin [IN] In --> IDLE to CROUCH IDLE, CROUCH CYCLE to CROUCH IDLE, SITTING to CROUCH IDLE
+    Pin [OUT] Out --> CROUCH IDLE to IDLE, CROUCH IDLE to CROUCH CYCLE, CROUCH IDLE to SITTING
+  [AnimStateTransitionNode] IDLE to CROUCH IDLE
+    Position: X=195, Y=203
+    Pin [IN] In --> IDLE
+    Pin [OUT] Out --> CROUCH IDLE
+  [AnimStateTransitionNode] CROUCH IDLE to IDLE
+    Position: X=135, Y=203
+    Pin [IN] In --> CROUCH IDLE
+    Pin [OUT] Out --> IDLE
+  [AnimStateNode] CROUCH CYCLE
+    Position: X=608, Y=384
+    Pin [IN] In --> CROUCH IDLE to CROUCH CYCLE, CYCLE to CROUCH CYCLE, SITTING to CROUCH CYCLE
+    Pin [OUT] Out --> CROUCH CYCLE to CROUCH IDLE, CROUCH CYCLE to CYCLE, CROUCH CYCLE to SITTING
+  [AnimStateTransitionNode] CROUCH IDLE to CROUCH CYCLE
+    Position: X=425, Y=365
+    Pin [IN] In --> CROUCH IDLE
+    Pin [OUT] Out --> CROUCH CYCLE
+  [AnimStateTransitionNode] CROUCH CYCLE to CROUCH IDLE
+    Position: X=425, Y=425
+    Pin [IN] In --> CROUCH CYCLE
+    Pin [OUT] Out --> CROUCH IDLE
+  [AnimStateTransitionNode] CYCLE to CROUCH CYCLE
+    Position: X=715, Y=203
+    Pin [IN] In --> CYCLE
+    Pin [OUT] Out --> CROUCH CYCLE
+  [AnimStateTransitionNode] CROUCH CYCLE to CYCLE
+    Position: X=655, Y=203
+    Pin [IN] In --> CROUCH CYCLE
+    Pin [OUT] Out --> CYCLE
+  [AnimStateTransitionNode] CROUCH IDLE to SITTING
+    Position: X=279, Y=275
+    Pin [IN] In --> CROUCH IDLE
+    Pin [OUT] Out --> SITTING
+  [AnimStateTransitionNode] SITTING to CROUCH IDLE
+    Position: X=330, Y=307
+    Pin [IN] In --> SITTING
+    Pin [OUT] Out --> CROUCH IDLE
+  [AnimStateTransitionNode] CROUCH CYCLE to SITTING
+    Position: X=512, Y=309
+    Pin [IN] In --> CROUCH CYCLE
+    Pin [OUT] Out --> SITTING
+  [AnimStateTransitionNode] SITTING to CROUCH CYCLE
+    Position: X=560, Y=273
+    Pin [IN] In --> SITTING
+    Pin [OUT] Out --> CROUCH CYCLE
+
+Graph: Locomotion
+  [AnimGraphNode_StateResult] Output Animation Pose
+    Position: X=0, Y=0
+    Pin [IN] Result --> Use cached pose 'MovementLocomotion'
+  [AnimGraphNode_UseCachedPose] Use cached pose 'MovementLocomotion'
+    Position: X=-384, Y=0
+    Pin [OUT] Pose --> Output Animation Pose
+

@@ -1,0 +1,68 @@
+{
+  "B_Soulslike_Enemy": {
+    "components": [
+      {
+        "name": "CollisionCylinder",
+        "class": "CapsuleComponent"
+      },
+      {
+        "name": "Arrow",
+        "class": "ArrowComponent"
+      },
+      {
+        "name": "CharMoveComp",
+        "class": "CharacterMovementComponent"
+      },
+      {
+        "name": "CharacterMesh0",
+        "class": "SkeletalMeshComponent",
+        "skeletal_mesh": "SKM_Manny_Simple",
+        "skeletal_mesh_path": "/Game/SoulslikeFramework/Demo/SKM/Mannequins/Meshes/SKM_Manny_Simple.SKM_Manny_Simple"
+      }
+    ]
+  },
+  "B_Soulslike_Enemy_Guard": {
+    "components": [
+      {
+        "name": "CollisionCylinder",
+        "class": "CapsuleComponent"
+      },
+      {
+        "name": "Arrow",
+        "class": "ArrowComponent"
+      },
+      {
+        "name": "CharMoveComp",
+        "class": "CharacterMovementComponent"
+      },
+      {
+        "name": "CharacterMesh0",
+        "class": "SkeletalMeshComponent",
+        "skeletal_mesh": "SKM_Manny_Simple",
+        "skeletal_mesh_path": "/Game/SoulslikeFramework/Demo/SKM/Mannequins/Meshes/SKM_Manny_Simple.SKM_Manny_Simple"
+      }
+    ]
+  },
+  "B_Soulslike_Enemy_Showcase": {
+    "components": [
+      {
+        "name": "CollisionCylinder",
+        "class": "CapsuleComponent"
+      },
+      {
+        "name": "Arrow",
+        "class": "ArrowComponent"
+      },
+      {
+        "name": "CharMoveComp",
+        "class": "CharacterMovementComponent"
+      },
+      {
+        "name": "CharacterMesh0",
+        "class": "SkeletalMeshComponent",
+        "skeletal_mesh": "SKM_Manny_Simple",
+        "skeletal_mesh_path": "/Game/SoulslikeFramework/Demo/SKM/Mannequins/Meshes/SKM_Manny_Simple.SKM_Manny_Simple"
+      }
+    ]
+  }
+}

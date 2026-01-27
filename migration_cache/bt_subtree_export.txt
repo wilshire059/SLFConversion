@@ -1,0 +1,318 @@
+=== BT Subtree Decorator Export ===
+
+
+============================================================
+Exporting: /Game/SoulslikeFramework/Blueprints/_AI/Subtrees/BT_Combat
+============================================================
+=== BehaviorTree: BT_Combat ===
+
+--- Root Decorators ---
+[Root][0] Is Target Set? - Key: Target
+    IntValue: 3
+[Root][1] Is State == Combat? - Key: State
+    IntValue: 4
+    ^^^ STATE KEY DECORATOR - IntValue=4 ^^^
+
+--- Node Tree ---
+Node: COMBAT MODE (BTComposite_Selector)
+  NumChildren: 2
+  [Branch 0] Child: INITIALIZE COMBAT (BTComposite_Sequence), Decorators: 1
+      Decorator[0]: Blackboard Based Condition - Key: InCombat
+        IntValue: 0
+  Node: INITIALIZE COMBAT (BTComposite_Sequence)
+    NumChildren: 4
+    [Branch 0] Child: Toggle Focus (BTT_ToggleFocus_C), Decorators: 0
+    [Branch 1] Child: BTT_GetCurrentLocation (BTT_GetCurrentLocation_C), Decorators: 0
+    [Branch 2] Child: Wait (BTTask_Wait), Decorators: 0
+    [Branch 3] Child: Set Key (InCombat) (BTT_SetKey_C), Decorators: 0
+  [Branch 1] Child: IN COMBAT (BTComposite_Selector), Decorators: 1
+      Decorator[0]: Blackboard Based Condition - Key: InCombat
+        IntValue: 0
+  Node: IN COMBAT (BTComposite_Selector)
+    NumChildren: 2
+    [Branch 0] Child: TRY ATTACK (BTComposite_Sequence), Decorators: 1
+        Decorator[0]: Blackboard Based Condition - Key: CanAttack
+          IntValue: 0
+    Node: TRY ATTACK (BTComposite_Sequence)
+      NumChildren: 2
+      [Branch 0] Child: Toggle Focus (BTT_ToggleFocus_C), Decorators: 0
+      [Branch 1] Child: Try Execute Attack (BTT_TryExecuteAbility_C), Decorators: 0
+    [Branch 1] Child: MOVEMENT (BTComposite_Selector), Decorators: 1
+        Decorator[0]: Blackboard Based Condition - Key: CanAttack
+          IntValue: 0
+    Node: MOVEMENT (BTComposite_Selector)
+      NumChildren: 2
+      [Branch 0] Child: STRAFE AROUND TARGET (BTComposite_Sequence), Decorators: 1
+          Decorator[0]: Blackboard Based Condition - Key: CanStrafe
+            IntValue: 0
+      Node: STRAFE AROUND TARGET (BTComposite_Sequence)
+        NumChildren: 5
+        [Branch 0] Child: Set Movement Mode (BTT_SetMovementMode_C), Decorators: 0
+        [Branch 1] Child: BTT_GetStrafePointAroundTarget (BTT_GetStrafePointAroundTarget_C), Decorators: 0
+        [Branch 2] Child: Toggle Focus (BTT_ToggleFocus_C), Decorators: 0
+        [Branch 3] Child: Move To (BTTask_MoveTo), Decorators: 0
+        [Branch 4] Child: Clear Key (BTT_ClearKey_C), Decorators: 0
+      [Branch 1] Child: MOVE TO ATTACK RADIUS (BTComposite_Sequence), Decorators: 0
+      Node: MOVE TO ATTACK RADIUS (BTComposite_Sequence)
+        NumChildren: 3
+        [Branch 0] Child: Toggle Focus (BTT_ToggleFocus_C), Decorators: 0
+        [Branch 1] Child: Simply Move To (BTT_SimpleMoveTo_C), Decorators: 0
+        [Branch 2] Child: Set Key (CanStrafe) (BTT_SetKey_C), Decorators: 0
+
+=== Summary ===
+Total Decorators: 7
+State Key Decorators: 1
+Total Tasks: 14
+
+=== Expected State Values (ESLFAIStates) ===
+  0 = Idle
+  1 = RandomRoam
+  2 = Patrolling
+  3 = Investigating
+  4 = Combat
+  5 = PoiseBroken
+  6 = Uninterruptable
+  7 = OutOfBounds
+
+
+============================================================
+Exporting: /Game/SoulslikeFramework/Blueprints/_AI/Subtrees/BT_Idle
+============================================================
+=== BehaviorTree: BT_Idle ===
+
+--- Root Decorators ---
+[Root][0] Is State == Idle? - Key: State
+    IntValue: 0
+    ^^^ STATE KEY DECORATOR - IntValue=0 ^^^
+
+--- Node Tree ---
+Node: IDLE MODE (BTComposite_Sequence)
+  NumChildren: 1
+  [Branch 0] Child: Toggle Focus (BTT_ToggleFocus_C), Decorators: 0
+
+=== Summary ===
+Total Decorators: 1
+State Key Decorators: 1
+Total Tasks: 1
+
+=== Expected State Values (ESLFAIStates) ===
+  0 = Idle
+  1 = RandomRoam
+  2 = Patrolling
+  3 = Investigating
+  4 = Combat
+  5 = PoiseBroken
+  6 = Uninterruptable
+  7 = OutOfBounds
+
+
+============================================================
+Exporting: /Game/SoulslikeFramework/Blueprints/_AI/Subtrees/BT_Investigating
+============================================================
+=== BehaviorTree: BT_Investigating ===
+
+--- Root Decorators ---
+[Root][0] Is State == Investigating? - Key: State
+    IntValue: 3
+    ^^^ STATE KEY DECORATOR - IntValue=3 ^^^
+
+--- Node Tree ---
+Node: INVESTIGATE MODE (BTComposite_Sequence)
+  NumChildren: 4
+  [Branch 0] Child: Set Movement Mode (BTT_SetMovementMode_C), Decorators: 0
+  [Branch 1] Child: Move To (BTTask_MoveTo), Decorators: 0
+  [Branch 2] Child: Wait (BTTask_Wait), Decorators: 0
+  [Branch 3] Child: BTT_SwitchToPreviousState (BTT_SwitchToPreviousState_C), Decorators: 0
+
+=== Summary ===
+Total Decorators: 1
+State Key Decorators: 1
+Total Tasks: 4
+
+=== Expected State Values (ESLFAIStates) ===
+  0 = Idle
+  1 = RandomRoam
+  2 = Patrolling
+  3 = Investigating
+  4 = Combat
+  5 = PoiseBroken
+  6 = Uninterruptable
+  7 = OutOfBounds
+
+
+============================================================
+Exporting: /Game/SoulslikeFramework/Blueprints/_AI/Subtrees/BT_OutOfBounds
+============================================================
+=== BehaviorTree: BT_OutOfBounds ===
+
+--- Root Decorators ---
+[Root][0] Is State == Out of Bounds? - Key: State
+    IntValue: 6
+    ^^^ STATE KEY DECORATOR - IntValue=6 ^^^
+
+--- Node Tree ---
+Node: OUT OF BOUNDS MODE (BTComposite_Sequence)
+  NumChildren: 7
+  [Branch 0] Child: Toggle Focus (BTT_ToggleFocus_C), Decorators: 0
+  [Branch 1] Child: Wait (BTTask_Wait), Decorators: 0
+  [Branch 2] Child: Set Movement Mode (BTT_SetMovementMode_C), Decorators: 0
+  [Branch 3] Child: BTT_GetRandomPointNearStartPosition (BTT_GetRandomPointNearStartPosition_C), Decorators: 0
+  [Branch 4] Child: Simple Parallel (BTComposite_SimpleParallel), Decorators: 0
+  Node: Simple Parallel (BTComposite_SimpleParallel)
+    NumChildren: 2
+    [Branch 0] Child: Move To (BTTask_MoveTo), Decorators: 0
+    [Branch 1] Child: Sequence (BTComposite_Sequence), Decorators: 0
+    Node: Sequence (BTComposite_Sequence)
+      NumChildren: 2
+      [Branch 0] Child: Wait (BTTask_Wait), Decorators: 0
+      [Branch 1] Child: Toggle Focus (BTT_ToggleFocus_C), Decorators: 0
+  [Branch 5] Child: BTT_SwitchState (BTT_SwitchState_C), Decorators: 0
+  [Branch 6] Child: Set Key (InCombat) (BTT_SetKey_C), Decorators: 0
+
+=== Summary ===
+Total Decorators: 1
+State Key Decorators: 1
+Total Tasks: 9
+
+=== Expected State Values (ESLFAIStates) ===
+  0 = Idle
+  1 = RandomRoam
+  2 = Patrolling
+  3 = Investigating
+  4 = Combat
+  5 = PoiseBroken
+  6 = Uninterruptable
+  7 = OutOfBounds
+
+
+============================================================
+Exporting: /Game/SoulslikeFramework/Blueprints/_AI/Subtrees/BT_PatrolPath
+============================================================
+=== BehaviorTree: BT_PatrolPath ===
+
+--- Root Decorators ---
+[Root][0] Is State == Patrolling? - Key: State
+    IntValue: 2
+    ^^^ STATE KEY DECORATOR - IntValue=2 ^^^
+
+--- Node Tree ---
+Node: PATROL PATH MODE (BTComposite_Sequence)
+  NumChildren: 3
+  [Branch 0] Child: Toggle Focus (BTT_ToggleFocus_C), Decorators: 0
+  [Branch 1] Child: Set Movement Mode (BTT_SetMovementMode_C), Decorators: 0
+  [Branch 2] Child: BTT_PatrolPath (BTT_PatrolPath_C), Decorators: 0
+
+=== Summary ===
+Total Decorators: 1
+State Key Decorators: 1
+Total Tasks: 3
+
+=== Expected State Values (ESLFAIStates) ===
+  0 = Idle
+  1 = RandomRoam
+  2 = Patrolling
+  3 = Investigating
+  4 = Combat
+  5 = PoiseBroken
+  6 = Uninterruptable
+  7 = OutOfBounds
+
+
+============================================================
+Exporting: /Game/SoulslikeFramework/Blueprints/_AI/Subtrees/BT_PoiseBroken
+============================================================
+=== BehaviorTree: BT_PoiseBroken ===
+
+--- Root Decorators ---
+[Root][0] Is State == Poise Broken? - Key: State
+    IntValue: 5
+    ^^^ STATE KEY DECORATOR - IntValue=5 ^^^
+
+--- Node Tree ---
+Node: POISE BROKEN MODE (BTComposite_Sequence)
+  NumChildren: 1
+  [Branch 0] Child: Toggle Focus (BTT_ToggleFocus_C), Decorators: 0
+
+=== Summary ===
+Total Decorators: 1
+State Key Decorators: 1
+Total Tasks: 1
+
+=== Expected State Values (ESLFAIStates) ===
+  0 = Idle
+  1 = RandomRoam
+  2 = Patrolling
+  3 = Investigating
+  4 = Combat
+  5 = PoiseBroken
+  6 = Uninterruptable
+  7 = OutOfBounds
+
+
+============================================================
+Exporting: /Game/SoulslikeFramework/Blueprints/_AI/Subtrees/BT_RandomRoam
+============================================================
+=== BehaviorTree: BT_RandomRoam ===
+
+--- Root Decorators ---
+[Root][0] Is State == Random Roam? - Key: State
+    IntValue: 1
+    ^^^ STATE KEY DECORATOR - IntValue=1 ^^^
+
+--- Node Tree ---
+Node: RANDOM ROAM MODE (BTComposite_Sequence)
+  NumChildren: 4
+  [Branch 0] Child: Toggle Focus (BTT_ToggleFocus_C), Decorators: 0
+  [Branch 1] Child: Set Movement Mode (BTT_SetMovementMode_C), Decorators: 0
+  [Branch 2] Child: BTT_GetRandomPoint (BTT_GetRandomPoint_C), Decorators: 0
+  [Branch 3] Child: Move To (BTTask_MoveTo), Decorators: 0
+
+=== Summary ===
+Total Decorators: 1
+State Key Decorators: 1
+Total Tasks: 4
+
+=== Expected State Values (ESLFAIStates) ===
+  0 = Idle
+  1 = RandomRoam
+  2 = Patrolling
+  3 = Investigating
+  4 = Combat
+  5 = PoiseBroken
+  6 = Uninterruptable
+  7 = OutOfBounds
+
+
+============================================================
+Exporting: /Game/SoulslikeFramework/Blueprints/_AI/Subtrees/BT_Uninterruptable
+============================================================
+=== BehaviorTree: BT_Uninterruptable ===
+
+--- Root Decorators ---
+[Root][0] Is State == Uninterruptable? - Key: State
+    IntValue: 6
+    ^^^ STATE KEY DECORATOR - IntValue=6 ^^^
+
+--- Node Tree ---
+Node: POISE BROKEN MODE (BTComposite_Sequence)
+  NumChildren: 1
+  [Branch 0] Child: Toggle Focus (BTT_ToggleFocus_C), Decorators: 0
+
+=== Summary ===
+Total Decorators: 1
+State Key Decorators: 1
+Total Tasks: 1
+
+=== Expected State Values (ESLFAIStates) ===
+  0 = Idle
+  1 = RandomRoam
+  2 = Patrolling
+  3 = Investigating
+  4 = Combat
+  5 = PoiseBroken
+  6 = Uninterruptable
+  7 = OutOfBounds
+
+
+
+Export complete!

@@ -1,0 +1,209 @@
+
+======================================================================
+BehaviorTree: BT_Enemy
+BlackboardAsset: BB_Standard
+RootDecorators: 0
+=== FULL TREE STRUCTURE ===
+[Composite] BTComposite_Selector - Selector
+  Children: 6
+  [0] [Task] BTTask_RunBehavior - POISE BROKEN MODE
+        SubtreeAsset: BT_PoiseBroken
+  [1] [Task] BTTask_RunBehavior - UNINTERRUPTABLE MODE
+        SubtreeAsset: BT_Uninterruptable
+  [2] [Task] BTTask_RunBehavior - OUT OF BOUNDS MODE
+        SubtreeAsset: BT_OutOfBounds
+  [3] [Task] BTTask_RunBehavior - COMBAT MODE
+        SubtreeAsset: BT_Combat
+  [4] [Task] BTTask_RunBehavior - INVESTIGATE MODE
+        SubtreeAsset: BT_Investigating
+    [Composite] BTComposite_Selector - PASSIVE MODES
+      Children: 3
+      [0] [Task] BTTask_RunBehavior - IDLE MODE
+            SubtreeAsset: BT_Idle
+      [1] [Task] BTTask_RunBehavior - PATROL MODE
+            SubtreeAsset: BT_PatrolPath
+      [2] [Task] BTTask_RunBehavior - RANDOM ROAM MODE
+            SubtreeAsset: BT_RandomRoam
+
+======================================================================
+BehaviorTree: BT_Idle
+BlackboardAsset: BB_Standard
+RootDecorators: 1
+  [0] BTDecorator_Blackboard - Is State == Idle?
+      Description: ( aborts lower priority )
+Blackboard: State Is Equal To Idle
+      BlackboardKey: State
+      FlowAbortMode: 1
+=== FULL TREE STRUCTURE ===
+[Composite] BTComposite_Sequence - IDLE MODE
+  Children: 1
+  [0] [Task] BTT_ToggleFocus_C - Toggle Focus
+
+======================================================================
+BehaviorTree: BT_Combat
+BlackboardAsset: BB_Standard
+RootDecorators: 2
+  [0] BTDecorator_Blackboard - Is Target Set?
+      Description: ( aborts lower priority )
+Blackboard: Target is Is Set
+      BlackboardKey: Target
+      FlowAbortMode: 1
+  [1] BTDecorator_Blackboard - Is State == Combat?
+      Description: ( aborts lower priority )
+Blackboard: State Is Equal To Combat
+      BlackboardKey: State
+      FlowAbortMode: 1
+=== FULL TREE STRUCTURE ===
+[Composite] BTComposite_Selector - COMBAT MODE
+  Children: 2
+  [0] [Decorator] BTDecorator_Blackboard
+        Description: ( aborts both )
+Blackboard: InCombat is Is Not Set
+        Key: InCombat
+    [Composite] BTComposite_Sequence - INITIALIZE COMBAT
+      Children: 4
+      [0] [Task] BTT_ToggleFocus_C - Toggle Focus
+      [1] [Task] BTT_GetCurrentLocation_C - BTT_GetCurrentLocation
+      [2] [Task] BTTask_Wait - Wait
+      [3] [Task] BTT_SetKey_C - Set Key (InCombat)
+  [1] [Decorator] BTDecorator_Blackboard
+        Description: ( aborts lower priority )
+Blackboard: InCombat is Is Set
+        Key: InCombat
+    [Composite] BTComposite_Selector - IN COMBAT
+      Children: 2
+      [0] [Decorator] BTDecorator_Blackboard
+            Description: ( aborts lower priority )
+Blackboard: CanAttack is Is Set
+            Key: CanAttack
+        [Composite] BTComposite_Sequence - TRY ATTACK
+          Children: 2
+          [0] [Task] BTT_ToggleFocus_C - Toggle Focus
+          [1] [Task] BTT_TryExecuteAbility_C - Try Execute Attack
+      [1] [Decorator] BTDecorator_Blackboard
+            Description: ( aborts lower priority )
+Blackboard: CanAttack is Is Not Set
+            Key: CanAttack
+        [Composite] BTComposite_Selector - MOVEMENT
+          Children: 2
+          [0] [Decorator] BTDecorator_Blackboard
+                Description: ( aborts self )
+Blackboard: CanStrafe is Is Set
+                Key: CanStrafe
+            [Composite] BTComposite_Sequence - STRAFE AROUND TARGET
+              Children: 5
+              [0] [Task] BTT_SetMovementMode_C - Set Movement Mode
+              [1] [Task] BTT_GetStrafePointAroundTarget_C - BTT_GetStrafePointAroundTarget
+              [2] [Task] BTT_ToggleFocus_C - Toggle Focus
+              [3] [Task] BTTask_MoveTo - Move To
+              [4] [Task] BTT_ClearKey_C - Clear Key
+            [Composite] BTComposite_Sequence - MOVE TO ATTACK RADIUS
+              Children: 3
+              [0] [Task] BTT_ToggleFocus_C - Toggle Focus
+              [1] [Task] BTT_SimpleMoveTo_C - Simply Move To
+                    [Service] BTS_SetMovementModeBasedOnDistance_C - BTS_SetMovementModeBasedOnDistance
+              [2] [Task] BTT_SetKey_C - Set Key (CanStrafe)
+
+======================================================================
+BehaviorTree: BT_Investigating
+BlackboardAsset: BB_Standard
+RootDecorators: 1
+  [0] BTDecorator_Blackboard - Is State == Investigating?
+      Description: ( aborts lower priority )
+Blackboard: State Is Equal To Investigating
+      BlackboardKey: State
+      FlowAbortMode: 1
+=== FULL TREE STRUCTURE ===
+[Composite] BTComposite_Sequence - INVESTIGATE MODE
+  Children: 4
+  [0] [Task] BTT_SetMovementMode_C - Set Movement Mode
+  [1] [Task] BTTask_MoveTo - Move To
+  [2] [Task] BTTask_Wait - Wait
+  [3] [Task] BTT_SwitchToPreviousState_C - BTT_SwitchToPreviousState
+
+======================================================================
+BehaviorTree: BT_PatrolPath
+BlackboardAsset: BB_Standard
+RootDecorators: 1
+  [0] BTDecorator_Blackboard - Is State == Patrolling?
+      Description: ( aborts lower priority )
+Blackboard: State Is Equal To Patrolling
+      BlackboardKey: State
+      FlowAbortMode: 1
+=== FULL TREE STRUCTURE ===
+[Composite] BTComposite_Sequence - PATROL PATH MODE
+  Children: 3
+  [0] [Task] BTT_ToggleFocus_C - Toggle Focus
+  [1] [Task] BTT_SetMovementMode_C - Set Movement Mode
+  [2] [Task] BTT_PatrolPath_C - BTT_PatrolPath
+
+======================================================================
+BehaviorTree: BT_RandomRoam
+BlackboardAsset: BB_Standard
+RootDecorators: 1
+  [0] BTDecorator_Blackboard - Is State == Random Roam?
+      Description: ( aborts lower priority )
+Blackboard: State Is Equal To Random Roam
+      BlackboardKey: State
+      FlowAbortMode: 1
+=== FULL TREE STRUCTURE ===
+[Composite] BTComposite_Sequence - RANDOM ROAM MODE
+  Children: 4
+  [0] [Task] BTT_ToggleFocus_C - Toggle Focus
+  [1] [Task] BTT_SetMovementMode_C - Set Movement Mode
+  [2] [Task] BTT_GetRandomPoint_C - BTT_GetRandomPoint
+  [3] [Task] BTTask_MoveTo - Move To
+
+======================================================================
+BehaviorTree: BT_PoiseBroken
+BlackboardAsset: BB_Standard
+RootDecorators: 1
+  [0] BTDecorator_Blackboard - Is State == Poise Broken?
+      Description: ( aborts lower priority )
+Blackboard: State Is Equal To Poise Broken
+      BlackboardKey: State
+      FlowAbortMode: 1
+=== FULL TREE STRUCTURE ===
+[Composite] BTComposite_Sequence - POISE BROKEN MODE
+  Children: 1
+  [0] [Task] BTT_ToggleFocus_C - Toggle Focus
+
+======================================================================
+BehaviorTree: BT_Uninterruptable
+BlackboardAsset: BB_Standard
+RootDecorators: 1
+  [0] BTDecorator_Blackboard - Is State == Uninterruptable?
+      Description: ( aborts lower priority )
+Blackboard: State Is Equal To Uninterruptable
+      BlackboardKey: State
+      FlowAbortMode: 1
+=== FULL TREE STRUCTURE ===
+[Composite] BTComposite_Sequence - POISE BROKEN MODE
+  Children: 1
+  [0] [Task] BTT_ToggleFocus_C - Toggle Focus
+
+======================================================================
+BehaviorTree: BT_OutOfBounds
+BlackboardAsset: BB_Standard
+RootDecorators: 1
+  [0] BTDecorator_Blackboard - Is State == Out of Bounds?
+      Description: ( aborts both )
+Blackboard: State Is Equal To Out of Bounds
+      BlackboardKey: State
+      FlowAbortMode: 3
+=== FULL TREE STRUCTURE ===
+[Composite] BTComposite_Sequence - OUT OF BOUNDS MODE
+  Children: 7
+  [0] [Task] BTT_ToggleFocus_C - Toggle Focus
+  [1] [Task] BTTask_Wait - Wait
+  [2] [Task] BTT_SetMovementMode_C - Set Movement Mode
+  [3] [Task] BTT_GetRandomPointNearStartPosition_C - BTT_GetRandomPointNearStartPosition
+    [Composite] BTComposite_SimpleParallel - Simple Parallel
+      Children: 2
+      [0] [Task] BTTask_MoveTo - Move To
+        [Composite] BTComposite_Sequence - Sequence
+          Children: 2
+          [0] [Task] BTTask_Wait - Wait
+          [1] [Task] BTT_ToggleFocus_C - Toggle Focus
+  [5] [Task] BTT_SwitchState_C - BTT_SwitchState
+  [6] [Task] BTT_SetKey_C - Set Key (InCombat)

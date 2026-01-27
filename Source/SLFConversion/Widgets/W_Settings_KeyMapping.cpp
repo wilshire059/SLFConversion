@@ -31,7 +31,13 @@ void UW_Settings_KeyMapping::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	// CRITICAL: Hide MainBlur widget - it's a BackgroundBlur at highest ZOrder that blurs everything
+	// CRITICAL: Hide blur widgets - BackgroundBlur at highest ZOrder that blurs everything
+	// W_Settings_KeyMapping has TWO blur widgets: "Blur" and "MainBlur"
+	if (UWidget* Blur = GetWidgetFromName(TEXT("Blur")))
+	{
+		Blur->SetVisibility(ESlateVisibility::Collapsed);
+		UE_LOG(LogTemp, Log, TEXT("[W_Settings_KeyMapping] Hidden Blur widget"));
+	}
 	if (UWidget* MainBlur = GetWidgetFromName(TEXT("MainBlur")))
 	{
 		MainBlur->SetVisibility(ESlateVisibility::Collapsed);

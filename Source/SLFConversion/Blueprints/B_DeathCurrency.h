@@ -14,13 +14,7 @@
 #include "SLFEnums.h"
 #include "SLFGameTypes.h"
 #include "SLFPrimaryDataAssets.h"
-#include "InputMappingContext.h"
-#include "LevelSequence.h"
-#include "LevelSequencePlayer.h"
-#include "MovieSceneSequencePlaybackSettings.h"
-#include "SkeletalMergingLibrary.h"
-#include "GeometryCollection/GeometryCollectionObject.h"
-#include "Field/FieldSystemObjects.h"
+#include "NiagaraComponent.h"
 #include "B_DeathCurrency.generated.h"
 
 // Forward declarations
@@ -39,6 +33,17 @@ class SLFCONVERSION_API AB_DeathCurrency : public AB_Interactable
 public:
 	AB_DeathCurrency();
 
+	virtual void BeginPlay() override;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// COMPONENT REFERENCES
+	// ═══════════════════════════════════════════════════════════════════════
+
+	/** Cached reference to Niagara component (from Blueprint SCS)
+	 *  Named differently than Blueprint variable to avoid property collision during reparent */
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components")
+	UNiagaraComponent* CachedDeathCurrencyNiagara;
+
 	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (4)
 	// ═══════════════════════════════════════════════════════════════════════
@@ -53,13 +58,9 @@ public:
 	TArray<FInstancedStruct> CacheTest;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// EVENT DISPATCHERS (0)
+	// ISLFInteractableInterface OVERRIDE
 	// ═══════════════════════════════════════════════════════════════════════
 
-
-
-	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (1)
-	// ═══════════════════════════════════════════════════════════════════════
-
+	virtual void OnInteract_Implementation(AActor* InteractingActor) override;
+	virtual void OnSpawnedFromSave_Implementation(const FGuid& Id, const FInstancedStruct& CustomData) override;
 };

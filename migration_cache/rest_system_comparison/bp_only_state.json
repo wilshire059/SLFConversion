@@ -1,0 +1,70 @@
+{
+  "B_SkyManager": {
+    "path": "/Game/SoulslikeFramework/Blueprints/Sky/B_SkyManager",
+    "exists": true,
+    "class": "Blueprint",
+    "parent_class": "BlueprintGeneratedClass",
+    "scs_components": [],
+    "variables": {},
+    "cdo_properties": {
+      "Time": "14.976",
+      "TimeDilation": "10.0",
+      "TimeInfoAsset": "DA_ExampleDayNightInfo"
+    },
+    "scs_error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  },
+  "PDA_DayNight": {
+    "path": "/Game/SoulslikeFramework/Data/PDA_DayNight",
+    "exists": true,
+    "class": "Blueprint",
+    "parent_class": "Unknown",
+    "properties": {}
+  },
+  "DA_ExampleDayNightInfo": {
+    "path": "/Game/SoulslikeFramework/Data/DayNight/DA_ExampleDayNightInfo",
+    "exists": true,
+    "class": "PrimaryDataAsset",
+    "parent_class": "PDA_DayNight_C",
+    "properties": {
+      "entries_count": 6,
+      "entries": [
+        {},
+        {},
+        {},
+        {},
+        {},
+        {}
+      ]
+    }
+  },
+  "W_TimePass": {
+    "path": "/Game/SoulslikeFramework/Widgets/RestMenu/W_TimePass",
+    "exists": true,
+    "class": "WidgetBlueprint",
+    "parent_class": "Unknown",
+    "widget_tree": [],
+    "animations": [],
+    "variables": [],
+    "export_error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  },
+  "W_RestMenu": {
+    "path": "/Game/SoulslikeFramework/Widgets/RestMenu/W_RestMenu",
+    "exists": true,
+    "class": "WidgetBlueprint",
+    "parent_class": "Unknown",
+    "widget_tree": [],
+    "animations": [],
+    "variables": [],
+    "export_error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  },
+  "W_RestMenu_TimeEntry": {
+    "path": "/Game/SoulslikeFramework/Widgets/RestMenu/W_RestMenu_TimeEntry",
+    "exists": true,
+    "class": "WidgetBlueprint",
+    "parent_class": "Unknown",
+    "widget_tree": [],
+    "animations": [],
+    "variables": [],
+    "export_error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  }
+}

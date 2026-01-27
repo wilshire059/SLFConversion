@@ -8,11 +8,16 @@
 #include "Blueprints/B_StatusEffect.h"
 #include "Blueprints/B_Stat.h"
 #include "Components/AC_StatManager.h"
+#include "Components/StatManagerComponent.h"
 #include "Interfaces/BPI_GenericCharacter.h"
 #include "SLFPrimaryDataAssets.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
+#include "NiagaraSystem.h"
+#include "Components/SkeletalMeshComponent.h"
 
 UB_StatusEffect::UB_StatusEffect()
 {
@@ -48,16 +53,48 @@ UAC_StatManager* UB_StatusEffect::GetOwnerStatManager_Implementation()
 		return nullptr;
 	}
 
+	// First try UAC_StatManager (Blueprint-based)
 	UAC_StatManager* StatManager = Owner->FindComponentByClass<UAC_StatManager>();
 
 	if (IsValid(StatManager))
 	{
-		UE_LOG(LogTemp, Verbose, TEXT("UB_StatusEffect::GetOwnerStatManager - Found StatManager"));
+		UE_LOG(LogTemp, Verbose, TEXT("UB_StatusEffect::GetOwnerStatManager - Found UAC_StatManager"));
 		return StatManager;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("UB_StatusEffect::GetOwnerStatManager - StatManager not found on Owner"));
+	UE_LOG(LogTemp, Warning, TEXT("UB_StatusEffect::GetOwnerStatManager - UAC_StatManager not found, will use UStatManagerComponent fallback"));
 	return nullptr;
+}
+
+// Helper to apply stat change using either UAC_StatManager or UStatManagerComponent
+bool UB_StatusEffect::TryAdjustOwnerStat(FGameplayTag StatTag, ESLFValueType ValueType, double Amount, bool bLevelUp, bool bTriggerRegen)
+{
+	if (!IsValid(Owner))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TryAdjustOwnerStat - Owner is null"));
+		return false;
+	}
+
+	// First try UAC_StatManager
+	UAC_StatManager* AC_StatMgr = Owner->FindComponentByClass<UAC_StatManager>();
+	if (IsValid(AC_StatMgr))
+	{
+		AC_StatMgr->AdjustStat(StatTag, ValueType, Amount, bLevelUp, bTriggerRegen);
+		UE_LOG(LogTemp, Log, TEXT("TryAdjustOwnerStat - Applied via UAC_StatManager: %s = %.2f"), *StatTag.ToString(), Amount);
+		return true;
+	}
+
+	// Fallback to UStatManagerComponent (C++ component)
+	UStatManagerComponent* StatMgrComp = Owner->FindComponentByClass<UStatManagerComponent>();
+	if (IsValid(StatMgrComp))
+	{
+		StatMgrComp->AdjustStat(StatTag, ValueType, Amount, bLevelUp, bTriggerRegen);
+		UE_LOG(LogTemp, Log, TEXT("TryAdjustOwnerStat - Applied via UStatManagerComponent: %s = %.2f"), *StatTag.ToString(), Amount);
+		return true;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("TryAdjustOwnerStat - No StatManager found on Owner %s"), *Owner->GetName());
+	return false;
 }
 
 double UB_StatusEffect::GetBuildupPercent_Implementation()
@@ -110,13 +147,15 @@ TMap<int32, FSLFStatusEffectRankInfo> UB_StatusEffect::GetEffectRankData_Impleme
 		return EmptyMap;
 	}
 
-	// Cast Data to UPDA_StatusEffect to access properties
-	// Note: UPDA_StatusEffect currently doesn't have RankInfo property - using empty map
+	// Cast Data to UPDA_StatusEffect to access RankInfo property
 	if (UPDA_StatusEffect* StatusData = Cast<UPDA_StatusEffect>(Data))
 	{
-		UE_LOG(LogTemp, Verbose, TEXT("UB_StatusEffect::GetEffectRankData - Data cast successful, returning empty map (RankInfo not in C++)"));
+		UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::GetEffectRankData - Returning RankInfo with %d ranks"),
+			StatusData->RankInfo.Num());
+		return StatusData->RankInfo;
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("UB_StatusEffect::GetEffectRankData - Data cast failed, returning empty map"));
 	return EmptyMap;
 }
 
@@ -221,11 +260,7 @@ void UB_StatusEffect::SpawnLoopingVfxAttached_Implementation()
 	// 2. Map_Find with ActiveRank key
 	// 3. If found: get FStatusEffectRankInfo->LoopingVfx
 	// 4. Cast Owner to BPI_GenericCharacter interface
-	// 5. If cast succeeds: Call PlaySoftNiagaraLoopingReplicated with:
-	//    - VFXSystem = LoopingVfx
-	//    - AttachSocket from RankInfo
-	//    - Location/Rotation from RankInfo
-	//    - Duration from EffectDuration
+	// 5. If cast succeeds: Spawn Niagara system attached to owner
 
 	if (!IsValid(Data) || !IsValid(Owner))
 	{
@@ -233,17 +268,98 @@ void UB_StatusEffect::SpawnLoopingVfxAttached_Implementation()
 		return;
 	}
 
-	// Check if Owner implements BPI_GenericCharacter
-	if (Owner->GetClass()->ImplementsInterface(UBPI_GenericCharacter::StaticClass()))
+	// Cast Data to get status effect properties
+	UPDA_StatusEffect* StatusData = Cast<UPDA_StatusEffect>(Data);
+	if (!StatusData)
 	{
-		// Cast Data to get status effect properties
-		if (UPDA_StatusEffect* StatusData = Cast<UPDA_StatusEffect>(Data))
+		UE_LOG(LogTemp, Warning, TEXT("UB_StatusEffect::SpawnLoopingVfxAttached - Data cast failed"));
+		return;
+	}
+
+	// Get RankInfo for the current ActiveRank (with fallback to lower ranks)
+	const FSLFStatusEffectRankInfo* RankData = StatusData->RankInfo.Find(ActiveRank);
+	int32 EffectiveRank = ActiveRank;
+
+	// Fallback: if exact rank not found, try lower ranks down to 1
+	if (!RankData && ActiveRank > 1)
+	{
+		UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::SpawnLoopingVfxAttached - No RankInfo for rank %d, trying fallback"), ActiveRank);
+		for (int32 FallbackRank = ActiveRank - 1; FallbackRank >= 1; --FallbackRank)
 		{
-			// Note: RankInfo property would contain VFX data per rank
-			// For now, log that we would spawn VFX here
-			UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::SpawnLoopingVfxAttached - Would spawn VFX for effect: %s"),
-				*StatusData->Tag.ToString());
+			RankData = StatusData->RankInfo.Find(FallbackRank);
+			if (RankData)
+			{
+				EffectiveRank = FallbackRank;
+				UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::SpawnLoopingVfxAttached - Using fallback rank %d"), FallbackRank);
+				break;
+			}
 		}
+	}
+
+	if (!RankData)
+	{
+		UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::SpawnLoopingVfxAttached - No RankInfo for rank %d (no fallback available)"), ActiveRank);
+		return;
+	}
+
+	// Get the LoopVFX Niagara system
+	UNiagaraSystem* LoopVFX = RankData->LoopVFX.VFXSystem.LoadSynchronous();
+	if (!LoopVFX)
+	{
+		UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::SpawnLoopingVfxAttached - No LoopVFX for rank %d"), ActiveRank);
+		return;
+	}
+
+	// Get attach socket (default to "Chest" if not specified)
+	FName AttachSocket = RankData->LoopVFX.AttachSocket;
+	if (AttachSocket.IsNone())
+	{
+		AttachSocket = FName("Chest");
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::SpawnLoopingVfxAttached - Spawning LoopVFX %s at socket %s for effect %s (rank %d)"),
+		*LoopVFX->GetName(), *AttachSocket.ToString(), *StatusData->Tag.ToString(), ActiveRank);
+
+	// Find the mesh component to attach to
+	USkeletalMeshComponent* MeshComp = Owner->FindComponentByClass<USkeletalMeshComponent>();
+	if (MeshComp)
+	{
+		// Spawn attached Niagara system
+		UNiagaraComponent* SpawnedComp = UNiagaraFunctionLibrary::SpawnSystemAttached(
+			LoopVFX,
+			MeshComp,
+			AttachSocket,
+			FVector::ZeroVector,
+			FRotator::ZeroRotator,
+			EAttachLocation::SnapToTarget,
+			true,  // bAutoDestroy
+			true,  // bAutoActivate
+			ENCPoolMethod::None,
+			true   // bPreCullCheck
+		);
+
+		if (SpawnedComp)
+		{
+			UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::SpawnLoopingVfxAttached - Successfully spawned LoopVFX"));
+			// Store reference for cleanup later if needed
+			LoopingVFXComponent = SpawnedComp;
+		}
+	}
+	else
+	{
+		// Fallback: spawn at actor location
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+			GetWorld(),
+			LoopVFX,
+			Owner->GetActorLocation(),
+			FRotator::ZeroRotator,
+			FVector(1.0f),
+			true,  // bAutoDestroy
+			true,  // bAutoActivate
+			ENCPoolMethod::None,
+			true   // bPreCullCheck
+		);
+		UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::SpawnLoopingVfxAttached - Spawned at location (no mesh found)"));
 	}
 }
 
@@ -302,14 +418,6 @@ void UB_StatusEffect::TickDamage()
 		return;
 	}
 
-	// Apply tick stat changes via StatManager
-	UAC_StatManager* StatMgr = GetOwnerStatManager();
-	if (!IsValid(StatMgr))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UB_StatusEffect::TickDamage - No StatManager available"));
-		return;
-	}
-
 	// Determine which stat changes to apply (prefer combined struct, fallback to TickStatChange)
 	TArray<FStatChange>* StatChangesToApply = nullptr;
 
@@ -345,14 +453,19 @@ void UB_StatusEffect::TickDamage()
 				*Change.StatTag.ToString(),
 				Change.ValueType == ESLFValueType::CurrentValue ? TEXT("Current") : TEXT("Max"));
 
-			// Apply stat change via StatManager
-			StatMgr->AdjustStat(
+			// Apply stat change via TryAdjustOwnerStat (handles both stat manager types)
+			bool bApplied = TryAdjustOwnerStat(
 				Change.StatTag,
 				Change.ValueType,
 				Amount,
 				false,  // Not a level up
 				Change.bTryActivateRegen
 			);
+
+			if (!bApplied)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("UB_StatusEffect::TickDamage - Failed to apply stat change to %s"), *Change.StatTag.ToString());
+			}
 		}
 	}
 	else
@@ -403,9 +516,6 @@ void UB_StatusEffect::EffectTriggered()
 
 	UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::EffectTriggered - Effect triggered!"));
 
-	// Apply one-shot stat changes via StatManager
-	UAC_StatManager* StatMgr = GetOwnerStatManager();
-
 	// Determine which one-shot stat changes to apply
 	TArray<FStatChange>* OneShotChanges = nullptr;
 
@@ -418,7 +528,7 @@ void UB_StatusEffect::EffectTriggered()
 		OneShotChanges = &OneShotStatChange.StatChanges;
 	}
 
-	if (IsValid(StatMgr) && OneShotChanges && OneShotChanges->Num() > 0)
+	if (OneShotChanges && OneShotChanges->Num() > 0)
 	{
 		FString EffectName = TEXT("Unknown");
 		if (UPDA_StatusEffect* StatusData = Cast<UPDA_StatusEffect>(Data))
@@ -440,14 +550,90 @@ void UB_StatusEffect::EffectTriggered()
 				*Change.StatTag.ToString(),
 				Change.ValueType == ESLFValueType::CurrentValue ? TEXT("Current") : TEXT("Max"));
 
-			// Apply stat change via StatManager
-			StatMgr->AdjustStat(
+			// Apply stat change via TryAdjustOwnerStat (handles both stat manager types)
+			bool bApplied = TryAdjustOwnerStat(
 				Change.StatTag,
 				Change.ValueType,
 				Amount,
 				false,  // Not a level up
 				Change.bTryActivateRegen
 			);
+
+			if (bApplied)
+			{
+				UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::EffectTriggered - [%s] DAMAGE APPLIED: %.2f to %s"),
+					*EffectName, Amount, *Change.StatTag.ToString());
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("UB_StatusEffect::EffectTriggered - [%s] FAILED to apply stat change to %s"),
+					*EffectName, *Change.StatTag.ToString());
+			}
+		}
+	}
+
+	// Spawn Trigger VFX (one-shot) from RankInfo
+	if (UPDA_StatusEffect* StatusData = Cast<UPDA_StatusEffect>(Data))
+	{
+		const FSLFStatusEffectRankInfo* RankData = StatusData->RankInfo.Find(ActiveRank);
+
+		// Fallback: if exact rank not found, try lower ranks down to 1
+		if (!RankData && ActiveRank > 1)
+		{
+			for (int32 FallbackRank = ActiveRank - 1; FallbackRank >= 1; --FallbackRank)
+			{
+				RankData = StatusData->RankInfo.Find(FallbackRank);
+				if (RankData)
+				{
+					UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::EffectTriggered - Using fallback rank %d for VFX"), FallbackRank);
+					break;
+				}
+			}
+		}
+
+		if (RankData)
+		{
+			UNiagaraSystem* TriggerVFX = RankData->TriggerVFX.VFXSystem.LoadSynchronous();
+			if (TriggerVFX)
+			{
+				FName AttachSocket = RankData->TriggerVFX.AttachSocket;
+				if (AttachSocket.IsNone())
+				{
+					AttachSocket = FName("Chest");
+				}
+
+				UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::EffectTriggered - Spawning TriggerVFX %s at socket %s"),
+					*TriggerVFX->GetName(), *AttachSocket.ToString());
+
+				USkeletalMeshComponent* MeshComp = Owner->FindComponentByClass<USkeletalMeshComponent>();
+				if (MeshComp)
+				{
+					UNiagaraFunctionLibrary::SpawnSystemAttached(
+						TriggerVFX,
+						MeshComp,
+						AttachSocket,
+						FVector::ZeroVector,
+						FRotator::ZeroRotator,
+						EAttachLocation::SnapToTarget,
+						true,  // bAutoDestroy
+						true,  // bAutoActivate
+						ENCPoolMethod::None,
+						true   // bPreCullCheck
+					);
+				}
+				else
+				{
+					UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+						GetWorld(),
+						TriggerVFX,
+						Owner->GetActorLocation(),
+						FRotator::ZeroRotator,
+						FVector(1.0f),
+						true,  // bAutoDestroy
+						true   // bAutoActivate
+					);
+				}
+			}
 		}
 	}
 
@@ -528,9 +714,101 @@ void UB_StatusEffect::RefreshRank_Implementation(int32 NewActiveRank)
 {
 	// Logic from JSON Event RefreshRank:
 	// 1. Set ActiveRank = NewActiveRank
+	// 2. Extract damage data from RankInfo[NewActiveRank].RelevantData
 
-	UE_LOG(LogTemp, Verbose, TEXT("UB_StatusEffect::RefreshRank - NewActiveRank: %d"), NewActiveRank);
+	UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::RefreshRank - NewActiveRank: %d"), NewActiveRank);
 	ActiveRank = NewActiveRank;
+
+	// Clear previous stat change data
+	TickStatChange = FStatusEffectTick();
+	OneShotStatChange = FStatusEffectStatChanges();
+	TickAndOneShotStatChange = FStatusEffectOneShotAndTick();
+	EffectDuration = 0.0;
+	EffectSteps = 0.0;
+
+	// Extract damage data from RankInfo
+	if (!IsValid(Data))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UB_StatusEffect::RefreshRank - Data is null"));
+		return;
+	}
+
+	UPDA_StatusEffect* StatusData = Cast<UPDA_StatusEffect>(Data);
+	if (!StatusData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UB_StatusEffect::RefreshRank - Failed to cast Data to UPDA_StatusEffect"));
+		return;
+	}
+
+	// Find RankInfo for this rank (with fallback to lower ranks)
+	const FSLFStatusEffectRankInfo* RankData = StatusData->RankInfo.Find(NewActiveRank);
+	int32 EffectiveRank = NewActiveRank;
+
+	if (!RankData && NewActiveRank > 1)
+	{
+		for (int32 FallbackRank = NewActiveRank - 1; FallbackRank >= 1; --FallbackRank)
+		{
+			RankData = StatusData->RankInfo.Find(FallbackRank);
+			if (RankData)
+			{
+				EffectiveRank = FallbackRank;
+				UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::RefreshRank - Using fallback rank %d for damage data"), FallbackRank);
+				break;
+			}
+		}
+	}
+
+	if (!RankData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UB_StatusEffect::RefreshRank - No RankInfo for rank %d"), NewActiveRank);
+		return;
+	}
+
+	// Extract damage data from RelevantData FInstancedStruct
+	// Try each possible struct type
+	if (RankData->RelevantData.IsValid())
+	{
+		// Try FStatusEffectOneShotAndTick first (most complete)
+		if (const FStatusEffectOneShotAndTick* OneShotAndTickData = RankData->RelevantData.GetPtr<FStatusEffectOneShotAndTick>())
+		{
+			TickAndOneShotStatChange = *OneShotAndTickData;
+			EffectDuration = OneShotAndTickData->Duration;
+			if (OneShotAndTickData->Interval > 0.0)
+			{
+				EffectSteps = OneShotAndTickData->Duration / OneShotAndTickData->Interval;
+			}
+			UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::RefreshRank - Loaded FStatusEffectOneShotAndTick: Duration=%.1f, Interval=%.1f, Instant=%d changes, Ticking=%d changes"),
+				OneShotAndTickData->Duration, OneShotAndTickData->Interval,
+				OneShotAndTickData->InstantStatAdjustment.Num(), OneShotAndTickData->TickingStatAdjustment.Num());
+		}
+		// Try FStatusEffectTick
+		else if (const FStatusEffectTick* TickData = RankData->RelevantData.GetPtr<FStatusEffectTick>())
+		{
+			TickStatChange = *TickData;
+			EffectDuration = TickData->Duration;
+			if (TickData->Interval > 0.0)
+			{
+				EffectSteps = TickData->Duration / TickData->Interval;
+			}
+			UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::RefreshRank - Loaded FStatusEffectTick: Duration=%.1f, Interval=%.1f, Ticking=%d changes"),
+				TickData->Duration, TickData->Interval, TickData->TickingStatAdjustment.Num());
+		}
+		// Try FStatusEffectStatChanges (one-shot only)
+		else if (const FStatusEffectStatChanges* OneShotData = RankData->RelevantData.GetPtr<FStatusEffectStatChanges>())
+		{
+			OneShotStatChange = *OneShotData;
+			UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::RefreshRank - Loaded FStatusEffectStatChanges: %d one-shot changes"),
+				OneShotData->StatChanges.Num());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("UB_StatusEffect::RefreshRank - RelevantData is valid but unknown struct type"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::RefreshRank - No RelevantData for rank %d (VFX only)"), EffectiveRank);
+	}
 }
 
 void UB_StatusEffect::AdjustBuildupOneshot_Implementation(double Delta)
@@ -538,15 +816,43 @@ void UB_StatusEffect::AdjustBuildupOneshot_Implementation(double Delta)
 	// Logic from JSON Event AdjustBuildupOneshot:
 	// Apply a one-time buildup adjustment
 	// 1. If not triggered and Data valid:
-	// 2. BuildupPercent = Clamp(BuildupPercent + Delta, 0, 100)
-	// 3. Broadcast OnBuildupUpdated
-	// 4. Check if >= 100, trigger if so
+	// 2. Apply resistance reduction to Delta
+	// 3. BuildupPercent = Clamp(BuildupPercent + Delta, 0, 100)
+	// 4. Broadcast OnBuildupUpdated
+	// 5. Check if >= 100, trigger if so
 
-	UE_LOG(LogTemp, Verbose, TEXT("UB_StatusEffect::AdjustBuildupOneshot - Delta: %f"), Delta);
+	UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::AdjustBuildupOneshot - Raw Delta: %.2f"), Delta);
 
 	if (!bIsTriggered && IsValid(Data))
 	{
-		BuildupPercent = FMath::Clamp(BuildupPercent + Delta, 0.0, 100.0);
+		// Apply resistance reduction (higher resistance = less buildup)
+		// Use ResistiveStatCurve if available, otherwise use formula
+		double AdjustedDelta = Delta;
+
+		UPDA_StatusEffect* StatusData = Cast<UPDA_StatusEffect>(Data);
+		if (StatusData && OwnerResistiveStatValue > 0.0)
+		{
+			// Check if we have a resistance curve
+			if (StatusData->ResistiveStatCurve)
+			{
+				// Use curve: X = resistance stat value, Y = buildup multiplier (0.0-1.0)
+				float CurveMultiplier = StatusData->ResistiveStatCurve->GetFloatValue(OwnerResistiveStatValue);
+				AdjustedDelta = Delta * FMath::Clamp(CurveMultiplier, 0.0f, 1.0f);
+				UE_LOG(LogTemp, Log, TEXT("  Resistance curve: stat=%.1f -> multiplier=%.3f -> adjusted delta=%.2f"),
+					OwnerResistiveStatValue, CurveMultiplier, AdjustedDelta);
+			}
+			else
+			{
+				// Use default formula: reduction = 100 / (100 + resistance)
+				double ResistanceFactor = 100.0 / (100.0 + OwnerResistiveStatValue);
+				AdjustedDelta = Delta * ResistanceFactor;
+				UE_LOG(LogTemp, Log, TEXT("  Resistance formula: stat=%.1f -> factor=%.3f -> adjusted delta=%.2f"),
+					OwnerResistiveStatValue, ResistanceFactor, AdjustedDelta);
+			}
+		}
+
+		BuildupPercent = FMath::Clamp(BuildupPercent + AdjustedDelta, 0.0, 100.0);
+		UE_LOG(LogTemp, Log, TEXT("  BuildupPercent now: %.1f%%"), BuildupPercent);
 		OnBuildupUpdated.Broadcast();
 
 		if (BuildupPercent >= 100.0)

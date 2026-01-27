@@ -1,0 +1,9 @@
+============================================================
+Checking Venom Sword Status Effect Configuration
+============================================================
+
+Found: /Game/SoulslikeFramework/Data/Items/DA_Sword01
+  Class: PDA_Item_C
+  ItemInformation: OK
+  EquipmentDetails: OK
+  WeaponStatusEffectInfo: EMPTY or None

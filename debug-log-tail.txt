@@ -1,0 +1,500 @@
+LogTemp: UAC_CombatManager::GetIsGuarding - false (Active: false, GracePeriod: false)
+LogTemp: UAC_InteractionManager::IsTargetLocked - false
+LogTemp: [StatManager] GetStat SoulslikeFramework.Stat.Secondary.HP: Stat=0000022D87774980, CurrentValue=500.00, MaxValue=500.00
+LogTemp: [AIStateMachine] Boss HP check: 100.0%
+LogTemp: UBTT_ToggleFocus::ExecuteTask - No focus to clear
+LogTemp: UBTT_ToggleFocus::ExecuteTask - No focus to clear
+LogTemp: UAC_CombatManager::GetIsGuarding - false (Active: false, GracePeriod: false)
+LogTemp: UAC_InteractionManager::IsTargetLocked - false
+LogTemp: [StatManager] GetStat SoulslikeFramework.Stat.Secondary.HP: Stat=0000022D87774980, CurrentValue=500.00, MaxValue=500.00
+LogTemp: [AIStateMachine] Boss HP check: 100.0%
+LogTemp: UAC_CombatManager::GetIsGuarding - false (Active: false, GracePeriod: false)
+LogTemp: UAC_InteractionManager::IsTargetLocked - false
+LogTemp: [StatManager] GetStat SoulslikeFramework.Stat.Secondary.HP: Stat=0000022D87774980, CurrentValue=500.00, MaxValue=500.00
+LogTemp: [AIStateMachine] Boss HP check: 100.0%
+LogTemp: UAC_CombatManager::GetIsGuarding - false (Active: false, GracePeriod: false)
+LogTemp: UAC_InteractionManager::IsTargetLocked - false
+LogTemp: [StatManager] GetStat SoulslikeFramework.Stat.Secondary.HP: Stat=0000022D87774980, CurrentValue=500.00, MaxValue=500.00
+LogTemp: [AIStateMachine] Boss HP check: 100.0%
+LogTemp: UBTT_ToggleFocus::ExecuteTask - No focus to clear
+LogTemp: UBTT_ToggleFocus::ExecuteTask - No focus to clear
+LogTemp: UW_HUD::NativeDestruct
+LogTemp: UW_ItemWheelSlot::NativeDestruct
+LogTemp: UW_ItemWheelSlot::NativeDestruct
+LogTemp: UW_ItemWheelSlot::NativeDestruct
+LogTemp: UW_ItemWheelSlot::NativeDestruct
+LogTemp: UW_AbilityDisplay::NativeDestruct
+LogTemp: UW_CurrencyContainer::NativeDestruct
+LogTemp: UW_Radar::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: [W_GameMenu] NativeDestruct
+LogTemp: UW_GameMenu_Button::NativeDestruct
+LogTemp: UW_GameMenu_Button::NativeDestruct
+LogTemp: UW_GameMenu_Button::NativeDestruct
+LogTemp: UW_GameMenu_Button::NativeDestruct
+LogTemp: UW_GameMenu_Button::NativeDestruct
+LogTemp: UW_Resources::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_Interaction::NativeDestruct
+LogTemp: UW_InteractionError::NativeDestruct
+LogTemp: UW_FirstLootNotification::NativeDestruct
+LogTemp: UW_Dialog::NativeDestruct
+LogTemp: UW_StatusEffectNotification::NativeDestruct
+LogTemp: UW_BigScreenMessage::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_NPC_Window::NativeDestruct
+LogTemp: UW_RestMenu_Button::NativeDestruct
+LogTemp: UW_RestMenu_Button::NativeDestruct
+LogTemp: UW_RestMenu_Button::NativeDestruct
+LogTemp: UW_RestMenu_Button::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_NPC_Window_Vendor::NativeDestruct
+LogTemp: UW_CurrencyContainer::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatBlock::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatBlock::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatBlock::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_VendorAction::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_Inventory::NativeDestruct
+LogTemp: UW_Inventory_CategoryEntry::NativeDestruct
+LogTemp: UW_Inventory_CategoryEntry::NativeDestruct
+LogTemp: UW_Inventory_CategoryEntry::NativeDestruct
+LogTemp: UW_Inventory_CategoryEntry::NativeDestruct
+LogTemp: UW_Inventory_CategoryEntry::NativeDestruct
+LogTemp: UW_Inventory_CategoryEntry::NativeDestruct
+LogTemp: UW_Inventory_CategoryEntry::NativeDestruct
+LogTemp: UW_Inventory_CategoryEntry::NativeDestruct
+LogTemp: UW_Inventory_CategoryEntry::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatBlock::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatBlock::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatBlock::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_InventoryAction::NativeDestruct
+LogTemp: UW_Inventory_ActionButton::NativeDestruct
+LogTemp: UW_Inventory_ActionButton::NativeDestruct
+LogTemp: UW_Inventory_ActionButton::NativeDestruct
+LogTemp: UW_Inventory_ActionButton::NativeDestruct
+LogTemp: UW_Inventory_ActionButton::NativeDestruct
+LogTemp: UW_InventoryActionAmount::NativeDestruct
+LogTemp: UW_InventoryAction::NativeDestruct
+LogTemp: UW_Inventory_ActionButton::NativeDestruct
+LogTemp: UW_Inventory_ActionButton::NativeDestruct
+LogTemp: UW_Inventory_ActionButton::NativeDestruct
+LogTemp: UW_Inventory_ActionButton::NativeDestruct
+LogTemp: UW_Inventory_ActionButton::NativeDestruct
+LogTemp: UW_InventoryActionAmount::NativeDestruct
+LogTemp: UW_GenericError::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: [W_Equipment] NativeDestruct
+LogTemp: UW_EquipmentSlot::NativeDestruct
+LogTemp: UW_EquipmentSlot::NativeDestruct
+LogTemp: UW_EquipmentSlot::NativeDestruct
+LogTemp: UW_EquipmentSlot::NativeDestruct
+LogTemp: UW_EquipmentSlot::NativeDestruct
+LogTemp: UW_EquipmentSlot::NativeDestruct
+LogTemp: UW_EquipmentSlot::NativeDestruct
+LogTemp: UW_EquipmentSlot::NativeDestruct
+LogTemp: UW_EquipmentSlot::NativeDestruct
+LogTemp: UW_EquipmentSlot::NativeDestruct
+LogTemp: UW_EquipmentSlot::NativeDestruct
+LogTemp: UW_EquipmentSlot::NativeDestruct
+LogTemp: UW_EquipmentSlot::NativeDestruct
+LogTemp: UW_EquipmentSlot::NativeDestruct
+LogTemp: UW_Equipment_Item_AttackPower::NativeDestruct
+LogTemp: UW_ItemInfoEntry::NativeDestruct
+LogTemp: UW_ItemInfoEntry::NativeDestruct
+LogTemp: UW_ItemInfoEntry::NativeDestruct
+LogTemp: UW_ItemInfoEntry::NativeDestruct
+LogTemp: UW_ItemInfoEntry::NativeDestruct
+LogTemp: UW_ItemInfoEntry::NativeDestruct
+LogTemp: UW_Equipment_Item_RequiredStats::NativeDestruct
+LogTemp: UW_ItemInfoEntry_RequiredStats::NativeDestruct
+LogTemp: UW_ItemInfoEntry_RequiredStats::NativeDestruct
+LogTemp: UW_ItemInfoEntry_RequiredStats::NativeDestruct
+LogTemp: UW_ItemInfoEntry_RequiredStats::NativeDestruct
+LogTemp: UW_ItemInfoEntry_RequiredStats::NativeDestruct
+LogTemp: UW_ItemInfoEntry_RequiredStats::NativeDestruct
+LogTemp: UW_ItemInfoEntry_RequiredStats::NativeDestruct
+LogTemp: UW_ItemInfoEntry_RequiredStats::NativeDestruct
+LogTemp: UW_Equipment_Item_StatScaling::NativeDestruct
+LogTemp: UW_ItemInfoEntry_StatScaling::NativeDestruct
+LogTemp: UW_ItemInfoEntry_StatScaling::NativeDestruct
+LogTemp: UW_ItemInfoEntry_StatScaling::NativeDestruct
+LogTemp: UW_ItemInfoEntry_StatScaling::NativeDestruct
+LogTemp: UW_ItemInfoEntry_StatScaling::NativeDestruct
+LogTemp: UW_ItemInfoEntry_StatScaling::NativeDestruct
+LogTemp: UW_ItemInfoEntry_StatScaling::NativeDestruct
+LogTemp: UW_ItemInfoEntry_StatScaling::NativeDestruct
+LogTemp: UW_Equipment_Item_StatsGranted::NativeDestruct
+LogTemp: UW_Equipment_Item_DamageNegation::NativeDestruct
+LogTemp: UW_Equipment_Item_Resistance::NativeDestruct
+LogTemp: UW_Equipment_Item_ItemEffect::NativeDestruct
+LogTemp: UW_Equipment_Item_OnUseEffect::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatBlock::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatBlock::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatBlock::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_GenericError::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: [W_Status] NativeDestruct
+LogTemp: UW_Status_LevelCurrencyBlock::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_Status_StatBlock::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_Status_StatBlock::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_Status_StatBlock::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_Status_StatBlock::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_Status_StatBlock::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_Status_StatBlock::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: [W_StatEntry_Status] NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_Crafting::NativeDestruct
+LogTemp: UW_InventorySlot::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatBlock::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatBlock::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatBlock::NativeDestruct
+LogTemp: UW_StatEntry::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_CraftingAction::NativeDestruct
+LogTemp: UW_CraftingEntrySimple::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_RestMenu::NativeDestruct
+LogTemp: UW_RestMenu_Button::NativeDestruct
+LogTemp: UW_RestMenu_Button::NativeDestruct
+LogTemp: UW_RestMenu_Button::NativeDestruct
+LogTemp: UW_RestMenu_Button::NativeDestruct
+LogTemp: UW_RestMenu_TimeEntry::NativeDestruct
+LogTemp: UW_RestMenu_TimeEntry::NativeDestruct
+LogTemp: UW_RestMenu_TimeEntry::NativeDestruct
+LogTemp: UW_RestMenu_TimeEntry::NativeDestruct
+LogTemp: UW_RestMenu_TimeEntry::NativeDestruct
+LogTemp: UW_RestMenu_TimeEntry::NativeDestruct
+LogTemp: UW_TimePass::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_LevelUp::NativeDestruct
+LogTemp: UW_LevelCurrencyBlock_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatBlock_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatBlock_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatBlock_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatBlock_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatBlock_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatBlock_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_StatEntry_LevelUp::NativeDestruct
+LogTemp: UW_StatEntry_StatName::NativeDestruct
+LogTemp: UW_Navigable::NativeDestruct
+LogTemp: UW_Navigable_InputReader::NativeDestruct
+LogTemp: UW_SkipCinematic::NativeDestruct
+LogSlate: Updating window title bar state: overlay mode, drag disabled, window buttons hidden, title bar hidden
+LogWorld: BeginTearingDown for /Game/SoulslikeFramework/Maps/UEDPIE_0_L_Demo_Showcase
+LogCrowdFollowing: Warning: Unable to find RecastNavMesh instance while trying to create UCrowdManager instance
+LogTemp: [SLFInputSimulator] Subsystem deinitialized
+LogWorld: UWorld::CleanupWorld for L_Demo_Showcase, bSessionEnded=true, bCleanupResources=true
+LogSlate: InvalidateAllWidgets triggered.  All widgets were invalidated
+LogPlayLevel: Display: Shutting down PIE online subsystems
+LogSlate: InvalidateAllWidgets triggered.  All widgets were invalidated
+LogSlate: Updating window title bar state: overlay mode, drag disabled, window buttons hidden, title bar hidden
+LogAudioMixer: Deinitializing Audio Bus Subsystem for audio device with ID 2
+LogAudioMixer: Display: FMixerPlatformXAudio2::StopAudioStream() called. InstanceID=2, StreamState=4
+LogAudioMixer: Display: FMixerPlatformXAudio2::StopAudioStream() called. InstanceID=2, StreamState=2
+LogUObjectHash: Compacting FUObjectHashTables data took   0.89ms
+LogPlayLevel: Display: Destroying online subsystem :Context_1
+LogSlate: Window 'Message Log' being destroyed
+LogSlate: Window 'Message Log' being destroyed
+LogSlate: Took 0.008893 seconds to synchronously load lazily loaded font '../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf' (3848K)

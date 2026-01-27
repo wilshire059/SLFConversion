@@ -1,0 +1,21 @@
+============================================================
+VERIFYING STAT REPARENTING
+============================================================
+C++ UB_Stat class: B_Stat
+[FAIL] /Game/SoulslikeFramework/Data/Stats/B_Stat
+        Parent: Unknown
+        Generated: B_Stat_C
+        Parent chain: 
+[FAIL] /Game/SoulslikeFramework/Data/Stats/Secondary/B_HP
+        Parent: Unknown
+        Generated: B_HP_C
+        Parent chain: 
+[FAIL] /Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Fire
+        Parent: Unknown
+        Generated: B_AP_Fire_C
+        Parent chain: 
+[FAIL] /Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Physical
+        Parent: Unknown
+        Generated: B_DN_Physical_C
+        Parent chain: 
+============================================================

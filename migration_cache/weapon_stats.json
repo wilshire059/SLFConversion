@@ -1,0 +1,17 @@
+{
+  "DA_Katana": {
+    "has_item_info_pascal": true
+  },
+  "DA_Sword01": {
+    "has_item_info_pascal": true
+  },
+  "DA_Greatsword": {
+    "has_item_info_pascal": true
+  },
+  "DA_PoisonSword": {
+    "has_item_info_pascal": true
+  },
+  "DA_BossMace": {
+    "has_item_info_pascal": true
+  }
+}

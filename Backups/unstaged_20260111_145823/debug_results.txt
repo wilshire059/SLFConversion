@@ -1,0 +1,19 @@
+Loaded Blueprint: /Game/SoulslikeFramework/Data/Stats/Secondary/B_HP
+Asset type: Blueprint
+Generated class: B_HP_C
+Generated class full path: /Game/SoulslikeFramework/Data/Stats/Secondary/B_HP.B_HP_C
+
+C++ UB_HP class: B_HP
+C++ UB_HP path: /Script/SLFConversion.B_HP
+C++ UB_Stat class: B_Stat
+C++ UB_Stat path: /Script/SLFConversion.B_Stat
+
+--- Checking generated class properties ---
+CDO type: SLFStatHP
+CDO has stat_info: YES
+CDO has min_value: YES (0.0)
+
+--- Using EditorAssetLibrary ---
+Asset data found: B_HP
+Asset class: <Struct 'TopLevelAssetPath' (0x000001CFA962297C) {package_name: "/Script/Engine", asset_name: "Blueprint"}>
+ParentClass tag: /Script/CoreUObject.Class'/Script/SLFConversion.SLFStatHP'

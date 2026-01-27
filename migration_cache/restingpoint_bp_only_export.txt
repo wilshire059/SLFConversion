@@ -1,0 +1,17 @@
+================================================================================
+B_RestingPoint Blueprint Analysis (bp_only)
+================================================================================
+
+Generated Class: B_RestingPoint_C
+
+CDO PROPERTIES:
+
+COMPONENT REFERENCES:
+  unlock_effect: ERROR - Actor: Failed to find property 'unlock_effect' for attribute 'unlock_effect' on 'B_RestingPoint_C'
+  effect: None
+  effect_light: ERROR - Actor: Failed to find property 'effect_light' for attribute 'effect_light' on 'B_RestingPoint_C'
+  environment_light: ERROR - Actor: Failed to find property 'environment_light' for attribute 'environment_light' on 'B_RestingPoint_C'
+  sitting_zone: ERROR - Actor: Failed to find property 'sitting_zone' for attribute 'sitting_zone' on 'B_RestingPoint_C'
+  scene: None
+  camera_arm: ERROR - Actor: Failed to find property 'camera_arm' for attribute 'camera_arm' on 'B_RestingPoint_C'
+  lookat_camera: ERROR - Actor: Failed to find property 'lookat_camera' for attribute 'lookat_camera' on 'B_RestingPoint_C'

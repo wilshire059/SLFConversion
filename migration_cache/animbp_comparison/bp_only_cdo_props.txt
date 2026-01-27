@@ -1,0 +1,2 @@
+=== AnimBP CDO Properties (bp_only) ===
+

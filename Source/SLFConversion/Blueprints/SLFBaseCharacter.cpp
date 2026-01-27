@@ -13,6 +13,7 @@
 #include "SLFBaseCharacter.h"
 #include "Components/StatManagerComponent.h"
 #include "Components/StatusEffectManagerComponent.h"
+#include "Components/AC_StatusEffectManager.h"
 #include "Components/BuffManagerComponent.h"
 #include "Components/LadderManagerComponent.h"
 #include "Components/AC_CombatManager.h"
@@ -28,6 +29,8 @@
 #include "Interfaces/BPI_Projectile.h"
 #include "Interfaces/BPI_Interactable.h"
 #include "Blueprints/B_PickupItem.h"
+#include "Blueprints/B_Container.h"
+#include "Blueprints/Actors/SLFContainer.h"
 #include "TimerManager.h"
 #include "Widgets/W_TargetExecutionIndicator.h"
 
@@ -56,8 +59,10 @@ ASLFBaseCharacter::ASLFBaseCharacter()
 		CachedStatManager->StatTable = DefaultStatTableFinder.Object;
 	}
 
-	// Other manager components still use FindComponentByClass - they may be added by Blueprint
-	CachedStatusEffectManager = nullptr;
+	// Create StatusEffectManager - B_StatusEffectArea and weapons with status effects need this
+	// CRITICAL: This must be UAC_StatusEffectManager, NOT UStatusEffectManagerComponent
+	// B_StatusEffectArea calls FindComponentByClass<UAC_StatusEffectManager>()
+	CachedStatusEffectManager = CreateDefaultSubobject<UAC_StatusEffectManager>(TEXT("StatusEffectManager"));
 	CachedBuffManager = nullptr;
 	CachedTargetLockonComponent = nullptr;
 	CachedProjectileHomingPosition = nullptr;
@@ -112,8 +117,11 @@ void ASLFBaseCharacter::BeginPlay()
 	{
 		CachedStatManager = FindComponentByClass<UStatManagerComponent>();
 	}
-	// Other manager components may be added by Blueprint SCS
-	CachedStatusEffectManager = FindComponentByClass<UStatusEffectManagerComponent>();
+	// StatusEffectManager is created in constructor, but verify it exists and cache
+	if (!CachedStatusEffectManager)
+	{
+		CachedStatusEffectManager = FindComponentByClass<UAC_StatusEffectManager>();
+	}
 	CachedBuffManager = FindComponentByClass<UBuffManagerComponent>();
 
 	// Find specific components by iterating (since we have multiple of same type)
@@ -378,10 +386,21 @@ void ASLFBaseCharacter::OpenContainer_Implementation(UAnimMontage* Montage, AAct
 	{
 		GetMesh()->GetAnimInstance()->Montage_Play(Montage);
 	}
-	// Trigger container opening via interactable interface (IMPLEMENTED)
-	if (Container && Container->GetClass()->ImplementsInterface(UBPI_Interactable::StaticClass()))
+
+	// Call back to the container to start its timeline (NOT OnInteract - that would loop)
+	// The container's OpenContainer triggers the lid animation timeline
+	if (Container)
 	{
-		IBPI_Interactable::Execute_OnInteract(Container, this);
+		// Try AB_Container (Blueprint-derived)
+		if (AB_Container* BPContainer = Cast<AB_Container>(Container))
+		{
+			BPContainer->OpenContainer();
+		}
+		// Try ASLFContainer (C++ base)
+		else if (ASLFContainer* SLFContainer = Cast<ASLFContainer>(Container))
+		{
+			SLFContainer->OpenContainer(this);
+		}
 	}
 }
 
@@ -557,13 +576,18 @@ void ASLFBaseCharacter::OnDoorMontageEnded(UAnimMontage* Montage, bool bInterrup
 void ASLFBaseCharacter::TryClimbLadder_Implementation(AActor* Ladder, bool bIsTopdown)
 {
 	// Delegate to LadderManager component (IMPLEMENTED)
-	UE_LOG(LogTemp, Log, TEXT("[BaseCharacter] TryClimbLadder called, topdown: %s"),
+	UE_LOG(LogTemp, Log, TEXT("[BaseCharacter] TryClimbLadder called, ladder: %s, topdown: %s"),
+		Ladder ? *Ladder->GetName() : TEXT("null"),
 		bIsTopdown ? TEXT("true") : TEXT("false"));
 
 	ULadderManagerComponent* LadderManager = FindComponentByClass<ULadderManagerComponent>();
 	if (LadderManager && Ladder)
 	{
-		LadderManager->StartClimb(Ladder);
+		LadderManager->StartClimb(Ladder, bIsTopdown);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[BaseCharacter] TryClimbLadder - No LadderManager found!"));
 	}
 }
 

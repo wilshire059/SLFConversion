@@ -1,0 +1,8 @@
+{
+  "path": "/Game/SoulslikeFramework/Blueprints/_AI/BT_Enemy",
+  "exists": true,
+  "structure": "=== BehaviorTree: BT_Enemy ===\n\n--- Root Decorators ---\n\n--- Node Tree ---\nNode: Selector (BTComposite_Selector)\n  NumChildren: 6\n  [Branch 0] Child: POISE BROKEN MODE (BTTask_RunBehavior), Decorators: 0\n  [Branch 1] Child: UNINTERRUPTABLE MODE (BTTask_RunBehavior), Decorators: 0\n  [Branch 2] Child: OUT OF BOUNDS MODE (BTTask_RunBehavior), Decorators: 0\n  [Branch 3] Child: COMBAT MODE (BTTask_RunBehavior), Decorators: 0\n  [Branch 4] Child: INVESTIGATE MODE (BTTask_RunBehavior), Decorators: 0\n  [Branch 5] Child: PASSIVE MODES (BTComposite_Selector), Decorators: 0\n  Node: PASSIVE MODES (BTComposite_Selector)\n    NumChildren: 3\n    [Branch 0] Child: IDLE MODE (BTTask_RunBehavior), Decorators: 0\n    [Branch 1] Child: PATROL MODE (BTTask_RunBehavior), Decorators: 0\n    [Branch 2] Child: RANDOM ROAM MODE (BTTask_RunBehavior), Decorators: 0\n\n=== Summary ===\nTotal Decorators: 0\nState Key Decorators: 0\nTotal Tasks: 8\n\n=== Expected State Values (E_AI_States) ===\n  0 = Idle\n  1 = Random Roam\n  2 = Patrolling\n  3 = Investigating\n  4 = Combat\n  5 = Poise Broken\n  6 = Uninterruptable\n  7 = Out of Bounds\n",
+  "error": null,
+  "name": "BT_Enemy",
+  "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'"
+}

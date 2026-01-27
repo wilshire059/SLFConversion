@@ -297,7 +297,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AC_EquipmentManager|Combat")
 	double GetWeaponPoiseDamage() const;
 
-	/** Get status effects from currently equipped weapon */
+	/** Get status effects from currently equipped weapon
+	 * Returns map of StatusEffect asset -> Application info (Rank, BuildupAmount)
+	 */
 	UFUNCTION(BlueprintCallable, Category = "AC_EquipmentManager|Combat")
-	TMap<FGameplayTag, UPrimaryDataAsset*> GetWeaponStatusEffects() const;
+	TMap<UPrimaryDataAsset*, FSLFStatusEffectApplication> GetWeaponStatusEffects() const;
 };

@@ -1,0 +1,199 @@
+COMPLETE SKYMANAGER COMPARISON
+bp_only vs SLFConversion
+======================================================================
+
+Loading level: /Game/SoulslikeFramework/Maps/L_Demo_Showcase
+
+======================================================================
+CURRENT PROJECT (SLFConversion)
+======================================================================
+
+Actor: B_SkyManager_C_1 (B_SkyManager_C)
+Location: <Struct 'Vector' (0x0000021B9E88D5F0) {x: 14533.983347, y: 1512.823044, z: 99.999998}>
+
+--- ACTOR PROPERTIES ---
+  time: 14.976
+  Time: 14.976
+  current_time_of_day: 12.0
+  CurrentTimeOfDay: 12.0
+  sunrise_time: 6.0
+  SunriseTime: 6.0
+  sunset_time: 18.0
+  SunsetTime: 18.0
+  day_length_minutes: 30.0
+  DayLengthMinutes: 30.0
+  time_dilation: 10.0
+  TimeDilation: 10.0
+  time_paused: False
+  bTimePaused: False
+  current_weather: <SLFWeatherType.CLEAR: 0>
+  CurrentWeather: <SLFWeatherType.CLEAR: 0>
+  weather_intensity: 1.0
+  WeatherIntensity: 1.0
+
+--- COMPONENTS (12) ---
+
+  [DefaultSceneRoot] (SceneComponent)
+    RelativeLocation: (14533.983347247526, 1512.8230439157537, 99.99999754274131)
+    RelativeRotation: (P=0.0, Y=0.0, R=0.0)
+    RelativeScale3D: (1.0, 1.0, 1.0)
+
+  [DirectionalLight_Sun] (DirectionalLightComponent)
+    RelativeLocation: (0.0, 0.0, 0.0)
+    RelativeRotation: (P=0.0, Y=0.0, R=0.0)
+    RelativeScale3D: (1.0, 1.0, 1.0)
+    Intensity: 10.0
+    LightColor: <Struct 'Color' (0x0000021BAF3CFCB8) {b: 214, g: 244, r: 255, a: 255}>
+    Temperature: 6500.0
+    UseTemperature: False
+    AtmosphereSunLight: True
+    AtmosphereSunLightIndex: 0
+    ForwardShadingPriority: 0
+    AffectsWorld: True
+    CastShadows: True
+    CastStaticShadows: True
+    CastDynamicShadows: True
+    IndirectLightingIntensity: 1.0
+    VolumetricScatteringIntensity: 1.0
+    LightSourceAngle: 0.5357000231742859
+    LightSourceSoftAngle: 0.0
+    ShadowAmount: 1.0
+    Mobility: <ComponentMobility.MOVABLE: 2>
+
+  [DirectionalLight_Moon] (DirectionalLightComponent)
+    RelativeLocation: (0.0, 0.0, 0.0)
+    RelativeRotation: (P=0.0, Y=0.0, R=0.0)
+    RelativeScale3D: (1.0, 1.0, 1.0)
+    Intensity: 0.5
+    LightColor: <Struct 'Color' (0x0000021B760925B8) {b: 255, g: 200, r: 180, a: 255}>
+    Temperature: 6500.0
+    UseTemperature: False
+    AtmosphereSunLight: False
+    AtmosphereSunLightIndex: 0
+    ForwardShadingPriority: 1
+    AffectsWorld: True
+    CastShadows: True
+    CastStaticShadows: True
+    CastDynamicShadows: True
+    IndirectLightingIntensity: 1.0
+    VolumetricScatteringIntensity: 1.0
+    LightSourceAngle: 0.5357000231742859
+    LightSourceSoftAngle: 0.0
+    ShadowAmount: 1.0
+    Mobility: <ComponentMobility.MOVABLE: 2>
+
+  [SkyLight] (SkyLightComponent)
+    RelativeLocation: (0.0, 0.0, 0.0)
+    RelativeRotation: (P=0.0, Y=0.0, R=0.0)
+    RelativeScale3D: (1.0, 1.0, 1.0)
+    Intensity: 1.0
+    SourceType: <SkyLightSourceType.SLS_CAPTURED_SCENE: 0>
+    Cubemap: None
+    LowerHemisphereColor: <Struct 'LinearColor' (0x0000021BAFE10318) {r: 0.000000, g: 0.000000, b: 0.000000, a: 1.000000}>
+    SkyDistanceThreshold: 150000.0
+    CaptureEmissiveOnly: False
+    IndirectLightingIntensity: 1.0
+    VolumetricScatteringIntensity: 1.0
+    OcclusionMaxDistance: 1000.0
+    Contrast: 0.0
+    OcclusionExponent: 1.0
+    MinOcclusion: 0.0
+    OcclusionTint: <Struct 'Color' (0x0000021BAFE10338) {b: 0, g: 0, r: 0, a: 255}>
+    Mobility: <ComponentMobility.MOVABLE: 2>
+    RealTimeCapture: False
+
+  [SkyAtmosphere] (SkyAtmosphereComponent)
+    RelativeLocation: (0.0, 0.0, 0.0)
+    RelativeRotation: (P=0.0, Y=0.0, R=0.0)
+    RelativeScale3D: (1.0, 1.0, 1.0)
+    TransformMode: <SkyAtmosphereTransformMode.PLANET_TOP_AT_ABSOLUTE_WORLD_ORIGIN: 0>
+    BottomRadius: 6360.0
+    GroundAlbedo: <Struct 'Color' (0x0000021B2F30B298) {b: 170, g: 170, r: 170, a: 255}>
+    AtmosphereHeight: 60.0
+    MultiScatteringFactor: 1.0
+    RayleighScatteringScale: 0.03310000151395798
+    RayleighScattering: <Struct 'LinearColor' (0x0000021B2F30B2AC) {r: 0.175287, g: 0.409607, b: 1.000000, a: 30.211479}>
+    RayleighExponentialDistribution: 8.0
+    MieScatteringScale: 0.003996000159531832
+    MieScattering: <Struct 'LinearColor' (0x0000021B2F30B2C4) {r: 1.000000, g: 1.000000, b: 1.000000, a: 1.000000}>
+    MieAbsorptionScale: 0.0004440000047907233
+    MieAbsorption: <Struct 'LinearColor' (0x0000021B2F30B2D8) {r: 1.000000, g: 1.000000, b: 1.000000, a: 1.000000}>
+    MieAnisotropy: 0.800000011920929
+    MieExponentialDistribution: 1.2000000476837158
+    OtherAbsorptionScale: 0.0018810000037774444
+    OtherAbsorption: <Struct 'LinearColor' (0x0000021B2F30B2F4) {r: 0.345561, g: 1.000000, b: 0.045189, a: 531.632080}>
+    SkyLuminanceFactor: <Struct 'LinearColor' (0x0000021B2F30B310) {r: 1.000000, g: 1.000000, b: 1.000000, a: 1.000000}>
+    HeightFogContribution: 1.0
+    TransmittanceMinLightElevationAngle: -90.0
+    AerialPerspectiveStartDepth: 0.10000000149011612
+
+  [VolumetricCloud] (VolumetricCloudComponent)
+    RelativeLocation: (0.0, 0.0, 0.0)
+    RelativeRotation: (P=0.0, Y=0.0, R=0.0)
+    RelativeScale3D: (1.0, 1.0, 1.0)
+    LayerBottomAltitude: 5.0
+    LayerHeight: 10.0
+    TracingStartMaxDistance: 350.0
+    TracingMaxDistance: 50.0
+    PlanetRadius: 6360.0
+    GroundAlbedo: <Struct 'Color' (0x0000021BAFC972AC) {b: 170, g: 170, r: 170, a: 255}>
+    Material: <Object '/Engine/EngineSky/VolumetricClouds/m_SimpleVolumetricCloud_Inst.m_SimpleVolumetricCloud_Inst' (0x0000021BA5A63000) Class 'MaterialInstanceConstant'>
+    UsePerSampleAtmosphericLightTransmittance: False
+    SkyLightCloudBottomOcclusion: 0.5
+    ViewSampleCountScale: 1.0
+    ShadowViewSampleCountScale: 1.0
+    ShadowTracingDistance: 15.0
+    StopTracingTransmittanceThreshold: 0.004999999888241291
+
+  [ExponentialHeightFog] (ExponentialHeightFogComponent)
+    RelativeLocation: (0.0, 0.0, 0.0)
+    RelativeRotation: (P=0.0, Y=0.0, R=0.0)
+    RelativeScale3D: (1.0, 1.0, 1.0)
+    FogDensity: 0.019999999552965164
+    FogHeightFalloff: 0.20000000298023224
+    FogMaxOpacity: 1.0
+    StartDistance: 0.0
+    FogCutoffDistance: 0.0
+    VolumetricFogScatteringDistribution: 0.20000000298023224
+    VolumetricFogAlbedo: <Struct 'Color' (0x0000021BAFC976BC) {b: 255, g: 255, r: 255, a: 255}>
+    VolumetricFogEmissive: <Struct 'LinearColor' (0x0000021BAFC976C0) {r: 0.000000, g: 0.000000, b: 0.000000, a: 0.000000}>
+    VolumetricFogExtinctionScale: 1.0
+    VolumetricFogDistance: 6000.0
+    VolumetricFogStartDistance: 0.0
+    VolumetricFogNearFadeInDistance: 0.0
+
+  [SM_SkySphere] (StaticMeshComponent)
+    RelativeLocation: (0.0, 0.0, 0.0)
+    RelativeRotation: (P=0.0, Y=0.0, R=0.0)
+    RelativeScale3D: (100.0, 100.0, 100.0)
+    StaticMesh: /Game/SoulslikeFramework/Blueprints/Sky/SM_SkySphere.SM_SkySphere
+    Materials: 1
+      [0]: /Game/SoulslikeFramework/Materials/M_SkySphere.M_SkySphere
+    Visible: True
+    CastShadow: True
+
+  [BillboardComponent_0] (BillboardComponent)
+    RelativeLocation: (0.0, 0.0, 0.0)
+    RelativeRotation: (P=0.0, Y=0.0, R=0.0)
+    RelativeScale3D: (0.0, 0.0, 0.0)
+
+  [BillboardComponent_1] (BillboardComponent)
+    RelativeLocation: (0.0, 0.0, 0.0)
+    RelativeRotation: (P=0.0, Y=0.0, R=0.0)
+    RelativeScale3D: (0.0, 0.0, 0.0)
+
+  [BillboardComponent_2] (BillboardComponent)
+    RelativeLocation: (0.0, 0.0, 0.0)
+    RelativeRotation: (P=0.0, Y=0.0, R=0.0)
+    RelativeScale3D: (0.0, 0.0, 0.0)
+
+  [FogExterior] (TimelineComponent)
+
+
+======================================================================
+COMPARISON COMPLETE
+======================================================================
+
+Results: C:/scripts/SLFConversion/migration_cache/skymanager_complete_comparison.txt
+
+NOTE: Run this same script on bp_only project to get comparison data

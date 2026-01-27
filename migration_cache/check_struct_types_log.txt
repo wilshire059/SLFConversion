@@ -1,0 +1,107 @@
+============================================================
+Checking Available Struct Types
+============================================================
+
+Checking struct availability:
+  FOUND: SLFStatusEffectApplication
+    Can instantiate: Yes
+    Properties: ['buildup_amount', 'rank']...
+  FOUND: FSLFStatusEffectApplication
+    Can instantiate: Yes
+    Properties: ['buildup_amount', 'rank']...
+  NOT FOUND: StatusEffectApplication
+  FOUND: SLFEquipmentInfo
+    Can instantiate: Yes
+    Properties: ['attachment_sockets', 'equip_slots', 'granted_buff_rank', 'granted_tags', 'item_buff_description', 'max_poise_damage', 'min_poise_damage', 'moveset_weapons', 'skeletal_mesh_info', 'stamina_multiplier']...
+  FOUND: FSLFEquipmentInfo
+    Can instantiate: Yes
+    Properties: ['attachment_sockets', 'equip_slots', 'granted_buff_rank', 'granted_tags', 'item_buff_description', 'max_poise_damage', 'min_poise_damage', 'moveset_weapons', 'skeletal_mesh_info', 'stamina_multiplier']...
+  NOT FOUND: EquipmentInfo
+  FOUND: SLFItemInfo
+    Can instantiate: Yes
+    Properties: ['action_to_trigger', 'category', 'crafting_details', 'discovery_description', 'display_name', 'equipment_details', 'icon_large_optional', 'icon_small', 'item_class', 'item_tag']...
+  FOUND: FSLFItemInfo
+    Can instantiate: Yes
+    Properties: ['action_to_trigger', 'category', 'crafting_details', 'discovery_description', 'display_name', 'equipment_details', 'icon_large_optional', 'icon_small', 'item_class', 'item_tag']...
+  NOT FOUND: ItemInfo
+
+
+Searching for 'StatusEffect' in unreal module:
+  AC_StatusEffectManager
+  AC_StatusEffectManager_OnStatusEffectAdded
+  AC_StatusEffectManager_OnStatusEffectRemoved
+  AC_StatusEffectManager_OnStatusEffectTriggered
+  B_StatusEffect
+  B_StatusEffectArea
+  B_StatusEffectBuildup
+  B_StatusEffectOneShot
+  B_StatusEffect_Bleed
+  B_StatusEffect_Burn
+  B_StatusEffect_Corruption
+  B_StatusEffect_Frostbite
+  B_StatusEffect_Madness
+  B_StatusEffect_Plague
+  B_StatusEffect_Poison
+  FSLFStatusEffectApplication
+  FSLFStatusEffectRankInfo
+  FSLFStatusEffectVfxInfo
+  FStatusEffectOneShotAndTick
+  FStatusEffectStatChanges
+  FStatusEffectTick
+  OnStatusEffectAdded
+  OnStatusEffectFinished
+  OnStatusEffectRemoved
+  OnStatusEffectTextTriggered
+  OnStatusEffectTriggered
+  PDA_StatusEffect
+  SLFStatusEffectApplication
+  SLFStatusEffectArea
+  SLFStatusEffectBase
+  SLFStatusEffectBaseFinished
+  SLFStatusEffectBaseTriggered
+  SLFStatusEffectBleed
+  SLFStatusEffectBuildup
+  SLFStatusEffectBuildupState
+  SLFStatusEffectBurn
+  SLFStatusEffectCorruption
+  SLFStatusEffectData
+  SLFStatusEffectFrostbite
+  SLFStatusEffectFrostbiteExample
+  SLFStatusEffectMadness
+  SLFStatusEffectOneShot
+  SLFStatusEffectPlague
+  SLFStatusEffectPlagueExample
+  SLFStatusEffectPoison
+  SLFStatusEffectRankData
+  SLFStatusEffectRankInfo
+  SLFStatusEffectStatChange
+  SLFStatusEffectVfxInfo
+  SLFWeaponStatusEffectData
+  StatusEffectManagerComponent
+  StatusEffectOneShotAndTick
+  StatusEffectStatChanges
+  StatusEffectTick
+  W_Browser_StatusEffect
+  W_Browser_StatusEffect_OnSelected
+  W_Browser_StatusEffect_Tooltip
+  W_StatusEffectBar
+  W_StatusEffectNotification
+
+
+Searching for 'Application' in unreal module:
+  ApplicationLifecycleComponent
+  ApplicationLifecycleComponent_ApplicationLifetimeDelegate
+  ApplicationLifecycleComponent_ApplicationStartupArgumentsDelegate
+  ApplicationLifecycleComponent_OnLowPowerModeDelegate
+  ApplicationLifecycleComponent_OnTemperatureChangeDelegate
+  ApplicationState
+  FSLFStatusEffectApplication
+  PreviewAnimationBlueprintApplicationMethod
+  SLFStatusEffectApplication
+
+
+Checking weapon asset property types:
+  item_information type: <class 'SLFItemInfo'>
+  equipment_details type: <class 'SLFEquipmentInfo'>
+  weapon_status_effect_info type: <class 'Map'>
+  equipment_details properties: ['assign', 'attachment_sockets', 'cast', 'copy', 'equip_slots', 'export_text', 'get_editor_property', 'granted_buff_rank', 'granted_tags', 'import_text', 'item_buff_description', 'max_poise_damage', 'min_poise_damage', 'moveset_weapons', 'set_editor_properties', 'set_editor_property', 'skeletal_mesh_info', 'stamina_multiplier', 'stat_changes', 'static_struct', 'to_tuple', 'weapon_ability', 'weapon_overlay', 'weapon_stat_info', 'weapon_status_effect_info']

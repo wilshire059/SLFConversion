@@ -1,0 +1,225 @@
+{
+  "project": "SLFConversion",
+  "weapons": {
+    "B_Item_Weapon_Katana": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Katana",
+      "components": {
+        "DefaultSceneRoot": {
+          "class": "SceneComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 1000.0
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        "WeaponMesh": {
+          "class": "StaticMeshComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": -1.6439
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": -103.2403,
+            "roll": 0.0
+          }
+        },
+        "TrailComponent": {
+          "class": "NiagaraComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        }
+      },
+      "class": "B_Item_Weapon_Katana_C",
+      "cpp_default_mesh_relative_location": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": -1.6439
+      },
+      "cpp_default_mesh_relative_rotation": {
+        "pitch": 0.0,
+        "yaw": -103.2403,
+        "roll": 0.0
+      }
+    },
+    "B_Item_Weapon_SwordExample01": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_SwordExample01",
+      "components": {
+        "DefaultSceneRoot": {
+          "class": "SceneComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 1000.0
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        "WeaponMesh": {
+          "class": "StaticMeshComponent",
+          "relative_location": {
+            "x": -0.0,
+            "y": -0.0,
+            "z": 36.4944
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 180.0
+          }
+        },
+        "TrailComponent": {
+          "class": "NiagaraComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        }
+      },
+      "class": "B_Item_Weapon_SwordExample01_C",
+      "cpp_default_mesh_relative_location": {
+        "x": -0.0,
+        "y": -0.0,
+        "z": 36.4944
+      },
+      "cpp_default_mesh_relative_rotation": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 180.0
+      }
+    },
+    "B_Item_Weapon_SwordExample02": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_SwordExample02",
+      "components": {
+        "DefaultSceneRoot": {
+          "class": "SceneComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 1000.0
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        "WeaponMesh": {
+          "class": "StaticMeshComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 50.0875
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": -130.0
+          }
+        },
+        "TrailComponent": {
+          "class": "NiagaraComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        }
+      },
+      "class": "B_Item_Weapon_SwordExample02_C",
+      "cpp_default_mesh_relative_location": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 50.0875
+      },
+      "cpp_default_mesh_relative_rotation": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": -130.0
+      }
+    },
+    "B_Item_Weapon_Greatsword": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Greatsword",
+      "components": {
+        "DefaultSceneRoot": {
+          "class": "SceneComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 1000.0
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        "WeaponMesh": {
+          "class": "StaticMeshComponent",
+          "relative_location": {
+            "x": 2.2303,
+            "y": 0.0,
+            "z": -0.0
+          },
+          "relative_rotation": {
+            "pitch": -0.8985,
+            "yaw": -65.8513,
+            "roll": -4.4508
+          }
+        },
+        "TrailComponent": {
+          "class": "NiagaraComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        }
+      },
+      "class": "B_Item_Weapon_Greatsword_C",
+      "cpp_default_mesh_relative_location": {
+        "x": 2.2303,
+        "y": 0.0,
+        "z": -0.0
+      },
+      "cpp_default_mesh_relative_rotation": {
+        "pitch": -0.8985,
+        "yaw": -65.8513,
+        "roll": -4.4508
+      }
+    }
+  }
+}

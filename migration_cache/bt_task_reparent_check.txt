@@ -1,0 +1,61 @@
+=== Blueprint BT Task Reparent Check ===
+
+BTT_ClearKey:
+  Parent: /Script/SLFConversion.BTT_ClearKey
+  Status: C++
+
+BTT_GetCurrentLocation:
+  Parent: /Script/SLFConversion.BTT_GetCurrentLocation
+  Status: C++
+
+BTT_GetRandomPoint:
+  Parent: /Script/SLFConversion.BTT_GetRandomPoint
+  Status: C++
+
+BTT_GetRandomPointNearStartPosition:
+  Parent: /Script/SLFConversion.BTT_GetRandomPointNearStartPosition
+  Status: C++
+
+BTT_GetStrafePointAroundTarget:
+  Parent: /Script/SLFConversion.BTT_GetStrafePointAroundTarget
+  Status: C++
+
+BTT_PatrolPath:
+  Parent: /Script/SLFConversion.BTT_PatrolPath
+  Status: C++
+
+BTT_SetKey:
+  Parent: /Script/SLFConversion.BTT_SetKey
+  Status: C++
+
+BTT_SetMovementMode:
+  Parent: /Script/SLFConversion.BTT_SetMovementMode
+  Status: C++
+
+BTT_SimpleMoveTo:
+  Parent: /Script/SLFConversion.BTT_SimpleMoveTo
+  Status: C++
+
+BTT_SwitchState:
+  Parent: /Script/SLFConversion.BTT_SwitchState
+  Status: C++
+
+BTT_SwitchToPreviousState:
+  Parent: /Script/SLFConversion.BTT_SwitchToPreviousState
+  Status: C++
+
+BTT_ToggleFocus:
+  Parent: /Script/SLFConversion.BTT_ToggleFocus
+  Status: C++
+
+BTT_TryExecuteAbility:
+  Parent: /Script/SLFConversion.BTT_TryExecuteAbility
+  Status: C++
+
+============================================================
+SUMMARY:
+  Reparented to C++: 13
+  Still Blueprint base: 0
+
+ALL Blueprint BT tasks reparented to C++!
+C++ ExecuteTask should be called - check for logging in those functions.

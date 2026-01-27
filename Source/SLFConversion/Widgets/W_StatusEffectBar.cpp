@@ -47,6 +47,41 @@ void UW_StatusEffectBar::CacheWidgetReferences()
 }
 
 /**
+ * SetupEffect
+ *
+ * Call after Effect is assigned to bind to the effect's delegates.
+ */
+void UW_StatusEffectBar::SetupEffect()
+{
+	if (!IsValid(Effect))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_StatusEffectBar::SetupEffect - Effect is null!"));
+		return;
+	}
+
+	// Bind to effect's OnBuildupUpdated delegate
+	Effect->OnBuildupUpdated.AddUniqueDynamic(this, &UW_StatusEffectBar::OnBuildupUpdatedHandler);
+
+	// Bind to effect's OnStatusEffectFinished delegate
+	Effect->OnStatusEffectFinished.AddUniqueDynamic(this, &UW_StatusEffectBar::OnStatusEffectFinishedHandler);
+
+	UE_LOG(LogTemp, Log, TEXT("UW_StatusEffectBar::SetupEffect - Bound to effect: %s"), *Effect->GetName());
+
+	// Update initial progress
+	EventOnBuildupPercentChanged();
+}
+
+void UW_StatusEffectBar::OnBuildupUpdatedHandler()
+{
+	EventOnBuildupPercentChanged();
+}
+
+void UW_StatusEffectBar::OnStatusEffectFinishedHandler(FGameplayTag StatusEffectTag)
+{
+	EventOnStatusEffectRemoved(StatusEffectTag);
+}
+
+/**
  * EventOnBuildupPercentChanged
  *
  * Blueprint Logic (from JSON graphs):

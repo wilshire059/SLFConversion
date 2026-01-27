@@ -4,13 +4,16 @@
 // 20-PASS VALIDATION: 2026-01-03
 
 #include "Widgets/W_Settings_Entry.h"
+#include "Widgets/W_Settings_CenteredText.h"
 #include "Components/Border.h"
 #include "Components/TextBlock.h"
-#include "Components/WidgetSwitcher.h"
 #include "Components/Slider.h"
 #include "Components/Button.h"
+#include "Components/HorizontalBox.h"
+#include "Components/ComboBoxKey.h"
 #include "GameFramework/GameUserSettings.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Blueprint/WidgetTree.h"
 
 UW_Settings_Entry::UW_Settings_Entry(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -19,13 +22,19 @@ UW_Settings_Entry::UW_Settings_Entry(const FObjectInitializer& ObjectInitializer
 	, HoveredColor(FLinearColor::Yellow)
 	, Selected(false)
 	, CustomSettingsAsset(nullptr)
-	, SelectedBorder(nullptr)
+	, BackgroundBorder(nullptr)
 	, SettingNameText(nullptr)
-	, ValueText(nullptr)
-	, EntrySwitcher(nullptr)
-	, ValueSlider(nullptr)
-	, LeftArrow(nullptr)
-	, RightArrow(nullptr)
+	, SliderValue(nullptr)
+	, ButtonsValue(nullptr)
+	, Slider(nullptr)
+	, DecreaseButton(nullptr)
+	, IncreaseButton(nullptr)
+	, ButtonView(nullptr)
+	, DoubleButtonView(nullptr)
+	, SliderView(nullptr)
+	, DropdownView(nullptr)
+	, KeySelectorView(nullptr)
+	, DropDown(nullptr)
 {
 }
 
@@ -40,25 +49,40 @@ void UW_Settings_Entry::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	UE_LOG(LogTemp, Log, TEXT("[W_Settings_Entry] NativeConstruct - Type: %d"), static_cast<int32>(EntryType));
+	UE_LOG(LogTemp, Log, TEXT("[W_Settings_Entry] NativeConstruct - Type: %d, Decrease=%s, Increase=%s, Slider=%s"),
+		static_cast<int32>(EntryType),
+		DecreaseButton ? TEXT("OK") : TEXT("NULL"),
+		IncreaseButton ? TEXT("OK") : TEXT("NULL"),
+		Slider ? TEXT("OK") : TEXT("NULL"));
 
-	// Bind button events
-	if (LeftArrow)
+	// Bind button events for Decrease/Increase (used in DoubleButtonView)
+	if (DecreaseButton)
 	{
-		LeftArrow->OnClicked.AddDynamic(this, &UW_Settings_Entry::OnLeftArrowClicked);
+		DecreaseButton->OnClicked.AddDynamic(this, &UW_Settings_Entry::OnLeftArrowClicked);
+		UE_LOG(LogTemp, Log, TEXT("[W_Settings_Entry] Bound DecreaseButton.OnClicked"));
 	}
 
-	if (RightArrow)
+	if (IncreaseButton)
 	{
-		RightArrow->OnClicked.AddDynamic(this, &UW_Settings_Entry::OnRightArrowClicked);
+		IncreaseButton->OnClicked.AddDynamic(this, &UW_Settings_Entry::OnRightArrowClicked);
+		UE_LOG(LogTemp, Log, TEXT("[W_Settings_Entry] Bound IncreaseButton.OnClicked"));
 	}
 
-	if (ValueSlider)
+	if (Slider)
 	{
-		ValueSlider->OnValueChanged.AddDynamic(this, &UW_Settings_Entry::OnSliderValueChanged);
+		Slider->OnValueChanged.AddDynamic(this, &UW_Settings_Entry::OnSliderValueChanged);
+		UE_LOG(LogTemp, Log, TEXT("[W_Settings_Entry] Bound Slider.OnValueChanged"));
 	}
 
-	// Set initial entry type
+	// Bind ComboBox widget generation delegates
+	if (DropDown)
+	{
+		DropDown->OnGenerateItemWidget.BindDynamic(this, &UW_Settings_Entry::OnGenerateItemWidget);
+		DropDown->OnGenerateContentWidget.BindDynamic(this, &UW_Settings_Entry::OnGenerateContentWidget);
+		UE_LOG(LogTemp, Log, TEXT("[W_Settings_Entry] Bound ComboBox widget generation delegates"));
+	}
+
+	// Set initial entry type (shows/hides appropriate views)
 	SetEntryType(EntryType);
 
 	// Initially not selected
@@ -68,19 +92,26 @@ void UW_Settings_Entry::NativeConstruct()
 void UW_Settings_Entry::NativeDestruct()
 {
 	// Unbind events
-	if (LeftArrow)
+	if (DecreaseButton)
 	{
-		LeftArrow->OnClicked.RemoveDynamic(this, &UW_Settings_Entry::OnLeftArrowClicked);
+		DecreaseButton->OnClicked.RemoveDynamic(this, &UW_Settings_Entry::OnLeftArrowClicked);
 	}
 
-	if (RightArrow)
+	if (IncreaseButton)
 	{
-		RightArrow->OnClicked.RemoveDynamic(this, &UW_Settings_Entry::OnRightArrowClicked);
+		IncreaseButton->OnClicked.RemoveDynamic(this, &UW_Settings_Entry::OnRightArrowClicked);
 	}
 
-	if (ValueSlider)
+	if (Slider)
 	{
-		ValueSlider->OnValueChanged.RemoveDynamic(this, &UW_Settings_Entry::OnSliderValueChanged);
+		Slider->OnValueChanged.RemoveDynamic(this, &UW_Settings_Entry::OnSliderValueChanged);
+	}
+
+	// Unbind ComboBox delegates
+	if (DropDown)
+	{
+		DropDown->OnGenerateItemWidget.Unbind();
+		DropDown->OnGenerateContentWidget.Unbind();
 	}
 
 	Super::NativeDestruct();
@@ -96,47 +127,58 @@ void UW_Settings_Entry::ApplyVisualConfig()
 		SettingNameText->SetText(SettingName);
 	}
 
-	// Initially hide selected border
-	if (SelectedBorder)
+	// Background border is always visible but color changes on selection
+	if (BackgroundBorder)
 	{
-		SelectedBorder->SetVisibility(ESlateVisibility::Collapsed);
+		BackgroundBorder->SetBrushColor(UnhoveredColor);
 	}
 }
 
-void UW_Settings_Entry::SetEntryType_Implementation(ESLFSettingEntry InType)
+void UW_Settings_Entry::SetEntryType_Implementation(ESLFSettingEntry Type)
 {
-	UE_LOG(LogTemp, Log, TEXT("[W_Settings_Entry] SetEntryType: %d"), static_cast<int32>(InType));
+	UE_LOG(LogTemp, Log, TEXT("[W_Settings_Entry] SetEntryType: %d"), static_cast<int32>(Type));
 
-	EntryType = InType;
+	EntryType = Type;
 
-	// Switch the widget switcher to the appropriate panel based on entry type
-	if (EntrySwitcher)
+	// Show/hide views based on entry type (Blueprint uses visibility, not WidgetSwitcher)
+	auto ShowView = [](UWidget* View, bool bShow)
 	{
-		int32 PanelIndex = 0;
-		switch (EntryType)
+		if (View)
 		{
-		case ESLFSettingEntry::DropDown:
-			PanelIndex = 0;
-			break;
-		case ESLFSettingEntry::SingleButton:
-			PanelIndex = 1;
-			break;
-		case ESLFSettingEntry::DoubleButton:
-			PanelIndex = 2;
-			break;
-		case ESLFSettingEntry::Slider:
-			PanelIndex = 3;
-			break;
-		case ESLFSettingEntry::InputKeySelector:
-			PanelIndex = 4;
-			break;
-		default:
-			// Handle invalid/stale enum values from Blueprint assets
-			UE_LOG(LogTemp, Warning, TEXT("[W_Settings_Entry] Unknown EntryType: %d, defaulting to DropDown"), static_cast<int32>(EntryType));
-			PanelIndex = 0;
-			break;
+			View->SetVisibility(bShow ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
 		}
-		EntrySwitcher->SetActiveWidgetIndex(PanelIndex);
+	};
+
+	// Hide all views first
+	ShowView(ButtonView, false);
+	ShowView(DoubleButtonView, false);
+	ShowView(SliderView, false);
+	ShowView(DropdownView, false);
+	ShowView(KeySelectorView, false);
+
+	// Show the appropriate view
+	switch (EntryType)
+	{
+	case ESLFSettingEntry::SingleButton:
+		ShowView(ButtonView, true);
+		break;
+	case ESLFSettingEntry::DoubleButton:
+		ShowView(DoubleButtonView, true);
+		break;
+	case ESLFSettingEntry::Slider:
+		ShowView(SliderView, true);
+		break;
+	case ESLFSettingEntry::DropDown:
+		ShowView(DropdownView, true);
+		break;
+	case ESLFSettingEntry::InputKeySelector:
+		ShowView(KeySelectorView, true);
+		break;
+	default:
+		// Handle invalid/stale enum values from Blueprint assets
+		UE_LOG(LogTemp, Warning, TEXT("[W_Settings_Entry] Unknown EntryType: %d, defaulting to DropDown"), static_cast<int32>(Type));
+		ShowView(DropdownView, true);
+		break;
 	}
 }
 
@@ -167,17 +209,27 @@ void UW_Settings_Entry::SetCurrentValue_Implementation(const FString& InCurrentV
 
 	CurrentValue = InCurrentValue;
 
-	// Update the value text display
-	if (ValueText)
+	// Update the appropriate value text display based on entry type
+	if (EntryType == ESLFSettingEntry::Slider)
 	{
-		ValueText->SetText(FText::FromString(CurrentValue));
+		if (SliderValue)
+		{
+			SliderValue->SetText(FText::FromString(CurrentValue));
+		}
+		// Update slider position
+		if (Slider)
+		{
+			int32 IntValue = FCString::Atoi(*CurrentValue);
+			Slider->SetValue(static_cast<float>(IntValue) / 100.0f);
+		}
 	}
-
-	// Update slider if applicable
-	if (ValueSlider && EntryType == ESLFSettingEntry::Slider)
+	else
 	{
-		int32 IntValue = FCString::Atoi(*CurrentValue);
-		ValueSlider->SetValue(static_cast<float>(IntValue) / 100.0f);
+		// DoubleButton, DropDown use ButtonsValue
+		if (ButtonsValue)
+		{
+			ButtonsValue->SetText(FText::FromString(CurrentValue));
+		}
 	}
 }
 
@@ -201,14 +253,7 @@ int32 UW_Settings_Entry::GetDecrementedValue_Implementation(int32 MaxClamp)
 	return NewValue;
 }
 
-UWidget* UW_Settings_Entry::OnGenerateItemWidget_Implementation(const FName& InItem)
-{
-	UE_LOG(LogTemp, Log, TEXT("[W_Settings_Entry] OnGenerateItemWidget: %s"), *InItem.ToString());
-
-	// Create a text block for the dropdown item
-	// This would typically be done with a widget pool in production
-	return nullptr;
-}
+// NOTE: OnGenerateItemWidget is implemented in Blueprint (creates W_Settings_CenteredText)
 
 void UW_Settings_Entry::SetCurrentBoolValue_Implementation(bool InCurrentValue)
 {
@@ -216,9 +261,10 @@ void UW_Settings_Entry::SetCurrentBoolValue_Implementation(bool InCurrentValue)
 
 	CurrentValue = InCurrentValue ? TEXT("1") : TEXT("0");
 
-	if (ValueText)
+	// Bool values are typically shown in ButtonsValue (DoubleButton view)
+	if (ButtonsValue)
 	{
-		ValueText->SetText(FText::FromString(InCurrentValue ? TEXT("On") : TEXT("Off")));
+		ButtonsValue->SetText(FText::FromString(InCurrentValue ? TEXT("On") : TEXT("Off")));
 	}
 }
 
@@ -245,9 +291,10 @@ void UW_Settings_Entry::SetCurrentScreenModeValue_Implementation(EWindowMode::Ty
 		break;
 	}
 
-	if (ValueText)
+	// Screen mode is shown in ButtonsValue (DropDown/DoubleButton view)
+	if (ButtonsValue)
 	{
-		ValueText->SetText(FText::FromString(ModeText));
+		ButtonsValue->SetText(FText::FromString(ModeText));
 	}
 }
 
@@ -257,31 +304,28 @@ void UW_Settings_Entry::SetCurrentResolutionValue_Implementation(const FIntPoint
 
 	CurrentValue = FString::Printf(TEXT("%dx%d"), Resolution.X, Resolution.Y);
 
-	if (ValueText)
+	// Resolution is shown in ButtonsValue (DropDown view)
+	if (ButtonsValue)
 	{
-		ValueText->SetText(FText::FromString(CurrentValue));
+		ButtonsValue->SetText(FText::FromString(CurrentValue));
 	}
 }
 
-void UW_Settings_Entry::SetEntrySelected_Implementation(bool InSelected)
+void UW_Settings_Entry::SetEntrySelected_Implementation(bool bSelected)
 {
-	UE_LOG(LogTemp, Log, TEXT("[W_Settings_Entry] SetEntrySelected: %s"), InSelected ? TEXT("true") : TEXT("false"));
+	UE_LOG(LogTemp, Log, TEXT("[W_Settings_Entry] SetEntrySelected: %s"), bSelected ? TEXT("true") : TEXT("false"));
 
-	Selected = InSelected;
+	Selected = bSelected;
 
-	if (SelectedBorder)
+	// Background border color changes based on selection (not visibility)
+	if (BackgroundBorder)
 	{
-		if (Selected)
-		{
-			SelectedBorder->SetVisibility(ESlateVisibility::Visible);
-			SelectedBorder->SetBrushColor(HoveredColor);
-			OnEntrySelected.Broadcast(this);
-		}
-		else
-		{
-			SelectedBorder->SetVisibility(ESlateVisibility::Collapsed);
-			SelectedBorder->SetBrushColor(UnhoveredColor);
-		}
+		BackgroundBorder->SetBrushColor(Selected ? HoveredColor : UnhoveredColor);
+	}
+
+	if (Selected)
+	{
+		OnEntrySelected.Broadcast(this);
 	}
 }
 
@@ -289,7 +333,16 @@ void UW_Settings_Entry::SetCameraInvertValue_Implementation(bool TargetBool)
 {
 	UE_LOG(LogTemp, Log, TEXT("[W_Settings_Entry] SetCameraInvertValue: %s"), TargetBool ? TEXT("true") : TEXT("false"));
 
-	SetCurrentBoolValue(TargetBool);
+	// Camera invert shows "Inverted" or "Normal" (not "On"/"Off" like regular bools)
+	// This matches the Blueprint's SelectText("Inverted", "Normal", bPickA=TargetBool)
+	CurrentValue = TargetBool ? TEXT("1") : TEXT("0");
+
+	if (ButtonsValue)
+	{
+		FText DisplayText = TargetBool ? FText::FromString(TEXT("Inverted")) : FText::FromString(TEXT("Normal"));
+		ButtonsValue->SetText(DisplayText);
+		UE_LOG(LogTemp, Log, TEXT("[W_Settings_Entry] SetCameraInvertValue - ButtonsValue set to: %s"), TargetBool ? TEXT("Inverted") : TEXT("Normal"));
+	}
 }
 
 void UW_Settings_Entry::EventDecreaseSetting_Implementation()
@@ -458,4 +511,30 @@ void UW_Settings_Entry::OnSliderValueChanged(float Value)
 
 	int32 IntValue = FMath::RoundToInt(Value * 100.0f);
 	SetCurrentValue(FString::FromInt(IntValue));
+}
+
+UWidget* UW_Settings_Entry::OnGenerateItemWidget(FName Item)
+{
+	UE_LOG(LogTemp, Log, TEXT("[W_Settings_Entry] OnGenerateItemWidget: %s"), *Item.ToString());
+
+	// Create W_Settings_CenteredText widget
+	UClass* WidgetClass = UW_Settings_CenteredText::StaticClass();
+	UW_Settings_CenteredText* CenteredTextWidget = CreateWidget<UW_Settings_CenteredText>(GetOwningPlayer(), WidgetClass);
+
+	if (CenteredTextWidget)
+	{
+		// Set the text to the item name
+		FText ItemText = FText::FromName(Item);
+		CenteredTextWidget->EventSetText(ItemText);
+	}
+
+	return CenteredTextWidget;
+}
+
+UWidget* UW_Settings_Entry::OnGenerateContentWidget(FName Item)
+{
+	UE_LOG(LogTemp, Log, TEXT("[W_Settings_Entry] OnGenerateContentWidget: %s"), *Item.ToString());
+
+	// Same logic as OnGenerateItemWidget for content display
+	return OnGenerateItemWidget(Item);
 }

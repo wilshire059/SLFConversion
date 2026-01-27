@@ -1,0 +1,107 @@
+{
+  "DA_Cube": {
+    "class": "PDA_Item_C",
+    "crafing_unlocked": false,
+    "sell_price": 0
+  },
+  "DA_ThrowingKnife": {
+    "class": "PDA_Item_C",
+    "crafing_unlocked": false,
+    "sell_price": 0
+  },
+  "DA_Apple": {
+    "class": "PDA_Item_C",
+    "crafing_unlocked": false,
+    "sell_price": 0
+  },
+  "DA_HealthFlask": {
+    "class": "PDA_Item_C",
+    "crafing_unlocked": false,
+    "sell_price": 0
+  },
+  "DA_BossMace": {
+    "class": "PDA_Item_C",
+    "crafing_unlocked": false,
+    "sell_price": 0
+  },
+  "DA_CrimsonEverbloom": {
+    "class": "PDA_Item_C",
+    "crafing_unlocked": false,
+    "sell_price": 0
+  },
+  "DA_ExampleArmor": {
+    "class": "PDA_Item_C",
+    "crafing_unlocked": false,
+    "sell_price": 0
+  },
+  "DA_ExampleArmor02": {
+    "class": "PDA_Item_C",
+    "crafing_unlocked": false,
+    "sell_price": 0
+  },
+  "DA_ExampleBracers": {
+    "class": "PDA_Item_C",
+    "crafing_unlocked": false,
+    "sell_price": 0
+  },
+  "DA_ExampleGreaves": {
+    "class": "PDA_Item_C",
+    "crafing_unlocked": false,
+    "sell_price": 0
+  },
+  "DA_ExampleHat": {
+    "class": "PDA_Item_C",
+    "crafing_unlocked": false,
+    "sell_price": 0
+  },
+  "DA_ExampleHelmet": {
+    "class": "PDA_Item_C",
+    "crafing_unlocked": false,
+    "sell_price": 0
+  },
+  "DA_ExampleTalisman": {
+    "class": "PDA_Item_C",
+    "crafing_unlocked": false,
+    "sell_price": 0
+  },
+  "DA_Greatsword": {
+    "class": "PDA_Item_C",
+    "crafing_unlocked": false,
+    "sell_price": 0
+  },
+  "DA_Katana": {
+    "class": "PDA_Item_C",
+    "crafing_unlocked": false,
+    "sell_price": 0
+  },
+  "DA_Lantern": {
+    "class": "PDA_Item_C",
+    "crafing_unlocked": false,
+    "sell_price": 0
+  },
+  "DA_PoisonSword": {
+    "class": "PDA_Item_C",
+    "crafing_unlocked": false,
+    "sell_price": 0
+  },
+  "DA_PrisonKey": {
+    "class": "PDA_Item_C",
+    "crafing_unlocked": false,
+    "sell_price": 0
+  },
+  "DA_Shield01": {
+    "class": "PDA_Item_C",
+    "crafing_unlocked": false,
+    "sell_price": 0
+  },
+  "DA_Sword01": {
+    "class": "PDA_Item_C",
+    "crafing_unlocked": false,
+    "sell_price": 0
+  },
+  "DA_Sword02": {
+    "class": "PDA_Item_C",
+    "crafing_unlocked": false,
+    "sell_price": 0
+  }
+}

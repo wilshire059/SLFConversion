@@ -1,0 +1,146 @@
+
+======================================================================
+EXTRACTING ARMOR MESH DATA FROM DATA ASSETS (Direct Property Access)
+======================================================================
+
+[DA_ExampleArmor]
+  Loaded: <class 'PrimaryDataAsset'>
+  Got ItemInformation: <class 'StructBase'>
+  ItemInformation properties: []
+  Could not get EquipmentDetails property
+  Direct access failed, trying COPY export...
+  Read with encoding: utf-8
+  Exported 3050 bytes
+  Saved raw export to C:/scripts/SLFConversion/migration_cache/DA_ExampleArmor_export.txt
+  *** Found 'SkeletalMesh' in export! ***
+  Found SkeletalMeshInfo section: 519 chars
+  Found 2 mesh entries
+    Mesh: DA_Quinn -> /Game/SoulslikeFramework/Meshes/SKM/Armor/Quinn/SKM_Quinn_Armor01.SKM_Quinn_Armor01
+    Mesh: DA_Manny -> /Game/SoulslikeFramework/Meshes/SKM/Armor/Manny/SKM_MannyArmor_01.SKM_MannyArmor_01
+    Stat: SoulslikeFramework.Stat.Misc.Weight = 10
+    Stat: SoulslikeFramework.Stat.Defense.Negation.Fire = 1
+    Stat: SoulslikeFramework.Stat.Defense.Negation.Frost = 1
+    Stat: SoulslikeFramework.Stat.Defense.Negation.Physical = 5
+    Slot: SoulslikeFramework.Equipment.SlotType.Armor
+  [OK] Meshes: 2, Stats: 4, Slots: 1
+
+[DA_ExampleArmor02]
+  Loaded: <class 'PrimaryDataAsset'>
+  Got ItemInformation: <class 'StructBase'>
+  ItemInformation properties: []
+  Could not get EquipmentDetails property
+  Direct access failed, trying COPY export...
+  Read with encoding: utf-16
+  Exported 3218 bytes
+  Saved raw export to C:/scripts/SLFConversion/migration_cache/DA_ExampleArmor02_export.txt
+  *** Found 'SkeletalMesh' in export! ***
+  Found SkeletalMeshInfo section: 519 chars
+  Found 2 mesh entries
+    Mesh: DA_Quinn -> /Game/SoulslikeFramework/Meshes/SKM/Armor/Quinn/SKM_Quinn_Armor02.SKM_Quinn_Armor02
+    Mesh: DA_Manny -> /Game/SoulslikeFramework/Meshes/SKM/Armor/Manny/SKM_MannyArmor_02.SKM_MannyArmor_02
+    Stat: SoulslikeFramework.Stat.Misc.Weight = 8
+    Stat: SoulslikeFramework.Stat.Defense.Negation.Holy = 5
+    Stat: SoulslikeFramework.Stat.Defense.Negation.Lightning = 5
+    Stat: SoulslikeFramework.Stat.Defense.Negation.Physical = 13
+    Slot: SoulslikeFramework.Equipment.SlotType.Armor
+  [OK] Meshes: 2, Stats: 4, Slots: 1
+
+[DA_ExampleHelmet]
+  Loaded: <class 'PrimaryDataAsset'>
+  Got ItemInformation: <class 'StructBase'>
+  ItemInformation properties: []
+  Could not get EquipmentDetails property
+  Direct access failed, trying COPY export...
+  Read with encoding: utf-16
+  Exported 3176 bytes
+  *** Found 'SkeletalMesh' in export! ***
+  Found SkeletalMeshInfo section: 507 chars
+  Found 2 mesh entries
+    Mesh: DA_Quinn -> /Game/SoulslikeFramework/Meshes/SKM/Armor/Quinn/SKM_QuinnHelm.SKM_QuinnHelm
+    Mesh: DA_Manny -> /Game/SoulslikeFramework/Meshes/SKM/Armor/Manny/SKM_MannyHelmet.SKM_MannyHelmet
+    Stat: SoulslikeFramework.Stat.Misc.Weight = 7
+    Stat: SoulslikeFramework.Stat.Defense.Negation.Holy = 11
+    Stat: SoulslikeFramework.Stat.Defense.Negation.Lightning = 3
+    Slot: SoulslikeFramework.Equipment.SlotType.Head
+  [OK] Meshes: 2, Stats: 3, Slots: 1
+
+[DA_ExampleHat]
+  Loaded: <class 'PrimaryDataAsset'>
+  Got ItemInformation: <class 'StructBase'>
+  ItemInformation properties: []
+  Could not get EquipmentDetails property
+  Direct access failed, trying COPY export...
+  Read with encoding: utf-16
+  Exported 2968 bytes
+  *** Found 'SkeletalMesh' in export! ***
+  Found SkeletalMeshInfo section: 499 chars
+  Found 2 mesh entries
+    Mesh: DA_Quinn -> /Game/SoulslikeFramework/Meshes/SKM/Armor/Quinn/SKM_QuinnHat.SKM_QuinnHat
+    Mesh: DA_Manny -> /Game/SoulslikeFramework/Meshes/SKM/Armor/Manny/SKM_MannyHat.SKM_MannyHat
+    Stat: SoulslikeFramework.Stat.Primary.Dexterity = 5
+    Slot: SoulslikeFramework.Equipment.SlotType.Head
+  [OK] Meshes: 2, Stats: 1, Slots: 1
+
+[DA_ExampleBracers]
+  Loaded: <class 'PrimaryDataAsset'>
+  Got ItemInformation: <class 'StructBase'>
+  ItemInformation properties: []
+  Could not get EquipmentDetails property
+  Direct access failed, trying COPY export...
+  Read with encoding: utf-16
+  Exported 3070 bytes
+  *** Found 'SkeletalMesh' in export! ***
+  Found SkeletalMeshInfo section: 513 chars
+  Found 2 mesh entries
+    Mesh: DA_Quinn -> /Game/SoulslikeFramework/Meshes/SKM/Armor/Quinn/SKM_Quinn_Gloves.SKM_Quinn_Gloves
+    Mesh: DA_Manny -> /Game/SoulslikeFramework/Meshes/SKM/Armor/Manny/SKM_MannyGloves.SKM_MannyGloves
+    Stat: SoulslikeFramework.Stat.Misc.Weight = 5
+    Stat: SoulslikeFramework.Stat.Defense.Negation.Holy = 3
+    Stat: SoulslikeFramework.Stat.Defense.Negation.Lightning = 3
+    Slot: SoulslikeFramework.Equipment.SlotType.Gloves
+  [OK] Meshes: 2, Stats: 3, Slots: 1
+
+[DA_ExampleGreaves]
+  Loaded: <class 'PrimaryDataAsset'>
+  Got ItemInformation: <class 'StructBase'>
+  ItemInformation properties: []
+  Could not get EquipmentDetails property
+  Direct access failed, trying COPY export...
+  Read with encoding: utf-16
+  Exported 3191 bytes
+  *** Found 'SkeletalMesh' in export! ***
+  Found SkeletalMeshInfo section: 517 chars
+  Found 2 mesh entries
+    Mesh: DA_Quinn -> /Game/SoulslikeFramework/Meshes/SKM/Armor/Quinn/SKM_Quinn_Greaves.SKM_Quinn_Greaves
+    Mesh: DA_Manny -> /Game/SoulslikeFramework/Meshes/SKM/Armor/Manny/SKM_MannyGreaves.SKM_MannyGreaves
+    Stat: SoulslikeFramework.Stat.Misc.Weight = 3
+    Stat: SoulslikeFramework.Stat.Defense.Negation.Magic = 3
+    Stat: SoulslikeFramework.Stat.Defense.Negation.Physical = 5
+    Stat: SoulslikeFramework.Stat.Defense.Negation.Lightning = 2
+    Slot: SoulslikeFramework.Equipment.SlotType.Greaves
+  [OK] Meshes: 2, Stats: 4, Slots: 1
+
+[DA_ExampleTalisman]
+  Loaded: <class 'PrimaryDataAsset'>
+  Got ItemInformation: <class 'StructBase'>
+  ItemInformation properties: []
+  Could not get EquipmentDetails property
+  Direct access failed, trying COPY export...
+  Read with encoding: utf-8
+  Exported 2940 bytes
+  NOTE: No 'SkeletalMesh' found in export text
+    Slot: SoulslikeFramework.Equipment.SlotType.Trinket 1
+  [OK] Meshes: 0, Stats: 0, Slots: 1
+
+======================================================================
+SAVING TO C:/scripts/SLFConversion/migration_cache/armor_mesh_data.json
+======================================================================
+
+Extracted data for 7 armor items:
+  - DA_ExampleArmor: 2 meshes, 4 stats
+  - DA_ExampleArmor02: 2 meshes, 4 stats
+  - DA_ExampleHelmet: 2 meshes, 3 stats
+  - DA_ExampleHat: 2 meshes, 1 stats
+  - DA_ExampleBracers: 2 meshes, 3 stats
+  - DA_ExampleGreaves: 2 meshes, 4 stats
+  - DA_ExampleTalisman: 0 meshes, 0 stats

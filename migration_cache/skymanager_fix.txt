@@ -1,0 +1,49 @@
+============================================================
+Fixing B_SkyManager Level Instance
+============================================================
+Loading Blueprint: /Game/SoulslikeFramework/Blueprints/Sky/B_SkyManager
+Blueprint class: B_SkyManager_C
+CDO has 8 components
+  - DefaultSceneRoot
+  - DirectionalLight_Sun
+  - DirectionalLight_Moon
+  - SkyLight
+  - SkyAtmosphere
+  - VolumetricCloud
+  - ExponentialHeightFog
+  - SM_SkySphere
+Got world: Untitled
+Searching for existing B_SkyManager instances...
+Total actors in world: 4
+
+No existing B_SkyManager instances found.
+Spawning new instance at origin...
+Spawned new B_SkyManager: B_SkyManager_C_0
+  Components: 11
+    - DefaultSceneRoot
+    - DirectionalLight_Sun
+    - DirectionalLight_Moon
+    - SkyLight
+    - SkyAtmosphere
+    - VolumetricCloud
+    - ExponentialHeightFog
+    - SM_SkySphere
+    - BillboardComponent_0
+    - BillboardComponent_1
+    - BillboardComponent_2
+
+--- Saving Level ---
+WARNING: Could not auto-save level
+Please save the level manually (Ctrl+S)
+
+============================================================
+FIX COMPLETE
+============================================================
+
+Next steps:
+1. Verify the level was saved
+2. Run PIE test
+3. Rest at resting point and change time
+4. Verify sky lighting changes
+
+Results written to: C:/scripts/SLFConversion/migration_cache/skymanager_fix.txt

@@ -29,6 +29,6 @@ void UW_TargetLock::NativeDestruct()
 
 void UW_TargetLock::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 

@@ -1,0 +1,152 @@
+{
+  "B_Item_Weapon": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/B_Item_Weapon",
+    "hierarchy": [
+      "B_Item_Weapon_C"
+    ],
+    "has_slf_weapon_base": false,
+    "cdo_location": "(0.00, 0.00, 0.00)",
+    "cdo_rotation": "(P=0.00, Y=0.00, R=0.00)",
+    "cdo_mesh": "None",
+    "components": [
+      {
+        "name": "WeaponMesh",
+        "location": "(0.00, 0.00, 0.00)",
+        "rotation": "(P=0.00, Y=0.00, R=0.00)",
+        "mesh": "NONE"
+      },
+      {
+        "name": "StaticMesh",
+        "location": "(0.00, 0.00, 0.00)",
+        "rotation": "(P=0.00, Y=0.00, R=0.00)",
+        "mesh": "NONE"
+      }
+    ]
+  },
+  "B_Item_Weapon_BossMace": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_BossMace",
+    "hierarchy": [
+      "B_Item_Weapon_BossMace_C"
+    ],
+    "has_slf_weapon_base": false,
+    "cdo_location": "(0.00, 0.00, 0.00)",
+    "cdo_rotation": "(P=0.00, Y=0.00, R=0.00)",
+    "cdo_mesh": "SM_Greatsword",
+    "components": [
+      {
+        "name": "WeaponMesh",
+        "location": "(0.00, 0.00, 0.00)",
+        "rotation": "(P=0.00, Y=0.00, R=0.00)",
+        "mesh": "NONE"
+      }
+    ]
+  },
+  "B_Item_Weapon_Greatsword": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Greatsword",
+    "hierarchy": [
+      "B_Item_Weapon_Greatsword_C"
+    ],
+    "has_slf_weapon_base": false,
+    "cdo_location": "(2.23, 0.00, 0.00)",
+    "cdo_rotation": "(P=-0.90, Y=-65.85, R=-4.45)",
+    "cdo_mesh": "SM_Greatsword",
+    "components": [
+      {
+        "name": "WeaponMesh",
+        "location": "(0.00, 0.00, 0.00)",
+        "rotation": "(P=0.00, Y=0.00, R=0.00)",
+        "mesh": "NONE"
+      }
+    ]
+  },
+  "B_Item_Weapon_Katana": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Katana",
+    "hierarchy": [
+      "B_Item_Weapon_Katana_C"
+    ],
+    "has_slf_weapon_base": false,
+    "cdo_location": "(0.00, 0.00, -1.64)",
+    "cdo_rotation": "(P=0.00, Y=-103.24, R=0.00)",
+    "cdo_mesh": "SM_Katana",
+    "components": [
+      {
+        "name": "WeaponMesh",
+        "location": "(0.00, 0.00, 0.00)",
+        "rotation": "(P=0.00, Y=0.00, R=0.00)",
+        "mesh": "NONE"
+      }
+    ]
+  },
+  "B_Item_Weapon_PoisonSword": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_PoisonSword",
+    "hierarchy": [
+      "B_Item_Weapon_PoisonSword_C"
+    ],
+    "has_slf_weapon_base": false,
+    "cdo_location": "(0.00, 0.00, 0.00)",
+    "cdo_rotation": "(P=0.00, Y=-90.00, R=0.00)",
+    "cdo_mesh": "None",
+    "components": [
+      {
+        "name": "WeaponMesh",
+        "location": "(0.00, 0.00, 0.00)",
+        "rotation": "(P=0.00, Y=0.00, R=0.00)",
+        "mesh": "NONE"
+      }
+    ]
+  },
+  "B_Item_Weapon_Shield": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Shield",
+    "hierarchy": [
+      "B_Item_Weapon_Shield_C"
+    ],
+    "has_slf_weapon_base": false,
+    "cdo_location": "(0.00, 0.00, 0.23)",
+    "cdo_rotation": "(P=0.00, Y=0.00, R=0.00)",
+    "cdo_mesh": "SM_Shield",
+    "components": [
+      {
+        "name": "WeaponMesh",
+        "location": "(0.00, 0.00, 0.00)",
+        "rotation": "(P=0.00, Y=0.00, R=0.00)",
+        "mesh": "NONE"
+      }
+    ]
+  },
+  "B_Item_Weapon_SwordExample01": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_SwordExample01",
+    "hierarchy": [
+      "B_Item_Weapon_SwordExample01_C"
+    ],
+    "has_slf_weapon_base": false,
+    "cdo_location": "(0.00, 0.00, 36.49)",
+    "cdo_rotation": "(P=0.00, Y=0.00, R=180.00)",
+    "cdo_mesh": "SM_ExampleSword01",
+    "components": [
+      {
+        "name": "WeaponMesh",
+        "location": "(0.00, 0.00, 0.00)",
+        "rotation": "(P=0.00, Y=0.00, R=0.00)",
+        "mesh": "NONE"
+      }
+    ]
+  },
+  "B_Item_Weapon_SwordExample02": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_SwordExample02",
+    "hierarchy": [
+      "B_Item_Weapon_SwordExample02_C"
+    ],
+    "has_slf_weapon_base": false,
+    "cdo_location": "(0.00, 0.00, 50.09)",
+    "cdo_rotation": "(P=0.00, Y=0.00, R=-130.00)",
+    "cdo_mesh": "SM_ExampleSword02",
+    "components": [
+      {
+        "name": "WeaponMesh",
+        "location": "(0.00, 0.00, 0.00)",
+        "rotation": "(P=0.00, Y=0.00, R=0.00)",
+        "mesh": "NONE"
+      }
+    ]
+  }
+}

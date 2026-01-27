@@ -29,7 +29,7 @@ void UW_Error::NativeDestruct()
 
 void UW_Error::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 void UW_Error::EventSetMessage_Implementation(const FText& Title, const FText& InMessage)
 {

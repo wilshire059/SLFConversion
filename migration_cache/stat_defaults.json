@@ -1,0 +1,101 @@
+{
+  "B_Vigor": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Vigor",
+    "tag": "SoulslikeFramework.Stat.Primary.Vigor",
+    "display_name": "Vigor",
+    "current_value": 0.0,
+    "max_value": 99.0,
+    "show_max_value": false,
+    "display_as_percent": false
+  },
+  "B_Strength": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Strength",
+    "tag": "SoulslikeFramework.Stat.Primary.Strength",
+    "display_name": "Strength",
+    "current_value": 0.0,
+    "max_value": 99.0,
+    "show_max_value": false,
+    "display_as_percent": false
+  },
+  "B_Dexterity": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Dexterity",
+    "tag": "SoulslikeFramework.Stat.Primary.Dexterity",
+    "display_name": "Dexterity",
+    "current_value": 0.0,
+    "max_value": 99.0,
+    "show_max_value": false,
+    "display_as_percent": false
+  },
+  "B_Intelligence": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Intelligence",
+    "tag": "SoulslikeFramework.Stat.Primary.Intelligence",
+    "display_name": "Intelligence",
+    "current_value": 0.0,
+    "max_value": 99.0,
+    "show_max_value": false,
+    "display_as_percent": false
+  },
+  "B_Faith": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Faith",
+    "tag": "SoulslikeFramework.Stat.Primary.Faith",
+    "display_name": "Faith",
+    "current_value": 0.0,
+    "max_value": 99.0,
+    "show_max_value": false,
+    "display_as_percent": false
+  },
+  "B_Arcane": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Arcane",
+    "tag": "SoulslikeFramework.Stat.Primary.Arcane",
+    "display_name": "Arcane",
+    "current_value": 0.0,
+    "max_value": 99.0,
+    "show_max_value": false,
+    "display_as_percent": false
+  },
+  "B_Mind": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Mind",
+    "tag": "SoulslikeFramework.Stat.Primary.Mind",
+    "display_name": "Mind",
+    "current_value": 0.0,
+    "max_value": 99.0,
+    "show_max_value": false,
+    "display_as_percent": false
+  },
+  "B_Endurance": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Endurance",
+    "tag": "SoulslikeFramework.Stat.Primary.Endurance",
+    "display_name": "Endurance",
+    "current_value": 0.0,
+    "max_value": 99.0,
+    "show_max_value": false,
+    "display_as_percent": false
+  },
+  "B_HP": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Secondary/B_HP",
+    "tag": "SoulslikeFramework.Stat.Secondary.HP",
+    "display_name": "HP",
+    "current_value": 500.0,
+    "max_value": 500.0,
+    "show_max_value": false,
+    "display_as_percent": false
+  },
+  "B_Stamina": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Secondary/B_Stamina",
+    "tag": "SoulslikeFramework.Stat.Secondary.Stamina",
+    "display_name": "Stamina",
+    "current_value": 50.0,
+    "max_value": 50.0,
+    "show_max_value": false,
+    "display_as_percent": false
+  },
+  "B_FP": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Secondary/B_FP",
+    "tag": "SoulslikeFramework.Stat.Secondary.FP",
+    "display_name": "FP",
+    "current_value": 100.0,
+    "max_value": 100.0,
+    "show_max_value": false,
+    "display_as_percent": false
+  }
+}

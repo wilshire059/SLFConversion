@@ -1,8 +1,11 @@
 // B_Interactable.cpp
 // C++ implementation for Blueprint B_Interactable
 //
-// 20-PASS VALIDATION: 2026-01-07
+// 20-PASS VALIDATION: 2026-01-17
 // Source: BlueprintDNA/Blueprint/B_Interactable.json
+//
+// COMPONENT OWNERSHIP: Blueprint SCS owns all components.
+// C++ only caches references at runtime. See CLAUDE.md for pattern.
 
 #include "Blueprints/B_Interactable.h"
 #include "Components/AC_SaveLoadManager.h"
@@ -13,10 +16,44 @@
 
 AB_Interactable::AB_Interactable()
 {
+	// NOTE: Components are created by Blueprint SCS (has mesh assignments)
+	// C++ caches references in BeginPlay - DO NOT create components here
+	InteractableSM = nullptr;
+	InteractableSK = nullptr;
+
 	// Default values
 	CanBeTraced = true;
 	IsActivated = false;
 	// ID is auto-generated as FGuid::NewGuid() if needed, or can be set in editor
+}
+
+void AB_Interactable::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// Find mesh components created by Blueprint SCS
+	// Look for "Interactable SM" and "Interactable SK" by name
+	TArray<UStaticMeshComponent*> StaticMeshes;
+	GetComponents<UStaticMeshComponent>(StaticMeshes);
+	for (UStaticMeshComponent* SMC : StaticMeshes)
+	{
+		if (SMC && SMC->GetName().Contains(TEXT("Interactable")))
+		{
+			InteractableSM = SMC;
+			break;
+		}
+	}
+
+	TArray<USkeletalMeshComponent*> SkeletalMeshes;
+	GetComponents<USkeletalMeshComponent>(SkeletalMeshes);
+	for (USkeletalMeshComponent* SKC : SkeletalMeshes)
+	{
+		if (SKC && SKC->GetName().Contains(TEXT("Interactable")))
+		{
+			InteractableSK = SKC;
+			break;
+		}
+	}
 }
 
 void AB_Interactable::AddInteractableStateToSaveData_Implementation()
@@ -100,4 +137,39 @@ void AB_Interactable::AddSpawnedInteractableToSaveData_Implementation(const FIns
 	SaveLoadManager->EventAddToSaveData(SpawnedTag, AdditionalDataToSave);
 
 	UE_LOG(LogTemp, Log, TEXT("  Added spawned interactable data for ID: %s"), *ID.ToString());
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// ISLFInteractableInterface IMPLEMENTATION
+// ═══════════════════════════════════════════════════════════════════════
+
+void AB_Interactable::OnInteract_Implementation(AActor* InteractingActor)
+{
+	// Base implementation - override in child classes for specific behavior
+	UE_LOG(LogTemp, Log, TEXT("AB_Interactable::OnInteract - %s interacted by %s"),
+		*GetName(), InteractingActor ? *InteractingActor->GetName() : TEXT("None"));
+}
+
+void AB_Interactable::OnTraced_Implementation(AActor* TracedBy)
+{
+	// Called when player traces this interactable
+	UE_LOG(LogTemp, Verbose, TEXT("AB_Interactable::OnTraced - %s traced by %s"),
+		*GetName(), TracedBy ? *TracedBy->GetName() : TEXT("None"));
+}
+
+void AB_Interactable::OnSpawnedFromSave_Implementation(const FGuid& Id, const FInstancedStruct& CustomData)
+{
+	// Called when this interactable is restored from save data
+	UE_LOG(LogTemp, Log, TEXT("AB_Interactable::OnSpawnedFromSave - %s restored with ID: %s"),
+		*GetName(), *Id.ToString());
+
+	// Store the ID
+	ID = Id;
+}
+
+FSLFItemInfo AB_Interactable::TryGetItemInfo_Implementation()
+{
+	// Base implementation returns empty item info
+	// Override in item-based interactables
+	return FSLFItemInfo();
 }

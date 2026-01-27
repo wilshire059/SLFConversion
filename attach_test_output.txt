@@ -1,0 +1,26 @@
+======================================================================
+DIRECT WEAPON ATTACH TEST - SwordExample01
+======================================================================
+Spawned character: B_Soulslike_Character_C_0
+Got mesh via character.mesh: CharacterMesh0
+Using mesh: CharacterMesh0
+
+=== SOCKET POSITIONS ON CHARACTER ===
+hand_r socket NOT found!
+weapon_r socket NOT found
+
+=== SPAWNING WEAPON ===
+Spawned weapon: B_Item_Weapon_SwordExample01_C_0
+Weapon has 1 StaticMeshComponents
+  - WeaponMesh
+WeaponMesh BEFORE attach:
+  Relative: Loc=(-0.00, -0.00, 36.49)
+  Relative: Rot=(P=0.00, Y=0.00, R=180.00)
+
+=== ATTACHING TO hand_r SOCKET ===
+EXCEPTION: module 'unreal' has no attribute 'AttachmentTransformRules'
+Traceback (most recent call last):
+  File "C:/scripts/slfconversion/test_weapon_attach_direct.py", line 143, in main
+    attach_rules = unreal.AttachmentTransformRules(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'unreal' has no attribute 'AttachmentTransformRules'

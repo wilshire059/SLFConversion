@@ -7,7 +7,7 @@
 // Variables:         0/0 (inherits from StatBase)
 // Functions:         0/0 (inherits from StatBase)
 // Event Dispatchers: 0/0 (inherits from StatBase)
-// CDO Defaults:      Strength tag, primary attribute
+// CDO Defaults:      Strength tag, affects Physical Attack Power
 // ═══════════════════════════════════════════════════════════════════════════════
 
 #include "SLFStatStrength.h"
@@ -26,5 +26,24 @@ USLFStatStrength::USLFStatStrength()
 	bOnlyMaxValueRelevant = false;
 	MinValue = 1.0;
 
-	UE_LOG(LogTemp, Log, TEXT("[StatStrength] Initialized with %.0f"), StatInfo.CurrentValue);
+	// Strength affects Physical Attack Power: each point adds 5 to CurrentValue
+	// At Strength=10, Physical AP = base(0) + 10*5 = 50
+	FGameplayTag PhysAPTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.AttackPower.Physical"));
+	FAffectedStat PhysAPAffect;
+	PhysAPAffect.FromLevel = 0;
+	PhysAPAffect.UntilLevel = 99;
+	PhysAPAffect.bAffectMaxValue = false;  // Affects CurrentValue (AP is displayed as current)
+	PhysAPAffect.Modifier = 5.0;           // 5 AP per Strength point
+	PhysAPAffect.Calculation = nullptr;
+	PhysAPAffect.ChangeByCurve = nullptr;
+
+	FAffectedStats PhysAPAffectedStats;
+	PhysAPAffectedStats.SoftcapData.Add(PhysAPAffect);
+
+	// CRITICAL: Must set StatInfo.StatModifiers.StatsToAffect (not StatBehavior.StatsToAffect)
+	// W_StatEntry_LevelUp reads from StatInfo.StatModifiers to get affected stats for highlighting
+	StatInfo.StatModifiers.StatsToAffect.Add(PhysAPTag, PhysAPAffectedStats);
+	UE_LOG(LogTemp, Log, TEXT("[SLFStatStrength] Added Physical AP to StatsToAffect in StatInfo.StatModifiers"));
+
+	UE_LOG(LogTemp, Log, TEXT("[StatStrength] Initialized with %.0f, affects Physical AP with modifier 5"), StatInfo.CurrentValue);
 }

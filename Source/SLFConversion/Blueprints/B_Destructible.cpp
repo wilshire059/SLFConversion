@@ -54,6 +54,12 @@ void AB_Destructible::BeginPlay()
 	{
 		CachedGC_DestructibleMesh->OnChaosBreakEvent.AddDynamic(this, &AB_Destructible::OnChaosBreakEvent);
 
+		// CRITICAL: Enable physics simulation
+		// The Blueprint SCS has simulate_physics=True set on the component.
+		// SetRestCollection with bApplyAssetDefaults=true does NOT set SimulatePhysics.
+		// We must explicitly enable it for Chaos destruction to work.
+		CachedGC_DestructibleMesh->SetSimulatePhysics(true);
+
 		// Ensure the component is activated for Chaos physics to work
 		if (!CachedGC_DestructibleMesh->IsActive())
 		{
@@ -61,9 +67,16 @@ void AB_Destructible::BeginPlay()
 		}
 
 		// Log physics state for debugging
-		UE_LOG(LogTemp, Log, TEXT("[B_Destructible] BeginPlay - Physics state: IsActive=%s, IsSimulatingPhysics=%s"),
+		UE_LOG(LogTemp, Log, TEXT("[B_Destructible] BeginPlay - Physics state: IsActive=%s, IsSimulatingPhysics=%s, SimulatePhysics=%s"),
 			CachedGC_DestructibleMesh->IsActive() ? TEXT("Yes") : TEXT("No"),
-			CachedGC_DestructibleMesh->IsSimulatingPhysics() ? TEXT("Yes") : TEXT("No"));
+			CachedGC_DestructibleMesh->IsSimulatingPhysics() ? TEXT("Yes") : TEXT("No"),
+			CachedGC_DestructibleMesh->BodyInstance.bSimulatePhysics ? TEXT("Yes") : TEXT("No"));
+
+		// Log collision settings for debugging
+		ECollisionChannel ObjectType = CachedGC_DestructibleMesh->GetCollisionObjectType();
+		ECollisionEnabled::Type CollisionEnabled = CachedGC_DestructibleMesh->GetCollisionEnabled();
+		UE_LOG(LogTemp, Log, TEXT("[B_Destructible] Collision - ObjectType=%d, CollisionEnabled=%d"),
+			(int32)ObjectType, (int32)CollisionEnabled);
 	}
 
 	UE_LOG(LogTemp, Log, TEXT("[B_Destructible] BeginPlay - GC=%s, Billboard=%s"),

@@ -1,0 +1,38 @@
+{
+  "T_Computer": {
+    "status": "success",
+    "path": "/Game/SoulslikeFramework/Widgets/_Textures/T_Computer.T_Computer",
+    "class": "Texture2D"
+  },
+  "T_Camera": {
+    "status": "success",
+    "path": "/Game/SoulslikeFramework/Widgets/_Textures/T_Camera.T_Camera",
+    "class": "Texture2D"
+  },
+  "T_Controller": {
+    "status": "success",
+    "path": "/Game/SoulslikeFramework/Widgets/_Textures/T_Controller.T_Controller",
+    "class": "Texture2D"
+  },
+  "T_Keybinds": {
+    "status": "success",
+    "path": "/Game/SoulslikeFramework/Widgets/_Textures/T_Keybinds.T_Keybinds",
+    "class": "Texture2D"
+  },
+  "T_Volume": {
+    "status": "success",
+    "path": "/Game/SoulslikeFramework/Widgets/_Textures/T_Volume.T_Volume",
+    "class": "Texture2D"
+  },
+  "T_Quit": {
+    "status": "success",
+    "path": "/Game/SoulslikeFramework/Widgets/_Textures/T_Quit.T_Quit",
+    "class": "Texture2D"
+  },
+  "T_Gesture": {
+    "status": "success",
+    "path": "/Game/SoulslikeFramework/Widgets/_Textures/T_Gesture.T_Gesture",
+    "class": "Texture2D"
+  },
+  "w_settings_loaded": true
+}

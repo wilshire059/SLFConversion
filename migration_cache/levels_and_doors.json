@@ -1,0 +1,71 @@
+{
+  "levels": [
+    "/Game/SoulslikeFramework/Maps/L_Demo.L_Demo:PersistentLevel.B_Door_Prison_C_UAID_C87F5456F39C534102_2014092758",
+    "/Game/SoulslikeFramework/Maps/L_Demo.L_Demo:PersistentLevel.B_Door_Prison_C_UAID_C87F5456F39CBD3C02_2012073187",
+    "/Game/SoulslikeFramework/Maps/L_Demo.L_Demo:PersistentLevel.B_Door_Prison_C_UAID_C87F5456F39CF83602_2113029293",
+    "/Game/SoulslikeFramework/Maps/L_Demo_Menu.L_Demo_Menu",
+    "/Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase"
+  ],
+  "door_assets": [
+    "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_BossDoor.B_BossDoor",
+    "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Door.B_Door",
+    "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Door_Demo.B_Door_Demo",
+    "/Game/SoulslikeFramework/Blueprints/Interfaces/BPI_BossDoor.BPI_BossDoor",
+    "/Game/SoulslikeFramework/Demo/_Animations/Interaction/Door/AM_SLF_OpenDoor_Boss.AM_SLF_OpenDoor_Boss",
+    "/Game/SoulslikeFramework/Demo/_Animations/Interaction/Door/AM_SLF_OpenDoor_LH.AM_SLF_OpenDoor_LH",
+    "/Game/SoulslikeFramework/Demo/_Animations/Interaction/Door/AM_SLF_OpenDoor_RH.AM_SLF_OpenDoor_RH",
+    "/Game/SoulslikeFramework/Demo/_Animations/Interaction/Door/AS_SLF_OpenDoor_Boss.AS_SLF_OpenDoor_Boss",
+    "/Game/SoulslikeFramework/Demo/_Animations/Interaction/Door/AS_SLF_OpenDoor_LH.AS_SLF_OpenDoor_LH",
+    "/Game/SoulslikeFramework/Demo/_Animations/Interaction/Door/AS_SLF_OpenDoor_RH.AS_SLF_OpenDoor_RH",
+    "/Game/SoulslikeFramework/Meshes/SM/Door/SM_Door.SM_Door",
+    "/Game/SoulslikeFramework/Meshes/SM/PrisonDoor/SM_PrisonDoor.SM_PrisonDoor",
+    "/Game/SoulslikeFramework/Meshes/SM/PrisonDoor/SM_PrisonDoorArch.SM_PrisonDoorArch",
+    "/Game/SoulslikeFramework/Structures/_Misc/FDoorLockInfo.FDoorLockInfo"
+  ],
+  "b_door_status": {
+    "class_name": "B_Door_C",
+    "cdo_components": [
+      {
+        "name": "Interactable SM",
+        "mesh": "SM_PrisonDoor",
+        "visible": true
+      },
+      {
+        "name": "Door Frame",
+        "mesh": "SM_PrisonDoorArch",
+        "visible": true
+      }
+    ],
+    "default_door_mesh": "<Object '/Game/SoulslikeFramework/Meshes/SM/PrisonDoor/SM_PrisonDoor.SM_PrisonDoor' (0x0000022CB24DA000) Class 'StaticMesh'>",
+    "default_door_frame_mesh": "<Object '/Game/SoulslikeFramework/Meshes/SM/PrisonDoor/SM_PrisonDoorArch.SM_PrisonDoorArch' (0x0000022CB24DB000) Class 'StaticMesh'>"
+  },
+  "demo_contents": [
+    "/Game/SoulslikeFramework/Demo/_Animations/Combat/OneHanded/AM_SLF_1h_Light_L_Greystone.AM_SLF_1h_Light_L_Greystone",
+    "/Game/SoulslikeFramework/Demo/_Animations/Combat/OneHanded/AS_SLF_Attack_1h_L_01.AS_SLF_Attack_1h_L_01",
+    "/Game/SoulslikeFramework/Demo/_Animations/Combat/OneHanded/AS_SLF_Attack_1h_L_02.AS_SLF_Attack_1h_L_02",
+    "/Game/SoulslikeFramework/Demo/_Animations/Combat/OneHanded/AS_SLF_Attack_1h_L_03.AS_SLF_Attack_1h_L_03",
+    "/Game/SoulslikeFramework/Demo/_Animations/Combat/OneHanded/AS_SLF_Attack_1h_L_04.AS_SLF_Attack_1h_L_04",
+    "/Game/SoulslikeFramework/Demo/ParagonGrux/Characters/Global/MaterialLayers/Fabric/T_ML_Canvas_Grey01.T_ML_Canvas_Grey01",
+    "/Game/SoulslikeFramework/Demo/ParagonGrux/Characters/Global/MaterialLayers/Fabric/T_ML_Canvas_Grey01_N.T_ML_Canvas_Grey01_N",
+    "/Game/SoulslikeFramework/Demo/ParagonGrux/Characters/Global/MaterialLayers/Fabric/T_ML_Fabric_Basic2.T_ML_Fabric_Basic2",
+    "/Game/SoulslikeFramework/Demo/ParagonGrux/Characters/Global/MaterialLayers/Fabric/T_ML_Fabric_Blue_Medium_N.T_ML_Fabric_Blue_Medium_N",
+    "/Game/SoulslikeFramework/Demo/ParagonGrux/Characters/Global/MaterialLayers/Fabric/T_ML_SmoothTech_01_D.T_ML_SmoothTech_01_D",
+    "/Game/SoulslikeFramework/Demo/ParagonGrux/Characters/Global/MaterialLayers/Leather/T_ML_FineLeather01.T_ML_FineLeather01",
+    "/Game/SoulslikeFramework/Demo/ParagonGrux/Characters/Global/MaterialLayers/Leather/T_ML_FineLeather01_N.T_ML_FineLeather01_N",
+    "/Game/SoulslikeFramework/Demo/ParagonGrux/Characters/Global/MaterialLayers/Metal/T_ML_Aluminum01_N.T_ML_Aluminum01_N",
+    "/Game/SoulslikeFramework/Demo/ParagonGrux/Characters/Global/MaterialLayers/Metal/T_ML_Gold_Metal01.T_ML_Gold_Metal01",
+    "/Game/SoulslikeFramework/Demo/ParagonGrux/Characters/Global/MaterialLayers/T_TestML_Mask.T_TestML_Mask",
+    "/Game/SoulslikeFramework/Demo/ParagonGrux/FX/Textures/Tile/T_TestML_Mask.T_TestML_Mask",
+    "/Game/SoulslikeFramework/Demo/RetargetedGameSampleAnimations/Crouch/AS_Neutral_Crouch_Loop_F_L_20.AS_Neutral_Crouch_Loop_F_L_20",
+    "/Game/SoulslikeFramework/Demo/RetargetedGameSampleAnimations/Run/AS_Neutral_Run_Loop_F_L_20.AS_Neutral_Run_Loop_F_L_20",
+    "/Game/SoulslikeFramework/Demo/RetargetedGameSampleAnimations/Run/AS_Neutral_Sprint_Loop_FL_20.AS_Neutral_Sprint_Loop_FL_20",
+    "/Game/SoulslikeFramework/Demo/RetargetedGameSampleAnimations/Run/AS_Neutral_Sprint_Loop_FL_45.AS_Neutral_Sprint_Loop_FL_45",
+    "/Game/SoulslikeFramework/Demo/RetargetedGameSampleAnimations/Walk/M_Neutral_Walk_Loop_F_L_20.M_Neutral_Walk_Loop_F_L_20",
+    "/Game/SoulslikeFramework/Demo/SKM/Mannequin_UE4/Textures/T_ML_Aluminum01.T_ML_Aluminum01",
+    "/Game/SoulslikeFramework/Demo/SKM/Mannequin_UE4/Textures/T_ML_Aluminum01_N.T_ML_Aluminum01_N",
+    "/Game/SoulslikeFramework/Demo/SKM/Mannequin_UE4/Textures/T_ML_Rubber_Blue_01_D.T_ML_Rubber_Blue_01_D",
+    "/Game/SoulslikeFramework/Demo/SKM/Mannequin_UE4/Textures/T_ML_Rubber_Blue_01_N.T_ML_Rubber_Blue_01_N"
+  ],
+  "level_folder_contents": [],
+  "level_folder_exists": false
+}

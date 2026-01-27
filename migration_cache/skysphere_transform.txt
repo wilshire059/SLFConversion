@@ -1,0 +1,43 @@
+SKYSPHERE TRANSFORM AND LIGHT PRIORITY CHECK
+======================================================================
+
+======================================================================
+CURRENT PROJECT
+======================================================================
+
+Loading level: /Game/SoulslikeFramework/Maps/L_Demo_Showcase
+
+Found: B_SkyManager_C_1
+  Actor Location: <Struct 'Vector' (0x000001D5003C1000) {x: 14533.983347, y: 1512.823044, z: 99.999998}>
+  Actor Scale: <Struct 'Vector' (0x000001D59B6BA1D0) {x: 1.000000, y: 1.000000, z: 1.000000}>
+
+  SM_SkySphere Component:
+    RelativeLocation: <Struct 'Vector' (0x000001D50453E980) {x: 0.000000, y: 0.000000, z: 0.000000}>
+    RelativeRotation: <Struct 'Rotator' (0x000001D50453E998) {pitch: 0.000000, yaw: 0.000000, roll: 0.000000}>
+    RelativeScale3D: <Struct 'Vector' (0x000001D50453E9B0) {x: 100.000000, y: 100.000000, z: 100.000000}>
+    WorldLocation: <Struct 'Vector' (0x000001D59B6BA950) {x: 14533.983347, y: 1512.823044, z: 99.999998}>
+    WorldScale: <Struct 'Vector' (0x000001D59B6BA8B0) {x: 100.000000, y: 100.000000, z: 100.000000}>
+    LocalBounds: (<Struct 'Vector' (0x000001D59B6BA860) {x: -4096.000000, y: -4096.000000, z: -4096.000000}>, <Struct 'Vector' (0x000001D59B6BA770) {x: 4096.000000, y: 4096.000000, z: 4096.000000}>)
+
+  DirectionalLight_Moon:
+    Intensity: 1.0
+    AtmosphereSunLight: True
+    ForwardShadingPriority: 1
+    AffectsWorld: True
+    Visible: True
+    CastShadows: True
+
+  DirectionalLight_Sun:
+    Intensity: 4.0
+    AtmosphereSunLight: True
+    ForwardShadingPriority: 0
+    AffectsWorld: True
+    Visible: True
+    CastShadows: True
+
+
+======================================================================
+CHECK COMPLETE
+======================================================================
+
+Results: C:/scripts/SLFConversion/migration_cache/skysphere_transform.txt

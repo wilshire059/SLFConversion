@@ -1,0 +1,4 @@
+{
+  "blueprint_path": "/Game/SoulslikeFramework/Widgets/_Generic/W_GenericButton",
+  "widget_tree_error": "'WidgetBlueprint' object has no attribute 'widget_tree'"
+}

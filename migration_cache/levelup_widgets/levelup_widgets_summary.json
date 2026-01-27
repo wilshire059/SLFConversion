@@ -1,0 +1,667 @@
+{
+  "W_LevelCurrencyBlock_LevelUp": {
+    "path": "/Game/SoulslikeFramework/Widgets/RestMenu/LevelUpMenu/W_LevelCurrencyBlock_LevelUp",
+    "name": "W_LevelCurrencyBlock_LevelUp",
+    "class": "WidgetBlueprint",
+    "variables": [
+      {
+        "name": "clip_to_bounds",
+        "value": "<WidgetClipping.INHERIT: 0>"
+      },
+      {
+        "name": "clipping",
+        "value": "<WidgetClipping.INHERIT: 0>"
+      },
+      {
+        "name": "color_and_opacity",
+        "value": "<Struct 'LinearColor' (0x00000235A321F300) {r: 1.000000, g: 1.000000, b: 1.000000, a: 1.000000}>"
+      },
+      {
+        "name": "cursor",
+        "value": "<MouseCursor.DEFAULT: 1>"
+      },
+      {
+        "name": "flow_direction_preference",
+        "value": "<FlowDirectionPreference.INHERIT: 0>"
+      },
+      {
+        "name": "foreground_color",
+        "value": "<Struct 'SlateColor' (0x00000235A321F330) {specified_color: {r: 1.000000, g: 0.000000, b: 1.000000, ..."
+      },
+      {
+        "name": "is_enabled",
+        "value": "True"
+      },
+      {
+        "name": "is_focusable",
+        "value": "False"
+      },
+      {
+        "name": "is_volatile",
+        "value": "False"
+      },
+      {
+        "name": "opacity",
+        "value": "1.0"
+      },
+      {
+        "name": "padding",
+        "value": "<Struct 'Margin' (0x00000235A321F3C0) {left: 0.000000, top: 0.000000, right: 0.000000, bottom: 0.000..."
+      },
+      {
+        "name": "pixel_snapping",
+        "value": "<WidgetPixelSnapping.INHERIT: 0>"
+      },
+      {
+        "name": "priority",
+        "value": "0"
+      },
+      {
+        "name": "render_opacity",
+        "value": "1.0"
+      },
+      {
+        "name": "render_transform",
+        "value": "<Struct 'WidgetTransform' (0x00000235A321F0D8) {translation: {x: 0.000000, y: 0.000000}, scale: {x: ..."
+      },
+      {
+        "name": "render_transform_pivot",
+        "value": "<Struct 'Vector2D' (0x00000235A321F110) {x: 0.500000, y: 0.500000}>"
+      },
+      {
+        "name": "stop_action",
+        "value": "False"
+      },
+      {
+        "name": "tick_frequency",
+        "value": "<WidgetTickFrequency.AUTO: 1>"
+      },
+      {
+        "name": "tool_tip_text",
+        "value": ""
+      },
+      {
+        "name": "visibility",
+        "value": "<SlateVisibility.SELF_HIT_TEST_INVISIBLE: 4>"
+      },
+      {
+        "name": "visiblity",
+        "value": "<SlateVisibility.SELF_HIT_TEST_INVISIBLE: 4>"
+      }
+    ],
+    "widget_tree": [],
+    "functions": [],
+    "event_dispatchers": [],
+    "generated_class": "W_LevelCurrencyBlock_LevelUp_C"
+  },
+  "W_LevelUp": {
+    "path": "/Game/SoulslikeFramework/Widgets/RestMenu/LevelUpMenu/W_LevelUp",
+    "name": "W_LevelUp",
+    "class": "WidgetBlueprint",
+    "variables": [
+      {
+        "name": "clip_to_bounds",
+        "value": "<WidgetClipping.INHERIT: 0>"
+      },
+      {
+        "name": "clipping",
+        "value": "<WidgetClipping.INHERIT: 0>"
+      },
+      {
+        "name": "color_and_opacity",
+        "value": "<Struct 'LinearColor' (0x00000235A3DE7B00) {r: 1.000000, g: 1.000000, b: 1.000000, a: 1.000000}>"
+      },
+      {
+        "name": "cursor",
+        "value": "<MouseCursor.DEFAULT: 1>"
+      },
+      {
+        "name": "flow_direction_preference",
+        "value": "<FlowDirectionPreference.INHERIT: 0>"
+      },
+      {
+        "name": "foreground_color",
+        "value": "<Struct 'SlateColor' (0x00000235A3DE7B30) {specified_color: {r: 1.000000, g: 0.000000, b: 1.000000, ..."
+      },
+      {
+        "name": "is_enabled",
+        "value": "True"
+      },
+      {
+        "name": "is_focusable",
+        "value": "False"
+      },
+      {
+        "name": "is_volatile",
+        "value": "False"
+      },
+      {
+        "name": "opacity",
+        "value": "1.0"
+      },
+      {
+        "name": "padding",
+        "value": "<Struct 'Margin' (0x00000235A3DE7BC0) {left: 0.000000, top: 0.000000, right: 0.000000, bottom: 0.000..."
+      },
+      {
+        "name": "pixel_snapping",
+        "value": "<WidgetPixelSnapping.INHERIT: 0>"
+      },
+      {
+        "name": "priority",
+        "value": "0"
+      },
+      {
+        "name": "render_opacity",
+        "value": "1.0"
+      },
+      {
+        "name": "render_transform",
+        "value": "<Struct 'WidgetTransform' (0x00000235A3DE78D8) {translation: {x: 0.000000, y: 0.000000}, scale: {x: ..."
+      },
+      {
+        "name": "render_transform_pivot",
+        "value": "<Struct 'Vector2D' (0x00000235A3DE7910) {x: 0.500000, y: 0.500000}>"
+      },
+      {
+        "name": "stop_action",
+        "value": "False"
+      },
+      {
+        "name": "tick_frequency",
+        "value": "<WidgetTickFrequency.AUTO: 1>"
+      },
+      {
+        "name": "tool_tip_text",
+        "value": ""
+      },
+      {
+        "name": "visibility",
+        "value": "<SlateVisibility.SELF_HIT_TEST_INVISIBLE: 4>"
+      },
+      {
+        "name": "visiblity",
+        "value": "<SlateVisibility.SELF_HIT_TEST_INVISIBLE: 4>"
+      }
+    ],
+    "widget_tree": [],
+    "functions": [],
+    "event_dispatchers": [],
+    "generated_class": "W_LevelUp_C"
+  },
+  "W_StatEntry_LevelUp": {
+    "path": "/Game/SoulslikeFramework/Widgets/RestMenu/LevelUpMenu/W_StatEntry_LevelUp",
+    "name": "W_StatEntry_LevelUp",
+    "class": "WidgetBlueprint",
+    "variables": [
+      {
+        "name": "clip_to_bounds",
+        "value": "<WidgetClipping.INHERIT: 0>"
+      },
+      {
+        "name": "clipping",
+        "value": "<WidgetClipping.INHERIT: 0>"
+      },
+      {
+        "name": "color_and_opacity",
+        "value": "<Struct 'LinearColor' (0x000002359B58BD00) {r: 1.000000, g: 1.000000, b: 1.000000, a: 1.000000}>"
+      },
+      {
+        "name": "cursor",
+        "value": "<MouseCursor.DEFAULT: 1>"
+      },
+      {
+        "name": "flow_direction_preference",
+        "value": "<FlowDirectionPreference.INHERIT: 0>"
+      },
+      {
+        "name": "foreground_color",
+        "value": "<Struct 'SlateColor' (0x000002359B58BD30) {specified_color: {r: 1.000000, g: 0.000000, b: 1.000000, ..."
+      },
+      {
+        "name": "is_enabled",
+        "value": "True"
+      },
+      {
+        "name": "is_focusable",
+        "value": "False"
+      },
+      {
+        "name": "is_volatile",
+        "value": "False"
+      },
+      {
+        "name": "opacity",
+        "value": "1.0"
+      },
+      {
+        "name": "padding",
+        "value": "<Struct 'Margin' (0x000002359B58BDC0) {left: 0.000000, top: 0.000000, right: 0.000000, bottom: 0.000..."
+      },
+      {
+        "name": "pixel_snapping",
+        "value": "<WidgetPixelSnapping.INHERIT: 0>"
+      },
+      {
+        "name": "priority",
+        "value": "0"
+      },
+      {
+        "name": "render_opacity",
+        "value": "1.0"
+      },
+      {
+        "name": "render_transform",
+        "value": "<Struct 'WidgetTransform' (0x000002359B58BAD8) {translation: {x: 0.000000, y: 0.000000}, scale: {x: ..."
+      },
+      {
+        "name": "render_transform_pivot",
+        "value": "<Struct 'Vector2D' (0x000002359B58BB10) {x: 0.500000, y: 0.500000}>"
+      },
+      {
+        "name": "stop_action",
+        "value": "False"
+      },
+      {
+        "name": "tick_frequency",
+        "value": "<WidgetTickFrequency.AUTO: 1>"
+      },
+      {
+        "name": "tool_tip_text",
+        "value": ""
+      },
+      {
+        "name": "visibility",
+        "value": "<SlateVisibility.SELF_HIT_TEST_INVISIBLE: 4>"
+      },
+      {
+        "name": "visiblity",
+        "value": "<SlateVisibility.SELF_HIT_TEST_INVISIBLE: 4>"
+      }
+    ],
+    "widget_tree": [],
+    "functions": [],
+    "event_dispatchers": [],
+    "generated_class": "W_StatEntry_LevelUp_C"
+  },
+  "W_StatBlock_LevelUp": {
+    "path": "/Game/SoulslikeFramework/Widgets/RestMenu/LevelUpMenu/W_StatBlock_LevelUp",
+    "name": "W_StatBlock_LevelUp",
+    "class": "WidgetBlueprint",
+    "variables": [
+      {
+        "name": "clip_to_bounds",
+        "value": "<WidgetClipping.INHERIT: 0>"
+      },
+      {
+        "name": "clipping",
+        "value": "<WidgetClipping.INHERIT: 0>"
+      },
+      {
+        "name": "color_and_opacity",
+        "value": "<Struct 'LinearColor' (0x00000235A5C4CF00) {r: 1.000000, g: 1.000000, b: 1.000000, a: 1.000000}>"
+      },
+      {
+        "name": "cursor",
+        "value": "<MouseCursor.DEFAULT: 1>"
+      },
+      {
+        "name": "flow_direction_preference",
+        "value": "<FlowDirectionPreference.INHERIT: 0>"
+      },
+      {
+        "name": "foreground_color",
+        "value": "<Struct 'SlateColor' (0x00000235A5C4CF30) {specified_color: {r: 1.000000, g: 0.000000, b: 1.000000, ..."
+      },
+      {
+        "name": "is_enabled",
+        "value": "True"
+      },
+      {
+        "name": "is_focusable",
+        "value": "False"
+      },
+      {
+        "name": "is_volatile",
+        "value": "False"
+      },
+      {
+        "name": "opacity",
+        "value": "1.0"
+      },
+      {
+        "name": "padding",
+        "value": "<Struct 'Margin' (0x00000235A5C4CFC0) {left: 0.000000, top: 0.000000, right: 0.000000, bottom: 0.000..."
+      },
+      {
+        "name": "pixel_snapping",
+        "value": "<WidgetPixelSnapping.INHERIT: 0>"
+      },
+      {
+        "name": "priority",
+        "value": "0"
+      },
+      {
+        "name": "render_opacity",
+        "value": "1.0"
+      },
+      {
+        "name": "render_transform",
+        "value": "<Struct 'WidgetTransform' (0x00000235A5C4CCD8) {translation: {x: 0.000000, y: 0.000000}, scale: {x: ..."
+      },
+      {
+        "name": "render_transform_pivot",
+        "value": "<Struct 'Vector2D' (0x00000235A5C4CD10) {x: 0.500000, y: 0.500000}>"
+      },
+      {
+        "name": "stop_action",
+        "value": "False"
+      },
+      {
+        "name": "tick_frequency",
+        "value": "<WidgetTickFrequency.AUTO: 1>"
+      },
+      {
+        "name": "tool_tip_text",
+        "value": ""
+      },
+      {
+        "name": "visibility",
+        "value": "<SlateVisibility.SELF_HIT_TEST_INVISIBLE: 4>"
+      },
+      {
+        "name": "visiblity",
+        "value": "<SlateVisibility.SELF_HIT_TEST_INVISIBLE: 4>"
+      }
+    ],
+    "widget_tree": [],
+    "functions": [],
+    "event_dispatchers": [],
+    "generated_class": "W_StatBlock_LevelUp_C"
+  },
+  "W_LevelUpCost": {
+    "path": "/Game/SoulslikeFramework/Widgets/RestMenu/LevelUpMenu/W_LevelUpCost",
+    "name": "W_LevelUpCost",
+    "class": "WidgetBlueprint",
+    "variables": [
+      {
+        "name": "clip_to_bounds",
+        "value": "<WidgetClipping.INHERIT: 0>"
+      },
+      {
+        "name": "clipping",
+        "value": "<WidgetClipping.INHERIT: 0>"
+      },
+      {
+        "name": "color_and_opacity",
+        "value": "<Struct 'LinearColor' (0x00000235B028AB00) {r: 1.000000, g: 1.000000, b: 1.000000, a: 1.000000}>"
+      },
+      {
+        "name": "cursor",
+        "value": "<MouseCursor.DEFAULT: 1>"
+      },
+      {
+        "name": "flow_direction_preference",
+        "value": "<FlowDirectionPreference.INHERIT: 0>"
+      },
+      {
+        "name": "foreground_color",
+        "value": "<Struct 'SlateColor' (0x00000235B028AB30) {specified_color: {r: 1.000000, g: 0.000000, b: 1.000000, ..."
+      },
+      {
+        "name": "is_enabled",
+        "value": "True"
+      },
+      {
+        "name": "is_focusable",
+        "value": "False"
+      },
+      {
+        "name": "is_volatile",
+        "value": "False"
+      },
+      {
+        "name": "opacity",
+        "value": "1.0"
+      },
+      {
+        "name": "padding",
+        "value": "<Struct 'Margin' (0x00000235B028ABC0) {left: 0.000000, top: 0.000000, right: 0.000000, bottom: 0.000..."
+      },
+      {
+        "name": "pixel_snapping",
+        "value": "<WidgetPixelSnapping.INHERIT: 0>"
+      },
+      {
+        "name": "priority",
+        "value": "0"
+      },
+      {
+        "name": "render_opacity",
+        "value": "1.0"
+      },
+      {
+        "name": "render_transform",
+        "value": "<Struct 'WidgetTransform' (0x00000235B028A8D8) {translation: {x: 0.000000, y: 0.000000}, scale: {x: ..."
+      },
+      {
+        "name": "render_transform_pivot",
+        "value": "<Struct 'Vector2D' (0x00000235B028A910) {x: 0.500000, y: 0.500000}>"
+      },
+      {
+        "name": "stop_action",
+        "value": "False"
+      },
+      {
+        "name": "tick_frequency",
+        "value": "<WidgetTickFrequency.AUTO: 1>"
+      },
+      {
+        "name": "tool_tip_text",
+        "value": ""
+      },
+      {
+        "name": "visibility",
+        "value": "<SlateVisibility.SELF_HIT_TEST_INVISIBLE: 4>"
+      },
+      {
+        "name": "visiblity",
+        "value": "<SlateVisibility.SELF_HIT_TEST_INVISIBLE: 4>"
+      }
+    ],
+    "widget_tree": [],
+    "functions": [],
+    "event_dispatchers": [],
+    "generated_class": "W_LevelUpCost_C"
+  },
+  "W_CurrencyEntry": {
+    "path": "/Game/SoulslikeFramework/Widgets/RestMenu/LevelUpMenu/W_CurrencyEntry",
+    "name": "W_CurrencyEntry",
+    "class": "WidgetBlueprint",
+    "variables": [
+      {
+        "name": "clip_to_bounds",
+        "value": "<WidgetClipping.INHERIT: 0>"
+      },
+      {
+        "name": "clipping",
+        "value": "<WidgetClipping.INHERIT: 0>"
+      },
+      {
+        "name": "color_and_opacity",
+        "value": "<Struct 'LinearColor' (0x00000235B028F300) {r: 1.000000, g: 1.000000, b: 1.000000, a: 1.000000}>"
+      },
+      {
+        "name": "cursor",
+        "value": "<MouseCursor.DEFAULT: 1>"
+      },
+      {
+        "name": "flow_direction_preference",
+        "value": "<FlowDirectionPreference.INHERIT: 0>"
+      },
+      {
+        "name": "foreground_color",
+        "value": "<Struct 'SlateColor' (0x00000235B028F330) {specified_color: {r: 1.000000, g: 0.000000, b: 1.000000, ..."
+      },
+      {
+        "name": "is_enabled",
+        "value": "True"
+      },
+      {
+        "name": "is_focusable",
+        "value": "False"
+      },
+      {
+        "name": "is_volatile",
+        "value": "False"
+      },
+      {
+        "name": "opacity",
+        "value": "1.0"
+      },
+      {
+        "name": "padding",
+        "value": "<Struct 'Margin' (0x00000235B028F3C0) {left: 0.000000, top: 0.000000, right: 0.000000, bottom: 0.000..."
+      },
+      {
+        "name": "pixel_snapping",
+        "value": "<WidgetPixelSnapping.INHERIT: 0>"
+      },
+      {
+        "name": "priority",
+        "value": "0"
+      },
+      {
+        "name": "render_opacity",
+        "value": "1.0"
+      },
+      {
+        "name": "render_transform",
+        "value": "<Struct 'WidgetTransform' (0x00000235B028F0D8) {translation: {x: 0.000000, y: 0.000000}, scale: {x: ..."
+      },
+      {
+        "name": "render_transform_pivot",
+        "value": "<Struct 'Vector2D' (0x00000235B028F110) {x: 0.500000, y: 0.500000}>"
+      },
+      {
+        "name": "stop_action",
+        "value": "False"
+      },
+      {
+        "name": "tick_frequency",
+        "value": "<WidgetTickFrequency.AUTO: 1>"
+      },
+      {
+        "name": "tool_tip_text",
+        "value": ""
+      },
+      {
+        "name": "visibility",
+        "value": "<SlateVisibility.SELF_HIT_TEST_INVISIBLE: 4>"
+      },
+      {
+        "name": "visiblity",
+        "value": "<SlateVisibility.SELF_HIT_TEST_INVISIBLE: 4>"
+      }
+    ],
+    "widget_tree": [],
+    "functions": [],
+    "event_dispatchers": [],
+    "generated_class": "W_CurrencyEntry_C"
+  },
+  "W_LevelEntry": {
+    "path": "/Game/SoulslikeFramework/Widgets/RestMenu/LevelUpMenu/W_LevelEntry",
+    "name": "W_LevelEntry",
+    "class": "WidgetBlueprint",
+    "variables": [
+      {
+        "name": "clip_to_bounds",
+        "value": "<WidgetClipping.INHERIT: 0>"
+      },
+      {
+        "name": "clipping",
+        "value": "<WidgetClipping.INHERIT: 0>"
+      },
+      {
+        "name": "color_and_opacity",
+        "value": "<Struct 'LinearColor' (0x00000235B08C2100) {r: 1.000000, g: 1.000000, b: 1.000000, a: 1.000000}>"
+      },
+      {
+        "name": "cursor",
+        "value": "<MouseCursor.DEFAULT: 1>"
+      },
+      {
+        "name": "flow_direction_preference",
+        "value": "<FlowDirectionPreference.INHERIT: 0>"
+      },
+      {
+        "name": "foreground_color",
+        "value": "<Struct 'SlateColor' (0x00000235B08C2130) {specified_color: {r: 1.000000, g: 0.000000, b: 1.000000, ..."
+      },
+      {
+        "name": "is_enabled",
+        "value": "True"
+      },
+      {
+        "name": "is_focusable",
+        "value": "False"
+      },
+      {
+        "name": "is_volatile",
+        "value": "False"
+      },
+      {
+        "name": "opacity",
+        "value": "1.0"
+      },
+      {
+        "name": "padding",
+        "value": "<Struct 'Margin' (0x00000235B08C21C0) {left: 0.000000, top: 0.000000, right: 0.000000, bottom: 0.000..."
+      },
+      {
+        "name": "pixel_snapping",
+        "value": "<WidgetPixelSnapping.INHERIT: 0>"
+      },
+      {
+        "name": "priority",
+        "value": "0"
+      },
+      {
+        "name": "render_opacity",
+        "value": "1.0"
+      },
+      {
+        "name": "render_transform",
+        "value": "<Struct 'WidgetTransform' (0x00000235B08C1ED8) {translation: {x: 0.000000, y: 0.000000}, scale: {x: ..."
+      },
+      {
+        "name": "render_transform_pivot",
+        "value": "<Struct 'Vector2D' (0x00000235B08C1F10) {x: 0.500000, y: 0.500000}>"
+      },
+      {
+        "name": "stop_action",
+        "value": "False"
+      },
+      {
+        "name": "tick_frequency",
+        "value": "<WidgetTickFrequency.AUTO: 1>"
+      },
+      {
+        "name": "tool_tip_text",
+        "value": ""
+      },
+      {
+        "name": "visibility",
+        "value": "<SlateVisibility.SELF_HIT_TEST_INVISIBLE: 4>"
+      },
+      {
+        "name": "visiblity",
+        "value": "<SlateVisibility.SELF_HIT_TEST_INVISIBLE: 4>"
+      }
+    ],
+    "widget_tree": [],
+    "functions": [],
+    "event_dispatchers": [],
+    "generated_class": "W_LevelEntry_C"
+  }
+}

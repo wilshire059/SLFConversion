@@ -29,7 +29,7 @@ void UW_LevelUpCost::NativeDestruct()
 
 void UW_LevelUpCost::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 void UW_LevelUpCost::EventInitializeLevelUpCost_Implementation(int32 CurrentLevel, int32 CurrentCurrency)
 {

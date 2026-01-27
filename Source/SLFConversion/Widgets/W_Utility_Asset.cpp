@@ -29,7 +29,7 @@ void UW_Utility_Asset::NativeDestruct()
 
 void UW_Utility_Asset::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 
 UWidget* UW_Utility_Asset::GetToolTipWidget_Implementation()

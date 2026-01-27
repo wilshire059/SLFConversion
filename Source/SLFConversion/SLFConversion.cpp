@@ -214,6 +214,22 @@ static FAutoConsoleCommand FixChaosInterfaceCmd(
 	})
 );
 
+// Console command to apply status effect RankInfo damage data
+// Usage: SLF.ApplyStatusEffects
+static FAutoConsoleCommand ApplyStatusEffectsCmd(
+	TEXT("SLF.ApplyStatusEffects"),
+	TEXT("Apply status effect RankInfo damage data (poison, bleed, burn, etc.).\nUsage: SLF.ApplyStatusEffects"),
+	FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("=== APPLYING STATUS EFFECT RANK INFO ==="));
+
+		FString Result = USLFAutomationLibrary::ApplyAllStatusEffectRankInfo();
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *Result);
+
+		UE_LOG(LogTemp, Warning, TEXT("=== DONE ==="));
+	})
+);
+
 #endif // WITH_EDITOR
 
 IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, SLFConversion, "SLFConversion" );

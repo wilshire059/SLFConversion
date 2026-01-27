@@ -12,9 +12,18 @@
 #include "Components/StatManagerComponent.h"
 #include "Components/AC_EquipmentManager.h"
 #include "Components/AC_StatusEffectManager.h"
+#include "Components/AICombatManagerComponent.h"
+#include "Components/SLFAIStateMachineComponent.h"
+#include "AIController.h"
+#include "BrainComponent.h"
 #include "Blueprints/B_DeathCurrency.h"
+#include "Blueprints/Actors/SLFBossDoor.h"
+#include "Blueprints/SLFSoulslikeEnemy.h"
+#include "Blueprints/B_Soulslike_Enemy.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
+#include "Components/CapsuleComponent.h"
 #include "Interfaces/BPI_Controller.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -25,6 +34,8 @@
 #include "Engine/AssetManager.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
+#include "EngineUtils.h"
+#include "PhysicsEngine/PhysicsAsset.h"
 
 UAC_CombatManager::UAC_CombatManager()
 {
@@ -825,17 +836,80 @@ void UAC_CombatManager::HandleDeath_Implementation(UStatManagerComponent* StatMa
 		return;
 	}
 
-	// Handle ragdoll if configured
-	if (RagdollOnDeath && IsValid(Mesh))
+	// Handle ragdoll if configured (using "Ragdoll" collision profile like bp_only)
+	if (RagdollOnDeath)
 	{
-		Mesh->SetSimulatePhysics(true);
-		Mesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+		ACharacter* OwnerChar = Cast<ACharacter>(Owner);
+		if (OwnerChar)
+		{
+			// STEP 1: Disable character movement - this is CRITICAL for ragdoll to work
+			// The movement component fights with physics simulation if left enabled
+			if (UCharacterMovementComponent* MovementComp = OwnerChar->GetCharacterMovement())
+			{
+				MovementComp->DisableMovement();
+				MovementComp->StopMovementImmediately();
+				UE_LOG(LogTemp, Warning, TEXT("[AC_CombatManager] HandleDeath - Movement component disabled"));
+			}
 
-		// Apply impulse from hit direction
-		FVector Impulse = GetKnockbackAmountForDamage(HitInfo, 500.0, 1000.0);
-		Mesh->AddImpulse(Impulse, NAME_None, true);
+			// STEP 2: Disable capsule collision with pawns (like AI does)
+			// This prevents the capsule from blocking the ragdoll mesh
+			if (UCapsuleComponent* Capsule = OwnerChar->GetCapsuleComponent())
+			{
+				Capsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				UE_LOG(LogTemp, Warning, TEXT("[AC_CombatManager] HandleDeath - Capsule collision disabled"));
+			}
 
-		UE_LOG(LogTemp, Log, TEXT("  Ragdoll enabled"));
+			// STEP 3: Enable ragdoll on mesh
+			if (IsValid(Mesh))
+			{
+				// Check if mesh has a physics asset (required for ragdoll)
+				if (!Mesh->GetPhysicsAsset())
+				{
+					UE_LOG(LogTemp, Warning, TEXT("[AC_CombatManager] HandleDeath - Mesh has NO physics asset, attempting to load PA_Mannequin..."));
+
+					// Try to load the standard mannequin physics asset
+					static const TCHAR* PhysicsAssetPath = TEXT("/Game/SoulslikeFramework/Demo/SKM/Mannequins/Rigs/PA_Mannequin.PA_Mannequin");
+					UPhysicsAsset* PhysicsAsset = LoadObject<UPhysicsAsset>(nullptr, PhysicsAssetPath);
+
+					if (PhysicsAsset)
+					{
+						Mesh->SetPhysicsAsset(PhysicsAsset, true);
+						UE_LOG(LogTemp, Warning, TEXT("[AC_CombatManager] HandleDeath - Loaded and assigned PA_Mannequin physics asset"));
+					}
+					else
+					{
+						UE_LOG(LogTemp, Error, TEXT("[AC_CombatManager] HandleDeath - Failed to load PA_Mannequin! Ragdoll will not work."));
+					}
+				}
+
+				// CRITICAL: Detach mesh from capsule before enabling physics
+				// Without this, the mesh stays locked to capsule position
+				Mesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+
+				// Enable collision and physics
+				Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+				Mesh->SetCollisionProfileName(FName("Ragdoll"));
+				Mesh->SetSimulatePhysics(true);
+
+				// Apply impulse from hit direction for dramatic death
+				FVector Impulse = GetKnockbackAmountForDamage(HitInfo, 500.0, 1000.0);
+				if (!Impulse.IsNearlyZero())
+				{
+					Mesh->AddImpulse(Impulse, NAME_None, true);
+				}
+
+				UE_LOG(LogTemp, Warning, TEXT("[AC_CombatManager] HandleDeath - Player ragdoll enabled (detached from capsule, physics asset: %s)"),
+					Mesh->GetPhysicsAsset() ? TEXT("YES") : TEXT("NO"));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[AC_CombatManager] HandleDeath - Mesh is null, cannot enable ragdoll"));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[AC_CombatManager] HandleDeath - Owner is not a character, cannot setup ragdoll"));
+		}
 	}
 
 	// Drop currency
@@ -883,6 +957,9 @@ void UAC_CombatManager::HandleDeath_Implementation(UStatManagerComponent* StatMa
 			UE_LOG(LogTemp, Warning, TEXT("  No PlayerController found"));
 		}
 	}
+
+	// NOTE: Enemy reset is now handled in SLFPlayerController::CompleteRespawn()
+	// This ensures it only runs when the PLAYER dies and respawns, not for every death
 
 	UE_LOG(LogTemp, Log, TEXT("  Character died"));
 }

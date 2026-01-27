@@ -1,0 +1,312 @@
+{
+	"B_DN_Physical":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Physical",
+		"tag": "SoulslikeFramework.Stat.Defense.Negation.Physical",
+		"display_name": "Physical Negation",
+		"display_as_percent": false,
+		"current_value": 0,
+		"max_value": 9999,
+		"show_max_value": false
+	},
+	"B_DN_Fire":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Fire",
+		"tag": "SoulslikeFramework.Stat.Defense.Negation.Fire",
+		"display_name": "Fire Negation",
+		"display_as_percent": false,
+		"current_value": 0,
+		"max_value": 9999,
+		"show_max_value": false
+	},
+	"B_DN_Frost":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Frost",
+		"tag": "SoulslikeFramework.Stat.Defense.Negation.Frost",
+		"display_name": "Frost Negation",
+		"display_as_percent": false,
+		"current_value": 0,
+		"max_value": 9999,
+		"show_max_value": false
+	},
+	"B_DN_Holy":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Holy",
+		"tag": "SoulslikeFramework.Stat.Defense.Negation.Holy",
+		"display_name": "Holy Negation",
+		"display_as_percent": false,
+		"current_value": 0,
+		"max_value": 9999,
+		"show_max_value": false
+	},
+	"B_DN_Lightning":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Lightning",
+		"tag": "SoulslikeFramework.Stat.Defense.Negation.Lightning",
+		"display_name": "Lightning Negation",
+		"display_as_percent": false,
+		"current_value": 0,
+		"max_value": 9999,
+		"show_max_value": false
+	},
+	"B_DN_Magic":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Magic",
+		"tag": "SoulslikeFramework.Stat.Defense.Negation.Magic",
+		"display_name": "Magic Negation",
+		"display_as_percent": false,
+		"current_value": 0,
+		"max_value": 9999,
+		"show_max_value": false
+	},
+	"B_Resistance_Focus":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Focus",
+		"tag": "SoulslikeFramework.Stat.Defense.Resistances.Focus",
+		"display_name": "Focus",
+		"display_as_percent": false,
+		"current_value": 0,
+		"max_value": 9999,
+		"show_max_value": false
+	},
+	"B_Resistance_Immunity":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Immunity",
+		"tag": "SoulslikeFramework.Stat.Defense.Resistances.Immunity",
+		"display_name": "Immunity",
+		"display_as_percent": false,
+		"current_value": 0,
+		"max_value": 9999,
+		"show_max_value": false
+	},
+	"B_Resistance_Robustness":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Robustness",
+		"tag": "SoulslikeFramework.Stat.Defense.Resistances.Robustness",
+		"display_name": "Robustness",
+		"display_as_percent": false,
+		"current_value": 0,
+		"max_value": 9999,
+		"show_max_value": false
+	},
+	"B_Resistance_Vitality":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Vitality",
+		"tag": "SoulslikeFramework.Stat.Defense.Resistances.Vitality",
+		"display_name": "Vitality",
+		"display_as_percent": false,
+		"current_value": 0,
+		"max_value": 9999,
+		"show_max_value": false
+	},
+	"B_AP_Physical":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Physical",
+		"tag": "SoulslikeFramework.Stat.Secondary.AttackPower.Physical",
+		"display_name": "Physical Attack Power",
+		"display_as_percent": false,
+		"current_value": 0,
+		"max_value": 9999,
+		"show_max_value": false
+	},
+	"B_AP_Fire":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Fire",
+		"tag": "SoulslikeFramework.Stat.Secondary.AttackPower.Fire",
+		"display_name": "Fiery Attack Power",
+		"display_as_percent": false,
+		"current_value": 0,
+		"max_value": 9999,
+		"show_max_value": false
+	},
+	"B_AP_Frost":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Frost",
+		"tag": "SoulslikeFramework.Stat.Secondary.AttackPower.Frost",
+		"display_name": "Frost Attack Power",
+		"display_as_percent": false,
+		"current_value": 0,
+		"max_value": 9999,
+		"show_max_value": false
+	},
+	"B_AP_Holy":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Holy",
+		"tag": "SoulslikeFramework.Stat.Secondary.AttackPower.Holy",
+		"display_name": "Holy Attack Power",
+		"display_as_percent": false,
+		"current_value": 0,
+		"max_value": 9999,
+		"show_max_value": false
+	},
+	"B_AP_Lightning":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Lightning",
+		"tag": "SoulslikeFramework.Stat.Secondary.AttackPower.Lightning",
+		"display_name": "Lightning Attack Power",
+		"display_as_percent": false,
+		"current_value": 0,
+		"max_value": 9999,
+		"show_max_value": false
+	},
+	"B_AP_Magic":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Magic",
+		"tag": "SoulslikeFramework.Stat.Secondary.AttackPower.Magic",
+		"display_name": "Magic Attack Power",
+		"display_as_percent": false,
+		"current_value": 0,
+		"max_value": 9999,
+		"show_max_value": false
+	},
+	"B_Poise":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/_Backend/B_Poise",
+		"tag": "SoulslikeFramework.Stat.Backend.Poise",
+		"display_name": "Poise",
+		"display_as_percent": false,
+		"current_value": 100,
+		"max_value": 100,
+		"show_max_value": false
+	},
+	"B_Stance":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/_Backend/B_Stance",
+		"tag": "SoulslikeFramework.Stat.Backend.Stance",
+		"display_name": "Stance",
+		"display_as_percent": false,
+		"current_value": 100,
+		"max_value": 100,
+		"show_max_value": false
+	},
+	"B_IncantationPower":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/_Backend/B_IncantationPower",
+		"tag": "SoulslikeFramework.Stat.Backend.IncantationPower",
+		"display_name": "Incantation Power",
+		"display_as_percent": false,
+		"current_value": 0,
+		"max_value": 9999,
+		"show_max_value": false
+	},
+	"B_Weight":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Misc/B_Weight",
+		"tag": "SoulslikeFramework.Stat.Misc.Weight",
+		"display_name": "Equip Load",
+		"display_as_percent": false,
+		"current_value": 0,
+		"max_value": 20,
+		"show_max_value": true
+	},
+	"B_Vigor":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Vigor",
+		"tag": "SoulslikeFramework.Stat.Primary.Vigor",
+		"display_name": "Vigor",
+		"display_as_percent": false,
+		"current_value": 0,
+		"max_value": 99,
+		"show_max_value": false
+	},
+	"B_Strength":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Strength",
+		"tag": "SoulslikeFramework.Stat.Primary.Strength",
+		"display_name": "Strength",
+		"display_as_percent": false,
+		"current_value": 0,
+		"max_value": 99,
+		"show_max_value": false
+	},
+	"B_Dexterity":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Dexterity",
+		"tag": "SoulslikeFramework.Stat.Primary.Dexterity",
+		"display_name": "Dexterity",
+		"display_as_percent": false,
+		"current_value": 0,
+		"max_value": 99,
+		"show_max_value": false
+	},
+	"B_Intelligence":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Intelligence",
+		"tag": "SoulslikeFramework.Stat.Primary.Intelligence",
+		"display_name": "Intelligence",
+		"display_as_percent": false,
+		"current_value": 0,
+		"max_value": 99,
+		"show_max_value": false
+	},
+	"B_Faith":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Faith",
+		"tag": "SoulslikeFramework.Stat.Primary.Faith",
+		"display_name": "Faith",
+		"display_as_percent": false,
+		"current_value": 0,
+		"max_value": 99,
+		"show_max_value": false
+	},
+	"B_Arcane":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Arcane",
+		"tag": "SoulslikeFramework.Stat.Primary.Arcane",
+		"display_name": "Arcane",
+		"display_as_percent": false,
+		"current_value": 0,
+		"max_value": 99,
+		"show_max_value": false
+	},
+	"B_Mind":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Mind",
+		"tag": "SoulslikeFramework.Stat.Primary.Mind",
+		"display_name": "Mind",
+		"display_as_percent": false,
+		"current_value": 0,
+		"max_value": 99,
+		"show_max_value": false
+	},
+	"B_Endurance":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Endurance",
+		"tag": "SoulslikeFramework.Stat.Primary.Endurance",
+		"display_name": "Endurance",
+		"display_as_percent": false,
+		"current_value": 0,
+		"max_value": 99,
+		"show_max_value": false
+	},
+	"B_HP":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Secondary/B_HP",
+		"tag": "SoulslikeFramework.Stat.Secondary.HP",
+		"display_name": "HP",
+		"display_as_percent": false,
+		"current_value": 500,
+		"max_value": 500,
+		"show_max_value": true
+	},
+	"B_Stamina":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Secondary/B_Stamina",
+		"tag": "SoulslikeFramework.Stat.Secondary.Stamina",
+		"display_name": "Stamina",
+		"display_as_percent": false,
+		"current_value": 50,
+		"max_value": 50,
+		"show_max_value": true
+	},
+	"B_FP":
+	{
+		"path": "/Game/SoulslikeFramework/Data/Stats/Secondary/B_FP",
+		"tag": "SoulslikeFramework.Stat.Secondary.FP",
+		"display_name": "FP",
+		"display_as_percent": false,
+		"current_value": 100,
+		"max_value": 100,
+		"show_max_value": true
+	}
+}

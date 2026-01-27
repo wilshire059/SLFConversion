@@ -1,0 +1,54 @@
+{
+  "B_Soulslike_Enemy_Guard": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Guard",
+    "parent_chain": [
+      "B_Soulslike_Enemy_Guard_C"
+    ],
+    "components": [],
+    "weapon_components": [
+      {
+        "name": "Weapon",
+        "class": "ChildActorComponent",
+        "relative_location": "(-1.60, 4.54, 14.40)",
+        "relative_rotation": "(P=6.57, Y=-76.97, R=-31.80)",
+        "child_actor_class": "B_Item_AI_Weapon_Greatsword_C",
+        "child_actor_path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/AI/B_Item_AI_Weapon_Greatsword.B_Item_AI_Weapon_Greatsword_C"
+      },
+      {
+        "parent": "Weapon",
+        "child_component": {
+          "name": "WeaponMesh",
+          "class": "StaticMeshComponent",
+          "relative_location": "(0.00, 0.00, 0.00)",
+          "relative_rotation": "(P=0.00, Y=0.00, R=0.00)"
+        }
+      }
+    ]
+  },
+  "B_Soulslike_Enemy_Showcase": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Showcase",
+    "parent_chain": [
+      "B_Soulslike_Enemy_Showcase_C"
+    ],
+    "components": [],
+    "weapon_components": [
+      {
+        "name": "Weapon",
+        "class": "ChildActorComponent",
+        "relative_location": "(1.94, -1.05, 3.93)",
+        "relative_rotation": "(P=9.85, Y=-1.75, R=-10.15)",
+        "child_actor_class": "B_Item_AI_Weapon_Sword_C",
+        "child_actor_path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/AI/B_Item_AI_Weapon_Sword.B_Item_AI_Weapon_Sword_C"
+      },
+      {
+        "parent": "Weapon",
+        "child_component": {
+          "name": "WeaponMesh",
+          "class": "StaticMeshComponent",
+          "relative_location": "(0.00, 0.00, 0.00)",
+          "relative_rotation": "(P=0.00, Y=0.00, R=0.00)"
+        }
+      }
+    ]
+  }
+}

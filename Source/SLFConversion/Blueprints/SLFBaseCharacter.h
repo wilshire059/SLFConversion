@@ -30,6 +30,7 @@
 // Forward declarations
 class UStatManagerComponent;
 class UStatusEffectManagerComponent;
+class UAC_StatusEffectManager;
 class UBuffManagerComponent;
 class ULadderManagerComponent;
 class UAC_CombatManager;
@@ -78,9 +79,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<UStatManagerComponent> CachedStatManager;
 
-	/** Status effect manager component */
+	/** Status effect manager component - using UAC_StatusEffectManager (NOT UStatusEffectManagerComponent) */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
-	TObjectPtr<UStatusEffectManagerComponent> CachedStatusEffectManager;
+	TObjectPtr<UAC_StatusEffectManager> CachedStatusEffectManager;
 
 	/** Buff manager component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")

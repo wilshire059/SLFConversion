@@ -35,7 +35,7 @@ UAC_AI_CombatManager::UAC_AI_CombatManager()
 	IkWeight = 1.0;
 	CausesHitStop = true;
 	HitStopDuration = 0.05;
-	CurrencyReward = 100;
+	CurrencyReward = 999;  // Increased for testing
 	CanBePushed = true;
 	RagdollOnDeath = true;
 	HitReactType = ESLFHitReactType::None;

@@ -1,0 +1,37 @@
+{
+  "DA_ExampleEnemyReactionAnimset": {
+    "path": "/Game/SoulslikeFramework/Data/_AnimationData/DA_ExampleEnemyReactionAnimset",
+    "death_montages": {},
+    "hit_reactions": {
+      "Fwd": "/Game/SoulslikeFramework/Demo/_Animations/HitReactions/AM_SLF_HitReaction_Fwd.AM_SLF_HitReaction_Fwd",
+      "Bwd": "/Game/SoulslikeFramework/Demo/_Animations/HitReactions/AM_SLF_HitReaction_Bwd.AM_SLF_HitReaction_Bwd",
+      "Left": "/Game/SoulslikeFramework/Demo/_Animations/HitReactions/AM_SLF_HitReaction_L.AM_SLF_HitReaction_L",
+      "Right": "/Game/SoulslikeFramework/Demo/_Animations/HitReactions/AM_SLF_HitReaction_R.AM_SLF_HitReaction_R"
+    }
+  },
+  "DA_ExampleBossReactionAnimset": {
+    "path": "/Game/SoulslikeFramework/Data/_AnimationData/DA_ExampleBossReactionAnimset",
+    "death_montages": {
+      "Fwd": "/Game/SoulslikeFramework/Demo/_Animations/_Boss/AM_SLF_Boss_Death_Fwd_Grux.AM_SLF_Boss_Death_Fwd_Grux",
+      "Left": "/Game/SoulslikeFramework/Demo/_Animations/_Boss/AM_SLF_Boss_Death_Fwd_Grux.AM_SLF_Boss_Death_Fwd_Grux",
+      "Right": "/Game/SoulslikeFramework/Demo/_Animations/_Boss/AM_SLF_Boss_Death_Bwd_Grux.AM_SLF_Boss_Death_Bwd_Grux",
+      "Bwd": "/Game/SoulslikeFramework/Demo/_Animations/_Boss/AM_SLF_Boss_Death_Bwd_Grux.AM_SLF_Boss_Death_Bwd_Grux"
+    },
+    "hit_reactions": {
+      "Fwd": "/Game/SoulslikeFramework/Demo/_Animations/_Boss/AM_SLF_Boss_HitReact_Front_Grux.AM_SLF_Boss_HitReact_Front_Grux",
+      "Bwd": "/Game/SoulslikeFramework/Demo/_Animations/_Boss/AM_SLF_Boss_HitReact_Back_Grux.AM_SLF_Boss_HitReact_Back_Grux",
+      "Left": "/Game/SoulslikeFramework/Demo/_Animations/_Boss/AM_SLF_Boss_HitReact_Left_Grux.AM_SLF_Boss_HitReact_Left_Grux",
+      "Right": "/Game/SoulslikeFramework/Demo/_Animations/_Boss/AM_SLF_Boss_HitReact_Right_Grux.AM_SLF_Boss_HitReact_Right_Grux"
+    }
+  },
+  "DA_ExamplePlayerReactionAnimset": {
+    "path": "/Game/SoulslikeFramework/Data/_AnimationData/DA_ExamplePlayerReactionAnimset",
+    "death_montages": {},
+    "hit_reactions": {
+      "Fwd": "/Game/SoulslikeFramework/Demo/_Animations/HitReactions/AM_SLF_HitReaction_Fwd.AM_SLF_HitReaction_Fwd",
+      "Bwd": "/Game/SoulslikeFramework/Demo/_Animations/HitReactions/AM_SLF_HitReaction_Bwd.AM_SLF_HitReaction_Bwd",
+      "Left": "/Game/SoulslikeFramework/Demo/_Animations/HitReactions/AM_SLF_HitReaction_L.AM_SLF_HitReaction_L",
+      "Right": "/Game/SoulslikeFramework/Demo/_Animations/HitReactions/AM_SLF_HitReaction_R.AM_SLF_HitReaction_R"
+    }
+  }
+}

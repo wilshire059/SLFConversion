@@ -1,0 +1,55 @@
+{
+  "steps": [
+    "Starting B_Door fix process...",
+    "Loaded Blueprint: B_Door",
+    "Step 2: Checking current SCS components...",
+    "  SCS components count: 3",
+    "    - Door Frame_GEN_VARIABLE (StaticMeshComponent)",
+    "    - DEBUG_OpeningDirection_GEN_VARIABLE (ArrowComponent)",
+    "    - MoveTo_GEN_VARIABLE (BillboardComponent)",
+    "Step 3: Checking parent class...",
+    "  Current parent: /Script/SLFConversion.SLFDoorBase",
+    "Step 4: Clearing construction script...",
+    "  clear_construction_script result: True",
+    "Step 5: Clearing all Blueprint logic...",
+    "  clear_all_blueprint_logic result: True",
+    "Step 6: Force reparent to /Script/SLFConversion.B_Door...",
+    "  reparent_blueprint result: True",
+    "Step 7: Compile and save...",
+    "  compile_and_save result: False",
+    "Step 8: Checking final state...",
+    "  Final BP CDO component count: 4",
+    "    - DefaultSceneRoot: SceneComponent (mesh=None)",
+    "    - Interactable SM: StaticMeshComponent (mesh=SM_PrisonDoor)",
+    "    - Door Frame: StaticMeshComponent (mesh=SM_PrisonDoorArch)",
+    "    - MoveTo: BillboardComponent (mesh=None)",
+    "SUCCESS! B_Door now has door components!"
+  ],
+  "final_state": {
+    "component_count": 4,
+    "components": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "mesh": null
+      },
+      {
+        "name": "Interactable SM",
+        "class": "StaticMeshComponent",
+        "mesh": "SM_PrisonDoor"
+      },
+      {
+        "name": "Door Frame",
+        "class": "StaticMeshComponent",
+        "mesh": "SM_PrisonDoorArch"
+      },
+      {
+        "name": "MoveTo",
+        "class": "BillboardComponent",
+        "mesh": null
+      }
+    ],
+    "has_door_mesh": true,
+    "has_door_frame": true
+  }
+}

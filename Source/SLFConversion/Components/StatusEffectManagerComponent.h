@@ -183,6 +183,9 @@ protected:
 	/** Get status effect tag from a PDA_StatusEffect asset */
 	FGameplayTag GetTagFromStatusEffectAsset(UDataAsset* StatusEffect) const;
 
+	/** Get the owner's resistance stat value for a given tag */
+	double GetOwnerResistanceStatValue(const FGameplayTag& ResistiveStatTag) const;
+
 	/** Trigger the status effect when buildup is full */
 	void TriggerStatusEffect(const FGameplayTag& EffectTag, int32 Rank);
 

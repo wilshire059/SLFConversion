@@ -1,0 +1,75 @@
+======================================================================
+MIGRATING BT DECORATORS FROM BLUEPRINT ENUM TO C++ INT VALUES
+======================================================================
+
+ESLFAIStates mapping:
+  Idle=0, RandomRoam=1, Patrolling=2, Investigating=3
+  Combat=4, PoiseBroken=5, Uninterruptable=6, OutOfBounds=7
+
+Processing: BT_Idle (expected State=0)
+  BehaviorTree: BT_Idle
+  Expected State value: 0
+  [0] Is State == Idle? - Key: State
+      Current IntValue: 0
+      OK: IntValue already correct
+  No changes needed.
+
+Processing: BT_RandomRoam (expected State=1)
+  BehaviorTree: BT_RandomRoam
+  Expected State value: 1
+  [0] Is State == Random Roam? - Key: State
+      Current IntValue: 1
+      OK: IntValue already correct
+  No changes needed.
+
+Processing: BT_PatrolPath (expected State=2)
+  BehaviorTree: BT_PatrolPath
+  Expected State value: 2
+  [0] Is State == Patrolling? - Key: State
+      Current IntValue: 2
+      OK: IntValue already correct
+  No changes needed.
+
+Processing: BT_Investigating (expected State=3)
+  BehaviorTree: BT_Investigating
+  Expected State value: 3
+  [0] Is State == Investigating? - Key: State
+      Current IntValue: 3
+      OK: IntValue already correct
+  No changes needed.
+
+Processing: BT_Combat (expected State=4)
+  BehaviorTree: BT_Combat
+  Expected State value: 4
+  [1] Is State == Combat? - Key: State
+      Current IntValue: 4
+      OK: IntValue already correct
+  No changes needed.
+
+Processing: BT_PoiseBroken (expected State=5)
+  BehaviorTree: BT_PoiseBroken
+  Expected State value: 5
+  [0] Is State == Poise Broken? - Key: State
+      Current IntValue: 5
+      OK: IntValue already correct
+  No changes needed.
+
+Processing: BT_Uninterruptable (expected State=6)
+  BehaviorTree: BT_Uninterruptable
+  Expected State value: 6
+  [0] Is State == Uninterruptable? - Key: State
+      Current IntValue: 6
+      OK: IntValue already correct
+  No changes needed.
+
+Processing: BT_OutOfBounds (expected State=7)
+  BehaviorTree: BT_OutOfBounds
+  Expected State value: 7
+  [0] Is State == Out of Bounds? - Key: State
+      Current IntValue: 6
+      FIXED: Set IntValue from 6 to 7
+  Saved BehaviorTree with fixes.
+
+======================================================================
+SUMMARY: 8 succeeded, 0 failed
+======================================================================

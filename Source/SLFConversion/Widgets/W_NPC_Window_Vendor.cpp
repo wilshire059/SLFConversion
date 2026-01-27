@@ -37,7 +37,7 @@ void UW_NPC_Window_Vendor::NativeDestruct()
 
 void UW_NPC_Window_Vendor::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 
 int32 UW_NPC_Window_Vendor::GetPlayerCurrency_Implementation()

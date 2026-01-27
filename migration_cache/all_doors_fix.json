@@ -1,0 +1,41 @@
+{
+  "blueprints_checked": [
+    {
+      "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Door",
+      "components": [
+        {
+          "name": "Interactable SM",
+          "mesh": "SM_PrisonDoor",
+          "fixed": false
+        },
+        {
+          "name": "Door Frame",
+          "mesh": "SM_PrisonDoorArch",
+          "fixed": false
+        }
+      ]
+    },
+    {
+      "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Door_Demo",
+      "components": []
+    }
+  ],
+  "levels_checked": [
+    {
+      "path": "/Game/SoulslikeFramework/Maps/L_Demo_Menu",
+      "doors": []
+    },
+    {
+      "path": "/Game/SoulslikeFramework/Maps/L_Demo_Showcase",
+      "doors": [
+        {
+          "name": "B_DoorDemo_C_1",
+          "class": "B_Door_Demo_C",
+          "location": "<Struct 'Vector' (0x000001959918B580) {x: 6878.639565, y: -641.473862, z: 9.999991}>",
+          "components_fixed": 0
+        }
+      ]
+    }
+  ],
+  "doors_fixed": 0
+}

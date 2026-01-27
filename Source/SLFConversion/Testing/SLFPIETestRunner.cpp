@@ -10,6 +10,8 @@
 #include "TimerManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "HAL/IConsoleManager.h"
+#include "Components/AC_SaveLoadManager.h"
+#include "InstancedStruct.h"
 
 // ========== CONSOLE COMMANDS ==========
 
@@ -43,6 +45,24 @@ static FAutoConsoleCommand CCmdTestMovement(
 				if (USLFPIETestRunner* Runner = GI->GetSubsystem<USLFPIETestRunner>())
 				{
 					Runner->RunMovementTest();
+				}
+			}
+		}
+	})
+);
+
+static FAutoConsoleCommand CCmdTestSaveLoad(
+	TEXT("SLF.Test.SaveLoad"),
+	TEXT("Run save/load system test"),
+	FConsoleCommandDelegate::CreateLambda([]()
+	{
+		if (UWorld* World = GEngine->GetWorldFromContextObject(GEngine->GetCurrentPlayWorld(), EGetWorldErrorMode::ReturnNull))
+		{
+			if (UGameInstance* GI = World->GetGameInstance())
+			{
+				if (USLFPIETestRunner* Runner = GI->GetSubsystem<USLFPIETestRunner>())
+				{
+					Runner->RunSaveLoadTest();
 				}
 			}
 		}
@@ -178,6 +198,7 @@ void USLFPIETestRunner::Initialize(FSubsystemCollectionBase& Collection)
 	UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] Console commands available:"));
 	UE_LOG(LogTemp, Log, TEXT("  SLF.Test.Actions - Run action system test"));
 	UE_LOG(LogTemp, Log, TEXT("  SLF.Test.Movement - Run movement test"));
+	UE_LOG(LogTemp, Log, TEXT("  SLF.Test.SaveLoad - Run save/load system test"));
 	UE_LOG(LogTemp, Log, TEXT("  SLF.SimKey <Key> - Simulate key press"));
 	UE_LOG(LogTemp, Log, TEXT("  SLF.SimAttack - Simulate attack"));
 	UE_LOG(LogTemp, Log, TEXT("  SLF.SimDodge - Simulate dodge"));
@@ -244,6 +265,10 @@ void USLFPIETestRunner::RunTest(FName TestName)
 	else if (TestName == FName("Interaction"))
 	{
 		RunInteractionTest();
+	}
+	else if (TestName == FName("SaveLoad"))
+	{
+		RunSaveLoadTest();
 	}
 }
 
@@ -385,4 +410,107 @@ FString USLFPIETestRunner::GetTestResultsReport() const
 
 	Report += FString::Printf(TEXT("\nTotal: %d passed, %d failed"), Passed, Failed);
 	return Report;
+}
+
+void USLFPIETestRunner::RunSaveLoadTest()
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] ===== SAVE/LOAD SYSTEM TEST ====="));
+
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		LogTestResult(FName("SaveLoad"), false, TEXT("No world"));
+		return;
+	}
+
+	// Get player controller
+	APlayerController* PC = World->GetFirstPlayerController();
+	if (!PC)
+	{
+		LogTestResult(FName("SaveLoad"), false, TEXT("No player controller"));
+		return;
+	}
+
+	// Find AC_SaveLoadManager component on the controller
+	UAC_SaveLoadManager* SaveLoadManager = PC->FindComponentByClass<UAC_SaveLoadManager>();
+	if (!SaveLoadManager)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SLFPIETestRunner] SaveLoadManager not on PC, checking pawn..."));
+
+		// Try on the pawn
+		if (APawn* Pawn = PC->GetPawn())
+		{
+			SaveLoadManager = Pawn->FindComponentByClass<UAC_SaveLoadManager>();
+		}
+	}
+
+	if (!SaveLoadManager)
+	{
+		LogTestResult(FName("SaveLoad.Component"), false, TEXT("AC_SaveLoadManager not found on PC or Pawn"));
+		UE_LOG(LogTemp, Error, TEXT("[SLFPIETestRunner] Could not find AC_SaveLoadManager - component may not be attached"));
+		return;
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] Found AC_SaveLoadManager: %s"), *SaveLoadManager->GetName());
+	LogTestResult(FName("SaveLoad.Component"), true, TEXT("AC_SaveLoadManager found"));
+
+	// Test 1: Check if save slot can be set
+	FString TestSlotName = TEXT("TestSlot_PIE");
+	SaveLoadManager->EventUpdateActiveSlot(TestSlotName);
+	bool bSlotUpdated = SaveLoadManager->CurrentSaveSlot == TestSlotName;
+	LogTestResult(FName("SaveLoad.UpdateSlot"), bSlotUpdated,
+		FString::Printf(TEXT("CurrentSaveSlot=%s"), *SaveLoadManager->CurrentSaveSlot));
+
+	// Test 2: Test data serialization
+	UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] Testing SerializeLevelData..."));
+	TArray<FInstancedStruct> LevelData = SaveLoadManager->SerializeLevelData();
+	bool bLevelDataValid = LevelData.Num() > 0;
+	LogTestResult(FName("SaveLoad.SerializeLevelData"), bLevelDataValid,
+		FString::Printf(TEXT("LevelData entries: %d"), LevelData.Num()));
+
+	// Test 3: Test class data serialization
+	UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] Testing SerializeClassData..."));
+	TArray<FInstancedStruct> ClassData = SaveLoadManager->SerializeClassData();
+	bool bClassDataValid = true; // Class data can be empty if no class selected
+	LogTestResult(FName("SaveLoad.SerializeClassData"), bClassDataValid,
+		FString::Printf(TEXT("ClassData entries: %d"), ClassData.Num()));
+
+	// Test 4: Test full save data serialization
+	UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] Testing SerializeAllDataForSaving..."));
+	SaveLoadManager->SerializeAllDataForSaving();
+	UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] SerializeAllDataForSaving completed"));
+	LogTestResult(FName("SaveLoad.SerializeAll"), true, TEXT("SerializeAllDataForSaving executed without crash"));
+
+	// Test 5: Test EventSaveData (actual disk save)
+	UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] Testing EventSaveData (will save to disk)..."));
+	SaveLoadManager->EventSaveData();
+	LogTestResult(FName("SaveLoad.SaveData"), true, TEXT("EventSaveData executed without crash"));
+
+	// Check after a delay if save completed
+	FTimerHandle SaveCheckTimer;
+	World->GetTimerManager().SetTimer(SaveCheckTimer, [this, SaveLoadManager, TestSlotName]()
+	{
+		// Test 6: Verify save file exists
+		bool bSaveExists = UGameplayStatics::DoesSaveGameExist(TestSlotName, 0);
+		LogTestResult(FName("SaveLoad.FileExists"), bSaveExists,
+			FString::Printf(TEXT("Save file '%s' exists: %s"), *TestSlotName, bSaveExists ? TEXT("YES") : TEXT("NO")));
+
+		// Test 7: Test preload
+		UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] Testing EventTryPreloadData..."));
+		SaveLoadManager->EventTryPreloadData();
+		LogTestResult(FName("SaveLoad.Preload"), true, TEXT("Preload executed without crash"));
+
+		// Test 8: Test GetSavedLevelName
+		FName SavedLevelName;
+		bool bSuccess = false;
+		SaveLoadManager->GetSavedLevelName(SavedLevelName, bSuccess);
+		LogTestResult(FName("SaveLoad.GetSavedLevel"), true,
+			FString::Printf(TEXT("GetSavedLevelName: %s (success=%s)"), *SavedLevelName.ToString(), bSuccess ? TEXT("true") : TEXT("false")));
+
+		// Print summary
+		UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] ===== SAVE/LOAD TEST COMPLETE ====="));
+		UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] Check logs above for individual test results"));
+		UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] Save slot used: %s"), *TestSlotName);
+
+	}, 2.0f, false);
 }

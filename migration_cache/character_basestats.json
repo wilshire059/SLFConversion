@@ -1,0 +1,10 @@
+{
+  "DA_Manny": {
+    "path": "/Game/SoulslikeFramework/Data/BaseCharacters/DA_Manny",
+    "base_stats": {}
+  },
+  "DA_Quinn": {
+    "path": "/Game/SoulslikeFramework/Data/BaseCharacters/DA_Quinn",
+    "base_stats": {}
+  }
+}

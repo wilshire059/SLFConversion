@@ -1,0 +1,25 @@
+================================================================================
+BP_ONLY B_LADDER DIAGNOSTIC
+================================================================================
+Loaded: /Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Ladder
+CDO: Default__B_Ladder_C
+CDO Class: B_Ladder_C
+Error getting parent class: Blueprint: Failed to find property 'parent_class' for attribute 'parent_class' on 'Blueprint'
+
+------------------------------------------------------------
+BLUEPRINT SCS COMPONENTS:
+------------------------------------------------------------
+Error getting SCS: Blueprint: Failed to find property 'simple_construction_script' for attribute 'simple_construction_script' on 'Blueprint'
+
+------------------------------------------------------------
+CDO COMPONENTS (via get_components_by_class):
+------------------------------------------------------------
+ISM Components: 0
+
+All Primitive Components: 0
+
+All Actor Components: 0
+
+================================================================================
+DIAGNOSTIC COMPLETE
+================================================================================

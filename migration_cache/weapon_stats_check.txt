@@ -1,0 +1,64 @@
+================================================================================
+WEAPON STAT CHANGES CHECK
+================================================================================
+
+[DA_Sword01]
+  Class: PDA_Item_C
+  ItemInformation: FOUND (SLFItemInfo)
+  EquipmentDetails: FOUND (SLFEquipmentInfo)
+  StatChanges count: 1
+    - <Struct 'GameplayTag' (0x000001B2B2D10F70) {}>: 15.0
+  *** NO WEIGHT STAT ***
+
+[DA_Greatsword]
+  Class: PDA_Item_C
+  ItemInformation: FOUND (SLFItemInfo)
+  EquipmentDetails: FOUND (SLFEquipmentInfo)
+  StatChanges count: 1
+    - <Struct 'GameplayTag' (0x000001B2B2D12C10) {}>: 75.0
+  *** NO WEIGHT STAT ***
+
+[DA_Katana]
+  Class: PDA_Item_C
+  ItemInformation: FOUND (SLFItemInfo)
+  EquipmentDetails: FOUND (SLFEquipmentInfo)
+  StatChanges count: 1
+    - <Struct 'GameplayTag' (0x000001B2B2D10270) {}>: 34.0
+  *** NO WEIGHT STAT ***
+
+[DA_Shield01]
+  Class: PDA_Item_C
+  ItemInformation: FOUND (SLFItemInfo)
+  EquipmentDetails: FOUND (SLFEquipmentInfo)
+  StatChanges count: 0
+  *** NO STAT CHANGES ***
+
+[DA_PoisonSword]
+  Class: PDA_Item_C
+  ItemInformation: FOUND (SLFItemInfo)
+  EquipmentDetails: FOUND (SLFEquipmentInfo)
+  StatChanges count: 1
+    - <Struct 'GameplayTag' (0x000001B2B2D1A3D0) {}>: 15.0
+  *** NO WEIGHT STAT ***
+
+[DA_BossMace]
+  Class: PDA_Item_C
+  ItemInformation: FOUND (SLFItemInfo)
+  EquipmentDetails: FOUND (SLFEquipmentInfo)
+  StatChanges count: 1
+    - <Struct 'GameplayTag' (0x000001B2B2D14EC0) {}>: 120.0
+  *** NO WEIGHT STAT ***
+
+================================================================================
+ARMOR COMPARISON
+================================================================================
+
+[DA_ExampleArmor]
+  Class: PDA_Item_C
+  StatChanges count: 4
+    - <Struct 'GameplayTag' (0x000001B2B2D11280) {}>: 10.0
+    - <Struct 'GameplayTag' (0x000001B2B2D16CC0) {}>: 1.0
+    - <Struct 'GameplayTag' (0x000001B2B2D12940) {}>: 1.0
+    - <Struct 'GameplayTag' (0x000001B2B2D1A0B0) {}>: 5.0
+
+================================================================================

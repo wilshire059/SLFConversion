@@ -47,6 +47,30 @@ struct FSLFAIAbility
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Ability")
 	float Cooldown = 0.0f;
+
+	/** Minimum distance to target for this ability (0 = no minimum) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Ability|Distance")
+	float MinDistance = 0.0f;
+
+	/** Maximum distance to target for this ability (0 = no limit) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Ability|Distance")
+	float MaxDistance = 0.0f;
+
+	/** If true, this ability is a gap-closer (lunge, charge, leap attack) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Ability|Distance")
+	bool bIsGapCloser = false;
+
+	/** Minimum HP percentage to use this ability (0-1, for enrage moves) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Ability|Condition")
+	float HealthThreshold = 0.0f;
+
+	/** If true, only use this ability when HP is BELOW threshold (for desperation moves) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Ability|Condition")
+	bool bUseBelowThreshold = false;
+
+	/** Last time this ability was used (runtime, not serialized) */
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "AI|Ability|Runtime")
+	float LastUsedTime = -999.0f;
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -96,6 +120,16 @@ public:
 	/** [5/41] Whether healthbar is currently active */
 	UPROPERTY(BlueprintReadWrite, Category = "AI Combat|State")
 	bool bHealthbarActive;
+
+	// --- Ability Selection Context (Set by AI State Machine before TryGetAbility) ---
+
+	/** Cached distance to target for ability selection (set by AI state machine) */
+	UPROPERTY(Transient, BlueprintReadWrite, Category = "AI Combat|AbilityContext")
+	float CachedDistanceToTarget = 0.0f;
+
+	/** Cached health percentage (0-1) for ability selection (set by AI state machine) */
+	UPROPERTY(Transient, BlueprintReadWrite, Category = "AI Combat|AbilityContext")
+	float CachedHealthPercent = 1.0f;
 
 	// --- Healthbar Config (4) ---
 
@@ -302,6 +336,16 @@ public:
 	/** [41/41] Currently selected ability */
 	UPROPERTY(BlueprintReadWrite, Category = "AI Combat|Abilities")
 	UDataAsset* SelectedAbility;
+
+	// --- Respawn Support ---
+
+	/** Original spawn transform for respawn-on-rest (stored in BeginPlay) */
+	UPROPERTY(BlueprintReadWrite, Category = "AI Combat|Respawn")
+	FTransform SpawnTransform;
+
+	/** Whether this enemy has been respawned (distinguishes first spawn from respawn) */
+	UPROPERTY(BlueprintReadWrite, Category = "AI Combat|Respawn")
+	bool bHasBeenRespawned;
 
 	// ═══════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS: 2/2 migrated

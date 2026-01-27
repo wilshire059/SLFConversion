@@ -1,0 +1,51 @@
+============================================================
+CHECK LINKED ANIM GRAPH FUNCTIONS
+============================================================
+
+/Game/SoulslikeFramework/Demo/_Animations/Locomotion/_Misc/ALI_LocomotionStates
+  Name: ALI_LocomotionStates
+  Class: AnimBlueprint
+  Functions (5):
+    - LL_Idle
+    - LL_Cycle
+    - LL_CrouchIdle
+    - LL_CrouchCycle
+    - LL_RestingIdle
+
+  Looking for LL_ layer functions:
+    FOUND: LL_Idle
+    FOUND: LL_Cycle
+    FOUND: LL_CrouchIdle
+    FOUND: LL_CrouchCycle
+    FOUND: LL_RestingIdle
+
+/Game/SoulslikeFramework/Demo/_Animations/Locomotion/_Misc/ALI_OverlayStates
+  Name: ALI_OverlayStates
+  Class: AnimBlueprint
+  Functions (8):
+    - LL_OneHanded_Left
+    - LL_Shield_Left
+    - LL_Shield_Block_Left
+    - LL_TwoHanded_Left
+    - LL_OneHanded_Right
+    - LL_Shield_Right
+    - LL_Shield_Block_Right
+    - LL_TwoHanded_Right
+
+  Looking for LL_ layer functions:
+    FOUND: LL_OneHanded_Left
+    FOUND: LL_Shield_Left
+    FOUND: LL_Shield_Block_Left
+    FOUND: LL_TwoHanded_Left
+    FOUND: LL_OneHanded_Right
+    FOUND: LL_Shield_Right
+    FOUND: LL_Shield_Block_Right
+    FOUND: LL_TwoHanded_Right
+
+============================================================
+SUMMARY
+============================================================
+If the LL_ layers are not found in the linked anim graphs,
+the issue exists in the source asset (not caused by migration).
+
+Full log saved to: C:/scripts/SLFConversion/migration_cache/backup_animlayer_check.txt

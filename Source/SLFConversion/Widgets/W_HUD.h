@@ -42,7 +42,10 @@ class UW_Interaction;
 class UW_LootNotification;
 class UW_FirstLootNotification;
 class UW_Resources;
+class UW_StatusEffectBar;
+class UW_StatusEffectNotification;
 class UVerticalBox;
+class UW_Radar;
 
 // Forward declarations for Blueprint types
 class UB_Stat;
@@ -96,14 +99,24 @@ protected:
 	UW_Status* CachedW_Status;
 	UW_Settings* CachedW_Settings;
 	UW_Resources* CachedW_Resources;
+	UW_RestMenu* CachedW_RestMenu;
+	UW_Radar* CachedW_Radar;
 
 	// Loot notification widgets - cached from UMG
 	UVerticalBox* CachedItemLootNotificationsBox;
 	UW_FirstLootNotification* CachedW_FirstLootNotification;
 
+	// Status effect widgets - cached from UMG
+	UVerticalBox* CachedStatusEffectBox;
+	UW_StatusEffectNotification* CachedW_StatusEffectNotification;
+
 	// Loot notification widget class for dynamic creation
 	UPROPERTY()
 	TSubclassOf<UW_LootNotification> LootNotificationWidgetClass;
+
+	// Status effect bar widget class for dynamic creation
+	UPROPERTY()
+	TSubclassOf<UW_StatusEffectBar> StatusEffectBarWidgetClass;
 
 public:
 
@@ -251,8 +264,8 @@ public:
 	virtual void EventHideInteractionWidget_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_HUD|Interaction")
-	void EventSetupRestingPointWidget(AB_RestingPoint* TargetCampfire);
-	virtual void EventSetupRestingPointWidget_Implementation(AB_RestingPoint* TargetCampfire);
+	void EventSetupRestingPointWidget(AActor* TargetCampfire);
+	virtual void EventSetupRestingPointWidget_Implementation(AActor* TargetCampfire);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_HUD|Interaction")
 	void EventShowNpcInteractionWidget();
@@ -383,6 +396,8 @@ public:
 	UW_Crafting* GetCachedCrafting() const { return CachedW_Crafting; }
 	UW_Status* GetCachedStatus() const { return CachedW_Status; }
 	UW_Settings* GetCachedSettings() const { return CachedW_Settings; }
+	UW_RestMenu* GetCachedRestMenu() const { return CachedW_RestMenu; }
+	UW_Radar* GetCachedRadar() const { return CachedW_Radar; }
 
 	// Death Screen
 	UFUNCTION(BlueprintCallable, Category = "W_HUD|Death")
@@ -418,4 +433,15 @@ protected:
 
 	UFUNCTION()
 	void OnSettingsClosedHandler();
+
+	UFUNCTION()
+	void OnRestMenuClosedHandler();
+
+	/** Internal handler bound to W_RestMenu::OnStorageRequested */
+	UFUNCTION()
+	void OnStorageRequestedHandler();
+
+	/** Internal handler bound to StatusEffectManagerComponent::OnStatusEffectAdded (takes UObject*) */
+	UFUNCTION()
+	void OnStatusEffectAddedFromComponent(UObject* StatusEffect);
 };

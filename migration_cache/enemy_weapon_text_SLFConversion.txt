@@ -1,0 +1,10 @@
+# Enemy Weapon Export - SLFConversion
+======================================================================
+
+## B_Soulslike_Enemy_Guard
+----------------------------------------
+ERROR: type object 'EditorAssetLibrary' has no attribute 'export_text'
+
+## B_Soulslike_Enemy_Showcase
+----------------------------------------
+ERROR: type object 'EditorAssetLibrary' has no attribute 'export_text'

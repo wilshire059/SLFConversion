@@ -1,0 +1,61 @@
+{
+  "table_path": "/Game/SoulslikeFramework/Data/_Datatables/DT_ExampleChestTier",
+  "rows": [
+    {
+      "name": "NewRow",
+      "item": null,
+      "weight": 0.0,
+      "min_amount": 1,
+      "max_amount": 1
+    },
+    {
+      "name": "NewRow_0",
+      "item": null,
+      "weight": 0.0,
+      "min_amount": 1,
+      "max_amount": 1
+    },
+    {
+      "name": "NewRow_1",
+      "item": null,
+      "weight": 0.0,
+      "min_amount": 1,
+      "max_amount": 1
+    },
+    {
+      "name": "NewRow_2",
+      "item": null,
+      "weight": 0.0,
+      "min_amount": 1,
+      "max_amount": 1
+    },
+    {
+      "name": "NewRow_3",
+      "item": null,
+      "weight": 0.0,
+      "min_amount": 1,
+      "max_amount": 1
+    },
+    {
+      "name": "NewRow_4",
+      "item": null,
+      "weight": 0.0,
+      "min_amount": 1,
+      "max_amount": 1
+    },
+    {
+      "name": "NewRow_5",
+      "item": null,
+      "weight": 0.0,
+      "min_amount": 1,
+      "max_amount": 1
+    },
+    {
+      "name": "NewRow_6",
+      "item": null,
+      "weight": 0.0,
+      "min_amount": 1,
+      "max_amount": 1
+    }
+  ]
+}

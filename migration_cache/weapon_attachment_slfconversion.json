@@ -1,0 +1,80 @@
+{
+	"project": "SLFConversion",
+	"weapons":
+	{
+		"B_Item_Weapon_Greatsword_C":
+		{
+			"class": "B_Item_Weapon_Greatsword_C",
+			"mesh_relative_location":
+			{
+				"x": 2.2303051928433888,
+				"y": 0,
+				"z": -2.7169896412715389e-06
+			},
+			"static_mesh": "SM_Greatsword"
+		},
+		"B_Item_Weapon_Katana_C":
+		{
+			"class": "B_Item_Weapon_Katana_C",
+			"mesh_relative_location":
+			{
+				"x": 2.7144818608953874e-12,
+				"y": 1.3721270946190358e-06,
+				"z": -1.6439001851942407
+			},
+			"attach_socket": "hand_r",
+			"mesh_offset_from_socket":
+			{
+				"x": 0.33451215191826122,
+				"y": -1.6094927428458163,
+				"z": 0.0063731402208446752
+			},
+			"mesh_offset_magnitude": 1.6438995599746704,
+			"static_mesh": "SM_Katana"
+		},
+		"B_Item_Weapon_PoisonSword_C":
+		{
+			"class": "B_Item_Weapon_PoisonSword_C",
+			"mesh_relative_location":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"static_mesh": "SM_PoisonSword"
+		},
+		"B_Item_Weapon_Shield_C":
+		{
+			"class": "B_Item_Weapon_Shield_C",
+			"mesh_relative_location":
+			{
+				"x": 2.7284841053187847e-12,
+				"y": -3.2270418159896508e-07,
+				"z": 0.22653895153354142
+			},
+			"static_mesh": "SM_Shield"
+		},
+		"B_Item_Weapon_SwordExample01_C":
+		{
+			"class": "B_Item_Weapon_SwordExample01_C",
+			"mesh_relative_location":
+			{
+				"x": 0,
+				"y": -8.6341333371819928e-07,
+				"z": 36.494420561370283
+			},
+			"static_mesh": "SM_ExampleSword01"
+		},
+		"B_Item_Weapon_SwordExample02_C":
+		{
+			"class": "B_Item_Weapon_SwordExample02_C",
+			"mesh_relative_location":
+			{
+				"x": 2.7284841053187847e-12,
+				"y": 1.4119568731985055e-06,
+				"z": 50.087473125172025
+			},
+			"static_mesh": "SM_ExampleSword02"
+		}
+	}
+}

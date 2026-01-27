@@ -1,0 +1,12 @@
+============================================================
+Verifying Weapon Status Effect Data
+============================================================
+
+Checking: /Game/SoulslikeFramework/Data/Items/DA_PoisonSword
+  Class: PDA_Item_C
+  WeaponStatusEffectInfo: 1 entries
+    DA_StatusEffect_Poison: Rank=3, BuildupAmount=50.0
+
+Checking: /Game/SoulslikeFramework/Data/Items/DA_Sword01
+  Class: PDA_Item_C
+  WeaponStatusEffectInfo: EMPTY

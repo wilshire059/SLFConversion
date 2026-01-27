@@ -1,0 +1,27 @@
+================================================================================
+VERIFYING BASESTATS
+================================================================================
+
+--- /Game/SoulslikeFramework/Data/BaseCharacters/DA_Manny ---
+  BaseStats entries: 8
+    SLFStatVigor: 10.0
+    SLFStatEndurance: 10.0
+    SLFStatMind: 10.0
+    SLFStatStrength: 10.0
+    SLFStatDexterity: 10.0
+    SLFStatIntelligence: 10.0
+    SLFStatFaith: 10.0
+    SLFStatArcane: 10.0
+
+--- /Game/SoulslikeFramework/Data/BaseCharacters/DA_Quinn ---
+  BaseStats entries: 8
+    SLFStatVigor: 10.0
+    SLFStatEndurance: 10.0
+    SLFStatMind: 10.0
+    SLFStatStrength: 10.0
+    SLFStatDexterity: 10.0
+    SLFStatIntelligence: 10.0
+    SLFStatFaith: 10.0
+    SLFStatArcane: 10.0
+
+================================================================================

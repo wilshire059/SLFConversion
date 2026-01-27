@@ -33,70 +33,70 @@ APPLYING ITEM CATEGORIES AND USABLE FLAGS
 Processing 21 items...
 
   OK: DA_Sword01
-      Category: NONE -> WEAPONS
+      Category: WEAPONS -> WEAPONS
       Usable: False -> False (Not Usable)
   OK: DA_Sword02
-      Category: NONE -> WEAPONS
+      Category: WEAPONS -> WEAPONS
       Usable: False -> False (Not Usable)
   OK: DA_PoisonSword
-      Category: NONE -> WEAPONS
+      Category: WEAPONS -> WEAPONS
       Usable: False -> False (Not Usable)
   OK: DA_Greatsword
-      Category: NONE -> WEAPONS
+      Category: WEAPONS -> WEAPONS
       Usable: False -> False (Not Usable)
   OK: DA_Katana
-      Category: NONE -> WEAPONS
+      Category: WEAPONS -> WEAPONS
       Usable: False -> False (Not Usable)
   OK: DA_BossMace
-      Category: NONE -> WEAPONS
+      Category: WEAPONS -> WEAPONS
       Usable: False -> False (Not Usable)
   OK: DA_Shield01
-      Category: NONE -> SHIELDS
+      Category: SHIELDS -> SHIELDS
       Usable: False -> False (Not Usable)
   OK: DA_ExampleArmor
-      Category: NONE -> ARMOR
+      Category: ARMOR -> ARMOR
       Usable: False -> False (Not Usable)
   OK: DA_ExampleArmor02
-      Category: NONE -> ARMOR
+      Category: ARMOR -> ARMOR
       Usable: False -> False (Not Usable)
   OK: DA_ExampleBracers
-      Category: NONE -> ARMOR
+      Category: ARMOR -> ARMOR
       Usable: False -> False (Not Usable)
   OK: DA_ExampleGreaves
-      Category: NONE -> ARMOR
+      Category: ARMOR -> ARMOR
       Usable: False -> False (Not Usable)
   OK: DA_ExampleHelmet
-      Category: NONE -> ARMOR
+      Category: ARMOR -> ARMOR
       Usable: False -> False (Not Usable)
   OK: DA_ExampleHat
-      Category: NONE -> ARMOR
+      Category: ARMOR -> ARMOR
       Usable: False -> False (Not Usable)
     Warning: Could not set action_tag for DA_Lantern: module 'unreal' has no attribute 'GameplayTagsManager'
   OK: DA_Lantern
-      Category: NONE -> TOOLS
+      Category: TOOLS -> TOOLS
       Usable: True -> True (Usable)
     Warning: Could not set action_tag for DA_ThrowingKnife: module 'unreal' has no attribute 'GameplayTagsManager'
   OK: DA_ThrowingKnife
-      Category: NONE -> TOOLS
+      Category: TOOLS -> TOOLS
       Usable: True -> True (Usable)
     Warning: Could not set action_tag for DA_HealthFlask: module 'unreal' has no attribute 'GameplayTagsManager'
   OK: DA_HealthFlask
-      Category: NONE -> TOOLS
+      Category: TOOLS -> TOOLS
       Usable: True -> True (Usable)
   OK: DA_ExampleTalisman
       Category: NONE -> BOLSTERING
       Usable: False -> False (Not Usable)
   OK: DA_Apple
-      Category: NONE -> CRAFTING
+      Category: CRAFTING -> CRAFTING
       Usable: True -> True (Usable)
   OK: DA_CrimsonEverbloom
-      Category: NONE -> CRAFTING
+      Category: CRAFTING -> CRAFTING
       Usable: False -> False (Not Usable)
   OK: DA_Cube
-      Category: NONE -> CRAFTING
+      Category: CRAFTING -> CRAFTING
       Usable: True -> False (Not Usable)
   OK: DA_PrisonKey
-      Category: NONE -> KEY_ITEMS
+      Category: KEY_ITEMS -> KEY_ITEMS
       Usable: False -> False (Not Usable)
 
 ============================================================

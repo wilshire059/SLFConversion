@@ -1,0 +1,179 @@
+{
+  "BlueprintPath": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_BossDoor",
+  "Components": {
+    "DefaultSceneRoot": {
+      "Class": "SceneComponent",
+      "RelativeLocation": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 1000.0
+      },
+      "RelativeRotation": {
+        "Pitch": 0.0,
+        "Yaw": 0.0,
+        "Roll": 0.0
+      },
+      "RelativeScale": {
+        "X": 1.0,
+        "Y": 1.0,
+        "Z": 1.0
+      }
+    },
+    "Interactable SM": {
+      "Class": "StaticMeshComponent",
+      "RelativeLocation": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 200.0
+      },
+      "RelativeRotation": {
+        "Pitch": 0.0,
+        "Yaw": 90.0,
+        "Roll": 0.0
+      },
+      "RelativeScale": {
+        "X": 3.25,
+        "Y": 0.1,
+        "Z": 4.25
+      },
+      "AttachParent": "DefaultSceneRoot",
+      "StaticMesh": "/Engine/BasicShapes/Cube.Cube"
+    },
+    "Interactable SK": {
+      "Class": "SkeletalMeshComponent",
+      "RelativeLocation": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "RelativeRotation": {
+        "Pitch": 0.0,
+        "Yaw": 0.0,
+        "Roll": 0.0
+      },
+      "RelativeScale": {
+        "X": 1.0,
+        "Y": 1.0,
+        "Z": 1.0
+      },
+      "AttachParent": "DefaultSceneRoot"
+    },
+    "Door Frame": {
+      "Class": "StaticMeshComponent",
+      "RelativeLocation": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "RelativeRotation": {
+        "Pitch": 0.0,
+        "Yaw": 90.0,
+        "Roll": 0.0
+      },
+      "RelativeScale": {
+        "X": 1.0,
+        "Y": 1.0,
+        "Z": 1.0
+      },
+      "AttachParent": "DefaultSceneRoot",
+      "StaticMesh": "/Game/SoulslikeFramework/Meshes/SM/Door/SM_Door.SM_Door"
+    },
+    "DEBUG_OpeningDirection": {
+      "Class": "ArrowComponent",
+      "RelativeLocation": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 150.0
+      },
+      "RelativeRotation": {
+        "Pitch": 0.0,
+        "Yaw": 0.0,
+        "Roll": 0.0
+      },
+      "RelativeScale": {
+        "X": 2.0,
+        "Y": 2.0000000596046448,
+        "Z": 2.0000000596046448
+      },
+      "AttachParent": "DefaultSceneRoot"
+    },
+    "MoveTo": {
+      "Class": "BillboardComponent",
+      "RelativeLocation": {
+        "X": 100.0,
+        "Y": 0.0,
+        "Z": 60.000000714819635
+      },
+      "RelativeRotation": {
+        "Pitch": -0.0,
+        "Yaw": -5.684341886080797e-14,
+        "Roll": 0.0
+      },
+      "RelativeScale": {
+        "X": 0.5,
+        "Y": 0.5,
+        "Z": 0.5
+      },
+      "AttachParent": "DefaultSceneRoot"
+    },
+    "Portal_Front": {
+      "Class": "NiagaraComponent",
+      "RelativeLocation": {
+        "X": 4.010511246203295e-08,
+        "Y": -100.0,
+        "Z": -2.2654028404812224e-08
+      },
+      "RelativeRotation": {
+        "Pitch": 0.0,
+        "Yaw": -89.99999930282684,
+        "Roll": 0.0
+      },
+      "RelativeScale": {
+        "X": 1.0,
+        "Y": 1.0,
+        "Z": 1.0
+      },
+      "AttachParent": "Interactable SM",
+      "NiagaraAsset": "/Game/SoulslikeFramework/VFX/Systems/NS_Portal.NS_Portal"
+    },
+    "Portal_Back": {
+      "Class": "NiagaraComponent",
+      "RelativeLocation": {
+        "X": -1.1437945196108173e-07,
+        "Y": 100.0,
+        "Z": -2.1197673263754152e-08
+      },
+      "RelativeRotation": {
+        "Pitch": 0.0,
+        "Yaw": -89.999999,
+        "Roll": 0.0
+      },
+      "RelativeScale": {
+        "X": 1.0,
+        "Y": 1.0,
+        "Z": 1.0
+      },
+      "AttachParent": "Interactable SM",
+      "NiagaraAsset": "/Game/SoulslikeFramework/VFX/Systems/NS_Portal.NS_Portal"
+    },
+    "DeathCurrencyDropLocation": {
+      "Class": "BillboardComponent",
+      "RelativeLocation": {
+        "X": 400.0,
+        "Y": 0.0,
+        "Z": 60.0
+      },
+      "RelativeRotation": {
+        "Pitch": 0.0,
+        "Yaw": 0.0,
+        "Roll": 0.0
+      },
+      "RelativeScale": {
+        "X": 1.0,
+        "Y": 1.0,
+        "Z": 1.0
+      },
+      "AttachParent": "DefaultSceneRoot"
+    }
+  }
+}

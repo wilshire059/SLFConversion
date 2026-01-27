@@ -19,12 +19,16 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "SLFEnums.h"
+#include "InputActionValue.h"
+#include "Animation/AnimMontage.h"
 #include "LadderManagerComponent.generated.h"
 
 // Forward declarations
 class UDataAsset;
 class UAnimMontage;
 class UAnimInstance;
+class UInputAction;
+class UEnhancedInputComponent;
 
 // Types used from SLFEnums.h:
 // - ESLFLadderClimbState
@@ -74,6 +78,16 @@ public:
 	/** [8/10] Whether fast climbing (sprint) */
 	UPROPERTY(BlueprintReadWrite, Category = "Runtime")
 	bool bClimbFast;
+
+	// --- Saved Settings (restored on detach) ---
+
+	/** Original bUseControllerRotationYaw setting before climbing */
+	UPROPERTY()
+	bool bSavedUseControllerRotationYaw;
+
+	/** Original bOrientRotationToMovement setting before climbing */
+	UPROPERTY()
+	bool bSavedOrientRotationToMovement;
 
 	// --- Config (2) ---
 
@@ -145,8 +159,8 @@ public:
 	// --- Climb Control (10) ---
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Ladder Manager")
-	void StartClimb(AActor* Ladder);
-	virtual void StartClimb_Implementation(AActor* Ladder);
+	void StartClimb(AActor* Ladder, bool bIsTopdown);
+	virtual void StartClimb_Implementation(AActor* Ladder, bool bIsTopdown);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Ladder Manager")
 	void StopClimb();
@@ -248,16 +262,54 @@ public:
 	void ResetLadderState();
 	virtual void ResetLadderState_Implementation();
 
+public:
+	// Tick to handle climbing input
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	// BeginPlay to setup input bindings
+	virtual void BeginPlay() override;
+
 protected:
 	/** Currently playing climb montage - for stopping */
 	UPROPERTY(Transient)
 	UAnimMontage* CurrentClimbMontage = nullptr;
 
+	/** Cache the last Y input for climbing direction */
+	float LastClimbInputY = 0.0f;
+
+	/** Reference to IA_Move input action for Enhanced Input */
+	UPROPERTY()
+	UInputAction* CachedMoveAction = nullptr;
+
 	/** Helper to get owner character's anim instance */
 	UAnimInstance* GetOwnerAnimInstance() const;
 
-	/** Helper to play a soft montage reference */
-	void PlayLadderMontage(const TSoftObjectPtr<UAnimMontage>& Montage, float PlayRate = 1.0f);
+	/** Helper to play a soft montage reference
+	 * @param Montage - The montage to play
+	 * @param PlayRate - Animation playback speed
+	 * @param bBindEndCallback - If true, binds HandleMontageEnded to fire when montage completes (for dismount animations)
+	 */
+	void PlayLadderMontage(const TSoftObjectPtr<UAnimMontage>& Montage, float PlayRate = 1.0f, bool bBindEndCallback = false);
+
+	/** Callback when a montage with end binding finishes (NOT USED - montages don't auto-blend) */
+	UFUNCTION()
+	void HandleMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
+	/** Callback when AnimNotify fires during montage playback
+	 *  bp_only uses OnNotifyBegin with "Loop_End" notify to transition states
+	 *  because montages don't auto-blend-out, so OnCompleted never fires */
+	UFUNCTION()
+	void HandleMontageNotifyBegin(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload);
+
+	/** Callback when montage starts blending out - fallback for montages without Loop_End notify */
+	UFUNCTION()
+	void HandleMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted);
+
+	/** Process movement input when climbing */
+	void HandleClimbingInput(const FVector2D& InputVector);
+
+	/** Enhanced Input callback for IA_Move */
+	void OnMoveInput(const FInputActionValue& Value);
 
 	// ═══════════════════════════════════════════════════════════════════
 	// CLIMB EVENTS

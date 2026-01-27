@@ -1,0 +1,11 @@
+{
+  "path": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Guard",
+  "exists": true,
+  "parent_class": "/Script/SLFConversion.SLFEnemyGuard",
+  "variables": [],
+  "functions": [],
+  "has_eventgraph": false,
+  "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'",
+  "error": null,
+  "name": "B_Soulslike_Enemy_Guard"
+}

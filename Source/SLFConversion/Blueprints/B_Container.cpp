@@ -23,32 +23,17 @@ AB_Container::AB_Container()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	// Create root scene component
-	USceneComponent* DefaultRoot = CreateDefaultSubobject<USceneComponent>(TEXT("DefaultSceneRoot"));
-	RootComponent = DefaultRoot;
+	// NOTE: Components are NOT created here - they come from Blueprint SCS
+	// C++ finds and caches references in BeginPlay
+	// This pattern allows Blueprint SCS to own components with mesh assignments
 
-	// Create Lid component
-	Lid = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Lid"));
-	Lid->SetupAttachment(RootComponent);
-
-	// Create ItemSpawn billboard
-	ItemSpawn = CreateDefaultSubobject<UBillboardComponent>(TEXT("ItemSpawn"));
-	ItemSpawn->SetupAttachment(RootComponent);
-
-	// Create PointLight
-	PointLight = CreateDefaultSubobject<UPointLightComponent>(TEXT("PointLight"));
-	PointLight->SetupAttachment(RootComponent);
-
-	// Create LootDropManager component
-	AC_LootDropManager = CreateDefaultSubobject<UAC_LootDropManager>(TEXT("AC_LootDropManager"));
-
-	// Create MoveToLocation billboard
-	MoveToLocation = CreateDefaultSubobject<UBillboardComponent>(TEXT("MoveToLocation"));
-	MoveToLocation->SetupAttachment(RootComponent);
-
-	// Create NiagaraLocation billboard
-	NiagaraLocation = CreateDefaultSubobject<UBillboardComponent>(TEXT("NiagaraLocation"));
-	NiagaraLocation->SetupAttachment(RootComponent);
+	// Initialize component pointers to nullptr
+	CachedLid = nullptr;
+	CachedItemSpawn = nullptr;
+	CachedPointLight = nullptr;
+	CachedLootDropManager = nullptr;
+	CachedMoveToLocation = nullptr;
+	CachedNiagaraLocation = nullptr;
 
 	// Initialize variables
 	MoveDistance = 100.0;
@@ -65,22 +50,60 @@ void AB_Container::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Cache the point light intensity for fade off timeline
-	if (PointLight)
+	// Find component references from Blueprint SCS
+	// Blueprint SCS owns the components; C++ caches references for runtime access
+	const TSet<UActorComponent*>& AllComponents = GetComponents();
+	for (UActorComponent* Component : AllComponents)
 	{
-		CachedIntensity = PointLight->Intensity;
+		FString CompName = Component->GetName();
+
+		if (CompName == TEXT("Lid") && !CachedLid)
+		{
+			CachedLid = Cast<UStaticMeshComponent>(Component);
+		}
+		else if (CompName == TEXT("ItemSpawn") && !CachedItemSpawn)
+		{
+			CachedItemSpawn = Cast<UBillboardComponent>(Component);
+		}
+		else if (CompName == TEXT("PointLight") && !CachedPointLight)
+		{
+			CachedPointLight = Cast<UPointLightComponent>(Component);
+		}
+		else if (CompName == TEXT("AC_LootDropManager") && !CachedLootDropManager)
+		{
+			CachedLootDropManager = Cast<UAC_LootDropManager>(Component);
+		}
+		else if (CompName == TEXT("MoveToLocation") && !CachedMoveToLocation)
+		{
+			CachedMoveToLocation = Cast<UBillboardComponent>(Component);
+		}
+		else if (CompName == TEXT("NiagaraLocation") && !CachedNiagaraLocation)
+		{
+			CachedNiagaraLocation = Cast<UBillboardComponent>(Component);
+		}
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[B_Container] BeginPlay - Lid: %s, PointLight: %s, LootManager: %s"),
+		CachedLid ? TEXT("Found") : TEXT("NOT FOUND"),
+		CachedPointLight ? TEXT("Found") : TEXT("NOT FOUND"),
+		CachedLootDropManager ? TEXT("Found") : TEXT("NOT FOUND"));
+
+	// Cache the point light intensity for fade off timeline
+	if (CachedPointLight)
+	{
+		CachedIntensity = CachedPointLight->Intensity;
 	}
 
 	// Store initial lid rotation
-	if (Lid)
+	if (CachedLid)
 	{
-		InitialLidRotation = Lid->GetRelativeRotation();
+		InitialLidRotation = CachedLid->GetRelativeRotation();
 	}
 
 	// Bind to loot drop manager's delegate
-	if (AC_LootDropManager)
+	if (CachedLootDropManager)
 	{
-		AC_LootDropManager->OnItemReadyForSpawn.AddDynamic(this, &AB_Container::OnItemReadyForSpawn);
+		CachedLootDropManager->OnItemReadyForSpawn.AddDynamic(this, &AB_Container::OnItemReadyForSpawn);
 	}
 }
 
@@ -88,12 +111,12 @@ void AB_Container::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
-	// Set MoveToLocation relative position based on MoveDistance
+	// Set CachedMoveToLocation relative position based on MoveDistance
 	// Blueprint: Sets X = MoveDistance, preserves existing Y and Z
-	if (MoveToLocation)
+	if (CachedMoveToLocation)
 	{
-		FVector CurrentLocation = MoveToLocation->GetRelativeLocation();
-		MoveToLocation->SetRelativeLocation(FVector(MoveDistance, CurrentLocation.Y, CurrentLocation.Z));
+		FVector CurrentLocation = CachedMoveToLocation->GetRelativeLocation();
+		CachedMoveToLocation->SetRelativeLocation(FVector(MoveDistance, CurrentLocation.Y, CurrentLocation.Z));
 	}
 }
 
@@ -119,6 +142,8 @@ void AB_Container::OnInteract_Implementation(AActor* InteractingActor)
 		AddInteractableStateToSaveData();
 
 		// Load montage and call interface to play animation on character
+		// The character's OpenContainer implementation will play the montage and then
+		// call back to this container's OpenContainer() to start the timeline
 		if (!OpenMontage.IsNull())
 		{
 			FStreamableManager& StreamableManager = UAssetManager::GetStreamableManager();
@@ -130,14 +155,17 @@ void AB_Container::OnInteract_Implementation(AActor* InteractingActor)
 					if (LoadedMontage && InteractingActor)
 					{
 						// Call the interface function to play montage on character
+						// The character will call back to OpenContainer() after starting the montage
 						ISLFGenericCharacterInterface::Execute_OpenContainer(InteractingActor, LoadedMontage, this);
 					}
 				})
 			);
 		}
-
-		// Call OpenContainer to start the chest opening animation
-		OpenContainer();
+		else
+		{
+			// No montage, start timeline immediately
+			OpenContainer();
+		}
 	}
 }
 
@@ -175,12 +203,12 @@ void AB_Container::UpdateOpenChestTimeline()
 	}
 
 	// Update lid rotation (0 to 90 degrees on pitch/Y axis)
-	if (Lid)
+	if (CachedLid)
 	{
 		float TargetPitch = FMath::Lerp(0.0f, 90.0f, OpenChestProgress);
 		FRotator NewRotation = InitialLidRotation;
 		NewRotation.Pitch = TargetPitch;
-		Lid->SetRelativeRotation(NewRotation);
+		CachedLid->SetRelativeRotation(NewRotation);
 	}
 
 	// Fire events at specific times:
@@ -231,10 +259,10 @@ void AB_Container::UpdateFadeOffTimeline()
 	}
 
 	// Lerp point light intensity from cached to 0
-	if (PointLight)
+	if (CachedPointLight)
 	{
 		float NewIntensity = FMath::Lerp(CachedIntensity, 0.0f, FadeOffProgress);
-		PointLight->SetIntensity(NewIntensity);
+		CachedPointLight->SetIntensity(NewIntensity);
 	}
 
 	// Timeline finished
@@ -249,7 +277,7 @@ void AB_Container::SpawnOpenVFX()
 {
 	UE_LOG(LogTemp, Log, TEXT("[B_Container] SpawnOpenVFX"));
 
-	if (!OpenVFX.IsNull() && NiagaraLocation)
+	if (!OpenVFX.IsNull() && CachedNiagaraLocation)
 	{
 		// Async load and spawn VFX
 		FStreamableManager& StreamableManager = UAssetManager::GetStreamableManager();
@@ -258,9 +286,9 @@ void AB_Container::SpawnOpenVFX()
 			FStreamableDelegate::CreateLambda([this]()
 			{
 				UNiagaraSystem* LoadedVFX = OpenVFX.Get();
-				if (LoadedVFX && NiagaraLocation)
+				if (LoadedVFX && CachedNiagaraLocation)
 				{
-					FVector SpawnLocation = NiagaraLocation->GetComponentLocation();
+					FVector SpawnLocation = CachedNiagaraLocation->GetComponentLocation();
 					UNiagaraFunctionLibrary::SpawnSystemAtLocation(
 						this,
 						LoadedVFX,
@@ -282,9 +310,9 @@ void AB_Container::SpawnItems()
 	UE_LOG(LogTemp, Log, TEXT("[B_Container] SpawnItems"));
 
 	// Tell loot drop manager to pick an item
-	if (AC_LootDropManager)
+	if (CachedLootDropManager)
 	{
-		AC_LootDropManager->PickItem();
+		CachedLootDropManager->PickItem();
 	}
 }
 
@@ -299,11 +327,11 @@ void AB_Container::OnItemReadyForSpawn(FSLFLootItem LootItem)
 		return;
 	}
 
-	// Get spawn transform from ItemSpawn component
+	// Get spawn transform from CachedItemSpawn component
 	FTransform SpawnTransform = FTransform::Identity;
-	if (ItemSpawn)
+	if (CachedItemSpawn)
 	{
-		SpawnTransform.SetLocation(ItemSpawn->GetComponentLocation());
+		SpawnTransform.SetLocation(CachedItemSpawn->GetComponentLocation());
 	}
 
 	// Calculate random amount
@@ -390,17 +418,17 @@ void AB_Container::InitializeLoadedStates_Implementation(bool bCanBeTracedState,
 	if (bIsActivatedState)
 	{
 		// Directly set lid to open position
-		if (Lid)
+		if (CachedLid)
 		{
 			FRotator OpenRotation = InitialLidRotation;
 			OpenRotation.Pitch = 90.0f;
-			Lid->SetRelativeRotation(OpenRotation);
+			CachedLid->SetRelativeRotation(OpenRotation);
 		}
 
 		// Turn off point light
-		if (PointLight)
+		if (CachedPointLight)
 		{
-			PointLight->SetIntensity(0.0f);
+			CachedPointLight->SetIntensity(0.0f);
 		}
 	}
 

@@ -1,0 +1,49 @@
+================================================================================
+WEAPON STAT CHANGES CHECK (with proper tag names)
+================================================================================
+
+[DA_Sword01]
+  StatChanges count: 1
+    - SoulslikeFramework.Stat.Secondary.AttackPower.Physical: 15.0
+  *** NO WEIGHT STAT (likely attack damage only) ***
+
+[DA_Greatsword]
+  StatChanges count: 1
+    - SoulslikeFramework.Stat.Secondary.AttackPower.Physical: 75.0
+  *** NO WEIGHT STAT (likely attack damage only) ***
+
+[DA_Katana]
+  StatChanges count: 1
+    - SoulslikeFramework.Stat.Secondary.AttackPower.Physical: 34.0
+  *** NO WEIGHT STAT (likely attack damage only) ***
+
+[DA_Shield01]
+  StatChanges count: 0
+  *** NO STAT CHANGES ***
+
+[DA_PoisonSword]
+  StatChanges count: 1
+    - SoulslikeFramework.Stat.Secondary.AttackPower.Physical: 15.0
+  *** NO WEIGHT STAT (likely attack damage only) ***
+
+[DA_BossMace]
+  StatChanges count: 1
+    - SoulslikeFramework.Stat.Secondary.AttackPower.Physical: 120.0
+  *** NO WEIGHT STAT (likely attack damage only) ***
+
+================================================================================
+ARMOR COMPARISON (should have Weight)
+================================================================================
+
+[DA_ExampleArmor]
+  StatChanges count: 4
+    - SoulslikeFramework.Stat.Misc.Weight: 10.0
+    - SoulslikeFramework.Stat.Defense.Negation.Fire: 1.0
+    - SoulslikeFramework.Stat.Defense.Negation.Frost: 1.0
+    - SoulslikeFramework.Stat.Defense.Negation.Physical: 5.0
+
+================================================================================
+
+CONCLUSION: Weapons in this project don't have Weight stat in StatChanges.
+They only have attack damage. This matches typical Soulslike design where
+weapon weight is NOT included in equip load (only armor contributes).

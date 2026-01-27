@@ -1,0 +1,28 @@
+{
+  "door_data": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Door",
+    "parent_class_error": "Blueprint: Failed to find property 'parent_class' for attribute 'parent_class' on 'Blueprint'",
+    "generated_class": "B_Door_C",
+    "cdo_components": [
+      {
+        "name": "Interactable SM",
+        "class": "StaticMeshComponent",
+        "mesh_path": "/Game/SoulslikeFramework/Meshes/SM/PrisonDoor/SM_PrisonDoor.SM_PrisonDoor",
+        "mesh_name": "SM_PrisonDoor",
+        "visible": true
+      },
+      {
+        "name": "Door Frame",
+        "class": "StaticMeshComponent",
+        "mesh_path": "/Game/SoulslikeFramework/Meshes/SM/PrisonDoor/SM_PrisonDoorArch.SM_PrisonDoorArch",
+        "mesh_name": "SM_PrisonDoorArch",
+        "visible": true
+      }
+    ],
+    "properties": {
+      "default_door_mesh": "<Object '/Game/SoulslikeFramework/Meshes/SM/PrisonDoor/SM_PrisonDoor.SM_PrisonDoor' (0x000001E0E8CEA000) Class 'StaticMesh'>",
+      "default_door_frame_mesh": "<Object '/Game/SoulslikeFramework/Meshes/SM/PrisonDoor/SM_PrisonDoorArch.SM_PrisonDoorArch' (0x000001E0E8CEB000) Class 'StaticMesh'>"
+    },
+    "scs_components": []
+  }
+}

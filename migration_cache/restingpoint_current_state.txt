@@ -1,0 +1,9 @@
+================================================================================
+B_RestingPoint Current State (SLFConversion)
+================================================================================
+
+Generated Class: B_RestingPoint_C
+Class Flags: <Object '/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_RestingPoint.B_RestingPoint_C' (0x0000016C124ED900) Class 'BlueprintGeneratedClass'>
+
+CDO Components:
+  - InteractionCollision (SphereComponent)

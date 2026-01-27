@@ -24,6 +24,10 @@
 
 // Forward declarations for widget types
 class UW_InventorySlot;
+class UW_GenericButton;
+class UButton;
+class UTextBlock;
+class UWidgetSwitcher;
 
 // Forward declarations for Blueprint types
 
@@ -101,4 +105,48 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Bind button events
+	void BindButtonEvents();
+
+	// Update the amount display text
+	void UpdateAmountDisplay();
+
+	// Handler for BtnUp pressed
+	UFUNCTION()
+	void OnBtnUpPressed();
+
+	// Handler for BtnDown pressed
+	UFUNCTION()
+	void OnBtnDownPressed();
+
+	// Handler for YES button pressed
+	UFUNCTION()
+	void OnYesButtonPressed();
+
+	// Handler for NO button pressed
+	UFUNCTION()
+	void OnNoButtonPressed();
+
+	// Cached widget references
+	UPROPERTY()
+	UButton* CachedBtnUp;
+
+	UPROPERTY()
+	UButton* CachedBtnDown;
+
+	UPROPERTY()
+	UTextBlock* CachedAmountText;
+
+	UPROPERTY()
+	UTextBlock* CachedMaxAmountText;
+
+	UPROPERTY()
+	UW_GenericButton* CachedYesButton;
+
+	UPROPERTY()
+	UW_GenericButton* CachedNoButton;
+
+	// Navigation state for YES/NO buttons (0 = YES, 1 = NO)
+	int32 ConfirmButtonIndex;
 };

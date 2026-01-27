@@ -1,0 +1,65 @@
+============================================================
+B_StatusEffectArea Fix
+============================================================
+C++ class: B_StatusEffectArea
+C++ CDO: Default__B_StatusEffectArea
+  CDO.status_effect_to_apply = None
+  CDO.effect_rank = 1
+
+Blueprint: B_StatusEffectArea
+Attempting reparent to C++...
+Reparent result: None
+Compiled
+Saved
+
+Generated class: B_StatusEffectArea_C
+Generated CDO properties:
+  status_effect_to_apply = None
+  effect_rank = 1
+
+Loading level: /Game/SoulslikeFramework/Maps/L_Demo_Showcase
+
+Found 7 B_StatusEffectArea instances
+
+First actor: B_StatusEffectArea_C_1
+Class: B_StatusEffectArea_C
+Class path: /Game/SoulslikeFramework/Data/StatusEffects/B_StatusEffectArea.B_StatusEffectArea_C
+
+All properties (filtered):
+  effect_rank
+  status_effect_to_apply
+
+Trying property access:
+  status_effect_to_apply = None
+  StatusEffectToApply = None
+  effect_rank = 1
+  EffectRank = 1
+  status_effect_tag = FAILED
+  StatusEffectTag = FAILED
+  area_effect = FAILED
+  AreaEffect = FAILED
+
+B_StatusEffectArea_C_1: Trying to set DA_StatusEffect_Poison
+  SUCCESS: status_effect_to_apply
+
+B_StatusEffectArea_C_2: Trying to set DA_StatusEffect_Bleed
+  SUCCESS: status_effect_to_apply
+
+B_StatusEffectArea_C_3: Trying to set DA_StatusEffect_Burn
+  SUCCESS: status_effect_to_apply
+
+B_StatusEffectArea_C_4: Trying to set DA_StatusEffect_Frostbite
+  SUCCESS: status_effect_to_apply
+
+B_StatusEffectArea_C_5: Trying to set DA_StatusEffect_Corruption
+  SUCCESS: status_effect_to_apply
+
+B_StatusEffectArea_C_6: Trying to set DA_StatusEffect_Madness
+  SUCCESS: status_effect_to_apply
+
+B_StatusEffectArea_C_7: Trying to set DA_StatusEffect_Plague
+  SUCCESS: status_effect_to_apply
+
+
+Modified: 7
+Level save: True

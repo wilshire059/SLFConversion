@@ -29,7 +29,7 @@ void UW_AbilityDisplay::NativeDestruct()
 
 void UW_AbilityDisplay::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 void UW_AbilityDisplay::EventOnAbilityInfoReceived_Implementation(UPDA_WeaponAbility* Ability)
 {

@@ -1,0 +1,11 @@
+{
+  "path": "/Game/SoulslikeFramework/Blueprints/_AI/Misc/AIC_SoulslikeFramework",
+  "exists": true,
+  "parent_class": "/Script/SLFConversion.SLFAIController",
+  "variables": [],
+  "functions": [],
+  "has_eventgraph": false,
+  "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'",
+  "error": null,
+  "name": "AIC_SoulslikeFramework"
+}

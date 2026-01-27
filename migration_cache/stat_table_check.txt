@@ -1,0 +1,46 @@
+================================================================================
+DT_ExampleStatTable ANALYSIS
+================================================================================
+
+Table: DT_ExampleStatTable
+Class: DataTable
+
+Row count: 33
+
+[HP]
+[FP]
+[Stamina]
+[Vigor]
+[Mind]
+[Endurance]
+[Strength]
+[Dexterity]
+[Intelligence]
+[Faith]
+[Arcane]
+[AP_Physical]
+[AP_Magic]
+[AP_Fire]
+[AP_Frost]
+[AP_Lightning]
+[AP_Holy]
+[DN_Physical]
+[DN_Magic]
+[DN_Fire]
+[DN_Frost]
+[DN_Lightning]
+[DN_Holy]
+[R_Immunity]
+[R_Focus]
+[R_Robustness]
+[R_Vitality]
+[Misc_Equip_Load]
+[Misc_Discovery]
+[Backend_IncantationPower]
+[Backend_StatusEffectBuildup]
+[Backend_Poise]
+[Backend_Stance]
+
+================================================================================
+WEIGHT STAT: NOT FOUND in DataTable - This is the root cause!
+================================================================================

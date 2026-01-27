@@ -29,7 +29,7 @@ void UW_LoadGame_Entry::NativeDestruct()
 
 void UW_LoadGame_Entry::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 
 void UW_LoadGame_Entry::SetSaveSlotSelected_Implementation(bool InSelected)

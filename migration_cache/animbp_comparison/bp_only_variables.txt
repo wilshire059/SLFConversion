@@ -1,0 +1,4 @@
+=== AnimBP Variables (bp_only) ===
+Parent Class: Unknown
+Total Variables: 0
+

@@ -195,6 +195,26 @@ struct SLFCONVERSION_API FSLFActorClass
 };
 
 //////////////////////////////////////////////////////////////////////////
+// SECTION: Status Effect Application (must come before Equipment section)
+//////////////////////////////////////////////////////////////////////////
+
+// Replaces: /Game/SoulslikeFramework/Structures/StatusEffects/FStatusEffectApplication
+// NOTE: Moved here to be available for FSLFEquipmentInfo.WeaponStatusEffectInfo
+USTRUCT(BlueprintType)
+struct SLFCONVERSION_API FSLFStatusEffectApplication
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StatusEffect")
+	int32 Rank = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StatusEffect")
+	double BuildupAmount = 0.0;
+
+	FSLFStatusEffectApplication() {}
+};
+
+//////////////////////////////////////////////////////////////////////////
 // SECTION: Action/Combat Types
 //////////////////////////////////////////////////////////////////////////
 
@@ -704,8 +724,10 @@ struct SLFCONVERSION_API FSLFEquipmentInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Equipment")
 	FSLFEquipmentWeaponStatInfo WeaponStatInfo;
 
+	// Maps status effect data asset to application info (Rank, BuildupAmount)
+	// bp_only: TMap<PDA_StatusEffect*, FStatusEffectApplication>
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Equipment")
-	TMap<FGameplayTag, double> WeaponStatusEffectInfo;
+	TMap<UPrimaryDataAsset*, FSLFStatusEffectApplication> WeaponStatusEffectInfo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Equipment")
 	TMap<FGameplayTag, FSLFEquipmentStat> StatChanges;
@@ -1307,21 +1329,6 @@ struct SLFCONVERSION_API FSLFStatusEffectRankInfo
 	FInstancedStruct RelevantData;
 
 	FSLFStatusEffectRankInfo() {}
-};
-
-// Replaces: /Game/SoulslikeFramework/Structures/StatusEffects/FStatusEffectApplication
-USTRUCT(BlueprintType)
-struct SLFCONVERSION_API FSLFStatusEffectApplication
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StatusEffect")
-	int32 Rank = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StatusEffect")
-	double BuildupAmount = 0.0;
-
-	FSLFStatusEffectApplication() {}
 };
 
 // Replaces: /Game/SoulslikeFramework/Structures/StatusEffects/FStatusEffectFrostbiteExample

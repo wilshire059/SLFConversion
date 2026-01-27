@@ -31,7 +31,7 @@ UW_LevelUp::UW_LevelUp(const FObjectInitializer& ObjectInitializer)
 	, CachedNegationStats(nullptr)
 	, CachedResistanceStats(nullptr)
 {
-	bIsFocusable = true;
+	SetIsFocusable(true);
 	NavigationIndex = 0;
 	CurrentPlayerCurrency = 0;
 	CurrentPlayerLevel = 0;  // Level starts at 0 (matches bp_only)

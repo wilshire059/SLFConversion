@@ -1,0 +1,46 @@
+{
+  "B_Soulslike_Enemy": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy",
+    "name": "B_Soulslike_Enemy",
+    "generated_class": "B_Soulslike_Enemy_C",
+    "generated_class_path": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy.B_Soulslike_Enemy_C",
+    "scs_components": [
+      {
+        "scs_error": "Blueprint: Failed to find property 'simple_construction_script' for attribute 'simple_construction_script' on 'Blueprint'"
+      }
+    ],
+    "cdo_class": "B_Soulslike_Enemy_C",
+    "mesh_component": "CharacterMesh0",
+    "skeletal_mesh": "SKM_Manny_Simple"
+  },
+  "B_Soulslike_Enemy_Guard": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Guard",
+    "name": "B_Soulslike_Enemy_Guard",
+    "generated_class": "B_Soulslike_Enemy_Guard_C",
+    "generated_class_path": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Guard.B_Soulslike_Enemy_Guard_C",
+    "scs_components": [
+      {
+        "scs_error": "Blueprint: Failed to find property 'simple_construction_script' for attribute 'simple_construction_script' on 'Blueprint'"
+      }
+    ],
+    "cdo_class": "B_Soulslike_Enemy_Guard_C",
+    "mesh_component": "CharacterMesh0",
+    "skeletal_mesh": "SKM_Manny_Simple",
+    "anim_class": "ABP_SoulslikeEnemy_C"
+  },
+  "B_Soulslike_Enemy_Showcase": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Showcase",
+    "name": "B_Soulslike_Enemy_Showcase",
+    "generated_class": "B_Soulslike_Enemy_Showcase_C",
+    "generated_class_path": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Showcase.B_Soulslike_Enemy_Showcase_C",
+    "scs_components": [
+      {
+        "scs_error": "Blueprint: Failed to find property 'simple_construction_script' for attribute 'simple_construction_script' on 'Blueprint'"
+      }
+    ],
+    "cdo_class": "B_Soulslike_Enemy_Showcase_C",
+    "mesh_component": "CharacterMesh0",
+    "skeletal_mesh": "SKM_Manny_Simple",
+    "anim_class": "ABP_SoulslikeEnemy_C"
+  }
+}

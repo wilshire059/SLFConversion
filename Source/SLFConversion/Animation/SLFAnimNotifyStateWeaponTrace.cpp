@@ -3,6 +3,9 @@
 #include "Components/AC_CombatManager.h"
 #include "Components/AICombatManagerComponent.h"
 #include "Components/AC_EquipmentManager.h"
+#include "Components/AC_StatusEffectManager.h"
+#include "Components/StatusEffectManagerComponent.h"
+#include "SLFPrimaryDataAssets.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Engine/World.h"
 
@@ -121,7 +124,8 @@ void USLFAnimNotifyStateWeaponTrace::NotifyTick(USkeletalMeshComponent* MeshComp
 			// Get weapon damage info from equipment manager
 			double Damage = 50.0;  // Default damage (10% of typical 500 HP)
 			double PoiseDamage = 25.0;  // Default poise damage
-			TMap<FGameplayTag, UPrimaryDataAsset*> StatusEffects;
+			TMap<FGameplayTag, UPrimaryDataAsset*> StatusEffectsLegacy;  // For legacy API
+			TMap<UPrimaryDataAsset*, FSLFStatusEffectApplication> WeaponStatusEffects;  // From weapon
 			USoundBase* GuardSound = nullptr;
 			USoundBase* PerfectGuardSound = nullptr;
 
@@ -130,6 +134,8 @@ void USLFAnimNotifyStateWeaponTrace::NotifyTick(USkeletalMeshComponent* MeshComp
 				// Get damage values from equipped weapon
 				Damage = EquipmentManager->GetWeaponDamage();
 				PoiseDamage = EquipmentManager->GetWeaponPoiseDamage();
+				// Get weapon's status effects with BuildupAmount
+				WeaponStatusEffects = EquipmentManager->GetWeaponStatusEffects();
 			}
 
 			// Try player combat manager first (UAC_CombatManager)
@@ -144,7 +150,7 @@ void USLFAnimNotifyStateWeaponTrace::NotifyTick(USkeletalMeshComponent* MeshComp
 					Hit,
 					Damage,
 					PoiseDamage,
-					StatusEffects
+					StatusEffectsLegacy
 				);
 			}
 			else
@@ -155,6 +161,54 @@ void USLFAnimNotifyStateWeaponTrace::NotifyTick(USkeletalMeshComponent* MeshComp
 				{
 					// Apply damage to AI target
 					AICombatManager->HandleIncomingWeaponDamage_AI(Owner, Damage, PoiseDamage, Hit);
+				}
+			}
+
+			// Apply weapon status effects to target
+			// Find target's status effect manager and apply each effect with proper BuildupAmount
+			if (WeaponStatusEffects.Num() > 0)
+			{
+				// Try legacy AC_StatusEffectManager first
+				UAC_StatusEffectManager* TargetStatusManager = HitActor->FindComponentByClass<UAC_StatusEffectManager>();
+				if (TargetStatusManager)
+				{
+					for (const auto& EffectPair : WeaponStatusEffects)
+					{
+						UPrimaryDataAsset* StatusEffectAsset = EffectPair.Key;
+						const FSLFStatusEffectApplication& Application = EffectPair.Value;
+
+						if (IsValid(StatusEffectAsset))
+						{
+							UE_LOG(LogTemp, Log, TEXT("[ANS_WeaponTrace] Applying status effect %s to %s: Rank=%d, BuildupAmount=%.1f"),
+								*StatusEffectAsset->GetName(), *HitActor->GetName(),
+								Application.Rank, Application.BuildupAmount);
+
+							TargetStatusManager->AddOneShotBuildup(StatusEffectAsset, Application.Rank, Application.BuildupAmount);
+						}
+					}
+				}
+				else
+				{
+					// Try new StatusEffectManagerComponent
+					UStatusEffectManagerComponent* TargetStatusComp = HitActor->FindComponentByClass<UStatusEffectManagerComponent>();
+					if (TargetStatusComp)
+					{
+						for (const auto& EffectPair : WeaponStatusEffects)
+						{
+							UPrimaryDataAsset* StatusEffectAsset = EffectPair.Key;
+							const FSLFStatusEffectApplication& Application = EffectPair.Value;
+
+							if (IsValid(StatusEffectAsset))
+							{
+								UE_LOG(LogTemp, Log, TEXT("[ANS_WeaponTrace] Applying status effect %s to %s: Rank=%d, BuildupAmount=%.1f"),
+									*StatusEffectAsset->GetName(), *HitActor->GetName(),
+									Application.Rank, Application.BuildupAmount);
+
+								// Cast to UDataAsset for the function signature
+								TargetStatusComp->AddOneShotBuildup(Cast<UDataAsset>(StatusEffectAsset), Application.Rank, Application.BuildupAmount);
+							}
+						}
+					}
 				}
 			}
 		}

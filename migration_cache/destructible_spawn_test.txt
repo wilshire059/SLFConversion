@@ -1,0 +1,30 @@
+
+================================================================================
+B_Destructible Spawn Test
+================================================================================
+
+Blueprint class: B_Destructible_C
+
+CDO Properties:
+  GeometryCollection: /Game/SoulslikeFramework/Meshes/SM/Barrel/Destructible/GC_Barrel.GC_Barrel
+
+Attempting to spawn instance...
+  Editor world: Untitled
+
+  Spawned actor: B_Destructible_C_0
+  Actor class: B_Destructible_C
+
+  Spawned Actor Components:
+    GeometryCollectionComponents: 1
+      - GC_DestructibleMesh
+          RestCollection: /Game/SoulslikeFramework/Meshes/SM/Barrel/Destructible/GC_Barrel.GC_Barrel
+          Visible: True
+
+  Actor GeometryCollection property: /Game/SoulslikeFramework/Meshes/SM/Barrel/Destructible/GC_Barrel.GC_Barrel
+
+  Deleting test actor...
+  Test actor deleted
+
+================================================================================
+Spawn Test Complete
+================================================================================

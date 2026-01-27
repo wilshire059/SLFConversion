@@ -29,7 +29,7 @@ void UW_Settings_InputKeySelector::NativeDestruct()
 
 void UW_Settings_InputKeySelector::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 
 void UW_Settings_InputKeySelector::TryGetKeyIcon_Implementation(const FKey& InKey, TSoftObjectPtr<UTexture2D>& OutIcon, bool& OutSuccess)

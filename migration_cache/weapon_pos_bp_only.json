@@ -1,0 +1,49 @@
+{
+  "project": "bp_only",
+  "tests": [
+    {
+      "weapon_name": "Katana",
+      "weapon_da": "/Game/SoulslikeFramework/Data/Items/DA_Katana",
+      "weapon_bp": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Katana",
+      "success": false,
+      "error": "No EquipmentManager found",
+      "character_name": "B_Soulslike_Character_C_0",
+      "sockets": {
+        "hand_r": {
+          "exists": false
+        },
+        "hand_l": {
+          "exists": false
+        },
+        "weapon_r": {
+          "exists": false
+        },
+        "weapon_l": {
+          "exists": false
+        }
+      }
+    },
+    {
+      "weapon_name": "SwordExample01",
+      "weapon_da": "/Game/SoulslikeFramework/Data/Items/DA_Sword01",
+      "weapon_bp": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_SwordExample01",
+      "success": false,
+      "error": "No EquipmentManager found",
+      "character_name": "B_Soulslike_Character_C_1",
+      "sockets": {
+        "hand_r": {
+          "exists": false
+        },
+        "hand_l": {
+          "exists": false
+        },
+        "weapon_r": {
+          "exists": false
+        },
+        "weapon_l": {
+          "exists": false
+        }
+      }
+    }
+  ]
+}

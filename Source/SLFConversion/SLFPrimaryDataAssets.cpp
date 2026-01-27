@@ -95,6 +95,31 @@ void UPDA_Vendor::ReduceItemStock(UObject* Item, int32 Delta)
 }
 
 //////////////////////////////////////////////////////////////////////////
+// UPDA_DayNight Implementation
+//////////////////////////////////////////////////////////////////////////
+
+FSLFDayNightInfo UPDA_DayNight::GetEntryForTime(double Time) const
+{
+	// Find the entry that contains this time
+	for (const FSLFDayNightInfo& Entry : Entries)
+	{
+		// Check if Time is between FromTime and ToTime
+		if (Time >= Entry.FromTime && Time < Entry.ToTime)
+		{
+			return Entry;
+		}
+	}
+
+	// Return first entry as default if no match (or empty if no entries)
+	if (Entries.Num() > 0)
+	{
+		return Entries[0];
+	}
+
+	return FSLFDayNightInfo();
+}
+
+//////////////////////////////////////////////////////////////////////////
 // UPDA_Item Implementation
 //////////////////////////////////////////////////////////////////////////
 

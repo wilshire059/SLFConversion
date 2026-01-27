@@ -1,0 +1,42 @@
+============================================================
+B_SkyManager Diagnosis: CDO vs Level Instance
+============================================================
+
+--- Step 1: Blueprint CDO Analysis ---
+CDO Component Count: 8
+
+CDO Components:
+  - DefaultSceneRoot (SceneComponent)
+  - DirectionalLight_Sun (DirectionalLightComponent)
+  - DirectionalLight_Moon (DirectionalLightComponent)
+  - SkyLight (SkyLightComponent)
+  - SkyAtmosphere (SkyAtmosphereComponent)
+  - VolumetricCloud (VolumetricCloudComponent)
+  - ExponentialHeightFog (ExponentialHeightFogComponent)
+  - SM_SkySphere (StaticMeshComponent)
+
+Expected Components Check:
+  DirectionalLight_Sun: FOUND
+  DirectionalLight_Moon: FOUND
+  SkyLight: FOUND
+  SkyAtmosphere: FOUND
+  VolumetricCloud: FOUND
+  SkySphereMesh: MISSING
+  ExponentialHeightFog: FOUND
+  PostProcessVolume: MISSING
+
+--- Step 2: Level Instance Analysis ---
+Loading level: /Game/SoulslikeFramework/Maps/L_Demo_Showcase
+Searching for B_SkyManager instances in world...
+Total actors in world: 4
+No B_SkyManager instances found in the level
+
+============================================================
+DIAGNOSIS SUMMARY
+============================================================
+Blueprint CDO Components: 8
+SkyManager Instances Found: 0
+
+CDO Status: GOOD (has expected components)
+
+Results written to: C:/scripts/SLFConversion/migration_cache/skymanager_diagnosis.txt

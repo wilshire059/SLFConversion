@@ -1,35 +1,26 @@
 // B_StatusEffectArea.h
 // C++ class for Blueprint B_StatusEffectArea
 //
-// 20-PASS VALIDATION: 2026-01-01 Autonomous Session
-// Source: BlueprintDNA/Blueprint/B_StatusEffectArea.json
+// 20-PASS VALIDATION: 2026-01-19
+// Source: BlueprintDNA_v2/Blueprint/B_StatusEffectArea.json
 // Parent: Actor -> AActor
-// Variables: 2 | Functions: 1 | Dispatchers: 0
+// Variables: 2 | Functions: 0 | Dispatchers: 0
+//
+// Blueprint Logic:
+// - OnComponentBeginOverlap(Box): Check Player tag -> StartBuildup
+// - OnComponentEndOverlap(Box): Check Player tag -> StopBuildup
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "GameplayTagContainer.h"
-#include "SLFEnums.h"
-#include "SLFGameTypes.h"
-#include "SLFPrimaryDataAssets.h"
-#include "InputMappingContext.h"
-#include "LevelSequence.h"
-#include "LevelSequencePlayer.h"
-#include "MovieSceneSequencePlaybackSettings.h"
-#include "SkeletalMergingLibrary.h"
-#include "GeometryCollection/GeometryCollectionObject.h"
-#include "Field/FieldSystemObjects.h"
+#include "Components/BoxComponent.h"
 #include "B_StatusEffectArea.generated.h"
 
 // Forward declarations
-class UAnimMontage;
-class UDataTable;
-
-
-// Event Dispatchers
-
+class UPrimaryDataAsset;
+class UAC_StatusEffectManager;
 
 UCLASS(Blueprintable, BlueprintType)
 class SLFCONVERSION_API AB_StatusEffectArea : public AActor
@@ -39,23 +30,40 @@ class SLFCONVERSION_API AB_StatusEffectArea : public AActor
 public:
 	AB_StatusEffectArea();
 
+protected:
+	virtual void BeginPlay() override;
+
+public:
 	// ═══════════════════════════════════════════════════════════════════════
-	// VARIABLES (2)
+	// VARIABLES (2) - from Blueprint
 	// ═══════════════════════════════════════════════════════════════════════
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
+	// The status effect data asset to apply (e.g., DA_StatusEffect_Poison)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status Effect")
 	UPrimaryDataAsset* StatusEffectToApply;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
+
+	// The rank/intensity of the effect
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status Effect")
 	int32 EffectRank;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// EVENT DISPATCHERS (0)
+	// COMPONENT REFERENCES - cached from Blueprint SCS
 	// ═══════════════════════════════════════════════════════════════════════
 
+	// Cached reference to the Box collision component (owned by Blueprint SCS)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components")
+	UBoxComponent* CachedBoxComponent;
 
-
+protected:
 	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (1)
+	// OVERLAP HANDLERS - implements Blueprint EventGraph logic
 	// ═══════════════════════════════════════════════════════════════════════
 
+	UFUNCTION()
+	void OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnBoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 };

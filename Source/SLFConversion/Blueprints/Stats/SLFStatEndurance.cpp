@@ -11,5 +11,25 @@ USLFStatEndurance::USLFStatEndurance()
 	StatInfo.RegenInfo.bCanRegenerate = false;
 	bShowMaxValueOnLevelUp = false;
 	MinValue = 1.0;
-	UE_LOG(LogTemp, Log, TEXT("[StatEndurance] Initialized with %.0f"), StatInfo.CurrentValue);
+
+	// Endurance affects Stamina: each point of Endurance adds 2 to Stamina Max
+	// BP_ONLY: Endurance=10 -> Stamina=70 (base 50 + 10*2 = 70)
+	FGameplayTag StaminaTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Stamina"));
+	FAffectedStat StaminaAffect;
+	StaminaAffect.FromLevel = 0;
+	StaminaAffect.UntilLevel = 99;
+	StaminaAffect.bAffectMaxValue = true;
+	StaminaAffect.Modifier = 2.0;
+	StaminaAffect.Calculation = nullptr;
+	StaminaAffect.ChangeByCurve = nullptr;
+
+	FAffectedStats StaminaAffectedStats;
+	StaminaAffectedStats.SoftcapData.Add(StaminaAffect);
+
+	// CRITICAL: Must set StatInfo.StatModifiers.StatsToAffect (not StatBehavior.StatsToAffect)
+	// W_StatEntry_LevelUp reads from StatInfo.StatModifiers to get affected stats for highlighting
+	StatInfo.StatModifiers.StatsToAffect.Add(StaminaTag, StaminaAffectedStats);
+	UE_LOG(LogTemp, Log, TEXT("[SLFStatEndurance] Added Stamina to StatsToAffect in StatInfo.StatModifiers"));
+
+	UE_LOG(LogTemp, Log, TEXT("[StatEndurance] Initialized with %.0f, affects Stamina with modifier 2"), StatInfo.CurrentValue);
 }

@@ -16,10 +16,11 @@ ASLFAIController::ASLFAIController()
 	SetPerceptionComponent(*AIPerceptionComponent);
 
 	// Configure default sight sense
+	// SOULS-LIKE: Enemies have 180 degree field of view (can see anything in front hemisphere)
 	UAISenseConfig_Sight* SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
 	SightConfig->SightRadius = 2000.0f;
 	SightConfig->LoseSightRadius = 2500.0f;
-	SightConfig->PeripheralVisionAngleDegrees = 90.0f;
+	SightConfig->PeripheralVisionAngleDegrees = 180.0f;  // Full hemisphere (was 90)
 	SightConfig->SetMaxAge(5.0f);
 	SightConfig->AutoSuccessRangeFromLastSeenLocation = 500.0f;
 	SightConfig->DetectionByAffiliation.bDetectEnemies = true;

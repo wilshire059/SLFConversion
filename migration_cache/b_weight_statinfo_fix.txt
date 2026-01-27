@@ -1,0 +1,23 @@
+================================================================================
+B_WEIGHT STATINFO DIRECT FIX
+================================================================================
+
+Loaded: B_Weight
+CDO: Default__B_Weight_C
+
+Before fix:
+  Tag: None
+  CurrentValue: 0.0
+  MaxValue: 0.0
+
+Setting StatInfo values...
+Error setting values: type object 'GameplayTag' has no attribute 'request_gameplay_tag'
+
+After fix:
+  Tag: None
+  CurrentValue: 0.0
+  MaxValue: 0.0
+
+*** STILL FAILED - Tag not set correctly ***
+
+================================================================================

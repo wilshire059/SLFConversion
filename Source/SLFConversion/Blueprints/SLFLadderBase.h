@@ -14,13 +14,20 @@
 //
 // PURPOSE: Ladder actor - climbable with procedural bar generation
 // PARENT: B_Interactable
+//
+// COMPONENT OWNERSHIP: Blueprint SCS owns all components.
+// C++ only caches references at runtime. See CLAUDE.md for pattern.
 
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SLFInteractableBase.h"
+#include "Blueprints/Actors/SLFInteractableBase.h"
 #include "Components/SceneComponent.h"
+#include "Components/BoxComponent.h"
+#include "Components/InstancedStaticMeshComponent.h"
 #include "SLFLadderBase.generated.h"
+
+class ULadderManagerComponent;
 
 /**
  * Ladder actor - climbable with procedural bar generation
@@ -37,6 +44,74 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void OnConstruction(const FTransform& Transform) override;
+
+	// ═══════════════════════════════════════════════════════════════════
+	// CACHED COMPONENTS - Populated from Blueprint SCS in BeginPlay
+	// Blueprint SCS owns these components, C++ just caches references
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** Cached from Blueprint SCS - Instanced mesh for ladder bars */
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Ladder|Components")
+	UInstancedStaticMeshComponent* CachedBarz;
+
+	/** Cached from Blueprint SCS - Instanced mesh for pole */
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Ladder|Components")
+	UInstancedStaticMeshComponent* CachedPole;
+
+	/** Cached from Blueprint SCS - Instanced mesh for connections */
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Ladder|Components")
+	UInstancedStaticMeshComponent* CachedConnections;
+
+	/** Cached from Blueprint SCS - Collision for climbing zone */
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Ladder|Components")
+	UBoxComponent* CachedClimbingCollision;
+
+	/** Cached from Blueprint SCS - Collision for bottom zone */
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Ladder|Components")
+	UBoxComponent* CachedBottomCollision;
+
+	/** Cached from Blueprint SCS - Collision for top zone */
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Ladder|Components")
+	UBoxComponent* CachedTopCollision;
+
+	/** Cached from Blueprint SCS - Collision for topdown zone */
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Ladder|Components")
+	UBoxComponent* CachedTopdownCollision;
+
+	// ═══════════════════════════════════════════════════════════════════
+	// OVERLAP EVENT HANDLERS - Controls ladder climbing state
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** Called when something ends overlapping the climbing collision zone */
+	UFUNCTION()
+	void OnClimbingCollisionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	/** Called when something begins overlapping the bottom zone */
+	UFUNCTION()
+	void OnBottomCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	/** Called when something ends overlapping the bottom zone */
+	UFUNCTION()
+	void OnBottomCollisionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	/** Called when something begins overlapping the top zone */
+	UFUNCTION()
+	void OnTopCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	/** Called when something ends overlapping the top zone */
+	UFUNCTION()
+	void OnTopCollisionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	/** Called when something ends overlapping the topdown zone */
+	UFUNCTION()
+	void OnTopdownCollisionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 public:
 	// ═══════════════════════════════════════════════════════════════════
@@ -134,4 +209,11 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Ladder")
 	void CreateLadder();
 	virtual void CreateLadder_Implementation();
+
+	// ═══════════════════════════════════════════════════════════════════
+	// INTERFACE OVERRIDE
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** Override OnInteract to call TryClimbLadder on the interacting actor */
+	virtual void OnInteract_Implementation(AActor* Interactor) override;
 };

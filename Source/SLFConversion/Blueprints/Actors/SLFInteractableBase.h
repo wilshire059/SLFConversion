@@ -7,6 +7,10 @@
 #include "InstancedStruct.h"
 #include "SLFGameTypes.h"
 #include "Interfaces/SLFInteractableInterface.h"
+#include "Components/SceneComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Components/SphereComponent.h"
 #include "SLFInteractableBase.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteracted, AActor*, Interactor);
@@ -23,19 +27,63 @@ public:
 	// MIGRATION SUMMARY: B_InteractableBase
 	// Variables: 6 | Functions: 4 | Dispatchers: 1
 	// ============================================================
-	// NOTE: Components are defined in Blueprint's SimpleConstructionScript
-	// Do NOT declare component pointers here - they conflict with Blueprint components
-	// Blueprint defines: DefaultSceneRoot, Interactable SM, Interactable SK
 
-	// Interaction Settings
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
-	FText InteractionPrompt;
+	// ============================================================
+	// ROOT COMPONENT
+	// Created in C++ constructor - Blueprint SCS components attach to this
+	// Migration removes Blueprint's SCS DefaultSceneRoot to avoid conflict
+	// ============================================================
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<USceneComponent> DefaultSceneRoot;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
+	// ============================================================
+	// MESH COMPONENTS (matching B_Interactable SCS)
+	// These replace the Blueprint SCS "Interactable SM" and "Interactable SK"
+	// ============================================================
+
+	/** Static mesh for interactable visuals (chests, campfires, etc.) */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UStaticMeshComponent> InteractableSM;
+
+	/** Skeletal mesh for animated interactables */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<USkeletalMeshComponent> InteractableSK;
+
+	/** Soft reference to static mesh - set in child Blueprints/classes */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Interactable|Mesh")
+	TSoftObjectPtr<UStaticMesh> DefaultInteractableMesh;
+
+	// ============================================================
+	// PROPERTIES FROM BLUEPRINT B_Interactable (CRITICAL!)
+	// These match the original Blueprint variable names
+	// ============================================================
+
+	/** Unique ID for save/load system */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactable Config|Saving")
+	FGuid ID;
+
+	/** Whether this interactable can be traced/highlighted (Blueprint: CanBeTraced?) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactable Config")
+	bool CanBeTraced = true;
+
+	/** Whether this interactable has been activated/discovered (Blueprint: IsActivated?) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactable Config")
+	bool IsActivated = false;
+
+	/** Display name shown in UI */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactable Config")
+	FText InteractableDisplayName;
+
+	/** Text shown when traced/prompted for interaction */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactable Config")
 	FText InteractionText;
 
+	// ============================================================
+	// Additional Interaction Settings (C++ extensions)
+	// ============================================================
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
-	FText InteractableDisplayName;
+	FText InteractionPrompt;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
 	bool bCanInteract = true;

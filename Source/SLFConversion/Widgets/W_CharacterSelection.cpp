@@ -36,7 +36,7 @@ void UW_CharacterSelection::NativeDestruct()
 
 void UW_CharacterSelection::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 
 void UW_CharacterSelection::InitializeAndStoreClassAssets_Implementation()

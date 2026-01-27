@@ -1,0 +1,21 @@
+{
+  "project": "SLFConversion",
+  "anim_instance": {
+    "animbp_path": null,
+    "overlay_state_left": null,
+    "overlay_state_right": null,
+    "variables": {}
+  },
+  "animbp": {
+    "path": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive",
+    "class": "AnimBlueprint",
+    "skeleton": "SK_Mannequin",
+    "parent_class": null
+  },
+  "animation_folders": {
+    "Arms": [],
+    "OneHanded": [],
+    "TwoHanded": [],
+    "Shield": []
+  }
+}

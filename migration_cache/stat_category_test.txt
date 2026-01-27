@@ -1,0 +1,115 @@
+================================================================================
+STAT CATEGORY TEST - Verifying Widget Grouping
+================================================================================
+
+--- Widget Category Tag Prefixes ---
+  Primary: SoulslikeFramework.Stat.Primary
+  Secondary: SoulslikeFramework.Stat.Secondary
+  AttackPower: SoulslikeFramework.Stat.Secondary.AttackPower
+  DamageNegation: SoulslikeFramework.Stat.Defense.Negation
+  Resistance: SoulslikeFramework.Stat.Defense.Resistances
+  Misc: SoulslikeFramework.Stat.Misc
+
+--- Stat Tags by Expected Category ---
+
+[Primary]
+  MISMATCH: B_Vigor_C
+       Tag: <Struct 'GameplayTag' (0x0000018DA9B0B2C0) {}>
+       DisplayName: 
+       Expected prefix: SoulslikeFramework.Stat.Primary
+  MISMATCH: B_Mind_C
+       Tag: <Struct 'GameplayTag' (0x0000018DA9B09F40) {}>
+       DisplayName: 
+       Expected prefix: SoulslikeFramework.Stat.Primary
+  MISMATCH: B_Endurance_C
+       Tag: <Struct 'GameplayTag' (0x0000018DA9B08740) {}>
+       DisplayName: 
+       Expected prefix: SoulslikeFramework.Stat.Primary
+  MISMATCH: B_Strength_C
+       Tag: <Struct 'GameplayTag' (0x0000018DA9B0AB40) {}>
+       DisplayName: 
+       Expected prefix: SoulslikeFramework.Stat.Primary
+  MISMATCH: B_Dexterity_C
+       Tag: <Struct 'GameplayTag' (0x0000018DA9B091C0) {}>
+       DisplayName: 
+       Expected prefix: SoulslikeFramework.Stat.Primary
+  MISMATCH: B_Intelligence_C
+       Tag: <Struct 'GameplayTag' (0x0000018DA9B0A240) {}>
+       DisplayName: 
+       Expected prefix: SoulslikeFramework.Stat.Primary
+  MISMATCH: B_Faith_C
+       Tag: <Struct 'GameplayTag' (0x0000018DA9B09AC0) {}>
+       DisplayName: 
+       Expected prefix: SoulslikeFramework.Stat.Primary
+  MISMATCH: B_Arcane_C
+       Tag: <Struct 'GameplayTag' (0x0000018DA9B08A40) {}>
+       DisplayName: 
+       Expected prefix: SoulslikeFramework.Stat.Primary
+
+[Secondary]
+  MISMATCH: B_HP_C
+       Tag: <Struct 'GameplayTag' (0x0000018DA9B0D840) {}>
+       DisplayName: 
+       Expected prefix: SoulslikeFramework.Stat.Secondary
+  MISMATCH: B_FP_C
+       Tag: <Struct 'GameplayTag' (0x0000018DA9B0DB40) {}>
+       DisplayName: 
+       Expected prefix: SoulslikeFramework.Stat.Secondary
+  MISMATCH: B_Stamina_C
+       Tag: <Struct 'GameplayTag' (0x0000018DA9B0E5C0) {}>
+       DisplayName: 
+       Expected prefix: SoulslikeFramework.Stat.Secondary
+
+[AttackPower]
+  MISMATCH: B_AP_Physical_C
+       Tag: <Struct 'GameplayTag' (0x0000018DA9B0D240) {}>
+       DisplayName: 
+       Expected prefix: SoulslikeFramework.Stat.Secondary.AttackPower
+  MISMATCH: B_AP_Magic_C
+       Tag: <Struct 'GameplayTag' (0x0000018DA9B0D0C0) {}>
+       DisplayName: 
+       Expected prefix: SoulslikeFramework.Stat.Secondary.AttackPower
+  MISMATCH: B_AP_Fire_C
+       Tag: <Struct 'GameplayTag' (0x0000018DA9B0B440) {}>
+       DisplayName: 
+       Expected prefix: SoulslikeFramework.Stat.Secondary.AttackPower
+  MISMATCH: B_AP_Frost_C
+       Tag: <Struct 'GameplayTag' (0x0000018DA9B0BBC0) {}>
+       DisplayName: 
+       Expected prefix: SoulslikeFramework.Stat.Secondary.AttackPower
+  MISMATCH: B_AP_Lightning_C
+       Tag: <Struct 'GameplayTag' (0x0000018DA9B0C7C0) {}>
+       DisplayName: 
+       Expected prefix: SoulslikeFramework.Stat.Secondary.AttackPower
+  MISMATCH: B_AP_Holy_C
+       Tag: <Struct 'GameplayTag' (0x0000018DA9B0C040) {}>
+       DisplayName: 
+       Expected prefix: SoulslikeFramework.Stat.Secondary.AttackPower
+
+[DamageNegation]
+  ERROR: Could not load /Game/SoulslikeFramework/Data/Stats/Defense/Negation/B_DN_Physical
+  ERROR: Could not load /Game/SoulslikeFramework/Data/Stats/Defense/Negation/B_DN_Magic
+  ERROR: Could not load /Game/SoulslikeFramework/Data/Stats/Defense/Negation/B_DN_Fire
+  ERROR: Could not load /Game/SoulslikeFramework/Data/Stats/Defense/Negation/B_DN_Frost
+  ERROR: Could not load /Game/SoulslikeFramework/Data/Stats/Defense/Negation/B_DN_Lightning
+  ERROR: Could not load /Game/SoulslikeFramework/Data/Stats/Defense/Negation/B_DN_Holy
+
+[Resistance]
+  ERROR: Could not load /Game/SoulslikeFramework/Data/Stats/Defense/Resistances/B_Immunity
+  ERROR: Could not load /Game/SoulslikeFramework/Data/Stats/Defense/Resistances/B_Focus
+  ERROR: Could not load /Game/SoulslikeFramework/Data/Stats/Defense/Resistances/B_Robustness
+  ERROR: Could not load /Game/SoulslikeFramework/Data/Stats/Defense/Resistances/B_Vitality
+
+[Misc]
+  ERROR: Could not load /Game/SoulslikeFramework/Data/Stats/Misc/B_EquipLoad
+  MISMATCH: B_Discovery_C
+       Tag: <Struct 'GameplayTag' (0x0000018DA9B013C0) {}>
+       DisplayName: 
+       Expected prefix: SoulslikeFramework.Stat.Misc
+
+================================================================================
+SECONDARY EXCLUSION TEST
+Stats matching Secondary but should be excluded from Base Stats widget:
+================================================================================
+
+================================================================================

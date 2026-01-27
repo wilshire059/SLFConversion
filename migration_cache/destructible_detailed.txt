@@ -1,0 +1,62 @@
+
+================================================================================
+B_Destructible Detailed Component Analysis
+================================================================================
+
+Spawned: B_Destructible_C_0
+Component: GC_DestructibleMesh
+
+--- Simulation Settings ---
+  generate_overlap_events: False
+  can_ever_affect_navigation: True
+  notify_breaks: True
+  notify_collisions: False
+  notify_trailing: False
+  notify_removals: False
+  use_size_specific_damage_threshold: False
+  damage_propagation_data: <Struct 'GeometryCollectionDamagePropagationData' (0x000002778EDD12A4) {enabled: False, break_damage_propagation_factor: 1.000000, shock_damage_propagation_factor: 0.000000}>
+  enable_clustering: True
+  cluster_group_index: 0
+  max_cluster_level: 100
+  mobility: <ComponentMobility.MOVABLE: 2>
+
+--- BodyInstance ---
+  simulate_physics: True
+  collision_enabled: <CollisionEnabled.QUERY_AND_PHYSICS: 3>
+  object_type: <CollisionChannel.ECC_DESTRUCTIBLE: 7>
+  mass_in_kg: 100.0
+  linear_damping: 0.009999999776482582
+  angular_damping: 0.0
+  enable_gravity: True
+  start_awake: True
+  position_solver_iteration_count: 8
+  velocity_solver_iteration_count: 2
+  collision_responses: <Struct 'CollisionResponse' (0x000002778EDD1090) {}>
+
+--- Collision ---
+  ObjectType: <CollisionChannel.ECC_DESTRUCTIBLE: 7>
+  CollisionEnabled: <CollisionEnabled.QUERY_AND_PHYSICS: 3>
+  CollisionProfileName: Custom
+
+--- Collision Responses ---
+  ECC_WORLD_STATIC: <CollisionResponseType.ECR_BLOCK: 2>
+  ECC_WORLD_DYNAMIC: <CollisionResponseType.ECR_BLOCK: 2>
+  ECC_PAWN: <CollisionResponseType.ECR_BLOCK: 2>
+  ECC_VISIBILITY: <CollisionResponseType.ECR_BLOCK: 2>
+  ECC_CAMERA: <CollisionResponseType.ECR_BLOCK: 2>
+  ECC_PHYSICS_BODY: <CollisionResponseType.ECR_BLOCK: 2>
+  ECC_VEHICLE: <CollisionResponseType.ECR_BLOCK: 2>
+  ECC_DESTRUCTIBLE: <CollisionResponseType.ECR_BLOCK: 2>
+
+--- RestCollection ---
+  RestCollection: None!
+
+--- Physics State (Runtime) ---
+  is_simulating_physics(): False
+  is_active(): False
+  is_visible(): True
+  State check error: 'GeometryCollectionComponent' object has no attribute 'is_registered'
+
+================================================================================
+Analysis Complete
+================================================================================

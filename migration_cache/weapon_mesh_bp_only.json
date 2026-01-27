@@ -1,0 +1,142 @@
+{
+  "B_Item_AI_Weapon_Sword": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/AI/B_Item_AI_Weapon_Sword",
+    "class": "B_Item_AI_Weapon_Sword_C",
+    "components": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "relative_location": "(0.00, 0.00, -100000.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "relative_scale": "(1.00, 1.00, 1.00)"
+      },
+      {
+        "name": "StaticMesh",
+        "class": "StaticMeshComponent",
+        "relative_location": "(0.00, 0.00, 43.66)",
+        "relative_rotation": "(0.00, 0.00, -130.00)",
+        "relative_scale": "(1.00, 1.00, 1.00)",
+        "static_mesh": "SM_ExampleSword02",
+        "static_mesh_path": "/Game/SoulslikeFramework/Meshes/SM/Sword_02/SM_ExampleSword02.SM_ExampleSword02"
+      },
+      {
+        "name": "AC_CollisionManager",
+        "class": "AC_CollisionManager_C"
+      },
+      {
+        "name": "Trail",
+        "class": "NiagaraComponent",
+        "relative_location": "(0.00, 1.11, -99939.25)",
+        "relative_rotation": "(0.00, -0.00, -178.25)",
+        "relative_scale": "(1.00, 1.00, 1.00)"
+      },
+      {
+        "name": "DEBUG_HandleVisualizer",
+        "class": "BillboardComponent",
+        "relative_location": "(0.00, 0.00, 0.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "relative_scale": "(0.15, 0.15, 0.15)"
+      },
+      {
+        "name": "DEBUG_FacingDirection",
+        "class": "ArrowComponent",
+        "relative_location": "(0.00, 0.00, 0.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "relative_scale": "(1.00, 1.00, 1.00)"
+      }
+    ]
+  },
+  "B_Item_AI_Weapon_Greatsword": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/AI/B_Item_AI_Weapon_Greatsword",
+    "class": "B_Item_AI_Weapon_Greatsword_C",
+    "components": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "relative_location": "(0.00, 0.00, -100000.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "relative_scale": "(1.00, 1.00, 1.00)"
+      },
+      {
+        "name": "StaticMesh",
+        "class": "StaticMeshComponent",
+        "relative_location": "(0.00, -0.00, -13.46)",
+        "relative_rotation": "(0.00, -43.43, 0.00)",
+        "relative_scale": "(1.00, 1.00, 1.00)",
+        "static_mesh": "SM_Greatsword",
+        "static_mesh_path": "/Game/SoulslikeFramework/Meshes/SM/Greatsword/SM_Greatsword.SM_Greatsword"
+      },
+      {
+        "name": "AC_CollisionManager",
+        "class": "AC_CollisionManager_C"
+      },
+      {
+        "name": "Trail",
+        "class": "NiagaraComponent",
+        "relative_location": "(-0.00, 0.00, -99947.02)",
+        "relative_rotation": "(-0.00, 90.00, -180.00)",
+        "relative_scale": "(1.00, 1.00, 1.00)"
+      },
+      {
+        "name": "DEBUG_HandleVisualizer",
+        "class": "BillboardComponent",
+        "relative_location": "(0.00, 0.00, 0.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "relative_scale": "(0.15, 0.15, 0.15)"
+      },
+      {
+        "name": "DEBUG_FacingDirection",
+        "class": "ArrowComponent",
+        "relative_location": "(0.00, 0.00, 0.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "relative_scale": "(1.00, 1.00, 1.00)"
+      }
+    ]
+  },
+  "B_Item_AI_Weapon": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/B_Item_AI_Weapon",
+    "class": "B_Item_AI_Weapon_C",
+    "components": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "relative_location": "(0.00, 0.00, -100000.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "relative_scale": "(1.00, 1.00, 1.00)"
+      },
+      {
+        "name": "StaticMesh",
+        "class": "StaticMeshComponent",
+        "relative_location": "(0.00, 0.00, 0.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "relative_scale": "(1.00, 1.00, 1.00)",
+        "static_mesh": "NONE"
+      },
+      {
+        "name": "AC_CollisionManager",
+        "class": "AC_CollisionManager_C"
+      },
+      {
+        "name": "Trail",
+        "class": "NiagaraComponent",
+        "relative_location": "(0.00, 0.00, -100000.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "relative_scale": "(1.00, 1.00, 1.00)"
+      },
+      {
+        "name": "DEBUG_HandleVisualizer",
+        "class": "BillboardComponent",
+        "relative_location": "(0.00, 0.00, 0.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "relative_scale": "(0.15, 0.15, 0.15)"
+      },
+      {
+        "name": "DEBUG_FacingDirection",
+        "class": "ArrowComponent",
+        "relative_location": "(0.00, 0.00, 0.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "relative_scale": "(1.00, 1.00, 1.00)"
+      }
+    ]
+  }
+}

@@ -39,7 +39,7 @@ UStatManagerComponent::UStatManagerComponent()
 		StatTable = nullptr;
 	}
 
-	// Initialize runtime
+	// Initialize runtime - Level starts at 1 (matches bp_only default)
 	Level = 1;
 }
 
@@ -155,12 +155,12 @@ void UStatManagerComponent::BeginPlay()
 							// Get stat tag from its default StatInfo
 							FGameplayTag StatTag = NewStat->StatInfo.Tag;
 
-							// If tag is invalid or values are zero, check C++ parent class CDO
-							// (Blueprint CDO may have overridden StatInfo with empty/default values)
-							bool bNeedsParentDefaults = !StatTag.IsValid() ||
-								(NewStat->StatInfo.CurrentValue == 0.0 && NewStat->StatInfo.MaxValue == 0.0);
+							// ALWAYS copy from C++ parent when StatClass is a Blueprint class
+							// Blueprint CDOs may have serialized incorrect values from before migration
+							// The C++ parent classes (USLFStatHP, USLFStatVigor, etc.) have the authoritative defaults
+							bool bIsBlueprintClass = StatClass->HasAnyClassFlags(CLASS_CompiledFromBlueprint);
 
-							if (bNeedsParentDefaults)
+							if (bIsBlueprintClass)
 							{
 								UClass* ParentClass = StatClass->GetSuperClass();
 								while (ParentClass)
@@ -359,14 +359,19 @@ void UStatManagerComponent::AdjustAffectedStats_Implementation(UObject* Stat, do
 
 	UE_LOG(LogTemp, Log, TEXT("[StatManager] AdjustAffectedStats from %s"), *Stat->GetName());
 
-	// Get StatBehavior.StatsToAffect from the B_Stat
+	// CRITICAL: Get StatsToAffect from StatInfo.StatModifiers (not the separate StatBehavior member)
+	// The stat classes set StatInfo.StatModifiers.StatsToAffect in their constructors
+	// This matches bp_only which uses FStatInfo.StatModifiers.StatsToAffect
 	USLFStatBase* BStat = Cast<USLFStatBase>(Stat);
 	if (!BStat) return;
 
-	const FStatBehavior& StatBehavior = BStat->StatBehavior;
+	// Use StatInfo.StatModifiers (the correct location matching bp_only and stat class constructors)
+	const FStatBehavior& StatModifiers = BStat->StatInfo.StatModifiers;
+
+	UE_LOG(LogTemp, Log, TEXT("[StatManager]   StatModifiers.StatsToAffect has %d entries"), StatModifiers.StatsToAffect.Num());
 
 	// For each affected stat, apply the scaled change
-	for (const auto& AffectedEntry : StatBehavior.StatsToAffect)
+	for (const auto& AffectedEntry : StatModifiers.StatsToAffect)
 	{
 		FGameplayTag AffectedStatTag = AffectedEntry.Key;
 		const FAffectedStats& AffectedStatsData = AffectedEntry.Value;
@@ -614,15 +619,61 @@ void UStatManagerComponent::ApplyBaseStatsFromCharacterClass()
 	}
 
 	// Apply base stats to each active stat using InitializeBaseClassValue
+	// Store the changes so we can apply affected stats afterward
+	TMap<USLFStatBase*, double> StatChanges;
+
 	for (const auto& StatPair : ActiveStats)
 	{
 		USLFStatBase* Stat = Cast<USLFStatBase>(StatPair.Value);
 		if (Stat)
 		{
+			double OldValue = Stat->StatInfo.CurrentValue;
 			UE_LOG(LogTemp, Warning, TEXT("[StatManager] Applying BaseStats to stat %s (class: %s)"),
 				*Stat->StatInfo.DisplayName.ToString(), *Stat->GetClass()->GetName());
 			// Call InitializeBaseClassValue on the stat
 			Stat->InitializeBaseClassValue(CharacterInfo->BaseStats);
+			double NewValue = Stat->StatInfo.CurrentValue;
+			double Change = NewValue - OldValue;
+			if (!FMath::IsNearlyZero(Change))
+			{
+				StatChanges.Add(Stat, Change);
+			}
+		}
+	}
+
+	// Now trigger affected stats for all primary stats that changed
+	// This calculates derived stats like HP from Vigor, FP from Mind, etc.
+	UE_LOG(LogTemp, Warning, TEXT("[StatManager] Triggering affected stats for %d changed stats"), StatChanges.Num());
+	for (const auto& ChangePair : StatChanges)
+	{
+		USLFStatBase* Stat = ChangePair.Key;
+		double Change = ChangePair.Value;
+
+		// CRITICAL: Read from StatInfo.StatModifiers (the correct location matching bp_only)
+		if (Stat->StatInfo.StatModifiers.StatsToAffect.Num() > 0)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[StatManager] Calling AdjustAffectedStats for %s (change: %.2f, affects: %d stats)"),
+				*Stat->StatInfo.DisplayName.ToString(), Change, Stat->StatInfo.StatModifiers.StatsToAffect.Num());
+			AdjustAffectedStats(Stat, Change, ESLFValueType::MaxValue);
+		}
+	}
+
+	// After applying all base stats and derived stats, reset Current to Max for secondary stats
+	// This ensures HP/FP/Stamina start at full after character creation
+	for (const auto& StatPair : ActiveStats)
+	{
+		USLFStatBase* Stat = Cast<USLFStatBase>(StatPair.Value);
+		if (Stat)
+		{
+			// Check if this is a secondary stat (HP, FP, Stamina) that should be reset to max
+			if (Stat->StatInfo.Tag.MatchesTagExact(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"))) ||
+				Stat->StatInfo.Tag.MatchesTagExact(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.FP"))) ||
+				Stat->StatInfo.Tag.MatchesTagExact(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Stamina"))))
+			{
+				Stat->StatInfo.CurrentValue = Stat->StatInfo.MaxValue;
+				UE_LOG(LogTemp, Warning, TEXT("[StatManager] Reset %s to max: %.0f/%.0f"),
+					*Stat->StatInfo.DisplayName.ToString(), Stat->StatInfo.CurrentValue, Stat->StatInfo.MaxValue);
+			}
 		}
 	}
 

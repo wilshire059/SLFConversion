@@ -1,0 +1,33 @@
+{
+  "blueprint_cdo": [
+    {
+      "name": "DefaultSceneRoot",
+      "class": "SceneComponent",
+      "visible": true
+    }
+  ],
+  "cpp_cdo": [
+    {
+      "name": "DefaultSceneRoot",
+      "class": "SceneComponent",
+      "visible": true
+    },
+    {
+      "name": "Interactable SM",
+      "class": "StaticMeshComponent",
+      "visible": true,
+      "mesh": "SM_PrisonDoor"
+    },
+    {
+      "name": "Door Frame",
+      "class": "StaticMeshComponent",
+      "visible": true,
+      "mesh": "SM_PrisonDoorArch"
+    },
+    {
+      "name": "MoveTo",
+      "class": "BillboardComponent",
+      "visible": false
+    }
+  ]
+}

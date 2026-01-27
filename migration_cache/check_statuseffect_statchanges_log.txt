@@ -1,0 +1,33 @@
+============================================================
+Checking Status Effect Stat Change Configuration
+============================================================
+
+DA_StatusEffect_Poison
+----------------------------------------
+  Class: PDA_StatusEffect_C
+  base_buildup_rate: 10.0
+  base_decay_rate: 2.0
+  decay_delay: 2.0
+  resistive_stat: <Struct 'GameplayTag' (0x0000018FC3D94C28) {}>
+  resistive_stat_curve: <Object '/Game/SoulslikeFramework/Data/StatusEffects/Misc/CF_ResistanceEffectiveness.CF_ResistanceEffectiveness' (0x0000018FC2038900) Class 'CurveFloat'>
+
+  Checking nested structs:
+  tick_stat_change error: PDA_StatusEffect: Failed to find property 'tick_stat_change' for attribute 'tick_stat_change' on 'PDA_StatusEffect_C'
+  one_shot_stat_change error: PDA_StatusEffect: Failed to find property 'one_shot_stat_change' for attribute 'one_shot_stat_change' on 'PDA_StatusEffect_C'
+  tick_and_one_shot_stat_change error: PDA_StatusEffect: Failed to find property 'tick_and_one_shot_stat_change' for attribute 'tick_and_one_shot_stat_change' on 'PDA_StatusEffect_C'
+
+DA_StatusEffect_Bleed
+----------------------------------------
+  Class: PDA_StatusEffect_C
+  base_buildup_rate: 10.0
+  base_decay_rate: 2.0
+  decay_delay: 2.0
+  resistive_stat: <Struct 'GameplayTag' (0x0000018FC3D954E8) {}>
+  resistive_stat_curve: <Object '/Game/SoulslikeFramework/Data/StatusEffects/Misc/CF_ResistanceEffectiveness.CF_ResistanceEffectiveness' (0x0000018FC2038900) Class 'CurveFloat'>
+
+  Checking nested structs:
+  tick_stat_change error: PDA_StatusEffect: Failed to find property 'tick_stat_change' for attribute 'tick_stat_change' on 'PDA_StatusEffect_C'
+  one_shot_stat_change error: PDA_StatusEffect: Failed to find property 'one_shot_stat_change' for attribute 'one_shot_stat_change' on 'PDA_StatusEffect_C'
+  tick_and_one_shot_stat_change error: PDA_StatusEffect: Failed to find property 'tick_and_one_shot_stat_change' for attribute 'tick_and_one_shot_stat_change' on 'PDA_StatusEffect_C'
+
+============================================================

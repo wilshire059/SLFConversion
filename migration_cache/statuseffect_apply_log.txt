@@ -1,0 +1,40 @@
+=== Applying StatusEffect Configuration ===
+Loading level: /Game/SoulslikeFramework/Maps/L_Demo_Showcase
+Total actors: 98
+Found 7 B_StatusEffectArea instances
+
+Loading status effect data assets...
+  Loaded: DA_StatusEffect_Poison
+  Loaded: DA_StatusEffect_Bleed
+  Loaded: DA_StatusEffect_Burn
+  Loaded: DA_StatusEffect_Frostbite
+  Loaded: DA_StatusEffect_Corruption
+  Loaded: DA_StatusEffect_Madness
+  Loaded: DA_StatusEffect_Plague
+
+Applying to instances...
+
+B_StatusEffectArea_C_1 (X=10091):
+  ERROR: SLFStatusEffectArea: Failed to find property 'status_effect_to_apply' for attribute 'status_effect_to_apply' on 'B_StatusEffectArea_C'
+
+B_StatusEffectArea_C_2 (X=10391):
+  ERROR: SLFStatusEffectArea: Failed to find property 'status_effect_to_apply' for attribute 'status_effect_to_apply' on 'B_StatusEffectArea_C'
+
+B_StatusEffectArea_C_3 (X=10691):
+  ERROR: SLFStatusEffectArea: Failed to find property 'status_effect_to_apply' for attribute 'status_effect_to_apply' on 'B_StatusEffectArea_C'
+
+B_StatusEffectArea_C_4 (X=10991):
+  ERROR: SLFStatusEffectArea: Failed to find property 'status_effect_to_apply' for attribute 'status_effect_to_apply' on 'B_StatusEffectArea_C'
+
+B_StatusEffectArea_C_5 (X=11291):
+  ERROR: SLFStatusEffectArea: Failed to find property 'status_effect_to_apply' for attribute 'status_effect_to_apply' on 'B_StatusEffectArea_C'
+
+B_StatusEffectArea_C_6 (X=11591):
+  ERROR: SLFStatusEffectArea: Failed to find property 'status_effect_to_apply' for attribute 'status_effect_to_apply' on 'B_StatusEffectArea_C'
+
+B_StatusEffectArea_C_7 (X=11891):
+  ERROR: SLFStatusEffectArea: Failed to find property 'status_effect_to_apply' for attribute 'status_effect_to_apply' on 'B_StatusEffectArea_C'
+
+Modified 0 instances
+
+=== Done ===

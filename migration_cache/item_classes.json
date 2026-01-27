@@ -1,0 +1,38 @@
+{
+  "DA_Sword01": {
+    "class": "PDA_Item_C",
+    "path": "/Game/SoulslikeFramework/Data/PDA_Item.PDA_Item_C"
+  },
+  "DA_Sword02": {
+    "class": "PDA_Item_C",
+    "path": "/Game/SoulslikeFramework/Data/PDA_Item.PDA_Item_C"
+  },
+  "DA_Greatsword": {
+    "class": "PDA_Item_C",
+    "path": "/Game/SoulslikeFramework/Data/PDA_Item.PDA_Item_C"
+  },
+  "DA_Katana": {
+    "class": "PDA_Item_C",
+    "path": "/Game/SoulslikeFramework/Data/PDA_Item.PDA_Item_C"
+  },
+  "DA_PoisonSword": {
+    "class": "PDA_Item_C",
+    "path": "/Game/SoulslikeFramework/Data/PDA_Item.PDA_Item_C"
+  },
+  "DA_BossMace": {
+    "class": "PDA_Item_C",
+    "path": "/Game/SoulslikeFramework/Data/PDA_Item.PDA_Item_C"
+  },
+  "DA_Shield01": {
+    "class": "PDA_Item_C",
+    "path": "/Game/SoulslikeFramework/Data/PDA_Item.PDA_Item_C"
+  },
+  "DA_Apple": {
+    "class": "PDA_Item_C",
+    "path": "/Game/SoulslikeFramework/Data/PDA_Item.PDA_Item_C"
+  },
+  "DA_HealthFlask": {
+    "class": "PDA_Item_C",
+    "path": "/Game/SoulslikeFramework/Data/PDA_Item.PDA_Item_C"
+  }
+}

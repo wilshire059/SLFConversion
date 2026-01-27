@@ -22,6 +22,219 @@
 4. **Preserve ALL defaults** - Mesh assignments, skeleton, component settings
 5. **AnimGraphs are PRESERVED** - Only clear EventGraph in AnimBPs
 6. **SURGICAL MIGRATION ONLY** - See warning below
+7. **BLUEPRINT SCS OWNS COMPONENTS** - C++ only caches references (see below)
+8. **USE C++ AUTOMATION, NOT PYTHON** - See section below
+
+---
+
+## ⚠️ C++ AUTOMATION PREFERENCE (CRITICAL) ⚠️
+
+**ALWAYS use C++ SLFAutomationLibrary functions instead of Python/Unreal API scripts.**
+
+### Why C++ Over Python?
+
+| Aspect | Python Script | C++ Automation |
+|--------|---------------|----------------|
+| Reliability | Unreal Python API can be flaky | Native, stable API |
+| Performance | Interpreter overhead | Native speed |
+| Debugging | Hard to debug in headless | Standard C++ debugging |
+| Consistency | API differs between versions | UE5 native API |
+
+### Available C++ Automation Functions
+
+`SLFAutomationLibrary.h` provides these functions:
+
+```cpp
+// REPARENTING
+static bool ReparentBlueprint(UObject* BlueprintAsset, const FString& NewParentClassPath);
+
+// BLUEPRINT CLEANUP
+static bool RemoveVariable(UBlueprint* Blueprint, const FString& VariableName);
+static bool RemoveAllVariables(UBlueprint* Blueprint);
+static bool ClearEventGraph(UBlueprint* Blueprint);
+static bool ClearAllBlueprintLogic(UBlueprint* Blueprint, bool bKeepVariables);
+
+// DATA EXTRACTION
+static bool ExtractBaseStats(const FString& CharacterClassPath, const FString& OutputPath);
+static int32 ExtractAllBaseStats(const FString& OutputPath);
+static int32 ApplyBaseStatsFromCache(const FString& InputPath);
+
+// VALIDATION
+static bool ValidateBlueprintCompiles(UBlueprint* Blueprint);
+```
+
+### How to Use C++ Automation
+
+**Option 1: Console Command (Preferred)**
+
+Add a console command in your game module that calls automation functions:
+```cpp
+// In your GameModule.cpp or a dedicated automation actor
+static FAutoConsoleCommand ReparentCmd(
+    TEXT("SLF.Reparent"),
+    TEXT("Reparent a Blueprint to C++ class. Usage: SLF.Reparent <BlueprintPath> <NewParentPath>"),
+    FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
+    {
+        if (Args.Num() >= 2)
+        {
+            UObject* BP = LoadObject<UObject>(nullptr, *Args[0]);
+            USLFAutomationLibrary::ReparentBlueprint(BP, Args[1]);
+        }
+    })
+);
+```
+
+Then run from command line:
+```bash
+"UnrealEditor-Cmd.exe" "Project.uproject" -ExecCmds="SLF.Reparent /Game/BP/B_Test /Script/Module.CppClass" -unattended
+```
+
+**Option 2: Editor Startup Automation**
+
+Create a commandlet or use PostEngineInit to run automation:
+```cpp
+// In module startup
+FCoreDelegates::OnPostEngineInit.AddLambda([]()
+{
+    // Check for automation flag
+    if (FParse::Param(FCommandLine::Get(), TEXT("RunAutomation")))
+    {
+        USLFAutomationLibrary::ReparentBlueprint(...);
+    }
+});
+```
+
+**Option 3: Minimal Python Wrapper (Last Resort)**
+
+If Python is absolutely required, use it ONLY as a thin wrapper calling C++:
+```python
+# ONLY use Python to CALL C++ functions, never for direct Blueprint manipulation
+import unreal
+unreal.SLFAutomationLibrary.reparent_blueprint(bp, "/Script/Module.CppClass")
+```
+
+### ❌ NEVER Do This (Python Direct Manipulation)
+
+```python
+# WRONG - Direct Python Blueprint manipulation
+bp = unreal.EditorAssetLibrary.load_asset(path)
+unreal.BlueprintEditorLibrary.reparent_blueprint(bp, new_parent)  # Flaky!
+unreal.EditorAssetLibrary.save_asset(path)
+```
+
+### ✅ ALWAYS Do This (C++ Functions)
+
+```cpp
+// RIGHT - Use SLFAutomationLibrary
+UObject* BP = LoadObject<UObject>(nullptr, TEXT("/Game/BP/B_Test"));
+USLFAutomationLibrary::ReparentBlueprint(BP, TEXT("/Script/SLFConversion.CppParent"));
+```
+
+---
+
+## ⚠️ COMPONENT OWNERSHIP STRATEGY (CRITICAL) ⚠️
+
+**Blueprint SCS (SimpleConstructionScript) owns all components. C++ only caches references at runtime.**
+
+### The Problem
+
+When a Blueprint has components created in its SCS (the Blueprint editor's component tree), and you create same-named components in C++ using `CreateDefaultSubobject`, you get:
+- Component conflicts (duplicate names)
+- Blueprint compilation issues
+- Interface detection failures (`ImplementsInterface()` returns false)
+- Runtime crashes or missing functionality
+
+### The Solution: Let Blueprint SCS Own Components
+
+**C++ classes should NOT create components that Blueprint SCS already provides.**
+
+#### ❌ WRONG: Creating components in C++ constructor
+```cpp
+AB_Interactable::AB_Interactable()
+{
+    // WRONG - Blueprint SCS already has "InteractionCollision"
+    InteractionCollision = CreateDefaultSubobject<USphereComponent>(TEXT("InteractionCollision"));
+    InteractionCollision->SetupAttachment(RootComponent);
+}
+```
+
+#### ✅ RIGHT: Cache references in BeginPlay
+```cpp
+// Header - declare as Transient (not serialized)
+UPROPERTY(Transient, BlueprintReadOnly, Category = "Components")
+USphereComponent* InteractionCollision;
+
+// Constructor - just set to nullptr
+AB_Interactable::AB_Interactable()
+{
+    // Components are created by Blueprint SCS
+    // C++ caches references in BeginPlay
+    InteractionCollision = nullptr;
+}
+
+// BeginPlay - find components by name
+void AB_Interactable::BeginPlay()
+{
+    Super::BeginPlay();
+
+    // Find the collision component created by Blueprint SCS
+    TArray<USphereComponent*> SphereComponents;
+    GetComponents<USphereComponent>(SphereComponents);
+    for (USphereComponent* SC : SphereComponents)
+    {
+        if (SC && SC->GetName().Contains(TEXT("Interaction")))
+        {
+            InteractionCollision = SC;
+            break;
+        }
+    }
+}
+```
+
+### When CreateDefaultSubobject IS Acceptable
+
+Use `CreateDefaultSubobject` when:
+1. **C++ creates NEW component types** not in Blueprint SCS
+2. **Child classes add components** that parent Blueprint doesn't have
+3. **Pure C++ actors** with no Blueprint SCS involvement
+
+Example (B_Container creates Lid, ItemSpawn, PointLight - NOT in parent):
+```cpp
+AB_Container::AB_Container()
+{
+    // These are NEW components, not conflicting with parent SCS
+    LidMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Lid"));
+    ItemSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("ItemSpawn"));
+    PointLight = CreateDefaultSubobject<UPointLightComponent>(TEXT("PointLight"));
+}
+```
+
+### Component Ownership Summary
+
+| Scenario | C++ Approach |
+|----------|-------------|
+| Blueprint SCS has component | **Cache reference in BeginPlay** |
+| Child adds NEW component | CreateDefaultSubobject OK |
+| Pure C++ actor | CreateDefaultSubobject OK |
+| Same-named component exists in parent | **NEVER CreateDefaultSubobject** |
+
+### Verification Pattern
+
+Add this comment header to migrated Actor classes:
+```cpp
+// COMPONENT OWNERSHIP: Blueprint SCS owns all components.
+// C++ only caches references at runtime. See CLAUDE.md for pattern.
+```
+
+### Files Already Using This Pattern
+
+| File | Components |
+|------|-----------|
+| B_Interactable.h/cpp | InteractableSM, InteractableSK |
+| B_RestingPoint.h/cpp | NiagaraComponent, RestingPointIndicator |
+| B_Container.h/cpp | LidMesh, ItemSpawnPoint, PointLight (NEW - CreateDefaultSubobject OK) |
+| SLFInteractableBase.h/cpp | CachedInteractionCollision, CachedInteractableSM, CachedInteractableSK |
+| SLFRestingPointBase.h/cpp | CachedSittingZone, CachedSpawnScene, CachedCameraArm, etc. |
 
 ---
 

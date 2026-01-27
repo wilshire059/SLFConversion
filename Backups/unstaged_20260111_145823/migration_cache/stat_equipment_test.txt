@@ -1,0 +1,26 @@
+=== Stat & Equipment Test ===
+
+[TEST 1] Loading W_Inventory widget
+[PASS] W_Inventory loaded
+[PASS] W_Inventory compiles
+
+[TEST 2] Loading W_Equipment widget
+[PASS] W_Equipment loaded
+[PASS] W_Equipment compiles
+
+[TEST 3] Loading stat Blueprints
+[PASS] All 3 stat Blueprints loaded
+
+[TEST 4] Checking C++ build status
+[PASS] C++ build succeeded (verified before test)
+
+[TEST 5] Loading character class data assets
+[WARN] /Game/SoulslikeFramework/Data/Classes/DA_Manny not found
+[WARN] /Game/SoulslikeFramework/Data/Classes/DA_Quinn not found
+
+=== TEST SUMMARY ===
+Build: PASS
+Widgets: PASS
+Stats: PASS
+
+Ready for visual verification in PIE

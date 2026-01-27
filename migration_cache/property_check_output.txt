@@ -1,0 +1,26 @@
+Property Binding Check Results
+================================================================================
+AnimBP: ABP_SoulslikeCharacter_Additive
+Generated Class: <Object '/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive_C' (0x000001CD1029EE00) Class 'AnimBlueprintGeneratedClass'>
+
+CDO Properties:
+  b_is_falling = NOT FOUND
+  bIsFalling = NOT FOUND
+  bIsAccelerating = NOT FOUND
+  b_is_accelerating = NOT FOUND
+  bIsBlocking = NOT FOUND
+  b_is_blocking = NOT FOUND
+  IsResting = NOT FOUND
+  is_resting = NOT FOUND
+  ik_weight = NOT FOUND
+  IkWeight = NOT FOUND
+  speed = NOT FOUND
+  Speed = NOT FOUND
+  direction = NOT FOUND
+  Direction = NOT FOUND
+  velocity = NOT FOUND
+  Velocity = NOT FOUND
+  left_hand_overlay_state = NOT FOUND
+  LeftHandOverlayState = NOT FOUND
+  right_hand_overlay_state = NOT FOUND
+  RightHandOverlayState = NOT FOUND

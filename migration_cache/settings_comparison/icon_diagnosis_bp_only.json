@@ -1,0 +1,7 @@
+{
+  "project": "bp_only",
+  "entry_analysis": {
+    "error": "WidgetBlueprint: Failed to find property 'generated_class' for attribute 'generated_class' on 'WidgetBlueprint'"
+  },
+  "widget_tree_error": "WidgetBlueprint: Failed to find property 'widget_tree' for attribute 'widget_tree' on 'WidgetBlueprint'"
+}

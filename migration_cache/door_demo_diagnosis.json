@@ -1,0 +1,19 @@
+{
+  "class_name": "B_Door_Demo_C",
+  "cdo_all_components": [
+    {
+      "name": "DefaultSceneRoot",
+      "class": "SceneComponent"
+    }
+  ],
+  "level_instance": {
+    "name": "B_DoorDemo_C_1",
+    "class": "B_Door_Demo_C",
+    "components": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent"
+      }
+    ]
+  }
+}

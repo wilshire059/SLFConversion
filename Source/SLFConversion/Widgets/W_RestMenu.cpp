@@ -11,11 +11,22 @@
 #include "Widgets/W_RestMenu_Button.h"
 #include "Widgets/W_RestMenu_TimeEntry.h"
 #include "Widgets/W_TimePass.h"
+#include "Widgets/W_LevelUp.h"
 #include "Widgets/W_HUD.h"
 #include "Blueprints/B_RestingPoint.h"
 #include "Blueprints/SLFRestingPointBase.h"
 #include "Blueprints/Actors/SLFSkyManager.h"
+#include "Blueprints/SLFSoulslikeEnemy.h"
+#include "Blueprints/B_Soulslike_Enemy.h"
+#include "Components/StatManagerComponent.h"
+#include "Components/AICombatManagerComponent.h"
+#include "Components/SLFAIStateMachineComponent.h"
+#include "Interfaces/BPI_GenericCharacter.h"
+#include "AIController.h"
+#include "Components/CapsuleComponent.h"
+#include "BrainComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "EngineUtils.h"
 #include "Components/WidgetSwitcher.h"
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
@@ -33,6 +44,7 @@ UW_RestMenu::UW_RestMenu(const FObjectInitializer& ObjectInitializer)
 	CachedSwitcher = nullptr;
 	CachedLocationText = nullptr;
 	TimeEntriesBoxWidget = nullptr;
+	LevelUpWidgetRef = nullptr;
 
 	// Button references
 	RestButton = nullptr;
@@ -110,6 +122,62 @@ FReply UW_RestMenu::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent
 	FKey Key = InKeyEvent.GetKey();
 
 	UE_LOG(LogTemp, Log, TEXT("[W_RestMenu] NativeOnKeyDown - Key: %s, CurrentViewIndex: %d"), *Key.ToString(), CurrentViewIndex);
+
+	// When in Level Up view (index 2), forward input to W_LevelUp widget
+	if (CurrentViewIndex == 2 && LevelUpWidgetRef)
+	{
+		// Navigate Up
+		if (Key == EKeys::W || Key == EKeys::Up || Key == EKeys::Gamepad_DPad_Up || Key == EKeys::Gamepad_LeftStick_Up)
+		{
+			LevelUpWidgetRef->EventNavigateUp();
+			return FReply::Handled();
+		}
+		// Navigate Down
+		if (Key == EKeys::S || Key == EKeys::Down || Key == EKeys::Gamepad_DPad_Down || Key == EKeys::Gamepad_LeftStick_Down)
+		{
+			LevelUpWidgetRef->EventNavigateDown();
+			return FReply::Handled();
+		}
+		// Navigate Left (decrease stat)
+		if (Key == EKeys::A || Key == EKeys::Left || Key == EKeys::Gamepad_DPad_Left || Key == EKeys::Gamepad_LeftStick_Left)
+		{
+			LevelUpWidgetRef->EventNavigateLeft();
+			return FReply::Handled();
+		}
+		// Navigate Right (increase stat)
+		if (Key == EKeys::D || Key == EKeys::Right || Key == EKeys::Gamepad_DPad_Right || Key == EKeys::Gamepad_LeftStick_Right)
+		{
+			LevelUpWidgetRef->EventNavigateRight();
+			return FReply::Handled();
+		}
+		// Confirm level up
+		if (Key == EKeys::Enter || Key == EKeys::SpaceBar || Key == EKeys::E || Key == EKeys::Gamepad_FaceButton_Bottom)
+		{
+			LevelUpWidgetRef->EventNavigateOk();
+			return FReply::Handled();
+		}
+		// Cancel/back - return to main rest menu
+		if (Key == EKeys::Escape || Key == EKeys::BackSpace || Key == EKeys::Q || Key == EKeys::Tab || Key == EKeys::Gamepad_FaceButton_Right)
+		{
+			// Hide level up widget and return to main buttons
+			LevelUpWidgetRef->SetVisibility(ESlateVisibility::Collapsed);
+			CurrentViewIndex = 0;
+			SetKeyboardFocus();
+
+			// Re-select first main button
+			MainNavigationIndex = 0;
+			for (UW_RestMenu_Button* Button : MainButtonEntries)
+			{
+				if (Button) Button->SetRestMenuButtonSelected(false);
+			}
+			if (MainButtonEntries.IsValidIndex(0) && MainButtonEntries[0])
+			{
+				MainButtonEntries[0]->SetRestMenuButtonSelected(true);
+			}
+			return FReply::Handled();
+		}
+		return FReply::Handled();
+	}
 
 	// Navigate Up: W, Up Arrow, Gamepad DPad Up
 	if (Key == EKeys::W || Key == EKeys::Up || Key == EKeys::Gamepad_DPad_Up || Key == EKeys::Gamepad_LeftStick_Up)
@@ -218,12 +286,14 @@ void UW_RestMenu::CacheWidgetReferences()
 	TimeEntriesBoxWidget = Cast<UVerticalBox>(GetWidgetFromName(TEXT("TimeEntriesBox")));  // Blueprint name: TimeEntriesBox
 	TimePassWidgetRef = Cast<UW_TimePass>(GetWidgetFromName(TEXT("W_TimePass")));           // Blueprint name: W_TimePass
 	TimeOfDayTextWidget = Cast<UTextBlock>(GetWidgetFromName(TEXT("TimeOfDayText")));       // Blueprint name: TimeOfDayText
+	LevelUpWidgetRef = Cast<UW_LevelUp>(GetWidgetFromName(TEXT("W_LevelUp")));              // Blueprint name: W_LevelUp
 
-	UE_LOG(LogTemp, Log, TEXT("UW_RestMenu::CacheWidgetReferences - Switcher: %s, LocationText: %s, TimeEntriesBoxWidget: %s, TimePassWidgetRef: %s"),
+	UE_LOG(LogTemp, Log, TEXT("UW_RestMenu::CacheWidgetReferences - Switcher: %s, LocationText: %s, TimeEntriesBoxWidget: %s, TimePassWidgetRef: %s, LevelUpWidgetRef: %s"),
 		CachedSwitcher ? TEXT("Found") : TEXT("NULL"),
 		CachedLocationText ? TEXT("Found") : TEXT("NULL"),
 		TimeEntriesBoxWidget ? TEXT("Found") : TEXT("NULL"),
-		TimePassWidgetRef ? TEXT("Found") : TEXT("NULL"));
+		TimePassWidgetRef ? TEXT("Found") : TEXT("NULL"),
+		LevelUpWidgetRef ? TEXT("Found") : TEXT("NULL"));
 
 	// Bind TimePassWidgetRef's OnTimePassEnd event
 	if (TimePassWidgetRef)
@@ -336,9 +406,24 @@ void UW_RestMenu::HandleLevelUpButtonPressed()
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_RestMenu::HandleLevelUpButtonPressed - Level Up"));
 
-	// Blueprint shows level up widget and switches input context
-	// For now, just log - level up functionality would need W_LevelUp widget
-	// This is typically handled by switching Switcher to level up view index
+	// Show the level up widget
+	if (LevelUpWidgetRef)
+	{
+		LevelUpWidgetRef->SetVisibility(ESlateVisibility::Visible);
+		LevelUpWidgetRef->SetKeyboardFocus();
+
+		// Initialize the level up menu - it will collect stat entries and set up navigation
+		// The W_LevelUp widget should already have its stat blocks populated via Blueprint
+		// Just need to call SetAllStatEntries to initialize navigation
+		LevelUpWidgetRef->SetAllStatEntries();
+
+		CurrentViewIndex = 2; // Level up view
+		UE_LOG(LogTemp, Log, TEXT("  Showing W_LevelUp widget, set keyboard focus"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  W_LevelUp widget not found!"));
+	}
 }
 
 /**
@@ -966,6 +1051,204 @@ void UW_RestMenu::HandleTimePassEnd()
 		TimePassWidgetRef->SetVisibility(ESlateVisibility::Collapsed);
 	}
 
+	// ═══════════════════════════════════════════════════════════════════════════════
+	// RESTORE HP, FP, AND STAMINA WHEN RESTING
+	// Matches bp_only behavior: Resting at a bonfire restores all resources to max
+	// ═══════════════════════════════════════════════════════════════════════════════
+	APlayerController* PC = GetOwningPlayer();
+	if (PC)
+	{
+		APawn* PlayerPawn = PC->GetPawn();
+		if (PlayerPawn)
+		{
+			// Get StatManagerComponent from player pawn
+			UStatManagerComponent* StatManager = PlayerPawn->FindComponentByClass<UStatManagerComponent>();
+			if (StatManager)
+			{
+				// Request gameplay tags for HP, FP, and Stamina
+				FGameplayTag HPTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
+				FGameplayTag FPTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.FP"));
+				FGameplayTag StaminaTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Stamina"));
+
+				// Reset all three stats to their max values
+				StatManager->ResetStat(HPTag);
+				StatManager->ResetStat(FPTag);
+				StatManager->ResetStat(StaminaTag);
+
+				UE_LOG(LogTemp, Log, TEXT("UW_RestMenu::HandleTimePassEnd - Restored HP, FP, and Stamina to max"));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("UW_RestMenu::HandleTimePassEnd - No StatManagerComponent found on player pawn"));
+			}
+		}
+	}
+
+	// ═══════════════════════════════════════════════════════════════════════════════
+	// RESPAWN ALL ENEMIES (Souls-like mechanic)
+	// Resting at a bonfire respawns all enemies with full health
+	// ═══════════════════════════════════════════════════════════════════════════════
+	RespawnAllEnemies();
+
 	// Return to main menu view
 	EventBackToMain();
+}
+
+void UW_RestMenu::RespawnAllEnemies()
+{
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[RestMenu] RespawnAllEnemies - No world!"));
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[RestMenu] ========== RESPAWNING ALL ENEMIES =========="));
+
+	int32 EnemiesReset = 0;
+
+	// Helper lambda to reset an enemy character (works for both class hierarchies)
+	auto ResetEnemyCharacter = [&](ACharacter* EnemyChar)
+	{
+		if (!IsValid(EnemyChar))
+		{
+			return;
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("[RestMenu] Found enemy: %s, Hidden: %s"),
+			*EnemyChar->GetName(), EnemyChar->IsHidden() ? TEXT("true") : TEXT("false"));
+
+		// Reset combat manager state
+		if (UAICombatManagerComponent* CombatManager = EnemyChar->FindComponentByClass<UAICombatManagerComponent>())
+		{
+			// Reset all combat state
+			CombatManager->bIsDead = false;
+			CombatManager->bPoiseBroken = false;
+			CombatManager->bHyperArmor = false;
+			CombatManager->bInvincible = false;
+			CombatManager->bHealthbarActive = false;
+
+			// Restore enemy to original spawn position
+			// SpawnTransform is stored in BeginPlay on first spawn (before bHasBeenRespawned is set)
+			FVector SpawnLocation = CombatManager->SpawnTransform.GetLocation();
+			if (!SpawnLocation.IsNearlyZero())
+			{
+				EnemyChar->SetActorTransform(CombatManager->SpawnTransform);
+				UE_LOG(LogTemp, Warning, TEXT("[RestMenu] Restored %s to spawn location: %s"),
+					*EnemyChar->GetName(), *SpawnLocation.ToString());
+			}
+
+			// Mark as respawned so BeginPlay doesn't overwrite SpawnTransform
+			CombatManager->bHasBeenRespawned = true;
+
+			UE_LOG(LogTemp, Warning, TEXT("[RestMenu] Reset combat state for %s"), *EnemyChar->GetName());
+		}
+
+		// CRITICAL: Use BPI_GenericCharacter interface to get the CORRECT StatManager
+		// FindComponentByClass returns the WRONG one (Blueprint SCS component)
+		UStatManagerComponent* StatManager = nullptr;
+		if (EnemyChar->GetClass()->ImplementsInterface(UBPI_GenericCharacter::StaticClass()))
+		{
+			UActorComponent* StatComp = nullptr;
+			IBPI_GenericCharacter::Execute_GetStatManager(EnemyChar, StatComp);
+			StatManager = Cast<UStatManagerComponent>(StatComp);
+		}
+
+		if (StatManager)
+		{
+			FGameplayTag HPTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
+			FGameplayTag PoiseTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Poise"));
+
+			StatManager->ResetStat(HPTag);
+			StatManager->ResetStat(PoiseTag);
+
+			UE_LOG(LogTemp, Warning, TEXT("[RestMenu] Reset HP and Poise via interface for %s"), *EnemyChar->GetName());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[RestMenu] Could not get StatManager via interface for %s"), *EnemyChar->GetName());
+		}
+
+		// Reset AI state machine to Idle
+		if (USLFAIStateMachineComponent* AIStateMachine = EnemyChar->FindComponentByClass<USLFAIStateMachineComponent>())
+		{
+			AIStateMachine->ClearTarget();
+			AIStateMachine->SetState(ESLFAIState::Idle);
+
+			UE_LOG(LogTemp, Warning, TEXT("[RestMenu] Reset AI state for %s"), *EnemyChar->GetName());
+		}
+
+		// CRITICAL: Restart the AI BrainComponent (it was stopped on death)
+		if (AAIController* AIC = Cast<AAIController>(EnemyChar->GetController()))
+		{
+			if (UBrainComponent* Brain = AIC->GetBrainComponent())
+			{
+				Brain->RestartLogic();
+				UE_LOG(LogTemp, Warning, TEXT("[RestMenu] *** RESTARTED AI BRAIN *** for %s"), *EnemyChar->GetName());
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[RestMenu] No BrainComponent found for %s"), *EnemyChar->GetName());
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[RestMenu] No AIController found for %s"), *EnemyChar->GetName());
+		}
+
+		// Make sure enemy is visible and fully functional (restore from hidden state)
+		EnemyChar->SetActorHiddenInGame(false);
+		EnemyChar->SetActorEnableCollision(true);
+		EnemyChar->SetActorTickEnabled(true);
+
+		// Re-enable collision on the mesh and DISABLE RAGDOLL (critical for respawn)
+		if (USkeletalMeshComponent* EnemyMesh = EnemyChar->GetMesh())
+		{
+			// CRITICAL: Disable ragdoll physics - enemy died with physics enabled
+			EnemyMesh->SetSimulatePhysics(false);
+			EnemyMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+			EnemyMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+
+			// Reset mesh to animation pose (remove ragdoll deformation)
+			EnemyMesh->SetAllBodiesSimulatePhysics(false);
+			EnemyMesh->ResetAllBodiesSimulatePhysics();
+
+			// Reattach mesh to capsule if it was detached during ragdoll
+			if (UCapsuleComponent* Capsule = EnemyChar->GetCapsuleComponent())
+			{
+				EnemyMesh->AttachToComponent(Capsule, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+			}
+
+			UE_LOG(LogTemp, Warning, TEXT("[RestMenu] Re-enabled mesh collision and DISABLED RAGDOLL for %s"), *EnemyChar->GetName());
+		}
+
+		// Re-enable collision on all primitive components
+		TArray<UPrimitiveComponent*> PrimitiveComponents;
+		EnemyChar->GetComponents<UPrimitiveComponent>(PrimitiveComponents);
+		for (UPrimitiveComponent* PrimComp : PrimitiveComponents)
+		{
+			if (PrimComp)
+			{
+				PrimComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+			}
+		}
+		UE_LOG(LogTemp, Warning, TEXT("[RestMenu] Re-enabled collision on %d primitive components for %s"),
+			PrimitiveComponents.Num(), *EnemyChar->GetName());
+
+		EnemiesReset++;
+	};
+
+	// Find all enemies from ASLFSoulslikeEnemy hierarchy (e.g., enemies reparented to new C++ classes)
+	for (TActorIterator<ASLFSoulslikeEnemy> It(World); It; ++It)
+	{
+		ResetEnemyCharacter(*It);
+	}
+
+	// Find all enemies from AB_Soulslike_Enemy hierarchy (e.g., boss characters like B_Soulslike_Boss_Malgareth)
+	for (TActorIterator<AB_Soulslike_Enemy> It(World); It; ++It)
+	{
+		ResetEnemyCharacter(*It);
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[RestMenu] ========== TOTAL ENEMIES RESET: %d =========="), EnemiesReset);
 }

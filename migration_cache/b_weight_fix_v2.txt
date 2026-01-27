@@ -1,0 +1,34 @@
+================================================================================
+B_WEIGHT FIX V2 (C++ Automation)
+================================================================================
+
+Loaded: B_Weight
+CDO: Default__B_Weight_C
+
+Checking C++ automation functions...
+SetStatInfoFromParent not available: type object 'SLFAutomationLibrary' has no attribute 'set_stat_info_from_parent'
+
+Trying to create GameplayTag via struct...
+Container creation error: 'GameplayTagContainer' object has no attribute 'add_tag'
+
+Checking StatInfo struct attributes...
+StatInfo type: <class 'StatInfo'>
+StatInfo dir (first 20): ['assign', 'cast', 'copy', 'current_value', 'description', 'display_as_percent', 'display_name', 'export_text', 'get_editor_property', 'import_text', 'max_value', 'regen_info', 'set_editor_properties', 'set_editor_property', 'show_max_value', 'stat_modifiers', 'static_struct', 'tag', 'to_tuple']
+
+Getting C++ parent class CDO...
+Found native class: SLFStatWeight
+Native CDO StatInfo.Tag: SoulslikeFramework.Stat.Misc.Weight
+Native CDO MaxValue: 50.0
+
+Copying native StatInfo to Blueprint CDO...
+Set stat_info from native CDO
+Asset saved
+
+Verifying...
+  Tag: SoulslikeFramework.Stat.Misc.Weight
+  CurrentValue: 0.0
+  MaxValue: 50.0
+
+*** SUCCESS: StatInfo now has correct tag! ***
+
+================================================================================

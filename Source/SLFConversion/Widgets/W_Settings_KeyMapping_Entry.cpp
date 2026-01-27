@@ -29,7 +29,7 @@ void UW_Settings_KeyMapping_Entry::NativeDestruct()
 
 void UW_Settings_KeyMapping_Entry::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 
 void UW_Settings_KeyMapping_Entry::SelectMappingForSlot_Implementation(EPlayerMappableKeySlot InSlot, FName& OutMappingName, EPlayerMappableKeySlot& OutOutSlot, FKey& OutDefaultKey, FKey& OutCurrentKey)

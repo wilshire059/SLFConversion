@@ -1,0 +1,30 @@
+{
+  "DA_BossMace": {
+    "path": "/Game/SoulslikeFramework/Data/Items/DA_BossMace",
+    "weapon_overlay": "SoulslikeFramework.Equipment.Weapons.Overlay.OneHanded"
+  },
+  "DA_Greatsword": {
+    "path": "/Game/SoulslikeFramework/Data/Items/DA_Greatsword",
+    "weapon_overlay": "SoulslikeFramework.Equipment.Weapons.Overlay.OneHanded"
+  },
+  "DA_Katana": {
+    "path": "/Game/SoulslikeFramework/Data/Items/DA_Katana",
+    "weapon_overlay": "SoulslikeFramework.Equipment.Weapons.Overlay.OneHanded"
+  },
+  "DA_PoisonSword": {
+    "path": "/Game/SoulslikeFramework/Data/Items/DA_PoisonSword",
+    "weapon_overlay": "SoulslikeFramework.Equipment.Weapons.Overlay.OneHanded"
+  },
+  "DA_Shield01": {
+    "path": "/Game/SoulslikeFramework/Data/Items/DA_Shield01",
+    "weapon_overlay": "SoulslikeFramework.Equipment.Weapons.Overlay.Shield"
+  },
+  "DA_Sword01": {
+    "path": "/Game/SoulslikeFramework/Data/Items/DA_Sword01",
+    "weapon_overlay": "SoulslikeFramework.Equipment.Weapons.Overlay.OneHanded"
+  },
+  "DA_Sword02": {
+    "path": "/Game/SoulslikeFramework/Data/Items/DA_Sword02",
+    "weapon_overlay": "SoulslikeFramework.Equipment.Weapons.Overlay.OneHanded"
+  }
+}

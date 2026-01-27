@@ -14,6 +14,8 @@
 #include "TimerManager.h"
 #include "Engine/StreamableManager.h"
 #include "Engine/AssetManager.h"
+#include "Components/StatManagerComponent.h"
+#include "Curves/CurveFloat.h"
 
 UStatusEffectManagerComponent::UStatusEffectManagerComponent()
 {
@@ -31,6 +33,34 @@ FGameplayTag UStatusEffectManagerComponent::GetTagFromStatusEffectAsset(UDataAss
 		return EffectData->Tag;
 	}
 	return FGameplayTag();
+}
+
+double UStatusEffectManagerComponent::GetOwnerResistanceStatValue(const FGameplayTag& ResistiveStatTag) const
+{
+	if (!ResistiveStatTag.IsValid())
+	{
+		return 0.0;
+	}
+
+	AActor* Owner = GetOwner();
+	if (!Owner)
+	{
+		return 0.0;
+	}
+
+	// Find stat manager on owner
+	UStatManagerComponent* StatManager = Owner->FindComponentByClass<UStatManagerComponent>();
+	if (!StatManager)
+	{
+		return 0.0;
+	}
+
+	// Get the stat value for the resistance tag
+	UObject* StatObj = nullptr;
+	FStatInfo StatInfo;
+	StatManager->GetStat(ResistiveStatTag, StatObj, StatInfo);
+
+	return StatInfo.CurrentValue;
 }
 
 void UStatusEffectManagerComponent::TriggerStatusEffect(const FGameplayTag& EffectTag, int32 Rank)
@@ -182,8 +212,35 @@ void UStatusEffectManagerComponent::AddOneShotBuildup_Implementation(UDataAsset*
 		return;
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("[StatusEffectManager] AddOneShotBuildup: %s, Rank %d, Delta %.2f"),
+	UE_LOG(LogTemp, Log, TEXT("[StatusEffectManager] AddOneShotBuildup: %s, Rank %d, RawDelta %.2f"),
 		*EffectTag.ToString(), EffectRank, Delta);
+
+	// Apply resistance reduction from owner's resistive stat
+	double AdjustedDelta = Delta;
+	UPDA_StatusEffect* EffectData = Cast<UPDA_StatusEffect>(StatusEffect);
+	if (EffectData && EffectData->ResistiveStat.IsValid())
+	{
+		double OwnerResistance = GetOwnerResistanceStatValue(EffectData->ResistiveStat);
+		if (OwnerResistance > 0.0)
+		{
+			if (EffectData->ResistiveStatCurve)
+			{
+				// Use curve if available (X = resistance stat, Y = multiplier)
+				float CurveMultiplier = EffectData->ResistiveStatCurve->GetFloatValue(static_cast<float>(OwnerResistance));
+				AdjustedDelta = Delta * FMath::Clamp(CurveMultiplier, 0.0f, 1.0f);
+				UE_LOG(LogTemp, Log, TEXT("[StatusEffectManager] Applied curve reduction: Resistance=%.1f, Multiplier=%.3f, AdjustedDelta=%.2f"),
+					OwnerResistance, CurveMultiplier, AdjustedDelta);
+			}
+			else
+			{
+				// Fallback formula: 100 / (100 + resistance) - at 100 resistance, 50% buildup
+				double ResistanceFactor = 100.0 / (100.0 + OwnerResistance);
+				AdjustedDelta = Delta * ResistanceFactor;
+				UE_LOG(LogTemp, Log, TEXT("[StatusEffectManager] Applied formula reduction: Resistance=%.1f, Factor=%.3f, AdjustedDelta=%.2f"),
+					OwnerResistance, ResistanceFactor, AdjustedDelta);
+			}
+		}
+	}
 
 	// Find or create buildup state
 	FSLFStatusEffectBuildupState* State = BuildupStates.Find(EffectTag);
@@ -197,8 +254,8 @@ void UStatusEffectManagerComponent::AddOneShotBuildup_Implementation(UDataAsset*
 		State = BuildupStates.Find(EffectTag);
 	}
 
-	// Add delta to buildup
-	State->CurrentBuildup = FMath::Min(State->CurrentBuildup + Delta, State->MaxBuildup);
+	// Add adjusted delta to buildup
+	State->CurrentBuildup = FMath::Min(State->CurrentBuildup + AdjustedDelta, State->MaxBuildup);
 
 	UE_LOG(LogTemp, Log, TEXT("[StatusEffectManager] Buildup now: %.1f/%.1f"),
 		State->CurrentBuildup, State->MaxBuildup);

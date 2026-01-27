@@ -1,0 +1,94 @@
+======================================================================
+COMPREHENSIVE LIGHTING CHECK - L_Demo_Showcase
+======================================================================
+
+Loading level: /Game/SoulslikeFramework/Maps/L_Demo_Showcase
+Loaded: <Object '/Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase' (0x00000122B13A0000) Class 'World'>
+World: L_Demo_Showcase
+Total actors: 104
+
+======================================================================
+1. DIRECTIONAL LIGHT ACTORS (standalone)
+======================================================================
+Found 0 DirectionalLight actors
+
+======================================================================
+2. SKY MANAGER ACTORS
+======================================================================
+Found 1 SkyManager actors
+
+  Actor: B_SkyManager_C_1
+    Class: B_SkyManager_C
+    Location: <Struct 'Vector' (0x00000122A014BA30) {x: 14533.983347, y: 1512.823044, z: 99.999998}>
+    Total Components: 12
+      - DefaultSceneRoot (SceneComponent)
+      - DirectionalLight_Sun (DirectionalLightComponent)
+          Intensity: 10.0
+          AtmosphereSunLight: True
+      - DirectionalLight_Moon (DirectionalLightComponent)
+          Intensity: 0.5
+          AtmosphereSunLight: False
+      - SkyLight (SkyLightComponent)
+      - SkyAtmosphere (SkyAtmosphereComponent)
+      - VolumetricCloud (VolumetricCloudComponent)
+      - ExponentialHeightFog (ExponentialHeightFogComponent)
+      - SM_SkySphere (StaticMeshComponent)
+      - BillboardComponent_0 (BillboardComponent)
+      - BillboardComponent_1 (BillboardComponent)
+      - BillboardComponent_2 (BillboardComponent)
+      - FogExterior (TimelineComponent)
+
+======================================================================
+3. SKY ATMOSPHERE ACTORS (standalone)
+======================================================================
+Found 0 SkyAtmosphere actors
+
+======================================================================
+4. SKY LIGHT ACTORS (standalone)
+======================================================================
+Found 0 SkyLight actors
+
+======================================================================
+5. EXPONENTIAL HEIGHT FOG ACTORS (standalone)
+======================================================================
+Found 0 ExponentialHeightFog actors
+
+======================================================================
+6. VOLUMETRIC CLOUD ACTORS (standalone)
+======================================================================
+Found 0 VolumetricCloud actors
+
+======================================================================
+7. ALL DIRECTIONAL LIGHT COMPONENTS (on any actor)
+======================================================================
+  B_SkyManager_C_1.DirectionalLight_Sun: Intensity=10.0, AtmosphereSunLight=True
+  B_SkyManager_C_1.DirectionalLight_Moon: Intensity=0.5, AtmosphereSunLight=False
+
+Total DirectionalLightComponents: 2
+Components with AtmosphereSunLight=True: 1
+  - B_SkyManager_C_1.DirectionalLight_Sun
+
+======================================================================
+8. ALL SKY ATMOSPHERE COMPONENTS (on any actor)
+======================================================================
+  B_SkyManager_C_1.SkyAtmosphere
+
+Total SkyAtmosphereComponents: 1
+
+======================================================================
+SUMMARY
+======================================================================
+DirectionalLight Actors: 0
+SkyManager Actors: 1
+SkyAtmosphere Actors: 0
+SkyLight Actors: 0
+ExponentialHeightFog Actors: 0
+VolumetricCloud Actors: 0
+Total DirectionalLightComponents: 2
+Lights with AtmosphereSunLight=True: 1
+
+======================================================================
+CHECK COMPLETE
+======================================================================
+
+Results: C:/scripts/SLFConversion/migration_cache/all_lighting_check.txt

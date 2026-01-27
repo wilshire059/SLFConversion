@@ -14,7 +14,12 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/AC_CombatManager.h"
 #include "Components/AICombatManagerComponent.h"
+#include "Components/AC_StatusEffectManager.h"
+#include "Components/StatusEffectManagerComponent.h"
+#include "Blueprints/SLFWeaponBase.h"
+#include "SLFPrimaryDataAssets.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "Engine/EngineTypes.h"
 
 UCollisionManagerComponent::UCollisionManagerComponent()
@@ -40,6 +45,10 @@ UCollisionManagerComponent::UCollisionManagerComponent()
 	TraceTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));           // Characters
 	TraceTypes.Add(UEngineTypes::ConvertToObjectType(ECC_WorldDynamic));   // Destructibles, physics props
 	TraceTypes.Add(UEngineTypes::ConvertToObjectType(ECC_PhysicsBody));    // Physics-simulated bodies
+	TraceTypes.Add(UEngineTypes::ConvertToObjectType(ECC_WorldStatic));    // Static world geometry
+	TraceTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Destructible));   // Chaos Destructibles (GeometryCollection)
+	TraceTypes.Add(UEngineTypes::ConvertToObjectType(ECC_GameTraceChannel1)); // Custom channel 1 (ObjectType=7, used by B_Destructible)
+	TraceTypes.Add(UEngineTypes::ConvertToObjectType(ECC_GameTraceChannel2)); // Custom channel 2 (in case other objects use it)
 }
 
 void UCollisionManagerComponent::BeginPlay()
@@ -166,6 +175,41 @@ void UCollisionManagerComponent::ProcessTrace_Implementation(const TArray<FHitRe
 		AttackingCharacter = WeaponOwner; // Fallback if weapon is the character itself
 	}
 
+	// Get weapon status effects from the weapon actor
+	TMap<FGameplayTag, UPrimaryDataAsset*> StatusEffects;
+	ASLFWeaponBase* WeaponActor = Cast<ASLFWeaponBase>(WeaponOwner);
+	if (WeaponActor)
+	{
+		// Get status effects from weapon's ItemInfo
+		const TMap<UPrimaryDataAsset*, FSLFStatusEffectApplication>& WeaponStatusEffects =
+			WeaponActor->ItemInfo.EquipmentDetails.WeaponStatusEffectInfo;
+
+		if (WeaponStatusEffects.Num() > 0)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[CollisionManager] Weapon %s has %d status effects"),
+				*WeaponActor->GetName(), WeaponStatusEffects.Num());
+
+			// Convert to the format expected by HandleIncomingWeaponDamage
+			// TMap<FGameplayTag, UPrimaryDataAsset*> where key is effect's tag
+			for (const auto& EffectPair : WeaponStatusEffects)
+			{
+				if (IsValid(EffectPair.Key))
+				{
+					// Get the status effect's tag from the data asset
+					UPDA_StatusEffect* StatusEffectData = Cast<UPDA_StatusEffect>(EffectPair.Key);
+					if (StatusEffectData && StatusEffectData->Tag.IsValid())
+					{
+						StatusEffects.Add(StatusEffectData->Tag, EffectPair.Key);
+						UE_LOG(LogTemp, Log, TEXT("[CollisionManager]   - Status Effect: %s, Tag: %s, Buildup: %.2f"),
+							*EffectPair.Key->GetName(),
+							*StatusEffectData->Tag.ToString(),
+							EffectPair.Value.BuildupAmount);
+					}
+				}
+			}
+		}
+	}
+
 	for (const FHitResult& Hit : HitResults)
 	{
 		AActor* HitActor = Hit.GetActor();
@@ -191,14 +235,13 @@ void UCollisionManagerComponent::ProcessTrace_Implementation(const TArray<FHitRe
 		// Apply damage directly to the hit actor's combat manager
 		double Damage = 50.0 * DamageMultiplier;  // Base weapon damage with multiplier (10% of typical 500 HP)
 		double PoiseDamage = 25.0 * DamageMultiplier;
-		TMap<FGameplayTag, UPrimaryDataAsset*> StatusEffects;
 
 		// Try player combat manager first
 		UAC_CombatManager* TargetCombatManager = HitActor->FindComponentByClass<UAC_CombatManager>();
 		if (TargetCombatManager)
 		{
-			UE_LOG(LogTemp, Log, TEXT("[CollisionManager] Applying %.1f damage to %s via CombatManager"),
-				Damage, *HitActor->GetName());
+			UE_LOG(LogTemp, Log, TEXT("[CollisionManager] Applying %.1f damage to %s via CombatManager, %d status effects"),
+				Damage, *HitActor->GetName(), StatusEffects.Num());
 
 			TargetCombatManager->HandleIncomingWeaponDamage(
 				AttackingCharacter,
@@ -220,6 +263,96 @@ void UCollisionManagerComponent::ProcessTrace_Implementation(const TArray<FHitRe
 					Damage, *HitActor->GetName());
 
 				AICombatManager->HandleIncomingWeaponDamage_AI(AttackingCharacter, Damage, PoiseDamage, Hit);
+
+				// Apply status effects separately for AI targets via StatusEffectManager
+				if (StatusEffects.Num() > 0 && WeaponActor)
+				{
+					// Find the AI's status effect manager
+					UStatusEffectManagerComponent* StatusEffectMgr = HitActor->FindComponentByClass<UStatusEffectManagerComponent>();
+					if (StatusEffectMgr)
+					{
+						const TMap<UPrimaryDataAsset*, FSLFStatusEffectApplication>& WeaponStatusEffects =
+							WeaponActor->ItemInfo.EquipmentDetails.WeaponStatusEffectInfo;
+
+						for (const auto& EffectPair : WeaponStatusEffects)
+						{
+							if (IsValid(EffectPair.Key))
+							{
+								UE_LOG(LogTemp, Log, TEXT("[CollisionManager] Applying status effect %s to AI %s (Buildup: %.2f, Rank: %d)"),
+									*EffectPair.Key->GetName(), *HitActor->GetName(),
+									EffectPair.Value.BuildupAmount, EffectPair.Value.Rank);
+
+								StatusEffectMgr->AddOneShotBuildup(
+									EffectPair.Key,
+									EffectPair.Value.Rank,
+									EffectPair.Value.BuildupAmount * DamageMultiplier
+								);
+							}
+						}
+					}
+					else
+					{
+						// Try legacy AC_StatusEffectManager
+						UAC_StatusEffectManager* LegacyStatusEffectMgr = HitActor->FindComponentByClass<UAC_StatusEffectManager>();
+						if (LegacyStatusEffectMgr)
+						{
+							const TMap<UPrimaryDataAsset*, FSLFStatusEffectApplication>& WeaponStatusEffects =
+								WeaponActor->ItemInfo.EquipmentDetails.WeaponStatusEffectInfo;
+
+							for (const auto& EffectPair : WeaponStatusEffects)
+							{
+								if (IsValid(EffectPair.Key))
+								{
+									UE_LOG(LogTemp, Log, TEXT("[CollisionManager] Applying status effect %s to AI %s via legacy manager"),
+										*EffectPair.Key->GetName(), *HitActor->GetName());
+
+									LegacyStatusEffectMgr->AddOneShotBuildup(
+										EffectPair.Key,
+										EffectPair.Value.Rank,
+										EffectPair.Value.BuildupAmount * DamageMultiplier
+									);
+								}
+							}
+						}
+						else
+						{
+							UE_LOG(LogTemp, Warning, TEXT("[CollisionManager] No StatusEffectManager found on AI %s"),
+								*HitActor->GetName());
+						}
+					}
+				}
+			}
+			else
+			{
+				// No combat manager - check if this is a physics object (like destructibles)
+				// Apply both damage and physics impulse to trigger Chaos destruction
+				UPrimitiveComponent* HitComponent = Hit.GetComponent();
+				if (HitComponent && HitComponent->IsSimulatingPhysics())
+				{
+					// Calculate impulse direction (from attacker toward hit point)
+					FVector ImpulseDirection = (Hit.ImpactPoint - AttackingCharacter->GetActorLocation()).GetSafeNormal();
+
+					// Apply point damage via UGameplayStatics - this triggers Chaos destruction
+					// GeometryCollectionComponent responds to TakeDamage and breaks when damage exceeds threshold
+					// NOTE: GC_Barrel has DamageThreshold=5000, so we need to exceed that!
+					float DamageAmount = 10000.0f * DamageMultiplier;  // Must exceed 5000 threshold to break
+					UGameplayStatics::ApplyPointDamage(
+						HitActor,
+						DamageAmount,
+						ImpulseDirection,
+						Hit,
+						AttackingCharacter->GetInstigatorController(),
+						AttackingCharacter,
+						nullptr  // DamageTypeClass
+					);
+
+					// Also apply a strong impulse for visual effect
+					FVector Impulse = ImpulseDirection * 10000.0 * DamageMultiplier;
+					HitComponent->AddImpulseAtLocation(Impulse, Hit.ImpactPoint);
+
+					UE_LOG(LogTemp, Log, TEXT("[CollisionManager] Applied damage (%.1f) and impulse to %s: %s"),
+						DamageAmount, *HitActor->GetName(), *Impulse.ToString());
+				}
 			}
 		}
 	}

@@ -1,0 +1,58 @@
+======================================================================
+EXTRACTING DAYNIGHT ENTRIES FROM BP_ONLY
+======================================================================
+Loaded: DA_ExampleDayNightInfo
+Class: PDA_DayNight_C
+
+Entries count: 6
+
+--- Entry 0 ---
+  Type: <class 'StructBase'>
+  Attributes: ['assign', 'cast', 'copy', 'export_text', 'get_editor_property', 'import_text', 'set_editor_properties', 'set_editor_property', 'static_struct', 'to_tuple']
+  get_editor_property('tag_13_8de95b234226c6ca36cc289782937abd'): <Struct 'GameplayTag' (0x000002CCB9D9B820) {}>
+  get_editor_property('name_3_de5ddafa478f0da09d298fb5c3826044'): Early Morning
+  get_editor_property('fromtime_9_e9b93b79414d557f282138ba47e1d055'): 9.0
+  get_editor_property('totime_10_e9595da4470d791d7d33af8354453aea'): 12.0
+
+--- Entry 1 ---
+  Type: <class 'StructBase'>
+  Attributes: ['assign', 'cast', 'copy', 'export_text', 'get_editor_property', 'import_text', 'set_editor_properties', 'set_editor_property', 'static_struct', 'to_tuple']
+  get_editor_property('tag_13_8de95b234226c6ca36cc289782937abd'): <Struct 'GameplayTag' (0x000002CCB9D9A8F0) {}>
+  get_editor_property('name_3_de5ddafa478f0da09d298fb5c3826044'): Sunrise
+  get_editor_property('fromtime_9_e9b93b79414d557f282138ba47e1d055'): 12.0
+  get_editor_property('totime_10_e9595da4470d791d7d33af8354453aea'): 14.0
+
+--- Entry 2 ---
+  Type: <class 'StructBase'>
+  Attributes: ['assign', 'cast', 'copy', 'export_text', 'get_editor_property', 'import_text', 'set_editor_properties', 'set_editor_property', 'static_struct', 'to_tuple']
+  get_editor_property('tag_13_8de95b234226c6ca36cc289782937abd'): <Struct 'GameplayTag' (0x000002CCB9D9A740) {}>
+  get_editor_property('name_3_de5ddafa478f0da09d298fb5c3826044'): Afternoon
+  get_editor_property('fromtime_9_e9b93b79414d557f282138ba47e1d055'): 14.0
+  get_editor_property('totime_10_e9595da4470d791d7d33af8354453aea'): 22.0
+
+--- Entry 3 ---
+  Type: <class 'StructBase'>
+  Attributes: ['assign', 'cast', 'copy', 'export_text', 'get_editor_property', 'import_text', 'set_editor_properties', 'set_editor_property', 'static_struct', 'to_tuple']
+  get_editor_property('tag_13_8de95b234226c6ca36cc289782937abd'): <Struct 'GameplayTag' (0x000002CCB9D9A9B0) {}>
+  get_editor_property('name_3_de5ddafa478f0da09d298fb5c3826044'): Sunset
+  get_editor_property('fromtime_9_e9b93b79414d557f282138ba47e1d055'): 22.0
+  get_editor_property('totime_10_e9595da4470d791d7d33af8354453aea'): 24.0
+
+--- Entry 4 ---
+  Type: <class 'StructBase'>
+  Attributes: ['assign', 'cast', 'copy', 'export_text', 'get_editor_property', 'import_text', 'set_editor_properties', 'set_editor_property', 'static_struct', 'to_tuple']
+  get_editor_property('tag_13_8de95b234226c6ca36cc289782937abd'): <Struct 'GameplayTag' (0x000002CCB9D984C0) {}>
+  get_editor_property('name_3_de5ddafa478f0da09d298fb5c3826044'): Night
+  get_editor_property('fromtime_9_e9b93b79414d557f282138ba47e1d055'): 0.0
+  get_editor_property('totime_10_e9595da4470d791d7d33af8354453aea'): 6.0
+
+--- Entry 5 ---
+  Type: <class 'StructBase'>
+  Attributes: ['assign', 'cast', 'copy', 'export_text', 'get_editor_property', 'import_text', 'set_editor_properties', 'set_editor_property', 'static_struct', 'to_tuple']
+  get_editor_property('tag_13_8de95b234226c6ca36cc289782937abd'): <Struct 'GameplayTag' (0x000002CCB9D9B7F0) {}>
+  get_editor_property('name_3_de5ddafa478f0da09d298fb5c3826044'): Midnight
+  get_editor_property('fromtime_9_e9b93b79414d557f282138ba47e1d055'): 6.0
+  get_editor_property('totime_10_e9595da4470d791d7d33af8354453aea'): 9.0
+
+
+Results: C:/scripts/SLFConversion/migration_cache/daynight_entries_detailed.txt

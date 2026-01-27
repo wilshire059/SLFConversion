@@ -1,0 +1,123 @@
+{
+  "B_Item_Weapon": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/B_Item_Weapon",
+    "name": "B_Item_Weapon",
+    "class": "B_Item_Weapon_C",
+    "static_mesh_transform": null,
+    "static_mesh": null
+  },
+  "B_Item_Weapon_Greatsword": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Greatsword",
+    "name": "B_Item_Weapon_Greatsword",
+    "class": "B_Item_Weapon_Greatsword_C",
+    "static_mesh_transform": {
+      "component_name": "StaticMesh",
+      "location": {
+        "x": 2.2303051928433817,
+        "y": 0.0,
+        "z": -2.716989641271539e-06
+      },
+      "rotation": {
+        "pitch": -0.8985376822392073,
+        "yaw": -65.85131259345019,
+        "roll": -4.45083382958106
+      }
+    },
+    "static_mesh": "SM_Greatsword"
+  },
+  "B_Item_Weapon_Katana": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Katana",
+    "name": "B_Item_Weapon_Katana",
+    "class": "B_Item_Weapon_Katana_C",
+    "static_mesh_transform": {
+      "component_name": "StaticMesh",
+      "location": {
+        "x": 2.7144818608953874e-12,
+        "y": 1.3721270946190358e-06,
+        "z": -1.6439001851942407
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": -103.24034523326178,
+        "roll": 0.0
+      }
+    },
+    "static_mesh": "SM_Katana"
+  },
+  "B_Item_Weapon_PoisonSword": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_PoisonSword",
+    "name": "B_Item_Weapon_PoisonSword",
+    "class": "B_Item_Weapon_PoisonSword_C",
+    "static_mesh_transform": {
+      "component_name": "StaticMesh",
+      "location": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": -90.0,
+        "roll": 0.0
+      }
+    },
+    "static_mesh": "SM_PoisonSword"
+  },
+  "B_Item_Weapon_Shield": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Shield",
+    "name": "B_Item_Weapon_Shield",
+    "class": "B_Item_Weapon_Shield_C",
+    "static_mesh_transform": {
+      "component_name": "StaticMesh",
+      "location": {
+        "x": 2.7569058147491887e-12,
+        "y": -3.2270420778808513e-07,
+        "z": 0.22653895153354076
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": -359.9999972113078
+      }
+    },
+    "static_mesh": "SM_Shield"
+  },
+  "B_Item_Weapon_SwordExample01": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_SwordExample01",
+    "name": "B_Item_Weapon_SwordExample01",
+    "class": "B_Item_Weapon_SwordExample01_C",
+    "static_mesh_transform": {
+      "component_name": "StaticMesh",
+      "location": {
+        "x": -2.842170943040401e-14,
+        "y": -8.634133296615484e-07,
+        "z": 36.49442056137028
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 179.9999986056543
+      }
+    },
+    "static_mesh": "SM_ExampleSword01"
+  },
+  "B_Item_Weapon_SwordExample02": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_SwordExample02",
+    "name": "B_Item_Weapon_SwordExample02",
+    "class": "B_Item_Weapon_SwordExample02_C",
+    "static_mesh_transform": {
+      "component_name": "StaticMesh",
+      "location": {
+        "x": 2.7142732506035827e-12,
+        "y": 1.4119568306839028e-06,
+        "z": 50.087473125172025
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": -129.99999899297188
+      }
+    },
+    "static_mesh": "SM_ExampleSword02"
+  }
+}

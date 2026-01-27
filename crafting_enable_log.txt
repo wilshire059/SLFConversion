@@ -1,0 +1,45 @@
+=== Enable Crafting Log ===
+Loaded: /Game/SoulslikeFramework/Data/Items/DA_Sword01 (class: PDA_Item_C)
+  Properties with craft/unlock: ['crafing_unlocked', 'get_required_crafting_items', 'on_crafting_unlocked', 'unlock_crafting']
+  Set crafing_unlocked = True
+  Saved!
+Loaded: /Game/SoulslikeFramework/Data/Items/DA_Sword02 (class: PDA_Item_C)
+  Properties with craft/unlock: ['crafing_unlocked', 'get_required_crafting_items', 'on_crafting_unlocked', 'unlock_crafting']
+  Set crafing_unlocked = True
+  Saved!
+Loaded: /Game/SoulslikeFramework/Data/Items/DA_Greatsword (class: PDA_Item_C)
+  Properties with craft/unlock: ['crafing_unlocked', 'get_required_crafting_items', 'on_crafting_unlocked', 'unlock_crafting']
+  Set crafing_unlocked = True
+  Saved!
+Loaded: /Game/SoulslikeFramework/Data/Items/DA_Katana (class: PDA_Item_C)
+  Properties with craft/unlock: ['crafing_unlocked', 'get_required_crafting_items', 'on_crafting_unlocked', 'unlock_crafting']
+  Set crafing_unlocked = True
+  Saved!
+Loaded: /Game/SoulslikeFramework/Data/Items/DA_Shield01 (class: PDA_Item_C)
+  Properties with craft/unlock: ['crafing_unlocked', 'get_required_crafting_items', 'on_crafting_unlocked', 'unlock_crafting']
+  Set crafing_unlocked = True
+  Saved!
+Loaded: /Game/SoulslikeFramework/Data/Items/DA_ExampleArmor (class: PDA_Item_C)
+  Properties with craft/unlock: ['crafing_unlocked', 'get_required_crafting_items', 'on_crafting_unlocked', 'unlock_crafting']
+  Set crafing_unlocked = True
+  Saved!
+Loaded: /Game/SoulslikeFramework/Data/Items/DA_ExampleArmor02 (class: PDA_Item_C)
+  Properties with craft/unlock: ['crafing_unlocked', 'get_required_crafting_items', 'on_crafting_unlocked', 'unlock_crafting']
+  Set crafing_unlocked = True
+  Saved!
+Loaded: /Game/SoulslikeFramework/Data/Items/DA_HealthFlask (class: PDA_Item_C)
+  Properties with craft/unlock: ['crafing_unlocked', 'get_required_crafting_items', 'on_crafting_unlocked', 'unlock_crafting']
+  Set crafing_unlocked = True
+  Saved!
+Loaded: /Game/SoulslikeFramework/Data/Items/DA_Apple (class: PDA_Item_C)
+  Properties with craft/unlock: ['crafing_unlocked', 'get_required_crafting_items', 'on_crafting_unlocked', 'unlock_crafting']
+  Set crafing_unlocked = True
+  Saved!
+Loaded: /Game/SoulslikeFramework/Data/Items/DA_ThrowingKnife (class: PDA_Item_C)
+  Properties with craft/unlock: ['crafing_unlocked', 'get_required_crafting_items', 'on_crafting_unlocked', 'unlock_crafting']
+  Set crafing_unlocked = True
+  Saved!
+
+=== Summary ===
+Success: 10
+Failed: 0

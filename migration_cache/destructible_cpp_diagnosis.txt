@@ -1,0 +1,39 @@
+=== DiagnoseDestructible ===
+=== DESTRUCTIBLE DIAGNOSIS ===
+Blueprint: /Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_Destructible
+
+Parent Class: /Script/SLFConversion.B_Destructible
+
+=== CDO PROPERTIES ===
+GeometryCollection (CDO): /Game/SoulslikeFramework/Meshes/SM/Barrel/Destructible/GC_Barrel.GC_Barrel
+DestructionSound (CDO): 
+
+=== SPAWN TEST ===
+Spawned: B_Destructible_C_0
+GeometryCollection (Spawned): /Game/SoulslikeFramework/Meshes/SM/Barrel/Destructible/GC_Barrel.GC_Barrel
+
+GeometryCollectionComponents: 1
+
+--- Component 0: GC_DestructibleMesh ---
+RestCollection: /Game/SoulslikeFramework/Meshes/SM/Barrel/Destructible/GC_Barrel.GC_Barrel
+IsActive: No
+IsSimulatingPhysics: No
+IsVisible: Yes
+CollisionEnabled: 3
+NotifyBreaks: Yes
+NotifyCollisions: No
+
+
+=== CompareDestructibleSettings ===
+=== DESTRUCTIBLE COMPARISON ===
+
+RestCollection: /Game/SoulslikeFramework/Meshes/SM/Barrel/Destructible/GC_Barrel.GC_Barrel (OK)
+
+Setting                  | Actual    | Expected  | Status
+-------------------------|-----------|-----------|-------
+SimulatePhysics          | false     | true      | MISMATCH
+CollisionEnabled         | 3         | 3         | OK
+NotifyBreaks             | true      | true      | OK
+NotifyCollisions         | false     | false     | OK
+IsActive                 | false     | true      | MISMATCH
+IsSimulatingPhysics      | false     | true      | MISMATCH

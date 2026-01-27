@@ -29,7 +29,7 @@ void UW_Credits::NativeDestruct()
 
 void UW_Credits::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 
 void UW_Credits::SetupEntries_Implementation(const TArray<FSLFCreditsEntry>& EntryArray)

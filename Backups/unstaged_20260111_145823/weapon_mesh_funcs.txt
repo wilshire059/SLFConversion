@@ -1,0 +1,195 @@
+
+// ============================================================================
+// WEAPON MESH DATA EXTRACTION/APPLICATION
+// ============================================================================
+
+int32 USLFAutomationLibrary::ExtractWeaponMeshData(const FString& OutputPath)
+{
+	UE_LOG(LogSLFAutomation, Warning, TEXT("=== ExtractWeaponMeshData ==="));
+
+	TArray<FString> WeaponPaths = {
+		TEXT("/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_SwordExample01"),
+		TEXT("/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_SwordExample02"),
+		TEXT("/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Greatsword"),
+		TEXT("/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Katana"),
+		TEXT("/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_BossMace"),
+		TEXT("/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Shield"),
+		TEXT("/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/AI/B_Item_AI_Weapon_Greatsword"),
+		TEXT("/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/AI/B_Item_AI_Weapon_Sword"),
+		TEXT("/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/B_Item_AI_Weapon"),
+		TEXT("/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/B_Item_Weapon"),
+	};
+
+	TSharedPtr<FJsonObject> RootObject = MakeShareable(new FJsonObject());
+	int32 ExtractedCount = 0;
+
+	for (const FString& BPPath : WeaponPaths)
+	{
+		FString BPName = FPaths::GetBaseFilename(BPPath);
+		UE_LOG(LogSLFAutomation, Warning, TEXT("[%s]"), *BPName);
+
+		UBlueprint* BP = Cast<UBlueprint>(StaticLoadObject(UBlueprint::StaticClass(), nullptr, *BPPath));
+		if (!BP) { UE_LOG(LogSLFAutomation, Warning, TEXT("  [SKIP] Could not load")); continue; }
+
+		USimpleConstructionScript* SCS = BP->SimpleConstructionScript;
+		if (!SCS) { UE_LOG(LogSLFAutomation, Warning, TEXT("  [SKIP] No SCS")); continue; }
+
+		TSharedPtr<FJsonObject> WeaponObject = MakeShareable(new FJsonObject());
+		WeaponObject->SetStringField(TEXT("path"), BPPath);
+
+		TArray<TSharedPtr<FJsonValue>> ComponentsArray;
+		TArray<USCS_Node*> AllNodes = SCS->GetAllNodes();
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  SCS has %d nodes"), AllNodes.Num());
+
+		for (USCS_Node* Node : AllNodes)
+		{
+			if (!Node || !Node->ComponentTemplate) continue;
+
+			UActorComponent* CompTemplate = Node->ComponentTemplate;
+			FString CompName = CompTemplate->GetName();
+			FString CompClass = CompTemplate->GetClass()->GetName();
+			UE_LOG(LogSLFAutomation, Warning, TEXT("    - %s: %s"), *CompName, *CompClass);
+
+			TSharedPtr<FJsonObject> CompObject = MakeShareable(new FJsonObject());
+			CompObject->SetStringField(TEXT("name"), CompName);
+			CompObject->SetStringField(TEXT("class"), CompClass);
+
+			if (UStaticMeshComponent* SMC = Cast<UStaticMeshComponent>(CompTemplate))
+			{
+				if (UStaticMesh* Mesh = SMC->GetStaticMesh())
+				{
+					FString MeshPath = Mesh->GetPathName();
+					CompObject->SetStringField(TEXT("static_mesh"), MeshPath);
+					UE_LOG(LogSLFAutomation, Warning, TEXT("        Mesh: %s"), *MeshPath);
+				}
+			}
+			ComponentsArray.Add(MakeShareable(new FJsonValueObject(CompObject)));
+		}
+
+		if (ComponentsArray.Num() > 0)
+		{
+			WeaponObject->SetArrayField(TEXT("components"), ComponentsArray);
+			RootObject->SetObjectField(BPName, WeaponObject);
+			ExtractedCount++;
+		}
+	}
+
+	FString JsonString;
+	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&JsonString);
+	FJsonSerializer::Serialize(RootObject.ToSharedRef(), Writer);
+
+	if (FFileHelper::SaveStringToFile(JsonString, *OutputPath))
+		UE_LOG(LogSLFAutomation, Warning, TEXT("Saved weapon mesh data to: %s"), *OutputPath);
+	else
+		UE_LOG(LogSLFAutomation, Error, TEXT("Failed to save to: %s"), *OutputPath);
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("Extracted %d weapons"), ExtractedCount);
+	return ExtractedCount;
+}
+
+int32 USLFAutomationLibrary::ApplyWeaponMeshData(const FString& InputPath)
+{
+	UE_LOG(LogSLFAutomation, Warning, TEXT("=== ApplyWeaponMeshData ==="));
+
+	FString JsonString;
+	if (!FFileHelper::LoadFileToString(JsonString, *InputPath))
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("Failed to load: %s"), *InputPath);
+		return 0;
+	}
+
+	TSharedPtr<FJsonObject> RootObject;
+	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonString);
+	if (!FJsonSerializer::Deserialize(Reader, RootObject) || !RootObject.IsValid())
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("Failed to parse JSON"));
+		return 0;
+	}
+
+	int32 SuccessCount = 0;
+
+	for (const auto& Pair : RootObject->Values)
+	{
+		FString BPName = Pair.Key;
+		TSharedPtr<FJsonObject> WeaponData = Pair.Value->AsObject();
+		if (!WeaponData.IsValid()) continue;
+
+		FString BPPath = WeaponData->GetStringField(TEXT("path"));
+		UE_LOG(LogSLFAutomation, Warning, TEXT("[%s]"), *BPName);
+
+		UBlueprint* BP = Cast<UBlueprint>(StaticLoadObject(UBlueprint::StaticClass(), nullptr, *BPPath));
+		if (!BP) { UE_LOG(LogSLFAutomation, Warning, TEXT("  [SKIP] Could not load")); continue; }
+
+		USimpleConstructionScript* SCS = BP->SimpleConstructionScript;
+		if (!SCS)
+		{
+			SCS = NewObject<USimpleConstructionScript>(BP);
+			BP->SimpleConstructionScript = SCS;
+		}
+
+		const TArray<TSharedPtr<FJsonValue>>* ComponentsArray;
+		if (!WeaponData->TryGetArrayField(TEXT("components"), ComponentsArray)) continue;
+
+		bool bModified = false;
+
+		for (const TSharedPtr<FJsonValue>& CompValue : *ComponentsArray)
+		{
+			TSharedPtr<FJsonObject> CompData = CompValue->AsObject();
+			if (!CompData.IsValid()) continue;
+
+			FString CompName = CompData->GetStringField(TEXT("name"));
+			FString CompClass = CompData->GetStringField(TEXT("class"));
+			FString MeshPath = CompData->GetStringField(TEXT("static_mesh"));
+
+			if (CompClass != TEXT("StaticMeshComponent") || MeshPath.IsEmpty()) continue;
+
+			UE_LOG(LogSLFAutomation, Warning, TEXT("  Processing: %s"), *CompName);
+
+			bool bExists = false;
+			for (USCS_Node* Node : SCS->GetAllNodes())
+			{
+				if (Node && Node->GetVariableName().ToString().Contains(CompName))
+				{
+					bExists = true;
+					if (UStaticMeshComponent* SMC = Cast<UStaticMeshComponent>(Node->ComponentTemplate))
+					{
+						UStaticMesh* Mesh = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), nullptr, *MeshPath));
+						if (Mesh) { SMC->SetStaticMesh(Mesh); UE_LOG(LogSLFAutomation, Warning, TEXT("    [OK] Updated mesh: %s"), *MeshPath); bModified = true; }
+					}
+					break;
+				}
+			}
+
+			if (!bExists)
+			{
+				USCS_Node* NewNode = SCS->CreateNode(UStaticMeshComponent::StaticClass(), FName(*CompName));
+				if (NewNode)
+				{
+					SCS->AddNode(NewNode);
+					if (UStaticMeshComponent* SMC = Cast<UStaticMeshComponent>(NewNode->ComponentTemplate))
+					{
+						UStaticMesh* Mesh = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), nullptr, *MeshPath));
+						if (Mesh) { SMC->SetStaticMesh(Mesh); UE_LOG(LogSLFAutomation, Warning, TEXT("    [OK] Created with mesh: %s"), *MeshPath); bModified = true; }
+					}
+				}
+			}
+		}
+
+		if (bModified)
+		{
+			FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(BP);
+			FKismetEditorUtilities::CompileBlueprint(BP);
+			UPackage* Package = BP->GetOutermost();
+			FString PackageFilename = FPackageName::LongPackageNameToFilename(Package->GetName(), FPackageName::GetAssetPackageExtension());
+			FSavePackageArgs SaveArgs; SaveArgs.TopLevelFlags = RF_Standalone; SaveArgs.Error = GError;
+			UPackage::SavePackage(Package, BP, *PackageFilename, SaveArgs);
+			UE_LOG(LogSLFAutomation, Warning, TEXT("  [SAVED] %s"), *BPName);
+			SuccessCount++;
+		}
+	}
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("Applied weapon mesh data: %d updated"), SuccessCount);
+	return SuccessCount;
+}
+
+#endif // WITH_EDITOR

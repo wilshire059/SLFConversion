@@ -1,0 +1,11 @@
+{
+  "path": "/Game/SoulslikeFramework/Blueprints/_AI/Services/BTS_ChaseBounds",
+  "exists": true,
+  "parent_class": "/Script/AIModule.BTService_BlueprintBase",
+  "variables": [],
+  "functions": [],
+  "has_eventgraph": false,
+  "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'",
+  "error": null,
+  "name": "BTS_ChaseBounds"
+}

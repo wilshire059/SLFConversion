@@ -1,0 +1,7 @@
+{
+  "softptr_values": {
+    "default_door_mesh": "<Object '/Game/SoulslikeFramework/Meshes/SM/PrisonDoor/SM_PrisonDoor.SM_PrisonDoor' (0x0000023FBB58A000) Class 'StaticMesh'>",
+    "default_door_frame_mesh": "<Object '/Game/SoulslikeFramework/Meshes/SM/PrisonDoor/SM_PrisonDoorArch.SM_PrisonDoorArch' (0x0000023FBB58B000) Class 'StaticMesh'>"
+  },
+  "status": "OK - Both TSoftObjectPtr properties set"
+}

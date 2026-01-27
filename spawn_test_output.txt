@@ -1,0 +1,350 @@
+LogInit: Display: Running engine for game: SLFConversion
+LogCore: Display: Requested channels: 'cpu,gpu,frame,log,bookmark,screenshot,region'
+LogTrace: Display: Control listening on port 1985
+LogCsvProfiler: Display: Metadata set : platform="Windows"
+LogCsvProfiler: Display: Metadata set : config="Development"
+LogCsvProfiler: Display: Metadata set : buildversion="++UE5+Release-5.7-CL-48512491"
+LogCsvProfiler: Display: Metadata set : engineversion="5.7.1-48512491+++UE5+Release-5.7"
+LogCsvProfiler: Display: Metadata set : enginereleaseversion="5.7.1"
+LogCsvProfiler: Display: Metadata set : os="Windows 11 (25H2) [10.0.26200.7462] "
+LogCsvProfiler: Display: Metadata set : cpu="GenuineIntel|Intel(R) Core(TM) 9 270H"
+LogCsvProfiler: Display: Metadata set : pgoenabled="0"
+LogCsvProfiler: Display: Metadata set : pgoprofilingenabled="0"
+LogCsvProfiler: Display: Metadata set : ltoenabled="0"
+LogCsvProfiler: Display: Metadata set : asan="0"
+LogCsvProfiler: Display: Metadata set : mergedmodules="0"
+LogCsvProfiler: Display: Metadata set : commandline="" C:\scripts\SLFConversion\SLFConversion.uproject -ExecCmds="Automation RunTests SLF.Spawn" -unattended -nopause -nosplash -stdout -NullRHI""
+LogCsvProfiler: Display: Metadata set : loginid="d995c8d241966abb5189efb7e08079c5"
+LogCsvProfiler: Display: Metadata set : llm="0"
+LogCsvProfiler: Display: Metadata set : systemresolution.resx="1280"
+LogCsvProfiler: Display: Metadata set : systemresolution.resy="720"
+LogAudio: Display: Pre-Initializing Audio Device Manager...
+LogAudio: Display: AudioInfo: 'OPUS' Registered
+LogAudioDebug: Display: Lib vorbis DLL was dynamically loaded.
+LogAudio: Display: AudioInfo: 'OGG' Registered
+LogAudio: Display: AudioInfo: 'ADPCM' Registered
+LogAudio: Display: AudioInfo: 'PCM' Registered
+LogAudio: Display: AudioInfo: 'BINKA' Registered
+LogAudio: Display: AudioInfo: 'RADA' Registered
+LogAudio: Display: Audio Device Manager Pre-Initialized
+LogConfig: Display: Loading VulkanPC ini files took 0.05 seconds
+LogConfig: Display: Loading Mac ini files took 0.06 seconds
+LogConfig: Display: Loading Android ini files took 0.07 seconds
+LogConfig: Display: Loading IOS ini files took 0.07 seconds
+LogConfig: Display: Loading Windows ini files took 0.07 seconds
+LogConfig: Display: Loading VisionOS ini files took 0.08 seconds
+LogConfig: Display: Loading TVOS ini files took 0.08 seconds
+LogConfig: Display: Loading Unix ini files took 0.08 seconds
+LogConfig: Display: Loading Linux ini files took 0.09 seconds
+LogAssetRegistry: Display: Asset registry cache read as 74.3 MiB from ../../../../../../scripts/SLFConversion/Intermediate/CachedAssetRegistry_0.bin.
+LogPluginManager: Display: The Plugin StructUtils has been marked deprecated for 5.5 and will be removed soon. Please update your dependencies.
+RenderDocPlugin: Display: RenderDoc plugin will not be loaded. Use '-AttachRenderDoc' on the cmd line or enable 'renderdoc.AutoAttach' in the plugin settings.
+[2026.01.12-23.23.13:788][  0]LogHAL: Display: Platform has ~ 32 GB [34032443392 / 34359738368 / 32], which maps to Largest [LargestMinGB=32, LargerMinGB=12, DefaultMinGB=8, SmallerMinGB=6, SmallestMinGB=0)
+[2026.01.12-23.23.13:789][  0]LogCsvProfiler: Display: Metadata set : extradevelopmentmemorymb="0"
+[2026.01.12-23.23.14:107][  0]LogWindowsTouchpad: Display: CacheForceMaxTouchpadSensitivityMode SetMaxTouchpadSensitivity
+[2026.01.12-23.23.14:110][  0]LogObj: Display: Attempting to load config data for Default__SlateThemeManager before the Class has been constructed/registered/linked (likely during module loading or early startup). This will result in the load silently failing and should be fixed.
+[2026.01.12-23.23.14:202][  0]LogCsvProfiler: Display: Metadata set : verbatimrhiname="Null"
+[2026.01.12-23.23.14:202][  0]LogCsvProfiler: Display: Metadata set : rhiname="Null"
+[2026.01.12-23.23.14:202][  0]LogCsvProfiler: Display: Metadata set : rhifeaturelevel="SM6"
+[2026.01.12-23.23.14:202][  0]LogCsvProfiler: Display: Metadata set : shaderplatform="PCD3D_SM6"
+[2026.01.12-23.23.14:209][  0]LogTextureFormatASTC: Display: ASTCEnc version 5.0.1 library loaded
+[2026.01.12-23.23.14:209][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatASTC
+[2026.01.12-23.23.14:209][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatDXT
+[2026.01.12-23.23.14:209][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatETC2
+[2026.01.12-23.23.14:209][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatIntelISPCTexComp
+[2026.01.12-23.23.14:209][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatUncompressed
+[2026.01.12-23.23.14:209][  0]LogTextureFormatOodle: Display: Oodle Texture TFO init; latest sdk version = 2.9.14
+[2026.01.12-23.23.14:209][  0]LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.14.dll
+[2026.01.12-23.23.14:209][  0]LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.5.dll
+[2026.01.12-23.23.14:210][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatOodle
+[2026.01.12-23.23.14:231][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android'
+[2026.01.12-23.23.14:231][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ASTC'
+[2026.01.12-23.23.14:231][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_DXT'
+[2026.01.12-23.23.14:231][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ETC2'
+[2026.01.12-23.23.14:231][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_OpenXR'
+[2026.01.12-23.23.14:231][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'AndroidClient'
+[2026.01.12-23.23.14:231][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ASTCClient'
+[2026.01.12-23.23.14:231][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_DXTClient'
+[2026.01.12-23.23.14:231][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ETC2Client'
+[2026.01.12-23.23.14:231][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_OpenXRClient'
+[2026.01.12-23.23.14:231][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_Multi'
+[2026.01.12-23.23.14:231][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_MultiClient'
+[2026.01.12-23.23.14:241][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'IOS'
+[2026.01.12-23.23.14:241][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'IOSClient'
+[2026.01.12-23.23.14:251][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Linux'
+[2026.01.12-23.23.14:251][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'LinuxEditor'
+[2026.01.12-23.23.14:251][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'LinuxServer'
+[2026.01.12-23.23.14:251][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'LinuxClient'
+[2026.01.12-23.23.14:261][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Mac'
+[2026.01.12-23.23.14:261][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'MacEditor'
+[2026.01.12-23.23.14:261][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'MacServer'
+[2026.01.12-23.23.14:261][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'MacClient'
+[2026.01.12-23.23.14:270][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'TVOS'
+[2026.01.12-23.23.14:270][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'TVOSClient'
+[2026.01.12-23.23.14:279][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Windows'
+[2026.01.12-23.23.14:279][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsEditor'
+[2026.01.12-23.23.14:279][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsServer'
+[2026.01.12-23.23.14:279][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsClient'
+[2026.01.12-23.23.14:279][  0]LogTargetPlatformManager: Display: Building Assets For WindowsEditor
+[2026.01.12-23.23.14:321][  0]LogDerivedDataCache: Display: Memory: Max Cache Size: -1 MB
+[2026.01.12-23.23.14:566][  0]LogDerivedDataCache: Display: ../../../Engine/DerivedDataCache/Compressed.ddp: Opened pak cache for reading. (1732 MiB)
+[2026.01.12-23.23.14:567][  0]LogZenServiceInstance: Display: Launching zen utility 'C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/zen.exe service status'.
+[2026.01.12-23.23.14:873][  0]LogZenServiceInstance: Display: Launching zen utility 'C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/zen.exe service status'.
+[2026.01.12-23.23.15:179][  0]LogZenServiceInstance: Display: Read zen version cache file from 'C:/Users/james/AppData/Local/UnrealEngine/5.7/Saved/Zen/zen.version', version: '5.7.6-202510061608-windows-x64-release-9a1ebb9'
+[2026.01.12-23.23.15:180][  0]LogZenServiceInstance: Display: Read zen version cache file from 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Install/zen.version', version: '5.7.6-202510061608-windows-x64-release-9a1ebb9'
+[2026.01.12-23.23.15:180][  0]LogZenServiceInstance: Display: Installed service at 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe' is up to date
+[2026.01.12-23.23.15:181][  0]LogZenServiceInstance: Display: Launching executable 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe', working dir 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Install', data dir 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Data', args '--port 8558 --data-dir C:\Users\james\AppData\Local\UnrealEngine\Common\Zen\Data --http asio --gc-cache-duration-seconds 1209600 --gc-interval-seconds 21600 --gc-low-diskspace-threshold 2147483648 --cache-bucket-limit-overwrites --quiet --http-forceloopback --owner-pid 81280  --child-id Zen_81280_Startup'
+[2026.01.12-23.23.15:252][  0]LogZenServiceInstance: Display: Unreal Zen Storage Server HTTP service at http://[::1]:8558 status: OK!.
+[2026.01.12-23.23.15:264][  0]LogDerivedDataCache: Display: ZenLocal: Using ZenServer HTTP service at [::1] with namespace ue.ddc status: OK!.
+[2026.01.12-23.23.15:275][  0]LogDerivedDataCache: Display: C:/Users/james/AppData/Local/UnrealEngine/Common/DerivedDataCache: Performance: Latency=0.04ms. RandomReadSpeed=666.97MBs, RandomWriteSpeed=116.29MBs. Assigned SpeedClass 'Local'
+[2026.01.12-23.23.15:295][  0]LogUbaHorde: Display: UBA/Horde Configuration [Uba.Provider.Horde]: Not Enabled
+[2026.01.12-23.23.15:313][  0]LogXGEController: Display: Initialized XGE controller. XGE tasks will not be spawned on this machine.
+[2026.01.12-23.23.15:313][  0]LogShaderCompilers: Display: Using XGE Controller for shader compilation
+[2026.01.12-23.23.15:313][  0]LogShaderCompilers: Display: Using 10 local workers for shader compilation
+[2026.01.12-23.23.15:315][  0]LogShaderCompilers: Display: Compiling shader autogen file: ../../../../../../scripts/SLFConversion/Intermediate/ShaderAutogen/PCD3D_SM6/AutogenShaderHeaders.ush
+[2026.01.12-23.23.15:316][  0]LogShaderCompilers: Display: Autogen file is unchanged, skipping write.
+[2026.01.12-23.23.15:745][  0]LogEditorDomain: Display: EditorDomain is Disabled
+[2026.01.12-23.23.15:825][  0]LogAssetRegistry: Display: AssetDataGatherer spent 0.000s loading caches ../../../../../../scripts/SLFConversion/Intermediate/CachedAssetRegistry_*.bin.
+[2026.01.12-23.23.16:004][  0]LogDeviceProfileManager: Display: Deviceprofile LinuxArm64Editor not found.
+[2026.01.12-23.23.16:004][  0]LogDeviceProfileManager: Display: Deviceprofile LinuxArm64 not found.
+[2026.01.12-23.23.16:041][  0]LogCsvProfiler: Display: Metadata set : deviceprofile="WindowsEditor"
+[2026.01.12-23.23.16:043][  0]LogStreaming: Display: FlushAsyncLoading(1): 1 QueuedPackages, 0 AsyncPackages
+[2026.01.12-23.23.16:053][  0]LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.12-23.23.16:053][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultTextMaterialOpaque is adding a dynamic import to package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness because of a recursive sync load
+[2026.01.12-23.23.16:053][  0]LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.12-23.23.16:054][  0]LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.12-23.23.16:054][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultTextMaterialOpaque is adding a dynamic import to package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec because of a recursive sync load
+[2026.01.12-23.23.16:054][  0]LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.12-23.23.16:054][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/WorldGridMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.12-23.23.16:056][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/WorldGridMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.12-23.23.16:056][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.12-23.23.16:056][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultPostProcessMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.12-23.23.16:057][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultLightFunctionMaterial is adding a dynamic import to package /Engine/EngineMaterials/DefaultPostProcessMaterial because of a recursive sync load
+[2026.01.12-23.23.16:057][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultPostProcessMaterial (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.12-23.23.16:058][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultDeferredDecalMaterial is adding a dynamic import to package /Engine/EngineMaterials/DefaultLightFunctionMaterial because of a recursive sync load
+[2026.01.12-23.23.16:058][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.12-23.23.16:058][  0]LogStreaming: Display: Package /Engine/EngineMaterials/WorldGridMaterial is adding a dynamic import to package /Engine/EngineMaterials/DefaultDeferredDecalMaterial because of a recursive sync load
+[2026.01.12-23.23.16:058][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/WorldGridMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.12-23.23.16:059][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultTextMaterialOpaque is adding a dynamic import to package /Engine/EngineMaterials/WorldGridMaterial because of a recursive sync load
+[2026.01.12-23.23.16:059][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/WorldGridMaterial (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.01.12-23.23.16:060][  0]LogTextureEncodingSettings: Display: Texture Encode Speed: FinalIfAvailable (editor).
+[2026.01.12-23.23.16:060][  0]LogTextureEncodingSettings: Display: Oodle Texture Encode Speed settings: Fast: RDO Off Lambda=0, Effort=Normal Final: RDO Off Lambda=0, Effort=Normal
+[2026.01.12-23.23.16:060][  0]LogTextureEncodingSettings: Display: Shared linear texture encoding: Disabled
+[2026.01.12-23.23.16:074][  0]LogMeshReduction: Display: Using QuadricMeshReduction for automatic static mesh reduction
+[2026.01.12-23.23.16:074][  0]LogMeshReduction: Display: Using SkeletalMeshReduction for automatic skeletal mesh reduction
+[2026.01.12-23.23.16:074][  0]LogMeshReduction: Display: Using ProxyLODMeshReduction for automatic mesh merging
+[2026.01.12-23.23.16:074][  0]LogMeshReduction: Display: No distributed automatic mesh merging module available
+[2026.01.12-23.23.16:276][  0]LogShaderCompilers: Display: Compiling shader autogen file: ../../../../../../scripts/SLFConversion/Intermediate/ShaderAutogen/PCD3D_SM5/AutogenShaderHeaders.ush
+[2026.01.12-23.23.16:276][  0]LogShaderCompilers: Display: Autogen file is unchanged, skipping write.
+[2026.01.12-23.23.16:276][  0]LogVirtualization: Display: VirtualizationSystem name found in ini file: None
+[2026.01.12-23.23.16:276][  0]LogVirtualization: Display: FNullVirtualizationSystem mounted, virtualization will be disabled
+[2026.01.12-23.23.16:319][  0]LogWorldPartition: Display: FWorldPartitionClassDescRegistry::Initialize started...
+[2026.01.12-23.23.16:321][  0]LogWorldPartition: Display: FWorldPartitionClassDescRegistry::Initialize took 1.911 ms
+[2026.01.12-23.23.16:355][  0]LogUdpMessaging: Display: Work queue size set to 1024.
+[2026.01.12-23.23.16:356][  0]LogUdpMessaging: Display: Unicast socket bound to '0.0.0.0:64259'.
+[2026.01.12-23.23.16:358][  0]LogUdpMessaging: Display: Added local interface '192.168.11.30' to multicast group '230.0.0.1:6666'
+[2026.01.12-23.23.16:358][  0]LogUdpMessaging: Display: Added local interface '127.0.0.1' to multicast group '230.0.0.1:6666'
+[2026.01.12-23.23.16:360][  0]LogUdpMessaging: Display: Using asynchronous task graph for message deserialization.
+[2026.01.12-23.23.16:467][  0]LogMetaSound: Display: MetaSound Page Target Initialized to 'Default'
+[2026.01.12-23.23.16:467][  0]LogAudio: Display: Registering Engine Module Parameter Interfaces...
+[2026.01.12-23.23.19:412][  0]LogTemp: Warning: AB_DemoRoom::Constructor - Components created
+[2026.01.12-23.23.19:481][  0]LogAudioCaptureCore: Display: No Audio Capture implementations found. Audio input will be silent.
+[2026.01.12-23.23.19:481][  0]LogAudioCaptureCore: Display: No Audio Capture implementations found. Audio input will be silent.
+[2026.01.12-23.23.20:005][  0]LogClass: Error: StructProperty FSLFPatrolPoint::Location is not initialized properly. Module:SLFConversion File:Blueprints/Actors/SLFPatrolPath.h
+[2026.01.12-23.23.20:005][  0]LogClass: Error: ObjectProperty FSLFModularMeshData::Skeleton is not initialized properly. Module:SLFConversion File:Blueprints/SLFSoulslikeCharacter.h
+[2026.01.12-23.23.20:005][  0]LogClass: Error: ByteProperty FSLFItemWheelNextSlotInfo::Alignment is not initialized properly even though its struct probably has a custom default constructor. Non deterministic fields should use UPROPERTY(Meta = (IgnoreForMemberInitializationTest)) to avoid errors from this test. Module:SLFConversion File:SLFGameTypes.h
+[2026.01.12-23.23.20:006][  0]LogClass: Display: 3 Uninitialized script struct members found including 1 object properties
+[2026.01.12-23.23.20:011][  0]LogAutomationTest: Error: LogClass: StructProperty FSLFPatrolPoint::Location is not initialized properly. Module:SLFConversion File:Blueprints/Actors/SLFPatrolPath.h
+[2026.01.12-23.23.20:011][  0]LogAutomationTest: Error: LogClass: ObjectProperty FSLFModularMeshData::Skeleton is not initialized properly. Module:SLFConversion File:Blueprints/SLFSoulslikeCharacter.h
+[2026.01.12-23.23.20:011][  0]LogAutomationTest: Error: LogClass: ByteProperty FSLFItemWheelNextSlotInfo::Alignment is not initialized properly even though its struct probably has a custom default constructor. Non deterministic fields should use UPROPERTY(Meta = (IgnoreForMemberInitializationTest)) to avoid errors from this test. Module:SLFConversion File:SLFGameTypes.h
+[2026.01.12-23.23.20:084][  0]LogAnalytics: Display: [UEEditor.Rocket.Release] AnalyticsET::StartSession ( APIServer = https://datarouter.ol.epicgames.com/datarouter/api/v1/public/data. AppVersion = 5.7.1-48512491+++UE5+Release-5.7 )
+[2026.01.12-23.23.20:085][  0]LogAudio: Display: Initializing Audio Device Manager...
+[2026.01.12-23.23.20:090][  0]LogAudio: Display: Loading Default Audio Settings Objects...
+[2026.01.12-23.23.20:090][  0]LogAudio: Display: No default SoundConcurrencyObject specified (or failed to load).
+[2026.01.12-23.23.20:091][  0]LogAudio: Display: Audio Device Manager Initialized
+[2026.01.12-23.23.20:091][  0]LogAudio: Display: Creating Audio Device:                 Id: 1, Scope: Shared, Realtime: True
+[2026.01.12-23.23.20:091][  0]LogAudioMixer: Display: Audio Mixer Platform Settings:
+[2026.01.12-23.23.20:091][  0]LogAudioMixer: Display: 	Sample Rate:						  48000
+[2026.01.12-23.23.20:091][  0]LogAudioMixer: Display: 	Callback Buffer Frame Size Requested: 1024
+[2026.01.12-23.23.20:091][  0]LogAudioMixer: Display: 	Callback Buffer Frame Size To Use:	  1024
+[2026.01.12-23.23.20:091][  0]LogAudioMixer: Display: 	Number of buffers to queue:			  1
+[2026.01.12-23.23.20:091][  0]LogAudioMixer: Display: 	Max Channels (voices):				  32
+[2026.01.12-23.23.20:091][  0]LogAudioMixer: Display: 	Number of Async Source Workers:		  4
+[2026.01.12-23.23.20:091][  0]LogAudio: Display: AudioDevice MaxSources: 32
+[2026.01.12-23.23.20:091][  0]LogAudio: Display: Audio Spatialization Plugin: None (built-in).
+[2026.01.12-23.23.20:091][  0]LogAudio: Display: Audio Reverb Plugin: None (built-in).
+[2026.01.12-23.23.20:091][  0]LogAudio: Display: Audio Occlusion Plugin: None (built-in).
+[2026.01.12-23.23.20:096][  0]LogAudioMixer: Display: Initializing audio mixer using platform API: 'XAudio2'
+[2026.01.12-23.23.20:103][  0]LogAudioEnumeration: Display: FWindowsMMDeviceCache: Default Render Role='Console', Device='Speakers (Realtek(R) Audio)'
+[2026.01.12-23.23.20:105][  0]LogAudioEnumeration: Display: FWindowsMMDeviceCache: Default Capture Role='Console', Device='Microphone Array (Intel® Smart Sound Technology for Digital Microphones)'
+[2026.01.12-23.23.20:105][  0]LogAudioEnumeration: Display: FWindowsMMDeviceCache: Default Render Role='Multimedia', Device='Speakers (Realtek(R) Audio)'
+[2026.01.12-23.23.20:105][  0]LogAudioEnumeration: Display: FWindowsMMDeviceCache: Default Capture Role='Multimedia', Device='Microphone Array (Intel® Smart Sound Technology for Digital Microphones)'
+[2026.01.12-23.23.20:105][  0]LogAudioEnumeration: Display: FWindowsMMDeviceCache: Default Render Role='Communications', Device='Speakers (Realtek(R) Audio)'
+[2026.01.12-23.23.20:106][  0]LogAudioEnumeration: Display: FWindowsMMDeviceCache: Default Capture Role='Communications', Device='Microphone Array (Intel® Smart Sound Technology for Digital Microphones)'
+[2026.01.12-23.23.20:539][  0]LogAudioMixer: Display: Using Audio Hardware Device Speakers (Realtek(R) Audio)
+[2026.01.12-23.23.20:541][  0]LogAudioMixer: Display: Initializing Sound Submixes...
+[2026.01.12-23.23.20:541][  0]LogAudioMixer: Display: Creating Master Submix 'MasterSubmixDefault'
+[2026.01.12-23.23.20:541][  0]LogAudioMixer: Display: Creating Master Submix 'MasterReverbSubmixDefault'
+[2026.01.12-23.23.20:542][  0]LogAudioMixer: Display: Output buffers initialized: Frames=1024, Channels=2, Samples=2048, InstanceID=1
+[2026.01.12-23.23.20:543][  0]LogAudioMixer: Display: Starting AudioMixerPlatformInterface::RunInternal(), InstanceID=1
+[2026.01.12-23.23.20:543][  0]LogAudioMixer: Display: FMixerPlatformXAudio2::SubmitBuffer() called for the first time. InstanceID=1
+[2026.01.12-23.23.20:544][  0]LogAudio: Display: Audio Device (ID: 1) registered with world 'Untitled'.
+[2026.01.12-23.23.20:550][  0]LogCsvProfiler: Display: Metadata set : largeworldcoordinates="1"
+[2026.01.12-23.23.20:564][  0]LogSourceControl: Display: Uncontrolled Changelist persistency file loaded ../../../../../../scripts/SLFConversion/Saved/SourceControl/UncontrolledChangelists.json
+[2026.01.12-23.23.20:702][  0]LogPython: Display: No pip-enabled plugins with python dependencies found, skipping
+[2026.01.12-23.23.21:073][  0]LogCore: Display: InsightsEditor module auto-connecting to local trace server...
+[2026.01.12-23.23.21:139][  0]LogInit: Display: Engine is initialized. Leaving FEngineLoop::Init()
+[2026.01.12-23.23.21:164][  0]LogAudio: Display: Audio Device unregistered from world 'None'.
+[2026.01.12-23.23.21:389][  0]LogClass: Warning: Struct Property Requirement has a struct type mismatch (tag FSLFDialogRequirement(/Script/SLFConversion) != prop SLFDialogRequirement(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DA_ExampleDialog. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.12-23.23.21:389][  0]LogClass: Warning: Array Inner Type mismatch in Requirement - Previous (StructProperty(FSLFDialogRequirement(/Script/SLFConversion),4535e794-4431-05b4-1ffc-868b475ec5f0)) Current(StructProperty(SLFDialogRequirement(/Script/SLFConversion))) in package: /Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DA_ExampleDialog
+[2026.01.12-23.23.21:389][  0]LogClass: Warning: Struct Property Items has a struct type mismatch (tag FSLFVendorItems(/Script/SLFConversion) != prop SLFVendorItems(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Vendor/DA_ExampleVendor. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.12-23.23.21:389][  0]LogClass: Warning: Set Element Type mismatch in Items - Previous (StructProperty(FSLFVendorItems(/Script/SLFConversion),3f19e5be-4086-cab8-9833-c884a6cf1dc2)) Current (StructProperty(SLFVendorItems(/Script/SLFConversion))) for package: /Game/SoulslikeFramework/Data/Vendor/DA_ExampleVendor
+[2026.01.12-23.23.21:691][  0]LogClass: Warning: Struct Property ItemInformation has a struct type mismatch (tag FSLFItemInfo(/Script/SLFConversion) != prop SLFItemInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/Items/DA_ExampleTalisman. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.12-23.23.21:691][  0]LogClass: Warning: Struct Property ExecuteFront has a struct type mismatch (tag FSLFExecutionInfo(/Script/SLFConversion) != prop SLFExecutionInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/_AnimationData/Executions/DA_Execute_Generic. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.12-23.23.21:691][  0]LogClass: Warning: Struct Property ExecuteBack has a struct type mismatch (tag FSLFExecutionInfo(/Script/SLFConversion) != prop SLFExecutionInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Data/_AnimationData/Executions/DA_Execute_Generic. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.12-23.23.21:880][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Blueprints\_WorldActors\Interactables\B_Door.uasset: [Compiler] No SignatureFunction in MulticastDelegateProperty 'OnDoorOpened'
+[2026.01.12-23.23.22:286][  0]LogEnum: Warning: EnumRedirect for enum ESLFAIStates maps 'E_AI_States::NewEnumerator7' to invalid value 'ESLFAIStates::NewEnumerator7'!
+[2026.01.12-23.23.22:286][  0]LogEnum: Warning: EnumRedirect for enum ESLFCompareOperation maps 'ECompareOperation1Enum::Dataflow_Compare_SmallerOrEqual' to invalid value 'ESLFCompareOperation::Dataflow_Compare_SmallerOrEqual'!
+[2026.01.12-23.23.22:800][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_StatDisplay.uasset: [Compiler] GetStat  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.12-23.23.22:800][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_StatDisplay.uasset: [Compiler] GetStat  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.12-23.23.22:800][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_StatDisplay.uasset: [Compiler] GetStat  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.12-23.23.22:802][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_StatDisplay.uasset: [Compiler] GetAllStats  was pruned because its Exec pin is not connected, the connected value is not available and will instead be read as default
+[2026.01.12-23.23.22:802][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_StatDisplay.uasset: [Compiler] COMPILER ERROR: failed building connection with 'Soulslike Enemy Object Reference is not compatible with Soulslike Character Object Reference.' at  Get
+[2026.01.12-23.23.22:802][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_StatDisplay.uasset: [Compiler] COMPILER ERROR: failed building connection with 'Soulslike Character Object Reference is not compatible with Soulslike Enemy Object Reference.' at  Get
+[2026.01.12-23.23.22:803][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_StatDisplay.uasset: [Compiler] COMPILER ERROR: failed building connection with 'Soulslike Character Object Reference is not compatible with Soulslike Enemy Object Reference.' at  Get
+[2026.01.12-23.23.22:803][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_StatDisplay.uasset: [Compiler] In use pin  Max Value  no longer exists on node  GetStatMaxValue . Please refresh node or break links to remove pin.
+[2026.01.12-23.23.22:803][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_StatDisplay.uasset: [Compiler] In use pin  Current Value  no longer exists on node  GetStatCurrentValue . Please refresh node or break links to remove pin.
+[2026.01.12-23.23.22:803][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_StatDisplay.uasset: [Compiler] In use pin  Max Value  no longer exists on node  GetStatMaxValue . Please refresh node or break links to remove pin.
+[2026.01.12-23.23.22:803][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_StatDisplay.uasset: [Compiler] In use pin  Current Value  no longer exists on node  GetStatCurrentValue . Please refresh node or break links to remove pin.
+[2026.01.12-23.23.22:803][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_StatDisplay.uasset: [Compiler] In use pin  Max Value  no longer exists on node  GetStatMaxValue . Please refresh node or break links to remove pin.
+[2026.01.12-23.23.22:803][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_StatDisplay.uasset: [Compiler] In use pin  Current Value  no longer exists on node  GetStatCurrentValue . Please refresh node or break links to remove pin.
+[2026.01.12-23.23.22:804][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_StatDisplay.uasset: [Compiler] This blueprint (self) is not a B_BaseCharacter_C, therefore ' Target ' must have a connection.
+[2026.01.12-23.23.22:804][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_StatDisplay.uasset: [Compiler] This blueprint (self) is not a B_BaseCharacter_C, therefore ' Target ' must have a connection.
+[2026.01.12-23.23.22:804][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_StatDisplay.uasset: [Compiler] This blueprint (self) is not a B_BaseCharacter_C, therefore ' Target ' must have a connection.
+[2026.01.12-23.23.22:804][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_StatDisplay.uasset: [Compiler] The current value of the ' Stat Info ' pin is invalid: 'Stat Info' in action 'GetStatMaxValue' must have an input wired into it ("by ref" params expect a valid input to operate on).
+[2026.01.12-23.23.22:804][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_StatDisplay.uasset: [Compiler] Variable node  Get  uses an invalid target.  It may depend on a node that is not connected to the execution chain, and got purged.
+[2026.01.12-23.23.22:805][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_StatDisplay.uasset: [Compiler] Variable node  Get  uses an invalid target.  It may depend on a node that is not connected to the execution chain, and got purged.
+[2026.01.12-23.23.22:805][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_StatDisplay.uasset: [Compiler] Variable node  Get  uses an invalid target.  It may depend on a node that is not connected to the execution chain, and got purged.
+[2026.01.12-23.23.22:805][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_StatDisplay.uasset: [Compiler] Default value '' for  Stats  is invalid: 'Array inputs (like 'Stats') must have an input wired into them (try connecting a MakeArray node).'
+[2026.01.12-23.23.22:805][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_StatDisplay.uasset: [Compiler] The current value of the ' Stat Info ' pin is invalid: 'Stat Info' in action 'GetStatCurrentValue' must have an input wired into it ("by ref" params expect a valid input to operate on).
+[2026.01.12-23.23.22:805][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_StatDisplay.uasset: [Compiler] The current value of the ' Stat Info ' pin is invalid: 'Stat Info' in action 'GetStatMaxValue' must have an input wired into it ("by ref" params expect a valid input to operate on).
+[2026.01.12-23.23.22:805][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_StatDisplay.uasset: [Compiler] The current value of the ' Stat Info ' pin is invalid: 'Stat Info' in action 'GetStatCurrentValue' must have an input wired into it ("by ref" params expect a valid input to operate on).
+[2026.01.12-23.23.22:805][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_StatDisplay.uasset: [Compiler] The current value of the ' Stat Info ' pin is invalid: 'Stat Info' in action 'GetStatMaxValue' must have an input wired into it ("by ref" params expect a valid input to operate on).
+[2026.01.12-23.23.22:805][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_StatDisplay.uasset: [Compiler] The current value of the ' Stat Info ' pin is invalid: 'Stat Info' in action 'GetStatCurrentValue' must have an input wired into it ("by ref" params expect a valid input to operate on).
+[2026.01.12-23.23.22:811][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_ExitCombat.uasset: [Compiler] Could not find a variable named "AC_AI_BehaviorManager" in '/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy.B_Soulslike_Enemy_C'.
+Make sure '/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy.B_Soulslike_Enemy_C' has been compiled for  Get
+[2026.01.12-23.23.22:812][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_ShowcaseEnemy_ExitCombat.uasset: [Compiler] The property associated with  AC AI Behavior Manager  could not be found in '/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy.B_Soulslike_Enemy_C'
+[2026.01.12-23.23.22:892][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_Demo_TimeSlider.uasset: [Compiler] Could not find a variable named "Time" in '/Game/SoulslikeFramework/Blueprints/Sky/B_SkyManager.B_SkyManager_C'.
+Make sure '/Game/SoulslikeFramework/Blueprints/Sky/B_SkyManager.B_SkyManager_C' has been compiled for  Set Time
+[2026.01.12-23.23.22:894][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_Demo_TimeSlider.uasset: [Compiler] Cannot order parameters Interactor in function OnInteract.
+[2026.01.12-23.23.22:894][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Demo\ShowcaseRoom\DemoRoom\Blueprints\B_Demo_TimeSlider.uasset: [Compiler] The property associated with  Time  could not be found in '/Game/SoulslikeFramework/Blueprints/Sky/B_SkyManager.B_SkyManager_C'
+[2026.01.12-23.23.22:945][  0]LogClass: Warning: Struct Property ItemInfo has a struct type mismatch (tag FSLFItemInfo(/Script/SLFConversion) != prop SLFItemInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Maps/L_Demo_Showcase. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.12-23.23.22:945][  0]LogClass: Warning: Struct Property ItemInfo has a struct type mismatch (tag FSLFItemInfo(/Script/SLFConversion) != prop SLFItemInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Maps/L_Demo_Showcase. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.12-23.23.22:945][  0]LogClass: Warning: Struct Property ItemInfo has a struct type mismatch (tag FSLFItemInfo(/Script/SLFConversion) != prop SLFItemInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Maps/L_Demo_Showcase. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.12-23.23.22:945][  0]LogClass: Warning: Struct Property ItemInfo has a struct type mismatch (tag FSLFItemInfo(/Script/SLFConversion) != prop SLFItemInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Maps/L_Demo_Showcase. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.12-23.23.22:945][  0]LogClass: Warning: Struct Property ItemInfo has a struct type mismatch (tag FSLFItemInfo(/Script/SLFConversion) != prop SLFItemInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Maps/L_Demo_Showcase. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.12-23.23.22:946][  0]LogClass: Warning: Struct Property ItemInfo has a struct type mismatch (tag FSLFItemInfo(/Script/SLFConversion) != prop SLFItemInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Maps/L_Demo_Showcase. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.12-23.23.22:946][  0]LogClass: Warning: Struct Property ItemInfo has a struct type mismatch (tag FSLFItemInfo(/Script/SLFConversion) != prop SLFItemInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Maps/L_Demo_Showcase. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.12-23.23.22:946][  0]LogClass: Warning: Struct Property ItemInfo has a struct type mismatch (tag FSLFItemInfo(/Script/SLFConversion) != prop SLFItemInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Maps/L_Demo_Showcase. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.12-23.23.22:946][  0]LogClass: Warning: Struct Property ItemInfo has a struct type mismatch (tag FSLFItemInfo(/Script/SLFConversion) != prop SLFItemInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Maps/L_Demo_Showcase. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.12-23.23.22:946][  0]LogClass: Warning: Struct Property ItemInfo has a struct type mismatch (tag FSLFItemInfo(/Script/SLFConversion) != prop SLFItemInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Maps/L_Demo_Showcase. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.12-23.23.22:946][  0]LogClass: Warning: Struct Property ItemInfo has a struct type mismatch (tag FSLFItemInfo(/Script/SLFConversion) != prop SLFItemInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Maps/L_Demo_Showcase. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.12-23.23.22:946][  0]LogClass: Warning: Struct Property ItemInfo has a struct type mismatch (tag FSLFItemInfo(/Script/SLFConversion) != prop SLFItemInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Maps/L_Demo_Showcase. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.12-23.23.22:946][  0]LogClass: Warning: Struct Property ItemInfo has a struct type mismatch (tag FSLFItemInfo(/Script/SLFConversion) != prop SLFItemInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Maps/L_Demo_Showcase. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.12-23.23.22:946][  0]LogClass: Warning: Struct Property ItemInfo has a struct type mismatch (tag FSLFItemInfo(/Script/SLFConversion) != prop SLFItemInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Maps/L_Demo_Showcase. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.12-23.23.22:946][  0]LogClass: Warning: Struct Property ItemInfo has a struct type mismatch (tag FSLFItemInfo(/Script/SLFConversion) != prop SLFItemInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Maps/L_Demo_Showcase. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.12-23.23.22:946][  0]LogClass: Warning: Struct Property ItemInfo has a struct type mismatch (tag FSLFItemInfo(/Script/SLFConversion) != prop SLFItemInfo(/Script/SLFConversion)) in package: /Game/SoulslikeFramework/Maps/L_Demo_Showcase. If that struct got renamed, add an entry to ActiveStructRedirects.
+[2026.01.12-23.23.22:947][  0]LogProperty: Warning: Serialized BlueprintGeneratedClass /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Showcase.B_Soulslike_Enemy_Showcase_C for a property of BlueprintGeneratedClass /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy.B_Soulslike_Enemy_C. Reference will be nulled.
+    ReferencingObject = B_ShowcaseEnemy_ExitCombat_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_ShowcaseEnemy_ExitCombat_C_1
+    Property = ObjectProperty /Game/SoulslikeFramework/Demo/ShowcaseRoom/DemoRoom/Blueprints/B_ShowcaseEnemy_ExitCombat.B_ShowcaseEnemy_ExitCombat_C:MyEnemyActor
+    Item = B_Soulslike_Enemy_Showcase_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Enemy_Demo_C_1
+[2026.01.12-23.23.22:947][  0]LogProperty: Warning: Serialized BlueprintGeneratedClass /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Showcase.B_Soulslike_Enemy_Showcase_C for a property of BlueprintGeneratedClass /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy.B_Soulslike_Enemy_C. Reference will be nulled.
+    ReferencingObject = B_ShowcaseEnemy_StatDisplay_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_ShowcaseEnemy_StatDisplay_C_1
+    Property = ObjectProperty /Game/SoulslikeFramework/Demo/ShowcaseRoom/DemoRoom/Blueprints/B_ShowcaseEnemy_StatDisplay.B_ShowcaseEnemy_StatDisplay_C:MyEnemyActor
+    Item = B_Soulslike_Enemy_Showcase_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Enemy_Demo_C_1
+[2026.01.12-23.23.22:958][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Maps\L_Demo_Showcase.umap: [Compiler] RecreatePinForVariable: 'FirstTimeOnDemoLevel' pin not found
+[2026.01.12-23.23.22:958][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Maps\L_Demo_Showcase.umap: [Compiler] RecreatePinForVariable: 'FirstTimeOnDemoLevel' pin not found
+[2026.01.12-23.23.22:960][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Maps\L_Demo_Showcase.umap: [Compiler] Input pin  Sequence to Play  specifying non-default value no longer exists on node  SpawnActor B Sequence Actor . Please refresh node or reset pin to default value to remove pin.
+[2026.01.12-23.23.22:960][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Maps\L_Demo_Showcase.umap: [Compiler] In use pin  Settings  no longer exists on node  SpawnActor B Sequence Actor . Please refresh node or break links to remove pin.
+[2026.01.12-23.23.22:960][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Maps\L_Demo_Showcase.umap: [Compiler] Input pin  Active?  specifying non-default value no longer exists on node  EventToggleCinematicMode . Please refresh node or reset pin to default value to remove pin.
+[2026.01.12-23.23.22:960][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Maps\L_Demo_Showcase.umap: [Compiler] In use pin  Target  no longer exists on node  Set . Please refresh node or break links to remove pin.
+[2026.01.12-23.23.22:960][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Maps\L_Demo_Showcase.umap: [Compiler] Could not find a variable named "FirstTimeOnDemoLevel" in '/Game/SoulslikeFramework/Blueprints/Global/GI_SoulslikeFramework.GI_SoulslikeFramework_C'.
+Make sure '/Game/SoulslikeFramework/Blueprints/Global/GI_SoulslikeFramework.GI_SoulslikeFramework_C' has been compiled for  Set
+[2026.01.12-23.23.22:960][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Maps\L_Demo_Showcase.umap: [Compiler] In use pin  First Time on Demo Level?  no longer exists on node  Get FirstTimeOnDemoLevel? . Please refresh node or break links to remove pin.
+[2026.01.12-23.23.22:960][  0]LogBlueprint: Error: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Maps\L_Demo_Showcase.umap: [Compiler] In use pin  Target  no longer exists on node  Get FirstTimeOnDemoLevel? . Please refresh node or break links to remove pin.
+[2026.01.12-23.23.22:960][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\SoulslikeFramework\Maps\L_Demo_Showcase.umap: [Compiler] Could not find a variable named "FirstTimeOnDemoLevel" in '/Game/SoulslikeFramework/Blueprints/Global/GI_SoulslikeFramework.GI_SoulslikeFramework_C'.
+Make sure '/Game/SoulslikeFramework/Blueprints/Global/GI_SoulslikeFramework.GI_SoulslikeFramework_C' has been compiled for  Get FirstTimeOnDemoLevel?
+[2026.01.12-23.23.24:142][  0]LogAudio: Display: Audio Device (ID: 1) registered with world 'L_Demo_Showcase'.
+[2026.01.12-23.23.24:164][  0]LogSkinnedMeshComp: Warning: GetSocketInfoByName(root): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_NPC_ShowcaseVendor_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_NPC_ShowcaseVendor_C_1)
+[2026.01.12-23.23.24:164][  0]LogSkinnedMeshComp: Warning: GetSocketInfoByName(root): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_NPC_ShowcaseVendor_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_NPC_ShowcaseVendor_C_1)
+[2026.01.12-23.23.24:164][  0]LogSkinnedMeshComp: Warning: GetSocketInfoByName(root): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_NPC_ShowcaseVendor_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_NPC_ShowcaseVendor_C_1)
+[2026.01.12-23.23.24:166][  0]LogSkinnedMeshComp: Warning: GetSocketInfoByName(pelvis): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_NPC_ShowcaseVendor_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_NPC_ShowcaseVendor_C_1)
+[2026.01.12-23.23.24:166][  0]LogSkinnedMeshComp: Warning: GetSocketInfoByName(pelvis): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_NPC_ShowcaseVendor_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_NPC_ShowcaseVendor_C_1)
+[2026.01.12-23.23.24:166][  0]LogSkinnedMeshComp: Warning: GetSocketInfoByName(pelvis): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_NPC_ShowcaseVendor_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_NPC_ShowcaseVendor_C_1)
+[2026.01.12-23.23.24:168][  0]LogScript: Warning: Accessed None trying to read (real) property PoiseBreakAsset in ABP_SoulslikeEnemy
+	ABP_SoulslikeEnemy_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Enemy_Guard_C_0.CharacterMesh0.ABP_SoulslikeEnemy_C_0
+	Function /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeEnemy.ABP_SoulslikeEnemy_C:ExecuteUbergraph_ABP_SoulslikeEnemy:0092
+[2026.01.12-23.23.24:168][  0]LogTemp: Warning: [ABP_SoulslikeEnemy] B_Soulslike_Enemy_Guard_C_0: GroundSpeed=0.0, Velocity=X=0.000 Y=0.000 Z=0.000, IsFalling=0, Direction=0.0, CombatMgr=AC_AI_CombatManager
+[2026.01.12-23.23.24:171][  0]LogScript: Warning: Accessed None trying to read (real) property PoiseBreakAsset in ABP_SoulslikeEnemy
+	ABP_SoulslikeEnemy_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Enemy_Demo_C_1.CharacterMesh0.ABP_SoulslikeEnemy_C_0
+	Function /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeEnemy.ABP_SoulslikeEnemy_C:ExecuteUbergraph_ABP_SoulslikeEnemy:0092
+[2026.01.12-23.23.24:174][  0]LogScript: Warning: Accessed None trying to read (real) property AC AI Combat Manager in ABP_SoulslikeBossNew_C
+	ABP_SoulslikeBossNew_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2.CharacterMesh0.ABP_SoulslikeBossNew_C_0
+	Function /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeBossNew.ABP_SoulslikeBossNew_C:ExecuteUbergraph_ABP_SoulslikeBossNew:002B
+[2026.01.12-23.23.24:174][  0]LogScript: Warning: Accessed None
+	ABP_SoulslikeBossNew_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_Boss_Malgareth_C_2.CharacterMesh0.ABP_SoulslikeBossNew_C_0
+	Function /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeBossNew.ABP_SoulslikeBossNew_C:ExecuteUbergraph_ABP_SoulslikeBossNew:0040
+[2026.01.12-23.23.24:191][  0]LogSkinnedMeshComp: Warning: GetSocketInfoByName(root): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_NPC_ShowcaseVendor_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_NPC_ShowcaseVendor_C_1)
+[2026.01.12-23.23.24:191][  0]LogSkinnedMeshComp: Warning: GetSocketInfoByName(pelvis): No SkeletalMesh for Component(CharacterMesh0) Actor(B_Soulslike_NPC_ShowcaseVendor_C /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Soulslike_NPC_ShowcaseVendor_C_1)
+[2026.01.12-23.23.24:201][  0]LogNavigation: Warning: FNavigationOctree::AddNode: Empty bounds, ignoring GeometryCollectionComponent /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Destructible_C_1.GC_DestructibleMesh.
+[2026.01.12-23.23.24:201][  0]LogNavigation: Warning: FNavigationOctree::AddNode: Empty bounds, ignoring GeometryCollectionComponent /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Destructible_C_5.GC_DestructibleMesh.
+[2026.01.12-23.23.24:201][  0]LogNavigation: Warning: FNavigationOctree::AddNode: Empty bounds, ignoring GeometryCollectionComponent /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Destructible_C_6.GC_DestructibleMesh.
+[2026.01.12-23.23.24:201][  0]LogNavigation: Warning: FNavigationOctree::AddNode: Empty bounds, ignoring GeometryCollectionComponent /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Destructible_C_7.GC_DestructibleMesh.
+[2026.01.12-23.23.24:201][  0]LogNavigation: Warning: FNavigationOctree::AddNode: Empty bounds, ignoring GeometryCollectionComponent /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Destructible_C_8.GC_DestructibleMesh.
+[2026.01.12-23.23.24:201][  0]LogNavigation: Warning: FNavigationOctree::AddNode: Empty bounds, ignoring GeometryCollectionComponent /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Destructible_C_9.GC_DestructibleMesh.
+[2026.01.12-23.23.24:201][  0]LogNavigation: Warning: FNavigationOctree::AddNode: Empty bounds, ignoring GeometryCollectionComponent /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Destructible_C_1.GC_DestructibleMesh.
+[2026.01.12-23.23.24:201][  0]LogNavigation: Warning: FNavigationOctree::AddNode: Empty bounds, ignoring GeometryCollectionComponent /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Destructible_C_5.GC_DestructibleMesh.
+[2026.01.12-23.23.24:201][  0]LogNavigation: Warning: FNavigationOctree::AddNode: Empty bounds, ignoring GeometryCollectionComponent /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Destructible_C_6.GC_DestructibleMesh.
+[2026.01.12-23.23.24:201][  0]LogNavigation: Warning: FNavigationOctree::AddNode: Empty bounds, ignoring GeometryCollectionComponent /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Destructible_C_7.GC_DestructibleMesh.
+[2026.01.12-23.23.24:201][  0]LogNavigation: Warning: FNavigationOctree::AddNode: Empty bounds, ignoring GeometryCollectionComponent /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Destructible_C_8.GC_DestructibleMesh.
+[2026.01.12-23.23.24:201][  0]LogNavigation: Warning: FNavigationOctree::AddNode: Empty bounds, ignoring GeometryCollectionComponent /Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase:PersistentLevel.B_Destructible_C_9.GC_DestructibleMesh.
+[2026.01.12-23.23.24:290][  0]LogPlacementMode: Display: The Asset Registry is not yet fully loaded so some placeable classes might be missing.
+[2026.01.12-23.23.24:613][  0]LogPakFile: Display: Mounted Pak file 'C:/Program Files/Epic Games/UE_5.7/FeaturePacks/TP_FirstPerson.upack', mount point: 'root:/'
+[2026.01.12-23.23.24:613][  0]LogPakFile: Display: Mounted Pak file 'C:/Program Files/Epic Games/UE_5.7/FeaturePacks/TP_FirstPersonBP.upack', mount point: 'root:/'
+[2026.01.12-23.23.24:613][  0]LogPakFile: Display: Mounted Pak file 'C:/Program Files/Epic Games/UE_5.7/FeaturePacks/TP_HandheldARBP.upack', mount point: 'root:/'
+[2026.01.12-23.23.24:614][  0]LogPakFile: Display: Mounted Pak file 'C:/Program Files/Epic Games/UE_5.7/FeaturePacks/TP_ThirdPerson.upack', mount point: 'root:/'
+[2026.01.12-23.23.24:614][  0]LogPakFile: Display: Mounted Pak file 'C:/Program Files/Epic Games/UE_5.7/FeaturePacks/TP_ThirdPersonBP.upack', mount point: 'root:/'
+[2026.01.12-23.23.24:614][  0]LogPakFile: Display: Mounted Pak file 'C:/Program Files/Epic Games/UE_5.7/FeaturePacks/TP_TopDown.upack', mount point: 'root:/'
+[2026.01.12-23.23.24:615][  0]LogPakFile: Display: Mounted Pak file 'C:/Program Files/Epic Games/UE_5.7/FeaturePacks/TP_TopDownBP.upack', mount point: 'root:/'
+[2026.01.12-23.23.24:615][  0]LogPakFile: Display: Mounted Pak file 'C:/Program Files/Epic Games/UE_5.7/FeaturePacks/TP_VehicleAdvBP.upack', mount point: 'root:/'
+[2026.01.12-23.23.24:615][  0]LogPakFile: Display: Mounted Pak file 'C:/Program Files/Epic Games/UE_5.7/FeaturePacks/TP_VirtualRealityBP.upack', mount point: 'root:/'
+[2026.01.12-23.23.24:797][  0]LogToolMenus: Warning: Menu section not found: 'Compile' for insert: 'EditorPerf'
+[2026.01.12-23.23.25:220][  0]LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.7/Engine/Plugins/Animation/IKRig/Content/Python/init_unreal.py... started...
+[2026.01.12-23.23.25:222][  0]LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.7/Engine/Plugins/Animation/IKRig/Content/Python/init_unreal.py... took 2.269 ms
+[2026.01.12-23.23.25:223][  0]LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.7/Engine/Plugins/Animation/ControlRig/Content/Python/init_unreal.py... started...
+[2026.01.12-23.23.25:240][  0]LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.7/Engine/Plugins/Animation/ControlRig/Content/Python/init_unreal.py... took 18.206 ms (total: 20.476 ms)
+[2026.01.12-23.23.25:508][  1]LogAssetRegistry: Display: Starting OnFilesLoaded.Broadcast
+[2026.01.12-23.23.25:533][  1]LogPlacementMode: Display: The Asset Registry is done with its initial scan, the list of placeable classes has been updated.
+[2026.01.12-23.23.25:543][  1]LogAssetRegistry: Display: Completed OnFilesLoaded.Broadcast: 0.380s
+[2026.01.12-23.23.25:595][  2]LogAutomationCommandLine: Display: Ready to start automation
+[2026.01.12-23.23.25:943][ 21]LogAssetRegistry: Display: Asset registry cache written as 74.3 MiB to ../../../../../../scripts/SLFConversion/Intermediate/CachedAssetRegistry_*.bin
+[2026.01.12-23.23.30:687][303]LogAutomationCommandLine: Display: Found 5 automation tests based on 'SLF.Spawn'
+[2026.01.12-23.23.30:687][303]LogAutomationCommandLine: Display: 	SLF.Spawn.ActorWithStatManager
+[2026.01.12-23.23.30:687][303]LogAutomationCommandLine: Display: 	SLF.Spawn.BlueprintEnemy
+[2026.01.12-23.23.30:687][303]LogAutomationCommandLine: Display: 	SLF.Spawn.CharacterDamage
+[2026.01.12-23.23.30:687][303]LogAutomationCommandLine: Display: 	SLF.Spawn.CombatSequence
+[2026.01.12-23.23.30:687][303]LogAutomationCommandLine: Display: 	SLF.Spawn.TwoActorsDistance
+[2026.01.12-23.23.30:689][303]LogAutomationController: Display: Clearing ../../../../../../scripts/SLFConversion/Saved/Automation/Logs/ and ../../../../../../scripts/SLFConversion/Saved/Automation/Tmp/
+[2026.01.12-23.23.30:691][303]LogAutomationController: Display: Test Started. Name={ActorWithStatManager} Path={SLF.Spawn.ActorWithStatManager}
+[2026.01.12-23.23.30:712][305]LogAutomationController: Display: Test Completed. Result={Success} Name={ActorWithStatManager} Path={SLF.Spawn.ActorWithStatManager}
+[2026.01.12-23.23.30:713][305]LogAutomationController: Display: Test Started. Name={BlueprintEnemy} Path={SLF.Spawn.BlueprintEnemy}
+[2026.01.12-23.23.30:762][308]LogAutomationController: Display: Test Completed. Result={Success} Name={BlueprintEnemy} Path={SLF.Spawn.BlueprintEnemy}
+[2026.01.12-23.23.30:763][308]LogAutomationController: Display: Test Started. Name={CharacterDamage} Path={SLF.Spawn.CharacterDamage}
+[2026.01.12-23.23.30:942][311]LogAutomationController: Display: Test Completed. Result={Success} Name={CharacterDamage} Path={SLF.Spawn.CharacterDamage}
+[2026.01.12-23.23.30:942][311]LogAutomationController: Warning: Character has StatManager but no HP stat initialized [C:\scripts\SLFConversion\Source\SLFConversion\Tests\SLFSpawnTests.cpp(291)]
+[2026.01.12-23.23.30:943][311]LogAutomationController: Display: Test Started. Name={CombatSequence} Path={SLF.Spawn.CombatSequence}
+[2026.01.12-23.23.30:977][313]LogAutomationController: Display: Test Completed. Result={Success} Name={CombatSequence} Path={SLF.Spawn.CombatSequence}
+[2026.01.12-23.23.30:978][314]LogAutomationController: Display: Test Started. Name={TwoActorsDistance} Path={SLF.Spawn.TwoActorsDistance}
+[2026.01.12-23.23.31:025][316]LogAutomationController: Error: Test Completed. Result={Fail} Name={TwoActorsDistance} Path={SLF.Spawn.TwoActorsDistance}
+[2026.01.12-23.23.31:026][316]LogAutomationController: Error: Expected 'Initial distance should be ~583 units' to be true. [C:\scripts\SLFConversion\Source\SLFConversion\Tests\SLFSpawnTests.cpp(413)]
+[2026.01.12-23.23.31:027][316]LogAutomationCommandLine: Display: ...Automation Test Queue Empty 5 tests performed.

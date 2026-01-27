@@ -1,0 +1,1423 @@
+{
+  "BlueprintName": "ABP_SoulslikeCharacter_Additive",
+  "BlueprintClass": "AnimBlueprint",
+  "ParentClass": "/Script/SLFConversion.ABP_SoulslikeCharacter_Additive",
+  "Variables": [
+
+  ],
+  "Graphs": [
+    {
+      "GraphName": "EventGraph",
+      "GraphClass": "EdGraph",
+      "NodeCount": 0,
+      "Nodes": [
+
+      ]
+    },
+    {
+      "GraphName": "AnimGraph",
+      "GraphClass": "AnimationGraph",
+      "NodeCount": 49,
+      "Nodes": [
+        {
+          "NodeName": "AnimGraphNode_Root_0",
+          "NodeClass": "AnimGraphNode_Root",
+          "NodeTitle": "Output Pose\nAnimGraph",
+          "NodePosX": 3072,
+          "NodePosY": 1856,
+          "NodeGuid": "815AD460440C78FAA85CA5BA26EBA4FE",
+          "Properties": {
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_Root_0.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Result",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "(LinkID=-1,SourceLinkID=-1)",
+              "LinkedTo": ["AnimGraphNode_IKRig_0.Pose"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_StateMachine_0",
+          "NodeClass": "AnimGraphNode_StateMachine",
+          "NodeTitle": "Locomotion\nState Machine",
+          "NodePosX": 0,
+          "NodePosY": -208,
+          "NodeGuid": "D11207224C4467BDBC4E2E9EDD0764ED",
+          "Properties": {
+            "EditorStateMachineGraph": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_StateMachine_0.Locomotion",
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_StateMachine_0.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_SaveCachedPose_2.Pose"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_BlendListByEnum_2",
+          "NodeClass": "AnimGraphNode_BlendListByEnum",
+          "NodeTitle": "Blend Poses (E_OverlayState)",
+          "NodePosX": 384,
+          "NodePosY": 16,
+          "NodeGuid": "F99C9040441C3A2822628383594FFC20",
+          "Properties": {
+            "BoundEnum": "/Game/SoulslikeFramework/Enums/E_OverlayState.E_OverlayState",
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_BlendListByEnum_2.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "BlendPose_0",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "(LinkID=-1,SourceLinkID=-1)",
+              "LinkedTo": ["AnimGraphNode_UseCachedPose_18.Pose"]
+            },
+            {
+              "PinName": "BlendPose_1",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_LinkedAnimLayer_7.Pose"]
+            },
+            {
+              "PinName": "BlendPose_2",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_LinkedAnimLayer_9.Pose"]
+            },
+            {
+              "PinName": "BlendPose_3",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_LinkedAnimLayer_8.Pose"]
+            },
+            {
+              "PinName": "BlendTime_0",
+              "PinType": "real",
+              "Direction": "Input",
+              "DefaultValue": "0.100000",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "BlendTime_1",
+              "PinType": "real",
+              "Direction": "Input",
+              "DefaultValue": "0.100000",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "BlendTime_2",
+              "PinType": "real",
+              "Direction": "Input",
+              "DefaultValue": "0.100000",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "BlendTime_3",
+              "PinType": "real",
+              "Direction": "Input",
+              "DefaultValue": "0.100000",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "ActiveEnumValue",
+              "PinType": "byte",
+              "Direction": "Input",
+              "DefaultValue": "0",
+              "LinkedTo": ["K2Node_VariableGet_2.LeftHandOverlayState"]
+            },
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_SaveCachedPose_10.Pose"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_LinkedAnimLayer_7",
+          "NodeClass": "AnimGraphNode_LinkedAnimLayer",
+          "NodeTitle": "ALI_OverlayStates - LL_OneHanded_Left\nLinked Anim Layer",
+          "NodePosX": 32,
+          "NodePosY": 112,
+          "NodeGuid": "B88271644B79AB2F48011A8F4451FB55",
+          "Properties": {
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_LinkedAnimLayer_7.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_BlendListByEnum_2.BlendPose_1"]
+            },
+            {
+              "PinName": "Locomotion",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_UseCachedPose_14.Pose"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_SaveCachedPose_8",
+          "NodeClass": "AnimGraphNode_SaveCachedPose",
+          "NodeTitle": "Save cached pose 'MainLocomotion'",
+          "NodePosX": 256,
+          "NodePosY": -496,
+          "NodeGuid": "0BF30BB54A1854126022FEA3503CD97F",
+          "Properties": {
+            "CacheName": "MainLocomotion",
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_SaveCachedPose_8.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "(LinkID=-1,SourceLinkID=-1)",
+              "LinkedTo": ["AnimGraphNode_StateMachine_1.Pose"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_UseCachedPose_18",
+          "NodeClass": "AnimGraphNode_UseCachedPose",
+          "NodeTitle": "Use cached pose 'MainLocomotion'",
+          "NodePosX": 0,
+          "NodePosY": 16,
+          "NodeGuid": "CF0358B542AF7883F9DC7D85F4B7BD09",
+          "Properties": {
+            "NameOfCache": "MainLocomotion",
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_UseCachedPose_18.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_BlendListByEnum_2.BlendPose_0"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_UseCachedPose_14",
+          "NodeClass": "AnimGraphNode_UseCachedPose",
+          "NodeTitle": "Use cached pose 'MainLocomotion'",
+          "NodePosX": -256,
+          "NodePosY": 128,
+          "NodeGuid": "4638AADD44958C4A2D22939EB80CBE70",
+          "Properties": {
+            "NameOfCache": "MainLocomotion",
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_UseCachedPose_14.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_LinkedAnimLayer_7.Locomotion"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_LinkedAnimLayer_8",
+          "NodeClass": "AnimGraphNode_LinkedAnimLayer",
+          "NodeTitle": "ALI_OverlayStates - LL_Shield_Left\nLinked Anim Layer",
+          "NodePosX": 32,
+          "NodePosY": 304,
+          "NodeGuid": "2821736543F6954C1EF8499FCF068AD3",
+          "Properties": {
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_LinkedAnimLayer_8.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_BlendListByEnum_2.BlendPose_3"]
+            },
+            {
+              "PinName": "Locomotion",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_UseCachedPose_1.Pose"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_UseCachedPose_1",
+          "NodeClass": "AnimGraphNode_UseCachedPose",
+          "NodeTitle": "Use cached pose 'MainLocomotion'",
+          "NodePosX": -256,
+          "NodePosY": 320,
+          "NodeGuid": "2BAAC6174451EF4AA9178DA878C94834",
+          "Properties": {
+            "NameOfCache": "MainLocomotion",
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_UseCachedPose_1.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_LinkedAnimLayer_8.Locomotion"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_BlendListByBool_1",
+          "NodeClass": "AnimGraphNode_BlendListByBool",
+          "NodeTitle": "Blend Poses by bool",
+          "NodePosX": 1440,
+          "NodePosY": 1648,
+          "NodeGuid": "D8B7C2484D50983DCDE6239EF0C56A4C",
+          "Properties": {
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_BlendListByBool_1.AnimGraphNodeBinding_Base_0",
+            "NodeComment": "Is player blocking?"
+          },
+          "Pins": [
+            {
+              "PinName": "BlendPose_0",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "(LinkID=-1,SourceLinkID=-1)",
+              "LinkedTo": ["AnimGraphNode_LayeredBoneBlend_2.Pose"]
+            },
+            {
+              "PinName": "BlendPose_1",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "(LinkID=-1,SourceLinkID=-1)",
+              "LinkedTo": ["AnimGraphNode_UseCachedPose_28.Pose"]
+            },
+            {
+              "PinName": "BlendTime_0",
+              "PinType": "real",
+              "Direction": "Input",
+              "DefaultValue": "0.100000",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "BlendTime_1",
+              "PinType": "real",
+              "Direction": "Input",
+              "DefaultValue": "0.200000",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "bActiveValue",
+              "PinType": "bool",
+              "Direction": "Input",
+              "DefaultValue": "False",
+              "LinkedTo": ["K2Node_VariableGet_0.bIsBlocking"]
+            },
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_ControlRig_0.Source"]
+            }
+          ]
+        },
+        {
+          "NodeName": "EdGraphNode_Comment_16",
+          "NodeClass": "EdGraphNode_Comment",
+          "NodeTitle": "Main movement locomotion",
+          "NodePosX": -64,
+          "NodePosY": -576,
+          "NodeGuid": "58D3392E4A8E9298918DD4B649C56B8F",
+          "Properties": {
+            "NodeComment": "Main movement locomotion"
+          },
+          "Pins": [
+
+          ]
+        },
+        {
+          "NodeName": "EdGraphNode_Comment_0",
+          "NodeClass": "EdGraphNode_Comment",
+          "NodeTitle": "Additive overlay states, left arm",
+          "NodePosX": -336,
+          "NodePosY": -48,
+          "NodeGuid": "108EA2194AD673F588A2C79F219019F4",
+          "Properties": {
+            "NodeComment": "Additive overlay states, left arm"
+          },
+          "Pins": [
+
+          ]
+        },
+        {
+          "NodeName": "EdGraphNode_Comment_18",
+          "NodeClass": "EdGraphNode_Comment",
+          "NodeTitle": "Guarding state",
+          "NodePosX": 578,
+          "NodePosY": 1561,
+          "NodeGuid": "0DA717384CF7D85C48E753BFC2501EBD",
+          "Properties": {
+            "NodeComment": "Guarding state"
+          },
+          "Pins": [
+
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_StateMachine_1",
+          "NodeClass": "AnimGraphNode_StateMachine",
+          "NodeTitle": "States\nState Machine",
+          "NodePosX": 0,
+          "NodePosY": -512,
+          "NodeGuid": "CCD1DD664775050A1B1027BE33D17E93",
+          "Properties": {
+            "EditorStateMachineGraph": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_StateMachine_1.States",
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_StateMachine_1.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_SaveCachedPose_8.Pose"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_SaveCachedPose_2",
+          "NodeClass": "AnimGraphNode_SaveCachedPose",
+          "NodeTitle": "Save cached pose 'MovementLocomotion'",
+          "NodePosX": 256,
+          "NodePosY": -192,
+          "NodeGuid": "2E63F9E24A87F933C95906A4FDD221B8",
+          "Properties": {
+            "CacheName": "MovementLocomotion",
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_SaveCachedPose_2.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "(LinkID=-1,SourceLinkID=-1)",
+              "LinkedTo": ["AnimGraphNode_StateMachine_0.Pose"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_LayeredBoneBlend_5",
+          "NodeClass": "AnimGraphNode_LayeredBoneBlend",
+          "NodeTitle": "Layered blend per bone",
+          "NodePosX": 2176,
+          "NodePosY": 2176,
+          "NodeGuid": "4956A49D4252B88DF2C8E1B85D14E3DD",
+          "Properties": {
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_LayeredBoneBlend_5.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "BasePose",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "(LinkID=-1,SourceLinkID=-1)",
+              "LinkedTo": ["AnimGraphNode_UseCachedPose_3.Pose"]
+            },
+            {
+              "PinName": "BlendPoses_0",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "(LinkID=-1,SourceLinkID=-1)",
+              "LinkedTo": ["AnimGraphNode_Slot_1.Pose"]
+            },
+            {
+              "PinName": "BlendWeights_0",
+              "PinType": "real",
+              "Direction": "Input",
+              "DefaultValue": "1.000000",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_IKRig_0.Source"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_Slot_1",
+          "NodeClass": "AnimGraphNode_Slot",
+          "NodeTitle": "Slot 'UpperBody'\nGroup 'DefaultGroup'",
+          "NodePosX": 1920,
+          "NodePosY": 2288,
+          "NodeGuid": "9C6514BC4D2E7162E706B28D85FCD40F",
+          "Properties": {
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_Slot_1.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Source",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "(LinkID=-1,SourceLinkID=-1)",
+              "LinkedTo": ["AnimGraphNode_UseCachedPose_2.Pose"]
+            },
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_LayeredBoneBlend_5.BlendPoses_0"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_UseCachedPose_16",
+          "NodeClass": "AnimGraphNode_UseCachedPose",
+          "NodeTitle": "Use cached pose 'MainLocomotion'",
+          "NodePosX": -256,
+          "NodePosY": 224,
+          "NodeGuid": "B694D5E34F618D123BC7C9A58681B1B7",
+          "Properties": {
+            "NameOfCache": "MainLocomotion",
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_UseCachedPose_16.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_LinkedAnimLayer_9.Locomotion"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_LinkedAnimLayer_9",
+          "NodeClass": "AnimGraphNode_LinkedAnimLayer",
+          "NodeTitle": "ALI_OverlayStates - LL_TwoHanded_Left\nLinked Anim Layer",
+          "NodePosX": 32,
+          "NodePosY": 208,
+          "NodeGuid": "3F4A38324C307487617B6EA5F8F26A1C",
+          "Properties": {
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_LinkedAnimLayer_9.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_BlendListByEnum_2.BlendPose_2"]
+            },
+            {
+              "PinName": "Locomotion",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_UseCachedPose_16.Pose"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_BlendListByEnum_0",
+          "NodeClass": "AnimGraphNode_BlendListByEnum",
+          "NodeTitle": "Blend Poses (E_OverlayState)",
+          "NodePosX": 384,
+          "NodePosY": 592,
+          "NodeGuid": "BD9E3EF24ACC90F0C5F3CEAF16434931",
+          "Properties": {
+            "BoundEnum": "/Game/SoulslikeFramework/Enums/E_OverlayState.E_OverlayState",
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_BlendListByEnum_0.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "BlendPose_0",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "(LinkID=-1,SourceLinkID=-1)",
+              "LinkedTo": ["AnimGraphNode_UseCachedPose_32.Pose"]
+            },
+            {
+              "PinName": "BlendPose_1",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_LinkedAnimLayer_10.Pose"]
+            },
+            {
+              "PinName": "BlendPose_2",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_LinkedAnimLayer_11.Pose"]
+            },
+            {
+              "PinName": "BlendPose_3",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_LinkedAnimLayer_12.Pose"]
+            },
+            {
+              "PinName": "BlendTime_0",
+              "PinType": "real",
+              "Direction": "Input",
+              "DefaultValue": "0.100000",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "BlendTime_1",
+              "PinType": "real",
+              "Direction": "Input",
+              "DefaultValue": "0.100000",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "BlendTime_2",
+              "PinType": "real",
+              "Direction": "Input",
+              "DefaultValue": "0.100000",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "BlendTime_3",
+              "PinType": "real",
+              "Direction": "Input",
+              "DefaultValue": "0.100000",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "ActiveEnumValue",
+              "PinType": "byte",
+              "Direction": "Input",
+              "DefaultValue": "0",
+              "LinkedTo": ["K2Node_VariableGet_5.RightHandOverlayState"]
+            },
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_SaveCachedPose_1.Pose"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_SaveCachedPose_1",
+          "NodeClass": "AnimGraphNode_SaveCachedPose",
+          "NodeTitle": "Save cached pose 'OverlayedPose'",
+          "NodePosX": 768,
+          "NodePosY": 592,
+          "NodeGuid": "24A67E954C8EC68DACEC5DA4FCC2E42D",
+          "Properties": {
+            "CacheName": "OverlayedPose",
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_SaveCachedPose_1.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "(LinkID=-1,SourceLinkID=-1)",
+              "LinkedTo": ["AnimGraphNode_BlendListByEnum_0.Pose"]
+            }
+          ]
+        },
+        {
+          "NodeName": "EdGraphNode_Comment_17",
+          "NodeClass": "EdGraphNode_Comment",
+          "NodeTitle": "Additive overlay states, right arm",
+          "NodePosX": -336,
+          "NodePosY": 528,
+          "NodeGuid": "7BFB6D7546287C3813E2C58A204257B1",
+          "Properties": {
+            "NodeComment": "Additive overlay states, right arm"
+          },
+          "Pins": [
+
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_LinkedAnimLayer_10",
+          "NodeClass": "AnimGraphNode_LinkedAnimLayer",
+          "NodeTitle": "ALI_OverlayStates - LL_OneHanded_Right\nLinked Anim Layer",
+          "NodePosX": 32,
+          "NodePosY": 688,
+          "NodeGuid": "A84F443142BA741C73E379B737F1FB6E",
+          "Properties": {
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_LinkedAnimLayer_10.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_BlendListByEnum_0.BlendPose_1"]
+            },
+            {
+              "PinName": "Locomotion",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_UseCachedPose_34.Pose"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_LinkedAnimLayer_11",
+          "NodeClass": "AnimGraphNode_LinkedAnimLayer",
+          "NodeTitle": "ALI_OverlayStates - LL_TwoHanded_Right\nLinked Anim Layer",
+          "NodePosX": 32,
+          "NodePosY": 784,
+          "NodeGuid": "F962687C4D0E4B6C7AC41B897BD12B49",
+          "Properties": {
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_LinkedAnimLayer_11.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_BlendListByEnum_0.BlendPose_2"]
+            },
+            {
+              "PinName": "Locomotion",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_UseCachedPose_33.Pose"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_LinkedAnimLayer_12",
+          "NodeClass": "AnimGraphNode_LinkedAnimLayer",
+          "NodeTitle": "ALI_OverlayStates - LL_Shield_Right\nLinked Anim Layer",
+          "NodePosX": 32,
+          "NodePosY": 880,
+          "NodeGuid": "DC2198A240221C439A5FA9A3B112626D",
+          "Properties": {
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_LinkedAnimLayer_12.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_BlendListByEnum_0.BlendPose_3"]
+            },
+            {
+              "PinName": "Locomotion",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_UseCachedPose_0.Pose"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_UseCachedPose_26",
+          "NodeClass": "AnimGraphNode_UseCachedPose",
+          "NodeTitle": "Use cached pose 'OverlayedPose'",
+          "NodePosX": 640,
+          "NodePosY": 1648,
+          "NodeGuid": "A88133AA4E49223230E1BB9C9EA8A68E",
+          "Properties": {
+            "NameOfCache": "OverlayedPose",
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_UseCachedPose_26.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_LayeredBoneBlend_2.BasePose"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_UseCachedPose_28",
+          "NodeClass": "AnimGraphNode_UseCachedPose",
+          "NodeTitle": "Use cached pose 'OverlayedPose'",
+          "NodePosX": 1024,
+          "NodePosY": 1824,
+          "NodeGuid": "0C8F7F3046413EABBF90008CC08B7932",
+          "Properties": {
+            "NameOfCache": "OverlayedPose",
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_UseCachedPose_28.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_BlendListByBool_1.BlendPose_1"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_SaveCachedPose_10",
+          "NodeClass": "AnimGraphNode_SaveCachedPose",
+          "NodeTitle": "Save cached pose 'OverlayLeft'",
+          "NodePosX": 768,
+          "NodePosY": 16,
+          "NodeGuid": "C02527814BE7F14959E641B757BE9A68",
+          "Properties": {
+            "CacheName": "OverlayLeft",
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_SaveCachedPose_10.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "(LinkID=-1,SourceLinkID=-1)",
+              "LinkedTo": ["AnimGraphNode_BlendListByEnum_2.Pose"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_UseCachedPose_34",
+          "NodeClass": "AnimGraphNode_UseCachedPose",
+          "NodeTitle": "Use cached pose 'OverlayLeft'",
+          "NodePosX": -240,
+          "NodePosY": 704,
+          "NodeGuid": "A71F4EDD4E66A8E1500987B01380CF9A",
+          "Properties": {
+            "NameOfCache": "OverlayLeft",
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_UseCachedPose_34.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_LinkedAnimLayer_10.Locomotion"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_UseCachedPose_33",
+          "NodeClass": "AnimGraphNode_UseCachedPose",
+          "NodeTitle": "Use cached pose 'OverlayLeft'",
+          "NodePosX": -240,
+          "NodePosY": 800,
+          "NodeGuid": "AD16323746E5D1A0BE6389A4E225FB31",
+          "Properties": {
+            "NameOfCache": "OverlayLeft",
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_UseCachedPose_33.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_LinkedAnimLayer_11.Locomotion"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_UseCachedPose_0",
+          "NodeClass": "AnimGraphNode_UseCachedPose",
+          "NodeTitle": "Use cached pose 'OverlayLeft'",
+          "NodePosX": -240,
+          "NodePosY": 896,
+          "NodeGuid": "58E66F4B41400E1F05C46DBC877E4B19",
+          "Properties": {
+            "NameOfCache": "OverlayLeft",
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_UseCachedPose_0.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_LinkedAnimLayer_12.Locomotion"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_UseCachedPose_32",
+          "NodeClass": "AnimGraphNode_UseCachedPose",
+          "NodeTitle": "Use cached pose 'OverlayLeft'",
+          "NodePosX": 32,
+          "NodePosY": 592,
+          "NodeGuid": "A22F57484D1CAD1A3A6F83A7FF995CDB",
+          "Properties": {
+            "NameOfCache": "OverlayLeft",
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_UseCachedPose_32.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_BlendListByEnum_0.BlendPose_0"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_Slot_0",
+          "NodeClass": "AnimGraphNode_Slot",
+          "NodeTitle": "Slot 'DefaultSlot'\nGroup 'DefaultGroup'",
+          "NodePosX": 2048,
+          "NodePosY": 1632,
+          "NodeGuid": "4AA2956447DCD718532CDB8676CBCAF1",
+          "Properties": {
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_Slot_0.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Source",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "(LinkID=-1,SourceLinkID=-1)",
+              "LinkedTo": ["AnimGraphNode_ControlRig_0.Pose"]
+            },
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_SaveCachedPose_0.Pose"]
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_CallFunction_0",
+          "NodeClass": "K2Node_CallFunction",
+          "NodeTitle": "NOT Boolean",
+          "NodePosX": 1760,
+          "NodePosY": 1824,
+          "NodeGuid": "84EEB77C4DC6AE6E902AE2BBD3EA24C0",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "A",
+              "PinType": "bool",
+              "Direction": "Input",
+              "DefaultValue": "false",
+              "LinkedTo": ["K2Node_VariableGet_1.bIsFalling"]
+            },
+            {
+              "PinName": "ReturnValue",
+              "PinType": "bool",
+              "Direction": "Output",
+              "DefaultValue": "false",
+              "LinkedTo": ["AnimGraphNode_ControlRig_0.ShouldDoIKTrace"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_LayeredBoneBlend_2",
+          "NodeClass": "AnimGraphNode_LayeredBoneBlend",
+          "NodeTitle": "Layered blend per bone",
+          "NodePosX": 1024,
+          "NodePosY": 1648,
+          "NodeGuid": "ABFC3D4B4278F09729F737919ABD0230",
+          "Properties": {
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_LayeredBoneBlend_2.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "BasePose",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "(LinkID=-1,SourceLinkID=-1)",
+              "LinkedTo": ["AnimGraphNode_UseCachedPose_26.Pose"]
+            },
+            {
+              "PinName": "BlendPoses_0",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "(LinkID=-1,SourceLinkID=-1)",
+              "LinkedTo": ["AnimGraphNode_SequencePlayer_0.Pose"]
+            },
+            {
+              "PinName": "BlendWeights_0",
+              "PinType": "real",
+              "Direction": "Input",
+              "DefaultValue": "1.000000",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_BlendListByBool_1.BlendPose_0"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_SequencePlayer_0",
+          "NodeClass": "AnimGraphNode_SequencePlayer",
+          "NodeTitle": "Sequence Player",
+          "NodePosX": 640,
+          "NodePosY": 1792,
+          "NodeGuid": "7648CC1E44CC0F2E3F868B936447FFA8",
+          "Properties": {
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_SequencePlayer_0.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Sequence",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableGet_4.ActiveGuardSequence"]
+            },
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_LayeredBoneBlend_2.BlendPoses_0"]
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableGet_4",
+          "NodeClass": "K2Node_VariableGet",
+          "NodeTitle": "Get ActiveGuardSequence",
+          "NodePosX": 640,
+          "NodePosY": 1760,
+          "NodeGuid": "710D0F0C49ECB77CD1CDFEBB19A2879D",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "ActiveGuardSequence",
+              "PinType": "object",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_SequencePlayer_0.Sequence"]
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_ControlRig_0",
+          "NodeClass": "AnimGraphNode_ControlRig",
+          "NodeTitle": "Control Rig",
+          "NodePosX": 1792,
+          "NodePosY": 1648,
+          "NodeGuid": "45164E7E4C213E2DF643F08079F9CD86",
+          "Properties": {
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_ControlRig_0.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Source",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "(LinkID=-1,SourceLinkID=-1)",
+              "LinkedTo": ["AnimGraphNode_BlendListByBool_1.Pose"]
+            },
+            {
+              "PinName": "Alpha",
+              "PinType": "real",
+              "Direction": "Input",
+              "DefaultValue": "1.000000",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "bAlphaBoolEnabled",
+              "PinType": "bool",
+              "Direction": "Input",
+              "DefaultValue": "True",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "AlphaCurveName",
+              "PinType": "name",
+              "Direction": "Input",
+              "DefaultValue": "None",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_Slot_0.Source"]
+            },
+            {
+              "PinName": "ShouldDoIKTrace",
+              "PinType": "bool",
+              "Direction": "Input",
+              "DefaultValue": "false",
+              "LinkedTo": ["K2Node_CallFunction_0.ReturnValue"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_SaveCachedPose_0",
+          "NodeClass": "AnimGraphNode_SaveCachedPose",
+          "NodeTitle": "Save cached pose 'FinalPose'",
+          "NodePosX": 2304,
+          "NodePosY": 1648,
+          "NodeGuid": "03582E7C40981FF8C8FAC3AA2CBE9EE4",
+          "Properties": {
+            "CacheName": "FinalPose",
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_SaveCachedPose_0.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "(LinkID=-1,SourceLinkID=-1)",
+              "LinkedTo": ["AnimGraphNode_Slot_0.Pose"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_UseCachedPose_3",
+          "NodeClass": "AnimGraphNode_UseCachedPose",
+          "NodeTitle": "Use cached pose 'FinalPose'",
+          "NodePosX": 1920,
+          "NodePosY": 2176,
+          "NodeGuid": "C53D708E469841BFC31275A6110B9BE9",
+          "Properties": {
+            "NameOfCache": "FinalPose",
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_UseCachedPose_3.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_LayeredBoneBlend_5.BasePose"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_UseCachedPose_2",
+          "NodeClass": "AnimGraphNode_UseCachedPose",
+          "NodeTitle": "Use cached pose 'FinalPose'",
+          "NodePosX": 1664,
+          "NodePosY": 2304,
+          "NodeGuid": "B7E3F4D347568F6EE93940BC950521E3",
+          "Properties": {
+            "NameOfCache": "FinalPose",
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_UseCachedPose_2.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_Slot_1.Source"]
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableGet_6",
+          "NodeClass": "K2Node_VariableGet",
+          "NodeTitle": "Get IkWeight",
+          "NodePosX": 2432,
+          "NodePosY": 2144,
+          "NodeGuid": "B6C3606243706F4B32F481B7E6F9713D",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "IkWeight",
+              "PinType": "real",
+              "Direction": "Output",
+              "DefaultValue": "0.0",
+              "LinkedTo": ["AnimGraphNode_IKRig_0.Alpha"]
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_IKRig_0",
+          "NodeClass": "AnimGraphNode_IKRig",
+          "NodeTitle": "IK Rig",
+          "NodePosX": 2432,
+          "NodePosY": 2176,
+          "NodeGuid": "F5B836034D972FFB48C6E4BAC0FB9710",
+          "Properties": {
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive:AnimGraph.AnimGraphNode_IKRig_0.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Source",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "(LinkID=-1,SourceLinkID=-1)",
+              "LinkedTo": ["AnimGraphNode_LayeredBoneBlend_5.Pose"]
+            },
+            {
+              "PinName": "bAlphaBoolEnabled",
+              "PinType": "bool",
+              "Direction": "Input",
+              "DefaultValue": "True",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "Alpha",
+              "PinType": "real",
+              "Direction": "Input",
+              "DefaultValue": "1.000000",
+              "LinkedTo": ["K2Node_VariableGet_6.IkWeight"]
+            },
+            {
+              "PinName": "AlphaCurveName",
+              "PinType": "name",
+              "Direction": "Input",
+              "DefaultValue": "None",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_Root_0.Result"]
+            },
+            {
+              "PinName": "Position_spine_05_Goal",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "0.000000,20.000000,0.000000",
+              "LinkedTo": ["K2Node_PromotableOperator_0.ReturnValue"]
+            },
+            {
+              "PinName": "PositionAlpha_spine_05_Goal",
+              "PinType": "real",
+              "Direction": "Input",
+              "DefaultValue": "1.000000",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableGet_3",
+          "NodeClass": "K2Node_VariableGet",
+          "NodeTitle": "Get ActiveHitNormal",
+          "NodePosX": 2176,
+          "NodePosY": 2400,
+          "NodeGuid": "9881DB5641A9E3998CE7D1A059BE5BC2",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "ActiveHitNormal",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "0, 0, 0",
+              "LinkedTo": ["K2Node_PromotableOperator_0.A"]
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_PromotableOperator_0",
+          "NodeClass": "K2Node_PromotableOperator",
+          "NodeTitle": "vector * vector",
+          "NodePosX": 2176,
+          "NodePosY": 2432,
+          "NodeGuid": "985BCDA0470188DEBB18B8B02E9158B1",
+          "Properties": {
+            "OperationName": "Multiply"
+          },
+          "Pins": [
+            {
+              "PinName": "A",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableGet_3.ActiveHitNormal"]
+            },
+            {
+              "PinName": "B",
+              "PinType": "real",
+              "Direction": "Input",
+              "DefaultValue": "15.000000",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "ReturnValue",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_IKRig_0.Position_spine_05_Goal"]
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableGet_0",
+          "NodeClass": "K2Node_VariableGet",
+          "NodeTitle": "Get bIsBlocking",
+          "NodePosX": 1264,
+          "NodePosY": 1616,
+          "NodeGuid": "82E360A1488324EB478CF8BAD9023066",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "bIsBlocking",
+              "PinType": "bool",
+              "Direction": "Output",
+              "DefaultValue": "false",
+              "LinkedTo": ["AnimGraphNode_BlendListByBool_1.bActiveValue"]
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableGet_1",
+          "NodeClass": "K2Node_VariableGet",
+          "NodeTitle": "Get bIsFalling",
+          "NodePosX": 1648,
+          "NodePosY": 1904,
+          "NodeGuid": "D57B790C4FF37A3DC8B2DE9CF5922C98",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "bIsFalling",
+              "PinType": "bool",
+              "Direction": "Output",
+              "DefaultValue": "false",
+              "LinkedTo": ["K2Node_CallFunction_0.A"]
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableGet_2",
+          "NodeClass": "K2Node_VariableGet",
+          "NodeTitle": "Get LeftHandOverlayState",
+          "NodePosX": 208,
+          "NodePosY": 432,
+          "NodeGuid": "F7F31F854DB04D81E115F783621F57E3",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "LeftHandOverlayState",
+              "PinType": "byte",
+              "Direction": "Output",
+              "DefaultValue": "Default",
+              "LinkedTo": ["AnimGraphNode_BlendListByEnum_2.ActiveEnumValue"]
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableGet_5",
+          "NodeClass": "K2Node_VariableGet",
+          "NodeTitle": "Get RightHandOverlayState",
+          "NodePosX": 288,
+          "NodePosY": 1040,
+          "NodeGuid": "56399C4B422F8715EEB33F8DA2167F94",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "RightHandOverlayState",
+              "PinType": "byte",
+              "Direction": "Output",
+              "DefaultValue": "Default",
+              "LinkedTo": ["AnimGraphNode_BlendListByEnum_0.ActiveEnumValue"]
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

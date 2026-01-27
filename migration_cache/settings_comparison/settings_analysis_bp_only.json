@@ -1,0 +1,24 @@
+{
+  "project": "bp_only",
+  "w_settings_categoryentry": {
+    "path": "/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings_CategoryEntry",
+    "blueprint_class": "WidgetBlueprint",
+    "generated_class": "W_Settings_CategoryEntry_C",
+    "parent_class": "Unknown",
+    "cdo_class": "W_Settings_CategoryEntry_C",
+    "cdo_properties": {
+      "icon": "None",
+      "selected": "Error: UserWidget: Failed to find property 'selected' for attribute 'selected' on 'W_Settings_CategoryEntry_C'",
+      "selected_color": "Error: UserWidget: Failed to find property 'selected_color' for attribute 'selected_color' on 'W_Settings_CategoryEntry_C'",
+      "deselected_color": "Error: UserWidget: Failed to find property 'deselected_color' for attribute 'deselected_color' on 'W_Settings_CategoryEntry_C'",
+      "setting_category": "Error: UserWidget: Failed to find property 'setting_category' for attribute 'setting_category' on 'W_Settings_CategoryEntry_C'",
+      "switcher_index": "Error: UserWidget: Failed to find property 'switcher_index' for attribute 'switcher_index' on 'W_Settings_CategoryEntry_C'"
+    }
+  },
+  "runtime_analysis": {
+    "w_settings_class": "W_Settings_C",
+    "w_settings_parent": "Unknown",
+    "creation_error": "module 'unreal' has no attribute 'WidgetBlueprintLibrary'",
+    "traceback": "Traceback (most recent call last):\n  File \"C:/scripts/SLFConversion/compare_settings_widgets.py\", line 127, in create_runtime_widget_and_analyze\n    widget = unreal.WidgetBlueprintLibrary.create(world, gen_class)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: module 'unreal' has no attribute 'WidgetBlueprintLibrary'\n"
+  }
+}

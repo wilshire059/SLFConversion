@@ -27,6 +27,8 @@ class UCameraComponent;
 class UUserWidget;
 class URadarElementComponent;
 class UTexture2D;
+class UW_Radar;
+class UW_Radar_TrackedElement;
 
 // Types used from SLFGameTypes.h:
 // - FSLFCardinalData
@@ -89,7 +91,11 @@ public:
 
 	/** [10/13] Radar widget reference */
 	UPROPERTY(BlueprintReadWrite, Category = "Runtime")
-	UUserWidget* RadarWidget;
+	UW_Radar* RadarWidget;
+
+	/** Map of tracked elements to their widget representations */
+	UPROPERTY(BlueprintReadWrite, Category = "Runtime")
+	TMap<URadarElementComponent*, UW_Radar_TrackedElement*> TrackedElementWidgets;
 
 	/** [11/13] Player camera reference for orientation */
 	UPROPERTY(BlueprintReadWrite, Category = "Runtime")
@@ -102,6 +108,10 @@ public:
 	/** [13/13] Radar detection radius */
 	UPROPERTY(BlueprintReadWrite, Category = "Runtime")
 	double RadarRadius;
+
+	/** Flag to track if radar has been fully initialized (prevents duplicate cardinal markers) */
+	UPROPERTY(Transient)
+	bool bIsRadarInitialized;
 
 	// ═══════════════════════════════════════════════════════════════════
 	// FUNCTIONS: 13/13 migrated
@@ -126,8 +136,8 @@ public:
 	 * @return The created marker widget
 	 */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Radar Manager|Tracking")
-	UUserWidget* StartTrackElement(URadarElementComponent* Element);
-	virtual UUserWidget* StartTrackElement_Implementation(URadarElementComponent* Element);
+	UW_Radar_TrackedElement* StartTrackElement(URadarElementComponent* Element);
+	virtual UW_Radar_TrackedElement* StartTrackElement_Implementation(URadarElementComponent* Element);
 
 	/** [4/13] Stop tracking a radar element
 	 * @param Element - The radar element component to stop tracking
@@ -169,7 +179,7 @@ public:
 
 	/** [10/13] Get radar widget reference */
 	UFUNCTION(BlueprintPure, Category = "Radar Manager")
-	UUserWidget* GetRadarWidget() const { return RadarWidget; }
+	UW_Radar* GetRadarWidget() const { return RadarWidget; }
 
 	/** [11/13] Calculate position on radar for world location
 	 * @param WorldLocation - World position to convert
@@ -188,4 +198,13 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Radar Manager")
 	void LateInitialize();
 	virtual void LateInitialize_Implementation();
+
+	/** [14/13] Refresh cardinal positions based on camera rotation */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Radar Manager")
+	void RefreshCardinals();
+	virtual void RefreshCardinals_Implementation();
+
+protected:
+	/** Populate default cardinal data if not set from Blueprint */
+	void PopulateDefaultCardinalData();
 };

@@ -1,0 +1,14 @@
+============================================================
+Fixing Status Effect TriggeredText
+============================================================
+
+Processing: /Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Poison
+  Class: PDA_StatusEffect_C
+  Current TriggeredText: DECAYED
+  Set TriggeredText to: POISONED
+  Verified TriggeredText: POISONED
+  SAVED!
+
+============================================================
+Results: 1 succeeded, 0 failed
+============================================================

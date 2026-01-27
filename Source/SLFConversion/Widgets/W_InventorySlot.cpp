@@ -28,6 +28,7 @@ UW_InventorySlot::UW_InventorySlot(const FObjectInitializer& ObjectInitializer)
 	CachedItemIcon = nullptr;
 	CachedItemAmount = nullptr;
 	CachedSlotBorder = nullptr;
+	CachedBackgroundBorder = nullptr;
 }
 
 void UW_InventorySlot::NativeConstruct()
@@ -36,8 +37,11 @@ void UW_InventorySlot::NativeConstruct()
 
 	CacheWidgetReferences();
 	BindButtonEvents();
+	ApplySlotColor();
 
-	UE_LOG(LogTemp, Log, TEXT("UW_InventorySlot::NativeConstruct"));
+	UE_LOG(LogTemp, Log, TEXT("UW_InventorySlot::NativeConstruct - StorageRelated: %s, SlotColor: (%.3f, %.3f, %.3f)"),
+		StorageRelated ? TEXT("true") : TEXT("false"),
+		SlotColor.R, SlotColor.G, SlotColor.B);
 }
 
 void UW_InventorySlot::NativeDestruct()
@@ -54,6 +58,9 @@ void UW_InventorySlot::CacheWidgetReferences()
 	CachedItemIcon = Cast<UImage>(GetWidgetFromName(TEXT("ItemIcon")));
 	CachedItemAmount = Cast<UTextBlock>(GetWidgetFromName(TEXT("ItemAmount")));
 	CachedSlotBorder = Cast<UBorder>(GetWidgetFromName(TEXT("HightlightBorder")));
+
+	// bp_only: BackgroundBorder receives SlotColor for visual differentiation
+	CachedBackgroundBorder = Cast<UBorder>(GetWidgetFromName(TEXT("BackgroundBorder")));
 }
 
 void UW_InventorySlot::BindButtonEvents()
@@ -381,5 +388,36 @@ void UW_InventorySlot::EventToggleSlot_Implementation(bool IsEnabled)
 	{
 		SetRenderOpacity(0.5f);
 		SetIsEnabled(false);
+	}
+}
+
+/**
+ * ApplySlotColor - Apply SlotColor to the background border
+ *
+ * bp_only logic:
+ * In NativeConstruct, applies SlotColor to BackgroundBorder widget
+ * This allows storage slots to have a darker appearance than inventory slots
+ */
+void UW_InventorySlot::ApplySlotColor()
+{
+	// Apply SlotColor to BackgroundBorder (the main slot background)
+	if (CachedBackgroundBorder)
+	{
+		CachedBackgroundBorder->SetBrushColor(SlotColor);
+		UE_LOG(LogTemp, Log, TEXT("UW_InventorySlot::ApplySlotColor - Applied to BackgroundBorder: (%.3f, %.3f, %.3f, %.3f)"),
+			SlotColor.R, SlotColor.G, SlotColor.B, SlotColor.A);
+	}
+	else
+	{
+		// Fallback: Try to find by name if not cached
+		if (UBorder* BackgroundBorder = Cast<UBorder>(GetWidgetFromName(TEXT("BackgroundBorder"))))
+		{
+			BackgroundBorder->SetBrushColor(SlotColor);
+			UE_LOG(LogTemp, Log, TEXT("UW_InventorySlot::ApplySlotColor - Applied via GetWidgetFromName"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("UW_InventorySlot::ApplySlotColor - BackgroundBorder widget not found!"));
+		}
 	}
 }

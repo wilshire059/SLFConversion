@@ -1,0 +1,17 @@
+{
+  "B_Interactable": {
+    "BlueprintPath": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Interactable",
+    "ClassName": "B_Interactable_C",
+    "Components": []
+  },
+  "B_Door": {
+    "BlueprintPath": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Door",
+    "ClassName": "B_Door_C",
+    "Components": []
+  },
+  "B_BossDoor": {
+    "BlueprintPath": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_BossDoor",
+    "ClassName": "B_BossDoor_C",
+    "Components": []
+  }
+}

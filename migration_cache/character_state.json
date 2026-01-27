@@ -1,0 +1,18 @@
+{
+  "BlueprintName": "B_Soulslike_Character",
+  "BlueprintClass": "Blueprint",
+  "ParentClass": "/Script/SLFConversion.SLFSoulslikeCharacter",
+  "Variables": [
+
+  ],
+  "Graphs": [
+    {
+      "GraphName": "EventGraph",
+      "GraphClass": "EdGraph",
+      "NodeCount": 0,
+      "Nodes": [
+
+      ]
+    }
+  ]
+}

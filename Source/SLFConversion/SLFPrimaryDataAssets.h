@@ -234,6 +234,13 @@ public:
 	/** Text displayed when effect triggers - matches Blueprint "TriggeredText" variable */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
 	FText TriggeredText;
+
+	/** Rank-based VFX and behavior data - matches Blueprint "RankInfo" variable
+	 * Key: Rank number (1, 2, 3, etc.)
+	 * Value: VFX info for trigger and loop effects at this rank
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "On Trigger")
+	TMap<int32, FSLFStatusEffectRankInfo> RankInfo;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -437,6 +444,10 @@ class SLFCONVERSION_API UPDA_CombatReactionAnimData : public UPDA_Base
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CombatReaction")
 	TSoftObjectPtr<UAnimMontage> ReactionMontage;
+
+	/** Death montages by direction - bp_only: TMap<E_Direction, TSoftObjectPtr<AnimMontage>> */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CombatReaction")
+	TMap<ESLFDirection, TSoftObjectPtr<UAnimMontage>> Death;
 };
 
 UCLASS(Blueprintable, BlueprintType)
@@ -551,11 +562,19 @@ class SLFCONVERSION_API UPDA_DayNight : public UPDA_Base
 	GENERATED_BODY()
 
 public:
+	/** Array of time-of-day entries for resting (Morning, Noon, Evening, Night, etc.) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
+	TArray<FSLFDayNightInfo> Entries;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DayNight")
 	double SunriseTime = 6.0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DayNight")
 	double SunsetTime = 18.0;
+
+	/** Get the entry for a specific time */
+	UFUNCTION(BlueprintCallable, Category = "DayNight")
+	FSLFDayNightInfo GetEntryForTime(double Time) const;
 };
 
 //////////////////////////////////////////////////////////////////////////

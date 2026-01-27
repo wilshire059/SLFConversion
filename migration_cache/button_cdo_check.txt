@@ -1,0 +1,11 @@
+Blueprint: /Game/SoulslikeFramework/Widgets/_Generic/W_GenericButton
+Generated class: W_GenericButton_C
+CDO: Default__W_GenericButton_C
+  button_color: NOT FOUND
+  selected_button_color: NOT FOUND
+  outline_color: NOT FOUND
+  selected_outline_color: NOT FOUND
+  outline_width: NOT FOUND
+  outline_corner_radii: NOT FOUND
+  text_padding: NOT FOUND
+Widget tree error: WidgetBlueprint: Failed to find property 'widget_tree' for attribute 'widget_tree' on 'WidgetBlueprint'

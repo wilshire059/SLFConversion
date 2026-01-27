@@ -1,0 +1,49 @@
+================================================================================
+ARMOR STAT CHANGES ANALYSIS
+================================================================================
+
+[DA_ExampleArmor]
+  StatChanges count: 4
+    *** WEIGHT FOUND ***
+    - Key: SoulslikeFramework.Stat.Misc.Weight, StatTag: SoulslikeFramework.Stat.Misc.Weight, Delta: 10.0
+    - Key: SoulslikeFramework.Stat.Defense.Negation.Fire, StatTag: SoulslikeFramework.Stat.Defense.Negation.Fire, Delta: 1.0
+    - Key: SoulslikeFramework.Stat.Defense.Negation.Frost, StatTag: SoulslikeFramework.Stat.Defense.Negation.Frost, Delta: 1.0
+    - Key: SoulslikeFramework.Stat.Defense.Negation.Physical, StatTag: SoulslikeFramework.Stat.Defense.Negation.Physical, Delta: 5.0
+
+[DA_ExampleArmor02]
+  StatChanges count: 4
+    *** WEIGHT FOUND ***
+    - Key: SoulslikeFramework.Stat.Misc.Weight, StatTag: SoulslikeFramework.Stat.Misc.Weight, Delta: 8.0
+    - Key: SoulslikeFramework.Stat.Defense.Negation.Holy, StatTag: SoulslikeFramework.Stat.Defense.Negation.Holy, Delta: 5.0
+    - Key: SoulslikeFramework.Stat.Defense.Negation.Lightning, StatTag: SoulslikeFramework.Stat.Defense.Negation.Lightning, Delta: 5.0
+    - Key: SoulslikeFramework.Stat.Defense.Negation.Physical, StatTag: SoulslikeFramework.Stat.Defense.Negation.Physical, Delta: 13.0
+
+[DA_ExampleHelmet]
+  StatChanges count: 3
+    *** WEIGHT FOUND ***
+    - Key: SoulslikeFramework.Stat.Misc.Weight, StatTag: SoulslikeFramework.Stat.Misc.Weight, Delta: 7.0
+    - Key: SoulslikeFramework.Stat.Defense.Negation.Holy, StatTag: SoulslikeFramework.Stat.Defense.Negation.Holy, Delta: 11.0
+    - Key: SoulslikeFramework.Stat.Defense.Negation.Lightning, StatTag: SoulslikeFramework.Stat.Defense.Negation.Lightning, Delta: 3.0
+
+[DA_ExampleHat]
+  StatChanges count: 1
+    - Key: SoulslikeFramework.Stat.Primary.Dexterity, StatTag: SoulslikeFramework.Stat.Primary.Dexterity, Delta: 5.0
+
+[DA_ExampleBracers]
+  StatChanges count: 3
+    *** WEIGHT FOUND ***
+    - Key: SoulslikeFramework.Stat.Misc.Weight, StatTag: SoulslikeFramework.Stat.Misc.Weight, Delta: 5.0
+    - Key: SoulslikeFramework.Stat.Defense.Negation.Holy, StatTag: SoulslikeFramework.Stat.Defense.Negation.Holy, Delta: 3.0
+    - Key: SoulslikeFramework.Stat.Defense.Negation.Lightning, StatTag: SoulslikeFramework.Stat.Defense.Negation.Lightning, Delta: 3.0
+
+[DA_ExampleGreaves]
+  StatChanges count: 4
+    *** WEIGHT FOUND ***
+    - Key: SoulslikeFramework.Stat.Misc.Weight, StatTag: SoulslikeFramework.Stat.Misc.Weight, Delta: 3.0
+    - Key: SoulslikeFramework.Stat.Defense.Negation.Magic, StatTag: SoulslikeFramework.Stat.Defense.Negation.Magic, Delta: 3.0
+    - Key: SoulslikeFramework.Stat.Defense.Negation.Physical, StatTag: SoulslikeFramework.Stat.Defense.Negation.Physical, Delta: 5.0
+    - Key: SoulslikeFramework.Stat.Defense.Negation.Lightning, StatTag: SoulslikeFramework.Stat.Defense.Negation.Lightning, Delta: 2.0
+
+================================================================================
+WEIGHT TAG: FOUND in at least one item
+================================================================================

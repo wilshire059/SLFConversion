@@ -47,10 +47,12 @@ public:
 	virtual void NativeDestruct() override;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// VARIABLES (0)
+	// WIDGET BINDINGS
 	// ═══════════════════════════════════════════════════════════════════════
 
-
+	// Text block to display centered text
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	class UTextBlock* CenteredText;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (0)

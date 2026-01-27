@@ -1,0 +1,40 @@
+=== Starting B_RestingPoint check ===
+Loading asset: /Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_RestingPoint
+Loaded asset: B_RestingPoint
+Asset type: Blueprint
+Generated class: B_RestingPoint_C
+  Could not get parent class: 'Blueprint' object has no attribute 'parent_class'
+
+--- Spawning test instance ---
+Spawned: B_RestingPoint_C_0
+
+All Components (13):
+  - InteractionCollision (SphereComponent)
+  - Scene (SceneComponent)
+  - SittingZone (BillboardComponent)
+  - CameraArm (SpringArmComponent)
+  - LookatCamera (CameraComponent)
+  - UnlockEffect (NiagaraComponent)
+  - Effect (NiagaraComponent)
+  - EffectLight (PointLightComponent)
+  - BillboardComponent_2 (BillboardComponent)
+  - EnvironmentLight (PointLightComponent)
+  - BillboardComponent_3 (BillboardComponent)
+  - Float (TimelineComponent)
+  - Timeline (TimelineComponent)
+
+Niagara Components Detail (2):
+  Component: UnlockEffect
+    NiagaraSystem: NS_CampfireDiscovered
+    Asset Path: /Game/SoulslikeFramework/VFX/Systems/NS_CampfireDiscovered.NS_CampfireDiscovered
+    AutoActivate: False
+    IsActive: False
+  Component: Effect
+    NiagaraSystem: NS_Campfire
+    Asset Path: /Game/SoulslikeFramework/VFX/Systems/NS_Campfire.NS_Campfire
+    AutoActivate: True
+    IsActive: False
+
+StaticMesh Components Detail (0):
+
+Test actor destroyed

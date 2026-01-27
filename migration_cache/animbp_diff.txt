@@ -1,0 +1,1137 @@
+217,218c217
+<         LinkedTo (1):
+<           -> K2Node_VariableGet_7.bIsBlocking?
+---
+>         LinkedTo (0):
+227c226
+<     Title: Get bIsBlocking?
+---
+>     Title: Get bIsBlocking
+231,232c230,231
+<     [VariableGet] VarName: bIsBlocking?
+<     [VariableGet] ResolvedProperty: bIsBlocking? (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] VarName: bIsBlocking
+>     [VariableGet] ResolvedProperty: bIsBlocking (Owner: ABP_SoulslikeCharacter_Additive)
+234c233
+<       PIN[0]: bIsBlocking? (OUTPUT)
+---
+>       PIN[0]: bIsBlocking (OUTPUT)
+237,238c236
+<         LinkedTo (1):
+<           -> AnimGraphNode_BlendListByBool_1.bActiveValue
+---
+>         LinkedTo (0):
+241c239
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+624c622
+<     Title: Get bIsFalling?
+---
+>     Title: Get bIsFalling
+628,629c626,627
+<     [VariableGet] VarName: bIsFalling?
+<     [VariableGet] ResolvedProperty: bIsFalling? (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] VarName: bIsFalling
+>     [VariableGet] ResolvedProperty: bIsFalling (Owner: ABP_SoulslikeCharacter_Additive)
+631c629
+<       PIN[0]: bIsFalling? (OUTPUT)
+---
+>       PIN[0]: bIsFalling (OUTPUT)
+634,635c632
+<         LinkedTo (1):
+<           -> K2Node_CallFunction_0.A
+---
+>         LinkedTo (0):
+638c635
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+656,657c653
+<         LinkedTo (1):
+<           -> K2Node_VariableGet_8.bIsFalling?
+---
+>         LinkedTo (0):
+718c714
+<     [VariableGet] ResolvedProperty: ActiveGuardSequence (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: ActiveGuardSequence (Owner: ABP_SoulslikeCharacter_Additive)
+727c723
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+813c809
+<     [VariableGet] ResolvedProperty: IkWeight (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: IkWeight (Owner: ABP_SoulslikeCharacter_Additive)
+822c818
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+874c870
+<     [VariableGet] ResolvedProperty: ActiveHitNormal (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: ActiveHitNormal (Owner: ABP_SoulslikeCharacter_Additive)
+884c880
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+1253c1249
+<     [Transition] ErrorMsg: (none)
+---
+>     [Transition] ErrorMsg: CROUCH IDLE to SITTING  will never be taken, please connect something to  Can Enter Transition
+1289c1285
+<     [Transition] ErrorMsg: (none)
+---
+>     [Transition] ErrorMsg: CROUCH CYCLE to SITTING  will never be taken, please connect something to  Can Enter Transition
+1404c1400
+<           -> K2Node_VariableGet_0.bIsAccelerating?
+---
+>           -> K2Node_VariableGet_0.bIsAccelerating
+1408c1404
+<     Title: Get bIsAccelerating?
+---
+>     Title: Get bIsAccelerating
+1412,1413c1408,1409
+<     [VariableGet] VarName: bIsAccelerating?
+<     [VariableGet] ResolvedProperty: bIsAccelerating? (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] VarName: bIsAccelerating
+>     [VariableGet] ResolvedProperty: bIsAccelerating (Owner: ABP_SoulslikeCharacter_Additive)
+1415c1411
+<       PIN[0]: bIsAccelerating? (OUTPUT)
+---
+>       PIN[0]: bIsAccelerating (OUTPUT)
+1422c1418
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+1446c1442
+<     Title: Get bIsAccelerating?
+---
+>     Title: Get bIsAccelerating
+1450,1451c1446,1447
+<     [VariableGet] VarName: bIsAccelerating?
+<     [VariableGet] ResolvedProperty: bIsAccelerating? (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] VarName: bIsAccelerating
+>     [VariableGet] ResolvedProperty: bIsAccelerating (Owner: ABP_SoulslikeCharacter_Additive)
+1453c1449
+<       PIN[0]: bIsAccelerating? (OUTPUT)
+---
+>       PIN[0]: bIsAccelerating (OUTPUT)
+1460c1456
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+1479c1475
+<           -> K2Node_VariableGet_0.bIsAccelerating?
+---
+>           -> K2Node_VariableGet_0.bIsAccelerating
+1537c1533
+<           -> K2Node_VariableGet_12.IsResting?
+---
+>           -> K2Node_VariableGet_12.IsResting
+1541c1537
+<     Title: Get IsResting?
+---
+>     Title: Get IsResting
+1545,1546c1541,1542
+<     [VariableGet] VarName: IsResting?
+<     [VariableGet] ResolvedProperty: IsResting? (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] VarName: IsResting
+>     [VariableGet] ResolvedProperty: IsResting (Owner: ABP_SoulslikeCharacter_Additive)
+1548c1544
+<       PIN[0]: IsResting? (OUTPUT)
+---
+>       PIN[0]: IsResting (OUTPUT)
+1555c1551
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+1575c1571
+<           -> K2Node_VariableGet_13.IsResting?
+---
+>           -> K2Node_VariableGet_13.IsResting
+1579c1575
+<     Title: Get IsResting?
+---
+>     Title: Get IsResting
+1583,1584c1579,1580
+<     [VariableGet] VarName: IsResting?
+<     [VariableGet] ResolvedProperty: IsResting? (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] VarName: IsResting
+>     [VariableGet] ResolvedProperty: IsResting (Owner: ABP_SoulslikeCharacter_Additive)
+1586c1582
+<       PIN[0]: IsResting? (OUTPUT)
+---
+>       PIN[0]: IsResting (OUTPUT)
+1593c1589
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+1617c1613
+<     Title: Get IsResting?
+---
+>     Title: Get IsResting
+1621,1622c1617,1618
+<     [VariableGet] VarName: IsResting?
+<     [VariableGet] ResolvedProperty: IsResting? (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] VarName: IsResting
+>     [VariableGet] ResolvedProperty: IsResting (Owner: ABP_SoulslikeCharacter_Additive)
+1624c1620
+<       PIN[0]: IsResting? (OUTPUT)
+---
+>       PIN[0]: IsResting (OUTPUT)
+1631c1627
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+1650c1646
+<           -> K2Node_VariableGet_0.IsResting?
+---
+>           -> K2Node_VariableGet_0.IsResting
+1678c1674
+<     Title: Get IsResting?
+---
+>     Title: Get IsResting
+1682,1683c1678,1679
+<     [VariableGet] VarName: IsResting?
+<     [VariableGet] ResolvedProperty: IsResting? (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] VarName: IsResting
+>     [VariableGet] ResolvedProperty: IsResting (Owner: ABP_SoulslikeCharacter_Additive)
+1685c1681
+<       PIN[0]: IsResting? (OUTPUT)
+---
+>       PIN[0]: IsResting (OUTPUT)
+1692c1688
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+1711c1707
+<           -> K2Node_VariableGet_1.IsResting?
+---
+>           -> K2Node_VariableGet_1.IsResting
+1739c1735
+<           -> K2Node_VariableGet_0.bIsAccelerating?
+---
+>           -> K2Node_VariableGet_0.bIsAccelerating
+1748c1744
+<     Title: Get bIsAccelerating?
+---
+>     Title: Get bIsAccelerating
+1752,1753c1748,1749
+<     [VariableGet] VarName: bIsAccelerating?
+<     [VariableGet] ResolvedProperty: bIsAccelerating? (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] VarName: bIsAccelerating
+>     [VariableGet] ResolvedProperty: bIsAccelerating (Owner: ABP_SoulslikeCharacter_Additive)
+1755c1751
+<       PIN[0]: bIsAccelerating? (OUTPUT)
+---
+>       PIN[0]: bIsAccelerating (OUTPUT)
+1762c1758
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+1825c1821
+<     [VariableGet] ResolvedProperty: IsCrouched (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: IsCrouched (Owner: ABP_SoulslikeCharacter_Additive)
+1834c1830
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+1863c1859
+<     [VariableGet] ResolvedProperty: IsCrouched (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: IsCrouched (Owner: ABP_SoulslikeCharacter_Additive)
+1872c1868
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+1958c1954
+<     [VariableGet] ResolvedProperty: IsCrouched (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: IsCrouched (Owner: ABP_SoulslikeCharacter_Additive)
+1967c1963
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+1972c1968
+<     Title: Get bIsAccelerating?
+---
+>     Title: Get bIsAccelerating
+1976,1977c1972,1973
+<     [VariableGet] VarName: bIsAccelerating?
+<     [VariableGet] ResolvedProperty: bIsAccelerating? (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] VarName: bIsAccelerating
+>     [VariableGet] ResolvedProperty: bIsAccelerating (Owner: ABP_SoulslikeCharacter_Additive)
+1979c1975
+<       PIN[0]: bIsAccelerating? (OUTPUT)
+---
+>       PIN[0]: bIsAccelerating (OUTPUT)
+1986c1982
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+2010c2006
+<           -> K2Node_VariableGet_1.bIsAccelerating?
+---
+>           -> K2Node_VariableGet_1.bIsAccelerating
+2043c2039
+<     [VariableGet] ResolvedProperty: IsCrouched (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: IsCrouched (Owner: ABP_SoulslikeCharacter_Additive)
+2052c2048
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+2057c2053
+<     Title: Get bIsAccelerating?
+---
+>     Title: Get bIsAccelerating
+2061,2062c2057,2058
+<     [VariableGet] VarName: bIsAccelerating?
+<     [VariableGet] ResolvedProperty: bIsAccelerating? (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] VarName: bIsAccelerating
+>     [VariableGet] ResolvedProperty: bIsAccelerating (Owner: ABP_SoulslikeCharacter_Additive)
+2064c2060
+<       PIN[0]: bIsAccelerating? (OUTPUT)
+---
+>       PIN[0]: bIsAccelerating (OUTPUT)
+2071c2067
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+2118c2114
+<           -> K2Node_VariableGet_1.bIsAccelerating?
+---
+>           -> K2Node_VariableGet_1.bIsAccelerating
+2151c2147
+<     [VariableGet] ResolvedProperty: IsCrouched (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: IsCrouched (Owner: ABP_SoulslikeCharacter_Additive)
+2160c2156
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+2189c2185
+<     [VariableGet] ResolvedProperty: IsCrouched (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: IsCrouched (Owner: ABP_SoulslikeCharacter_Additive)
+2198c2194
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+2203c2199
+<     Title: Get bIsAccelerating?
+---
+>     Title: Get bIsAccelerating
+2207,2208c2203,2204
+<     [VariableGet] VarName: bIsAccelerating?
+<     [VariableGet] ResolvedProperty: bIsAccelerating? (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] VarName: bIsAccelerating
+>     [VariableGet] ResolvedProperty: bIsAccelerating (Owner: ABP_SoulslikeCharacter_Additive)
+2210c2206
+<       PIN[0]: bIsAccelerating? (OUTPUT)
+---
+>       PIN[0]: bIsAccelerating (OUTPUT)
+2217c2213
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+2241c2237
+<           -> K2Node_VariableGet_1.bIsAccelerating?
+---
+>           -> K2Node_VariableGet_1.bIsAccelerating
+2288c2284
+<           -> K2Node_VariableGet_0.IsResting?
+---
+>           -> K2Node_VariableGet_0.IsResting
+2292c2288
+<     Title: Get IsResting?
+---
+>     Title: Get IsResting
+2296,2297c2292,2293
+<     [VariableGet] VarName: IsResting?
+<     [VariableGet] ResolvedProperty: IsResting? (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] VarName: IsResting
+>     [VariableGet] ResolvedProperty: IsResting (Owner: ABP_SoulslikeCharacter_Additive)
+2299c2295
+<       PIN[0]: IsResting? (OUTPUT)
+---
+>       PIN[0]: IsResting (OUTPUT)
+2306c2302
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+2330c2326
+<     Title: Get IsResting?
+---
+>     Title: Get IsResting
+2334,2335c2330,2331
+<     [VariableGet] VarName: IsResting?
+<     [VariableGet] ResolvedProperty: IsResting? (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] VarName: IsResting
+>     [VariableGet] ResolvedProperty: IsResting (Owner: ABP_SoulslikeCharacter_Additive)
+2337c2333
+<       PIN[0]: IsResting? (OUTPUT)
+---
+>       PIN[0]: IsResting (OUTPUT)
+2344c2340
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+2382c2378
+<     [VariableGet] ResolvedProperty: IsCrouched (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: IsCrouched (Owner: ABP_SoulslikeCharacter_Additive)
+2391c2387
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+2410c2406
+<           -> K2Node_VariableGet_0.IsResting?
+---
+>           -> K2Node_VariableGet_0.IsResting
+2434c2430
+<           -> K2Node_VariableGet_0.IsResting?
+---
+>           -> K2Node_VariableGet_0.IsResting
+2438c2434
+<     Title: Get IsResting?
+---
+>     Title: Get IsResting
+2442,2443c2438,2439
+<     [VariableGet] VarName: IsResting?
+<     [VariableGet] ResolvedProperty: IsResting? (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] VarName: IsResting
+>     [VariableGet] ResolvedProperty: IsResting (Owner: ABP_SoulslikeCharacter_Additive)
+2445c2441
+<       PIN[0]: IsResting? (OUTPUT)
+---
+>       PIN[0]: IsResting (OUTPUT)
+2452c2448
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+2476c2472
+<     Title: Get IsResting?
+---
+>     Title: Get IsResting
+2480,2481c2476,2477
+<     [VariableGet] VarName: IsResting?
+<     [VariableGet] ResolvedProperty: IsResting? (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] VarName: IsResting
+>     [VariableGet] ResolvedProperty: IsResting (Owner: ABP_SoulslikeCharacter_Additive)
+2483c2479
+<       PIN[0]: IsResting? (OUTPUT)
+---
+>       PIN[0]: IsResting (OUTPUT)
+2490c2486
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+2509c2505
+<           -> K2Node_VariableGet_0.IsResting?
+---
+>           -> K2Node_VariableGet_0.IsResting
+2537c2533
+<           -> K2Node_VariableGet_1.bIsAccelerating?
+---
+>           -> K2Node_VariableGet_1.bIsAccelerating
+2550c2546
+<     Title: Get bIsAccelerating?
+---
+>     Title: Get bIsAccelerating
+2554,2555c2550,2551
+<     [VariableGet] VarName: bIsAccelerating?
+<     [VariableGet] ResolvedProperty: bIsAccelerating? (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] VarName: bIsAccelerating
+>     [VariableGet] ResolvedProperty: bIsAccelerating (Owner: ABP_SoulslikeCharacter_Additive)
+2557c2553
+<       PIN[0]: bIsAccelerating? (OUTPUT)
+---
+>       PIN[0]: bIsAccelerating (OUTPUT)
+2564c2560
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+2574c2570
+<     [VariableGet] ResolvedProperty: IsCrouched (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: IsCrouched (Owner: ABP_SoulslikeCharacter_Additive)
+2583c2579
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+2693c2689
+<     [Transition] ErrorMsg: (none)
+---
+>     [Transition] ErrorMsg: To Falling to Fall Loop  will never be taken, please connect something to  Can Enter Transition
+2797c2793
+<     [Transition] ErrorMsg: (none)
+---
+>     [Transition] ErrorMsg: Land to Locomotion  will never be taken, please connect something to  Can Enter Transition
+2897c2893
+<     Title: Get bIsFalling?
+---
+>     Title: Get bIsFalling
+2901,2902c2897,2898
+<     [VariableGet] VarName: bIsFalling?
+<     [VariableGet] ResolvedProperty: bIsFalling? (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] VarName: bIsFalling
+>     [VariableGet] ResolvedProperty: bIsFalling (Owner: ABP_SoulslikeCharacter_Additive)
+2904c2900
+<       PIN[0]: bIsFalling? (OUTPUT)
+---
+>       PIN[0]: bIsFalling (OUTPUT)
+2911c2907
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+2930c2926
+<           -> K2Node_VariableGet_0.bIsFalling?
+---
+>           -> K2Node_VariableGet_0.bIsFalling
+2949c2945
+<     [VariableGet] ResolvedProperty: Velocity (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: Velocity (Owner: ABP_SoulslikeCharacter_Additive)
+2971c2967
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+3049c3045
+<           -> K2Node_VariableGet_0.bIsFalling?
+---
+>           -> K2Node_VariableGet_0.bIsFalling
+3053c3049
+<     Title: Get bIsFalling?
+---
+>     Title: Get bIsFalling
+3057,3058c3053,3054
+<     [VariableGet] VarName: bIsFalling?
+<     [VariableGet] ResolvedProperty: bIsFalling? (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] VarName: bIsFalling
+>     [VariableGet] ResolvedProperty: bIsFalling (Owner: ABP_SoulslikeCharacter_Additive)
+3060c3056
+<       PIN[0]: bIsFalling? (OUTPUT)
+---
+>       PIN[0]: bIsFalling (OUTPUT)
+3067c3063
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+3193c3189
+<     Title: Get bIsFalling?
+---
+>     Title: Get bIsFalling
+3197,3198c3193,3194
+<     [VariableGet] VarName: bIsFalling?
+<     [VariableGet] ResolvedProperty: bIsFalling? (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] VarName: bIsFalling
+>     [VariableGet] ResolvedProperty: bIsFalling (Owner: ABP_SoulslikeCharacter_Additive)
+3200c3196
+<       PIN[0]: bIsFalling? (OUTPUT)
+---
+>       PIN[0]: bIsFalling (OUTPUT)
+3207c3203
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+3226c3222
+<           -> K2Node_VariableGet_0.bIsFalling?
+---
+>           -> K2Node_VariableGet_0.bIsFalling
+3268c3264
+<           -> K2Node_VariableGet_0.bIsAccelerating?
+---
+>           -> K2Node_VariableGet_0.bIsAccelerating
+3272c3268
+<     Title: Get bIsAccelerating?
+---
+>     Title: Get bIsAccelerating
+3276,3277c3272,3273
+<     [VariableGet] VarName: bIsAccelerating?
+<     [VariableGet] ResolvedProperty: bIsAccelerating? (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] VarName: bIsAccelerating
+>     [VariableGet] ResolvedProperty: bIsAccelerating (Owner: ABP_SoulslikeCharacter_Additive)
+3279c3275
+<       PIN[0]: bIsAccelerating? (OUTPUT)
+---
+>       PIN[0]: bIsAccelerating (OUTPUT)
+3286c3282
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+3402c3398
+<     [VariableGet] ResolvedProperty: Velocity2D (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: Velocity2D (Owner: ABP_SoulslikeCharacter_Additive)
+3412c3408
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+3422c3418
+<     [VariableGet] ResolvedProperty: WorldRotation (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: WorldRotation (Owner: ABP_SoulslikeCharacter_Additive)
+3432c3428
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+3795c3791
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+3843c3839
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+3905c3901
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+3928c3924
+<     [VariableGet] ResolvedProperty: Acceleration (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: Acceleration (Owner: ABP_SoulslikeCharacter_Additive)
+3938c3934
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+4002c3998
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+4080,4081c4076
+<         LinkedTo (1):
+<           -> K2Node_VariableSet_1.bIsAccelerating?
+---
+>         LinkedTo (0):
+4085c4080
+<     Title: Set bIsAccelerating?
+---
+>     Title: Set bIsAccelerating
+4098c4093
+<       PIN[2]: bIsAccelerating? (INPUT)
+---
+>       PIN[2]: bIsAccelerating (INPUT)
+4101,4102c4096
+<         LinkedTo (1):
+<           -> K2Node_CallFunction_2.ReturnValue
+---
+>         LinkedTo (0):
+4109c4103
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+4121,4122c4115
+<         LinkedTo (1):
+<           -> K2Node_VariableSet_5.bIsFalling?
+---
+>         LinkedTo (0):
+4126c4119
+<     Title: Set bIsFalling?
+---
+>     Title: Set bIsFalling
+4138c4131
+<       PIN[2]: bIsFalling? (INPUT)
+---
+>       PIN[2]: bIsFalling (INPUT)
+4141,4142c4134
+<         LinkedTo (1):
+<           -> K2Node_PropertyAccess_1.Value
+---
+>         LinkedTo (0):
+4149c4141
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+4211c4203
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+4221c4213
+<     [VariableGet] ResolvedProperty: Velocity (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: Velocity (Owner: ABP_SoulslikeCharacter_Additive)
+4231c4223
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+4287c4279
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+4339c4331
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+4526c4518
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+4709,4711c4701,4702
+<         Category: bool
+<         LinkedTo (1):
+<           -> K2Node_VariableSet_0.bIsBlocking?
+---
+>         Category: wildcard
+>         LinkedTo (0):
+4715c4706
+<     Title: Set bIsBlocking?
+---
+>     Title: Set bIsBlocking
+4727c4718
+<       PIN[2]: bIsBlocking? (INPUT)
+---
+>       PIN[2]: bIsBlocking (INPUT)
+4730,4731c4721
+<         LinkedTo (1):
+<           -> K2Node_PropertyAccess_1.Value
+---
+>         LinkedTo (0):
+4738c4728
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+4761c4751
+<     Title: Set IsResting?
+---
+>     Title: Set IsResting
+4773c4763
+<       PIN[2]: IsResting? (INPUT)
+---
+>       PIN[2]: IsResting (INPUT)
+4776,4777c4766
+<         LinkedTo (1):
+<           -> K2Node_PropertyAccess_1.Value
+---
+>         LinkedTo (0):
+4784c4773
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+4796,4797c4785
+<         LinkedTo (1):
+<           -> K2Node_VariableSet_5.IsResting?
+---
+>         LinkedTo (0):
+4819c4807
+<     Title: Set LeftHandOverlayState
+---
+>     Title: Set LeftHandOverlayState_0
+4832c4820
+<       PIN[2]: LeftHandOverlayState (INPUT)
+---
+>       PIN[2]: LeftHandOverlayState_0 (INPUT)
+4850c4838
+<     Title: Set RightHandOverlayState
+---
+>     Title: Set RightHandOverlayState_0
+4862c4850
+<       PIN[2]: RightHandOverlayState (INPUT)
+---
+>       PIN[2]: RightHandOverlayState_0 (INPUT)
+4889c4877
+<           -> K2Node_VariableSet_6.LeftHandOverlayState
+---
+>           -> K2Node_VariableSet_6.LeftHandOverlayState_0
+4902c4890
+<           -> K2Node_VariableSet_3.RightHandOverlayState
+---
+>           -> K2Node_VariableSet_3.RightHandOverlayState_0
+4947c4935
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+5159c5147
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+5218c5206
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+5261c5249
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+5353c5341
+<         SubCategoryObject: AC_EquipmentManager_C
+---
+>         SubCategoryObject: AC_EquipmentManager
+5358c5346
+<         SubCategoryObject: AC_EquipmentManager_C
+---
+>         SubCategoryObject: AC_EquipmentManager
+5362c5350
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+5382c5370
+<         SubCategoryObject: AC_CombatManager_C
+---
+>         SubCategoryObject: AC_CombatManager
+5387c5375
+<         SubCategoryObject: AC_CombatManager_C
+---
+>         SubCategoryObject: AC_CombatManager
+5391c5379
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+5410c5398
+<         SubCategoryObject: AC_ActionManager_C
+---
+>         SubCategoryObject: AC_ActionManager
+5415c5403
+<         SubCategoryObject: AC_ActionManager_C
+---
+>         SubCategoryObject: AC_ActionManager
+5419c5407
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+5553c5541
+<     [VariableGet] ResolvedProperty: AnimDataAsset (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: AnimDataAsset (Owner: ABP_SoulslikeCharacter_Additive)
+5557c5545
+<         SubCategoryObject: PDA_AnimData_C
+---
+>         SubCategoryObject: PDA_AnimData
+5562c5550
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+5572c5560
+<     [VariableGet] ResolvedProperty: OneHandedWeapon_Left (Owner: PDA_AnimData_C)
+---
+>     [VariableGet] ResolvedProperty: OneHandedWeapon_Left (Owner: PDA_AnimData)
+5581c5569
+<         SubCategoryObject: PDA_AnimData_C
+---
+>         SubCategoryObject: PDA_AnimData
+5678c5666
+<     [VariableGet] ResolvedProperty: AnimDataAsset (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: AnimDataAsset (Owner: ABP_SoulslikeCharacter_Additive)
+5682c5670
+<         SubCategoryObject: PDA_AnimData_C
+---
+>         SubCategoryObject: PDA_AnimData
+5687c5675
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+5697c5685
+<     [VariableGet] ResolvedProperty: ShieldLeft (Owner: PDA_AnimData_C)
+---
+>     [VariableGet] ResolvedProperty: ShieldLeft (Owner: PDA_AnimData)
+5706c5694
+<         SubCategoryObject: PDA_AnimData_C
+---
+>         SubCategoryObject: PDA_AnimData
+5728c5716,5717
+<         LinkedTo (0):
+---
+>         LinkedTo (1):
+>           -> AnimGraphNode_LinkedInputPose_0.Pose
+5741c5730,5731
+<         LinkedTo (0):
+---
+>         LinkedTo (1):
+>           -> AnimGraphNode_Root_0.Result
+5807c5797
+<     [VariableGet] ResolvedProperty: AnimDataAsset (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: AnimDataAsset (Owner: ABP_SoulslikeCharacter_Additive)
+5811c5801
+<         SubCategoryObject: PDA_AnimData_C
+---
+>         SubCategoryObject: PDA_AnimData
+5816c5806
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+5855c5845
+<     [VariableGet] ResolvedProperty: TwoHandedWeapon_Left (Owner: PDA_AnimData_C)
+---
+>     [VariableGet] ResolvedProperty: TwoHandedWeapon_Left (Owner: PDA_AnimData)
+5864c5854
+<         SubCategoryObject: PDA_AnimData_C
+---
+>         SubCategoryObject: PDA_AnimData
+5961c5951
+<     [VariableGet] ResolvedProperty: AnimDataAsset (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: AnimDataAsset (Owner: ABP_SoulslikeCharacter_Additive)
+5965c5955
+<         SubCategoryObject: PDA_AnimData_C
+---
+>         SubCategoryObject: PDA_AnimData
+5970c5960
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+5980c5970
+<     [VariableGet] ResolvedProperty: OneHandedWeapon_Right (Owner: PDA_AnimData_C)
+---
+>     [VariableGet] ResolvedProperty: OneHandedWeapon_Right (Owner: PDA_AnimData)
+5989c5979
+<         SubCategoryObject: PDA_AnimData_C
+---
+>         SubCategoryObject: PDA_AnimData
+6011c6001,6002
+<         LinkedTo (0):
+---
+>         LinkedTo (1):
+>           -> AnimGraphNode_LinkedInputPose_0.Pose
+6024c6015,6016
+<         LinkedTo (0):
+---
+>         LinkedTo (1):
+>           -> AnimGraphNode_Root_0.Result
+6044c6036,6037
+<         LinkedTo (0):
+---
+>         LinkedTo (1):
+>           -> AnimGraphNode_LinkedInputPose_0.Pose
+6057c6050,6051
+<         LinkedTo (0):
+---
+>         LinkedTo (1):
+>           -> AnimGraphNode_Root_0.Result
+6123c6117
+<     [VariableGet] ResolvedProperty: AnimDataAsset (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: AnimDataAsset (Owner: ABP_SoulslikeCharacter_Additive)
+6127c6121
+<         SubCategoryObject: PDA_AnimData_C
+---
+>         SubCategoryObject: PDA_AnimData
+6132c6126
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+6171c6165
+<     [VariableGet] ResolvedProperty: TwoHandedWeapon_Right (Owner: PDA_AnimData_C)
+---
+>     [VariableGet] ResolvedProperty: TwoHandedWeapon_Right (Owner: PDA_AnimData)
+6180c6174
+<         SubCategoryObject: PDA_AnimData_C
+---
+>         SubCategoryObject: PDA_AnimData
+6259c6253
+<     [VariableGet] ResolvedProperty: Speed (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: Speed (Owner: ABP_SoulslikeCharacter_Additive)
+6268c6262
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+6278c6272
+<     [VariableGet] ResolvedProperty: AnimDataAsset (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: AnimDataAsset (Owner: ABP_SoulslikeCharacter_Additive)
+6282c6276
+<         SubCategoryObject: PDA_AnimData_C
+---
+>         SubCategoryObject: PDA_AnimData
+6287c6281
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+6297c6291
+<     [VariableGet] ResolvedProperty: WalkRunLocomotion (Owner: PDA_AnimData_C)
+---
+>     [VariableGet] ResolvedProperty: WalkRunLocomotion (Owner: PDA_AnimData)
+6306c6300
+<         SubCategoryObject: PDA_AnimData_C
+---
+>         SubCategoryObject: PDA_AnimData
+6356c6350
+<     [VariableGet] ResolvedProperty: AnimDataAsset (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: AnimDataAsset (Owner: ABP_SoulslikeCharacter_Additive)
+6360c6354
+<         SubCategoryObject: PDA_AnimData_C
+---
+>         SubCategoryObject: PDA_AnimData
+6365c6359
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+6375c6369
+<     [VariableGet] ResolvedProperty: Idle (Owner: PDA_AnimData_C)
+---
+>     [VariableGet] ResolvedProperty: Idle (Owner: PDA_AnimData)
+6384c6378
+<         SubCategoryObject: PDA_AnimData_C
+---
+>         SubCategoryObject: PDA_AnimData
+6416c6410
+<     [VariableGet] ResolvedProperty: AnimDataAsset (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: AnimDataAsset (Owner: ABP_SoulslikeCharacter_Additive)
+6420c6414
+<         SubCategoryObject: PDA_AnimData_C
+---
+>         SubCategoryObject: PDA_AnimData
+6425c6419
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+6435c6429
+<     [VariableGet] ResolvedProperty: CrouchIdle (Owner: PDA_AnimData_C)
+---
+>     [VariableGet] ResolvedProperty: CrouchIdle (Owner: PDA_AnimData)
+6444c6438
+<         SubCategoryObject: PDA_AnimData_C
+---
+>         SubCategoryObject: PDA_AnimData
+6522c6516
+<     [VariableGet] ResolvedProperty: AnimDataAsset (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: AnimDataAsset (Owner: ABP_SoulslikeCharacter_Additive)
+6526c6520
+<         SubCategoryObject: PDA_AnimData_C
+---
+>         SubCategoryObject: PDA_AnimData
+6531c6525
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+6541c6535
+<     [VariableGet] ResolvedProperty: CrouchLocomotion (Owner: PDA_AnimData_C)
+---
+>     [VariableGet] ResolvedProperty: CrouchLocomotion (Owner: PDA_AnimData)
+6550c6544
+<         SubCategoryObject: PDA_AnimData_C
+---
+>         SubCategoryObject: PDA_AnimData
+6580c6574
+<     [VariableGet] ResolvedProperty: Speed (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: Speed (Owner: ABP_SoulslikeCharacter_Additive)
+6589c6583
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+6620c6614
+<     [VariableGet] ResolvedProperty: AnimDataAsset (Owner: ABP_SoulslikeCharacter_Additive_C)
+---
+>     [VariableGet] ResolvedProperty: AnimDataAsset (Owner: ABP_SoulslikeCharacter_Additive)
+6624c6618
+<         SubCategoryObject: PDA_AnimData_C
+---
+>         SubCategoryObject: PDA_AnimData
+6629c6623
+<         SubCategoryObject: ABP_SoulslikeCharacter_Additive_C
+---
+>         SubCategoryObject: ABP_SoulslikeCharacter_Additive
+6639c6633
+<     [VariableGet] ResolvedProperty: RestingIdle (Owner: PDA_AnimData_C)
+---
+>     [VariableGet] ResolvedProperty: RestingIdle (Owner: PDA_AnimData)
+6648c6642
+<         SubCategoryObject: PDA_AnimData_C
+---
+>         SubCategoryObject: PDA_AnimData
+6674,6680d6667
+<   WorldLocation : struct (GUID: 59021E9F48E0E87CACBDCCBC54A88372)
+<   WorldRotation : struct (GUID: 76D0BCE54BE8BFA0D36FA094E8B05CE0)
+<   Acceleration : struct (GUID: 668C6F9B47E0560096F1A486E36A7501)
+<   Acceleration2D : struct (GUID: B9E3A8F04F711B75B22CEC9D41A39CD0)
+<   bIsAccelerating? : bool (GUID: B20751994310D1FFC007DAA63FA2C812)
+<   Velocity : struct (GUID: BCDC8DC64A0F48D4FDDAF8A12550698E)
+<   Velocity2D : struct (GUID: 03534E8041B78E0FAACC958CEA0D083D)
+6682,6696c6669,6670
+<   Speed : real (GUID: 349A88274D14144C5368D2BD68C35836)
+<   AnimDataAsset : object (GUID: A2C23BB341504BE0496CCAA8F21882B9)
+<   GrantedTags : struct (GUID: 24F1EAF44CCAC74EA950BBB1168E92FE)
+<   bIsBlocking? : bool (GUID: 9CB7971F4B77D85604D425B72813D05E)
+<   IsCrouched : bool (GUID: C3B01AC3401882FB97D7998FBD47ACE8)
+<   bIsFalling? : bool (GUID: 2C145CB94D3F51F4CAB6C98D1DFB0FF9)
+<   IsResting? : bool (GUID: 4332B19540039392A2D69B8320D42B71)
+<   RightHandOverlayState : byte (GUID: A8484C8B44CF17BA1C6A58AEDCAAEB34)
+<   LeftHandOverlayState : byte (GUID: 4DAC9FF64FD91F6A82515DBD0BB6393E)
+<   EquipmentManager : object (GUID: 037E940740D93837D0A296874E2ACCD4)
+<   CombatManager : object (GUID: C68649D146E7CE8E0A485FA9EE6AFA15)
+<   ActionManager : object (GUID: E10616E94ADC1232AE3AB08AC7170798)
+<   ActiveGuardSequence : object (GUID: BE73419C4C0097376A5F24A8BB52EEA3)
+<   IkWeight : real (GUID: 74053C864C0FE9CAA448A2892A325822)
+<   ActiveHitNormal : struct (GUID: 0D4442B04B7DD3DDA3739BB2EDF1A70B)
+---
+>   RightHandOverlayState_0 : byte (GUID: A8484C8B44CF17BA1C6A58AEDCAAEB34)
+>   LeftHandOverlayState_0 : byte (GUID: 4DAC9FF64FD91F6A82515DBD0BB6393E)
+6701,6720c6675,6700
+< ParentClass: AnimInstance
+<   CurrentSkeleton : ObjectProperty
+<   RootMotionMode : ByteProperty
+<   bUseMultiThreadedAnimationUpdate : BoolProperty
+<   bUsingCopyPoseFromMesh : BoolProperty
+<   bReceiveNotifiesFromLinkedInstances : BoolProperty
+<   bPropagateNotifiesToLinkedInstances : BoolProperty
+<   bUseMainInstanceMontageEvaluationData : BoolProperty
+<   bQueueMontageEvents : BoolProperty
+<   OnMontageBlendingOut : MulticastInlineDelegateProperty
+<   OnMontageBlendedIn : MulticastInlineDelegateProperty
+<   OnMontageStarted : MulticastInlineDelegateProperty
+<   OnMontageEnded : MulticastInlineDelegateProperty
+<   OnAllMontageInstancesEnded : MulticastInlineDelegateProperty
+<   OnMontageSectionChanged : MulticastInlineDelegateProperty
+<   SlotGroupInertializationRequestDataMap : MapProperty
+<   PostCompileValidationClassName : StructProperty
+<   NotifyQueue : StructProperty
+<   ActiveAnimNotifyState : ArrayProperty
+<   ActiveAnimNotifyEventReference : ArrayProperty
+---
+> ParentClass: ABP_SoulslikeCharacter_Additive
+>   WorldLocation : StructProperty
+>   WorldRotation : StructProperty
+>   Acceleration : StructProperty
+>   Acceleration2D : StructProperty
+>   bIsAccelerating : BoolProperty
+>   Velocity : StructProperty
+>   Velocity2D : StructProperty
+>   Direction : DoubleProperty
+>   Speed : DoubleProperty
+>   AnimDataAsset : ObjectProperty
+>   GrantedTags : StructProperty
+>   bIsBlocking : BoolProperty
+>   IsCrouched : BoolProperty
+>   bIsFalling : BoolProperty
+>   IsResting : BoolProperty
+>   LeftHandOverlayState : EnumProperty
+>   RightHandOverlayState : EnumProperty
+>   ActiveOverlayState : EnumProperty
+>   EquipmentManager : ObjectProperty
+>   CombatManager : ObjectProperty
+>   ActionManager : ObjectProperty
+>   ActiveGuardSequence : ObjectProperty
+>   IkWeight : DoubleProperty
+>   ActiveHitNormal : StructProperty
+>   OwnerCharacter : ObjectProperty

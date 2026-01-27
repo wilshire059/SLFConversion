@@ -7,8 +7,8 @@
 
 #include "Blueprints/B_Ladder.h"
 #include "Engine/StaticMesh.h"
-#include "Components/AC_LadderManager.h"
-#include "Interfaces/SLFGenericCharacterInterface.h"
+#include "Components/LadderManagerComponent.h"
+#include "Interfaces/BPI_GenericCharacter.h"
 
 AB_Ladder::AB_Ladder()
 {
@@ -116,8 +116,10 @@ void AB_Ladder::CreateLadder_Implementation()
 	double PoleHeight = GetPoleHeight();
 	if (PoleHeight <= 0.0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("AB_Ladder::CreateLadder - PoleHeight is 0, cannot create ladder"));
-		return;
+		// Fallback: Use a default pole segment height if mesh isn't set
+		// This ensures ladder bars are still created even without a pole mesh
+		PoleHeight = LadderHeight;
+		UE_LOG(LogTemp, Warning, TEXT("AB_Ladder::CreateLadder - PoleHeight is 0 (no mesh?), using LadderHeight=%f as fallback"), LadderHeight);
 	}
 
 	// Calculate number of bars based on ladder height and bar offset
@@ -238,6 +240,31 @@ void AB_Ladder::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Log mesh status for visibility debugging
+	UE_LOG(LogTemp, Log, TEXT("[B_Ladder] BeginPlay - LadderHeight: %.2f, BarOffset: %.2f"), LadderHeight, BarOffset);
+
+	if (Barz)
+	{
+		UStaticMesh* BarzMesh = Barz->GetStaticMesh();
+		UE_LOG(LogTemp, Log, TEXT("[B_Ladder] Barz mesh: %s, InstanceCount: %d"),
+			BarzMesh ? *BarzMesh->GetName() : TEXT("NULL - BARS INVISIBLE!"),
+			Barz->GetInstanceCount());
+	}
+	if (Pole)
+	{
+		UStaticMesh* PoleMesh = Pole->GetStaticMesh();
+		UE_LOG(LogTemp, Log, TEXT("[B_Ladder] Pole mesh: %s, InstanceCount: %d"),
+			PoleMesh ? *PoleMesh->GetName() : TEXT("NULL - POLES INVISIBLE!"),
+			Pole->GetInstanceCount());
+	}
+	if (ClimbingCollision)
+	{
+		FVector Extent = ClimbingCollision->GetUnscaledBoxExtent();
+		FVector Location = ClimbingCollision->GetRelativeLocation();
+		UE_LOG(LogTemp, Log, TEXT("[B_Ladder] ClimbingCollision - Extent: (%.1f, %.1f, %.1f), Location: (%.1f, %.1f, %.1f)"),
+			Extent.X, Extent.Y, Extent.Z, Location.X, Location.Y, Location.Z);
+	}
+
 	// Bind overlap events for ladder collision zones
 	if (ClimbingCollision)
 	{
@@ -261,7 +288,7 @@ void AB_Ladder::BeginPlay()
 		TopdownCollision->OnComponentEndOverlap.AddDynamic(this, &AB_Ladder::OnTopdownCollisionEndOverlap);
 	}
 
-	UE_LOG(LogTemp, Verbose, TEXT("AB_Ladder::BeginPlay - Overlap events bound"));
+	UE_LOG(LogTemp, Log, TEXT("[B_Ladder] BeginPlay - Overlap events bound"));
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -278,7 +305,7 @@ void AB_Ladder::OnInteract_Implementation(AActor* InteractingActor)
 	}
 
 	// Check if interacting actor implements BPI_GenericCharacter interface
-	if (!InteractingActor->GetClass()->ImplementsInterface(USLFGenericCharacterInterface::StaticClass()))
+	if (!InteractingActor->GetClass()->ImplementsInterface(UBPI_GenericCharacter::StaticClass()))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[B_Ladder] InteractingActor does not implement BPI_GenericCharacter"));
 		return;
@@ -297,7 +324,8 @@ void AB_Ladder::OnInteract_Implementation(AActor* InteractingActor)
 		bIsTopdown ? TEXT("true") : TEXT("false"), DistanceToTop);
 
 	// Call TryClimbLadder on the interacting actor via interface
-	ISLFGenericCharacterInterface::Execute_TryClimbLadder(InteractingActor, this, bIsTopdown);
+	// Note: IBPI_GenericCharacter::TryClimbLadder takes AActor* for the ladder parameter
+	IBPI_GenericCharacter::Execute_TryClimbLadder(InteractingActor, this, bIsTopdown);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -313,10 +341,30 @@ void AB_Ladder::OnClimbingCollisionEndOverlap(UPrimitiveComponent* OverlappedCom
 	}
 
 	// Get ladder manager from other actor
-	UAC_LadderManager* LadderManager = OtherActor->FindComponentByClass<UAC_LadderManager>();
+	ULadderManagerComponent* LadderManager = OtherActor->FindComponentByClass<ULadderManagerComponent>();
 	if (LadderManager)
 	{
-		UE_LOG(LogTemp, Verbose, TEXT("AB_Ladder::OnClimbingCollisionEndOverlap - Setting IsClimbing=false, CurrentLadder=null"));
+		// GUARD: Check if the character is currently climbing on THIS ladder
+		// During mounting/orientation, the character may briefly exit the collision
+		// Only reset climbing if they're not actively climbing on this ladder
+		AActor* CurrentLadder = LadderManager->GetCurrentLadder();
+		bool bIsClimbing = LadderManager->GetIsClimbing();
+
+		UE_LOG(LogTemp, Log, TEXT("[B_Ladder] OnClimbingCollisionEndOverlap - Actor: %s, IsClimbing: %s, CurrentLadder: %s, ThisLadder: %s"),
+			*OtherActor->GetName(),
+			bIsClimbing ? TEXT("true") : TEXT("false"),
+			CurrentLadder ? *CurrentLadder->GetName() : TEXT("null"),
+			*GetName());
+
+		// If the character is currently climbing THIS ladder, don't reset
+		// This prevents the premature reset during mounting/orientation
+		if (bIsClimbing && CurrentLadder == this)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[B_Ladder] OnClimbingCollisionEndOverlap - GUARD: Character is actively climbing this ladder, NOT resetting"));
+			return;
+		}
+
+		UE_LOG(LogTemp, Log, TEXT("[B_Ladder] OnClimbingCollisionEndOverlap - Resetting climbing state"));
 		LadderManager->SetIsClimbing(false);
 		LadderManager->SetCurrentLadder(nullptr);
 	}
@@ -330,7 +378,7 @@ void AB_Ladder::OnBottomCollisionBeginOverlap(UPrimitiveComponent* OverlappedCom
 		return;
 	}
 
-	UAC_LadderManager* LadderManager = OtherActor->FindComponentByClass<UAC_LadderManager>();
+	ULadderManagerComponent* LadderManager = OtherActor->FindComponentByClass<ULadderManagerComponent>();
 	if (LadderManager)
 	{
 		UE_LOG(LogTemp, Verbose, TEXT("AB_Ladder::OnBottomCollisionBeginOverlap - Setting IsOnGround=true, CurrentLadder=%s"), *GetName());
@@ -347,7 +395,7 @@ void AB_Ladder::OnBottomCollisionEndOverlap(UPrimitiveComponent* OverlappedCompo
 		return;
 	}
 
-	UAC_LadderManager* LadderManager = OtherActor->FindComponentByClass<UAC_LadderManager>();
+	ULadderManagerComponent* LadderManager = OtherActor->FindComponentByClass<ULadderManagerComponent>();
 	if (LadderManager)
 	{
 		UE_LOG(LogTemp, Verbose, TEXT("AB_Ladder::OnBottomCollisionEndOverlap - Setting IsOnGround=false"));
@@ -363,7 +411,7 @@ void AB_Ladder::OnTopCollisionBeginOverlap(UPrimitiveComponent* OverlappedCompon
 		return;
 	}
 
-	UAC_LadderManager* LadderManager = OtherActor->FindComponentByClass<UAC_LadderManager>();
+	ULadderManagerComponent* LadderManager = OtherActor->FindComponentByClass<ULadderManagerComponent>();
 	if (LadderManager)
 	{
 		UE_LOG(LogTemp, Verbose, TEXT("AB_Ladder::OnTopCollisionBeginOverlap - Setting IsClimbingOffTop=true"));
@@ -379,7 +427,7 @@ void AB_Ladder::OnTopCollisionEndOverlap(UPrimitiveComponent* OverlappedComponen
 		return;
 	}
 
-	UAC_LadderManager* LadderManager = OtherActor->FindComponentByClass<UAC_LadderManager>();
+	ULadderManagerComponent* LadderManager = OtherActor->FindComponentByClass<ULadderManagerComponent>();
 	if (LadderManager)
 	{
 		UE_LOG(LogTemp, Verbose, TEXT("AB_Ladder::OnTopCollisionEndOverlap - Setting IsClimbingOffTop=false"));
@@ -395,7 +443,7 @@ void AB_Ladder::OnTopdownCollisionEndOverlap(UPrimitiveComponent* OverlappedComp
 		return;
 	}
 
-	UAC_LadderManager* LadderManager = OtherActor->FindComponentByClass<UAC_LadderManager>();
+	ULadderManagerComponent* LadderManager = OtherActor->FindComponentByClass<ULadderManagerComponent>();
 	if (LadderManager)
 	{
 		UE_LOG(LogTemp, Verbose, TEXT("AB_Ladder::OnTopdownCollisionEndOverlap - Setting IsClimbingDownFromTop=true, CurrentLadder=%s"), *GetName());

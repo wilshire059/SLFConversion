@@ -1,0 +1,53 @@
+======================================================================
+FIXING ALL SKYMANAGER SETTINGS TO MATCH BP_ONLY
+======================================================================
+
+Loading level: /Game/SoulslikeFramework/Maps/L_Demo_Showcase
+
+Loading required assets...
+  VolumetricCloud material: <Object '/Game/SoulslikeFramework/Materials/MI_VolumetricCloud.MI_VolumetricCloud' (0x0000016269535800) Class 'MaterialInstanceConstant'>
+
+Found: B_SkyManager_C_1
+
+--- FIXING ACTOR PROPERTIES ---
+  TimeDilation: 100.0
+
+--- FIXING DirectionalLight_Sun ---
+  RelativeLocation: (-1.8e-12, -50.0, 1.3e-07)
+  RelativeRotation: (-44.64, -180.0, 180.0)
+  Intensity: 4.0
+  LightColor: (255, 255, 255)
+
+--- FIXING DirectionalLight_Moon ---
+  RelativeLocation: (0.0, 50.0, 0.0)
+  RelativeRotation: (44.64, 0.0, 0.0)
+  Intensity: 1.0
+  AtmosphereSunLight: True
+  AtmosphereSunLightIndex: 1
+  ForwardShadingPriority: 1
+
+--- FIXING SkyLight ---
+  RelativeLocation: (50.0, 0.0, 0.0)
+  RealTimeCapture: True
+
+--- FIXING SkyAtmosphere ---
+  SkyLuminanceFactor: (1.0, 0.95, 0.61, 1.0)
+
+--- FIXING VolumetricCloud ---
+  LayerBottomAltitude: 0.404084
+  LayerHeight: 20.0
+  Material: MI_VolumetricCloud
+
+--- FIXING ExponentialHeightFog ---
+  StartDistance: 10000.0
+
+======================================================================
+SAVING LEVEL
+======================================================================
+Level saved!
+
+======================================================================
+ALL FIXES APPLIED
+======================================================================
+
+Results: C:/scripts/SLFConversion/migration_cache/skymanager_all_fixes.txt

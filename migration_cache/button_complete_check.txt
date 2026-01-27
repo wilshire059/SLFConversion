@@ -1,0 +1,22 @@
+Blueprint: /Game/SoulslikeFramework/Widgets/_Generic/W_GenericButton
+Blueprint Class: WidgetBlueprint
+Generated class: W_GenericButton_C
+CDO: Default__W_GenericButton_C
+
+Class Hierarchy:
+  W_GenericButton_C (/Game/SoulslikeFramework/Widgets/_Generic/W_GenericButton.W_GenericButton_C)
+
+--- Widget Tree ---
+Widget tree error: 'WidgetBlueprint' object has no attribute 'widget_tree'
+
+--- CDO Properties ---
+  button_color: (0.012, 0.012, 0.012, 0.902)
+  selected_button_color: (0.075, 0.075, 0.075, 0.902)
+  outline_color: (0.376, 0.325, 0.271, 1.000)
+  selected_outline_color: (0.859, 0.745, 0.620, 1.000)
+  outline_width: 2.0
+  outline_corner_radii: (1.0, 1.0, 1.0, 1.0)
+  text_color: SlateColor(0.859, 0.745, 0.620, 1.000)
+  text_padding: (l=8.0, t=5.0, r=8.0, b=5.0)
+  text: Text
+  selected: False

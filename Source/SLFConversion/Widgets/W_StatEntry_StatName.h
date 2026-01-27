@@ -63,11 +63,18 @@ public:
 
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (0)
+	// FUNCTIONS
 	// ═══════════════════════════════════════════════════════════════════════
 
+	// Runtime text update function
+	UFUNCTION(BlueprintCallable, Category = "StatEntry")
+	void SetStatText(const FText& InText);
 
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Cached TextBlock reference
+	UPROPERTY()
+	class UTextBlock* CachedStatNameText;
 };

@@ -1,0 +1,1893 @@
+{
+  "AnimBlueprintName": "ABP_SoulslikeEnemy",
+  "TargetSkeleton": "/Game/SoulslikeFramework/Demo/SKM/Mannequins/Meshes/SK_Mannequin.SK_Mannequin",
+  "ParentClass": "/Script/Engine.AnimInstance",
+  "Variables": [
+    {
+      "Name": "SoulslikeCharacter",
+      "Type": "object",
+      "SubCategory": "None",
+      "SubCategoryObject": "/Game/SoulslikeFramework/Blueprints/_Characters/B_Soulslike_Character.B_Soulslike_Character_C"
+    },
+    {
+      "Name": "MovementComponent",
+      "Type": "object",
+      "SubCategory": "None",
+      "SubCategoryObject": "/Script/Engine.CharacterMovementComponent"
+    },
+    {
+      "Name": "Velocity",
+      "Type": "struct",
+      "SubCategory": "None",
+      "SubCategoryObject": "/Script/CoreUObject.Vector"
+    },
+    {
+      "Name": "GroundSpeed",
+      "Type": "real",
+      "SubCategory": "double",
+      "SubCategoryObject": ""
+    },
+    {
+      "Name": "IsFalling",
+      "Type": "bool",
+      "SubCategory": "None",
+      "SubCategoryObject": ""
+    },
+    {
+      "Name": "EquipmentComponent",
+      "Type": "object",
+      "SubCategory": "None",
+      "SubCategoryObject": "/Game/SoulslikeFramework/Blueprints/Components/AC_EquipmentManager.AC_EquipmentManager_C"
+    },
+    {
+      "Name": "LocomotionType",
+      "Type": "byte",
+      "SubCategory": "None",
+      "SubCategoryObject": "/Game/SoulslikeFramework/Enums/E_OverlayState.E_OverlayState"
+    },
+    {
+      "Name": "PhysicsWeight",
+      "Type": "real",
+      "SubCategory": "float",
+      "SubCategoryObject": ""
+    },
+    {
+      "Name": "SoulslikeEnemy",
+      "Type": "object",
+      "SubCategory": "None",
+      "SubCategoryObject": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy.B_Soulslike_Enemy_C"
+    },
+    {
+      "Name": "AC AI Combat Manager",
+      "Type": "object",
+      "SubCategory": "None",
+      "SubCategoryObject": "/Game/SoulslikeFramework/Blueprints/Components/AC_AI_CombatManager.AC_AI_CombatManager_C"
+    },
+    {
+      "Name": "Hit Location",
+      "Type": "struct",
+      "SubCategory": "None",
+      "SubCategoryObject": "/Script/CoreUObject.Vector"
+    },
+    {
+      "Name": "Direction",
+      "Type": "real",
+      "SubCategory": "float",
+      "SubCategoryObject": ""
+    },
+    {
+      "Name": "PoiseBroken",
+      "Type": "bool",
+      "SubCategory": "None",
+      "SubCategoryObject": ""
+    },
+    {
+      "Name": "PoiseBreakAsset",
+      "Type": "object",
+      "SubCategory": "None",
+      "SubCategoryObject": "/Game/SoulslikeFramework/Data/_AnimationData/PDA_PoiseBreakAnimData.PDA_PoiseBreakAnimData_C"
+    }
+  ],
+  "Graphs": [
+    {
+      "GraphName": "EventGraph",
+      "GraphClass": "EdGraph",
+      "Nodes": [
+        {
+          "NodeName": "K2Node_Event_0",
+          "NodeClass": "K2Node_Event",
+          "NodeTitle": "Event Blueprint Update Animation",
+          "NodePosX": 32,
+          "NodePosY": 224,
+          "NodeGuid": "031A53D6418B77B1F8844CBE3ADEDB9C",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "OutputDelegate",
+              "PinType": "delegate",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "then",
+              "PinType": "exec",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableGet_10.execute"]
+            },
+            {
+              "PinName": "DeltaTimeX",
+              "PinType": "real",
+              "Direction": "Output",
+              "DefaultValue": "0.0",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_Event_1",
+          "NodeClass": "K2Node_Event",
+          "NodeTitle": "Event Blueprint Initialize Animation",
+          "NodePosX": 0,
+          "NodePosY": -768,
+          "NodeGuid": "70CFD99742B84E5088EC409E9F345CE8",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "OutputDelegate",
+              "PinType": "delegate",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "then",
+              "PinType": "exec",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_DynamicCast_1.execute"]
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_CallFunction_3",
+          "NodeClass": "K2Node_CallFunction",
+          "NodeTitle": "Get Owning Actor\nTarget is Anim Instance",
+          "NodePosX": 0,
+          "NodePosY": -640,
+          "NodeGuid": "5717CAF54BCAC2D24DCC968C453F6998",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "ReturnValue",
+              "PinType": "object",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_DynamicCast_1.Object"]
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableGet_2",
+          "NodeClass": "K2Node_VariableGet",
+          "NodeTitle": "Get CharacterMovement",
+          "NodePosX": 896,
+          "NodePosY": -688,
+          "NodeGuid": "C13C0B5B41288E979939119F35CECDD7",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "CharacterMovement",
+              "PinType": "object",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_11.MovementComponent"]
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_7.Output_Get"]
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableSet_11",
+          "NodeClass": "K2Node_VariableSet",
+          "NodeTitle": "Set MovementComponent",
+          "NodePosX": 1200,
+          "NodePosY": -752,
+          "NodeGuid": "BB6E37E4425A3D430168B69E2123847D",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "execute",
+              "PinType": "exec",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_7.then"]
+            },
+            {
+              "PinName": "then",
+              "PinType": "exec",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_8.execute"]
+            },
+            {
+              "PinName": "MovementComponent",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableGet_2.CharacterMovement"]
+            },
+            {
+              "PinName": "Output_Get",
+              "PinType": "object",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_ExecutionSequence_0",
+          "NodeClass": "K2Node_ExecutionSequence",
+          "NodeTitle": "Sequence",
+          "NodePosX": 1024,
+          "NodePosY": 224,
+          "NodeGuid": "36A5B68B48C153650E24BC8587A2B546",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "execute",
+              "PinType": "exec",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableGet_10.then"]
+            },
+            {
+              "PinName": "then_0",
+              "PinType": "exec",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_3.execute"]
+            },
+            {
+              "PinName": "then_1",
+              "PinType": "exec",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableGet_12.execute"]
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableSet_3",
+          "NodeClass": "K2Node_VariableSet",
+          "NodeTitle": "Set Velocity",
+          "NodePosX": 1408,
+          "NodePosY": -128,
+          "NodeGuid": "C8ED320645971DECB29430BB3F6D60E6",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "execute",
+              "PinType": "exec",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_ExecutionSequence_0.then_0"]
+            },
+            {
+              "PinName": "then",
+              "PinType": "exec",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_4.execute"]
+            },
+            {
+              "PinName": "Velocity",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "0, 0, 0",
+              "LinkedTo": ["K2Node_VariableGet_4.Velocity"]
+            },
+            {
+              "PinName": "Output_Get",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "0, 0, 0",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableGet_6",
+          "NodeClass": "K2Node_VariableGet",
+          "NodeTitle": "Get MovementComponent",
+          "NodePosX": 1408,
+          "NodePosY": -16,
+          "NodeGuid": "6470F141488BB538FA897CB74B5745DB",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "MovementComponent",
+              "PinType": "object",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableGet_4.self"]
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableGet_4",
+          "NodeClass": "K2Node_VariableGet",
+          "NodeTitle": "Get Velocity",
+          "NodePosX": 1408,
+          "NodePosY": -48,
+          "NodeGuid": "FE58B8B947DA8711221AE495E7A91AFD",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "Velocity",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "0, 0, 0",
+              "LinkedTo": ["K2Node_VariableSet_3.Velocity"]
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableGet_6.MovementComponent"]
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_CallFunction_5",
+          "NodeClass": "K2Node_CallFunction",
+          "NodeTitle": "Vector Length XY",
+          "NodePosX": 1664,
+          "NodePosY": -48,
+          "NodeGuid": "0EDB4B694CF871AC7802F88C37B71A98",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "A",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "0, 0, 0",
+              "LinkedTo": ["K2Node_VariableGet_0.Velocity"]
+            },
+            {
+              "PinName": "ReturnValue",
+              "PinType": "real",
+              "Direction": "Output",
+              "DefaultValue": "0.0",
+              "LinkedTo": ["K2Node_VariableSet_4.GroundSpeed"]
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableSet_4",
+          "NodeClass": "K2Node_VariableSet",
+          "NodeTitle": "Set GroundSpeed",
+          "NodePosX": 1664,
+          "NodePosY": -128,
+          "NodeGuid": "4F4E406C4B72A17AB26B6FA0A1BEED0E",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "execute",
+              "PinType": "exec",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_3.then"]
+            },
+            {
+              "PinName": "then",
+              "PinType": "exec",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_6.execute"]
+            },
+            {
+              "PinName": "GroundSpeed",
+              "PinType": "real",
+              "Direction": "Input",
+              "DefaultValue": "0.0",
+              "LinkedTo": ["K2Node_CallFunction_5.ReturnValue"]
+            },
+            {
+              "PinName": "Output_Get",
+              "PinType": "real",
+              "Direction": "Output",
+              "DefaultValue": "0.0",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableSet_6",
+          "NodeClass": "K2Node_VariableSet",
+          "NodeTitle": "Set IsFalling",
+          "NodePosX": 1920,
+          "NodePosY": -128,
+          "NodeGuid": "C07AF13E45E0C064F85903A90A5CC713",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "execute",
+              "PinType": "exec",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_4.then"]
+            },
+            {
+              "PinName": "then",
+              "PinType": "exec",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_1.execute"]
+            },
+            {
+              "PinName": "IsFalling",
+              "PinType": "bool",
+              "Direction": "Input",
+              "DefaultValue": "false",
+              "LinkedTo": ["K2Node_CallFunction_7.ReturnValue"]
+            },
+            {
+              "PinName": "Output_Get",
+              "PinType": "bool",
+              "Direction": "Output",
+              "DefaultValue": "false",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableGet_3",
+          "NodeClass": "K2Node_VariableGet",
+          "NodeTitle": "Get MovementComponent",
+          "NodePosX": 1920,
+          "NodePosY": 32,
+          "NodeGuid": "BE770B984FDEE9761C45749B0012328C",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "MovementComponent",
+              "PinType": "object",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_CallFunction_7.self"]
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_CallFunction_7",
+          "NodeClass": "K2Node_CallFunction",
+          "NodeTitle": "Is Falling\nTarget is Nav Movement Component",
+          "NodePosX": 1920,
+          "NodePosY": -48,
+          "NodeGuid": "CC51205B4E25A5EEE17F968D7DC66C1B",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableGet_3.MovementComponent"]
+            },
+            {
+              "PinName": "ReturnValue",
+              "PinType": "bool",
+              "Direction": "Output",
+              "DefaultValue": "false",
+              "LinkedTo": ["K2Node_VariableSet_6.IsFalling"]
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableGet_0",
+          "NodeClass": "K2Node_VariableGet",
+          "NodeTitle": "Get Velocity",
+          "NodePosX": 1664,
+          "NodePosY": 16,
+          "NodeGuid": "D962BEB34AC8432BBFDC31B50B50B5C2",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "Velocity",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "0, 0, 0",
+              "LinkedTo": ["K2Node_CallFunction_5.A"]
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "EdGraphNode_Comment_5",
+          "NodeClass": "EdGraphNode_Comment",
+          "NodeTitle": "Velocity, Speed, bFalling & bShouldMove?",
+          "NodePosX": 1344,
+          "NodePosY": -192,
+          "NodeGuid": "DA98A9CF4426FAC1AE1266A0FBD56C2F",
+          "Properties": {
+            "NodeComment": "Velocity, Speed, bFalling & bShouldMove?"
+          },
+          "Pins": [
+
+          ]
+        },
+        {
+          "NodeName": "K2Node_DynamicCast_1",
+          "NodeClass": "K2Node_DynamicCast",
+          "NodeTitle": "Cast To B_Soulslike_Enemy",
+          "NodePosX": 368,
+          "NodePosY": -768,
+          "NodeGuid": "7C73CD3542323313739994AEEE068231",
+          "Properties": {
+            "TargetType": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy.B_Soulslike_Enemy_C"
+          },
+          "Pins": [
+            {
+              "PinName": "execute",
+              "PinType": "exec",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_Event_1.then"]
+            },
+            {
+              "PinName": "then",
+              "PinType": "exec",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_7.execute"]
+            },
+            {
+              "PinName": "CastFailed",
+              "PinType": "exec",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "Object",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_CallFunction_3.ReturnValue"]
+            },
+            {
+              "PinName": "AsSoulslike Enemy",
+              "PinType": "object",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_7.SoulslikeEnemy"]
+            },
+            {
+              "PinName": "bSuccess",
+              "PinType": "bool",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableSet_7",
+          "NodeClass": "K2Node_VariableSet",
+          "NodeTitle": "Set SoulslikeEnemy",
+          "NodePosX": 640,
+          "NodePosY": -752,
+          "NodeGuid": "C4A83E5F4AD7DE7A731FE0BE98DA03FA",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "execute",
+              "PinType": "exec",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_DynamicCast_1.then"]
+            },
+            {
+              "PinName": "then",
+              "PinType": "exec",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_11.execute"]
+            },
+            {
+              "PinName": "SoulslikeEnemy",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_DynamicCast_1.AsSoulslike Enemy"]
+            },
+            {
+              "PinName": "Output_Get",
+              "PinType": "object",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableGet_2.self", "K2Node_VariableGet_11.self"]
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableGet_10",
+          "NodeClass": "K2Node_VariableGet",
+          "NodeTitle": "Get",
+          "NodePosX": 384,
+          "NodePosY": 224,
+          "NodeGuid": "0411155C47FDBA9B031B78875D010E37",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "execute",
+              "PinType": "exec",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_Event_0.then"]
+            },
+            {
+              "PinName": "then",
+              "PinType": "exec",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_ExecutionSequence_0.execute"]
+            },
+            {
+              "PinName": "else",
+              "PinType": "exec",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "SoulslikeEnemy",
+              "PinType": "object",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableGet_11",
+          "NodeClass": "K2Node_VariableGet",
+          "NodeTitle": "Get AC_AI_CombatManager",
+          "NodePosX": 896,
+          "NodePosY": -624,
+          "NodeGuid": "60AF04854ADA66C298B311B4579C9AC0",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "AC_AI_CombatManager",
+              "PinType": "object",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_8.AC AI Combat Manager"]
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_7.Output_Get"]
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableSet_8",
+          "NodeClass": "K2Node_VariableSet",
+          "NodeTitle": "Set AC AI Combat Manager",
+          "NodePosX": 1536,
+          "NodePosY": -752,
+          "NodeGuid": "2F1CD1AD449CFF3FE0D29EBF3691CF3F",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "execute",
+              "PinType": "exec",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_11.then"]
+            },
+            {
+              "PinName": "then",
+              "PinType": "exec",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_MacroInstance_0.exec"]
+            },
+            {
+              "PinName": "AC AI Combat Manager",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableGet_11.AC_AI_CombatManager"]
+            },
+            {
+              "PinName": "Output_Get",
+              "PinType": "object",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_MacroInstance_0.InputObject", "K2Node_VariableGet_9.self"]
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableGet_12",
+          "NodeClass": "K2Node_VariableGet",
+          "NodeTitle": "Get",
+          "NodePosX": 1408,
+          "NodePosY": 560,
+          "NodeGuid": "8148A9ED49E0648FF51ED49048DE2FA3",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "execute",
+              "PinType": "exec",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_ExecutionSequence_0.then_1"]
+            },
+            {
+              "PinName": "then",
+              "PinType": "exec",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_0.execute"]
+            },
+            {
+              "PinName": "else",
+              "PinType": "exec",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "AC AI Combat Manager",
+              "PinType": "object",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableGet_13.self", "K2Node_VariableGet_15.self", "K2Node_VariableGet_16.self"]
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableGet_13",
+          "NodeClass": "K2Node_VariableGet",
+          "NodeTitle": "Get CurrentHitNormal",
+          "NodePosX": 1664,
+          "NodePosY": 647,
+          "NodeGuid": "17D8B9DB43E90F9A2AE762925D0B6149",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "CurrentHitNormal",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "0, 0, 0",
+              "LinkedTo": ["K2Node_VariableSet_10.Hit Location"]
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableGet_12.AC AI Combat Manager"]
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableSet_10",
+          "NodeClass": "K2Node_VariableSet",
+          "NodeTitle": "Set Hit Location",
+          "NodePosX": 2176,
+          "NodePosY": 576,
+          "NodeGuid": "0AB9ECEA4470C007C6B519A1A9A6F5E8",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "execute",
+              "PinType": "exec",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_0.then"]
+            },
+            {
+              "PinName": "then",
+              "PinType": "exec",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_2.execute"]
+            },
+            {
+              "PinName": "Hit Location",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "0, 0, 0",
+              "LinkedTo": ["K2Node_VariableGet_13.CurrentHitNormal"]
+            },
+            {
+              "PinName": "Output_Get",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "0, 0, 0",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_CallFunction_0",
+          "NodeClass": "K2Node_CallFunction",
+          "NodeTitle": "Calculate Direction",
+          "NodePosX": 1952,
+          "NodePosY": 144,
+          "NodeGuid": "07FB6E2A4F6EEDD5EE8C0BA9C0CB8D2D",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "Velocity",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "0, 0, 0",
+              "LinkedTo": ["K2Node_VariableGet_8.Velocity"]
+            },
+            {
+              "PinName": "BaseRotation",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "0, 0, 0",
+              "LinkedTo": ["K2Node_CallFunction_1.ReturnValue"]
+            },
+            {
+              "PinName": "ReturnValue",
+              "PinType": "real",
+              "Direction": "Output",
+              "DefaultValue": "0.0",
+              "LinkedTo": ["K2Node_VariableSet_1.Direction"]
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableGet_8",
+          "NodeClass": "K2Node_VariableGet",
+          "NodeTitle": "Get Velocity",
+          "NodePosX": 1952,
+          "NodePosY": 112,
+          "NodeGuid": "D81A5D474D35BCE63795EEA20C6361C3",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "Velocity",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "0, 0, 0",
+              "LinkedTo": ["K2Node_CallFunction_0.Velocity"]
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableGet_1",
+          "NodeClass": "K2Node_VariableGet",
+          "NodeTitle": "Get SoulslikeEnemy",
+          "NodePosX": 1728,
+          "NodePosY": 128,
+          "NodeGuid": "23EE23AA4D954F9C774A859C52AB2B61",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "SoulslikeEnemy",
+              "PinType": "object",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_CallFunction_1.self"]
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_CallFunction_1",
+          "NodeClass": "K2Node_CallFunction",
+          "NodeTitle": "Get Actor Rotation\nTarget is Actor",
+          "NodePosX": 1728,
+          "NodePosY": 160,
+          "NodeGuid": "58349C6A4F3898AE8E2FE880BD9C127E",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableGet_1.SoulslikeEnemy"]
+            },
+            {
+              "PinName": "ReturnValue",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "0, 0, 0",
+              "LinkedTo": ["K2Node_CallFunction_0.BaseRotation"]
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableSet_1",
+          "NodeClass": "K2Node_VariableSet",
+          "NodeTitle": "Set Direction",
+          "NodePosX": 2256,
+          "NodePosY": -128,
+          "NodeGuid": "502841AF4C62BC586B9103955FE0B0B2",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "execute",
+              "PinType": "exec",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_6.then"]
+            },
+            {
+              "PinName": "then",
+              "PinType": "exec",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "Direction",
+              "PinType": "real",
+              "Direction": "Input",
+              "DefaultValue": "0.0",
+              "LinkedTo": ["K2Node_CallFunction_0.ReturnValue"]
+            },
+            {
+              "PinName": "Output_Get",
+              "PinType": "real",
+              "Direction": "Output",
+              "DefaultValue": "0.0",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableGet_15",
+          "NodeClass": "K2Node_VariableGet",
+          "NodeTitle": "Get PoiseBroken",
+          "NodePosX": 1664,
+          "NodePosY": 688,
+          "NodeGuid": "B344B0BF4015658A9626AEA60E409F89",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "PoiseBroken",
+              "PinType": "bool",
+              "Direction": "Output",
+              "DefaultValue": "false",
+              "LinkedTo": ["K2Node_VariableSet_2.PoiseBroken"]
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableGet_12.AC AI Combat Manager"]
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableSet_2",
+          "NodeClass": "K2Node_VariableSet",
+          "NodeTitle": "Set PoiseBroken",
+          "NodePosX": 2432,
+          "NodePosY": 576,
+          "NodeGuid": "F59CA5FF4BDF544AE204DC8BF00FE67E",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "execute",
+              "PinType": "exec",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_10.then"]
+            },
+            {
+              "PinName": "then",
+              "PinType": "exec",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "PoiseBroken",
+              "PinType": "bool",
+              "Direction": "Input",
+              "DefaultValue": "false",
+              "LinkedTo": ["K2Node_VariableGet_15.PoiseBroken"]
+            },
+            {
+              "PinName": "Output_Get",
+              "PinType": "bool",
+              "Direction": "Output",
+              "DefaultValue": "false",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableSet_0",
+          "NodeClass": "K2Node_VariableSet",
+          "NodeTitle": "Set PhysicsWeight",
+          "NodePosX": 1920,
+          "NodePosY": 576,
+          "NodeGuid": "9741F5AA45883175BFF58B81E8CD825A",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "execute",
+              "PinType": "exec",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableGet_12.then"]
+            },
+            {
+              "PinName": "then",
+              "PinType": "exec",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_10.execute"]
+            },
+            {
+              "PinName": "PhysicsWeight",
+              "PinType": "real",
+              "Direction": "Input",
+              "DefaultValue": "0.0",
+              "LinkedTo": ["K2Node_VariableGet_16.IkWeight"]
+            },
+            {
+              "PinName": "Output_Get",
+              "PinType": "real",
+              "Direction": "Output",
+              "DefaultValue": "0.0",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableGet_16",
+          "NodeClass": "K2Node_VariableGet",
+          "NodeTitle": "Get IkWeight",
+          "NodePosX": 1664,
+          "NodePosY": 608,
+          "NodeGuid": "333556E9489F726A47AFFC9803CCF527",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "IkWeight",
+              "PinType": "real",
+              "Direction": "Output",
+              "DefaultValue": "0.0",
+              "LinkedTo": ["K2Node_VariableSet_0.PhysicsWeight"]
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableGet_12.AC AI Combat Manager"]
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_MacroInstance_0",
+          "NodeClass": "K2Node_MacroInstance",
+          "NodeTitle": "Is Valid",
+          "NodePosX": 1792,
+          "NodePosY": -768,
+          "NodeGuid": "A8A76A094423217A95AD2E86BF7B6F22",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "exec",
+              "PinType": "exec",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_8.then"]
+            },
+            {
+              "PinName": "InputObject",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_8.Output_Get"]
+            },
+            {
+              "PinName": "Is Valid",
+              "PinType": "exec",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_9.execute"]
+            },
+            {
+              "PinName": "Is Not Valid",
+              "PinType": "exec",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableGet_9",
+          "NodeClass": "K2Node_VariableGet",
+          "NodeTitle": "Get PoiseBreakAsset",
+          "NodePosX": 1792,
+          "NodePosY": -640,
+          "NodeGuid": "EBC8421C418B55CFFB4AB59A4CAE9BCA",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "PoiseBreakAsset",
+              "PinType": "object",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_9.PoiseBreakAsset"]
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableSet_8.Output_Get"]
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableSet_9",
+          "NodeClass": "K2Node_VariableSet",
+          "NodeTitle": "Set PoiseBreakAsset",
+          "NodePosX": 2176,
+          "NodePosY": -752,
+          "NodeGuid": "AA93AD08430407F16B82EE9D8E18E6E9",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "execute",
+              "PinType": "exec",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_MacroInstance_0.Is Valid"]
+            },
+            {
+              "PinName": "then",
+              "PinType": "exec",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "PoiseBreakAsset",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableGet_9.PoiseBreakAsset"]
+            },
+            {
+              "PinName": "Output_Get",
+              "PinType": "object",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "GraphName": "AnimGraph",
+      "GraphClass": "AnimationGraph",
+      "Nodes": [
+        {
+          "NodeName": "AnimGraphNode_Root_0",
+          "NodeClass": "AnimGraphNode_Root",
+          "NodeTitle": "Output Pose\nAnimGraph",
+          "NodePosX": 208,
+          "NodePosY": -48,
+          "NodeGuid": "F523124D4FFCE352C7A62F9E9B1CFF02",
+          "Properties": {
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeEnemy.ABP_SoulslikeEnemy:AnimGraph.AnimGraphNode_Root_0.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Result",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "(LinkID=-1,SourceLinkID=-1)",
+              "LinkedTo": ["AnimGraphNode_IKRig_0.Pose"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_StateMachine_0",
+          "NodeClass": "AnimGraphNode_StateMachine",
+          "NodeTitle": "Locomotion\nState Machine",
+          "NodePosX": -1408,
+          "NodePosY": -160,
+          "NodeGuid": "B0FFFEBC4C1BED7B744C248DB5D01882",
+          "Properties": {
+            "EditorStateMachineGraph": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeEnemy.ABP_SoulslikeEnemy:AnimGraph.AnimGraphNode_StateMachine_0.Locomotion",
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeEnemy.ABP_SoulslikeEnemy:AnimGraph.AnimGraphNode_StateMachine_0.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_SaveCachedPose_0.Pose"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_SaveCachedPose_0",
+          "NodeClass": "AnimGraphNode_SaveCachedPose",
+          "NodeTitle": "Save cached pose 'Locomotion'",
+          "NodePosX": -1232,
+          "NodePosY": -144,
+          "NodeGuid": "1F34BA384F3F4FEE91A6D2BDB6A23254",
+          "Properties": {
+            "CacheName": "Locomotion",
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeEnemy.ABP_SoulslikeEnemy:AnimGraph.AnimGraphNode_SaveCachedPose_0.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "(LinkID=-1,SourceLinkID=-1)",
+              "LinkedTo": ["AnimGraphNode_StateMachine_0.Pose"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_Slot_0",
+          "NodeClass": "AnimGraphNode_Slot",
+          "NodeTitle": "Slot 'DefaultSlot'\nGroup 'DefaultGroup'",
+          "NodePosX": -768,
+          "NodePosY": 0,
+          "NodeGuid": "5C15D1CD46C6649DD4F60F88EFD5B60D",
+          "Properties": {
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeEnemy.ABP_SoulslikeEnemy:AnimGraph.AnimGraphNode_Slot_0.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Source",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "(LinkID=-1,SourceLinkID=-1)",
+              "LinkedTo": ["AnimGraphNode_BlendListByBool_0.Pose"]
+            },
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_ControlRig_1.Source"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_ControlRig_1",
+          "NodeClass": "AnimGraphNode_ControlRig",
+          "NodeTitle": "Control Rig",
+          "NodePosX": -512,
+          "NodePosY": 17,
+          "NodeGuid": "B0F6C1C44E6DB17A49AB04A7E5B911FB",
+          "Properties": {
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeEnemy.ABP_SoulslikeEnemy:AnimGraph.AnimGraphNode_ControlRig_1.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Source",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "(LinkID=-1,SourceLinkID=-1)",
+              "LinkedTo": ["AnimGraphNode_Slot_0.Pose"]
+            },
+            {
+              "PinName": "Alpha",
+              "PinType": "real",
+              "Direction": "Input",
+              "DefaultValue": "1.000000",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "bAlphaBoolEnabled",
+              "PinType": "bool",
+              "Direction": "Input",
+              "DefaultValue": "True",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "AlphaCurveName",
+              "PinType": "name",
+              "Direction": "Input",
+              "DefaultValue": "None",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_IKRig_0.Source"]
+            },
+            {
+              "PinName": "ShouldDoIKTrace",
+              "PinType": "bool",
+              "Direction": "Input",
+              "DefaultValue": "true",
+              "LinkedTo": ["K2Node_CallFunction_0.ReturnValue"]
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableGet_7",
+          "NodeClass": "K2Node_VariableGet",
+          "NodeTitle": "Get IsFalling",
+          "NodePosX": -512,
+          "NodePosY": 176,
+          "NodeGuid": "84ED811F45CAF7A2B308A3B8B9E4F7D2",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "IsFalling",
+              "PinType": "bool",
+              "Direction": "Output",
+              "DefaultValue": "false",
+              "LinkedTo": ["K2Node_CallFunction_0.A"]
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_CallFunction_0",
+          "NodeClass": "K2Node_CallFunction",
+          "NodeTitle": "NOT Boolean",
+          "NodePosX": -512,
+          "NodePosY": 144,
+          "NodeGuid": "A4F6138D46D4CD01A9436CA83C3E84E9",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "A",
+              "PinType": "bool",
+              "Direction": "Input",
+              "DefaultValue": "false",
+              "LinkedTo": ["K2Node_VariableGet_7.IsFalling"]
+            },
+            {
+              "PinName": "ReturnValue",
+              "PinType": "bool",
+              "Direction": "Output",
+              "DefaultValue": "false",
+              "LinkedTo": ["AnimGraphNode_ControlRig_1.ShouldDoIKTrace"]
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableGet_6",
+          "NodeClass": "K2Node_VariableGet",
+          "NodeTitle": "Get PhysicsWeight",
+          "NodePosX": -128,
+          "NodePosY": -16,
+          "NodeGuid": "619894014435CEAEA0D6FE8C0AC67B4D",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "PhysicsWeight",
+              "PinType": "real",
+              "Direction": "Output",
+              "DefaultValue": "0.0",
+              "LinkedTo": ["AnimGraphNode_IKRig_0.Alpha"]
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_IKRig_0",
+          "NodeClass": "AnimGraphNode_IKRig",
+          "NodeTitle": "IK Rig",
+          "NodePosX": -128,
+          "NodePosY": 16,
+          "NodeGuid": "5348183D484D38E5490106AE3002C32C",
+          "Properties": {
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeEnemy.ABP_SoulslikeEnemy:AnimGraph.AnimGraphNode_IKRig_0.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Source",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "(LinkID=-1,SourceLinkID=-1)",
+              "LinkedTo": ["AnimGraphNode_ControlRig_1.Pose"]
+            },
+            {
+              "PinName": "bAlphaBoolEnabled",
+              "PinType": "bool",
+              "Direction": "Input",
+              "DefaultValue": "True",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "Alpha",
+              "PinType": "real",
+              "Direction": "Input",
+              "DefaultValue": "1.000000",
+              "LinkedTo": ["K2Node_VariableGet_6.PhysicsWeight"]
+            },
+            {
+              "PinName": "AlphaCurveName",
+              "PinType": "name",
+              "Direction": "Input",
+              "DefaultValue": "None",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_Root_0.Result"]
+            },
+            {
+              "PinName": "Position_spine_05_Goal",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "0.000000,20.000000,0.000000",
+              "LinkedTo": ["K2Node_PromotableOperator_0.ReturnValue"]
+            },
+            {
+              "PinName": "PositionAlpha_spine_05_Goal",
+              "PinType": "real",
+              "Direction": "Input",
+              "DefaultValue": "1.000000",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableGet_3",
+          "NodeClass": "K2Node_VariableGet",
+          "NodeTitle": "Get Hit Location",
+          "NodePosX": -512,
+          "NodePosY": 240,
+          "NodeGuid": "28AA66504B7C7CC9C23E2287ECCB262A",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "Hit Location",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "0, 0, 0",
+              "LinkedTo": ["K2Node_PromotableOperator_0.A"]
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_PromotableOperator_0",
+          "NodeClass": "K2Node_PromotableOperator",
+          "NodeTitle": "vector * vector",
+          "NodePosX": -512,
+          "NodePosY": 272,
+          "NodeGuid": "1AC0F7C843748E98631FCEB4B44F531F",
+          "Properties": {
+            "OperationName": "Multiply"
+          },
+          "Pins": [
+            {
+              "PinName": "A",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": ["K2Node_VariableGet_3.Hit Location"]
+            },
+            {
+              "PinName": "B",
+              "PinType": "real",
+              "Direction": "Input",
+              "DefaultValue": "15.000000",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "ReturnValue",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_IKRig_0.Position_spine_05_Goal"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_StateMachine_2",
+          "NodeClass": "AnimGraphNode_StateMachine",
+          "NodeTitle": "Poise Broken\nState Machine",
+          "NodePosX": -1280,
+          "NodePosY": 0,
+          "NodeGuid": "A7CB9609447F02ABABEB34969DA67169",
+          "Properties": {
+            "EditorStateMachineGraph": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeEnemy.ABP_SoulslikeEnemy:AnimGraph.AnimGraphNode_StateMachine_2.Poise Broken",
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeEnemy.ABP_SoulslikeEnemy:AnimGraph.AnimGraphNode_StateMachine_2.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_BlendListByBool_0.BlendPose_0"]
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_BlendListByBool_0",
+          "NodeClass": "AnimGraphNode_BlendListByBool",
+          "NodeTitle": "Blend Poses by bool",
+          "NodePosX": -1024,
+          "NodePosY": 16,
+          "NodeGuid": "5549C7584EC3F141D76A1A8FB4D17FFE",
+          "Properties": {
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeEnemy.ABP_SoulslikeEnemy:AnimGraph.AnimGraphNode_BlendListByBool_0.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "BlendPose_0",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "(LinkID=-1,SourceLinkID=-1)",
+              "LinkedTo": ["AnimGraphNode_StateMachine_2.Pose"]
+            },
+            {
+              "PinName": "BlendPose_1",
+              "PinType": "struct",
+              "Direction": "Input",
+              "DefaultValue": "(LinkID=-1,SourceLinkID=-1)",
+              "LinkedTo": ["AnimGraphNode_UseCachedPose_0.Pose"]
+            },
+            {
+              "PinName": "BlendTime_0",
+              "PinType": "real",
+              "Direction": "Input",
+              "DefaultValue": "0.200000",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "BlendTime_1",
+              "PinType": "real",
+              "Direction": "Input",
+              "DefaultValue": "0.500000",
+              "LinkedTo": []
+            },
+            {
+              "PinName": "bActiveValue",
+              "PinType": "bool",
+              "Direction": "Input",
+              "DefaultValue": "False",
+              "LinkedTo": ["K2Node_VariableGet_4.PoiseBroken"]
+            },
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_Slot_0.Source"]
+            }
+          ]
+        },
+        {
+          "NodeName": "K2Node_VariableGet_4",
+          "NodeClass": "K2Node_VariableGet",
+          "NodeTitle": "Get PoiseBroken",
+          "NodePosX": -1024,
+          "NodePosY": 224,
+          "NodeGuid": "A639609942932BC76AD830A87CABB332",
+          "Properties": {
+
+          },
+          "Pins": [
+            {
+              "PinName": "PoiseBroken",
+              "PinType": "bool",
+              "Direction": "Output",
+              "DefaultValue": "false",
+              "LinkedTo": ["AnimGraphNode_BlendListByBool_0.bActiveValue"]
+            },
+            {
+              "PinName": "self",
+              "PinType": "object",
+              "Direction": "Input",
+              "DefaultValue": "",
+              "LinkedTo": []
+            }
+          ]
+        },
+        {
+          "NodeName": "AnimGraphNode_UseCachedPose_0",
+          "NodeClass": "AnimGraphNode_UseCachedPose",
+          "NodeTitle": "Use cached pose 'Locomotion'",
+          "NodePosX": -1280,
+          "NodePosY": 128,
+          "NodeGuid": "04D28B6F4A74F17DA604FBA4AC5C20AE",
+          "Properties": {
+            "NameOfCache": "Locomotion",
+            "Binding": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeEnemy.ABP_SoulslikeEnemy:AnimGraph.AnimGraphNode_UseCachedPose_0.AnimGraphNodeBinding_Base_0"
+          },
+          "Pins": [
+            {
+              "PinName": "Pose",
+              "PinType": "struct",
+              "Direction": "Output",
+              "DefaultValue": "",
+              "LinkedTo": ["AnimGraphNode_BlendListByBool_0.BlendPose_1"]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

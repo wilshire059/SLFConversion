@@ -13,11 +13,13 @@
 #include "SLFEnums.h"
 #include "Engine/DataTable.h"
 #include "GameFramework/Character.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "TimerManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/StatManagerComponent.h"
 #include "Components/StatusEffectManagerComponent.h"
+#include "Components/SLFAIStateMachineComponent.h"
 #include "Interfaces/BPI_GenericCharacter.h"
 #include "Interfaces/BPI_Enemy.h"
 #include "Interfaces/BPI_ExecutionIndicator.h"
@@ -31,6 +33,8 @@
 #include "SLFPrimaryDataAssets.h"
 #include "Animation/AnimMontage.h"
 #include "AC_CombatManager.h"
+#include "Blueprints/BFL_Helper.h"
+#include "Components/AIBossComponent.h"
 
 UAICombatManagerComponent::UAICombatManagerComponent()
 {
@@ -42,6 +46,7 @@ UAICombatManagerComponent::UAICombatManagerComponent()
 	bHyperArmor = false;
 	bInvincible = false;
 	bHealthbarActive = false;
+	bHasBeenRespawned = false;
 
 	// Initialize healthbar config
 	bUseWorldHealthbar = true;
@@ -84,7 +89,7 @@ UAICombatManagerComponent::UAICombatManagerComponent()
 	HitStopDuration = 0.1f;
 	bCanBePushed = true;
 	bRagdollOnDeath = true;
-	CurrencyReward = 100;
+	CurrencyReward = 999;  // Increased for testing
 
 	// Initialize damage/combat runtime
 	DamagingActor = nullptr;
@@ -146,6 +151,15 @@ void UAICombatManagerComponent::BeginPlay()
 	if (AActor* Owner = GetOwner())
 	{
 		Mesh = Owner->FindComponentByClass<USkeletalMeshComponent>();
+
+		// Store spawn transform for respawn-on-rest
+		// Only store on FIRST spawn, not on respawn
+		if (!bHasBeenRespawned)
+		{
+			SpawnTransform = Owner->GetActorTransform();
+			UE_LOG(LogTemp, Log, TEXT("[AICombatManager] Stored SpawnTransform at %s"),
+				*SpawnTransform.GetLocation().ToString());
+		}
 	}
 
 	// Bind to stat updates
@@ -167,8 +181,27 @@ void UAICombatManagerComponent::HandleIncomingWeaponDamage_AI_Implementation(
 	DamagingActor = DamageCauser;
 	CurrentHitNormal = HitResult.ImpactNormal;
 
-	// Apply damage to health and poise stats
+	// CRITICAL: Tell AI State Machine to target the attacker and enter combat
+	// This is how enemies react when attacked from behind (they couldn't see the attacker)
 	AActor* Owner = GetOwner();
+	if (Owner && DamageCauser)
+	{
+		if (USLFAIStateMachineComponent* AIStateMachine = Owner->FindComponentByClass<USLFAIStateMachineComponent>())
+		{
+			// Only set target if not already in combat with someone
+			// GetCurrentTarget() returns nullptr if no target
+			AActor* ExistingTarget = AIStateMachine->GetCurrentTarget();
+			if (!IsValid(ExistingTarget) || AIStateMachine->GetCurrentState() == ESLFAIState::Idle)
+			{
+				AIStateMachine->SetTarget(DamageCauser);
+				AIStateMachine->SetState(ESLFAIState::Combat);
+				UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] *** ATTACKED FROM BLIND SPOT *** Setting attacker %s as target!"),
+					*DamageCauser->GetName());
+			}
+		}
+	}
+
+	// Apply damage to health and poise stats
 	bool bJustBrokePoise = false;  // Track if poise just broke THIS hit
 
 	if (Owner && Owner->GetClass()->ImplementsInterface(UBPI_GenericCharacter::StaticClass()))
@@ -227,20 +260,50 @@ void UAICombatManagerComponent::HandleIncomingWeaponDamage_AI_Implementation(
 			// Update healthbar via interface
 			if (Owner->GetClass()->ImplementsInterface(UBPI_Enemy::StaticClass()))
 			{
-				// Show healthbar when taking damage
-				UE_LOG(LogTemp, Log, TEXT("[AICombatManager] Calling ToggleHealthbarVisual(true)"));
-				IBPI_Enemy::Execute_ToggleHealthbarVisual(Owner, true);
+				// BOSS CHECK: Skip showing enemy healthbar for bosses - they use the HUD boss bar instead
+				UAIBossComponent* BossComp = Owner->FindComponentByClass<UAIBossComponent>();
+				bool bIsBoss = (BossComp != nullptr && BossComp->bShowBossBar);
 
-				// Update health values for UI
-				if (bGotStat)
+				if (bIsBoss)
 				{
-					UE_LOG(LogTemp, Log, TEXT("[AICombatManager] GetStat succeeded - calling UpdateEnemyHealth (HP: %.0f/%.0f)"),
-						StatInfo.CurrentValue, StatInfo.MaxValue);
-					IBPI_Enemy::Execute_UpdateEnemyHealth(Owner, StatInfo.CurrentValue, StatInfo.MaxValue, -Damage);
+					UE_LOG(LogTemp, Log, TEXT("[AICombatManager] Owner is BOSS - skipping enemy healthbar (using HUD boss bar)"));
+					// Boss health updates go through AIBossComponent::OnStatUpdated -> HUD boss bar
+					// No world-space healthbar needed
 				}
 				else
 				{
-					UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] GetStat FAILED for HP tag"));
+					// Show healthbar when taking damage (non-boss enemies only)
+					UE_LOG(LogTemp, Log, TEXT("[AICombatManager] Calling ToggleHealthbarVisual(true)"));
+					IBPI_Enemy::Execute_ToggleHealthbarVisual(Owner, true);
+					bHealthbarActive = true;
+
+					// Update health values for UI (world-space healthbar)
+					if (bGotStat)
+					{
+						UE_LOG(LogTemp, Log, TEXT("[AICombatManager] GetStat succeeded - calling UpdateEnemyHealth (HP: %.0f/%.0f)"),
+							StatInfo.CurrentValue, StatInfo.MaxValue);
+						IBPI_Enemy::Execute_UpdateEnemyHealth(Owner, StatInfo.CurrentValue, StatInfo.MaxValue, -Damage);
+					}
+					else
+					{
+						UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] GetStat FAILED for HP tag"));
+					}
+
+					// Set up recurring LOS/distance check timer to hide healthbar when player runs away
+					if (UWorld* World = GetWorld())
+					{
+						// Clear any existing timer first
+						World->GetTimerManager().ClearTimer(HealthbarLosTimer);
+						// Check LOS/distance every 0.5 seconds
+						World->GetTimerManager().SetTimer(
+							HealthbarLosTimer,
+							this,
+							&UAICombatManagerComponent::CheckLineOfSight,
+							LineOfSightCheckInterval,
+							true  // bLoop = true for recurring check
+						);
+						UE_LOG(LogTemp, Log, TEXT("[AICombatManager] Started healthbar LOS timer"));
+					}
 				}
 			}
 			else
@@ -600,19 +663,139 @@ void UAICombatManagerComponent::HandleDeath_Implementation(AActor* Killer)
 
 	bIsDead = true;
 
-	UE_LOG(LogTemp, Log, TEXT("[AICombatManager] HandleDeath - Killed by: %s"),
+	UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] HandleDeath - Killed by: %s"),
 		Killer ? *Killer->GetName() : TEXT("null"));
+
+	// CRITICAL: Disable healthbar immediately on death
+	DisableHealthbar();
+	UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] HandleDeath - DisableHealthbar called"));
+
+	// CRITICAL: Stop AI immediately so dead enemy doesn't continue attacking
+	AActor* Owner = GetOwner();
+	if (Owner)
+	{
+		// Stop the AI controller's behavior tree / brain
+		if (APawn* OwnerPawn = Cast<APawn>(Owner))
+		{
+			if (AAIController* AIC = Cast<AAIController>(OwnerPawn->GetController()))
+			{
+				if (UBrainComponent* Brain = AIC->GetBrainComponent())
+				{
+					Brain->StopLogic(TEXT("Enemy Died"));
+					UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] HandleDeath - AI BrainComponent STOPPED"));
+				}
+			}
+		}
+
+		// NOTE: Do NOT call StopAllMontages here - that prevents the death animation from playing
+		// The death animation is triggered by the character class or BPI_Enemy interface
+		// We only stop the AI brain, which prevents new attacks
+	}
+
+	// CRITICAL: Set up collision for ragdoll (matching bp_only behavior)
+	if (Owner)
+	{
+		// Get capsule component and set it to ignore Pawn channel (bp_only pattern)
+		if (ACharacter* OwnerChar = Cast<ACharacter>(Owner))
+		{
+			if (UCapsuleComponent* Capsule = OwnerChar->GetCapsuleComponent())
+			{
+				Capsule->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+				UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] HandleDeath - Capsule set to ignore Pawn channel"));
+			}
+		}
+
+		// Set mesh collision profile to "Ragdoll" - this is a predefined UE profile
+		// that's configured to collide with WorldStatic (floor) but not other pawns
+		if (Mesh)
+		{
+			Mesh->SetCollisionProfileName(FName("Ragdoll"));
+			UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] HandleDeath - Mesh collision profile set to 'Ragdoll'"));
+		}
+	}
 
 	// Broadcast death event
 	OnDeath.Broadcast(Killer);
 
-	// Ragdoll if configured
-	if (bRagdollOnDeath && Mesh)
+	// Calculate death direction for animation selection
+	ESLFDirection DeathDirection = ESLFDirection::Fwd; // Default to forward
+	if (Owner && Killer)
 	{
-		Mesh->SetSimulatePhysics(true);
+		// Create a simple HitResult from the killer's location
+		FHitResult FakeHit;
+		FakeHit.ImpactPoint = Killer->GetActorLocation();
+		FakeHit.Location = Owner->GetActorLocation();
+		FakeHit.ImpactNormal = (Owner->GetActorLocation() - Killer->GetActorLocation()).GetSafeNormal();
+
+		UBFL_Helper::GetDirectionFromHit(Owner, FakeHit, GetWorld(), DeathDirection);
+		UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] HandleDeath - Death direction: %d"), (int32)DeathDirection);
 	}
 
-	// Schedule cleanup
+	// Try to play death montage from ReactionAnimset (ALWAYS try, regardless of bRagdollOnDeath)
+	bool bPlayedDeathAnim = false;
+	if (Mesh && ReactionAnimset)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] HandleDeath - Checking ReactionAnimset '%s' for death montage"),
+			*ReactionAnimset->GetName());
+
+		// Cast to UPDA_CombatReactionAnimData to access the Death TMap
+		if (UPDA_CombatReactionAnimData* ReactionData = Cast<UPDA_CombatReactionAnimData>(ReactionAnimset))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] HandleDeath - Death TMap has %d entries"), ReactionData->Death.Num());
+
+			// Look up death montage by direction
+			if (TSoftObjectPtr<UAnimMontage>* DeathMontagePtr = ReactionData->Death.Find(DeathDirection))
+			{
+				if (!DeathMontagePtr->IsNull())
+				{
+					UAnimMontage* DeathMontage = DeathMontagePtr->LoadSynchronous();
+					if (DeathMontage)
+					{
+						if (UAnimInstance* AnimInstance = Mesh->GetAnimInstance())
+						{
+							float MontageLength = AnimInstance->Montage_Play(DeathMontage, 1.0f);
+							UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] HandleDeath - Playing death montage '%s' (length: %.2f)"),
+								*DeathMontage->GetName(), MontageLength);
+							bPlayedDeathAnim = true;
+						}
+					}
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] HandleDeath - Death montage for direction %d is null"), (int32)DeathDirection);
+				}
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] HandleDeath - No death montage for direction %d (available: %d entries)"),
+					(int32)DeathDirection, ReactionData->Death.Num());
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] HandleDeath - ReactionAnimset is not UPDA_CombatReactionAnimData (class: %s)"),
+				*ReactionAnimset->GetClass()->GetName());
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] HandleDeath - No Mesh (%s) or ReactionAnimset (%s)"),
+			Mesh ? TEXT("valid") : TEXT("null"),
+			ReactionAnimset ? TEXT("valid") : TEXT("null"));
+	}
+
+	// If no death anim played, use ragdoll as fallback (if enabled)
+	if (!bPlayedDeathAnim && bRagdollOnDeath && Mesh)
+	{
+		Mesh->SetSimulatePhysics(true);
+		UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] HandleDeath - No death anim, enabling ragdoll physics"));
+	}
+	else if (!bPlayedDeathAnim && !bRagdollOnDeath)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] HandleDeath - No death anim and ragdoll disabled - enemy may freeze in place"));
+	}
+
+	// Schedule cleanup (hide enemy after death animation plays)
 	if (UWorld* World = GetWorld())
 	{
 		FTimerHandle CleanupTimer;
@@ -632,7 +815,16 @@ void UAICombatManagerComponent::EndEncounter_Implementation()
 
 	if (AActor* Owner = GetOwner())
 	{
-		Owner->Destroy();
+		// CRITICAL: Hide instead of destroy so enemies can be respawned when player rests
+		// This matches Souls-like behavior where enemies respawn at bonfires
+		Owner->SetActorHiddenInGame(true);
+		Owner->SetActorEnableCollision(false);
+		Owner->SetActorTickEnabled(false);
+
+		// Mark as "dead but not destroyed" for respawn system
+		bIsDead = true;
+
+		UE_LOG(LogTemp, Log, TEXT("[AICombatManager] Enemy hidden for respawn: %s"), *Owner->GetName());
 	}
 }
 
@@ -658,11 +850,36 @@ void UAICombatManagerComponent::SetHyperArmor_Implementation(bool bEnabled)
 
 bool UAICombatManagerComponent::TryGetAbility_Implementation(UDataAsset*& OutAbility)
 {
+	// CRITICAL: Don't select abilities if enemy is dead
+	if (bIsDead)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] TryGetAbility - BLOCKED: Enemy is dead!"));
+		OutAbility = nullptr;
+		return false;
+	}
+
+	// Check if we have any abilities configured
+	if (Abilities.Num() == 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] TryGetAbility - NO ABILITIES CONFIGURED! Add abilities to the Abilities array."));
+		OutAbility = nullptr;
+		return false;
+	}
+
+	// Log ability evaluation for debugging
+	UE_LOG(LogTemp, Log, TEXT("[AICombatManager] TryGetAbility - Evaluating %d abilities (Dist=%.1f, HP=%.1f%%)"),
+		Abilities.Num(), CachedDistanceToTarget, CachedHealthPercent * 100.0f);
+
 	// Filter available abilities
 	TArray<FSLFAIAbility> ValidAbilities;
 	for (const FSLFAIAbility& Ability : Abilities)
 	{
-		if (EvaluateAbilityRule(Ability))
+		bool bValid = EvaluateAbilityRule(Ability);
+		UE_LOG(LogTemp, Log, TEXT("[AICombatManager]   - %s: %s (MinD=%.0f, MaxD=%.0f, CD=%.1f, HP=%.0f%%)"),
+			Ability.AbilityAsset ? *Ability.AbilityAsset->GetName() : TEXT("null"),
+			bValid ? TEXT("VALID") : TEXT("REJECTED"),
+			Ability.MinDistance, Ability.MaxDistance, Ability.Cooldown, Ability.HealthThreshold * 100.0f);
+		if (bValid)
 		{
 			ValidAbilities.Add(Ability);
 		}
@@ -687,27 +904,118 @@ bool UAICombatManagerComponent::TryGetAbility_Implementation(UDataAsset*& OutAbi
 			{
 				OutAbility = Ability.AbilityAsset;
 				SelectedAbility = OutAbility;
+
+				// Update last used time for cooldown tracking
+				// Find and update the original ability in the array
+				for (FSLFAIAbility& OrigAbility : Abilities)
+				{
+					if (OrigAbility.AbilityAsset == OutAbility)
+					{
+						OrigAbility.LastUsedTime = GetWorld() ? GetWorld()->GetTimeSeconds() : 0.0f;
+						break;
+					}
+				}
+
+				UE_LOG(LogTemp, Log, TEXT("[AICombatManager] TryGetAbility - Selected: %s"),
+					OutAbility ? *OutAbility->GetName() : TEXT("null"));
 				return true;
 			}
 		}
-	}
 
-	OutAbility = nullptr;
-	return false;
+		// Fallback: if weight loop didn't select (edge case), pick first valid
+		OutAbility = ValidAbilities[0].AbilityAsset;
+		SelectedAbility = OutAbility;
+		UE_LOG(LogTemp, Log, TEXT("[AICombatManager] TryGetAbility - Weight fallback: %s"),
+			OutAbility ? *OutAbility->GetName() : TEXT("null"));
+		return OutAbility != nullptr;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] TryGetAbility - All %d abilities failed evaluation (cooldown/distance/health checks)"),
+			Abilities.Num());
+
+		// FALLBACK: When all abilities fail evaluation, pick a random one anyway
+		// This ensures the boss can always attack (Elden Ring bosses don't just stand around)
+		// The cooldowns might be too restrictive or distance ranges might not match
+		int32 RandomIndex = FMath::RandRange(0, Abilities.Num() - 1);
+		OutAbility = Abilities[RandomIndex].AbilityAsset;
+		SelectedAbility = OutAbility;
+
+		// Reset cooldown for the selected ability
+		Abilities[RandomIndex].LastUsedTime = GetWorld() ? GetWorld()->GetTimeSeconds() : 0.0f;
+
+		UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] TryGetAbility - FALLBACK: Selected random ability: %s"),
+			OutAbility ? *OutAbility->GetName() : TEXT("null"));
+
+		return OutAbility != nullptr;
+	}
 }
 
 bool UAICombatManagerComponent::EvaluateAbilityRule_Implementation(const FSLFAIAbility& Ability)
 {
-	// Check if ability is valid and can be executed
+	// Check if ability is valid
 	if (!Ability.AbilityAsset)
 	{
 		return false;
 	}
 
-	// Check cooldown - ability would have LastUsedTime property
-	// Check range requirements based on DistanceRule
-	// For now, basic validation passes if asset exists
-	UE_LOG(LogTemp, Verbose, TEXT("[AICombatManager] EvaluateAbilityRule - Checking ability validity"));
+	float CurrentTime = GetWorld() ? GetWorld()->GetTimeSeconds() : 0.0f;
+
+	// Check cooldown
+	if (Ability.Cooldown > 0.0f)
+	{
+		float TimeSinceLastUse = CurrentTime - Ability.LastUsedTime;
+		if (TimeSinceLastUse < Ability.Cooldown)
+		{
+			UE_LOG(LogTemp, Verbose, TEXT("[AICombatManager] EvaluateAbilityRule - Ability on cooldown (%.1fs remaining)"),
+				Ability.Cooldown - TimeSinceLastUse);
+			return false;
+		}
+	}
+
+	// Check minimum distance
+	if (Ability.MinDistance > 0.0f && CachedDistanceToTarget < Ability.MinDistance)
+	{
+		UE_LOG(LogTemp, Verbose, TEXT("[AICombatManager] EvaluateAbilityRule - Too close (%.1f < %.1f)"),
+			CachedDistanceToTarget, Ability.MinDistance);
+		return false;
+	}
+
+	// Check maximum distance (only if > 0, meaning there's a limit)
+	if (Ability.MaxDistance > 0.0f && CachedDistanceToTarget > Ability.MaxDistance)
+	{
+		UE_LOG(LogTemp, Verbose, TEXT("[AICombatManager] EvaluateAbilityRule - Too far (%.1f > %.1f)"),
+			CachedDistanceToTarget, Ability.MaxDistance);
+		return false;
+	}
+
+	// Check health threshold
+	if (Ability.HealthThreshold > 0.0f)
+	{
+		if (Ability.bUseBelowThreshold)
+		{
+			// Only use when HP is BELOW threshold (desperation moves)
+			if (CachedHealthPercent >= Ability.HealthThreshold)
+			{
+				UE_LOG(LogTemp, Verbose, TEXT("[AICombatManager] EvaluateAbilityRule - HP too high for desperation move (%.1f%% >= %.1f%%)"),
+					CachedHealthPercent * 100.0f, Ability.HealthThreshold * 100.0f);
+				return false;
+			}
+		}
+		else
+		{
+			// Only use when HP is ABOVE threshold (early phase moves)
+			if (CachedHealthPercent < Ability.HealthThreshold)
+			{
+				UE_LOG(LogTemp, Verbose, TEXT("[AICombatManager] EvaluateAbilityRule - HP too low for this move (%.1f%% < %.1f%%)"),
+					CachedHealthPercent * 100.0f, Ability.HealthThreshold * 100.0f);
+				return false;
+			}
+		}
+	}
+
+	UE_LOG(LogTemp, Verbose, TEXT("[AICombatManager] EvaluateAbilityRule - Ability approved (dist=%.1f, hp=%.1f%%)"),
+		CachedDistanceToTarget, CachedHealthPercent * 100.0f);
 	return true;
 }
 
@@ -723,10 +1031,22 @@ void UAICombatManagerComponent::OverrideAbilities_Implementation(const TArray<FS
 
 void UAICombatManagerComponent::TraceRightHand_Implementation()
 {
-	if (!Mesh) return;
+	if (!Mesh)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] TraceRightHand - No mesh!"));
+		return;
+	}
 
 	FVector Start = Mesh->GetSocketLocation(HandSocket_R_Start);
 	FVector End = Mesh->GetSocketLocation(HandSocket_R_End);
+
+	// Debug: Log trace locations every ~1 second (every 60th call at 60fps)
+	static int32 TraceCounter = 0;
+	if (++TraceCounter % 60 == 0)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[AICombatManager] TraceRightHand - Start: %s, End: %s, Radius: %.1f"),
+			*Start.ToString(), *End.ToString(), HandTraceRadius);
+	}
 
 	TArray<FHitResult> HitResults;
 	FCollisionQueryParams Params;
@@ -736,6 +1056,7 @@ void UAICombatManagerComponent::TraceRightHand_Implementation()
 		HitResults, Start, End, FQuat::Identity,
 		ECC_Pawn, FCollisionShape::MakeSphere(HandTraceRadius), Params))
 	{
+		UE_LOG(LogTemp, Log, TEXT("[AICombatManager] TraceRightHand - HIT! %d actors"), HitResults.Num());
 		ProcessHandTrace(HitResults);
 	}
 }
@@ -805,6 +1126,10 @@ void UAICombatManagerComponent::ApplyFistDamage_Implementation(AActor* Target, c
 
 void UAICombatManagerComponent::ToggleHandTrace_Implementation(bool bEnable, bool bRightHand)
 {
+	UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] ToggleHandTrace - Enable: %s, RightHand: %s"),
+		bEnable ? TEXT("TRUE") : TEXT("FALSE"),
+		bRightHand ? TEXT("TRUE") : TEXT("FALSE"));
+
 	UWorld* World = GetWorld();
 	if (!World) return;
 
@@ -818,6 +1143,7 @@ void UAICombatManagerComponent::ToggleHandTrace_Implementation(bool bEnable, boo
 				RightHandTraceTimer, this,
 				&UAICombatManagerComponent::TraceRightHand_Implementation,
 				0.016f, true);
+			UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] Started RIGHT hand trace timer"));
 		}
 		else
 		{
@@ -825,14 +1151,21 @@ void UAICombatManagerComponent::ToggleHandTrace_Implementation(bool bEnable, boo
 				LeftHandTraceTimer, this,
 				&UAICombatManagerComponent::TraceLeftHand_Implementation,
 				0.016f, true);
+			UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] Started LEFT hand trace timer"));
 		}
 	}
 	else
 	{
 		if (bRightHand)
+		{
 			World->GetTimerManager().ClearTimer(RightHandTraceTimer);
+			UE_LOG(LogTemp, Log, TEXT("[AICombatManager] Stopped RIGHT hand trace timer"));
+		}
 		else
+		{
 			World->GetTimerManager().ClearTimer(LeftHandTraceTimer);
+			UE_LOG(LogTemp, Log, TEXT("[AICombatManager] Stopped LEFT hand trace timer"));
+		}
 	}
 }
 
@@ -1130,7 +1463,7 @@ void UAICombatManagerComponent::ClearPoiseBreakResetTimer_Implementation()
 
 void UAICombatManagerComponent::CheckLineOfSight_Implementation()
 {
-	// Check line of sight to player for healthbar visibility
+	// Check line of sight and distance to player for healthbar visibility
 	AActor* Owner = GetOwner();
 	if (!Owner) return;
 
@@ -1144,20 +1477,43 @@ void UAICombatManagerComponent::CheckLineOfSight_Implementation()
 	APawn* PlayerPawn = PC->GetPawn();
 	if (!PlayerPawn) return;
 
-	// Line trace from owner to player
+	// Check distance first - if player is too far, hide healthbar
+	const float MaxHealthbarDistance = 2000.0f; // 20 meters
+	FVector Start = Owner->GetActorLocation();
+	FVector End = PlayerPawn->GetActorLocation();
+	float DistanceToPlayer = FVector::Dist(Start, End);
+
+	if (DistanceToPlayer > MaxHealthbarDistance)
+	{
+		// Player is too far - hide healthbar and stop the timer
+		UE_LOG(LogTemp, Log, TEXT("[AICombatManager] CheckLineOfSight - Player too far (%.0f > %.0f), hiding healthbar"),
+			DistanceToPlayer, MaxHealthbarDistance);
+		DisableHealthbar();
+		return;
+	}
+
+	// Line trace from owner to player for visibility check
 	FHitResult HitResult;
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(Owner);
-
-	FVector Start = Owner->GetActorLocation();
-	FVector End = PlayerPawn->GetActorLocation();
+	Params.AddIgnoredActor(PlayerPawn);
 
 	bool bHasLineOfSight = !World->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params);
 
 	// Update healthbar visibility based on line of sight
-	if (bHasLineOfSight && Owner->GetClass()->ImplementsInterface(UBPI_Enemy::StaticClass()))
+	if (Owner->GetClass()->ImplementsInterface(UBPI_Enemy::StaticClass()))
 	{
-		IBPI_Enemy::Execute_ToggleHealthbarVisual(Owner, true);
+		if (bHasLineOfSight)
+		{
+			// Has line of sight - keep healthbar visible (it's already showing)
+			// Don't need to call ToggleHealthbarVisual(true) again
+		}
+		else
+		{
+			// Lost line of sight - hide healthbar
+			UE_LOG(LogTemp, Log, TEXT("[AICombatManager] CheckLineOfSight - Lost LOS, hiding healthbar"));
+			DisableHealthbar();
+		}
 	}
 }
 
@@ -1165,12 +1521,20 @@ void UAICombatManagerComponent::DisableHealthbar_Implementation()
 {
 	bHealthbarActive = false;
 
-	UE_LOG(LogTemp, Log, TEXT("[AICombatManager] DisableHealthbar"));
+	UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] DisableHealthbar - Hiding healthbar widget"));
 
 	if (UWorld* World = GetWorld())
 	{
 		World->GetTimerManager().ClearTimer(HealthbarTimer);
 		World->GetTimerManager().ClearTimer(HealthbarLosTimer);
+	}
+
+	// CRITICAL: Actually hide the healthbar widget via BPI_Enemy interface
+	AActor* Owner = GetOwner();
+	if (Owner && Owner->GetClass()->ImplementsInterface(UBPI_Enemy::StaticClass()))
+	{
+		IBPI_Enemy::Execute_ToggleHealthbarVisual(Owner, false);
+		UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] DisableHealthbar - Called ToggleHealthbarVisual(false)"));
 	}
 }
 

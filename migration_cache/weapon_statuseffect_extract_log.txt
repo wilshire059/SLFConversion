@@ -1,0 +1,7 @@
+============================================================
+Extracting Weapon Status Effect Data from bp_only
+============================================================
+
+
+Total weapons with status effects: 0
+Saved to: C:/scripts/SLFConversion/migration_cache/weapon_statuseffect_data.json

@@ -1,0 +1,74 @@
+{
+  "B_Stat": {
+    "error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  },
+  "B_HP": {
+    "error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  },
+  "B_FP": {
+    "error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  },
+  "B_Stamina": {
+    "error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  },
+  "B_Vigor": {
+    "error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  },
+  "B_Mind": {
+    "error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  },
+  "B_Endurance": {
+    "error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  },
+  "B_Strength": {
+    "error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  },
+  "B_Dexterity": {
+    "error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  },
+  "B_Intelligence": {
+    "error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  },
+  "B_Faith": {
+    "error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  },
+  "B_Arcane": {
+    "error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  },
+  "B_AP_Physical": {
+    "error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  },
+  "B_AP_Magic": {
+    "error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  },
+  "B_AP_Fire": {
+    "error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  },
+  "B_AP_Frost": {
+    "error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  },
+  "B_AP_Lightning": {
+    "error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  },
+  "B_AP_Holy": {
+    "error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  },
+  "B_DN_Physical": {
+    "error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  },
+  "B_DN_Magic": {
+    "error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  },
+  "B_DN_Fire": {
+    "error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  },
+  "B_DN_Frost": {
+    "error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  },
+  "B_DN_Lightning": {
+    "error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  },
+  "B_DN_Holy": {
+    "error": "type object 'EditorAssetLibrary' has no attribute 'export_text'"
+  }
+}

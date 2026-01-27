@@ -1,0 +1,53 @@
+======================================================================
+SKYMANAGER INSTANCE CHECK
+======================================================================
+
+Loading level: /Game/SoulslikeFramework/Maps/L_Demo_Showcase
+Loaded: <Object '/Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase' (0x000001BF29CD3800) Class 'World'>
+
+============================================================
+Found: B_SkyManager_C_1 (B_SkyManager_C)
+============================================================
+Total Components: 12
+
+  DefaultSceneRoot (SceneComponent)
+
+  DirectionalLight_Sun (DirectionalLightComponent)
+    Intensity: 10.0
+    AtmosphereSunLight: True
+
+  DirectionalLight_Moon (DirectionalLightComponent)
+    Intensity: 0.5
+    AtmosphereSunLight: False
+
+  SkyLight (SkyLightComponent)
+    Intensity: 1.0
+    SourceType: <SkyLightSourceType.SLS_CAPTURED_SCENE: 0>
+    Visible: True
+
+  SkyAtmosphere (SkyAtmosphereComponent)
+    Visible: True
+
+  VolumetricCloud (VolumetricCloudComponent)
+
+  ExponentialHeightFog (ExponentialHeightFogComponent)
+
+  SM_SkySphere (StaticMeshComponent)
+    StaticMesh: /Game/SoulslikeFramework/Blueprints/Sky/SM_SkySphere.SM_SkySphere
+    Materials: 1
+      [0]: /Game/SoulslikeFramework/Materials/M_SkySphere.M_SkySphere
+    Visible: True
+
+  BillboardComponent_0 (BillboardComponent)
+
+  BillboardComponent_1 (BillboardComponent)
+
+  BillboardComponent_2 (BillboardComponent)
+
+  FogExterior (TimelineComponent)
+
+======================================================================
+CHECK COMPLETE
+======================================================================
+
+Results: C:/scripts/SLFConversion/migration_cache/skymanager_instance.txt

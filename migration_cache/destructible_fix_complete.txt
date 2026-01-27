@@ -1,0 +1,36 @@
+
+================================================================================
+Complete Fix for B_Destructible
+================================================================================
+
+Loaded Blueprint: /Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_Destructible
+
+Note getting SCS: 'Blueprint' object has no attribute 'simple_construction_script'
+
+Target C++ parent: B_Destructible
+Reparenting to C++ class...
+
+Removing duplicate Blueprint variables...
+  Note removing GeometryCollection: type object 'BlueprintEditorLibrary' has no attribute 'remove_variable'
+  Note removing DestructionSound: type object 'BlueprintEditorLibrary' has no attribute 'remove_variable'
+
+Loaded GC_Barrel: /Game/SoulslikeFramework/Meshes/SM/Barrel/Destructible/GC_Barrel.GC_Barrel
+
+Setting CDO properties...
+  Set GeometryCollection to: /Game/SoulslikeFramework/Meshes/SM/Barrel/Destructible/GC_Barrel
+  Verified GeometryCollection: /Game/SoulslikeFramework/Meshes/SM/Barrel/Destructible/GC_Barrel.GC_Barrel
+
+Compiling Blueprint...
+  Compiled successfully
+
+Saving asset...
+  Save result: True
+
+----------------------------------------
+Final Verification:
+  GeometryCollection: /Game/SoulslikeFramework/Meshes/SM/Barrel/Destructible/GC_Barrel.GC_Barrel
+  CDO ActorComponents: 0
+
+================================================================================
+Fix Complete
+================================================================================

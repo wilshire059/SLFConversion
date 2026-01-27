@@ -1,0 +1,11 @@
+=== COMPILE STATUS: ABP_SoulslikeCharacter_Additive ===
+
+Blueprint Status: UP TO DATE
+
+=== NODE ERRORS ===
+
+=== SUMMARY ===
+Errors: 0
+Warnings: 0
+
+No compile errors or warnings found in graph nodes.

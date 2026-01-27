@@ -29,7 +29,7 @@ void UW_ItemWheel_NextSlot::NativeDestruct()
 
 void UW_ItemWheel_NextSlot::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 
 void UW_ItemWheel_NextSlot::HandleChildItem_Implementation(UPrimaryDataAsset* InItem)

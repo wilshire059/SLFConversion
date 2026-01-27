@@ -1,0 +1,496 @@
+=== ANIMBLUEPRINT DIAGNOSIS: ABP_SoulslikeCharacter_Additive ===
+
+ParentClass: AnimInstance
+TargetSkeleton: SK_Mannequin
+
+=== VARIABLES ===
+  WorldLocation : struct
+  WorldRotation : struct
+  Acceleration : struct
+  Acceleration2D : struct
+  bIsAccelerating? : bool
+  Velocity : struct
+  Velocity2D : struct
+  Direction(Angle) : real
+  Speed : real
+  AnimDataAsset : object
+  GrantedTags : struct
+  bIsBlocking? : bool
+  IsCrouched : bool
+  bIsFalling? : bool
+  IsResting? : bool
+  RightHandOverlayState : byte
+  LeftHandOverlayState : byte
+  EquipmentManager : object
+  CombatManager : object
+  ActionManager : object
+  ActiveGuardSequence : object
+  IkWeight : real
+  ActiveHitNormal : struct
+
+=== GRAPHS ===
+
+--- AnimGraph (AnimationGraph) ---
+  Nodes: 49
+    AnimGraphNode_Root: 1
+    AnimGraphNode_StateMachine: 2
+    AnimGraphNode_BlendListByEnum: 2
+    AnimGraphNode_LinkedAnimLayer: 6
+    AnimGraphNode_SaveCachedPose: 5
+    AnimGraphNode_UseCachedPose: 12
+    AnimGraphNode_BlendListByBool: 1
+    K2Node_VariableGet: 7
+    EdGraphNode_Comment: 4
+    AnimGraphNode_LayeredBoneBlend: 2
+    AnimGraphNode_Slot: 2
+    K2Node_CallFunction: 1
+    AnimGraphNode_SequencePlayer: 1
+    AnimGraphNode_ControlRig: 1
+    AnimGraphNode_IKRig: 1
+    K2Node_PromotableOperator: 1
+  [AnimGraphNode_LinkedAnimLayer] AnimGraphNode_LinkedAnimLayer_7: ALI_OverlayStates - LL_OneHanded_Left
+Linked Anim Layer
+  [AnimGraphNode_LinkedAnimLayer] AnimGraphNode_LinkedAnimLayer_8: ALI_OverlayStates - LL_Shield_Left
+Linked Anim Layer
+  [AnimGraphNode_LinkedAnimLayer] AnimGraphNode_LinkedAnimLayer_9: ALI_OverlayStates - LL_TwoHanded_Left
+Linked Anim Layer
+  [AnimGraphNode_LinkedAnimLayer] AnimGraphNode_LinkedAnimLayer_10: ALI_OverlayStates - LL_OneHanded_Right
+Linked Anim Layer
+  [AnimGraphNode_LinkedAnimLayer] AnimGraphNode_LinkedAnimLayer_11: ALI_OverlayStates - LL_TwoHanded_Right
+Linked Anim Layer
+  [AnimGraphNode_LinkedAnimLayer] AnimGraphNode_LinkedAnimLayer_12: ALI_OverlayStates - LL_Shield_Right
+Linked Anim Layer
+
+--- Locomotion (AnimationStateMachineGraph) ---
+  Nodes: 22
+    AnimStateEntryNode: 1
+    AnimStateNode: 5
+    AnimStateTransitionNode: 16
+
+--- IDLE (AnimationStateGraph) ---
+  Nodes: 2
+    AnimGraphNode_StateResult: 1
+    AnimGraphNode_LinkedAnimLayer: 1
+  [AnimGraphNode_LinkedAnimLayer] AnimGraphNode_LinkedAnimLayer_0: ALI_LocomotionStates - LL_Idle
+Linked Anim Layer
+
+--- CYCLE (AnimationStateGraph) ---
+  Nodes: 2
+    AnimGraphNode_StateResult: 1
+    AnimGraphNode_LinkedAnimLayer: 1
+  [AnimGraphNode_LinkedAnimLayer] AnimGraphNode_LinkedAnimLayer_0: ALI_LocomotionStates - LL_Cycle
+Linked Anim Layer
+
+--- Transition (AnimationTransitionGraph) ---
+  Nodes: 2
+    AnimGraphNode_TransitionResult: 1
+    K2Node_VariableGet: 1
+
+--- Transition (AnimationTransitionGraph) ---
+  Nodes: 3
+    AnimGraphNode_TransitionResult: 1
+    K2Node_VariableGet: 1
+    K2Node_CallFunction: 1
+
+--- SITTING (AnimationStateGraph) ---
+  Nodes: 2
+    AnimGraphNode_StateResult: 1
+    AnimGraphNode_LinkedAnimLayer: 1
+  [AnimGraphNode_LinkedAnimLayer] AnimGraphNode_LinkedAnimLayer_0: ALI_LocomotionStates - LL_RestingIdle
+Linked Anim Layer
+
+--- Transition (AnimationTransitionGraph) ---
+  Nodes: 2
+    AnimGraphNode_TransitionResult: 1
+    K2Node_VariableGet: 1
+
+--- Transition (AnimationTransitionGraph) ---
+  Nodes: 2
+    AnimGraphNode_TransitionResult: 1
+    K2Node_VariableGet: 1
+
+--- Transition (AnimationTransitionGraph) ---
+  Nodes: 3
+    AnimGraphNode_TransitionResult: 1
+    K2Node_VariableGet: 1
+    K2Node_CallFunction: 1
+
+--- Transition (AnimationTransitionGraph) ---
+  Nodes: 5
+    AnimGraphNode_TransitionResult: 1
+    K2Node_VariableGet: 2
+    K2Node_CallFunction: 1
+    K2Node_CommutativeAssociativeBinaryOperator: 1
+
+--- CROUCH IDLE (AnimationStateGraph) ---
+  Nodes: 2
+    AnimGraphNode_StateResult: 1
+    AnimGraphNode_LinkedAnimLayer: 1
+  [AnimGraphNode_LinkedAnimLayer] AnimGraphNode_LinkedAnimLayer_0: ALI_LocomotionStates - LL_CrouchIdle
+Linked Anim Layer
+
+--- Transition (AnimationTransitionGraph) ---
+  Nodes: 2
+    AnimGraphNode_TransitionResult: 1
+    K2Node_VariableGet: 1
+
+--- Transition (AnimationTransitionGraph) ---
+  Nodes: 3
+    AnimGraphNode_TransitionResult: 1
+    K2Node_VariableGet: 1
+    K2Node_CallFunction: 1
+
+--- CROUCH CYCLE (AnimationStateGraph) ---
+  Nodes: 2
+    AnimGraphNode_StateResult: 1
+    AnimGraphNode_LinkedAnimLayer: 1
+  [AnimGraphNode_LinkedAnimLayer] AnimGraphNode_LinkedAnimLayer_0: ALI_LocomotionStates - LL_CrouchCycle
+Linked Anim Layer
+
+--- Transition (AnimationTransitionGraph) ---
+  Nodes: 4
+    AnimGraphNode_TransitionResult: 1
+    K2Node_VariableGet: 2
+    K2Node_CommutativeAssociativeBinaryOperator: 1
+
+--- Transition (AnimationTransitionGraph) ---
+  Nodes: 5
+    AnimGraphNode_TransitionResult: 1
+    K2Node_VariableGet: 2
+    K2Node_CommutativeAssociativeBinaryOperator: 1
+    K2Node_CallFunction: 1
+
+--- Transition (AnimationTransitionGraph) ---
+  Nodes: 2
+    AnimGraphNode_TransitionResult: 1
+    K2Node_VariableGet: 1
+
+--- Transition (AnimationTransitionGraph) ---
+  Nodes: 5
+    AnimGraphNode_TransitionResult: 1
+    K2Node_VariableGet: 2
+    K2Node_CommutativeAssociativeBinaryOperator: 1
+    K2Node_CallFunction: 1
+
+--- Transition (AnimationTransitionGraph) ---
+  Nodes: 2
+    AnimGraphNode_TransitionResult: 1
+    K2Node_VariableGet: 1
+
+--- Transition (AnimationTransitionGraph) ---
+  Nodes: 5
+    AnimGraphNode_TransitionResult: 1
+    K2Node_VariableGet: 2
+    K2Node_CommutativeAssociativeBinaryOperator: 1
+    K2Node_CallFunction: 1
+
+--- Transition (AnimationTransitionGraph) ---
+  Nodes: 2
+    AnimGraphNode_TransitionResult: 1
+    K2Node_VariableGet: 1
+
+--- Transition (AnimationTransitionGraph) ---
+  Nodes: 6
+    AnimGraphNode_TransitionResult: 1
+    K2Node_VariableGet: 3
+    K2Node_CallFunction: 1
+    K2Node_CommutativeAssociativeBinaryOperator: 1
+
+--- States (AnimationStateMachineGraph) ---
+  Nodes: 13
+    AnimStateEntryNode: 1
+    AnimStateNode: 4
+    AnimStateAliasNode: 2
+    AnimStateTransitionNode: 6
+
+--- Locomotion (AnimationStateGraph) ---
+  Nodes: 2
+    AnimGraphNode_StateResult: 1
+    AnimGraphNode_UseCachedPose: 1
+
+--- Jump (AnimationStateGraph) ---
+  Nodes: 2
+    AnimGraphNode_StateResult: 1
+    AnimGraphNode_SequencePlayer: 1
+
+--- AnimationTransitionGraph_1 (AnimationTransitionGraph) ---
+  Nodes: 5
+    AnimGraphNode_TransitionResult: 1
+    K2Node_VariableGet: 2
+    K2Node_CommutativeAssociativeBinaryOperator: 1
+    K2Node_PromotableOperator: 1
+
+--- Fall Loop (AnimationStateGraph) ---
+  Nodes: 2
+    AnimGraphNode_StateResult: 1
+    AnimGraphNode_SequencePlayer: 1
+
+--- AnimationTransitionGraph_1 (AnimationTransitionGraph) ---
+  Nodes: 2
+    AnimGraphNode_TransitionResult: 1
+    K2Node_VariableGet: 1
+
+--- AnimationTransitionGraph_1 (AnimationTransitionGraph) ---
+  Nodes: 1
+    AnimGraphNode_TransitionResult: 1
+
+--- Land (AnimationStateGraph) ---
+  Nodes: 4
+    AnimGraphNode_StateResult: 1
+    AnimGraphNode_SequencePlayer: 1
+    AnimGraphNode_ApplyAdditive: 1
+    AnimGraphNode_UseCachedPose: 1
+
+--- AnimationTransitionGraph_1 (AnimationTransitionGraph) ---
+  Nodes: 3
+    AnimGraphNode_TransitionResult: 1
+    K2Node_VariableGet: 1
+    K2Node_CallFunction: 1
+
+--- AnimationTransitionGraph_1 (AnimationTransitionGraph) ---
+  Nodes: 1
+    AnimGraphNode_TransitionResult: 1
+
+--- AnimationTransitionGraph_1 (AnimationTransitionGraph) ---
+  Nodes: 2
+    AnimGraphNode_TransitionResult: 1
+    K2Node_VariableGet: 1
+
+--- BlueprintThreadSafeUpdateAnimation (EdGraph) ---
+  Nodes: 16
+    K2Node_FunctionEntry: 1
+    K2Node_CallFunction: 12
+    K2Node_VariableGet: 2
+    K2Node_VariableSet: 1
+
+--- GetCharacterMovementComponent (EdGraph) ---
+  Nodes: 5
+    K2Node_FunctionEntry: 1
+    K2Node_FunctionResult: 2
+    K2Node_DynamicCast: 1
+    K2Node_PropertyAccess: 1
+  [K2Node_PropertyAccess] K2Node_PropertyAccess_1: Property Access
+      GeneratedPropertyName = K2Node_PropertyAccess
+
+--- GetLocationData (EdGraph) ---
+  Nodes: 3
+    K2Node_FunctionEntry: 1
+    K2Node_PropertyAccess: 1
+    K2Node_VariableSet: 1
+  [K2Node_PropertyAccess] K2Node_PropertyAccess_1: Property Access
+      GeneratedPropertyName = K2Node_PropertyAccess_1
+
+--- GetRotationData (EdGraph) ---
+  Nodes: 3
+    K2Node_FunctionEntry: 1
+    K2Node_VariableSet: 1
+    K2Node_PropertyAccess: 1
+  [K2Node_PropertyAccess] K2Node_PropertyAccess_2: Property Access
+      GeneratedPropertyName = K2Node_PropertyAccess_2
+
+--- GetAccelerationData (EdGraph) ---
+  Nodes: 13
+    K2Node_FunctionEntry: 1
+    K2Node_VariableSet: 4
+    K2Node_PropertyAccess: 2
+    K2Node_VariableGet: 1
+    K2Node_PromotableOperator: 1
+    EdGraphNode_Comment: 1
+    K2Node_CallFunction: 3
+  [K2Node_PropertyAccess] K2Node_PropertyAccess_0: Property Access
+      GeneratedPropertyName = K2Node_PropertyAccess_3
+  [K2Node_PropertyAccess] K2Node_PropertyAccess_1: Property Access
+      GeneratedPropertyName = K2Node_PropertyAccess_4
+
+--- GetVelocityData (EdGraph) ---
+  Nodes: 8
+    K2Node_FunctionEntry: 1
+    K2Node_PropertyAccess: 1
+    K2Node_VariableSet: 3
+    K2Node_VariableGet: 1
+    K2Node_PromotableOperator: 1
+    K2Node_CallFunction: 1
+  [K2Node_PropertyAccess] K2Node_PropertyAccess_0: Property Access
+      GeneratedPropertyName = K2Node_PropertyAccess_5
+
+--- GetEquipmentComponent (EdGraph) ---
+  Nodes: 7
+    K2Node_FunctionEntry: 1
+    K2Node_FunctionResult: 2
+    K2Node_PropertyAccess: 1
+    K2Node_CallFunction: 1
+    K2Node_MacroInstance: 2
+  [K2Node_PropertyAccess] K2Node_PropertyAccess_1: Property Access
+      GeneratedPropertyName = K2Node_PropertyAccess_6
+
+--- GetGrantedTags (EdGraph) ---
+  Nodes: 3
+    K2Node_FunctionEntry: 1
+    K2Node_VariableSet: 1
+    K2Node_PropertyAccess: 1
+  [K2Node_PropertyAccess] K2Node_PropertyAccess_0: Property Access
+      GeneratedPropertyName = K2Node_PropertyAccess_7
+
+--- GetCombatComponent (EdGraph) ---
+  Nodes: 7
+    K2Node_FunctionEntry: 1
+    K2Node_FunctionResult: 2
+    K2Node_CallFunction: 1
+    K2Node_MacroInstance: 2
+    K2Node_PropertyAccess: 1
+  [K2Node_PropertyAccess] K2Node_PropertyAccess_0: Property Access
+      GeneratedPropertyName = K2Node_PropertyAccess_8
+
+--- GetIsBlocking (EdGraph) ---
+  Nodes: 3
+    K2Node_FunctionEntry: 1
+    K2Node_PropertyAccess: 1
+    K2Node_VariableSet: 1
+  [K2Node_PropertyAccess] K2Node_PropertyAccess_1: Property Access
+      GeneratedPropertyName = K2Node_PropertyAccess_9
+
+--- GetIsResting (EdGraph) ---
+  Nodes: 3
+    K2Node_FunctionEntry: 1
+    K2Node_VariableSet: 1
+    K2Node_PropertyAccess: 1
+  [K2Node_PropertyAccess] K2Node_PropertyAccess_1: Property Access
+      GeneratedPropertyName = K2Node_PropertyAccess_10
+
+--- GetOverlayStates (EdGraph) ---
+  Nodes: 5
+    K2Node_FunctionEntry: 1
+    K2Node_VariableSet: 2
+    K2Node_PropertyAccess: 2
+  [K2Node_PropertyAccess] K2Node_PropertyAccess_3: Property Access
+      GeneratedPropertyName = K2Node_PropertyAccess_11
+  [K2Node_PropertyAccess] K2Node_PropertyAccess_2: Property Access
+      GeneratedPropertyName = K2Node_PropertyAccess_12
+
+--- GetIsCrouched (EdGraph) ---
+  Nodes: 3
+    K2Node_FunctionEntry: 1
+    K2Node_VariableSet: 1
+    K2Node_PropertyAccess: 1
+  [K2Node_PropertyAccess] K2Node_PropertyAccess_0: Property Access
+      GeneratedPropertyName = K2Node_PropertyAccess_13
+
+--- GetActionComponent (EdGraph) ---
+  Nodes: 7
+    K2Node_FunctionEntry: 1
+    K2Node_FunctionResult: 2
+    K2Node_MacroInstance: 2
+    K2Node_CallFunction: 1
+    K2Node_PropertyAccess: 1
+  [K2Node_PropertyAccess] K2Node_PropertyAccess_0: Property Access
+      GeneratedPropertyName = K2Node_PropertyAccess_14
+
+--- GetBlockSequenceForWeapon (EdGraph) ---
+  Nodes: 3
+    K2Node_FunctionEntry: 1
+    K2Node_PropertyAccess: 1
+    K2Node_VariableSet: 1
+  [K2Node_PropertyAccess] K2Node_PropertyAccess_2: Property Access
+      GeneratedPropertyName = K2Node_PropertyAccess_15
+
+--- GetIkHitReactData (EdGraph) ---
+  Nodes: 5
+    K2Node_FunctionEntry: 1
+    K2Node_PropertyAccess: 2
+    K2Node_VariableSet: 2
+  [K2Node_PropertyAccess] K2Node_PropertyAccess_1: Property Access
+      GeneratedPropertyName = K2Node_PropertyAccess_16
+  [K2Node_PropertyAccess] K2Node_PropertyAccess_0: Property Access
+      GeneratedPropertyName = K2Node_PropertyAccess_17
+
+--- EventGraph (EdGraph) ---
+  Nodes: 9
+    K2Node_Event: 1
+    K2Node_CallFunction: 4
+    K2Node_VariableSet: 3
+    EdGraphNode_Comment: 1
+
+--- LL_OneHanded_Left (AnimationGraph) ---
+  Nodes: 6
+    AnimGraphNode_Root: 1
+    AnimGraphNode_LinkedInputPose: 1
+    AnimGraphNode_SequenceEvaluator: 1
+    AnimGraphNode_LayeredBoneBlend: 1
+    K2Node_VariableGet: 2
+
+--- LL_Shield_Left (AnimationGraph) ---
+  Nodes: 6
+    AnimGraphNode_Root: 1
+    AnimGraphNode_LinkedInputPose: 1
+    AnimGraphNode_SequenceEvaluator: 1
+    AnimGraphNode_LayeredBoneBlend: 1
+    K2Node_VariableGet: 2
+
+--- LL_Shield_Block_Left (AnimationGraph) ---
+  Nodes: 2
+    AnimGraphNode_Root: 1
+    AnimGraphNode_LinkedInputPose: 1
+
+--- LL_TwoHanded_Left (AnimationGraph) ---
+  Nodes: 6
+    AnimGraphNode_Root: 1
+    AnimGraphNode_LinkedInputPose: 1
+    AnimGraphNode_SequenceEvaluator: 1
+    K2Node_VariableGet: 2
+    AnimGraphNode_LayeredBoneBlend: 1
+
+--- LL_OneHanded_Right (AnimationGraph) ---
+  Nodes: 6
+    AnimGraphNode_Root: 1
+    AnimGraphNode_LinkedInputPose: 1
+    AnimGraphNode_SequenceEvaluator: 1
+    AnimGraphNode_LayeredBoneBlend: 1
+    K2Node_VariableGet: 2
+
+--- LL_Shield_Right (AnimationGraph) ---
+  Nodes: 2
+    AnimGraphNode_Root: 1
+    AnimGraphNode_LinkedInputPose: 1
+
+--- LL_Shield_Block_Right (AnimationGraph) ---
+  Nodes: 2
+    AnimGraphNode_Root: 1
+    AnimGraphNode_LinkedInputPose: 1
+
+--- LL_TwoHanded_Right (AnimationGraph) ---
+  Nodes: 6
+    AnimGraphNode_Root: 1
+    AnimGraphNode_LinkedInputPose: 1
+    AnimGraphNode_SequenceEvaluator: 1
+    K2Node_VariableGet: 2
+    AnimGraphNode_LayeredBoneBlend: 1
+
+--- LL_Cycle (AnimationGraph) ---
+  Nodes: 6
+    AnimGraphNode_Root: 1
+    AnimGraphNode_BlendSpacePlayer: 1
+    K2Node_VariableGet: 4
+
+--- LL_Idle (AnimationGraph) ---
+  Nodes: 4
+    AnimGraphNode_Root: 1
+    AnimGraphNode_SequencePlayer: 1
+    K2Node_VariableGet: 2
+
+--- LL_CrouchIdle (AnimationGraph) ---
+  Nodes: 4
+    AnimGraphNode_Root: 1
+    K2Node_VariableGet: 2
+    AnimGraphNode_SequencePlayer: 1
+
+--- LL_CrouchCycle (AnimationGraph) ---
+  Nodes: 6
+    AnimGraphNode_Root: 1
+    AnimGraphNode_BlendSpacePlayer: 1
+    K2Node_VariableGet: 4
+
+--- LL_RestingIdle (AnimationGraph) ---
+  Nodes: 4
+    AnimGraphNode_Root: 1
+    K2Node_VariableGet: 2
+    AnimGraphNode_SequencePlayer: 1

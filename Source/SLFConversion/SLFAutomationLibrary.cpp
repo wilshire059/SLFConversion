@@ -64,6 +64,8 @@
 #include "GeometryCollection/GeometryCollectionObject.h"
 // Interface diagnostics
 #include "Interfaces/SLFDestructibleHelperInterface.h"
+// WidgetBlueprint for widget delegate binding clearing
+#include "WidgetBlueprint.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogSLFAutomation, Log, All);
 
@@ -526,6 +528,56 @@ static int32 ClearComponentDelegateBindings(UBlueprint* Blueprint)
 }
 
 // ============================================================================
+// WIDGET DELEGATE BINDINGS (for WidgetBlueprint)
+// ============================================================================
+
+int32 USLFAutomationLibrary::ClearWidgetDelegateBindings(UObject* WidgetBlueprintAsset)
+{
+	UWidgetBlueprint* WidgetBP = Cast<UWidgetBlueprint>(WidgetBlueprintAsset);
+	if (!WidgetBP)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("ClearWidgetDelegateBindings: Not a WidgetBlueprint"));
+		return 0;
+	}
+
+	int32 ClearedCount = 0;
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("=== CLEARING WIDGET DELEGATE BINDINGS FROM %s ==="), *WidgetBP->GetName());
+
+	// WidgetBlueprint has a Bindings array that stores widget property bindings
+	// These include bindings like OnGenerateItemWidget on ComboBoxKey widgets
+	if (WidgetBP->Bindings.Num() > 0)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("Found %d widget bindings"), WidgetBP->Bindings.Num());
+
+		// Log what we're clearing
+		for (int32 i = 0; i < WidgetBP->Bindings.Num(); ++i)
+		{
+			const FDelegateEditorBinding& Binding = WidgetBP->Bindings[i];
+			UE_LOG(LogSLFAutomation, Warning, TEXT("  Binding %d: Object=%s, Property=%s, Function=%s"),
+				i,
+				*Binding.ObjectName,
+				*Binding.PropertyName.ToString(),
+				*Binding.FunctionName.ToString());
+		}
+
+		ClearedCount = WidgetBP->Bindings.Num();
+		WidgetBP->Bindings.Empty();
+
+		UE_LOG(LogSLFAutomation, Warning, TEXT("Cleared %d widget bindings"), ClearedCount);
+	}
+	else
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("No widget bindings found"));
+	}
+
+	// Mark as modified
+	WidgetBP->Modify();
+
+	return ClearedCount;
+}
+
+// ============================================================================
 // GRAPH CLEARING
 // ============================================================================
 
@@ -894,7 +946,15 @@ bool USLFAutomationLibrary::ClearAllBlueprintLogicNoCompile(UObject* BlueprintAs
 	int32 BindingsCleared = ClearComponentDelegateBindings(Blueprint);
 	UE_LOG(LogSLFAutomation, Warning, TEXT("Cleared %d component delegate bindings"), BindingsCleared);
 
-	// 8. Refresh and mark modified - BUT DO NOT COMPILE
+	// 8. For WidgetBlueprints, clear widget delegate bindings (ComboBox OnGenerateItemWidget, etc.)
+	UWidgetBlueprint* WidgetBP = Cast<UWidgetBlueprint>(Blueprint);
+	if (WidgetBP)
+	{
+		int32 WidgetBindingsCleared = ClearWidgetDelegateBindings(WidgetBP);
+		UE_LOG(LogSLFAutomation, Warning, TEXT("Cleared %d widget delegate bindings"), WidgetBindingsCleared);
+	}
+
+	// 9. Refresh and mark modified - BUT DO NOT COMPILE
 	UE_LOG(LogSLFAutomation, Warning, TEXT("Refreshing nodes for %s (NO COMPILE)..."), *Blueprint->GetName());
 	FBlueprintEditorUtils::RefreshAllNodes(Blueprint);
 	FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(Blueprint);
@@ -2031,6 +2091,125 @@ bool USLFAutomationLibrary::ApplySkeletalMeshInfoToItem(const FString& ItemAsset
 	else
 	{
 		UE_LOG(LogSLFAutomation, Error, TEXT("  Failed to save"));
+	}
+
+	return bSaved;
+}
+
+bool USLFAutomationLibrary::ApplyDeathMontagesToAnimset(const FString& AnimsetPath, const TArray<FString>& DirectionNames, const TArray<FString>& MontagePaths)
+{
+	UE_LOG(LogSLFAutomation, Warning, TEXT("ApplyDeathMontagesToAnimset: %s with %d entries"), *AnimsetPath, DirectionNames.Num());
+
+	if (DirectionNames.Num() != MontagePaths.Num())
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  DirectionNames and MontagePaths arrays must have same length"));
+		return false;
+	}
+
+	if (DirectionNames.Num() == 0)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  No death montage entries to apply"));
+		return true;
+	}
+
+	// Load the animset asset
+	UObject* Asset = LoadObject<UObject>(nullptr, *AnimsetPath);
+	if (!Asset)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Failed to load asset: %s"), *AnimsetPath);
+		return false;
+	}
+
+	// Try to cast to UPDA_CombatReactionAnimData
+	UPDA_CombatReactionAnimData* AnimsetData = Cast<UPDA_CombatReactionAnimData>(Asset);
+	if (!AnimsetData)
+	{
+		// Try Blueprint generated class
+		if (UBlueprint* BP = Cast<UBlueprint>(Asset))
+		{
+			if (BP->GeneratedClass)
+			{
+				AnimsetData = Cast<UPDA_CombatReactionAnimData>(BP->GeneratedClass->GetDefaultObject());
+			}
+		}
+	}
+
+	if (!AnimsetData)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Asset is not UPDA_CombatReactionAnimData: %s"), *AnimsetPath);
+		return false;
+	}
+
+	// Direction name to enum mapping
+	TMap<FString, ESLFDirection> DirectionMap;
+	DirectionMap.Add(TEXT("Idle"), ESLFDirection::Idle);
+	DirectionMap.Add(TEXT("Fwd"), ESLFDirection::Fwd);
+	DirectionMap.Add(TEXT("FwdLeft"), ESLFDirection::FwdLeft);
+	DirectionMap.Add(TEXT("FwdRight"), ESLFDirection::FwdRight);
+	DirectionMap.Add(TEXT("Left"), ESLFDirection::Left);
+	DirectionMap.Add(TEXT("Right"), ESLFDirection::Right);
+	DirectionMap.Add(TEXT("Bwd"), ESLFDirection::Bwd);
+	DirectionMap.Add(TEXT("BwdLeft"), ESLFDirection::BwdLeft);
+	DirectionMap.Add(TEXT("BwdRight"), ESLFDirection::BwdRight);
+
+	// Clear existing Death map
+	AnimsetData->Death.Empty();
+
+	int32 AddedCount = 0;
+	for (int32 i = 0; i < DirectionNames.Num(); i++)
+	{
+		const FString& DirName = DirectionNames[i];
+		const FString& MontagePath = MontagePaths[i];
+
+		// Get direction enum
+		ESLFDirection* DirEnumPtr = DirectionMap.Find(DirName);
+		if (!DirEnumPtr)
+		{
+			UE_LOG(LogSLFAutomation, Warning, TEXT("  Unknown direction name: %s"), *DirName);
+			continue;
+		}
+
+		// Load the montage
+		UAnimMontage* Montage = LoadObject<UAnimMontage>(nullptr, *MontagePath);
+		if (!Montage)
+		{
+			UE_LOG(LogSLFAutomation, Warning, TEXT("  Could not load montage: %s"), *MontagePath);
+			continue;
+		}
+
+		// Create soft object pointer and add to map
+		TSoftObjectPtr<UAnimMontage> MontageSoftPtr(Montage);
+		AnimsetData->Death.Add(*DirEnumPtr, MontageSoftPtr);
+		AddedCount++;
+
+		UE_LOG(LogSLFAutomation, Log, TEXT("  Added death montage: %s -> %s"), *DirName, *Montage->GetName());
+	}
+
+	if (AddedCount == 0)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  No death montage entries added"));
+		return false;
+	}
+
+	// Mark package dirty and save
+	AnimsetData->MarkPackageDirty();
+
+	UPackage* Package = AnimsetData->GetOutermost();
+	FString PackageFileName = FPackageName::LongPackageNameToFilename(Package->GetName(), FPackageName::GetAssetPackageExtension());
+
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Standalone;
+	SaveArgs.Error = GError;
+
+	bool bSaved = UPackage::SavePackage(Package, AnimsetData, *PackageFileName, SaveArgs);
+
+	if (bSaved)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  Saved %s with %d death montages"), *AnimsetPath, AddedCount);
+	}
+	else
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Failed to save: %s"), *AnimsetPath);
 	}
 
 	return bSaved;
@@ -6537,6 +6716,543 @@ FString USLFAutomationLibrary::DiagnoseInterfaceImplementation(const FString& Bl
 	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutputString);
 	FJsonSerializer::Serialize(ResultJson, Writer);
 	return OutputString;
+}
+
+// ============================================================================
+// STATUS EFFECT RANK INFO RESTORATION
+// ============================================================================
+
+FString USLFAutomationLibrary::ApplyStatusEffectRankInfo(const FString& StatusEffectAssetPath)
+{
+	UE_LOG(LogSLFAutomation, Log, TEXT("=== ApplyStatusEffectRankInfo: %s ==="), *StatusEffectAssetPath);
+
+	// Load the status effect data asset
+	UPDA_StatusEffect* StatusEffect = Cast<UPDA_StatusEffect>(
+		StaticLoadObject(UPDA_StatusEffect::StaticClass(), nullptr, *StatusEffectAssetPath));
+
+	if (!StatusEffect)
+	{
+		FString Error = FString::Printf(TEXT("ERROR: Failed to load status effect: %s"), *StatusEffectAssetPath);
+		UE_LOG(LogSLFAutomation, Error, TEXT("%s"), *Error);
+		return Error;
+	}
+
+	// Get the asset name to determine which damage data to apply
+	FString AssetName = StatusEffect->GetName();
+	UE_LOG(LogSLFAutomation, Log, TEXT("Asset Name: %s, Tag: %s"), *AssetName, *StatusEffect->Tag.ToString());
+
+	// Get current RankInfo
+	TMap<int32, FSLFStatusEffectRankInfo>& RankInfo = StatusEffect->RankInfo;
+	UE_LOG(LogSLFAutomation, Log, TEXT("Current RankInfo has %d entries"), RankInfo.Num());
+
+	int32 RanksUpdated = 0;
+
+	// Load VFX assets (soft ptr - doesn't require loading the actual asset)
+	TSoftObjectPtr<UNiagaraSystem> NS_Poison(FSoftObjectPath(TEXT("/Game/SoulslikeFramework/VFX/Systems/NS_Poison.NS_Poison")));
+	TSoftObjectPtr<UNiagaraSystem> NS_PoisonLoop(FSoftObjectPath(TEXT("/Game/SoulslikeFramework/VFX/Systems/NS_PoisonLoop.NS_PoisonLoop")));
+	TSoftObjectPtr<UNiagaraSystem> NS_BleedExplode(FSoftObjectPath(TEXT("/Game/SoulslikeFramework/VFX/Systems/NS_BleedExplode.NS_BleedExplode")));
+	TSoftObjectPtr<UNiagaraSystem> NS_Burn(FSoftObjectPath(TEXT("/Game/SoulslikeFramework/VFX/Systems/NS_Burn.NS_Burn")));
+	TSoftObjectPtr<UNiagaraSystem> NS_BurnLoop(FSoftObjectPath(TEXT("/Game/SoulslikeFramework/VFX/Systems/NS_BurnLoop.NS_BurnLoop")));
+	TSoftObjectPtr<UNiagaraSystem> NS_FrostBite(FSoftObjectPath(TEXT("/Game/SoulslikeFramework/VFX/Systems/NS_FrostBite.NS_FrostBite")));
+	TSoftObjectPtr<UNiagaraSystem> NS_Corruption(FSoftObjectPath(TEXT("/Game/SoulslikeFramework/VFX/Systems/NS_Corruption.NS_Corruption")));
+	TSoftObjectPtr<UNiagaraSystem> NS_Madness(FSoftObjectPath(TEXT("/Game/SoulslikeFramework/VFX/Systems/NS_Madness.NS_Madness")));
+	TSoftObjectPtr<UNiagaraSystem> NS_Souls(FSoftObjectPath(TEXT("/Game/SoulslikeFramework/VFX/Systems/NS_Souls.NS_Souls")));
+
+	// Apply damage data based on status effect type
+	if (AssetName.Contains(TEXT("Poison")))
+	{
+		// Poison: Rank 1 = tick damage, Rank 2 = one-shot, Rank 3 = both
+		// Rank 1: FStatusEffectTick - Duration=5s, Interval=1s, HP -5 to -10 per tick
+		{
+			FSLFStatusEffectRankInfo& Rank1 = RankInfo.FindOrAdd(1);
+
+			// Set VFX
+			Rank1.TriggerVFX.VFXSystem = NS_Poison;
+			Rank1.LoopVFX.VFXSystem = NS_PoisonLoop;
+			Rank1.LoopVFX.AttachSocket = FName("spine_04");
+
+			FStatusEffectTick TickData;
+			TickData.Duration = 5.0;
+			TickData.Interval = 1.0;
+
+			FStatChange HPChange;
+			HPChange.StatTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
+			HPChange.MinAmount = -5.0;
+			HPChange.MaxAmount = -10.0;
+			HPChange.ValueType = ESLFValueType::CurrentValue;
+			HPChange.bTryActivateRegen = false;
+			TickData.TickingStatAdjustment.Add(HPChange);
+
+			Rank1.RelevantData.InitializeAs<FStatusEffectTick>(TickData);
+			RanksUpdated++;
+			UE_LOG(LogSLFAutomation, Log, TEXT("  Rank 1: FStatusEffectTick + VFX (Duration=5, Interval=1, HP -5 to -10)"));
+		}
+
+		// Rank 2: FStatusEffectStatChanges - HP -50 to -100 one-shot
+		{
+			FSLFStatusEffectRankInfo& Rank2 = RankInfo.FindOrAdd(2);
+
+			// Set VFX
+			Rank2.TriggerVFX.VFXSystem = NS_Poison;
+			Rank2.LoopVFX.VFXSystem = NS_PoisonLoop;
+			Rank2.LoopVFX.AttachSocket = FName("spine_04");
+
+			FStatusEffectStatChanges OneShotData;
+
+			FStatChange HPChange;
+			HPChange.StatTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
+			HPChange.MinAmount = -50.0;
+			HPChange.MaxAmount = -100.0;
+			HPChange.ValueType = ESLFValueType::CurrentValue;
+			HPChange.bTryActivateRegen = false;
+			OneShotData.StatChanges.Add(HPChange);
+
+			Rank2.RelevantData.InitializeAs<FStatusEffectStatChanges>(OneShotData);
+			RanksUpdated++;
+			UE_LOG(LogSLFAutomation, Log, TEXT("  Rank 2: FStatusEffectStatChanges + VFX (HP -50 to -100)"));
+		}
+
+		// Rank 3: FStatusEffectOneShotAndTick - Duration=10s, Interval=1s, Instant HP -100 to -200, Tick HP -10 to -20
+		{
+			FSLFStatusEffectRankInfo& Rank3 = RankInfo.FindOrAdd(3);
+
+			// Set VFX
+			Rank3.TriggerVFX.VFXSystem = NS_Poison;
+			Rank3.LoopVFX.VFXSystem = NS_PoisonLoop;
+			Rank3.LoopVFX.AttachSocket = FName("spine_02");
+
+			FStatusEffectOneShotAndTick CombinedData;
+			CombinedData.Duration = 10.0;
+			CombinedData.Interval = 1.0;
+
+			FStatChange InstantHP;
+			InstantHP.StatTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
+			InstantHP.MinAmount = -20.0;  // Reduced from test values
+			InstantHP.MaxAmount = -40.0;  // Reduced from test values
+			InstantHP.ValueType = ESLFValueType::CurrentValue;
+			InstantHP.bTryActivateRegen = false;
+			CombinedData.InstantStatAdjustment.Add(InstantHP);
+
+			FStatChange TickHP;
+			TickHP.StatTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
+			TickHP.MinAmount = -5.0;  // Reduced from test values
+			TickHP.MaxAmount = -10.0;  // Reduced from test values
+			TickHP.ValueType = ESLFValueType::CurrentValue;
+			TickHP.bTryActivateRegen = false;
+			CombinedData.TickingStatAdjustment.Add(TickHP);
+
+			Rank3.RelevantData.InitializeAs<FStatusEffectOneShotAndTick>(CombinedData);
+			RanksUpdated++;
+			UE_LOG(LogSLFAutomation, Log, TEXT("  Rank 3: FStatusEffectOneShotAndTick + VFX (Instant HP -20 to -40, Tick HP -5 to -10)"));
+		}
+	}
+	else if (AssetName.Contains(TEXT("Bleed")))
+	{
+		// Bleed: One-shot HP damage, increasing with rank
+		// Rank 1: HP -50 to -75
+		{
+			FSLFStatusEffectRankInfo& Rank1 = RankInfo.FindOrAdd(1);
+
+			// Set VFX - Bleed uses BleedExplode as trigger VFX
+			Rank1.TriggerVFX.VFXSystem = NS_BleedExplode;
+			Rank1.TriggerVFX.AttachSocket = FName("spine_04");
+
+			FStatusEffectStatChanges OneShotData;
+			FStatChange HPChange;
+			HPChange.StatTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
+			HPChange.MinAmount = -50.0;
+			HPChange.MaxAmount = -75.0;
+			HPChange.ValueType = ESLFValueType::CurrentValue;
+			OneShotData.StatChanges.Add(HPChange);
+
+			Rank1.RelevantData.InitializeAs<FStatusEffectStatChanges>(OneShotData);
+			RanksUpdated++;
+			UE_LOG(LogSLFAutomation, Log, TEXT("  Rank 1: HP -50 to -75 + VFX"));
+		}
+
+		// Rank 2: HP -100 to -150
+		{
+			FSLFStatusEffectRankInfo& Rank2 = RankInfo.FindOrAdd(2);
+
+			// Set VFX
+			Rank2.TriggerVFX.VFXSystem = NS_BleedExplode;
+			Rank2.TriggerVFX.AttachSocket = FName("spine_04");
+
+			FStatusEffectStatChanges OneShotData;
+			FStatChange HPChange;
+			HPChange.StatTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
+			HPChange.MinAmount = -100.0;
+			HPChange.MaxAmount = -150.0;
+			HPChange.ValueType = ESLFValueType::CurrentValue;
+			OneShotData.StatChanges.Add(HPChange);
+
+			Rank2.RelevantData.InitializeAs<FStatusEffectStatChanges>(OneShotData);
+			RanksUpdated++;
+			UE_LOG(LogSLFAutomation, Log, TEXT("  Rank 2: HP -100 to -150 + VFX"));
+		}
+
+		// Rank 3: Instant + tick
+		{
+			FSLFStatusEffectRankInfo& Rank3 = RankInfo.FindOrAdd(3);
+
+			// Set VFX
+			Rank3.TriggerVFX.VFXSystem = NS_BleedExplode;
+			Rank3.TriggerVFX.AttachSocket = FName("spine_02");
+
+			FStatusEffectOneShotAndTick CombinedData;
+			CombinedData.Duration = 8.0;
+			CombinedData.Interval = 1.0;
+
+			FStatChange InstantHP;
+			InstantHP.StatTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
+			InstantHP.MinAmount = -150.0;
+			InstantHP.MaxAmount = -250.0;
+			InstantHP.ValueType = ESLFValueType::CurrentValue;
+			CombinedData.InstantStatAdjustment.Add(InstantHP);
+
+			FStatChange TickHP;
+			TickHP.StatTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
+			TickHP.MinAmount = -15.0;
+			TickHP.MaxAmount = -25.0;
+			TickHP.ValueType = ESLFValueType::CurrentValue;
+			CombinedData.TickingStatAdjustment.Add(TickHP);
+
+			Rank3.RelevantData.InitializeAs<FStatusEffectOneShotAndTick>(CombinedData);
+			RanksUpdated++;
+			UE_LOG(LogSLFAutomation, Log, TEXT("  Rank 3: Instant HP -150 to -250, Tick HP -15 to -25 + VFX"));
+		}
+	}
+	else if (AssetName.Contains(TEXT("Burn")))
+	{
+		// Burn: Fast tick damage
+		// Rank 1: Duration=4s, Interval=0.5s, HP -8 to -12 per tick
+		{
+			FSLFStatusEffectRankInfo& Rank1 = RankInfo.FindOrAdd(1);
+
+			// Set VFX
+			Rank1.TriggerVFX.VFXSystem = NS_Burn;
+			Rank1.LoopVFX.VFXSystem = NS_BurnLoop;
+			Rank1.LoopVFX.AttachSocket = FName("spine_04");
+
+			FStatusEffectTick TickData;
+			TickData.Duration = 4.0;
+			TickData.Interval = 0.5;
+
+			FStatChange HPChange;
+			HPChange.StatTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
+			HPChange.MinAmount = -8.0;
+			HPChange.MaxAmount = -12.0;
+			HPChange.ValueType = ESLFValueType::CurrentValue;
+			TickData.TickingStatAdjustment.Add(HPChange);
+
+			Rank1.RelevantData.InitializeAs<FStatusEffectTick>(TickData);
+			RanksUpdated++;
+			UE_LOG(LogSLFAutomation, Log, TEXT("  Rank 1: Duration=4, Interval=0.5, HP -8 to -12 + VFX"));
+		}
+
+		// Rank 2: Duration=6s, Interval=0.5s, HP -12 to -18 per tick
+		{
+			FSLFStatusEffectRankInfo& Rank2 = RankInfo.FindOrAdd(2);
+
+			// Set VFX
+			Rank2.TriggerVFX.VFXSystem = NS_Burn;
+			Rank2.LoopVFX.VFXSystem = NS_BurnLoop;
+			Rank2.LoopVFX.AttachSocket = FName("spine_04");
+
+			FStatusEffectTick TickData;
+			TickData.Duration = 6.0;
+			TickData.Interval = 0.5;
+
+			FStatChange HPChange;
+			HPChange.StatTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
+			HPChange.MinAmount = -12.0;
+			HPChange.MaxAmount = -18.0;
+			HPChange.ValueType = ESLFValueType::CurrentValue;
+			TickData.TickingStatAdjustment.Add(HPChange);
+
+			Rank2.RelevantData.InitializeAs<FStatusEffectTick>(TickData);
+			RanksUpdated++;
+			UE_LOG(LogSLFAutomation, Log, TEXT("  Rank 2: Duration=6, Interval=0.5, HP -12 to -18 + VFX"));
+		}
+
+		// Rank 3: Duration=8s, Interval=0.5s, Instant HP -50 to -100, Tick HP -15 to -25
+		{
+			FSLFStatusEffectRankInfo& Rank3 = RankInfo.FindOrAdd(3);
+
+			// Set VFX
+			Rank3.TriggerVFX.VFXSystem = NS_Burn;
+			Rank3.LoopVFX.VFXSystem = NS_BurnLoop;
+			Rank3.LoopVFX.AttachSocket = FName("spine_02");
+
+			FStatusEffectOneShotAndTick CombinedData;
+			CombinedData.Duration = 8.0;
+			CombinedData.Interval = 0.5;
+
+			FStatChange InstantHP;
+			InstantHP.StatTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
+			InstantHP.MinAmount = -50.0;
+			InstantHP.MaxAmount = -100.0;
+			InstantHP.ValueType = ESLFValueType::CurrentValue;
+			CombinedData.InstantStatAdjustment.Add(InstantHP);
+
+			FStatChange TickHP;
+			TickHP.StatTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
+			TickHP.MinAmount = -15.0;
+			TickHP.MaxAmount = -25.0;
+			TickHP.ValueType = ESLFValueType::CurrentValue;
+			CombinedData.TickingStatAdjustment.Add(TickHP);
+
+			Rank3.RelevantData.InitializeAs<FStatusEffectOneShotAndTick>(CombinedData);
+			RanksUpdated++;
+			UE_LOG(LogSLFAutomation, Log, TEXT("  Rank 3: Instant HP -50 to -100, Tick HP -15 to -25 + VFX"));
+		}
+	}
+	else if (AssetName.Contains(TEXT("Frostbite")))
+	{
+		// Frostbite: HP + Stamina damage
+		// Rank 1: HP -30 to -50, Stamina -20 to -30
+		{
+			FSLFStatusEffectRankInfo& Rank1 = RankInfo.FindOrAdd(1);
+
+			// Set VFX
+			Rank1.TriggerVFX.VFXSystem = NS_FrostBite;
+			Rank1.TriggerVFX.AttachSocket = FName("spine_04");
+
+			FStatusEffectStatChanges OneShotData;
+
+			FStatChange HPChange;
+			HPChange.StatTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
+			HPChange.MinAmount = -30.0;
+			HPChange.MaxAmount = -50.0;
+			HPChange.ValueType = ESLFValueType::CurrentValue;
+			OneShotData.StatChanges.Add(HPChange);
+
+			FStatChange StaminaChange;
+			StaminaChange.StatTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Stamina"));
+			StaminaChange.MinAmount = -20.0;
+			StaminaChange.MaxAmount = -30.0;
+			StaminaChange.ValueType = ESLFValueType::CurrentValue;
+			OneShotData.StatChanges.Add(StaminaChange);
+
+			Rank1.RelevantData.InitializeAs<FStatusEffectStatChanges>(OneShotData);
+			RanksUpdated++;
+			UE_LOG(LogSLFAutomation, Log, TEXT("  Rank 1: HP -30 to -50, Stamina -20 to -30 + VFX"));
+		}
+
+		// Rank 2: HP -60 to -100, Stamina -40 to -60
+		{
+			FSLFStatusEffectRankInfo& Rank2 = RankInfo.FindOrAdd(2);
+
+			// Set VFX
+			Rank2.TriggerVFX.VFXSystem = NS_FrostBite;
+			Rank2.TriggerVFX.AttachSocket = FName("spine_04");
+
+			FStatusEffectStatChanges OneShotData;
+
+			FStatChange HPChange;
+			HPChange.StatTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
+			HPChange.MinAmount = -60.0;
+			HPChange.MaxAmount = -100.0;
+			HPChange.ValueType = ESLFValueType::CurrentValue;
+			OneShotData.StatChanges.Add(HPChange);
+
+			FStatChange StaminaChange;
+			StaminaChange.StatTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Stamina"));
+			StaminaChange.MinAmount = -40.0;
+			StaminaChange.MaxAmount = -60.0;
+			StaminaChange.ValueType = ESLFValueType::CurrentValue;
+			OneShotData.StatChanges.Add(StaminaChange);
+
+			Rank2.RelevantData.InitializeAs<FStatusEffectStatChanges>(OneShotData);
+			RanksUpdated++;
+			UE_LOG(LogSLFAutomation, Log, TEXT("  Rank 2: HP -60 to -100, Stamina -40 to -60 + VFX"));
+		}
+
+		// Rank 3: Instant HP + tick Stamina drain
+		{
+			FSLFStatusEffectRankInfo& Rank3 = RankInfo.FindOrAdd(3);
+
+			// Set VFX
+			Rank3.TriggerVFX.VFXSystem = NS_FrostBite;
+			Rank3.TriggerVFX.AttachSocket = FName("spine_02");
+
+			FStatusEffectOneShotAndTick CombinedData;
+			CombinedData.Duration = 6.0;
+			CombinedData.Interval = 1.0;
+
+			FStatChange InstantHP;
+			InstantHP.StatTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
+			InstantHP.MinAmount = -100.0;
+			InstantHP.MaxAmount = -150.0;
+			InstantHP.ValueType = ESLFValueType::CurrentValue;
+			CombinedData.InstantStatAdjustment.Add(InstantHP);
+
+			FStatChange TickStamina;
+			TickStamina.StatTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Stamina"));
+			TickStamina.MinAmount = -10.0;
+			TickStamina.MaxAmount = -15.0;
+			TickStamina.ValueType = ESLFValueType::CurrentValue;
+			CombinedData.TickingStatAdjustment.Add(TickStamina);
+
+			Rank3.RelevantData.InitializeAs<FStatusEffectOneShotAndTick>(CombinedData);
+			RanksUpdated++;
+			UE_LOG(LogSLFAutomation, Log, TEXT("  Rank 3: Instant HP -100 to -150, Tick Stamina -10 to -15 + VFX"));
+		}
+	}
+	else if (AssetName.Contains(TEXT("Corruption")))
+	{
+		// Corruption: Use NS_Corruption VFX
+		for (int32 Rank = 1; Rank <= 3; Rank++)
+		{
+			FSLFStatusEffectRankInfo& RankEntry = RankInfo.FindOrAdd(Rank);
+			RankEntry.TriggerVFX.VFXSystem = NS_Corruption;
+			RankEntry.TriggerVFX.AttachSocket = FName("spine_04");
+
+			FStatusEffectStatChanges OneShotData;
+			FStatChange HPChange;
+			HPChange.StatTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
+			HPChange.MinAmount = -20.0 * Rank;
+			HPChange.MaxAmount = -40.0 * Rank;
+			HPChange.ValueType = ESLFValueType::CurrentValue;
+			OneShotData.StatChanges.Add(HPChange);
+
+			RankEntry.RelevantData.InitializeAs<FStatusEffectStatChanges>(OneShotData);
+			RanksUpdated++;
+		}
+		UE_LOG(LogSLFAutomation, Log, TEXT("  Corruption: 3 ranks with scaling HP damage + VFX"));
+	}
+	else if (AssetName.Contains(TEXT("Madness")))
+	{
+		// Madness: Use NS_Madness VFX
+		for (int32 Rank = 1; Rank <= 3; Rank++)
+		{
+			FSLFStatusEffectRankInfo& RankEntry = RankInfo.FindOrAdd(Rank);
+			RankEntry.TriggerVFX.VFXSystem = NS_Madness;
+			RankEntry.TriggerVFX.AttachSocket = FName("spine_04");
+
+			FStatusEffectStatChanges OneShotData;
+			FStatChange HPChange;
+			HPChange.StatTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
+			HPChange.MinAmount = -25.0 * Rank;
+			HPChange.MaxAmount = -50.0 * Rank;
+			HPChange.ValueType = ESLFValueType::CurrentValue;
+			OneShotData.StatChanges.Add(HPChange);
+
+			RankEntry.RelevantData.InitializeAs<FStatusEffectStatChanges>(OneShotData);
+			RanksUpdated++;
+		}
+		UE_LOG(LogSLFAutomation, Log, TEXT("  Madness: 3 ranks with scaling HP damage + VFX"));
+	}
+	else if (AssetName.Contains(TEXT("Plague")))
+	{
+		// Plague: Use NS_Souls VFX
+		for (int32 Rank = 1; Rank <= 3; Rank++)
+		{
+			FSLFStatusEffectRankInfo& RankEntry = RankInfo.FindOrAdd(Rank);
+			RankEntry.TriggerVFX.VFXSystem = NS_Souls;
+			RankEntry.TriggerVFX.AttachSocket = FName("spine_04");
+
+			FStatusEffectStatChanges OneShotData;
+			FStatChange HPChange;
+			HPChange.StatTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
+			HPChange.MinAmount = -30.0 * Rank;
+			HPChange.MaxAmount = -60.0 * Rank;
+			HPChange.ValueType = ESLFValueType::CurrentValue;
+			OneShotData.StatChanges.Add(HPChange);
+
+			RankEntry.RelevantData.InitializeAs<FStatusEffectStatChanges>(OneShotData);
+			RanksUpdated++;
+		}
+		UE_LOG(LogSLFAutomation, Log, TEXT("  Plague: 3 ranks with scaling HP damage + VFX"));
+	}
+	else
+	{
+		// Generic default for any other status effect
+		UE_LOG(LogSLFAutomation, Warning, TEXT("Unknown status effect type: %s - applying generic damage data"), *AssetName);
+
+		// Rank 1: Basic HP tick damage
+		{
+			FSLFStatusEffectRankInfo& Rank1 = RankInfo.FindOrAdd(1);
+
+			FStatusEffectTick TickData;
+			TickData.Duration = 5.0;
+			TickData.Interval = 1.0;
+
+			FStatChange HPChange;
+			HPChange.StatTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
+			HPChange.MinAmount = -5.0;
+			HPChange.MaxAmount = -10.0;
+			HPChange.ValueType = ESLFValueType::CurrentValue;
+			TickData.TickingStatAdjustment.Add(HPChange);
+
+			Rank1.RelevantData.InitializeAs<FStatusEffectTick>(TickData);
+			RanksUpdated++;
+		}
+	}
+
+	// Mark package dirty and save
+	StatusEffect->MarkPackageDirty();
+
+	UPackage* Package = StatusEffect->GetOutermost();
+	if (Package)
+	{
+		FString PackageFilename;
+		if (FPackageName::TryConvertLongPackageNameToFilename(Package->GetName(), PackageFilename, FPackageName::GetAssetPackageExtension()))
+		{
+			FSavePackageArgs SaveArgs;
+			SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
+			SaveArgs.SaveFlags = SAVE_NoError;
+
+			bool bSaved = UPackage::SavePackage(Package, StatusEffect, *PackageFilename, SaveArgs);
+			if (bSaved)
+			{
+				UE_LOG(LogSLFAutomation, Log, TEXT("Saved: %s"), *StatusEffectAssetPath);
+			}
+			else
+			{
+				UE_LOG(LogSLFAutomation, Warning, TEXT("Failed to save: %s"), *StatusEffectAssetPath);
+			}
+		}
+	}
+
+	FString Result = FString::Printf(TEXT("SUCCESS: Updated %d ranks for %s"), RanksUpdated, *AssetName);
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+FString USLFAutomationLibrary::ApplyAllStatusEffectRankInfo()
+{
+	UE_LOG(LogSLFAutomation, Log, TEXT("=== ApplyAllStatusEffectRankInfo ==="));
+
+	TArray<FString> StatusEffects = {
+		TEXT("/Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Poison"),
+		TEXT("/Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Bleed"),
+		TEXT("/Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Burn"),
+		TEXT("/Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Frostbite"),
+		TEXT("/Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Corruption"),
+		TEXT("/Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Madness"),
+		TEXT("/Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Plague")
+	};
+
+	int32 Success = 0;
+	int32 Failed = 0;
+
+	for (const FString& Path : StatusEffects)
+	{
+		FString Result = ApplyStatusEffectRankInfo(Path);
+		if (Result.StartsWith(TEXT("SUCCESS")))
+		{
+			Success++;
+		}
+		else
+		{
+			Failed++;
+		}
+	}
+
+	FString Result = FString::Printf(TEXT("Applied status effect RankInfo: %d succeeded, %d failed"), Success, Failed);
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
 }
 
 #endif // WITH_EDITOR

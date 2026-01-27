@@ -1,0 +1,8 @@
+{
+  "path": "/Game/SoulslikeFramework/Blueprints/_AI/Subtrees/BT_Idle",
+  "exists": true,
+  "structure": "=== BehaviorTree: BT_Idle ===\n\n--- Root Decorators ---\n[Root][0] Is State == Idle? - Key: State\n    IntValue: 0\n    ^^^ STATE KEY DECORATOR - IntValue=0 ^^^\n\n--- Node Tree ---\nNode: IDLE MODE (BTComposite_Sequence)\n  NumChildren: 1\n  [Branch 0] Child: Toggle Focus (BTT_ToggleFocus_C), Decorators: 0\n\n=== Summary ===\nTotal Decorators: 1\nState Key Decorators: 1\nTotal Tasks: 1\n\n=== Expected State Values (ESLFAIStates) ===\n  0 = Idle\n  1 = RandomRoam\n  2 = Patrolling\n  3 = Investigating\n  4 = Combat\n  5 = PoiseBroken\n  6 = Uninterruptable\n  7 = OutOfBounds\n",
+  "error": null,
+  "name": "BT_Idle",
+  "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'"
+}

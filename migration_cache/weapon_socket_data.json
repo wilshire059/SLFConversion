@@ -1,0 +1,68 @@
+{
+  "DA_Sword01": {
+    "path": "/Game/SoulslikeFramework/Data/Items/DA_Sword01",
+    "name": "DA_Sword01",
+    "left_socket": "hand_l",
+    "right_socket": "hand_r",
+    "rotation_offset": {
+      "pitch": 0.0,
+      "yaw": 0.0,
+      "roll": 0.0
+    }
+  },
+  "DA_Sword02": {
+    "path": "/Game/SoulslikeFramework/Data/Items/DA_Sword02",
+    "name": "DA_Sword02",
+    "left_socket": "None",
+    "right_socket": "None",
+    "rotation_offset": {
+      "pitch": 0.0,
+      "yaw": 0.0,
+      "roll": 0.0
+    }
+  },
+  "DA_Greatsword": {
+    "path": "/Game/SoulslikeFramework/Data/Items/DA_Greatsword",
+    "name": "DA_Greatsword",
+    "left_socket": "hand_l",
+    "right_socket": "hand_r",
+    "rotation_offset": {
+      "pitch": 0.0,
+      "yaw": 0.0,
+      "roll": 0.0
+    }
+  },
+  "DA_Katana": {
+    "path": "/Game/SoulslikeFramework/Data/Items/DA_Katana",
+    "name": "DA_Katana",
+    "left_socket": "hand_l",
+    "right_socket": "hand_r",
+    "rotation_offset": {
+      "pitch": 0.0,
+      "yaw": 0.0,
+      "roll": 0.0
+    }
+  },
+  "DA_Shield01": {
+    "path": "/Game/SoulslikeFramework/Data/Items/DA_Shield01",
+    "name": "DA_Shield01",
+    "left_socket": "hand_l",
+    "right_socket": "hand_r",
+    "rotation_offset": {
+      "pitch": 0.0,
+      "yaw": 0.0,
+      "roll": 0.0
+    }
+  },
+  "DA_PoisonSword": {
+    "path": "/Game/SoulslikeFramework/Data/Items/DA_PoisonSword",
+    "name": "DA_PoisonSword",
+    "left_socket": "None",
+    "right_socket": "None",
+    "rotation_offset": {
+      "pitch": 0.0,
+      "yaw": 0.0,
+      "roll": 0.0
+    }
+  }
+}

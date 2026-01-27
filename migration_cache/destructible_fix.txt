@@ -1,0 +1,27 @@
+
+================================================================================
+Fixing B_Destructible
+================================================================================
+
+Loaded Blueprint: /Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_Destructible
+Target C++ parent: B_Destructible
+Reparenting result: None
+
+Loaded GC_Barrel: /Game/SoulslikeFramework/Meshes/SM/Barrel/Destructible/GC_Barrel.GC_Barrel
+
+Setting CDO properties...
+  Set GeometryCollection to: /Game/SoulslikeFramework/Meshes/SM/Barrel/Destructible/GC_Barrel
+  Verified GeometryCollection: /Game/SoulslikeFramework/Meshes/SM/Barrel/Destructible/GC_Barrel.GC_Barrel
+
+Clearing Blueprint logic...
+  Note clearing graphs: 'Blueprint' object has no attribute 'uber_graph_pages'
+
+Compiling Blueprint...
+  Compiled successfully
+
+Saving asset...
+  Save result: True
+
+================================================================================
+Fix Complete
+================================================================================

@@ -73,6 +73,10 @@ public:
 
 
 
+	// Setup function - call after Effect is assigned to bind to delegates
+	UFUNCTION(BlueprintCallable, Category = "W_StatusEffectBar")
+	void SetupEffect();
+
 	// Event Handlers (2 events)
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_StatusEffectBar")
 	void EventOnBuildupPercentChanged();
@@ -85,4 +89,11 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Delegate handlers
+	UFUNCTION()
+	void OnBuildupUpdatedHandler();
+
+	UFUNCTION()
+	void OnStatusEffectFinishedHandler(FGameplayTag StatusEffectTag);
 };

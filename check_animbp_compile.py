@@ -1,41 +1,33 @@
-# check_animbp_compile.py
-# Check AnimBP compile status after surgical restore
+"""
+Quick check to verify AnimBP loads and compiles without enum errors.
+"""
 
 import unreal
 
-ANIMBP = "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive"
-
-def log(msg):
-    print(msg)
-    unreal.log(msg)
+ANIMBP_PATH = "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive"
 
 def main():
-    log("=== AnimBP Compile Check After Surgical Restore ===")
+    unreal.log_warning("=" * 70)
+    unreal.log_warning("CHECK ANIMBP COMPILE STATUS")
+    unreal.log_warning("=" * 70)
 
-    asset = unreal.EditorAssetLibrary.load_asset(ANIMBP)
-    if not asset:
-        log(f"ERROR: Failed to load {ANIMBP}")
+    animbp = unreal.load_asset(ANIMBP_PATH)
+    if not animbp:
+        unreal.log_warning("[ERROR] Could not load AnimBP")
         return
 
-    log(f"\nAnimBP: {asset.get_name()}")
+    unreal.log_warning(f"Loaded: {animbp.get_name()}")
 
-    # Check compile errors using C++ automation library
-    errors = unreal.SLFAutomationLibrary.get_blueprint_compile_errors(asset)
+    # Get compile status
+    errors = unreal.SLFAutomationLibrary.get_blueprint_compile_errors(animbp)
 
-    if errors:
-        log(f"\n=== COMPILE ERRORS ===")
-        log(errors)
-
-        # Count error lines
-        error_count = len([line for line in errors.split('\n') if line.strip()])
-        log(f"\nTotal errors: {error_count}")
+    if errors and len(errors) > 0:
+        unreal.log_warning(f"[ERRORS] Compile errors found:")
+        unreal.log_warning(errors)
     else:
-        log("\n[OK] AnimBP compiles successfully with 0 errors!")
+        unreal.log_warning("[SUCCESS] No compile errors!")
 
-    # Also run LinkedAnimLayer diagnosis
-    log("\n=== LinkedAnimLayer Diagnosis ===")
-    diagnosis = unreal.SLFAutomationLibrary.diagnose_linked_anim_layer_nodes(asset)
-    log(diagnosis)
+    unreal.log_warning("=" * 70)
 
 if __name__ == "__main__":
     main()

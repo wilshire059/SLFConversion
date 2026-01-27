@@ -64,12 +64,20 @@ void UW_BigScreenMessage::EventShowMessage_Implementation(const FText& InMessage
 		HasBackdrop ? TEXT("true") : TEXT("false"),
 		AnimationRateScale);
 
+	// CRITICAL: Stop any existing animations first to reset widget state
+	// Without this, subsequent calls may not show the message because the animation
+	// left the text at opacity 0 from the fade-out portion
+	StopAllAnimations();
+
 	// Make this widget visible
 	SetVisibility(ESlateVisibility::Visible);
 
 	// Set the message text
 	if (MessageTextBlock)
 	{
+		// CRITICAL: Reset render opacity to 1.0 before animation plays
+		// The FadeSequential animation fades out at the end, leaving opacity at 0
+		MessageTextBlock->SetRenderOpacity(1.0f);
 		MessageTextBlock->SetText(InMessage);
 		UE_LOG(LogTemp, Log, TEXT("[BigScreenMessage] Set Message text to: %s"), *InMessage.ToString());
 
@@ -85,6 +93,8 @@ void UW_BigScreenMessage::EventShowMessage_Implementation(const FText& InMessage
 	// Set backdrop visibility
 	if (BgMsgTextBlock)
 	{
+		// CRITICAL: Reset render opacity to 1.0 for backdrop as well
+		BgMsgTextBlock->SetRenderOpacity(1.0f);
 		BgMsgTextBlock->SetText(InMessage);
 		BgMsgTextBlock->SetVisibility(HasBackdrop ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 		UE_LOG(LogTemp, Log, TEXT("[BigScreenMessage] BgMsg visibility: %s"),
@@ -113,17 +123,10 @@ void UW_BigScreenMessage::EventShowMessage_Implementation(const FText& InMessage
 
 	if (FadeAnim)
 	{
-		// Check if animation is already playing
-		if (!IsAnimationPlaying(FadeAnim))
-		{
-			float PlaybackSpeed = FMath::Max(0.1f, (float)AnimationRateScale);
-			PlayAnimation(FadeAnim, 0.0f, 1, EUMGSequencePlayMode::Forward, PlaybackSpeed);
-			UE_LOG(LogTemp, Log, TEXT("[BigScreenMessage] Playing FadeSequential animation at speed %.2f"), PlaybackSpeed);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Log, TEXT("[BigScreenMessage] FadeSequential animation already playing"));
-		}
+		// Play the animation fresh (we called StopAllAnimations() above so it's safe to play)
+		float PlaybackSpeed = FMath::Max(0.1f, (float)AnimationRateScale);
+		PlayAnimation(FadeAnim, 0.0f, 1, EUMGSequencePlayMode::Forward, PlaybackSpeed);
+		UE_LOG(LogTemp, Log, TEXT("[BigScreenMessage] Playing FadeSequential animation at speed %.2f"), PlaybackSpeed);
 	}
 	else
 	{

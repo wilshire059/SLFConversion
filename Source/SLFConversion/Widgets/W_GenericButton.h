@@ -44,6 +44,7 @@ public:
 	UW_GenericButton(const FObjectInitializer& ObjectInitializer);
 
 	// Widget lifecycle
+	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 
@@ -85,13 +86,15 @@ public:
 	// FUNCTIONS (1)
 	// ═══════════════════════════════════════════════════════════════════════
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_GenericButton")
+	// Note: "Selected?" parameter in Blueprint becomes "InSelected" in C++ (question marks not allowed)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_GenericButton", meta = (DisplayName = "SetButtonSelected"))
 	void SetButtonSelected(bool InSelected);
 	virtual void SetButtonSelected_Implementation(bool InSelected);
 
 
 	// Event Handlers (2 events)
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_GenericButton")
+	// Note: Blueprint calls this as "Event PressButton" with space - DisplayName maps it
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_GenericButton", meta = (DisplayName = "Event PressButton"))
 	void EventPressButton();
 	virtual void EventPressButton_Implementation();
 

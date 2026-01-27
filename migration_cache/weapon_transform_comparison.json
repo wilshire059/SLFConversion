@@ -1,0 +1,62 @@
+{
+  "B_Item_Weapon_SwordExample01": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_SwordExample01",
+    "exists": true,
+    "class": "Blueprint",
+    "default_mesh_relative_location": "(0.0, 0.0, 36.49)",
+    "default_mesh_relative_rotation": "<Struct 'Rotator' (0x0000013D91FBF988) {pitch: 0.000000, yaw: 0.000000, roll: 180.000000}>",
+    "default_weapon_mesh": "SM_ExampleSword01",
+    "weapon_mesh": "WeaponMesh",
+    "item_info": "<Struct 'SLFItemInfo' (0x0000013D91FBF478) {item_tag: {}, category: {category: None, sub_category: Miscellaneous}, display_name: \"\", short_description: \"\", long_description: \"\", discovery_description: \"\", usable: False, rechargeable: False, on_use_description: \"\", icon_small: None, icon_large_optional: None, max_amount: 1, action_to_trigger: {}, item_class: None, world_pickup_info: {world_display_style: ShowMesh, world_niagara_system: None, world_static_mesh: None, world_skeletal_mesh: None}, equipment_details: {equip_slots: {gameplay_tags: }, granted_tags: {gameplay_tags: }, weapon_overlay: {}, weapon_ability: None, weapon_stat_info: {has_stat_scaling: False, scaling_info: (), has_stat_requirement: False, stat_requirement_info: ()}, weapon_status_effect_info: (), stat_changes: (), skeletal_mesh_info: (), attachment_sockets: {left_hand_socket_name: \"\", right_hand_socket_name: \"\", holster_socket_name: \"\", attachment_rotation_offset: {pitch: 0.000000, yaw: 0.000000, roll: 0.000000}}, moveset_weapons: None, item_buff_description: \"\", granted_buff_rank: (), stamina_multiplier: 1.000000, min_poise_damage: 0.000000, max_poise_damage: 0.000000}, crafting_details: {can_be_crafted: False, required_items: ()}}>",
+    "component_0": {
+      "name": "WeaponMesh",
+      "relative_location": "(0.0, 0.0, 0.0)",
+      "relative_rotation": "(0.0, 0.0, 0.0)"
+    }
+  },
+  "B_Item_Weapon_Greatsword": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Greatsword",
+    "exists": true,
+    "class": "Blueprint",
+    "default_mesh_relative_location": "(2.23, 0.0, 0.0)",
+    "default_mesh_relative_rotation": "<Struct 'Rotator' (0x0000013E1C012D88) {pitch: -0.900000, yaw: -65.850000, roll: -4.450000}>",
+    "default_weapon_mesh": "SM_Greatsword",
+    "weapon_mesh": "WeaponMesh",
+    "item_info": "<Struct 'SLFItemInfo' (0x0000013E1C012878) {item_tag: {}, category: {category: None, sub_category: Miscellaneous}, display_name: \"\", short_description: \"\", long_description: \"\", discovery_description: \"\", usable: False, rechargeable: False, on_use_description: \"\", icon_small: None, icon_large_optional: None, max_amount: 1, action_to_trigger: {}, item_class: None, world_pickup_info: {world_display_style: ShowMesh, world_niagara_system: None, world_static_mesh: None, world_skeletal_mesh: None}, equipment_details: {equip_slots: {gameplay_tags: }, granted_tags: {gameplay_tags: }, weapon_overlay: {}, weapon_ability: None, weapon_stat_info: {has_stat_scaling: False, scaling_info: (), has_stat_requirement: False, stat_requirement_info: ()}, weapon_status_effect_info: (), stat_changes: (), skeletal_mesh_info: (), attachment_sockets: {left_hand_socket_name: \"\", right_hand_socket_name: \"\", holster_socket_name: \"\", attachment_rotation_offset: {pitch: 0.000000, yaw: 0.000000, roll: 0.000000}}, moveset_weapons: None, item_buff_description: \"\", granted_buff_rank: (), stamina_multiplier: 1.000000, min_poise_damage: 0.000000, max_poise_damage: 0.000000}, crafting_details: {can_be_crafted: False, required_items: ()}}>",
+    "component_0": {
+      "name": "WeaponMesh",
+      "relative_location": "(0.0, 0.0, 0.0)",
+      "relative_rotation": "(0.0, 0.0, 0.0)"
+    }
+  },
+  "B_Item_Weapon_Katana": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Katana",
+    "exists": true,
+    "class": "Blueprint",
+    "default_mesh_relative_location": "(0.0, 0.0, -1.64)",
+    "default_mesh_relative_rotation": "<Struct 'Rotator' (0x0000013E1C016988) {pitch: 0.000000, yaw: -103.240000, roll: 0.000000}>",
+    "default_weapon_mesh": "SM_Katana",
+    "weapon_mesh": "WeaponMesh",
+    "item_info": "<Struct 'SLFItemInfo' (0x0000013E1C016478) {item_tag: {}, category: {category: None, sub_category: Miscellaneous}, display_name: \"\", short_description: \"\", long_description: \"\", discovery_description: \"\", usable: False, rechargeable: False, on_use_description: \"\", icon_small: None, icon_large_optional: None, max_amount: 1, action_to_trigger: {}, item_class: None, world_pickup_info: {world_display_style: ShowMesh, world_niagara_system: None, world_static_mesh: None, world_skeletal_mesh: None}, equipment_details: {equip_slots: {gameplay_tags: }, granted_tags: {gameplay_tags: }, weapon_overlay: {}, weapon_ability: None, weapon_stat_info: {has_stat_scaling: False, scaling_info: (), has_stat_requirement: False, stat_requirement_info: ()}, weapon_status_effect_info: (), stat_changes: (), skeletal_mesh_info: (), attachment_sockets: {left_hand_socket_name: \"\", right_hand_socket_name: \"\", holster_socket_name: \"\", attachment_rotation_offset: {pitch: 0.000000, yaw: 0.000000, roll: 0.000000}}, moveset_weapons: None, item_buff_description: \"\", granted_buff_rank: (), stamina_multiplier: 1.000000, min_poise_damage: 0.000000, max_poise_damage: 0.000000}, crafting_details: {can_be_crafted: False, required_items: ()}}>",
+    "component_0": {
+      "name": "WeaponMesh",
+      "relative_location": "(0.0, 0.0, 0.0)",
+      "relative_rotation": "(0.0, 0.0, 0.0)"
+    }
+  },
+  "B_Item_Weapon_Shield": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Shield",
+    "exists": true,
+    "class": "Blueprint",
+    "default_mesh_relative_location": "(0.0, 0.0, 0.227)",
+    "default_mesh_relative_rotation": "<Struct 'Rotator' (0x0000013E1C01A588) {pitch: 0.000000, yaw: 0.000000, roll: 0.000000}>",
+    "default_weapon_mesh": "SM_Shield",
+    "weapon_mesh": "WeaponMesh",
+    "item_info": "<Struct 'SLFItemInfo' (0x0000013E1C01A078) {item_tag: {}, category: {category: None, sub_category: Miscellaneous}, display_name: \"\", short_description: \"\", long_description: \"\", discovery_description: \"\", usable: False, rechargeable: False, on_use_description: \"\", icon_small: None, icon_large_optional: None, max_amount: 1, action_to_trigger: {}, item_class: None, world_pickup_info: {world_display_style: ShowMesh, world_niagara_system: None, world_static_mesh: None, world_skeletal_mesh: None}, equipment_details: {equip_slots: {gameplay_tags: }, granted_tags: {gameplay_tags: }, weapon_overlay: {}, weapon_ability: None, weapon_stat_info: {has_stat_scaling: False, scaling_info: (), has_stat_requirement: False, stat_requirement_info: ()}, weapon_status_effect_info: (), stat_changes: (), skeletal_mesh_info: (), attachment_sockets: {left_hand_socket_name: \"\", right_hand_socket_name: \"\", holster_socket_name: \"\", attachment_rotation_offset: {pitch: 0.000000, yaw: 0.000000, roll: 0.000000}}, moveset_weapons: None, item_buff_description: \"\", granted_buff_rank: (), stamina_multiplier: 1.000000, min_poise_damage: 0.000000, max_poise_damage: 0.000000}, crafting_details: {can_be_crafted: False, required_items: ()}}>",
+    "component_0": {
+      "name": "WeaponMesh",
+      "relative_location": "(0.0, 0.0, 0.0)",
+      "relative_rotation": "(0.0, 0.0, 0.0)"
+    }
+  }
+}

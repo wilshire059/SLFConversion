@@ -55,6 +55,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
 	int32 MaxAllowedNameLength;
 
+	// Widget references (from UMG designer)
+	UPROPERTY(BlueprintReadOnly, Category = "Widgets", meta = (BindWidgetOptional))
+	class UTextBlock* CardinalText;
+
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (0)
 	// ═══════════════════════════════════════════════════════════════════════
@@ -62,9 +66,12 @@ public:
 
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (0)
+	// FUNCTIONS (1)
 	// ═══════════════════════════════════════════════════════════════════════
 
+	/** Update the text display based on CardinalData - called after setting CardinalData */
+	UFUNCTION(BlueprintCallable, Category = "Radar Cardinal")
+	void UpdateCardinalDisplay();
 
 protected:
 	// Cache references

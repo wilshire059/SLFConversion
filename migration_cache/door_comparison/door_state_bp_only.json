@@ -1,0 +1,259 @@
+{
+  "B_Door": {
+    "class_name": "B_Door_C",
+    "class_path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Door.B_Door_C",
+    "hierarchy": [
+      {
+        "name": "B_Door_C",
+        "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Door.B_Door_C"
+      }
+    ],
+    "components": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "location": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 10000.0
+        },
+        "scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      },
+      {
+        "name": "BillboardComponent_1",
+        "class": "BillboardComponent",
+        "location": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "scale": {
+          "x": 0.5,
+          "y": 0.5,
+          "z": 0.5
+        }
+      },
+      {
+        "name": "Interactable SM",
+        "class": "StaticMeshComponent",
+        "location": {
+          "x": 0.0,
+          "y": -75.0,
+          "z": 0.0
+        },
+        "scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      },
+      {
+        "name": "Interactable SK",
+        "class": "SkeletalMeshComponent",
+        "location": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      },
+      {
+        "name": "Door Frame",
+        "class": "StaticMeshComponent",
+        "location": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      },
+      {
+        "name": "DEBUG_OpeningDirection",
+        "class": "ArrowComponent",
+        "location": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 150.0
+        },
+        "scale": {
+          "x": 2.0,
+          "y": 2.0000000596046448,
+          "z": 2.0000000596046448
+        }
+      },
+      {
+        "name": "MoveTo",
+        "class": "BillboardComponent",
+        "location": {
+          "x": 100.0,
+          "y": 0.0,
+          "z": 60.00000071481918
+        },
+        "scale": {
+          "x": 0.5,
+          "y": 0.5,
+          "z": 0.5
+        }
+      },
+      {
+        "name": "DoorTimeline",
+        "class": "TimelineComponent"
+      }
+    ]
+  },
+  "B_BossDoor": {
+    "class_name": "B_BossDoor_C",
+    "class_path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_BossDoor.B_BossDoor_C",
+    "hierarchy": [
+      {
+        "name": "B_BossDoor_C",
+        "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_BossDoor.B_BossDoor_C"
+      }
+    ],
+    "components": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "location": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 10000.0
+        },
+        "scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      },
+      {
+        "name": "Interactable SM",
+        "class": "StaticMeshComponent",
+        "location": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 200.0
+        },
+        "scale": {
+          "x": 3.25,
+          "y": 0.1,
+          "z": 4.25
+        }
+      },
+      {
+        "name": "Interactable SK",
+        "class": "SkeletalMeshComponent",
+        "location": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      },
+      {
+        "name": "Door Frame",
+        "class": "StaticMeshComponent",
+        "location": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      },
+      {
+        "name": "DEBUG_OpeningDirection",
+        "class": "ArrowComponent",
+        "location": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 150.0
+        },
+        "scale": {
+          "x": 2.0,
+          "y": 2.0000000596046448,
+          "z": 2.0000000596046448
+        }
+      },
+      {
+        "name": "MoveTo",
+        "class": "BillboardComponent",
+        "location": {
+          "x": 100.0,
+          "y": 0.0,
+          "z": 60.00000071481918
+        },
+        "scale": {
+          "x": 0.5,
+          "y": 0.5,
+          "z": 0.5
+        }
+      },
+      {
+        "name": "DoorTimeline",
+        "class": "TimelineComponent"
+      },
+      {
+        "name": "Portal_Front",
+        "class": "NiagaraComponent",
+        "location": {
+          "x": 4.010511246203295e-08,
+          "y": -100.0,
+          "z": -2.2654028404812224e-08
+        },
+        "scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      },
+      {
+        "name": "Portal_Back",
+        "class": "NiagaraComponent",
+        "location": {
+          "x": -1.1437945196108173e-07,
+          "y": 100.0,
+          "z": -2.1197673263754152e-08
+        },
+        "scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      },
+      {
+        "name": "DeathCurrencyDropLocation",
+        "class": "BillboardComponent",
+        "location": {
+          "x": 400.0,
+          "y": 0.0,
+          "z": 60.0
+        },
+        "scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      }
+    ]
+  },
+  "level_actors": []
+}

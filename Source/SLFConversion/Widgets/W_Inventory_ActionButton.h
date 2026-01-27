@@ -87,4 +87,17 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Handler for UseButton OnClicked
+	UFUNCTION()
+	void OnUseButtonClicked();
+
+	// Handler for UseButton OnHovered
+	UFUNCTION()
+	void OnUseButtonHovered();
+
+	// Cached reference to the UseButton widget from Blueprint UMG designer
+	// Named CachedUseButton to avoid collision with Blueprint-generated property
+	UPROPERTY(Transient)
+	class UButton* CachedUseButton;
 };

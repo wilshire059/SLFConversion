@@ -6,6 +6,7 @@
 #include "Widgets/W_Inventory_ActionButton.h"
 #include "Components/Border.h"
 #include "Components/TextBlock.h"
+#include "Components/Button.h"
 
 UW_Inventory_ActionButton::UW_Inventory_ActionButton(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -43,7 +44,21 @@ void UW_Inventory_ActionButton::NativeDestruct()
 
 void UW_Inventory_ActionButton::CacheWidgetReferences()
 {
-	// Cache border and text widgets for visual updates
+	// Find and bind the UseButton widget from Blueprint UMG designer
+	// bp_only: UseButton.OnPressed → Call OnActionButtonPressed
+	// bp_only: UseButton.OnHovered → SetActionButtonSelected(true)
+	// NOTE: Variable is named CachedUseButton to avoid collision with Blueprint-generated property
+	CachedUseButton = Cast<UButton>(GetWidgetFromName(TEXT("UseButton")));
+	if (CachedUseButton)
+	{
+		CachedUseButton->OnClicked.AddUniqueDynamic(this, &UW_Inventory_ActionButton::OnUseButtonClicked);
+		CachedUseButton->OnHovered.AddUniqueDynamic(this, &UW_Inventory_ActionButton::OnUseButtonHovered);
+		UE_LOG(LogTemp, Log, TEXT("UW_Inventory_ActionButton::CacheWidgetReferences - Bound UseButton events for %s"), *ActionText.ToString());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_Inventory_ActionButton::CacheWidgetReferences - UseButton not found!"));
+	}
 }
 
 void UW_Inventory_ActionButton::SetActionButtonSelected_Implementation(bool InSelected)
@@ -67,4 +82,18 @@ void UW_Inventory_ActionButton::EventActionPressed_Implementation()
 
 	// Broadcast OnActionButtonPressed event
 	OnActionButtonPressed.Broadcast();
+}
+
+void UW_Inventory_ActionButton::OnUseButtonClicked()
+{
+	UE_LOG(LogTemp, Log, TEXT("UW_Inventory_ActionButton::OnUseButtonClicked - %s"), *ActionText.ToString());
+	// bp_only: On UseButton Pressed → Call OnActionButtonPressed
+	EventActionPressed();
+}
+
+void UW_Inventory_ActionButton::OnUseButtonHovered()
+{
+	UE_LOG(LogTemp, Log, TEXT("UW_Inventory_ActionButton::OnUseButtonHovered - %s"), *ActionText.ToString());
+	// bp_only: On UseButton Hovered → SetActionButtonSelected(true)
+	SetActionButtonSelected(true);
 }

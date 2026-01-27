@@ -1,0 +1,71 @@
+{
+  "cdo": {
+    "total_components": 4,
+    "components": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "visible": true,
+        "hidden_in_game": false,
+        "relative_location": "X=0.0 Y=0.0 Z=0.0",
+        "relative_scale": "X=1.00 Y=1.00 Z=1.00",
+        "attach_parent": "None (Root)"
+      },
+      {
+        "name": "Interactable SM",
+        "class": "StaticMeshComponent",
+        "visible": true,
+        "hidden_in_game": false,
+        "relative_location": "X=0.0 Y=0.0 Z=0.0",
+        "relative_scale": "X=1.00 Y=1.00 Z=1.00",
+        "attach_parent": "DefaultSceneRoot",
+        "static_mesh": "SM_PrisonDoor",
+        "collision_enabled": "<CollisionEnabled.QUERY_ONLY: 1>",
+        "cast_shadow": true,
+        "visible_in_scene_capture_only": false,
+        "hidden_in_scene_capture": false
+      },
+      {
+        "name": "Door Frame",
+        "class": "StaticMeshComponent",
+        "visible": true,
+        "hidden_in_game": false,
+        "relative_location": "X=0.0 Y=0.0 Z=0.0",
+        "relative_scale": "X=1.00 Y=1.00 Z=1.00",
+        "attach_parent": "DefaultSceneRoot",
+        "static_mesh": "SM_PrisonDoorArch",
+        "collision_enabled": "<CollisionEnabled.NO_COLLISION: 0>",
+        "cast_shadow": true,
+        "visible_in_scene_capture_only": false,
+        "hidden_in_scene_capture": false
+      },
+      {
+        "name": "MoveTo",
+        "class": "BillboardComponent",
+        "visible": false,
+        "hidden_in_game": true,
+        "relative_location": "X=0.0 Y=0.0 Z=0.0",
+        "relative_scale": "X=1.00 Y=1.00 Z=1.00",
+        "attach_parent": "DefaultSceneRoot"
+      }
+    ]
+  },
+  "spawned": {
+    "success": true,
+    "components": [
+      {
+        "name": "Interactable SM",
+        "visible": true,
+        "mesh": "SM_PrisonDoor",
+        "scale": "X=1.00 Y=1.00 Z=1.00"
+      },
+      {
+        "name": "Door Frame",
+        "visible": true,
+        "mesh": "SM_PrisonDoorArch",
+        "scale": "X=1.00 Y=1.00 Z=1.00"
+      }
+    ]
+  },
+  "level_instances": []
+}

@@ -1,0 +1,6 @@
+======================================================================
+B_SkyManager Full Diagnosis
+======================================================================
+
+Loading Blueprint: /Game/SoulslikeFramework/Blueprints/Sky/B_SkyManager
+Generated Class: B_SkyManager_C

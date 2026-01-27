@@ -1,0 +1,58 @@
+================================================================================
+STAT TABLE CONTENTS (DT_ExampleStatTable)
+================================================================================
+Loaded: DT_ExampleStatTable
+Row count: 33
+
+PRIMARY STATS:
+  Arcane
+  Dexterity
+  Endurance
+  Faith
+  Intelligence
+  Mind
+  Strength
+  Vigor
+
+SECONDARY STATS (HP/FP/Stamina/Defense/Resistance):
+  FP
+  HP
+  Stamina
+
+ATTACK POWER STATS:
+  AP_Fire
+  AP_Frost
+  AP_Holy
+  AP_Lightning
+  AP_Magic
+  AP_Physical
+
+OTHER STATS:
+  Backend_IncantationPower
+  Backend_Poise
+  Backend_Stance
+  Backend_StatusEffectBuildup
+  DN_Fire
+  DN_Frost
+  DN_Holy
+  DN_Lightning
+  DN_Magic
+  DN_Physical
+  Misc_Discovery
+  Misc_Equip_Load
+  R_Focus
+  R_Immunity
+  R_Robustness
+  R_Vitality
+
+================================================================================
+Total: 33 stats
+
+================================================================================
+ATTACK POWER CHECK:
+  B_AP_Physical: MISSING
+  B_AP_Magic: MISSING
+  B_AP_Lightning: MISSING
+  B_AP_Fire: MISSING
+  B_AP_Holy: MISSING
+  B_AP_Frost: MISSING

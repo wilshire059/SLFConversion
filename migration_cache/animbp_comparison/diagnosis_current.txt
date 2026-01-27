@@ -1,0 +1,63 @@
+=======================================================================
+ANIMBP DIAGNOSTIC REPORT
+Asset: /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive
+=======================================================================
+
+Total Graphs: 64
+
+=== ANIMGRAPH ===
+Node Count: 47
+
+STATE MACHINE: Locomotion | State Machine
+  Position: X=0, Y=-208
+  OUTPUT --> Save cached pose 'MovementLocomotion'
+
+BLEND POSES BY ENUM: Blend Poses (E_OverlayState)
+  Position: X=384, Y=16
+  ActiveEnumValue = 0 (NOT CONNECTED!)
+  *** NEEDS BINDING TO OVERLAY STATE VARIABLE ***
+  BlendPose_0 <-- Use cached pose 'MainLocomotion'
+  BlendPose_1 <-- ALI_OverlayStates - LL_OneHanded_Left | Linked Anim Layer
+  BlendPose_2 <-- ALI_OverlayStates - LL_TwoHanded_Left | Linked Anim Layer
+  BlendPose_3 <-- ALI_OverlayStates - LL_Shield_Left | Linked Anim Layer
+  OUTPUT --> Save cached pose 'OverlayLeft'
+
+VARIABLE GET: bIsBlocking?
+  Position: X=1440, Y=1856
+  *** PROBLEM: Variable has special characters ***
+  OUTPUT --> Blend Poses by bool (pin: bActiveValue)
+
+STATE MACHINE: States | State Machine
+  Position: X=0, Y=-512
+  OUTPUT --> Save cached pose 'MainLocomotion'
+
+BLEND POSES BY ENUM: Blend Poses (E_OverlayState)
+  Position: X=384, Y=592
+  ActiveEnumValue = 0 (NOT CONNECTED!)
+  *** NEEDS BINDING TO OVERLAY STATE VARIABLE ***
+  BlendPose_0 <-- Use cached pose 'OverlayLeft'
+  BlendPose_1 <-- ALI_OverlayStates - LL_OneHanded_Right | Linked Anim Layer
+  BlendPose_2 <-- ALI_OverlayStates - LL_TwoHanded_Right | Linked Anim Layer
+  BlendPose_3 <-- ALI_OverlayStates - LL_Shield_Right | Linked Anim Layer
+  OUTPUT --> Save cached pose 'OverlayedPose'
+
+VARIABLE GET: bIsFalling?
+  Position: X=1792, Y=1840
+  *** PROBLEM: Variable has special characters ***
+  OUTPUT --> NOT Boolean (pin: A)
+
+VARIABLE GET: ActiveGuardSequence
+  Position: X=640, Y=1760
+  OUTPUT --> Sequence Player (pin: Sequence)
+
+VARIABLE GET: IkWeight
+  Position: X=2432, Y=2144
+  OUTPUT --> IK Rig (pin: Alpha)
+
+VARIABLE GET: ActiveHitNormal
+  Position: X=2176, Y=2400
+  OUTPUT --> vector * vector (pin: A)
+
+=======================================================================
+END OF DIAGNOSTIC REPORT
+=======================================================================

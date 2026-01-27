@@ -1,0 +1,30 @@
+============================================================
+Cleanup B_SkyManager - Remove Duplicates
+============================================================
+Opening level: /Game/SoulslikeFramework/Maps/L_Demo_Showcase
+Loaded world: L_Demo_Showcase
+Working in world: L_Demo_Showcase
+
+Searching for B_SkyManager instances...
+  Found: B_SkyManager_C_1
+    Components: 12
+    Location: (14534.0, 1512.8, 100.0)
+  Found: B_SkyManager_C_0
+    Components: 11
+    Location: (14534.0, 1512.8, 100.0)
+
+Total B_SkyManager instances: 2
+
+Keeping: B_SkyManager_C_1 (12 components)
+  Location: (14534.0, 1512.8, 100.0)
+Deleting: B_SkyManager_C_0 (11 components)
+
+Deleted 1 duplicate instance(s)
+
+Saving level...
+Level saved successfully!
+
+============================================================
+CLEANUP COMPLETE
+============================================================
+Results written to: C:/scripts/SLFConversion/migration_cache/skymanager_cleanup.txt

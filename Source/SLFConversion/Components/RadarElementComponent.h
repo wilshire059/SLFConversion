@@ -13,8 +13,9 @@
 #include "Engine/Texture2D.h"
 #include "RadarElementComponent.generated.h"
 
-// Forward declaration
+// Forward declarations
 class UUserWidget;
+class UW_Radar_TrackedElement;
 
 UCLASS(ClassGroup = (Soulslike), meta = (BlueprintSpawnableComponent), Blueprintable, BlueprintType)
 class SLFCONVERSION_API URadarElementComponent : public UActorComponent
@@ -42,7 +43,7 @@ public:
 
 	/** Reference to the created marker widget (W_Radar_TrackedElement) */
 	UPROPERTY(BlueprintReadWrite, Category = "Default")
-	UUserWidget* MarkerWidget;
+	UW_Radar_TrackedElement* MarkerWidget;
 
 	// ═══════════════════════════════════════════════════════════════════
 	// FUNCTIONS: 3/3 migrated (excluding ExecuteUbergraph)

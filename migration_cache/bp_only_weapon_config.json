@@ -1,0 +1,200 @@
+{
+  "project": "unknown",
+  "base_weapon": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/B_Item_Weapon",
+    "name": "B_Item_Weapon",
+    "scs_components": {
+      "error": "Blueprint: Failed to find property 'simple_construction_script' for attribute 'simple_construction_script' on 'Blueprint'"
+    }
+  },
+  "weapons": {
+    "B_Item_Weapon_SwordExample01": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_SwordExample01",
+      "name": "B_Item_Weapon_SwordExample01",
+      "parent_class": "Unknown",
+      "generated_class": "B_Item_Weapon_SwordExample01_C",
+      "cdo_properties": {
+        "default_mesh_relative_location": {
+          "x": -2.842170943040401e-14,
+          "y": -8.634133296615484e-07,
+          "z": 36.49442056137028
+        },
+        "default_mesh_relative_rotation": {
+          "pitch": 0.0,
+          "yaw": 0.0,
+          "roll": 179.9999986056543
+        },
+        "default_weapon_mesh": "SM_ExampleSword01",
+        "default_attachment_rotation_offset": {
+          "pitch": 0.0,
+          "yaw": 0.0,
+          "roll": 0.0
+        }
+      },
+      "scs_components": {
+        "error": "Blueprint: Failed to find property 'simple_construction_script' for attribute 'simple_construction_script' on 'Blueprint'"
+      },
+      "weapon_mesh_component": {
+        "class": "StaticMeshComponent",
+        "name": "WeaponMesh",
+        "relative_location": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "relative_rotation": {
+          "pitch": 0.0,
+          "yaw": 0.0,
+          "roll": 0.0
+        },
+        "relative_scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "visible": true
+      }
+    },
+    "B_Item_Weapon_Greatsword": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Greatsword",
+      "name": "B_Item_Weapon_Greatsword",
+      "parent_class": "Unknown",
+      "generated_class": "B_Item_Weapon_Greatsword_C",
+      "cdo_properties": {
+        "default_mesh_relative_location": {
+          "x": 2.2303051928433817,
+          "y": 0.0,
+          "z": -2.716989641271539e-06
+        },
+        "default_mesh_relative_rotation": {
+          "pitch": -0.8985376822392073,
+          "yaw": -65.85131259345019,
+          "roll": -4.45083382958106
+        },
+        "default_weapon_mesh": "SM_Greatsword",
+        "default_attachment_rotation_offset": {
+          "pitch": 0.0,
+          "yaw": 0.0,
+          "roll": 0.0
+        }
+      },
+      "scs_components": {
+        "error": "Blueprint: Failed to find property 'simple_construction_script' for attribute 'simple_construction_script' on 'Blueprint'"
+      },
+      "weapon_mesh_component": {
+        "class": "StaticMeshComponent",
+        "name": "WeaponMesh",
+        "relative_location": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "relative_rotation": {
+          "pitch": 0.0,
+          "yaw": 0.0,
+          "roll": 0.0
+        },
+        "relative_scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "visible": true
+      }
+    },
+    "B_Item_Weapon_Katana": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Katana",
+      "name": "B_Item_Weapon_Katana",
+      "parent_class": "Unknown",
+      "generated_class": "B_Item_Weapon_Katana_C",
+      "cdo_properties": {
+        "default_mesh_relative_location": {
+          "x": 2.7144818608953874e-12,
+          "y": 1.3721270946190358e-06,
+          "z": -1.6439001851942407
+        },
+        "default_mesh_relative_rotation": {
+          "pitch": 0.0,
+          "yaw": -103.24034523326178,
+          "roll": 0.0
+        },
+        "default_weapon_mesh": "SM_Katana",
+        "default_attachment_rotation_offset": {
+          "pitch": 0.0,
+          "yaw": 0.0,
+          "roll": 0.0
+        }
+      },
+      "scs_components": {
+        "error": "Blueprint: Failed to find property 'simple_construction_script' for attribute 'simple_construction_script' on 'Blueprint'"
+      },
+      "weapon_mesh_component": {
+        "class": "StaticMeshComponent",
+        "name": "WeaponMesh",
+        "relative_location": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "relative_rotation": {
+          "pitch": 0.0,
+          "yaw": 0.0,
+          "roll": 0.0
+        },
+        "relative_scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "visible": true
+      }
+    },
+    "B_Item_Weapon_Shield": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Shield",
+      "name": "B_Item_Weapon_Shield",
+      "parent_class": "Unknown",
+      "generated_class": "B_Item_Weapon_Shield_C",
+      "cdo_properties": {
+        "default_mesh_relative_location": {
+          "x": 2.7569058147491887e-12,
+          "y": -3.2270420778808513e-07,
+          "z": 0.22653895153354076
+        },
+        "default_mesh_relative_rotation": {
+          "pitch": 0.0,
+          "yaw": 0.0,
+          "roll": -359.9999972113078
+        },
+        "default_weapon_mesh": "SM_Shield",
+        "default_attachment_rotation_offset": {
+          "pitch": 0.0,
+          "yaw": 0.0,
+          "roll": 0.0
+        }
+      },
+      "scs_components": {
+        "error": "Blueprint: Failed to find property 'simple_construction_script' for attribute 'simple_construction_script' on 'Blueprint'"
+      },
+      "weapon_mesh_component": {
+        "class": "StaticMeshComponent",
+        "name": "WeaponMesh",
+        "relative_location": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "relative_rotation": {
+          "pitch": 0.0,
+          "yaw": 0.0,
+          "roll": 0.0
+        },
+        "relative_scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "visible": true
+      }
+    }
+  }
+}

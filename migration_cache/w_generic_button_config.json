@@ -1,0 +1,9 @@
+{
+  "path": "/Game/SoulslikeFramework/Widgets/_Generic/W_GenericButton",
+  "variables": {},
+  "components": {},
+  "cdo_properties": {
+    "text": "Text"
+  },
+  "widget_tree": []
+}

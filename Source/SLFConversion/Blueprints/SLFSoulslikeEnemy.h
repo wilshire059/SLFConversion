@@ -28,6 +28,7 @@
 #include "Components/TimelineComponent.h"
 #include "NiagaraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "SLFGameTypes.h"
 #include "SLFSoulslikeEnemy.generated.h"
 
 // Forward declarations
@@ -162,6 +163,20 @@ public:
 	 */
 	UFUNCTION()
 	void HandleOnPoiseBroken(bool bBroken);
+
+	/**
+	 * Handler for OnDeath event from CombatManagerComponent
+	 * bp_only flow: OnDeath -> PickAndSpawnLoot (spawns death currency)
+	 */
+	UFUNCTION()
+	void HandleOnDeath(AActor* Killer);
+
+	/**
+	 * Handler for OnItemReadyForSpawn event from LootDropManagerComponent
+	 * bp_only flow: Spawns B_DeathCurrency at enemy location with currency amount
+	 */
+	UFUNCTION()
+	void HandleOnItemReadyForSpawn(FSLFLootItem Item);
 
 	// ═══════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS: 1/1 migrated

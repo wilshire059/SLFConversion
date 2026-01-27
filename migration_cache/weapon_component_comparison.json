@@ -1,0 +1,66 @@
+{
+  "B_Item_Weapon_Shield": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Shield",
+    "components": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "attach_parent": "None",
+        "location": "(-100000.00, -100000.00, -100000.00)",
+        "rotation": "(P=0.00, Y=0.00, R=0.00)"
+      },
+      {
+        "name": "WeaponMesh",
+        "class": "StaticMeshComponent",
+        "attach_parent": "DefaultSceneRoot",
+        "location": "(0.00, 0.00, 0.00)",
+        "rotation": "(P=0.00, Y=0.00, R=0.00)",
+        "mesh": "NONE",
+        "visible": true
+      },
+      {
+        "name": "TrailComponent",
+        "class": "NiagaraComponent",
+        "attach_parent": "DefaultSceneRoot",
+        "location": "(0.00, 0.00, 0.00)",
+        "rotation": "(P=0.00, Y=0.00, R=0.00)"
+      },
+      {
+        "name": "CollisionManager",
+        "class": "CollisionManagerComponent"
+      }
+    ]
+  },
+  "B_Item_Weapon_SwordExample01": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_SwordExample01",
+    "components": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "attach_parent": "None",
+        "location": "(-100000.00, -100000.00, -100000.00)",
+        "rotation": "(P=0.00, Y=0.00, R=0.00)"
+      },
+      {
+        "name": "WeaponMesh",
+        "class": "StaticMeshComponent",
+        "attach_parent": "DefaultSceneRoot",
+        "location": "(0.00, 0.00, 0.00)",
+        "rotation": "(P=0.00, Y=0.00, R=0.00)",
+        "mesh": "NONE",
+        "visible": true
+      },
+      {
+        "name": "TrailComponent",
+        "class": "NiagaraComponent",
+        "attach_parent": "DefaultSceneRoot",
+        "location": "(0.00, 0.00, 0.00)",
+        "rotation": "(P=0.00, Y=0.00, R=0.00)"
+      },
+      {
+        "name": "CollisionManager",
+        "class": "CollisionManagerComponent"
+      }
+    ]
+  }
+}

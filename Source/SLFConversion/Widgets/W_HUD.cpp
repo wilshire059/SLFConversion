@@ -11,12 +11,14 @@
 #include "Components/StatManagerComponent.h"
 #include "Blueprints/B_Interactable.h"
 #include "Blueprints/B_RestingPoint.h"
+#include "Blueprints/SLFRestingPointBase.h"
 #include "Blueprints/Actors/SLFInteractableBase.h"
 #include "Blueprints/Actors/SLFBossDoor.h"
 #include "Blueprints/SLFPickupItemBase.h"
 #include "SLFPrimaryDataAssets.h"
 #include "Interfaces/SLFInteractableInterface.h"
 #include "Interfaces/BPI_Interactable.h"
+#include "Interfaces/BPI_Controller.h"
 #include "Components/AC_AI_InteractionManager.h"
 #include "Widgets/W_LoadingScreen.h"
 #include "Widgets/W_Inventory.h"
@@ -33,6 +35,10 @@
 #include "Widgets/W_FirstLootNotification.h"
 #include "Widgets/W_Resources.h"
 #include "Widgets/W_BigScreenMessage.h"
+#include "Widgets/W_StatusEffectBar.h"
+#include "Widgets/W_StatusEffectNotification.h"
+#include "Widgets/W_Radar.h"
+#include "Widgets/W_Boss_Healthbar.h"
 #include "Components/VerticalBox.h"
 #include "Components/WidgetSwitcher.h"
 #include "Components/Image.h"
@@ -40,6 +46,8 @@
 #include "Animation/WidgetAnimation.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/InventoryManagerComponent.h"
+#include "Components/AC_StatusEffectManager.h"
+#include "Components/StatusEffectManagerComponent.h"
 #include "GameFramework/PC_SoulslikeFramework.h"
 #include "Framework/SLFPlayerController.h"
 
@@ -55,9 +63,14 @@ UW_HUD::UW_HUD(const FObjectInitializer& ObjectInitializer)
 	CachedW_Status = nullptr;
 	CachedW_Settings = nullptr;
 	CachedW_Resources = nullptr;
+	CachedW_RestMenu = nullptr;
+	CachedW_Radar = nullptr;
 	CachedItemLootNotificationsBox = nullptr;
 	CachedW_FirstLootNotification = nullptr;
+	CachedStatusEffectBox = nullptr;
+	CachedW_StatusEffectNotification = nullptr;
 	LootNotificationWidgetClass = nullptr;
+	StatusEffectBarWidgetClass = nullptr;
 	IsDialogActive = false;
 	CinematicMode = false;
 }
@@ -177,6 +190,21 @@ void UW_HUD::CacheWidgetReferences()
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - CachedW_Resources: %s"),
 		CachedW_Resources ? TEXT("Found") : TEXT("NOT FOUND"));
 
+	// Find CachedW_RestMenu widget
+	if (!CachedW_RestMenu)
+	{
+		CachedW_RestMenu = Cast<UW_RestMenu>(GetWidgetFromName(TEXT("RestMenu")));
+	}
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - CachedW_RestMenu: %s"),
+		CachedW_RestMenu ? TEXT("Found") : TEXT("NOT FOUND"));
+
+	// Bind to RestMenu's OnStorageRequested event
+	if (CachedW_RestMenu)
+	{
+		CachedW_RestMenu->OnStorageRequested.AddUniqueDynamic(this, &UW_HUD::OnStorageRequestedHandler);
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - Bound to CachedW_RestMenu::OnStorageRequested"));
+	}
+
 	if (CachedW_Settings)
 	{
 		CachedW_Settings->OnSettingsClosed.AddUniqueDynamic(this, &UW_HUD::OnSettingsClosedHandler);
@@ -206,6 +234,38 @@ void UW_HUD::CacheWidgetReferences()
 	}
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - LootNotificationWidgetClass: %s"),
 		LootNotificationWidgetClass ? TEXT("Loaded") : TEXT("NOT LOADED"));
+
+	// Cache status effect widgets
+	if (!CachedStatusEffectBox)
+	{
+		CachedStatusEffectBox = Cast<UVerticalBox>(GetWidgetFromName(TEXT("StatusEffectBox")));
+	}
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - CachedStatusEffectBox: %s"),
+		CachedStatusEffectBox ? TEXT("Found") : TEXT("NOT FOUND"));
+
+	if (!CachedW_StatusEffectNotification)
+	{
+		CachedW_StatusEffectNotification = Cast<UW_StatusEffectNotification>(GetWidgetFromName(TEXT("W_StatusEffectNotification")));
+	}
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - CachedW_StatusEffectNotification: %s"),
+		CachedW_StatusEffectNotification ? TEXT("Found") : TEXT("NOT FOUND"));
+
+	// Pre-load status effect bar widget class
+	if (!StatusEffectBarWidgetClass)
+	{
+		StatusEffectBarWidgetClass = LoadClass<UW_StatusEffectBar>(nullptr,
+			TEXT("/Game/SoulslikeFramework/Widgets/HUD/W_StatusEffectBar.W_StatusEffectBar_C"));
+	}
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - StatusEffectBarWidgetClass: %s"),
+		StatusEffectBarWidgetClass ? TEXT("Loaded") : TEXT("NOT LOADED"));
+
+	// Cache W_Radar widget for radar/compass functionality
+	if (!CachedW_Radar)
+	{
+		CachedW_Radar = Cast<UW_Radar>(GetWidgetFromName(TEXT("W_Radar")));
+	}
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - CachedW_Radar: %s"),
+		CachedW_Radar ? TEXT("Found") : TEXT("NOT FOUND"));
 
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - END"));
 }
@@ -339,6 +399,28 @@ void UW_HUD::InitializeBindings_Implementation()
 			else
 			{
 				UE_LOG(LogTemp, Warning, TEXT("UW_HUD::InitializeBindings - StatManagerComponent not found on Pawn"));
+			}
+
+			// Bind to StatusEffectManager's OnStatusEffectAdded event
+			// Try AC_StatusEffectManager first (Blueprint), then StatusEffectManagerComponent (C++)
+			UAC_StatusEffectManager* AC_StatusEffectMgr = Pawn->FindComponentByClass<UAC_StatusEffectManager>();
+			if (AC_StatusEffectMgr)
+			{
+				AC_StatusEffectMgr->OnStatusEffectAdded.AddUniqueDynamic(this, &UW_HUD::EventOnStatusEffectAdded);
+				UE_LOG(LogTemp, Log, TEXT("UW_HUD::InitializeBindings - Bound to AC_StatusEffectManager::OnStatusEffectAdded"));
+			}
+			else
+			{
+				UStatusEffectManagerComponent* StatusEffectMgr = Pawn->FindComponentByClass<UStatusEffectManagerComponent>();
+				if (StatusEffectMgr)
+				{
+					StatusEffectMgr->OnStatusEffectAdded.AddUniqueDynamic(this, &UW_HUD::OnStatusEffectAddedFromComponent);
+					UE_LOG(LogTemp, Log, TEXT("UW_HUD::InitializeBindings - Bound to StatusEffectManagerComponent::OnStatusEffectAdded"));
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("UW_HUD::InitializeBindings - No StatusEffectManager found on Pawn"));
+				}
 			}
 		}
 		else
@@ -630,6 +712,44 @@ void UW_HUD::EventOnStatusEffectAdded_Implementation(UB_StatusEffect* StatusEffe
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventOnStatusEffectAdded - Effect: %s"),
 		StatusEffect ? *StatusEffect->GetName() : TEXT("None"));
+
+	if (!IsValid(StatusEffect))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::EventOnStatusEffectAdded - Invalid StatusEffect!"));
+		return;
+	}
+
+	if (!CachedStatusEffectBox)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::EventOnStatusEffectAdded - No StatusEffectBox!"));
+		return;
+	}
+
+	if (!StatusEffectBarWidgetClass)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::EventOnStatusEffectAdded - No StatusEffectBarWidgetClass!"));
+		return;
+	}
+
+	// Create a new W_StatusEffectBar widget
+	UW_StatusEffectBar* NewBar = CreateWidget<UW_StatusEffectBar>(GetOwningPlayer(), StatusEffectBarWidgetClass);
+	if (!NewBar)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::EventOnStatusEffectAdded - Failed to create W_StatusEffectBar!"));
+		return;
+	}
+
+	// Set the effect reference on the bar
+	NewBar->Effect = StatusEffect;
+
+	// Setup the effect binding (binds to OnBuildupUpdated, OnStatusEffectFinished)
+	NewBar->SetupEffect();
+
+	// Add to the StatusEffectBox
+	CachedStatusEffectBox->AddChild(NewBar);
+
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventOnStatusEffectAdded - Created status effect bar for %s"),
+		*StatusEffect->GetName());
 }
 
 void UW_HUD::EventOnStatsInitialized_Implementation()
@@ -834,15 +954,91 @@ void UW_HUD::EventHideInteractionWidget_Implementation()
 	}
 }
 
-void UW_HUD::EventSetupRestingPointWidget_Implementation(AB_RestingPoint* TargetCampfire)
+void UW_HUD::EventSetupRestingPointWidget_Implementation(AActor* TargetCampfire)
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventSetupRestingPointWidget - Campfire: %s"),
 		TargetCampfire ? *TargetCampfire->GetName() : TEXT("None"));
-	if (UW_RestMenu* RestMenuWidget = Cast<UW_RestMenu>(GetWidgetFromName(TEXT("RestMenu"))))
+
+	// Switch ViewportSwitcher to show WindowsOL (index 1) which contains RestMenu
+	EventSwitchViewport(1);
+
+	// Cache RestMenu if needed
+	if (!CachedW_RestMenu)
 	{
-		RestMenuWidget->EventSetupRestingPoint(TargetCampfire);
+		CachedW_RestMenu = Cast<UW_RestMenu>(GetWidgetFromName(TEXT("RestMenu")));
 	}
+
+	if (CachedW_RestMenu)
+	{
+		CachedW_RestMenu->EventSetupRestingPoint(TargetCampfire);
+	}
+
 	EventToggleUiMode(true);
+
+	// Set ActiveWidgetTag for navigation routing and switch input context
+	// Try APC_SoulslikeFramework first (the actual game's controller), then ASLFPlayerController as fallback
+	APlayerController* OwningPlayer = GetOwningPlayer();
+	if (APC_SoulslikeFramework* PC = Cast<APC_SoulslikeFramework>(OwningPlayer))
+	{
+		// Set active widget tag for RestMenu navigation
+		PC->ActiveWidgetTag = FGameplayTag::RequestGameplayTag(FName(TEXT("SoulslikeFramework.Backend.Widgets.RestMenu")));
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventSetupRestingPointWidget - Set ActiveWidgetTag to RestMenu (via APC_SoulslikeFramework)"));
+
+		// Switch input context: Enable menu context, disable gameplay context
+		TArray<UInputMappingContext*> ToEnable;
+		TArray<UInputMappingContext*> ToDisable;
+
+		if (PC->NavigableMenuMappingContext)
+		{
+			ToEnable.Add(PC->NavigableMenuMappingContext);
+		}
+		if (PC->GameplayMappingContext)
+		{
+			ToDisable.Add(PC->GameplayMappingContext);
+		}
+
+		// Use interface method for input context switch
+		IBPI_Controller::Execute_SwitchInputContext(PC, ToEnable, ToDisable);
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventSetupRestingPointWidget - Switched to menu input context"));
+	}
+	else if (ASLFPlayerController* SLFController = Cast<ASLFPlayerController>(OwningPlayer))
+	{
+		// Fallback to ASLFPlayerController
+		SLFController->ActiveWidgetTag = FGameplayTag::RequestGameplayTag(FName(TEXT("SoulslikeFramework.Backend.Widgets.RestMenu")));
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventSetupRestingPointWidget - Set ActiveWidgetTag to RestMenu (via ASLFPlayerController)"));
+
+		TArray<UInputMappingContext*> ToEnable;
+		TArray<UInputMappingContext*> ToDisable;
+
+		if (SLFController->IMC_NavigableMenu)
+		{
+			ToEnable.Add(SLFController->IMC_NavigableMenu);
+		}
+		if (SLFController->IMC_Gameplay)
+		{
+			ToDisable.Add(SLFController->IMC_Gameplay);
+		}
+
+		SLFController->SwitchInputContextInternal(ToEnable, ToDisable);
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventSetupRestingPointWidget - Switched to menu input context"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::EventSetupRestingPointWidget - Could not cast to APC_SoulslikeFramework or ASLFPlayerController!"));
+	}
+
+	// Bind to resting point's OnExited to clear navigation when menu closes
+	if (TargetCampfire)
+	{
+		if (ASLFRestingPointBase* SLFRestPoint = Cast<ASLFRestingPointBase>(TargetCampfire))
+		{
+			SLFRestPoint->OnExited.AddUniqueDynamic(this, &UW_HUD::OnRestMenuClosedHandler);
+		}
+		else if (AB_RestingPoint* OldRestPoint = Cast<AB_RestingPoint>(TargetCampfire))
+		{
+			OldRestPoint->OnExited.AddUniqueDynamic(this, &UW_HUD::OnRestMenuClosedHandler);
+		}
+	}
 }
 
 void UW_HUD::EventShowNpcInteractionWidget_Implementation()
@@ -1021,10 +1217,38 @@ void UW_HUD::EventShowSkipCinematicNotification_Implementation()
 
 void UW_HUD::EventShowBossBar_Implementation(const FText& BossName, AActor* BossActor)
 {
-	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowBossBar - Boss: %s"), *BossName.ToString());
-	if (UWidget* BossBar = GetWidgetFromName(TEXT("BossBar")))
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowBossBar - Boss: %s, Actor: %s"),
+		*BossName.ToString(), BossActor ? *BossActor->GetName() : TEXT("null"));
+
+	// Find the W_Boss_Healthbar widget (may be named "BossBar" or "W_Boss_Healthbar")
+	UW_Boss_Healthbar* BossHealthbar = Cast<UW_Boss_Healthbar>(GetWidgetFromName(TEXT("W_Boss_Healthbar")));
+	if (!BossHealthbar)
 	{
-		BossBar->SetVisibility(ESlateVisibility::Visible);
+		BossHealthbar = Cast<UW_Boss_Healthbar>(GetWidgetFromName(TEXT("BossBar")));
+	}
+
+	if (BossHealthbar)
+	{
+		// Make visible first
+		BossHealthbar->SetVisibility(ESlateVisibility::Visible);
+
+		// Initialize the boss bar with name and actor reference for health binding
+		BossHealthbar->EventInitializeBossBar(BossName, BossActor);
+
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowBossBar - Initialized boss bar with name: %s"), *BossName.ToString());
+	}
+	else
+	{
+		// Fallback - just set visibility if we find any widget named BossBar
+		if (UWidget* BossBar = GetWidgetFromName(TEXT("BossBar")))
+		{
+			BossBar->SetVisibility(ESlateVisibility::Visible);
+			UE_LOG(LogTemp, Warning, TEXT("UW_HUD::EventShowBossBar - Found BossBar but it's not W_Boss_Healthbar type"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("UW_HUD::EventShowBossBar - No boss healthbar widget found!"));
+		}
 	}
 }
 
@@ -1087,9 +1311,57 @@ void UW_HUD::OnGameMenuWidgetRequestHandler(FGameplayTag WidgetTag)
 
 void UW_HUD::OnInventoryClosedHandler()
 {
-	UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnInventoryClosedHandler - Closing Inventory, showing GameMenu"));
+	// Check if we were in storage mode (came from rest menu)
+	bool bWasStorageMode = false;
+	if (CachedW_Inventory)
+	{
+		bWasStorageMode = CachedW_Inventory->StorageMode;
+		// Reset storage mode when closing
+		if (bWasStorageMode)
+		{
+			CachedW_Inventory->SetStorageMode(false);
+		}
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnInventoryClosedHandler - Closing Inventory, bWasStorageMode: %s"),
+		bWasStorageMode ? TEXT("true") : TEXT("false"));
+
 	EventCloseInventory();
-	EventShowGameMenu();
+
+	if (bWasStorageMode)
+	{
+		// Return to rest menu (viewport 1)
+		EventSwitchViewport(1);
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnInventoryClosedHandler - Returning to RestMenu (viewport 1)"));
+
+		// Set ActiveWidgetTag back to RestMenu
+		APlayerController* OwningPlayer = GetOwningPlayer();
+		if (APC_SoulslikeFramework* PC = Cast<APC_SoulslikeFramework>(OwningPlayer))
+		{
+			PC->ActiveWidgetTag = FGameplayTag::RequestGameplayTag(FName(TEXT("SoulslikeFramework.Backend.Widgets.RestMenu")));
+		}
+		else if (ASLFPlayerController* SLFController = Cast<ASLFPlayerController>(OwningPlayer))
+		{
+			SLFController->ActiveWidgetTag = FGameplayTag::RequestGameplayTag(FName(TEXT("SoulslikeFramework.Backend.Widgets.RestMenu")));
+		}
+
+		// CRITICAL: Call EventFadeInRestMenu to restore navigation and keyboard focus
+		// bp_only Event OnExitStorage calls RestMenu.EventFadeInRestMenu() after switching viewport
+		if (CachedW_RestMenu)
+		{
+			CachedW_RestMenu->EventFadeInRestMenu();
+			UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnInventoryClosedHandler - Called RestMenu.EventFadeInRestMenu()"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("UW_HUD::OnInventoryClosedHandler - CachedW_RestMenu is null, cannot restore navigation!"));
+		}
+	}
+	else
+	{
+		// Normal flow - return to game menu
+		EventShowGameMenu();
+	}
 }
 
 void UW_HUD::OnEquipmentClosedHandler()
@@ -1118,6 +1390,58 @@ void UW_HUD::OnSettingsClosedHandler()
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnSettingsClosedHandler - Closing Settings, showing GameMenu"));
 	EventCloseSettings();
 	EventShowGameMenu();
+}
+
+void UW_HUD::OnRestMenuClosedHandler()
+{
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnRestMenuClosedHandler - RestMenu closed, restoring gameplay input"));
+
+	// Clear ActiveWidgetTag and switch input context back to gameplay
+	// Try APC_SoulslikeFramework first, then ASLFPlayerController as fallback
+	APlayerController* OwningPlayer = GetOwningPlayer();
+	if (APC_SoulslikeFramework* PC = Cast<APC_SoulslikeFramework>(OwningPlayer))
+	{
+		// Clear active widget tag
+		PC->ActiveWidgetTag = FGameplayTag();
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnRestMenuClosedHandler - Cleared ActiveWidgetTag (via APC_SoulslikeFramework)"));
+
+		// Switch input context: Enable gameplay context, disable menu context
+		TArray<UInputMappingContext*> ToEnable;
+		TArray<UInputMappingContext*> ToDisable;
+
+		if (PC->GameplayMappingContext)
+		{
+			ToEnable.Add(PC->GameplayMappingContext);
+		}
+		if (PC->NavigableMenuMappingContext)
+		{
+			ToDisable.Add(PC->NavigableMenuMappingContext);
+		}
+
+		IBPI_Controller::Execute_SwitchInputContext(PC, ToEnable, ToDisable);
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnRestMenuClosedHandler - Switched to gameplay input context"));
+	}
+	else if (ASLFPlayerController* SLFController = Cast<ASLFPlayerController>(OwningPlayer))
+	{
+		// Fallback to ASLFPlayerController
+		SLFController->ActiveWidgetTag = FGameplayTag();
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnRestMenuClosedHandler - Cleared ActiveWidgetTag (via ASLFPlayerController)"));
+
+		TArray<UInputMappingContext*> ToEnable;
+		TArray<UInputMappingContext*> ToDisable;
+
+		if (SLFController->IMC_Gameplay)
+		{
+			ToEnable.Add(SLFController->IMC_Gameplay);
+		}
+		if (SLFController->IMC_NavigableMenu)
+		{
+			ToDisable.Add(SLFController->IMC_NavigableMenu);
+		}
+
+		SLFController->SwitchInputContextInternal(ToEnable, ToDisable);
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnRestMenuClosedHandler - Switched to gameplay input context"));
+	}
 }
 
 void UW_HUD::OnItemLootedHandler(UDataAsset* ItemAsset, int32 Amount)
@@ -1192,6 +1516,10 @@ void UW_HUD::RouteNavigateCancel(const FGameplayTag& ActiveWidgetTag)
 	{
 		if (CachedW_Settings) CachedW_Settings->EventNavigateCancel();
 	}
+	else if (TagString.Contains(TEXT("RestMenu")))
+	{
+		if (CachedW_RestMenu) CachedW_RestMenu->EventNavigateCancel();
+	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::RouteNavigateCancel - Unknown widget tag: %s"), *TagString);
@@ -1224,6 +1552,10 @@ void UW_HUD::RouteNavigateOk(const FGameplayTag& ActiveWidgetTag)
 	{
 		if (CachedW_Settings) CachedW_Settings->EventNavigateOk();
 	}
+	else if (TagString.Contains(TEXT("RestMenu")))
+	{
+		if (CachedW_RestMenu) CachedW_RestMenu->EventNavigateOk();
+	}
 }
 
 void UW_HUD::RouteNavigateUp(const FGameplayTag& ActiveWidgetTag)
@@ -1252,6 +1584,10 @@ void UW_HUD::RouteNavigateUp(const FGameplayTag& ActiveWidgetTag)
 	{
 		if (CachedW_Settings) CachedW_Settings->EventNavigateUp();
 	}
+	else if (TagString.Contains(TEXT("RestMenu")))
+	{
+		if (CachedW_RestMenu) CachedW_RestMenu->EventNavigateUp();
+	}
 }
 
 void UW_HUD::RouteNavigateDown(const FGameplayTag& ActiveWidgetTag)
@@ -1279,6 +1615,10 @@ void UW_HUD::RouteNavigateDown(const FGameplayTag& ActiveWidgetTag)
 	else if (TagString.Contains(TEXT("System")) || TagString.Contains(TEXT("Settings")))
 	{
 		if (CachedW_Settings) CachedW_Settings->EventNavigateDown();
+	}
+	else if (TagString.Contains(TEXT("RestMenu")))
+	{
+		if (CachedW_RestMenu) CachedW_RestMenu->EventNavigateDown();
 	}
 }
 
@@ -1399,5 +1739,66 @@ void UW_HUD::RouteNavigateResetToDefaults(const FGameplayTag& ActiveWidgetTag)
 	if (TagString.Contains(TEXT("System")) || TagString.Contains(TEXT("Settings")))
 	{
 		if (CachedW_Settings) CachedW_Settings->EventNavigateResetToDefault();
+	}
+}
+
+void UW_HUD::OnStorageRequestedHandler()
+{
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnStorageRequestedHandler - Opening Inventory in Storage Mode"));
+
+	// Switch viewport to show main HUD layer (index 0) where inventory lives
+	// Rest menu was on index 1 (WindowsOL layer)
+	EventSwitchViewport(0);
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnStorageRequestedHandler - Switched viewport to index 0"));
+
+	// Show the inventory widget
+	EventShowInventory();
+
+	// Set inventory to storage mode
+	if (CachedW_Inventory)
+	{
+		CachedW_Inventory->SetStorageMode(true);
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnStorageRequestedHandler - Set StorageMode to true"));
+	}
+	else
+	{
+		// Try to find and cache it if not already cached
+		CachedW_Inventory = Cast<UW_Inventory>(GetWidgetFromName(TEXT("W_Inventory")));
+		if (CachedW_Inventory)
+		{
+			CachedW_Inventory->SetStorageMode(true);
+			UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnStorageRequestedHandler - Found and set StorageMode to true"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("UW_HUD::OnStorageRequestedHandler - CachedW_Inventory not found!"));
+		}
+	}
+
+	// Set ActiveWidgetTag for navigation routing
+	APlayerController* OwningPlayer = GetOwningPlayer();
+	if (APC_SoulslikeFramework* PC = Cast<APC_SoulslikeFramework>(OwningPlayer))
+	{
+		PC->ActiveWidgetTag = FGameplayTag::RequestGameplayTag(FName(TEXT("SoulslikeFramework.Backend.Widgets.Inventory")));
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnStorageRequestedHandler - Set ActiveWidgetTag to Inventory"));
+	}
+	else if (ASLFPlayerController* SLFController = Cast<ASLFPlayerController>(OwningPlayer))
+	{
+		SLFController->ActiveWidgetTag = FGameplayTag::RequestGameplayTag(FName(TEXT("SoulslikeFramework.Backend.Widgets.Inventory")));
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnStorageRequestedHandler - Set ActiveWidgetTag to Inventory (via ASLFPlayerController)"));
+	}
+}
+
+void UW_HUD::OnStatusEffectAddedFromComponent(UObject* StatusEffect)
+{
+	// StatusEffectManagerComponent uses UObject*, cast to UB_StatusEffect and forward
+	UB_StatusEffect* Effect = Cast<UB_StatusEffect>(StatusEffect);
+	if (Effect)
+	{
+		EventOnStatusEffectAdded(Effect);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::OnStatusEffectAddedFromComponent - Failed to cast StatusEffect to UB_StatusEffect"));
 	}
 }

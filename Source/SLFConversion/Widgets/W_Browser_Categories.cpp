@@ -29,7 +29,7 @@ void UW_Browser_Categories::NativeDestruct()
 
 void UW_Browser_Categories::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 void UW_Browser_Categories::EventOnCategoryClicked_Implementation(uint8 InCategory)
 {

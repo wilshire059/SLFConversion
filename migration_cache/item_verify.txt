@@ -1,0 +1,19 @@
+=== Item Data Verification ===
+
+[CHECK] DA_Sword01
+  DisplayName: 'Sword of the Unleashed Behemoth'
+  ItemTag: '<Struct 'GameplayTag' (0x0000017706FA5A78) {}>'
+
+[CHECK] DA_HealthFlask
+  DisplayName: 'Health Flask'
+  ItemTag: '<Struct 'GameplayTag' (0x0000017706FA6678) {}>'
+
+[CHECK] DA_Apple
+  DisplayName: 'Rejuvenating Apple'
+  ItemTag: '<Struct 'GameplayTag' (0x0000017706FA7278) {}>'
+
+[CHECK] DA_ExampleArmor
+  DisplayName: 'Brass Armor'
+  ItemTag: '<Struct 'GameplayTag' (0x0000017706FA7E78) {}>'
+
+=== Verification Complete ===

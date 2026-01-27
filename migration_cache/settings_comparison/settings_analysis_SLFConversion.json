@@ -1,0 +1,24 @@
+{
+  "project": "SLFConversion",
+  "w_settings_categoryentry": {
+    "path": "/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings_CategoryEntry",
+    "blueprint_class": "WidgetBlueprint",
+    "generated_class": "W_Settings_CategoryEntry_C",
+    "parent_class": "Unknown",
+    "cdo_class": "W_Settings_CategoryEntry_C",
+    "cdo_properties": {
+      "icon": "None",
+      "selected": "False",
+      "selected_color": "<Struct 'LinearColor' (0x0000025C0FEBBF50) {r: 0.859375, g: 0.744195, b: 0.618340, a: 1.000000}>",
+      "deselected_color": "<Struct 'LinearColor' (0x0000025C0FEBBF60) {r: 0.494118, g: 0.392157, b: 0.282353, a: 1.000000}>",
+      "setting_category": "<Struct 'GameplayTag' (0x0000025C0FEBBF08) {}>",
+      "switcher_index": "0"
+    }
+  },
+  "runtime_analysis": {
+    "w_settings_class": "W_Settings_C",
+    "w_settings_parent": "Unknown",
+    "creation_error": "module 'unreal' has no attribute 'WidgetBlueprintLibrary'",
+    "traceback": "Traceback (most recent call last):\n  File \"C:/scripts/SLFConversion/compare_settings_widgets.py\", line 127, in create_runtime_widget_and_analyze\n    widget = unreal.WidgetBlueprintLibrary.create(world, gen_class)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: module 'unreal' has no attribute 'WidgetBlueprintLibrary'\n"
+  }
+}

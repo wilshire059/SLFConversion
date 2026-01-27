@@ -1535,9 +1535,9 @@ double UAC_EquipmentManager::GetWeaponPoiseDamage() const
 	return 5.0;  // Unarmed poise damage
 }
 
-TMap<FGameplayTag, UPrimaryDataAsset*> UAC_EquipmentManager::GetWeaponStatusEffects() const
+TMap<UPrimaryDataAsset*, FSLFStatusEffectApplication> UAC_EquipmentManager::GetWeaponStatusEffects() const
 {
-	TMap<FGameplayTag, UPrimaryDataAsset*> StatusEffects;
+	TMap<UPrimaryDataAsset*, FSLFStatusEffectApplication> StatusEffects;
 
 	// Get equipped weapon from right hand slots
 	for (const FGameplayTag& SlotTag : RightHandSlots)
@@ -1547,8 +1547,17 @@ TMap<FGameplayTag, UPrimaryDataAsset*> UAC_EquipmentManager::GetWeaponStatusEffe
 			if (UPDA_Item* Item = Cast<UPDA_Item>(ItemPtr->Get()))
 			{
 				// Copy status effects from weapon data
-				// Note: The original stores as TMap<FGameplayTag, double>, we return assets
-				// This needs adjustment based on actual status effect system
+				// FSLFEquipmentInfo.WeaponStatusEffectInfo is TMap<UPrimaryDataAsset*, FSLFStatusEffectApplication>
+				for (const auto& EffectEntry : Item->ItemInformation.EquipmentDetails.WeaponStatusEffectInfo)
+				{
+					if (IsValid(EffectEntry.Key))
+					{
+						StatusEffects.Add(EffectEntry.Key, EffectEntry.Value);
+						UE_LOG(LogTemp, Log, TEXT("[EquipmentManager] Weapon status effect: %s, Rank: %d, BuildupAmount: %.1f"),
+							*EffectEntry.Key->GetName(), EffectEntry.Value.Rank, EffectEntry.Value.BuildupAmount);
+					}
+				}
+				break; // Only process first equipped weapon
 			}
 		}
 	}

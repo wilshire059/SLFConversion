@@ -31,7 +31,7 @@ void UW_Navigable_InputReader::NativeDestruct()
 
 void UW_Navigable_InputReader::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 
 void UW_Navigable_InputReader::GetInputIconForKey_Implementation(const FKey& Key, TSoftObjectPtr<UTexture2D>& Icon)

@@ -1,0 +1,11 @@
+=== Checking B_StatusEffectArea Blueprint ===
+Loaded Blueprint: B_StatusEffectArea
+Error getting parent_class: Blueprint: Failed to find property 'parent_class' for attribute 'parent_class' on 'Blueprint'
+
+Expected C++ class: /Script/SLFConversion.B_StatusEffectArea
+C++ class found: B_StatusEffectArea
+C++ CDO: Default__B_StatusEffectArea
+  status_effect_to_apply (C++ CDO): None
+
+=== Attempting to reparent Blueprint ===
+Reparent result: None

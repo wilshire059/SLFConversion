@@ -34,7 +34,7 @@ void UW_Status_StatBlock::NativeDestruct()
 
 void UW_Status_StatBlock::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 
 void UW_Status_StatBlock::SetupCurrentStats_Implementation(const TArray<USLFStatBase*>& StatObjects, const TMap<FGameplayTag, TSubclassOf<USLFStatBase>>& StatClassesAndCategories)
@@ -69,6 +69,46 @@ void UW_Status_StatBlock::SetupCurrentStats_Implementation(const TArray<USLFStat
 		return;
 	}
 
+	// ═══════════════════════════════════════════════════════════════════════════════
+	// Category remapping and exclusion - match logic in W_StatBlock.cpp
+	// ═══════════════════════════════════════════════════════════════════════════════
+
+	FGameplayTag EffectiveCategory = Category;
+	FString CategoryStr = Category.ToString();
+
+	// Build exclusion list - stats matching these tags should NOT appear in the current block
+	TArray<FGameplayTag> ExcludeTags;
+
+	// Check if this is the "Secondary" (Base Stats) block
+	bool bIsSecondaryBlock = CategoryStr.Equals(TEXT("SoulslikeFramework.Stat.Secondary")) ||
+	                         CategoryStr.EndsWith(TEXT(".Secondary"));
+
+	if (bIsSecondaryBlock)
+	{
+		// Exclude AttackPower stats - they go in their own block
+		ExcludeTags.Add(FGameplayTag::RequestGameplayTag(FName(TEXT("SoulslikeFramework.Stat.Secondary.AttackPower"))));
+		// Exclude Backend stats (Poise, Stance, IncantationPower, etc.)
+		ExcludeTags.Add(FGameplayTag::RequestGameplayTag(FName(TEXT("SoulslikeFramework.Stat.Backend"))));
+		UE_LOG(LogTemp, Log, TEXT("[W_Status_StatBlock] Secondary block - excluding AttackPower and Backend stats"));
+	}
+
+	// Remap category tags to match actual stat tags
+	if (CategoryStr.Contains(TEXT("Secondary.AttackPower")) || CategoryStr.Contains(TEXT("AttackPower")))
+	{
+		EffectiveCategory = FGameplayTag::RequestGameplayTag(FName(TEXT("SoulslikeFramework.Stat.Secondary.AttackPower")));
+		UE_LOG(LogTemp, Log, TEXT("[W_Status_StatBlock] Remapped category: %s -> %s"), *CategoryStr, *EffectiveCategory.ToString());
+	}
+	else if (CategoryStr.Contains(TEXT("DamageNegation")) || CategoryStr.Contains(TEXT("Negation")))
+	{
+		EffectiveCategory = FGameplayTag::RequestGameplayTag(FName(TEXT("SoulslikeFramework.Stat.Defense.Negation")));
+		UE_LOG(LogTemp, Log, TEXT("[W_Status_StatBlock] Remapped category: %s -> %s"), *CategoryStr, *EffectiveCategory.ToString());
+	}
+	else if (CategoryStr.Contains(TEXT("Resistance")))
+	{
+		EffectiveCategory = FGameplayTag::RequestGameplayTag(FName(TEXT("SoulslikeFramework.Stat.Defense.Resistances")));
+		UE_LOG(LogTemp, Log, TEXT("[W_Status_StatBlock] Remapped category: %s -> %s"), *CategoryStr, *EffectiveCategory.ToString());
+	}
+
 	int32 CreatedCount = 0;
 
 	// For each stat, check category and create widget
@@ -79,11 +119,26 @@ void UW_Status_StatBlock::SetupCurrentStats_Implementation(const TArray<USLFStat
 		// Get the stat's tag (e.g., "SoulslikeFramework.Stat.Primary.Vigor")
 		const FGameplayTag& StatTag = StatObj->StatInfo.Tag;
 
-		// Check if this stat belongs in this block by category
+		// Check if this stat belongs in this block by effective category
 		// MatchesTag() returns true if StatTag is a child of Category
 		// e.g., "SoulslikeFramework.Stat.Primary.Vigor".MatchesTag("SoulslikeFramework.Stat.Primary") = true
-		// If Category is not valid (empty), show all stats
-		bool bShouldShow = !Category.IsValid() || StatTag.MatchesTag(Category);
+		// If EffectiveCategory is not valid (empty), show all stats
+		bool bShouldShow = !EffectiveCategory.IsValid() || StatTag.MatchesTag(EffectiveCategory);
+
+		// Check exclusion list
+		if (bShouldShow)
+		{
+			for (const FGameplayTag& ExcludeTag : ExcludeTags)
+			{
+				if (StatTag.MatchesTag(ExcludeTag))
+				{
+					UE_LOG(LogTemp, Log, TEXT("[W_Status_StatBlock] Excluding stat %s (matches exclusion %s)"),
+						*StatTag.ToString(), *ExcludeTag.ToString());
+					bShouldShow = false;
+					break;
+				}
+			}
+		}
 
 		UE_LOG(LogTemp, Verbose, TEXT("[W_Status_StatBlock] Stat: %s, Tag: %s, MatchesCategory: %s"),
 			*StatObj->StatInfo.DisplayName.ToString(),

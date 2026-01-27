@@ -3,13 +3,14 @@
 
 USLFAttackPowerFire::USLFAttackPowerFire()
 {
-	StatInfo.Tag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.AttackPower.Fire"));
-	StatInfo.DisplayName = FText::FromString(TEXT("Fire Attack"));
+	// Defaults from bp_only B_AP_Fire CDO
+	StatInfo.Tag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.AttackPower.Fire"));
+	StatInfo.DisplayName = FText::FromString(TEXT("Fiery Attack Power"));
 	StatInfo.CurrentValue = 0.0;
 	StatInfo.MaxValue = 9999.0;
 	StatInfo.bShowMaxValue = false;
+	StatInfo.bDisplayAsPercent = false;
 	StatInfo.RegenInfo.bCanRegenerate = false;
 	bShowMaxValueOnLevelUp = false;
 	MinValue = 0.0;
-	UE_LOG(LogTemp, Log, TEXT("[AP_Fire] Initialized with %.0f"), StatInfo.CurrentValue);
 }

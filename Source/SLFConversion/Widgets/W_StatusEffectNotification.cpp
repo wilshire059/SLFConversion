@@ -10,6 +10,8 @@
 
 #include "Widgets/W_StatusEffectNotification.h"
 #include "Components/TextBlock.h"
+#include "Components/AC_StatusEffectManager.h"
+#include "Components/StatusEffectManagerComponent.h"
 #include "TimerManager.h"
 
 UW_StatusEffectNotification::UW_StatusEffectNotification(const FObjectInitializer& ObjectInitializer)
@@ -17,6 +19,8 @@ UW_StatusEffectNotification::UW_StatusEffectNotification(const FObjectInitialize
 {
 	NotificationDuration = 2.0; // Default 2 seconds
 	TxtStatusEffect = nullptr;
+	CachedStatusEffectManager = nullptr;
+	CachedStatusEffectManagerComponent = nullptr;
 }
 
 void UW_StatusEffectNotification::NativeConstruct()
@@ -26,11 +30,24 @@ void UW_StatusEffectNotification::NativeConstruct()
 	// Cache widget references
 	CacheWidgetReferences();
 
+	// Bind to status effect manager (matches bp_only Construct graph)
+	BindToStatusEffectManager();
+
 	UE_LOG(LogTemp, Log, TEXT("UW_StatusEffectNotification::NativeConstruct"));
 }
 
 void UW_StatusEffectNotification::NativeDestruct()
 {
+	// Unbind from status effect manager to prevent dangling delegates
+	if (IsValid(CachedStatusEffectManager))
+	{
+		CachedStatusEffectManager->OnStatusEffectTriggered.RemoveDynamic(this, &UW_StatusEffectNotification::OnStatusEffectTriggeredHandler);
+	}
+	if (IsValid(CachedStatusEffectManagerComponent))
+	{
+		CachedStatusEffectManagerComponent->OnStatusEffectTextTriggered.RemoveDynamic(this, &UW_StatusEffectNotification::OnStatusEffectTriggeredHandler);
+	}
+
 	// Clear any pending timer
 	if (UWorld* World = GetWorld())
 	{
@@ -94,6 +111,9 @@ void UW_StatusEffectNotification::EventOnStatusEffectTriggered_Implementation(co
 		UE_LOG(LogTemp, Warning, TEXT("  TxtStatusEffect widget is null"));
 	}
 
+	// Make widget visible (bp_only sets visibility to Visible here)
+	SetVisibility(ESlateVisibility::Visible);
+
 	// Note: Blueprint plays UMG animations here. In C++, we just handle the timer for duration.
 	// Animations should be set up in the Blueprint UMG designer and played via PlayAnimation()
 	// if needed, but typically the Blueprint handles visual effects.
@@ -111,4 +131,64 @@ void UW_StatusEffectNotification::EventOnStatusEffectTriggered_Implementation(co
 			false
 		);
 	}
+}
+
+/**
+ * BindToStatusEffectManager
+ *
+ * Blueprint Logic (from bp_only JSON Construct graph):
+ * 1. GetOwningPlayerPawn()
+ * 2. GetComponentByClass(AC_StatusEffectManager_C)
+ * 3. Bind Event to OnStatusEffectTriggered
+ *
+ * This allows the widget to receive notifications when status effects trigger.
+ */
+void UW_StatusEffectNotification::BindToStatusEffectManager()
+{
+	APawn* OwningPawn = GetOwningPlayerPawn();
+	if (!OwningPawn)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_StatusEffectNotification::BindToStatusEffectManager - No owning pawn"));
+		return;
+	}
+
+	// Try to find AC_StatusEffectManager first (Blueprint component)
+	CachedStatusEffectManager = OwningPawn->FindComponentByClass<UAC_StatusEffectManager>();
+	if (CachedStatusEffectManager)
+	{
+		// Bind to OnStatusEffectTriggered
+		CachedStatusEffectManager->OnStatusEffectTriggered.AddDynamic(this, &UW_StatusEffectNotification::OnStatusEffectTriggeredHandler);
+		UE_LOG(LogTemp, Log, TEXT("UW_StatusEffectNotification::BindToStatusEffectManager - Bound to AC_StatusEffectManager on %s"),
+			*OwningPawn->GetName());
+		return;
+	}
+
+	// Try StatusEffectManagerComponent (C++ component)
+	CachedStatusEffectManagerComponent = OwningPawn->FindComponentByClass<UStatusEffectManagerComponent>();
+	if (CachedStatusEffectManagerComponent)
+	{
+		// Bind to OnStatusEffectTextTriggered
+		CachedStatusEffectManagerComponent->OnStatusEffectTextTriggered.AddDynamic(this, &UW_StatusEffectNotification::OnStatusEffectTriggeredHandler);
+		UE_LOG(LogTemp, Log, TEXT("UW_StatusEffectNotification::BindToStatusEffectManager - Bound to StatusEffectManagerComponent on %s"),
+			*OwningPawn->GetName());
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("UW_StatusEffectNotification::BindToStatusEffectManager - No StatusEffectManager found on pawn %s"),
+		*OwningPawn->GetName());
+}
+
+/**
+ * OnStatusEffectTriggeredHandler
+ *
+ * Handler called when status effect manager broadcasts OnStatusEffectTriggered.
+ * Calls EventOnStatusEffectTriggered to display the notification.
+ */
+void UW_StatusEffectNotification::OnStatusEffectTriggeredHandler(FText TriggeredText)
+{
+	UE_LOG(LogTemp, Log, TEXT("UW_StatusEffectNotification::OnStatusEffectTriggeredHandler - Received: %s"),
+		*TriggeredText.ToString());
+
+	// Call the event function to display the notification
+	EventOnStatusEffectTriggered(TriggeredText);
 }

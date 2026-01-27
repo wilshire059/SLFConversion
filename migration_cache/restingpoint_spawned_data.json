@@ -1,0 +1,96 @@
+{
+  "actor_name": "B_RestingPoint_C_0",
+  "actor_class": "B_RestingPoint_C",
+  "components": [
+    {
+      "name": "InteractionCollision",
+      "class": "SphereComponent",
+      "class_path": "/Script/Engine.SphereComponent",
+      "properties": {}
+    },
+    {
+      "name": "Scene",
+      "class": "SceneComponent",
+      "class_path": "/Script/Engine.SceneComponent",
+      "properties": {}
+    },
+    {
+      "name": "SittingZone",
+      "class": "BillboardComponent",
+      "class_path": "/Script/Engine.BillboardComponent",
+      "properties": {}
+    },
+    {
+      "name": "CameraArm",
+      "class": "SpringArmComponent",
+      "class_path": "/Script/Engine.SpringArmComponent",
+      "properties": {
+        "target_arm_length": 300.0
+      }
+    },
+    {
+      "name": "LookatCamera",
+      "class": "CameraComponent",
+      "class_path": "/Script/Engine.CameraComponent",
+      "properties": {}
+    },
+    {
+      "name": "UnlockEffect",
+      "class": "NiagaraComponent",
+      "class_path": "/Script/Niagara.NiagaraComponent",
+      "properties": {
+        "niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_CampfireDiscovered.NS_CampfireDiscovered",
+        "auto_activate": false
+      }
+    },
+    {
+      "name": "Effect",
+      "class": "NiagaraComponent",
+      "class_path": "/Script/Niagara.NiagaraComponent",
+      "properties": {
+        "niagara_system": "/Game/SoulslikeFramework/VFX/Systems/NS_Campfire.NS_Campfire",
+        "auto_activate": true
+      }
+    },
+    {
+      "name": "EffectLight",
+      "class": "PointLightComponent",
+      "class_path": "/Script/Engine.PointLightComponent",
+      "properties": {
+        "intensity": 5000.0
+      }
+    },
+    {
+      "name": "BillboardComponent_2",
+      "class": "BillboardComponent",
+      "class_path": "/Script/Engine.BillboardComponent",
+      "properties": {}
+    },
+    {
+      "name": "EnvironmentLight",
+      "class": "PointLightComponent",
+      "class_path": "/Script/Engine.PointLightComponent",
+      "properties": {
+        "intensity": 3433.960693359375
+      }
+    },
+    {
+      "name": "BillboardComponent_3",
+      "class": "BillboardComponent",
+      "class_path": "/Script/Engine.BillboardComponent",
+      "properties": {}
+    },
+    {
+      "name": "Float",
+      "class": "TimelineComponent",
+      "class_path": "/Script/Engine.TimelineComponent",
+      "properties": {}
+    },
+    {
+      "name": "Timeline",
+      "class": "TimelineComponent",
+      "class_path": "/Script/Engine.TimelineComponent",
+      "properties": {}
+    }
+  ]
+}

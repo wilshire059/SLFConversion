@@ -1,0 +1,30 @@
+{
+  "DA_Sword01": {
+    "category": "<SLFItemCategory.WEAPONS: 6>",
+    "sub_category": "<SLFItemSubCategory.SWORD: 12>"
+  },
+  "DA_Sword02": {
+    "category": "<SLFItemCategory.WEAPONS: 6>",
+    "sub_category": "<SLFItemSubCategory.SWORD: 12>"
+  },
+  "DA_Greatsword": {
+    "category": "<SLFItemCategory.WEAPONS: 6>",
+    "sub_category": "<SLFItemSubCategory.SWORD: 12>"
+  },
+  "DA_Katana": {
+    "category": "<SLFItemCategory.WEAPONS: 6>",
+    "sub_category": "<SLFItemSubCategory.KATANA: 13>"
+  },
+  "DA_PoisonSword": {
+    "category": "<SLFItemCategory.WEAPONS: 6>",
+    "sub_category": "<SLFItemSubCategory.SWORD: 12>"
+  },
+  "DA_BossMace": {
+    "category": "<SLFItemCategory.WEAPONS: 6>",
+    "sub_category": "<SLFItemSubCategory.MACE: 15>"
+  },
+  "DA_Shield01": {
+    "category": "<SLFItemCategory.SHIELDS: 7>",
+    "sub_category": "<SLFItemSubCategory.MISCELLANEOUS: 4>"
+  }
+}

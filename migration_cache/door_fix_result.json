@@ -1,0 +1,10 @@
+{
+  "blueprint_cdo": [
+    {
+      "name": "DefaultSceneRoot",
+      "class": "SceneComponent",
+      "visible": true
+    }
+  ],
+  "status": "FAILED"
+}

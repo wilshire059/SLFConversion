@@ -50,7 +50,7 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Player")
 	void OnTargetLocked(bool TargetLocked, bool RotateTowards);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Player")
-	void OnRest(AB_RestingPoint* TargetCampfire);
+	void OnRest(AActor* TargetCampfire);  // AActor* for compatibility with both AB_RestingPoint and ASLFRestingPointBase
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Player")
 	void ChangeHeadpiece(const TSoftObjectPtr<USkeletalMesh>& NewMesh);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Player")
@@ -76,7 +76,7 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Player")
 	void OnDialogStarted(UAC_AI_InteractionManager* DialogComponent);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Player")
-	void DiscoverRestingPoint(UAnimMontage* InteractionMontage, AB_RestingPoint* Point);
+	void DiscoverRestingPoint(UAnimMontage* InteractionMontage, AActor* Point);  // AActor* for compatibility with both AB_RestingPoint and ASLFRestingPointBase
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Player")
 	void TriggerChaosField(bool Enable);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Player")

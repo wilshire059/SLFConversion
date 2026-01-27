@@ -1,0 +1,31 @@
+
+================================================================================
+GC_Barrel GeometryCollection Asset Settings
+================================================================================
+
+Asset: GC_Barrel
+Class: GeometryCollection
+
+--- Asset Properties ---
+  enable_clustering: True
+  cluster_group_index: 0
+  max_cluster_level: 100
+  damage_threshold: [1.000000, 1.000000, 1.000000]
+  mass: 2500.0
+  physics_material: <Object '/Engine/EngineMaterials/DefaultPhysicalMaterial.DefaultPhysicalMaterial' (0x000001C918C2FE40) Class 'PhysicalMaterial'>
+  damage_propagation_data: <Struct 'GeometryCollectionDamagePropagationData' (0x000001C93562779C) {enabled: True, break_damage_propagation_factor: 1.000000, shock_damage_propagation_factor: 0.000000}>
+  size_specific_data: [{}]
+
+--- Damage Thresholds ---
+  DamageModel: <DamageModelTypeEnum.CHAOS_DAMAGE_MODEL_USER_DEFINED_DAMAGE_THRESHOLD: 0>
+  SizeSpecificData: 1 entries
+    Entry 0: <Struct 'GeometryCollectionSizeSpecificData' (0x000001C935782D00) {}>
+
+--- Physics Settings ---
+
+--- Export Text Analysis ---
+  Export analysis error: type object 'EditorAssetLibrary' has no attribute 'get_asset_export_text'
+
+================================================================================
+Check Complete
+================================================================================

@@ -62,8 +62,9 @@ struct FSLFWeaponStatusEffectData
 {
 	GENERATED_BODY()
 
+	/** The status effect data asset (PDA_StatusEffect) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
-	FGameplayTag StatusEffectTag;
+	UPrimaryDataAsset* StatusEffectAsset = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	float BuildupAmount = 0.0f;

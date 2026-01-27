@@ -16,10 +16,12 @@
 // Forward declarations
 class UBorder;
 class UTextBlock;
-class UWidgetSwitcher;
 class USlider;
 class UButton;
+class UHorizontalBox;
 class UPrimaryDataAsset;
+class UComboBoxKey;
+class UW_Settings_CenteredText;
 
 // Event Dispatchers
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FW_Settings_Entry_OnWindowModeChanged);
@@ -87,29 +89,54 @@ public:
 	UPrimaryDataAsset* CustomSettingsAsset;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// WIDGET BINDINGS
+	// WIDGET BINDINGS (names must match Blueprint exactly)
 	// ═══════════════════════════════════════════════════════════════════════
 
+	// Background border - used for selection highlighting
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
-	UBorder* SelectedBorder;
+	UBorder* BackgroundBorder;
 
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
 	UTextBlock* SettingNameText;
 
+	// Value text for slider view
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
-	UTextBlock* ValueText;
+	UTextBlock* SliderValue;
+
+	// Value text for button/dropdown view
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UTextBlock* ButtonsValue;
+
+	// Slider control
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	USlider* Slider;
+
+	// Decrease/Increase buttons (for double button view)
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UButton* DecreaseButton;
 
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
-	UWidgetSwitcher* EntrySwitcher;
+	UButton* IncreaseButton;
+
+	// View panels - shown/hidden based on EntryType (NO WidgetSwitcher!)
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UHorizontalBox* ButtonView;
 
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
-	USlider* ValueSlider;
+	UHorizontalBox* DoubleButtonView;
 
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
-	UButton* LeftArrow;
+	UHorizontalBox* SliderView;
 
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
-	UButton* RightArrow;
+	UHorizontalBox* DropdownView;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UHorizontalBox* KeySelectorView;
+
+	// ComboBox for dropdown entry type
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UComboBoxKey* DropDown;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS
@@ -129,8 +156,8 @@ public:
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Settings_Entry")
-	void SetEntryType(ESLFSettingEntry InType);
-	virtual void SetEntryType_Implementation(ESLFSettingEntry InType);
+	void SetEntryType(ESLFSettingEntry Type);
+	virtual void SetEntryType_Implementation(ESLFSettingEntry Type);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Settings_Entry")
 	FText GetQualityLevelText(int32 QualityLevel);
@@ -148,9 +175,8 @@ public:
 	int32 GetDecrementedValue(int32 MaxClamp);
 	virtual int32 GetDecrementedValue_Implementation(int32 MaxClamp);
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Settings_Entry")
-	UWidget* OnGenerateItemWidget(const FName& InItem);
-	virtual UWidget* OnGenerateItemWidget_Implementation(const FName& InItem);
+	// NOTE: OnGenerateItemWidget is implemented in Blueprint, not C++
+	// The Blueprint creates W_Settings_CenteredText widgets for ComboBox items
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Settings_Entry")
 	void SetCurrentBoolValue(bool InCurrentValue);
@@ -165,8 +191,8 @@ public:
 	virtual void SetCurrentResolutionValue_Implementation(const FIntPoint& Resolution);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Settings_Entry")
-	void SetEntrySelected(bool InSelected);
-	virtual void SetEntrySelected_Implementation(bool InSelected);
+	void SetEntrySelected(UPARAM(DisplayName = "Selected") bool bSelected);
+	virtual void SetEntrySelected_Implementation(bool bSelected);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Settings_Entry")
 	void SetCameraInvertValue(bool TargetBool);
@@ -200,7 +226,8 @@ public:
 	void EventOnSliderSettingIncrease();
 	virtual void EventOnSliderSettingIncrease_Implementation();
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Settings_Entry")
+	// Note: Blueprint calls this as "Event Refresh Resolutions" with spaces
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Settings_Entry", meta = (DisplayName = "Event RefreshResolutions"))
 	void EventRefreshResolutions();
 	virtual void EventRefreshResolutions_Implementation();
 
@@ -216,6 +243,18 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Settings_Entry")
 	void EventActivateEntry();
 	virtual void EventActivateEntry_Implementation();
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// COMBOBOX WIDGET GENERATION (for dropdown items)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	// Called by ComboBox to generate widgets for dropdown items
+	UFUNCTION()
+	UWidget* OnGenerateItemWidget(FName Item);
+
+	// Called by ComboBox to generate the content widget (selected item display)
+	UFUNCTION()
+	UWidget* OnGenerateContentWidget(FName Item);
 
 protected:
 	// Update visuals based on configuration

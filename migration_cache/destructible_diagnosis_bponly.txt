@@ -1,0 +1,26 @@
+
+================================================================================
+B_Destructible Diagnosis (bp_only)
+================================================================================
+
+Blueprint: /Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_Destructible
+Generated Class: B_Destructible_C
+
+CDO (Default Object): Default__B_Destructible_C
+  GeometryCollection: Property not found - Actor: Failed to find property 'geometry_collection' for attribute 'geometry_collection' on 'B_Destructible_C'
+  DestructionSound: Property not found - Actor: Failed to find property 'destruction_sound' for attribute 'destruction_sound' on 'B_Destructible_C'
+
+CDO Components:
+  GeometryCollectionComponents: 0
+
+All CDO Components:
+  Total components: 0
+
+----------------------------------------
+Checking GC_Barrel asset...
+  GC_Barrel found: /Game/SoulslikeFramework/Meshes/SM/Barrel/Destructible/GC_Barrel.GC_Barrel
+  Class: GeometryCollection
+
+================================================================================
+Diagnosis Complete
+================================================================================

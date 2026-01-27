@@ -1,0 +1,49 @@
+=== Stat Initialization Verification ===
+
+[TEST 1] Checking Stat DataTable
+[PASS] DataTable has 33 rows
+  Row: HP
+  Row: FP
+  Row: Stamina
+  Row: Vigor
+  Row: Mind
+  Row: Endurance
+  Row: Strength
+  Row: Dexterity
+  Row: Intelligence
+  Row: Faith
+
+[TEST 2] Checking stat Blueprint classes
+[PASS] B_Vigor loaded
+  Generated class found
+[PASS] B_Strength loaded
+  Generated class found
+[PASS] B_Dexterity loaded
+  Generated class found
+
+[TEST 3] Checking player character
+[FAIL] B_Soulslike_Character not found
+
+[TEST 4] Checking W_StatBlock widget
+[PASS] W_StatBlock exists
+
+[TEST 5] Checking W_Inventory widget
+[PASS] W_Inventory loaded
+[WARN] Compile issues: === COMPILE STATUS: W_Inventory ===
+
+Blueprint Status: UP TO DATE
+
+=== NODE ERRORS ===
+
+=== SUMMARY ===
+Errors: 0
+Warnings: 0
+
+No compile errors or warnings found in graph nodes.
+
+
+=== SUMMARY ===
+All checks complete. If stats don't display in PIE:
+1. Check C++ build has no errors
+2. Verify OnStatsInitialized is being broadcast
+3. Check W_StatBlock finds StatManagerComponent

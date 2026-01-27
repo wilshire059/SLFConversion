@@ -1,0 +1,19 @@
+================================================================================
+SCS COMPONENT TEMPLATE CHECK
+================================================================================
+Loaded: /Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Ladder
+
+--- Accessing SCS via SLFAutomationLibrary ---
+Error: module 'unreal' has no attribute 'SLFAutomationLibrary'
+
+--- Accessing SCS directly ---
+
+--- Checking via export_text ---
+Error: type object 'EditorAssetLibrary' has no attribute 'export_text'
+
+--- Spawning a test ladder ---
+Cannot spawn actor in headless mode
+
+================================================================================
+DONE
+================================================================================

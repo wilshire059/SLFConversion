@@ -1,0 +1,67 @@
+{
+  "B_AP_Physical": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Physical",
+    "class_name": "B_AP_Physical_C",
+    "all_properties": {}
+  },
+  "B_AP_Magic": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Magic",
+    "class_name": "B_AP_Magic_C",
+    "all_properties": {}
+  },
+  "B_AP_Fire": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Secondary/AttackPower/B_AP_Fire",
+    "class_name": "B_AP_Fire_C",
+    "all_properties": {}
+  },
+  "B_DN_Physical": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Physical",
+    "class_name": "B_DN_Physical_C",
+    "all_properties": {}
+  },
+  "B_DN_Fire": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Fire",
+    "class_name": "B_DN_Fire_C",
+    "all_properties": {}
+  },
+  "B_DN_Magic": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_DN_Magic",
+    "class_name": "B_DN_Magic_C",
+    "all_properties": {}
+  },
+  "B_Resistance_Focus": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Focus",
+    "class_name": "B_Resistance_Focus_C",
+    "all_properties": {}
+  },
+  "B_Resistance_Immunity": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Immunity",
+    "class_name": "B_Resistance_Immunity_C",
+    "all_properties": {}
+  },
+  "B_Resistance_Robustness": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Robustness",
+    "class_name": "B_Resistance_Robustness_C",
+    "all_properties": {}
+  },
+  "B_Resistance_Vitality": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Defense/B_Resistance_Vitality",
+    "class_name": "B_Resistance_Vitality_C",
+    "all_properties": {}
+  },
+  "B_Vigor": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Vigor",
+    "class_name": "B_Vigor_C",
+    "all_properties": {}
+  },
+  "B_Strength": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Strength",
+    "class_name": "B_Strength_C",
+    "all_properties": {}
+  },
+  "B_Intelligence": {
+    "path": "/Game/SoulslikeFramework/Data/Stats/Primary/B_Intelligence",
+    "class_name": "B_Intelligence_C",
+    "all_properties": {}
+  }
+}

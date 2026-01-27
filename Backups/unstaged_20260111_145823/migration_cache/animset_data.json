@@ -1,0 +1,17 @@
+{
+  "/Game/SoulslikeFramework/Data/WeaponAnimsets/DA_Animset_LightSword": {
+    "guard_r": "/Game/SoulslikeFramework/Demo/_Animations/Combat/Poses/AS_SLF_Guard_Pose_R.AS_SLF_Guard_Pose_R",
+    "guard_l": "/Game/SoulslikeFramework/Demo/_Animations/Combat/Poses/AS_SLF_Guard_Pose_L.AS_SLF_Guard_Pose_L"
+  },
+  "/Game/SoulslikeFramework/Data/WeaponAnimsets/DA_Animset_Greatsword": {
+    "guard_r": "/Game/SoulslikeFramework/Demo/_Animations/Combat/Poses/AS_SLF_Guard_Pose_R.AS_SLF_Guard_Pose_R",
+    "guard_l": "/Game/SoulslikeFramework/Demo/_Animations/Combat/Poses/AS_SLF_Guard_Pose_L.AS_SLF_Guard_Pose_L"
+  },
+  "/Game/SoulslikeFramework/Data/WeaponAnimsets/DA_Animset_Katana": {
+    "guard_r": "/Game/SoulslikeFramework/Demo/_Animations/Combat/Poses/AS_SLF_Guard_Pose_R.AS_SLF_Guard_Pose_R",
+    "guard_l": "/Game/SoulslikeFramework/Demo/_Animations/Combat/Poses/AS_SLF_Guard_Pose_L.AS_SLF_Guard_Pose_L"
+  },
+  "/Game/SoulslikeFramework/Data/WeaponAnimsets/DA_Animset_Shield": {
+    "guard_l": "/Game/SoulslikeFramework/Demo/_Animations/Combat/Poses/AS_SLF_Shield_Block_AO_L.AS_SLF_Shield_Block_AO_L"
+  }
+}

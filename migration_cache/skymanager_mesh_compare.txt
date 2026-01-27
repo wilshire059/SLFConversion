@@ -1,0 +1,18 @@
+SKYMANAGER MESH COMPARISON
+============================================================
+
+============================================================
+SLFCONVERSION VERSION
+============================================================
+Blueprint: /Game/SoulslikeFramework/Blueprints/Sky/B_SkyManager
+Class: B_SkyManager_C
+
+Total Components: 0
+
+
+
+============================================================
+COMPARISON COMPLETE
+============================================================
+
+Results: C:/scripts/SLFConversion/migration_cache/skymanager_mesh_compare.txt

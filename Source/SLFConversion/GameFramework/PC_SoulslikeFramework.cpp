@@ -8,18 +8,112 @@
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
 #include "EnhancedInputSubsystems.h"
+#include "EnhancedInputComponent.h"
 #include "Components/InventoryManagerComponent.h"
 #include "Components/EquipmentManagerComponent.h"
 #include "Components/SaveLoadManagerComponent.h"
 #include "Components/RadarManagerComponent.h"
 #include "Components/ProgressManagerComponent.h"
+#include "Widgets/W_Radar.h"
 #include "Blueprints/B_RestingPoint.h"
 
 APC_SoulslikeFramework::APC_SoulslikeFramework()
 {
 	W_HUD = nullptr;
-	GameplayMappingContext = nullptr;
 	ActiveSequencePlayer = nullptr;
+
+	// Load Input Mapping Contexts
+	static ConstructorHelpers::FObjectFinder<UInputMappingContext> GameplayContextFinder(
+		TEXT("/Game/SoulslikeFramework/Input/IMC_Gameplay"));
+	if (GameplayContextFinder.Succeeded())
+	{
+		GameplayMappingContext = GameplayContextFinder.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputMappingContext> NavigableMenuContextFinder(
+		TEXT("/Game/SoulslikeFramework/Input/IMC_NavigableMenu"));
+	if (NavigableMenuContextFinder.Succeeded())
+	{
+		NavigableMenuMappingContext = NavigableMenuContextFinder.Object;
+	}
+
+	// Load Navigation Input Actions
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_UpFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Up"));
+	if (IA_UpFinder.Succeeded())
+	{
+		IA_NavigableMenu_Up = IA_UpFinder.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_DownFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Down"));
+	if (IA_DownFinder.Succeeded())
+	{
+		IA_NavigableMenu_Down = IA_DownFinder.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_LeftFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Left"));
+	if (IA_LeftFinder.Succeeded())
+	{
+		IA_NavigableMenu_Left = IA_LeftFinder.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_RightFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Right"));
+	if (IA_RightFinder.Succeeded())
+	{
+		IA_NavigableMenu_Right = IA_RightFinder.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_OkFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Ok"));
+	if (IA_OkFinder.Succeeded())
+	{
+		IA_NavigableMenu_Ok = IA_OkFinder.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_BackFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Back"));
+	if (IA_BackFinder.Succeeded())
+	{
+		IA_NavigableMenu_Back = IA_BackFinder.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_LeftCategoryFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Left_Category"));
+	if (IA_LeftCategoryFinder.Succeeded())
+	{
+		IA_NavigableMenu_Left_Category = IA_LeftCategoryFinder.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_RightCategoryFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Right_Category"));
+	if (IA_RightCategoryFinder.Succeeded())
+	{
+		IA_NavigableMenu_Right_Category = IA_RightCategoryFinder.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_UnequipFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Unequip"));
+	if (IA_UnequipFinder.Succeeded())
+	{
+		IA_NavigableMenu_Unequip = IA_UnequipFinder.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_DetailedViewFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_DetailedView"));
+	if (IA_DetailedViewFinder.Succeeded())
+	{
+		IA_NavigableMenu_DetailedView = IA_DetailedViewFinder.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_ResetToDefaultsFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_ResetToDefaults"));
+	if (IA_ResetToDefaultsFinder.Succeeded())
+	{
+		IA_NavigableMenu_ResetToDefaults = IA_ResetToDefaultsFinder.Object;
+	}
 
 	// Create components
 	AC_InventoryManager = CreateDefaultSubobject<UInventoryManagerComponent>(TEXT("AC_InventoryManager"));
@@ -53,6 +147,186 @@ void APC_SoulslikeFramework::BeginPlay()
 	// Broadcast HUD initialized
 	OnHudInitialized.Broadcast();
 	UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] OnHudInitialized broadcast"));
+
+	// Schedule radar initialization after HUD is ready (delayed to ensure widgets are constructed)
+	// Note: Uses 0.2s delay instead of 1.0s for faster radar visibility
+	if (UWorld* World = GetWorld())
+	{
+		FTimerHandle RadarInitTimer;
+		World->GetTimerManager().SetTimer(RadarInitTimer, this,
+			&APC_SoulslikeFramework::EventInitializeRadar_Implementation, 0.2f, false);
+		UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] Scheduled radar initialization"));
+	}
+}
+
+void APC_SoulslikeFramework::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+
+	UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] SetupInputComponent"));
+
+	if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(InputComponent))
+	{
+		// Bind navigation input actions
+		if (IA_NavigableMenu_Up)
+		{
+			EnhancedInput->BindAction(IA_NavigableMenu_Up, ETriggerEvent::Started, this, &APC_SoulslikeFramework::HandleNavigateUp);
+			UE_LOG(LogTemp, Log, TEXT("  Bound IA_NavigableMenu_Up"));
+		}
+		if (IA_NavigableMenu_Down)
+		{
+			EnhancedInput->BindAction(IA_NavigableMenu_Down, ETriggerEvent::Started, this, &APC_SoulslikeFramework::HandleNavigateDown);
+			UE_LOG(LogTemp, Log, TEXT("  Bound IA_NavigableMenu_Down"));
+		}
+		if (IA_NavigableMenu_Left)
+		{
+			EnhancedInput->BindAction(IA_NavigableMenu_Left, ETriggerEvent::Started, this, &APC_SoulslikeFramework::HandleNavigateLeft);
+			UE_LOG(LogTemp, Log, TEXT("  Bound IA_NavigableMenu_Left"));
+		}
+		if (IA_NavigableMenu_Right)
+		{
+			EnhancedInput->BindAction(IA_NavigableMenu_Right, ETriggerEvent::Started, this, &APC_SoulslikeFramework::HandleNavigateRight);
+			UE_LOG(LogTemp, Log, TEXT("  Bound IA_NavigableMenu_Right"));
+		}
+		if (IA_NavigableMenu_Ok)
+		{
+			EnhancedInput->BindAction(IA_NavigableMenu_Ok, ETriggerEvent::Started, this, &APC_SoulslikeFramework::HandleNavigateOk);
+			UE_LOG(LogTemp, Log, TEXT("  Bound IA_NavigableMenu_Ok"));
+		}
+		if (IA_NavigableMenu_Back)
+		{
+			EnhancedInput->BindAction(IA_NavigableMenu_Back, ETriggerEvent::Started, this, &APC_SoulslikeFramework::HandleNavigateBack);
+			UE_LOG(LogTemp, Log, TEXT("  Bound IA_NavigableMenu_Back"));
+		}
+		if (IA_NavigableMenu_Left_Category)
+		{
+			EnhancedInput->BindAction(IA_NavigableMenu_Left_Category, ETriggerEvent::Started, this, &APC_SoulslikeFramework::HandleNavigateCategoryLeft);
+			UE_LOG(LogTemp, Log, TEXT("  Bound IA_NavigableMenu_Left_Category"));
+		}
+		if (IA_NavigableMenu_Right_Category)
+		{
+			EnhancedInput->BindAction(IA_NavigableMenu_Right_Category, ETriggerEvent::Started, this, &APC_SoulslikeFramework::HandleNavigateCategoryRight);
+			UE_LOG(LogTemp, Log, TEXT("  Bound IA_NavigableMenu_Right_Category"));
+		}
+		if (IA_NavigableMenu_Unequip)
+		{
+			EnhancedInput->BindAction(IA_NavigableMenu_Unequip, ETriggerEvent::Started, this, &APC_SoulslikeFramework::HandleNavigateUnequip);
+			UE_LOG(LogTemp, Log, TEXT("  Bound IA_NavigableMenu_Unequip"));
+		}
+		if (IA_NavigableMenu_DetailedView)
+		{
+			EnhancedInput->BindAction(IA_NavigableMenu_DetailedView, ETriggerEvent::Started, this, &APC_SoulslikeFramework::HandleNavigateDetailedView);
+			UE_LOG(LogTemp, Log, TEXT("  Bound IA_NavigableMenu_DetailedView"));
+		}
+		if (IA_NavigableMenu_ResetToDefaults)
+		{
+			EnhancedInput->BindAction(IA_NavigableMenu_ResetToDefaults, ETriggerEvent::Started, this, &APC_SoulslikeFramework::HandleNavigateResetToDefaults);
+			UE_LOG(LogTemp, Log, TEXT("  Bound IA_NavigableMenu_ResetToDefaults"));
+		}
+	}
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// NAVIGATION INPUT HANDLERS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void APC_SoulslikeFramework::HandleNavigateUp()
+{
+	UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] HandleNavigateUp - ActiveWidgetTag: %s"), *ActiveWidgetTag.ToString());
+	if (W_HUD)
+	{
+		W_HUD->RouteNavigateUp(ActiveWidgetTag);
+	}
+}
+
+void APC_SoulslikeFramework::HandleNavigateDown()
+{
+	UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] HandleNavigateDown - ActiveWidgetTag: %s"), *ActiveWidgetTag.ToString());
+	if (W_HUD)
+	{
+		W_HUD->RouteNavigateDown(ActiveWidgetTag);
+	}
+}
+
+void APC_SoulslikeFramework::HandleNavigateLeft()
+{
+	UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] HandleNavigateLeft - ActiveWidgetTag: %s"), *ActiveWidgetTag.ToString());
+	if (W_HUD)
+	{
+		W_HUD->RouteNavigateLeft(ActiveWidgetTag);
+	}
+}
+
+void APC_SoulslikeFramework::HandleNavigateRight()
+{
+	UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] HandleNavigateRight - ActiveWidgetTag: %s"), *ActiveWidgetTag.ToString());
+	if (W_HUD)
+	{
+		W_HUD->RouteNavigateRight(ActiveWidgetTag);
+	}
+}
+
+void APC_SoulslikeFramework::HandleNavigateOk()
+{
+	UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] HandleNavigateOk - ActiveWidgetTag: %s"), *ActiveWidgetTag.ToString());
+	if (W_HUD)
+	{
+		W_HUD->RouteNavigateOk(ActiveWidgetTag);
+	}
+}
+
+void APC_SoulslikeFramework::HandleNavigateBack()
+{
+	UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] HandleNavigateBack - ActiveWidgetTag: %s"), *ActiveWidgetTag.ToString());
+	if (W_HUD)
+	{
+		W_HUD->RouteNavigateCancel(ActiveWidgetTag);
+	}
+}
+
+void APC_SoulslikeFramework::HandleNavigateCategoryLeft()
+{
+	UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] HandleNavigateCategoryLeft - ActiveWidgetTag: %s"), *ActiveWidgetTag.ToString());
+	if (W_HUD)
+	{
+		W_HUD->RouteNavigateCategoryLeft(ActiveWidgetTag);
+	}
+}
+
+void APC_SoulslikeFramework::HandleNavigateCategoryRight()
+{
+	UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] HandleNavigateCategoryRight - ActiveWidgetTag: %s"), *ActiveWidgetTag.ToString());
+	if (W_HUD)
+	{
+		W_HUD->RouteNavigateCategoryRight(ActiveWidgetTag);
+	}
+}
+
+void APC_SoulslikeFramework::HandleNavigateUnequip()
+{
+	UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] HandleNavigateUnequip - ActiveWidgetTag: %s"), *ActiveWidgetTag.ToString());
+	if (W_HUD)
+	{
+		W_HUD->RouteNavigateUnequip(ActiveWidgetTag);
+	}
+}
+
+void APC_SoulslikeFramework::HandleNavigateDetailedView()
+{
+	UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] HandleNavigateDetailedView - ActiveWidgetTag: %s"), *ActiveWidgetTag.ToString());
+	if (W_HUD)
+	{
+		W_HUD->RouteNavigateDetailedView(ActiveWidgetTag);
+	}
+}
+
+void APC_SoulslikeFramework::HandleNavigateResetToDefaults()
+{
+	UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] HandleNavigateResetToDefaults - ActiveWidgetTag: %s"), *ActiveWidgetTag.ToString());
+	if (W_HUD)
+	{
+		W_HUD->RouteNavigateResetToDefaults(ActiveWidgetTag);
+	}
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -377,5 +651,44 @@ void APC_SoulslikeFramework::BlendViewTarget_Implementation(AActor* TargetActor,
 		Params.bLockOutgoing = bLockOutgoing;
 
 		SetViewTargetWithBlend(TargetActor, BlendTime, Params.BlendFunction, Params.BlendExp, Params.bLockOutgoing);
+	}
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// RADAR INITIALIZATION
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void APC_SoulslikeFramework::EventInitializeRadar_Implementation()
+{
+	UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] EventInitializeRadar"));
+
+	// Get the W_Radar widget from the HUD
+	if (!W_HUD)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[PC_SoulslikeFramework] EventInitializeRadar - No W_HUD!"));
+		return;
+	}
+
+	UW_Radar* RadarWidget = W_HUD->GetCachedRadar();
+	if (!RadarWidget)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[PC_SoulslikeFramework] EventInitializeRadar - No W_Radar widget in HUD!"));
+		return;
+	}
+
+	// Set the radar widget on the RadarManager
+	if (AC_RadarManager)
+	{
+		AC_RadarManager->RadarWidget = RadarWidget;
+		UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] EventInitializeRadar - Set RadarWidget on RadarManager"));
+
+		// Call LateInitialize to complete full setup (player icon + cardinal markers)
+		// This is called here instead of relying on RadarManager's timer because
+		// the widget reference needs to be set first
+		AC_RadarManager->LateInitialize();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[PC_SoulslikeFramework] EventInitializeRadar - No AC_RadarManager!"));
 	}
 }

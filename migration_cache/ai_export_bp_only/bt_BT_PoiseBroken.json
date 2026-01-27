@@ -1,0 +1,8 @@
+{
+  "path": "/Game/SoulslikeFramework/Blueprints/_AI/Subtrees/BT_PoiseBroken",
+  "exists": true,
+  "structure": "=== BehaviorTree: BT_PoiseBroken ===\n\n--- Root Decorators ---\n\n--- Node Tree ---\nNode: POISE BROKEN MODE (BTComposite_Sequence)\n  NumChildren: 1\n  [Branch 0] Child: Toggle Focus (BTT_ToggleFocus_C), Decorators: 0\n\n=== Summary ===\nTotal Decorators: 0\nState Key Decorators: 0\nTotal Tasks: 1\n\n=== Expected State Values (E_AI_States) ===\n  0 = Idle\n  1 = Random Roam\n  2 = Patrolling\n  3 = Investigating\n  4 = Combat\n  5 = Poise Broken\n  6 = Uninterruptable\n  7 = Out of Bounds\n",
+  "error": null,
+  "name": "BT_PoiseBroken",
+  "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'"
+}

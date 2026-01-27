@@ -1,0 +1,168 @@
+[
+  {
+    "path": "/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive",
+    "loaded": true,
+    "renames_attempted": [
+      [
+        "bIsAccelerating?",
+        "bIsAccelerating"
+      ],
+      [
+        "bIsBlocking?",
+        "bIsBlocking"
+      ],
+      [
+        "bIsFalling?",
+        "bIsFalling"
+      ],
+      [
+        "IsResting?",
+        "IsResting"
+      ]
+    ],
+    "renames_succeeded": [],
+    "renames_failed": [
+      [
+        "bIsAccelerating?",
+        "bIsAccelerating",
+        "Could not find variable to rename"
+      ],
+      [
+        "bIsBlocking?",
+        "bIsBlocking",
+        "Could not find variable to rename"
+      ],
+      [
+        "bIsFalling?",
+        "bIsFalling",
+        "Could not find variable to rename"
+      ],
+      [
+        "IsResting?",
+        "IsResting",
+        "Could not find variable to rename"
+      ]
+    ],
+    "compiled": true,
+    "status": {
+      "is_valid": true,
+      "status": "Unknown",
+      "errors": [],
+      "warnings": []
+    },
+    "errors": []
+  },
+  {
+    "path": "/Game/SoulslikeFramework/Blueprints/Components/AC_CombatManager",
+    "loaded": true,
+    "renames_attempted": [
+      [
+        "IsGuarding?",
+        "IsGuarding"
+      ]
+    ],
+    "renames_succeeded": [],
+    "renames_failed": [
+      [
+        "IsGuarding?",
+        "IsGuarding",
+        "Could not find variable to rename"
+      ]
+    ],
+    "compiled": true,
+    "status": {
+      "is_valid": true,
+      "status": "Unknown",
+      "errors": [],
+      "warnings": []
+    },
+    "errors": []
+  },
+  {
+    "path": "/Game/SoulslikeFramework/Blueprints/Components/AC_ActionManager",
+    "loaded": true,
+    "renames_attempted": [],
+    "renames_succeeded": [],
+    "renames_failed": [],
+    "compiled": true,
+    "status": {
+      "is_valid": true,
+      "status": "Unknown",
+      "errors": [],
+      "warnings": []
+    },
+    "errors": []
+  },
+  {
+    "path": "/Game/SoulslikeFramework/Blueprints/AI/BTS_ChaseBounds",
+    "loaded": false,
+    "renames_attempted": [],
+    "renames_succeeded": [],
+    "renames_failed": [],
+    "compiled": false,
+    "status": null,
+    "errors": [
+      "Could not load asset"
+    ]
+  },
+  {
+    "path": "/Game/SoulslikeFramework/Demo/_Animations/_Notify/ANS_AI_FistTrace",
+    "loaded": false,
+    "renames_attempted": [],
+    "renames_succeeded": [],
+    "renames_failed": [],
+    "compiled": false,
+    "status": null,
+    "errors": [
+      "Could not load asset"
+    ]
+  },
+  {
+    "path": "/Game/SoulslikeFramework/Demo/_Animations/_Notify/ANS_HyperArmor",
+    "loaded": false,
+    "renames_attempted": [],
+    "renames_succeeded": [],
+    "renames_failed": [],
+    "compiled": false,
+    "status": null,
+    "errors": [
+      "Could not load asset"
+    ]
+  },
+  {
+    "path": "/Game/SoulslikeFramework/Demo/_Animations/_Notify/ANS_InvincibilityFrame",
+    "loaded": false,
+    "renames_attempted": [],
+    "renames_succeeded": [],
+    "renames_failed": [],
+    "compiled": false,
+    "status": null,
+    "errors": [
+      "Could not load asset"
+    ]
+  },
+  {
+    "path": "/Game/SoulslikeFramework/Demo/_Animations/_Notify/ANS_InputBuffer",
+    "loaded": false,
+    "renames_attempted": [],
+    "renames_succeeded": [],
+    "renames_failed": [],
+    "compiled": false,
+    "status": null,
+    "errors": [
+      "Could not load asset"
+    ]
+  },
+  {
+    "path": "/Game/SoulslikeFramework/Demo/_Animations/_Notify/ANS_RegisterAttackSequence",
+    "loaded": false,
+    "renames_attempted": [],
+    "renames_succeeded": [],
+    "renames_failed": [],
+    "compiled": false,
+    "status": null,
+    "errors": [
+      "Could not load asset"
+    ]
+  }
+]

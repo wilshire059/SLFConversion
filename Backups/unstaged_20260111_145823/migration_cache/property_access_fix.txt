@@ -1,0 +1,13 @@
+============================================================
+FIX PROPERTY ACCESS PATHS
+============================================================
+Loaded: ABP_SoulslikeCharacter_Additive
+Class: AnimBlueprint
+Blueprint class: <Object '/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive_C' (0x000002AB17563800) Class 'AnimBlueprintGeneratedClass'>
+
+Exporting asset to examine Property Access paths...
+Export error: type object 'EditorAssetLibrary' has no attribute 'export_text'
+
+============================================================
+ATTEMPTING DIRECT TEXT MODIFICATION
+============================================================

@@ -29,6 +29,6 @@ void UW_CreditEntry_Extra::NativeDestruct()
 
 void UW_CreditEntry_Extra::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 

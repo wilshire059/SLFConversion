@@ -28,6 +28,11 @@
 #include "Interfaces/BPI_Player.h"
 #include "Interfaces/BPI_Controller.h"
 #include "Widgets/W_HUD.h"
+#include "Blueprints/SLFRestingPointBase.h"
+#include "Components/AC_ActionManager.h"
+#include "Components/AC_CombatManager.h"
+#include "Components/AICombatManagerComponent.h"
+#include "Components/CombatManagerComponent.h"
 
 UAC_InteractionManager::UAC_InteractionManager()
 {
@@ -339,6 +344,7 @@ void UAC_InteractionManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty
  * 4. IsValid check on HUD
  * 5. If valid, call W_HUD::EventFade(FadeToBlack)
  * 6. Bind to resting point's OnReady event
+ * 7. Call AC_ActionManager::SetIsResting(true) - triggers sitting animation
  */
 void UAC_InteractionManager::EventOnRest(AActor* RestingPoint)
 {
@@ -395,12 +401,113 @@ void UAC_InteractionManager::EventOnRest(AActor* RestingPoint)
 		}
 	}
 
-	// Bind to resting point's OnReady event
-	// Note: This requires the resting point to have an OnReady dispatcher
-	// The Blueprint binds: OnReady -> OpenRestingPointWidget
-	// This will be handled by the resting point calling back when ready
+	// Bind to resting point's OnReady and OnExited events
+	// When OnReady fires (after player is positioned), open the rest menu
+	// When OnExited fires (player closes menu), call EventRestEnded
+	if (ASLFRestingPointBase* RestPoint = Cast<ASLFRestingPointBase>(RestingPoint))
+	{
+		// Remove first to avoid duplicate binding ensure error
+		RestPoint->OnReady.RemoveDynamic(this, &UAC_InteractionManager::OnRestingPointReady);
+		RestPoint->OnReady.AddDynamic(this, &UAC_InteractionManager::OnRestingPointReady);
+		UE_LOG(LogTemp, Log, TEXT("  Bound to OnReady delegate"));
+
+		// Also bind to OnExited - fires when player leaves rest menu
+		RestPoint->OnExited.RemoveDynamic(this, &UAC_InteractionManager::OnRestingPointExited);
+		RestPoint->OnExited.AddDynamic(this, &UAC_InteractionManager::OnRestingPointExited);
+		UE_LOG(LogTemp, Log, TEXT("  Bound to OnExited delegate"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  Could not cast to ASLFRestingPointBase for OnReady/OnExited binding"));
+	}
+
+	// Call AC_ActionManager::SetIsResting(true) to trigger sitting animation
+	// The AnimBP (ABP_SoulslikeCharacter_Additive) checks IsResting to play AS_SLF_Sitting_Idle_Loop
+	if (UAC_ActionManager* ActionManager = Owner->FindComponentByClass<UAC_ActionManager>())
+	{
+		ActionManager->SetIsResting(true);
+		UE_LOG(LogTemp, Log, TEXT("  Called SetIsResting(true) on AC_ActionManager"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  Could not find AC_ActionManager on owner"));
+	}
 
 	UE_LOG(LogTemp, Log, TEXT("  Resting point set, waiting for OnReady callback"));
+}
+
+void UAC_InteractionManager::OnRestingPointReady()
+{
+	UE_LOG(LogTemp, Log, TEXT("UAC_InteractionManager::OnRestingPointReady - Opening rest menu"));
+
+	// Get controller and open rest menu via HUD
+	AActor* Owner = GetOwner();
+	if (!IsValid(Owner))
+	{
+		return;
+	}
+
+	APawn* OwnerPawn = Cast<APawn>(Owner);
+	if (!IsValid(OwnerPawn))
+	{
+		OwnerPawn = Owner->GetInstigator();
+	}
+
+	if (!IsValid(OwnerPawn))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  Could not get pawn"));
+		return;
+	}
+
+	AController* Controller = OwnerPawn->GetController();
+	if (!IsValid(Controller))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  Could not get controller"));
+		return;
+	}
+
+	// Get HUD and open rest menu
+	if (Controller->GetClass()->ImplementsInterface(UBPI_Controller::StaticClass()))
+	{
+		UUserWidget* HUDWidget = nullptr;
+		IBPI_Controller::Execute_GetPlayerHUD(Controller, HUDWidget);
+		if (UW_HUD* HUD = Cast<UW_HUD>(HUDWidget))
+		{
+			// Call EventSetupRestingPointWidget on HUD to show the rest menu
+			HUD->EventSetupRestingPointWidget(LastRestingPoint);
+			UE_LOG(LogTemp, Log, TEXT("  Called HUD->EventSetupRestingPointWidget(%s)"),
+				LastRestingPoint ? *LastRestingPoint->GetName() : TEXT("null"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("  Could not get W_HUD"));
+		}
+	}
+
+	// Unbind from OnReady to avoid duplicate bindings
+	if (ASLFRestingPointBase* RestPoint = Cast<ASLFRestingPointBase>(LastRestingPoint))
+	{
+		RestPoint->OnReady.RemoveDynamic(this, &UAC_InteractionManager::OnRestingPointReady);
+	}
+}
+
+/**
+ * OnRestingPointExited - Callback when player exits rest menu
+ * Called via binding to B_RestingPoint::OnExited delegate
+ * Triggers the full rest end flow via EventRestEnded
+ */
+void UAC_InteractionManager::OnRestingPointExited()
+{
+	UE_LOG(LogTemp, Log, TEXT("UAC_InteractionManager::OnRestingPointExited - Player closed rest menu"));
+
+	// Unbind from OnExited to avoid duplicate calls
+	if (ASLFRestingPointBase* RestPoint = Cast<ASLFRestingPointBase>(LastRestingPoint))
+	{
+		RestPoint->OnExited.RemoveDynamic(this, &UAC_InteractionManager::OnRestingPointExited);
+	}
+
+	// Call the full rest ended flow
+	EventRestEnded();
 }
 
 /**
@@ -416,13 +523,81 @@ void UAC_InteractionManager::EventRestInitialized()
 
 /**
  * EventRestEnded - Called when resting ends
- * This is a stub event called when player leaves rest menu
+ * This is called when player leaves rest menu (bound to W_RestMenu OnExited delegate)
+ *
+ * Blueprint Logic:
+ * 1. Do Once
+ * 2. Event Replenishment
+ * 3. GetPlayerHUD → CloseAllMenus → EventFade (FadeIn)
+ * 4. SetIsResting(false) - stops sitting animation
+ * 5. EventToggleUiMode(false)
+ * 6. SetViewTarget back to player
+ * 7. Enable player input
+ * 8. BlendViewTarget (camera transition)
+ * 9. Event Reset
  */
 void UAC_InteractionManager::EventRestEnded()
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_InteractionManager::EventRestEnded"));
-	// Called when player leaves rest menu
-	// Subclasses or Blueprint can override to add custom behavior
+
+	AActor* Owner = GetOwner();
+	if (!IsValid(Owner))
+	{
+		return;
+	}
+
+	// Call Event Replenishment to restore health/stamina/etc
+	EventReplenishment();
+
+	// Get HUD and trigger fade in
+	APawn* OwnerPawn = Cast<APawn>(Owner);
+	if (!IsValid(OwnerPawn))
+	{
+		OwnerPawn = Owner->GetInstigator();
+	}
+
+	if (IsValid(OwnerPawn))
+	{
+		AController* Controller = OwnerPawn->GetController();
+		if (IsValid(Controller) && Controller->GetClass()->ImplementsInterface(UBPI_Controller::StaticClass()))
+		{
+			UUserWidget* HUDWidget = nullptr;
+			IBPI_Controller::Execute_GetPlayerHUD(Controller, HUDWidget);
+			if (UW_HUD* HUD = Cast<UW_HUD>(HUDWidget))
+			{
+				HUD->CloseAllMenus();
+				HUD->EventFade(ESLFFadeTypes::FadeIn, 1.0f);
+				HUD->EventToggleUiMode(false);
+				UE_LOG(LogTemp, Log, TEXT("  HUD: CloseAllMenus, FadeIn, UiMode(false)"));
+			}
+		}
+	}
+
+	// Call SetIsResting(false) to stop sitting animation
+	if (UAC_ActionManager* ActionManager = Owner->FindComponentByClass<UAC_ActionManager>())
+	{
+		ActionManager->SetIsResting(false);
+		UE_LOG(LogTemp, Log, TEXT("  Called SetIsResting(false) on AC_ActionManager"));
+	}
+
+	// SetViewTarget back to player and enable input
+	if (IsValid(OwnerPawn))
+	{
+		APlayerController* PC = Cast<APlayerController>(OwnerPawn->GetController());
+		if (IsValid(PC))
+		{
+			// Set view target back to player pawn with smooth blend
+			PC->SetViewTargetWithBlend(OwnerPawn, 0.5f, EViewTargetBlendFunction::VTBlend_EaseInOut);
+			UE_LOG(LogTemp, Log, TEXT("  SetViewTargetWithBlend to player pawn"));
+
+			// Re-enable player input
+			PC->SetInputMode(FInputModeGameOnly());
+			OwnerPawn->EnableInput(PC);
+			UE_LOG(LogTemp, Log, TEXT("  Enabled player input"));
+		}
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("  Rest ended, player should stand up"));
 }
 
 /**
@@ -740,6 +915,33 @@ void UAC_InteractionManager::CheckTargetDistance_Implementation()
 	AActor* Owner = GetOwner();
 	if (!IsValid(Owner))
 	{
+		return;
+	}
+
+	// CHECK IF TARGET IS DEAD - must clear lock before distance check
+	// The target may have an AC_CombatManager or AICombatManagerComponent
+	bool bTargetIsDead = false;
+
+	// Try AC_CombatManager (player/NPC)
+	if (UAC_CombatManager* CombatManager = LockedOnTarget->FindComponentByClass<UAC_CombatManager>())
+	{
+		bTargetIsDead = CombatManager->IsDead;
+	}
+	// Try AICombatManagerComponent (AI enemies)
+	else if (UAICombatManagerComponent* AICombatManager = LockedOnTarget->FindComponentByClass<UAICombatManagerComponent>())
+	{
+		bTargetIsDead = AICombatManager->bIsDead;
+	}
+	// Try CombatManagerComponent (generic)
+	else if (UCombatManagerComponent* GenericCombatManager = LockedOnTarget->FindComponentByClass<UCombatManagerComponent>())
+	{
+		bTargetIsDead = GenericCombatManager->bIsDead;
+	}
+
+	if (bTargetIsDead)
+	{
+		UE_LOG(LogTemp, Log, TEXT("UAC_InteractionManager::CheckTargetDistance - Target is dead, resetting lock-on"));
+		ResetLockOn();
 		return;
 	}
 

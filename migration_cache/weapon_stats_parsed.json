@@ -1,0 +1,71 @@
+{
+  "DA_BossMace": {
+    "name": "DA_BossMace",
+    "has_stat_scaling": true,
+    "scaling_info": {
+      "Dexterity": "A"
+    },
+    "stat_changes": {
+      "Physical": 120
+    },
+    "min_poise_damage": 15.0,
+    "max_poise_damage": 30.0,
+    "stamina_multiplier": 1.0
+  },
+  "DA_Greatsword": {
+    "name": "DA_Greatsword",
+    "has_stat_scaling": true,
+    "scaling_info": {
+      "Strength": "S"
+    },
+    "stat_changes": {
+      "Physical": 75
+    },
+    "min_poise_damage": 25.0,
+    "max_poise_damage": 50.0,
+    "stamina_multiplier": 3.0
+  },
+  "DA_Katana": {
+    "name": "DA_Katana",
+    "has_stat_scaling": true,
+    "has_stat_requirement": true,
+    "scaling_info": {
+      "Dexterity": "A"
+    },
+    "stat_requirement_info": {
+      "Dexterity": 10
+    },
+    "stat_changes": {
+      "Physical": 34
+    },
+    "min_poise_damage": 20.0,
+    "max_poise_damage": 35.0,
+    "stamina_multiplier": 1.0
+  },
+  "DA_PoisonSword": {
+    "name": "DA_PoisonSword",
+    "has_stat_scaling": true,
+    "scaling_info": {
+      "Arcane": "S"
+    },
+    "stat_changes": {
+      "Physical": 15
+    },
+    "min_poise_damage": 15.0,
+    "max_poise_damage": 30.0,
+    "stamina_multiplier": 0.5
+  },
+  "DA_Sword01": {
+    "name": "DA_Sword01",
+    "has_stat_scaling": true,
+    "scaling_info": {
+      "Arcane": "B"
+    },
+    "stat_changes": {
+      "Physical": 15
+    },
+    "min_poise_damage": 10.0,
+    "max_poise_damage": 20.0,
+    "stamina_multiplier": 1.0
+  }
+}

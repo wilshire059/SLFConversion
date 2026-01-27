@@ -3,14 +3,14 @@
 
 USLFDamageNegationFire::USLFDamageNegationFire()
 {
-	StatInfo.Tag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.DamageNegation.Fire"));
-	StatInfo.DisplayName = FText::FromString(TEXT("Fire Defense"));
+	// Defaults from bp_only B_DN_Fire CDO
+	StatInfo.Tag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Defense.Negation.Fire"));
+	StatInfo.DisplayName = FText::FromString(TEXT("Fire Negation"));
 	StatInfo.CurrentValue = 0.0;
-	StatInfo.MaxValue = 100.0;
+	StatInfo.MaxValue = 9999.0;
 	StatInfo.bShowMaxValue = false;
-	StatInfo.bDisplayAsPercent = true;
+	StatInfo.bDisplayAsPercent = false;
 	StatInfo.RegenInfo.bCanRegenerate = false;
 	bShowMaxValueOnLevelUp = false;
-	MinValue = -100.0;
-	UE_LOG(LogTemp, Log, TEXT("[DN_Fire] Initialized with %.1f%%"), StatInfo.CurrentValue);
+	MinValue = 0.0;
 }

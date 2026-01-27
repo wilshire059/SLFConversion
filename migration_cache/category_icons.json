@@ -1,0 +1,56 @@
+{
+  "w_settings_category_entry_display": {
+    "found": false,
+    "error": "UserWidget: Failed to find property 'w_settings_category_entry_display' for attribute 'w_settings_category_entry_display' on 'W_Settings_C'"
+  },
+  "w_settings_category_entry_camera": {
+    "found": false,
+    "error": "UserWidget: Failed to find property 'w_settings_category_entry_camera' for attribute 'w_settings_category_entry_camera' on 'W_Settings_C'"
+  },
+  "w_settings_category_entry_gameplay": {
+    "found": false,
+    "error": "UserWidget: Failed to find property 'w_settings_category_entry_gameplay' for attribute 'w_settings_category_entry_gameplay' on 'W_Settings_C'"
+  },
+  "w_settings_category_entry_keybinds": {
+    "found": false,
+    "error": "UserWidget: Failed to find property 'w_settings_category_entry_keybinds' for attribute 'w_settings_category_entry_keybinds' on 'W_Settings_C'"
+  },
+  "w_settings_category_entry_sounds": {
+    "found": false,
+    "error": "UserWidget: Failed to find property 'w_settings_category_entry_sounds' for attribute 'w_settings_category_entry_sounds' on 'W_Settings_C'"
+  },
+  "w_settings_category_entry_quit": {
+    "found": false,
+    "error": "UserWidget: Failed to find property 'w_settings_category_entry_quit' for attribute 'w_settings_category_entry_quit' on 'W_Settings_C'"
+  },
+  "textures": {
+    "T_Computer": {
+      "found": true,
+      "class": "Texture2D"
+    },
+    "T_Camera": {
+      "found": true,
+      "class": "Texture2D"
+    },
+    "T_Controller": {
+      "found": true,
+      "class": "Texture2D"
+    },
+    "T_Keybinds": {
+      "found": true,
+      "class": "Texture2D"
+    },
+    "T_Volume": {
+      "found": true,
+      "class": "Texture2D"
+    },
+    "T_Quit": {
+      "found": true,
+      "class": "Texture2D"
+    },
+    "T_Gesture": {
+      "found": true,
+      "class": "Texture2D"
+    }
+  }
+}

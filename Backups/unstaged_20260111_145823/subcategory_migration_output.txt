@@ -1,0 +1,96 @@
+
+=== BEFORE MIGRATION ===
+
+============================================================
+CURRENT ITEM SUBCATEGORY VALUES
+============================================================
+  DA_Apple: Category=CRAFTING: 2>, SubCategory=MISCELLANEOUS
+  DA_BossMace: Category=WEAPONS: 6>, SubCategory=MISCELLANEOUS
+  DA_ExampleArmor: Category=ARMOR: 8>, SubCategory=MISCELLANEOUS
+  DA_ExampleArmor02: Category=ARMOR: 8>, SubCategory=MISCELLANEOUS
+  DA_ExampleBracers: Category=ARMOR: 8>, SubCategory=MISCELLANEOUS
+  DA_ExampleGreaves: Category=ARMOR: 8>, SubCategory=MISCELLANEOUS
+  DA_ExampleHat: Category=ARMOR: 8>, SubCategory=MISCELLANEOUS
+  DA_ExampleHelmet: Category=ARMOR: 8>, SubCategory=MISCELLANEOUS
+  DA_ExampleTalisman: Category=BOLSTERING: 3>, SubCategory=MISCELLANEOUS
+  DA_Greatsword: Category=WEAPONS: 6>, SubCategory=MISCELLANEOUS
+  DA_HealthFlask: Category=TOOLS: 1>, SubCategory=MISCELLANEOUS
+  DA_Katana: Category=WEAPONS: 6>, SubCategory=MISCELLANEOUS
+  DA_Lantern: Category=TOOLS: 1>, SubCategory=MISCELLANEOUS
+  DA_PoisonSword: Category=WEAPONS: 6>, SubCategory=MISCELLANEOUS
+  DA_PrisonKey: Category=KEY_ITEMS: 4>, SubCategory=MISCELLANEOUS
+  DA_Shield01: Category=SHIELDS: 7>, SubCategory=MISCELLANEOUS
+  DA_Sword01: Category=WEAPONS: 6>, SubCategory=MISCELLANEOUS
+  DA_Sword02: Category=WEAPONS: 6>, SubCategory=MISCELLANEOUS
+  DA_ThrowingKnife: Category=TOOLS: 1>, SubCategory=MISCELLANEOUS
+============================================================
+
+=== APPLYING CHANGES ===
+
+============================================================
+APPLYING ITEM SUBCATEGORIES
+============================================================
+Processing 16 items...
+
+  OK: DA_ExampleHelmet
+      SubCategory: MISCELLANEOUS -> HEAD
+  OK: DA_ExampleHat
+      SubCategory: MISCELLANEOUS -> HEAD
+  OK: DA_ExampleArmor
+      SubCategory: MISCELLANEOUS -> CHEST
+  OK: DA_ExampleArmor02
+      SubCategory: MISCELLANEOUS -> CHEST
+  OK: DA_ExampleBracers
+      SubCategory: MISCELLANEOUS -> ARMS
+  OK: DA_ExampleGreaves
+      SubCategory: MISCELLANEOUS -> LEGS
+  OK: DA_Sword01
+      SubCategory: MISCELLANEOUS -> SWORD
+  OK: DA_Sword02
+      SubCategory: MISCELLANEOUS -> SWORD
+  OK: DA_PoisonSword
+      SubCategory: MISCELLANEOUS -> SWORD
+  OK: DA_Greatsword
+      SubCategory: MISCELLANEOUS -> SWORD
+  OK: DA_Katana
+      SubCategory: MISCELLANEOUS -> KATANA
+  OK: DA_BossMace
+      SubCategory: MISCELLANEOUS -> MACE
+  OK: DA_ExampleTalisman
+      SubCategory: MISCELLANEOUS -> TALISMANS
+  OK: DA_HealthFlask
+      SubCategory: MISCELLANEOUS -> FLASKS
+  OK: DA_ThrowingKnife
+      SubCategory: MISCELLANEOUS -> PROJECTILES
+  OK: DA_Apple
+      SubCategory: MISCELLANEOUS -> CONSUMABLES
+
+============================================================
+Results: 16 succeeded, 0 failed
+============================================================
+
+=== AFTER MIGRATION ===
+
+============================================================
+CURRENT ITEM SUBCATEGORY VALUES
+============================================================
+  DA_Apple: Category=CRAFTING: 2>, SubCategory=CONSUMABLES
+  DA_BossMace: Category=WEAPONS: 6>, SubCategory=MACE
+  DA_ExampleArmor: Category=ARMOR: 8>, SubCategory=CHEST
+  DA_ExampleArmor02: Category=ARMOR: 8>, SubCategory=CHEST
+  DA_ExampleBracers: Category=ARMOR: 8>, SubCategory=ARMS
+  DA_ExampleGreaves: Category=ARMOR: 8>, SubCategory=LEGS
+  DA_ExampleHat: Category=ARMOR: 8>, SubCategory=HEAD
+  DA_ExampleHelmet: Category=ARMOR: 8>, SubCategory=HEAD
+  DA_ExampleTalisman: Category=BOLSTERING: 3>, SubCategory=TALISMANS
+  DA_Greatsword: Category=WEAPONS: 6>, SubCategory=SWORD
+  DA_HealthFlask: Category=TOOLS: 1>, SubCategory=FLASKS
+  DA_Katana: Category=WEAPONS: 6>, SubCategory=KATANA
+  DA_Lantern: Category=TOOLS: 1>, SubCategory=MISCELLANEOUS
+  DA_PoisonSword: Category=WEAPONS: 6>, SubCategory=SWORD
+  DA_PrisonKey: Category=KEY_ITEMS: 4>, SubCategory=MISCELLANEOUS
+  DA_Shield01: Category=SHIELDS: 7>, SubCategory=MISCELLANEOUS
+  DA_Sword01: Category=WEAPONS: 6>, SubCategory=SWORD
+  DA_Sword02: Category=WEAPONS: 6>, SubCategory=SWORD
+  DA_ThrowingKnife: Category=TOOLS: 1>, SubCategory=PROJECTILES
+============================================================

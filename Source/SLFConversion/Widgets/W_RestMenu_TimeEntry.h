@@ -81,7 +81,25 @@ public:
 	void EventTimeEntryPressed();
 	virtual void EventTimeEntryPressed_Implementation();
 
+	// Update display text from TimeInfo
+	void UpdateTimeText();
+
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Button event handlers
+	UFUNCTION()
+	void HandleButtonClicked();
+
+	UFUNCTION()
+	void HandleButtonHovered();
+
+	UFUNCTION()
+	void HandleButtonUnhovered();
+
+	// Cached widget references (NOT UPROPERTY to avoid conflict with Blueprint widget bindings)
+	class UTextBlock* TimeTextWidget;
+	class UBorder* BtnBorderWidget;
+	class UButton* BtnWidget;
 };

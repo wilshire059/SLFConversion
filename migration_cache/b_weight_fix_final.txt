@@ -1,0 +1,16 @@
+================================================================================
+B_WEIGHT FIX FINAL
+================================================================================
+
+Native StatInfo.Tag: SoulslikeFramework.Stat.Misc.Weight
+Native StatInfo.MaxValue: 50.0
+
+Copied StatInfo to Blueprint CDO
+Save result: True
+
+Verify - Tag: SoulslikeFramework.Stat.Misc.Weight
+Verify - MaxValue: 50.0
+
+*** SUCCESS ***
+
+================================================================================

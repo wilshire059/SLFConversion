@@ -1,0 +1,30 @@
+============================================================
+CHECKING DIRECTIONAL LIGHTS IN L_Demo_Showcase
+============================================================
+
+Loading level: /Game/SoulslikeFramework/Maps/L_Demo_Showcase
+Loaded: <Object '/Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase' (0x00000137783D0000) Class 'World'>
+World: L_Demo_Showcase
+Total actors: 104
+
+----------------------------------------
+DIRECTIONAL LIGHTS IN LEVEL:
+----------------------------------------
+
+  SkyManager Actor: B_SkyManager_C_1 (B_SkyManager_C)
+    Location: <Struct 'Vector' (0x00000137672DBD00) {x: 14533.983347, y: 1512.823044, z: 99.999998}>
+    DirectionalLightComponents: 2
+      - DirectionalLight_Sun: Intensity=10.0
+        AtmosphereSunLight: True
+      - DirectionalLight_Moon: Intensity=0.5
+        AtmosphereSunLight: True
+
+----------------------------------------
+SKY ATMOSPHERES IN LEVEL:
+----------------------------------------
+
+============================================================
+CHECK COMPLETE
+============================================================
+
+Results: C:/scripts/SLFConversion/migration_cache/level_lights_check.txt

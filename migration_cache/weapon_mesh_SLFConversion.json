@@ -1,0 +1,103 @@
+{
+  "B_Item_AI_Weapon_Sword": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/AI/B_Item_AI_Weapon_Sword",
+    "class": "B_Item_AI_Weapon_Sword_C",
+    "components": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "relative_location": "(0.00, 0.00, -100000.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "relative_scale": "(1.00, 1.00, 1.00)"
+      },
+      {
+        "name": "WeaponMesh",
+        "class": "StaticMeshComponent",
+        "relative_location": "(0.00, 0.00, 0.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "relative_scale": "(1.00, 1.00, 1.00)",
+        "static_mesh": "NONE"
+      },
+      {
+        "name": "TrailComponent",
+        "class": "NiagaraComponent",
+        "relative_location": "(0.00, 0.00, 0.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "relative_scale": "(1.00, 1.00, 1.00)"
+      },
+      {
+        "name": "CollisionManager",
+        "class": "CollisionManagerComponent"
+      }
+    ],
+    "default_weapon_mesh": "<Object '/Game/SoulslikeFramework/Meshes/SM/Sword/SM_ExampleSword01.SM_ExampleSword01' (0x000001FA907B4000) Class 'StaticMesh'>",
+    "default_attachment_rotation_offset": "(0.00, 0.00, 0.00)"
+  },
+  "B_Item_AI_Weapon_Greatsword": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/AI/B_Item_AI_Weapon_Greatsword",
+    "class": "B_Item_AI_Weapon_Greatsword_C",
+    "components": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "relative_location": "(0.00, 0.00, -100000.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "relative_scale": "(1.00, 1.00, 1.00)"
+      },
+      {
+        "name": "WeaponMesh",
+        "class": "StaticMeshComponent",
+        "relative_location": "(0.00, 0.00, 0.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "relative_scale": "(1.00, 1.00, 1.00)",
+        "static_mesh": "NONE"
+      },
+      {
+        "name": "TrailComponent",
+        "class": "NiagaraComponent",
+        "relative_location": "(0.00, 0.00, 0.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "relative_scale": "(1.00, 1.00, 1.00)"
+      },
+      {
+        "name": "CollisionManager",
+        "class": "CollisionManagerComponent"
+      }
+    ],
+    "default_weapon_mesh": "<Object '/Game/SoulslikeFramework/Meshes/SM/Greatsword/SM_Greatsword.SM_Greatsword' (0x000001FA907B7000) Class 'StaticMesh'>",
+    "default_attachment_rotation_offset": "(0.00, 0.00, 0.00)"
+  },
+  "B_Item_AI_Weapon": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/B_Item_AI_Weapon",
+    "class": "B_Item_AI_Weapon_C",
+    "components": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "relative_location": "(0.00, 0.00, -100000.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "relative_scale": "(1.00, 1.00, 1.00)"
+      },
+      {
+        "name": "WeaponMesh",
+        "class": "StaticMeshComponent",
+        "relative_location": "(0.00, 0.00, 0.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "relative_scale": "(1.00, 1.00, 1.00)",
+        "static_mesh": "NONE"
+      },
+      {
+        "name": "TrailComponent",
+        "class": "NiagaraComponent",
+        "relative_location": "(0.00, 0.00, 0.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "relative_scale": "(1.00, 1.00, 1.00)"
+      },
+      {
+        "name": "CollisionManager",
+        "class": "CollisionManagerComponent"
+      }
+    ],
+    "default_attachment_rotation_offset": "(0.00, 0.00, 0.00)"
+  }
+}

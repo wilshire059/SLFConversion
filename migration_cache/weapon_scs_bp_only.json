@@ -1,0 +1,319 @@
+{
+  "project": "bp_only",
+  "weapons": {
+    "B_Item_Weapon_Katana": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Katana",
+      "components": {
+        "DefaultSceneRoot": {
+          "class": "SceneComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 1000.0
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        "StaticMesh": {
+          "class": "StaticMeshComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": -1.6439
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": -103.2403,
+            "roll": 0.0
+          },
+          "static_mesh": "SM_Katana"
+        },
+        "Trail": {
+          "class": "NiagaraComponent",
+          "relative_location": {
+            "x": 0.0011,
+            "y": 0.0045,
+            "z": 1060.1614
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": -13.2403,
+            "roll": -1.405
+          }
+        },
+        "DEBUG_HandleVisualizer": {
+          "class": "BillboardComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        "DEBUG_FacingDirection": {
+          "class": "ArrowComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        }
+      },
+      "class": "B_Item_Weapon_Katana_C"
+    },
+    "B_Item_Weapon_SwordExample01": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_SwordExample01",
+      "components": {
+        "DefaultSceneRoot": {
+          "class": "SceneComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 1000.0
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        "BillboardComponent_1": {
+          "class": "BillboardComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        "StaticMesh": {
+          "class": "StaticMeshComponent",
+          "relative_location": {
+            "x": -0.0,
+            "y": -0.0,
+            "z": 36.4944
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 180.0
+          },
+          "static_mesh": "SM_ExampleSword01"
+        },
+        "Trail": {
+          "class": "NiagaraComponent",
+          "relative_location": {
+            "x": -0.0,
+            "y": -0.0,
+            "z": 1050.204
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 90.0,
+            "roll": 180.0
+          }
+        },
+        "DEBUG_HandleVisualizer": {
+          "class": "BillboardComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        "DEBUG_FacingDirection": {
+          "class": "ArrowComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        }
+      },
+      "class": "B_Item_Weapon_SwordExample01_C"
+    },
+    "B_Item_Weapon_SwordExample02": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_SwordExample02",
+      "components": {
+        "DefaultSceneRoot": {
+          "class": "SceneComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 1000.0
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        "BillboardComponent_1": {
+          "class": "BillboardComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        "StaticMesh": {
+          "class": "StaticMeshComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 50.0875
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": -130.0
+          },
+          "static_mesh": "SM_ExampleSword02"
+        },
+        "Trail": {
+          "class": "NiagaraComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 1.1145,
+            "z": 1067.1794
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": -0.0,
+            "roll": -178.2476
+          }
+        },
+        "DEBUG_HandleVisualizer": {
+          "class": "BillboardComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        "DEBUG_FacingDirection": {
+          "class": "ArrowComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        }
+      },
+      "class": "B_Item_Weapon_SwordExample02_C"
+    },
+    "B_Item_Weapon_Greatsword": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Greatsword",
+      "components": {
+        "DefaultSceneRoot": {
+          "class": "SceneComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 1000.0
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        "StaticMesh": {
+          "class": "StaticMeshComponent",
+          "relative_location": {
+            "x": 2.2303,
+            "y": 0.0,
+            "z": -0.0
+          },
+          "relative_rotation": {
+            "pitch": -0.8985,
+            "yaw": -65.8513,
+            "roll": -4.4508
+          },
+          "static_mesh": "SM_Greatsword"
+        },
+        "Trail": {
+          "class": "NiagaraComponent",
+          "relative_location": {
+            "x": -2.0495,
+            "y": -3.0572,
+            "z": 1066.2307
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 125.5394,
+            "roll": -175.4596
+          }
+        },
+        "DEBUG_HandleVisualizer": {
+          "class": "BillboardComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        },
+        "DEBUG_FacingDirection": {
+          "class": "ArrowComponent",
+          "relative_location": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "relative_rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          }
+        }
+      },
+      "class": "B_Item_Weapon_Greatsword_C"
+    }
+  }
+}

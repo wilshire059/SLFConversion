@@ -85,6 +85,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
 	static bool ClearConstructionScript(UObject* BlueprintAsset);
 
+	// Clear widget delegate bindings from WidgetBlueprint (e.g., ComboBox OnGenerateItemWidget)
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
+	static int32 ClearWidgetDelegateBindings(UObject* WidgetBlueprintAsset);
+
 	// COMPREHENSIVE MIGRATION
 	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
 	static bool MigrateToShell(UObject* BlueprintAsset, const FString& NewParentClassPath, const TArray<FString>& VariablesToRemove, const TArray<FString>& FunctionsToRemove, const TArray<FString>& DispatchersToRemove);
@@ -110,6 +114,16 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "SLF Automation|DataAsset")
 	static bool ApplySkeletalMeshInfoToItem(const FString& ItemAssetPath, const TArray<FString>& CharacterAssetNames, const TArray<FString>& MeshPaths);
+
+	/**
+	 * Apply Death montages TMap to a PDA_CombatReactionAnimData asset
+	 * @param AnimsetPath - Path to the reaction animset data asset
+	 * @param DirectionNames - Array of direction names (Fwd, Bwd, Left, Right, etc.)
+	 * @param MontagePaths - Array of corresponding montage asset paths
+	 * @return true if successful
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|DataAsset")
+	static bool ApplyDeathMontagesToAnimset(const FString& AnimsetPath, const TArray<FString>& DirectionNames, const TArray<FString>& MontagePaths);
 
 	UFUNCTION(BlueprintCallable, Category = "SLF Automation|DataAsset")
 	static FString GetWeaponOverlayTag(const FString& ItemAssetPath);
@@ -411,6 +425,19 @@ public:
 	// Uses JSON exports from both projects
 	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Validation")
 	static FString CompareToBpOnly(const FString& BlueprintPath, const FString& BpOnlyExportJsonPath);
+
+	// STATUS EFFECT DATA RESTORATION
+	// Apply status effect RankInfo damage data that was lost during migration
+	// RankInfo uses FInstancedStruct which requires C++ to properly set
+	// StatusEffectAssetPath: e.g., "/Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Poison"
+	// Returns: Result string with details
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
+	static FString ApplyStatusEffectRankInfo(const FString& StatusEffectAssetPath);
+
+	// Apply status effect data to all known status effects
+	// Applies hardcoded damage values from original Blueprint data
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
+	static FString ApplyAllStatusEffectRankInfo();
 
 #endif // WITH_EDITOR
 };

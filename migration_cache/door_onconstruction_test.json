@@ -1,0 +1,72 @@
+{
+  "B_Door": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Door",
+    "cdo_check": {
+      "default_door_mesh": "<Object '/Game/SoulslikeFramework/Meshes/SM/PrisonDoor/SM_PrisonDoor.SM_PrisonDoor' (0x000001D262D7A800) Class 'StaticMesh'>",
+      "default_door_frame_mesh": "<Object '/Game/SoulslikeFramework/Meshes/SM/PrisonDoor/SM_PrisonDoorArch.SM_PrisonDoorArch' (0x000001D262D7B800) Class 'StaticMesh'>",
+      "components": [
+        {
+          "name": "Interactable SM",
+          "mesh": "NO_MESH"
+        },
+        {
+          "name": "Door Frame",
+          "mesh": "SM_PrisonDoorArch"
+        }
+      ]
+    },
+    "spawn_check": {
+      "spawned": true,
+      "class": "B_Door_C",
+      "components": [
+        {
+          "name": "Interactable SM",
+          "mesh": "SM_PrisonDoor",
+          "visible": true
+        },
+        {
+          "name": "Door Frame",
+          "mesh": "SM_PrisonDoorArch",
+          "visible": true
+        }
+      ],
+      "door_mesh_applied": "SM_PrisonDoorArch"
+    },
+    "status": "SUCCESS - OnConstruction applied mesh correctly"
+  },
+  "B_BossDoor": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_BossDoor",
+    "cdo_check": {
+      "default_door_mesh_error": "SLFBossDoor: Failed to find property 'default_door_mesh' for attribute 'default_door_mesh' on 'B_BossDoor_C'",
+      "default_door_frame_mesh_error": "SLFBossDoor: Failed to find property 'default_door_frame_mesh' for attribute 'default_door_frame_mesh' on 'B_BossDoor_C'",
+      "components": [
+        {
+          "name": "Interactable SM",
+          "mesh": "Cube"
+        },
+        {
+          "name": "Door Frame",
+          "mesh": "SM_Door"
+        }
+      ]
+    },
+    "spawn_check": {
+      "spawned": true,
+      "class": "B_BossDoor_C",
+      "components": [
+        {
+          "name": "Interactable SM",
+          "mesh": "Cube",
+          "visible": false
+        },
+        {
+          "name": "Door Frame",
+          "mesh": "SM_Door",
+          "visible": true
+        }
+      ],
+      "door_mesh_applied": "SM_Door"
+    },
+    "status": "FAILED - TSoftObjectPtr not set"
+  }
+}

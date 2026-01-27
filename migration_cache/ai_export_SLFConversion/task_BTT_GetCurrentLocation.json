@@ -1,0 +1,11 @@
+{
+  "path": "/Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_GetCurrentLocation",
+  "exists": true,
+  "parent_class": "/Script/SLFConversion.BTT_GetCurrentLocation",
+  "variables": [],
+  "functions": [],
+  "has_eventgraph": false,
+  "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'",
+  "error": null,
+  "name": "BTT_GetCurrentLocation"
+}

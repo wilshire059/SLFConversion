@@ -149,4 +149,11 @@ protected:
 
 	UPROPERTY()
 	UBorder* CachedSlotBorder;
+
+	// bp_only: BackgroundBorder receives SlotColor for visual differentiation
+	UPROPERTY()
+	UBorder* CachedBackgroundBorder;
+
+	// Apply SlotColor to visual elements
+	void ApplySlotColor();
 };

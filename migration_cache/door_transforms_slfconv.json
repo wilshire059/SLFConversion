@@ -1,0 +1,83 @@
+{
+  "project": "SLFConversion",
+  "components": [
+    {
+      "name": "DefaultSceneRoot",
+      "class": "SceneComponent",
+      "relative_location": {
+        "x": 99999.0,
+        "y": 99999.0,
+        "z": 0.0
+      },
+      "relative_rotation": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "relative_scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    {
+      "name": "Interactable SM",
+      "class": "StaticMeshComponent",
+      "relative_location": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "relative_rotation": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "relative_scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "mesh": "SM_PrisonDoor"
+    },
+    {
+      "name": "Door Frame",
+      "class": "StaticMeshComponent",
+      "relative_location": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "relative_rotation": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "relative_scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "mesh": "SM_PrisonDoorArch"
+    },
+    {
+      "name": "MoveTo",
+      "class": "BillboardComponent",
+      "relative_location": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "relative_rotation": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "relative_scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    }
+  ]
+}

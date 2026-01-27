@@ -1,0 +1,151 @@
+{
+  "B_Door": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Door",
+    "exists": true,
+    "compile_info": {
+      "status_error": "Blueprint: Property 'Status' for attribute 'status' on 'Blueprint' is protected and cannot be read",
+      "ubergraph_error": "Blueprint: Failed to find property 'ubergraph_pages' for attribute 'ubergraph_pages' on 'Blueprint'",
+      "function_graphs_error": "Blueprint: Failed to find property 'function_graphs' for attribute 'function_graphs' on 'Blueprint'"
+    },
+    "scs": {
+      "error": "Blueprint: Failed to find property 'simple_construction_script' for attribute 'simple_construction_script' on 'Blueprint'"
+    },
+    "blueprint_cdo": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "visible": true
+      }
+    ],
+    "cpp_cdo": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "visible": true
+      },
+      {
+        "name": "Interactable SM",
+        "class": "StaticMeshComponent",
+        "visible": true,
+        "mesh": "SM_PrisonDoor"
+      },
+      {
+        "name": "Door Frame",
+        "class": "StaticMeshComponent",
+        "visible": true,
+        "mesh": "SM_PrisonDoorArch"
+      },
+      {
+        "name": "MoveTo",
+        "class": "BillboardComponent",
+        "visible": false
+      }
+    ],
+    "blueprint_name": "B_Door",
+    "blueprint_class": "Blueprint",
+    "generated_class": "B_Door_C",
+    "cpp_class": "B_Door"
+  },
+  "B_BossDoor": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_BossDoor",
+    "exists": true,
+    "compile_info": {
+      "status_error": "Blueprint: Property 'Status' for attribute 'status' on 'Blueprint' is protected and cannot be read",
+      "ubergraph_error": "Blueprint: Failed to find property 'ubergraph_pages' for attribute 'ubergraph_pages' on 'Blueprint'",
+      "function_graphs_error": "Blueprint: Failed to find property 'function_graphs' for attribute 'function_graphs' on 'Blueprint'"
+    },
+    "scs": {
+      "error": "Blueprint: Failed to find property 'simple_construction_script' for attribute 'simple_construction_script' on 'Blueprint'"
+    },
+    "blueprint_cdo": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "visible": true
+      },
+      {
+        "name": "Interactable SM",
+        "class": "StaticMeshComponent",
+        "visible": false,
+        "mesh": "Cube"
+      },
+      {
+        "name": "CurrencySpawnLocation",
+        "class": "BillboardComponent",
+        "visible": false
+      },
+      {
+        "name": "MoveTo",
+        "class": "BillboardComponent",
+        "visible": false
+      },
+      {
+        "name": "Door Frame",
+        "class": "StaticMeshComponent",
+        "visible": true,
+        "mesh": "SM_Door"
+      },
+      {
+        "name": "PortalEffectFront",
+        "class": "NiagaraComponent",
+        "visible": true
+      },
+      {
+        "name": "PortalEffectBack",
+        "class": "NiagaraComponent",
+        "visible": true
+      }
+    ],
+    "cpp_cdo": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "visible": true
+      },
+      {
+        "name": "Interactable SM",
+        "class": "StaticMeshComponent",
+        "visible": true,
+        "mesh": "SM_PrisonDoor"
+      },
+      {
+        "name": "Door Frame",
+        "class": "StaticMeshComponent",
+        "visible": true,
+        "mesh": "SM_PrisonDoorArch"
+      },
+      {
+        "name": "MoveTo",
+        "class": "BillboardComponent",
+        "visible": false
+      },
+      {
+        "name": "Portal_Front",
+        "class": "NiagaraComponent",
+        "visible": true
+      },
+      {
+        "name": "Portal_Back",
+        "class": "NiagaraComponent",
+        "visible": true
+      },
+      {
+        "name": "DeathCurrencyDropLocation",
+        "class": "BillboardComponent",
+        "visible": false
+      }
+    ],
+    "blueprint_name": "B_BossDoor",
+    "blueprint_class": "Blueprint",
+    "generated_class": "B_BossDoor_C",
+    "cpp_class": "B_BossDoor"
+  },
+  "comparison": {
+    "b_door_bp_cdo_components": 1,
+    "b_door_cpp_cdo_components": 4,
+    "b_bossdoor_bp_cdo_components": 7,
+    "b_bossdoor_cpp_cdo_components": 7,
+    "b_door_scs_empty": false,
+    "b_bossdoor_scs_empty": false
+  }
+}

@@ -1,0 +1,18 @@
+============================================================
+Inspecting DT_ExampleStatTable Row Structure
+============================================================
+DataTable: DT_ExampleStatTable
+Row Struct: FStatEntry
+Row Struct Path: /Game/SoulslikeFramework/Structures/Stats/FStatEntry.FStatEntry
+
+Struct Properties:
+Row struct error: 'Class' object has no attribute 'properties'
+
+Asset path: /Game/SoulslikeFramework/Data/_Datatables/DT_ExampleStatTable.DT_ExampleStatTable
+RowStructure tag: /Game/SoulslikeFramework/Structures/Stats/FStatEntry.FStatEntry
+
+Row count: 33
+
+Blueprint FStatInfo found: FStatInfo
+  Path: /Game/SoulslikeFramework/Structures/Stats/FStatInfo.FStatInfo
+============================================================

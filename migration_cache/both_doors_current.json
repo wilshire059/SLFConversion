@@ -1,0 +1,58 @@
+{
+  "B_Door": {
+    "name": "B_Door",
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Door",
+    "scs_nodes": [],
+    "cdo_components": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "visible": true
+      }
+    ]
+  },
+  "B_BossDoor": {
+    "name": "B_BossDoor",
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_BossDoor",
+    "scs_nodes": [],
+    "cdo_components": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "visible": true
+      },
+      {
+        "name": "Interactable SM",
+        "class": "StaticMeshComponent",
+        "visible": false,
+        "mesh": "Cube"
+      },
+      {
+        "name": "CurrencySpawnLocation",
+        "class": "BillboardComponent",
+        "visible": false
+      },
+      {
+        "name": "MoveTo",
+        "class": "BillboardComponent",
+        "visible": false
+      },
+      {
+        "name": "Door Frame",
+        "class": "StaticMeshComponent",
+        "visible": true,
+        "mesh": "SM_Door"
+      },
+      {
+        "name": "PortalEffectFront",
+        "class": "NiagaraComponent",
+        "visible": true
+      },
+      {
+        "name": "PortalEffectBack",
+        "class": "NiagaraComponent",
+        "visible": true
+      }
+    ]
+  }
+}

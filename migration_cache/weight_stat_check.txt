@@ -1,0 +1,25 @@
+================================================================================
+WEIGHT STAT INVESTIGATION
+================================================================================
+
+Total rows: 33
+
+Found Weight row: [Misc_Equip_Load]
+
+--- B_Weight Class Check ---
+B_Weight NOT FOUND at: /Game/SoulslikeFramework/Data/Stats/_Backend/B_Weight
+
+--- C++ USLFStatWeight Check ---
+USLFStatWeight class loaded: SLFStatWeight
+CDO: Default__SLFStatWeight
+StatInfo.Tag: SoulslikeFramework.Stat.Misc.Weight
+StatInfo.CurrentValue: 0.0
+StatInfo.MaxValue: 50.0
+
+--- Armor StatChanges Tag Check ---
+Armor Weight StatChange key: SoulslikeFramework.Stat.Misc.Weight
+Armor Weight Delta: 10.0
+
+================================================================================
+EXPECTED: Both C++ and armor should use tag 'SoulslikeFramework.Stat.Misc.Weight'
+================================================================================

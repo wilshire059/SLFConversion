@@ -1,0 +1,358 @@
+{
+  "behavior_trees": {
+    "BT_Enemy": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_AI/BT_Enemy",
+      "exists": true,
+      "structure": "=== BehaviorTree: BT_Enemy ===\n\n--- Root Decorators ---\n\n--- Node Tree ---\nNode: Selector (BTComposite_Selector)\n  NumChildren: 6\n  [Branch 0] Child: POISE BROKEN MODE (BTTask_RunBehavior), Decorators: 0\n  [Branch 1] Child: UNINTERRUPTABLE MODE (BTTask_RunBehavior), Decorators: 0\n  [Branch 2] Child: OUT OF BOUNDS MODE (BTTask_RunBehavior), Decorators: 0\n  [Branch 3] Child: COMBAT MODE (BTTask_RunBehavior), Decorators: 0\n  [Branch 4] Child: INVESTIGATE MODE (BTTask_RunBehavior), Decorators: 0\n  [Branch 5] Child: PASSIVE MODES (BTComposite_Selector), Decorators: 0\n  Node: PASSIVE MODES (BTComposite_Selector)\n    NumChildren: 3\n    [Branch 0] Child: IDLE MODE (BTTask_RunBehavior), Decorators: 0\n    [Branch 1] Child: PATROL MODE (BTTask_RunBehavior), Decorators: 0\n    [Branch 2] Child: RANDOM ROAM MODE (BTTask_RunBehavior), Decorators: 0\n\n=== Summary ===\nTotal Decorators: 0\nState Key Decorators: 0\nTotal Tasks: 8\n\n=== Expected State Values (E_AI_States) ===\n  0 = Idle\n  1 = Random Roam\n  2 = Patrolling\n  3 = Investigating\n  4 = Combat\n  5 = Poise Broken\n  6 = Uninterruptable\n  7 = Out of Bounds\n",
+      "error": null,
+      "name": "BT_Enemy",
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'"
+    },
+    "BT_Combat": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_AI/Subtrees/BT_Combat",
+      "exists": true,
+      "structure": "=== BehaviorTree: BT_Combat ===\n\n--- Root Decorators ---\n[Root][0] Blackboard Based Condition\n    Key: InCombat\n    IntValue: 0\n[Root][0] Blackboard Based Condition\n    Key: InCombat\n    IntValue: 0\n\n--- Node Tree ---\nNode: COMBAT MODE (BTComposite_Selector)\n  NumChildren: 2\n  [Branch 0] Child: INITIALIZE COMBAT (BTComposite_Sequence), Decorators: 1\n      Decorator[0]: Blackboard Based Condition\n        IntValue: 0\n  Node: INITIALIZE COMBAT (BTComposite_Sequence)\n    NumChildren: 4\n    [Branch 0] Child: Toggle Focus (BTT_ToggleFocus_C), Decorators: 0\n    [Branch 1] Child: BTT_GetCurrentLocation (BTT_GetCurrentLocation_C), Decorators: 0\n    [Branch 2] Child: Wait (BTTask_Wait), Decorators: 0\n    [Branch 3] Child: Set Key (InCombat) (BTT_SetKey_C), Decorators: 0\n  [Branch 1] Child: IN COMBAT (BTComposite_Selector), Decorators: 1\n      Decorator[0]: Blackboard Based Condition\n        IntValue: 0\n  Node: IN COMBAT (BTComposite_Selector)\n    NumChildren: 2\n    [Branch 0] Child: TRY ATTACK (BTComposite_Sequence), Decorators: 1\n        Decorator[0]: Blackboard Based Condition\n          IntValue: 0\n    Node: TRY ATTACK (BTComposite_Sequence)\n      NumChildren: 2\n      [Branch 0] Child: Toggle Focus (BTT_ToggleFocus_C), Decorators: 0\n      [Branch 1] Child: Try Execute Attack (BTT_TryExecuteAbility_C), Decorators: 0\n    [Branch 1] Child: MOVEMENT (BTComposite_Selector), Decorators: 1\n        Decorator[0]: Blackboard Based Condition\n          IntValue: 0\n    Node: MOVEMENT (BTComposite_Selector)\n      NumChildren: 2\n      [Branch 0] Child: STRAFE AROUND TARGET (BTComposite_Sequence), Decorators: 1\n          Decorator[0]: Blackboard Based Condition\n            IntValue: 0\n      Node: STRAFE AROUND TARGET (BTComposite_Sequence)\n        NumChildren: 5\n        [Branch 0] Child: Set Movement Mode (BTT_SetMovementMode_C), Decorators: 0\n        [Branch 1] Child: BTT_GetStrafePointAroundTarget (BTT_GetStrafePointAroundTarget_C), Decorators: 0\n        [Branch 2] Child: Toggle Focus (BTT_ToggleFocus_C), Decorators: 0\n        [Branch 3] Child: Move To (BTTask_MoveTo), Decorators: 0\n        [Branch 4] Child: Clear Key (BTT_ClearKey_C), Decorators: 0\n      [Branch 1] Child: MOVE TO ATTACK RADIUS (BTComposite_Sequence), Decorators: 0\n      Node: MOVE TO ATTACK RADIUS (BTComposite_Sequence)\n        NumChildren: 3\n        [Branch 0] Child: Toggle Focus (BTT_ToggleFocus_C), Decorators: 0\n        [Branch 1] Child: Simply Move To (BTT_SimpleMoveTo_C), Decorators: 0\n        [Branch 2] Child: Set Key (CanStrafe) (BTT_SetKey_C), Decorators: 0\n\n=== Summary ===\nTotal Decorators: 5\nState Key Decorators: 0\nTotal Tasks: 14\n\n=== Expected State Values (E_AI_States) ===\n  0 = Idle\n  1 = Random Roam\n  2 = Patrolling\n  3 = Investigating\n  4 = Combat\n  5 = Poise Broken\n  6 = Uninterruptable\n  7 = Out of Bounds\n",
+      "error": null,
+      "name": "BT_Combat",
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'"
+    },
+    "BT_Idle": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_AI/Subtrees/BT_Idle",
+      "exists": true,
+      "structure": "=== BehaviorTree: BT_Idle ===\n\n--- Root Decorators ---\n\n--- Node Tree ---\nNode: IDLE MODE (BTComposite_Sequence)\n  NumChildren: 1\n  [Branch 0] Child: Toggle Focus (BTT_ToggleFocus_C), Decorators: 0\n\n=== Summary ===\nTotal Decorators: 0\nState Key Decorators: 0\nTotal Tasks: 1\n\n=== Expected State Values (E_AI_States) ===\n  0 = Idle\n  1 = Random Roam\n  2 = Patrolling\n  3 = Investigating\n  4 = Combat\n  5 = Poise Broken\n  6 = Uninterruptable\n  7 = Out of Bounds\n",
+      "error": null,
+      "name": "BT_Idle",
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'"
+    },
+    "BT_Investigating": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_AI/Subtrees/BT_Investigating",
+      "exists": true,
+      "structure": "=== BehaviorTree: BT_Investigating ===\n\n--- Root Decorators ---\n\n--- Node Tree ---\nNode: INVESTIGATE MODE (BTComposite_Sequence)\n  NumChildren: 4\n  [Branch 0] Child: Set Movement Mode (BTT_SetMovementMode_C), Decorators: 0\n  [Branch 1] Child: Move To (BTTask_MoveTo), Decorators: 0\n  [Branch 2] Child: Wait (BTTask_Wait), Decorators: 0\n  [Branch 3] Child: BTT_SwitchToPreviousState (BTT_SwitchToPreviousState_C), Decorators: 0\n\n=== Summary ===\nTotal Decorators: 0\nState Key Decorators: 0\nTotal Tasks: 4\n\n=== Expected State Values (E_AI_States) ===\n  0 = Idle\n  1 = Random Roam\n  2 = Patrolling\n  3 = Investigating\n  4 = Combat\n  5 = Poise Broken\n  6 = Uninterruptable\n  7 = Out of Bounds\n",
+      "error": null,
+      "name": "BT_Investigating",
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'"
+    },
+    "BT_OutOfBounds": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_AI/Subtrees/BT_OutOfBounds",
+      "exists": true,
+      "structure": "=== BehaviorTree: BT_OutOfBounds ===\n\n--- Root Decorators ---\n\n--- Node Tree ---\nNode: OUT OF BOUNDS MODE (BTComposite_Sequence)\n  NumChildren: 7\n  [Branch 0] Child: Toggle Focus (BTT_ToggleFocus_C), Decorators: 0\n  [Branch 1] Child: Wait (BTTask_Wait), Decorators: 0\n  [Branch 2] Child: Set Movement Mode (BTT_SetMovementMode_C), Decorators: 0\n  [Branch 3] Child: BTT_GetRandomPointNearStartPosition (BTT_GetRandomPointNearStartPosition_C), Decorators: 0\n  [Branch 4] Child: Simple Parallel (BTComposite_SimpleParallel), Decorators: 0\n  Node: Simple Parallel (BTComposite_SimpleParallel)\n    NumChildren: 2\n    [Branch 0] Child: Move To (BTTask_MoveTo), Decorators: 0\n    [Branch 1] Child: Sequence (BTComposite_Sequence), Decorators: 0\n    Node: Sequence (BTComposite_Sequence)\n      NumChildren: 2\n      [Branch 0] Child: Wait (BTTask_Wait), Decorators: 0\n      [Branch 1] Child: Toggle Focus (BTT_ToggleFocus_C), Decorators: 0\n  [Branch 5] Child: BTT_SwitchState (BTT_SwitchState_C), Decorators: 0\n  [Branch 6] Child: Set Key (InCombat) (BTT_SetKey_C), Decorators: 0\n\n=== Summary ===\nTotal Decorators: 0\nState Key Decorators: 0\nTotal Tasks: 9\n\n=== Expected State Values (E_AI_States) ===\n  0 = Idle\n  1 = Random Roam\n  2 = Patrolling\n  3 = Investigating\n  4 = Combat\n  5 = Poise Broken\n  6 = Uninterruptable\n  7 = Out of Bounds\n",
+      "error": null,
+      "name": "BT_OutOfBounds",
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'"
+    },
+    "BT_PatrolPath": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_AI/Subtrees/BT_PatrolPath",
+      "exists": true,
+      "structure": "=== BehaviorTree: BT_PatrolPath ===\n\n--- Root Decorators ---\n\n--- Node Tree ---\nNode: PATROL PATH MODE (BTComposite_Sequence)\n  NumChildren: 3\n  [Branch 0] Child: Toggle Focus (BTT_ToggleFocus_C), Decorators: 0\n  [Branch 1] Child: Set Movement Mode (BTT_SetMovementMode_C), Decorators: 0\n  [Branch 2] Child: BTT_PatrolPath (BTT_PatrolPath_C), Decorators: 0\n\n=== Summary ===\nTotal Decorators: 0\nState Key Decorators: 0\nTotal Tasks: 3\n\n=== Expected State Values (E_AI_States) ===\n  0 = Idle\n  1 = Random Roam\n  2 = Patrolling\n  3 = Investigating\n  4 = Combat\n  5 = Poise Broken\n  6 = Uninterruptable\n  7 = Out of Bounds\n",
+      "error": null,
+      "name": "BT_PatrolPath",
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'"
+    },
+    "BT_PoiseBroken": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_AI/Subtrees/BT_PoiseBroken",
+      "exists": true,
+      "structure": "=== BehaviorTree: BT_PoiseBroken ===\n\n--- Root Decorators ---\n\n--- Node Tree ---\nNode: POISE BROKEN MODE (BTComposite_Sequence)\n  NumChildren: 1\n  [Branch 0] Child: Toggle Focus (BTT_ToggleFocus_C), Decorators: 0\n\n=== Summary ===\nTotal Decorators: 0\nState Key Decorators: 0\nTotal Tasks: 1\n\n=== Expected State Values (E_AI_States) ===\n  0 = Idle\n  1 = Random Roam\n  2 = Patrolling\n  3 = Investigating\n  4 = Combat\n  5 = Poise Broken\n  6 = Uninterruptable\n  7 = Out of Bounds\n",
+      "error": null,
+      "name": "BT_PoiseBroken",
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'"
+    },
+    "BT_RandomRoam": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_AI/Subtrees/BT_RandomRoam",
+      "exists": true,
+      "structure": "=== BehaviorTree: BT_RandomRoam ===\n\n--- Root Decorators ---\n\n--- Node Tree ---\nNode: RANDOM ROAM MODE (BTComposite_Sequence)\n  NumChildren: 4\n  [Branch 0] Child: Toggle Focus (BTT_ToggleFocus_C), Decorators: 0\n  [Branch 1] Child: Set Movement Mode (BTT_SetMovementMode_C), Decorators: 0\n  [Branch 2] Child: BTT_GetRandomPoint (BTT_GetRandomPoint_C), Decorators: 0\n  [Branch 3] Child: Move To (BTTask_MoveTo), Decorators: 0\n\n=== Summary ===\nTotal Decorators: 0\nState Key Decorators: 0\nTotal Tasks: 4\n\n=== Expected State Values (E_AI_States) ===\n  0 = Idle\n  1 = Random Roam\n  2 = Patrolling\n  3 = Investigating\n  4 = Combat\n  5 = Poise Broken\n  6 = Uninterruptable\n  7 = Out of Bounds\n",
+      "error": null,
+      "name": "BT_RandomRoam",
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'"
+    },
+    "BT_Uninterruptable": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_AI/Subtrees/BT_Uninterruptable",
+      "exists": true,
+      "structure": "=== BehaviorTree: BT_Uninterruptable ===\n\n--- Root Decorators ---\n\n--- Node Tree ---\nNode: POISE BROKEN MODE (BTComposite_Sequence)\n  NumChildren: 1\n  [Branch 0] Child: Toggle Focus (BTT_ToggleFocus_C), Decorators: 0\n\n=== Summary ===\nTotal Decorators: 0\nState Key Decorators: 0\nTotal Tasks: 1\n\n=== Expected State Values (E_AI_States) ===\n  0 = Idle\n  1 = Random Roam\n  2 = Patrolling\n  3 = Investigating\n  4 = Combat\n  5 = Poise Broken\n  6 = Uninterruptable\n  7 = Out of Bounds\n",
+      "error": null,
+      "name": "BT_Uninterruptable",
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'"
+    }
+  },
+  "bt_tasks": {
+    "BTT_ClearKey": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_ClearKey",
+      "exists": true,
+      "parent_class": "/Script/AIModule.BTTask_BlueprintBase",
+      "variables": [],
+      "functions": [],
+      "has_eventgraph": false,
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'",
+      "error": null,
+      "name": "BTT_ClearKey"
+    },
+    "BTT_GetCurrentLocation": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_GetCurrentLocation",
+      "exists": true,
+      "parent_class": "/Script/AIModule.BTTask_BlueprintBase",
+      "variables": [],
+      "functions": [],
+      "has_eventgraph": false,
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'",
+      "error": null,
+      "name": "BTT_GetCurrentLocation"
+    },
+    "BTT_GetRandomPoint": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_GetRandomPoint",
+      "exists": true,
+      "parent_class": "/Script/AIModule.BTTask_BlueprintBase",
+      "variables": [],
+      "functions": [],
+      "has_eventgraph": false,
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'",
+      "error": null,
+      "name": "BTT_GetRandomPoint"
+    },
+    "BTT_GetRandomPointNearStartPosition": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_GetRandomPointNearStartPosition",
+      "exists": true,
+      "parent_class": "/Script/AIModule.BTTask_BlueprintBase",
+      "variables": [],
+      "functions": [],
+      "has_eventgraph": false,
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'",
+      "error": null,
+      "name": "BTT_GetRandomPointNearStartPosition"
+    },
+    "BTT_GetStrafePointAroundTarget": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_GetStrafePointAroundTarget",
+      "exists": true,
+      "parent_class": "/Script/AIModule.BTTask_BlueprintBase",
+      "variables": [],
+      "functions": [],
+      "has_eventgraph": false,
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'",
+      "error": null,
+      "name": "BTT_GetStrafePointAroundTarget"
+    },
+    "BTT_PatrolPath": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_PatrolPath",
+      "exists": true,
+      "parent_class": "/Script/AIModule.BTTask_BlueprintBase",
+      "variables": [],
+      "functions": [],
+      "has_eventgraph": false,
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'",
+      "error": null,
+      "name": "BTT_PatrolPath"
+    },
+    "BTT_SetKey": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_SetKey",
+      "exists": true,
+      "parent_class": "/Script/AIModule.BTTask_BlueprintBase",
+      "variables": [],
+      "functions": [],
+      "has_eventgraph": false,
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'",
+      "error": null,
+      "name": "BTT_SetKey"
+    },
+    "BTT_SetMovementMode": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_SetMovementMode",
+      "exists": true,
+      "parent_class": "/Script/AIModule.BTTask_BlueprintBase",
+      "variables": [],
+      "functions": [],
+      "has_eventgraph": false,
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'",
+      "error": null,
+      "name": "BTT_SetMovementMode"
+    },
+    "BTT_SimpleMoveTo": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_SimpleMoveTo",
+      "exists": true,
+      "parent_class": "/Script/AIModule.BTTask_BlueprintBase",
+      "variables": [],
+      "functions": [],
+      "has_eventgraph": false,
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'",
+      "error": null,
+      "name": "BTT_SimpleMoveTo"
+    },
+    "BTT_SwitchState": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_SwitchState",
+      "exists": true,
+      "parent_class": "/Script/AIModule.BTTask_BlueprintBase",
+      "variables": [],
+      "functions": [],
+      "has_eventgraph": false,
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'",
+      "error": null,
+      "name": "BTT_SwitchState"
+    },
+    "BTT_SwitchToPreviousState": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_SwitchToPreviousState",
+      "exists": true,
+      "parent_class": "/Script/AIModule.BTTask_BlueprintBase",
+      "variables": [],
+      "functions": [],
+      "has_eventgraph": false,
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'",
+      "error": null,
+      "name": "BTT_SwitchToPreviousState"
+    },
+    "BTT_ToggleFocus": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_ToggleFocus",
+      "exists": true,
+      "parent_class": "/Script/AIModule.BTTask_BlueprintBase",
+      "variables": [],
+      "functions": [],
+      "has_eventgraph": false,
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'",
+      "error": null,
+      "name": "BTT_ToggleFocus"
+    },
+    "BTT_TryExecuteAbility": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_TryExecuteAbility",
+      "exists": true,
+      "parent_class": "/Script/AIModule.BTTask_BlueprintBase",
+      "variables": [],
+      "functions": [],
+      "has_eventgraph": false,
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'",
+      "error": null,
+      "name": "BTT_TryExecuteAbility"
+    }
+  },
+  "bt_services": {
+    "BTS_ChaseBounds": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_AI/Services/BTS_ChaseBounds",
+      "exists": true,
+      "parent_class": "/Script/AIModule.BTService_BlueprintBase",
+      "variables": [],
+      "functions": [],
+      "has_eventgraph": false,
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'",
+      "error": null,
+      "name": "BTS_ChaseBounds"
+    },
+    "BTS_IsTargetDead": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_AI/Services/BTS_IsTargetDead",
+      "exists": true,
+      "parent_class": "/Script/AIModule.BTService_BlueprintBase",
+      "variables": [],
+      "functions": [],
+      "has_eventgraph": false,
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'",
+      "error": null,
+      "name": "BTS_IsTargetDead"
+    }
+  },
+  "blackboard": {
+    "BB_Standard": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_AI/BB_Standard",
+      "exists": true,
+      "keys": [],
+      "error": null,
+      "name": "BB_Standard",
+      "diagnosis": "=== DIAGNOSE BB STATE KEY: /Game/SoulslikeFramework/Blueprints/_AI/BB_Standard ===\nLoaded: /Game/SoulslikeFramework/Blueprints/_AI/BB_Standard.BB_Standard\nTotal Keys: 12\n\nKey: SelfActor (Type: BlackboardKeyType_Object)\nKey: Target (Type: BlackboardKeyType_Object)\nKey: InCombat (Type: BlackboardKeyType_Bool)\nKey: POI (Type: BlackboardKeyType_Vector)\nKey: State (Type: BlackboardKeyType_Enum)\n  >>> THIS IS THE STATE KEY <<<\n  KeyType is Enum\n  EnumType: /Game/SoulslikeFramework/Enums/E_AI_States.E_AI_States\n  Enum Values:\n    [0] Value=0 Name=NewEnumerator0 Display=Idle\n    [1] Value=1 Name=NewEnumerator4 Display=Random Roam\n    [2] Value=2 Name=NewEnumerator1 Display=Patrolling\n    [3] Value=3 Name=NewEnumerator5 Display=Investigating\n    [4] Value=4 Name=NewEnumerator2 Display=Combat\n    [5] Value=5 Name=NewEnumerator6 Display=Poise Broken\n    [6] Value=6 Name=NewEnumerator7 Display=Uninterruptable\n    [7] Value=7 Name=NewEnumerator3 Display=Out of Bounds\nKey: StartPosition (Type: BlackboardKeyType_Vector)\nKey: AttackRadius (Type: BlackboardKeyType_Float)\nKey: StrafeRadius (Type: BlackboardKeyType_Float)\nKey: CanAttack (Type: BlackboardKeyType_Bool)\nKey: ChaseDistance (Type: BlackboardKeyType_Float)\nKey: CanStrafe (Type: BlackboardKeyType_Bool)\nKey: SpeedAdjustDistance (Type: BlackboardKeyType_Float)\n",
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'"
+    }
+  },
+  "ai_controller": {
+    "AIC_SoulslikeFramework": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_AI/Misc/AIC_SoulslikeFramework",
+      "exists": true,
+      "parent_class": "/Script/AIModule.AIController",
+      "variables": [],
+      "functions": [],
+      "has_eventgraph": false,
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'",
+      "error": null,
+      "name": "AIC_SoulslikeFramework"
+    }
+  },
+  "enemies": {
+    "B_Soulslike_Enemy": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy",
+      "exists": true,
+      "parent_class": "/Game/SoulslikeFramework/Blueprints/_Characters/B_BaseCharacter.B_BaseCharacter_C",
+      "variables": [],
+      "functions": [],
+      "has_eventgraph": false,
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'",
+      "error": null,
+      "name": "B_Soulslike_Enemy"
+    },
+    "B_Soulslike_Enemy_Guard": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Guard",
+      "exists": true,
+      "parent_class": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy.B_Soulslike_Enemy_C",
+      "variables": [],
+      "functions": [],
+      "has_eventgraph": false,
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'",
+      "error": null,
+      "name": "B_Soulslike_Enemy_Guard"
+    },
+    "B_Soulslike_Enemy_Showcase": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Showcase",
+      "exists": true,
+      "parent_class": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy.B_Soulslike_Enemy_C",
+      "variables": [],
+      "functions": [],
+      "has_eventgraph": false,
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'",
+      "error": null,
+      "name": "B_Soulslike_Enemy_Showcase"
+    },
+    "B_Soulslike_Boss": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss",
+      "exists": true,
+      "parent_class": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy.B_Soulslike_Enemy_C",
+      "variables": [],
+      "functions": [],
+      "has_eventgraph": false,
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'",
+      "error": null,
+      "name": "B_Soulslike_Boss"
+    },
+    "B_Soulslike_Boss_Malgareth": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss_Malgareth",
+      "exists": true,
+      "parent_class": "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss.B_Soulslike_Boss_C",
+      "variables": [],
+      "functions": [],
+      "has_eventgraph": false,
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'",
+      "error": null,
+      "name": "B_Soulslike_Boss_Malgareth"
+    }
+  },
+  "components": {
+    "AC_AI_BehaviorManager": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_Components/AI/AC_AI_BehaviorManager",
+      "exists": false,
+      "parent_class": null,
+      "variables": [],
+      "functions": [],
+      "has_eventgraph": false,
+      "export_text": null,
+      "error": "Asset not found"
+    },
+    "AC_AI_CombatManager": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_Components/AI/AC_AI_CombatManager",
+      "exists": false,
+      "parent_class": null,
+      "variables": [],
+      "functions": [],
+      "has_eventgraph": false,
+      "export_text": null,
+      "error": "Asset not found"
+    }
+  },
+  "enums": {
+    "E_AI_States": {
+      "path": "/Game/SoulslikeFramework/Enums/E_AI_States",
+      "exists": true,
+      "values": [],
+      "error": null,
+      "name": "E_AI_States",
+      "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'"
+    }
+  }
+}

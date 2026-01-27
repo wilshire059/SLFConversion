@@ -1,0 +1,69 @@
+=== BT_Enemy Decorator Export ===
+
+Calling SLFAutomationLibrary.ExportBTAllDecoratorIntValues...
+=== BehaviorTree: BT_Enemy ===
+
+--- Root Decorators ---
+
+--- Node Tree ---
+Node: Selector (BTComposite_Selector)
+  NumChildren: 6
+  [Branch 0] Child: POISE BROKEN MODE (BTTask_RunBehavior), Decorators: 0
+  [Branch 1] Child: UNINTERRUPTABLE MODE (BTTask_RunBehavior), Decorators: 0
+  [Branch 2] Child: OUT OF BOUNDS MODE (BTTask_RunBehavior), Decorators: 0
+  [Branch 3] Child: COMBAT MODE (BTTask_RunBehavior), Decorators: 0
+  [Branch 4] Child: INVESTIGATE MODE (BTTask_RunBehavior), Decorators: 0
+  [Branch 5] Child: PASSIVE MODES (BTComposite_Selector), Decorators: 0
+  Node: PASSIVE MODES (BTComposite_Selector)
+    NumChildren: 3
+    [Branch 0] Child: IDLE MODE (BTTask_RunBehavior), Decorators: 0
+    [Branch 1] Child: PATROL MODE (BTTask_RunBehavior), Decorators: 0
+    [Branch 2] Child: RANDOM ROAM MODE (BTTask_RunBehavior), Decorators: 0
+
+=== Summary ===
+Total Decorators: 0
+State Key Decorators: 0
+Total Tasks: 8
+
+=== Expected State Values (ESLFAIStates) ===
+  0 = Idle
+  1 = RandomRoam
+  2 = Patrolling
+  3 = Investigating
+  4 = Combat
+  5 = PoiseBroken
+  6 = Uninterruptable
+  7 = OutOfBounds
+
+
+
+=== Blackboard State Key ===
+=== DIAGNOSE BB STATE KEY: /Game/SoulslikeFramework/Blueprints/_AI/BB_Standard ===
+Loaded: /Game/SoulslikeFramework/Blueprints/_AI/BB_Standard.BB_Standard
+Total Keys: 12
+
+Key: SelfActor (Type: BlackboardKeyType_Object)
+Key: Target (Type: BlackboardKeyType_Object)
+Key: InCombat (Type: BlackboardKeyType_Bool)
+Key: POI (Type: BlackboardKeyType_Vector)
+Key: State (Type: BlackboardKeyType_Enum)
+  >>> THIS IS THE STATE KEY <<<
+  KeyType is Enum
+  EnumType: /Script/SLFConversion.ESLFAIStates
+  Enum Values:
+    [0] Value=0 Name=ESLFAIStates::Idle Display=Idle
+    [1] Value=1 Name=ESLFAIStates::RandomRoam Display=Random Roam
+    [2] Value=2 Name=ESLFAIStates::Patrolling Display=Patrolling
+    [3] Value=3 Name=ESLFAIStates::Investigating Display=Investigating
+    [4] Value=4 Name=ESLFAIStates::Combat Display=Combat
+    [5] Value=5 Name=ESLFAIStates::PoiseBroken Display=Poise Broken
+    [6] Value=6 Name=ESLFAIStates::Uninterruptable Display=Uninterruptable
+    [7] Value=7 Name=ESLFAIStates::OutOfBounds Display=Out of Bounds
+Key: StartPosition (Type: BlackboardKeyType_Vector)
+Key: AttackRadius (Type: BlackboardKeyType_Float)
+Key: StrafeRadius (Type: BlackboardKeyType_Float)
+Key: CanAttack (Type: BlackboardKeyType_Bool)
+Key: ChaseDistance (Type: BlackboardKeyType_Float)
+Key: CanStrafe (Type: BlackboardKeyType_Bool)
+Key: SpeedAdjustDistance (Type: BlackboardKeyType_Float)
+

@@ -1,0 +1,52 @@
+============================================================
+Equipment Filter Test
+============================================================
+
+Testing Item Category Values:
+------------------------------------------------------------
+
+DA_Sword01:
+  Category: <SLFItemCategory.WEAPONS: 6> (int=6)
+  SubCategory: <SLFItemSubCategory.SWORD: 12> (int=12)
+  Matches Right Hand: True (Cat=6, SubCat=12)
+  Matches Left Hand: False (Cat=6, SubCat=12)
+
+DA_Sword02:
+  Category: <SLFItemCategory.WEAPONS: 6> (int=6)
+  SubCategory: <SLFItemSubCategory.SWORD: 12> (int=12)
+  Matches Right Hand: True (Cat=6, SubCat=12)
+  Matches Left Hand: False (Cat=6, SubCat=12)
+
+DA_Greatsword:
+  Category: <SLFItemCategory.WEAPONS: 6> (int=6)
+  SubCategory: <SLFItemSubCategory.SWORD: 12> (int=12)
+  Matches Right Hand: True (Cat=6, SubCat=12)
+  Matches Left Hand: False (Cat=6, SubCat=12)
+
+DA_PoisonSword:
+  Category: <SLFItemCategory.WEAPONS: 6> (int=6)
+  SubCategory: <SLFItemSubCategory.SWORD: 12> (int=12)
+  Matches Right Hand: True (Cat=6, SubCat=12)
+  Matches Left Hand: False (Cat=6, SubCat=12)
+
+DA_Katana:
+  Category: <SLFItemCategory.WEAPONS: 6> (int=6)
+  SubCategory: <SLFItemSubCategory.KATANA: 13> (int=13)
+  Matches Right Hand: True (Cat=6, SubCat=13)
+  Matches Left Hand: False (Cat=6, SubCat=13)
+
+DA_BossMace:
+  Category: <SLFItemCategory.WEAPONS: 6> (int=6)
+  SubCategory: <SLFItemSubCategory.MACE: 15> (int=15)
+  Matches Right Hand: True (Cat=6, SubCat=15)
+  Matches Left Hand: False (Cat=6, SubCat=15)
+
+DA_Shield01:
+  Category: <SLFItemCategory.SHIELDS: 7> (int=7)
+  SubCategory: <SLFItemSubCategory.MISCELLANEOUS: 4> (int=4)
+  Matches Right Hand: False (Cat=7, SubCat=4)
+  Matches Left Hand: True (Cat=7, SubCat=4)
+
+============================================================
+Test Complete
+============================================================

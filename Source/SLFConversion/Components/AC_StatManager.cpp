@@ -240,17 +240,18 @@ void UAC_StatManager::AdjustAffectedStats_Implementation(UB_Stat* Stat, double C
 		return;
 	}
 
-	// Get the stat behavior which contains StatsToAffect map
-	// Blueprint accesses: Stat->StatBehavior->StatsToAffect
-	const FStatBehavior& StatBehavior = Stat->StatBehavior;
+	// CRITICAL: Get StatsToAffect from StatInfo.StatModifiers (not the separate StatBehavior member)
+	// W_StatEntry_LevelUp reads from StatInfo.StatModifiers to get affected stats for highlighting
+	// This must be consistent across all stat-related code
+	const FStatBehavior& StatModifiers = Stat->StatInfo.StatModifiers;
 
 	// Check if there are any affected stats
-	if (StatBehavior.StatsToAffect.Num() > 0)
+	if (StatModifiers.StatsToAffect.Num() > 0)
 	{
-		UE_LOG(LogTemp, Log, TEXT("  Processing %d affected stats"), StatBehavior.StatsToAffect.Num());
+		UE_LOG(LogTemp, Log, TEXT("  Processing %d affected stats from StatInfo.StatModifiers"), StatModifiers.StatsToAffect.Num());
 
 		// ForEach loop over the StatsToAffect map
-		for (const auto& AffectedEntry : StatBehavior.StatsToAffect)
+		for (const auto& AffectedEntry : StatModifiers.StatsToAffect)
 		{
 			FGameplayTag AffectedStatTag = AffectedEntry.Key;
 			const FAffectedStats& AffectedStatsData = AffectedEntry.Value;

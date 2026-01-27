@@ -1,0 +1,49 @@
+=== Status Effect Data Asset Diagnosis ===
+
+=== Testing VFX Asset Loading ===
+OK: Loaded VFX: /Game/SoulslikeFramework/VFX/Systems/NS_Poison.NS_Poison
+    Class: NiagaraSystem
+OK: Loaded VFX: /Game/SoulslikeFramework/VFX/Systems/NS_PoisonLoop.NS_PoisonLoop
+    Class: NiagaraSystem
+
+=== Testing Status Effect Data Assets ===
+
+--- /Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Poison ---
+OK: Loaded asset
+    Class: PDA_StatusEffect_C
+    Total props: 40
+    Rank-related: ['rank_info']
+    VFX-related: []
+    Has rank_info attribute: YES
+    rank_info type: <class 'Map'>
+    rank_info keys: [1]
+    rank_info length: 1
+
+--- /Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Burn ---
+OK: Loaded asset
+    Class: PDA_StatusEffect_C
+    Total props: 40
+    Rank-related: ['rank_info']
+    VFX-related: []
+    Has rank_info attribute: YES
+    rank_info type: <class 'Map'>
+    rank_info keys: [1]
+    rank_info length: 1
+
+=== Checking Available Struct Types ===
+OK: unreal.SLFStatusEffectVfxInfo exists
+    Can instantiate: YES
+    Properties: ['attach_socket', 'vfx_system']
+OK: unreal.FSLFStatusEffectVfxInfo exists
+    Can instantiate: YES
+    Properties: ['attach_socket', 'vfx_system']
+MISSING: unreal.StatusEffectVfxInfo does not exist
+OK: unreal.SLFStatusEffectRankInfo exists
+    Can instantiate: YES
+    Properties: ['loop_vfx', 'relevant_data', 'trigger_vfx']
+OK: unreal.FSLFStatusEffectRankInfo exists
+    Can instantiate: YES
+    Properties: ['loop_vfx', 'relevant_data', 'trigger_vfx']
+MISSING: unreal.StatusEffectRankInfo does not exist
+
+=== Diagnosis Complete ===

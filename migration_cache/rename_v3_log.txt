@@ -1,0 +1,71 @@
+============================================================
+DEEP EXPLORATION OF ANIMBLUEPRINT
+============================================================
+Asset type: AnimBlueprint
+
+All attributes of AnimBlueprint:
+  acquire_editor_element_handle
+  add_node_asset_override
+  call_method
+  cast
+  generated_class
+  get_animation_graphs
+  get_class
+  get_default_object
+  get_editor_property
+  get_fname
+  get_full_name
+  get_name
+  get_nodes_of_class
+  get_outer
+  get_outermost
+  get_package
+  get_path_name
+  get_typed_outer
+  get_world
+  is_editor_property_overridden
+  is_package_external
+  modify
+  rename
+  reset_editor_property
+  set_blueprint_variable_expose_on_spawn
+  set_blueprint_variable_expose_to_cinematics
+  set_blueprint_variable_instance_editable
+  set_editor_properties
+  set_editor_property
+  static_class
+
+Trying skeleton_generated_class...
+
+Trying target_skeleton...
+
+Trying get_blueprint_generated_class...
+  generated_class: <Object '/Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive.ABP_SoulslikeCharacter_Additive_C' (0x000002E70009EE00) Class 'AnimBlueprintGeneratedClass'>
+  Class name: ABP_SoulslikeCharacter_Additive_C
+  CDO: <Object '/Script/Engine.Default__AnimBlueprintGeneratedClass' (0x000002E6AFB98C00) Class 'AnimBlueprintGeneratedClass'>
+
+  Properties with '?' in name:
+  Error: 'AnimBlueprintGeneratedClass' object has no attribute 'properties'
+
+Editor properties (subset):
+  blueprint_category: 
+  blueprint_description: 
+  blueprint_display_name: 
+  blueprint_namespace: 
+
+Graphs in Blueprint:
+  Error: type object 'BlueprintEditorLibrary' has no attribute 'get_graphs'
+
+============================================================
+EXPLORING AC_CombatManager (Regular Blueprint)
+============================================================
+Asset type: Blueprint
+
+Checking for variable access methods...
+  No new_variables attribute
+  Generated class: AC_CombatManager_C
+  Error getting generated class: 'BlueprintGeneratedClass' object has no attribute 'properties'
+
+============================================================
+EXPLORATION COMPLETE
+============================================================

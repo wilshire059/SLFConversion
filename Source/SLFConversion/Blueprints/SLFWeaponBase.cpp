@@ -537,13 +537,13 @@ TArray<FSLFWeaponStatusEffectData> ASLFWeaponBase::GetWeaponStatusEffectData_Imp
 
 	const FSLFEquipmentInfo& EquipmentDetails = ItemInfo.EquipmentDetails;
 
-	// Convert TMap<FGameplayTag, double> to TArray<FSLFWeaponStatusEffectData>
+	// Convert TMap<UPrimaryDataAsset*, FSLFStatusEffectApplication> to TArray<FSLFWeaponStatusEffectData>
 	for (const auto& StatusPair : EquipmentDetails.WeaponStatusEffectInfo)
 	{
 		FSLFWeaponStatusEffectData Entry;
-		Entry.StatusEffectTag = StatusPair.Key;
-		Entry.BuildupAmount = static_cast<float>(StatusPair.Value);
-		Entry.EffectRank = 1; // Default rank
+		Entry.StatusEffectAsset = StatusPair.Key;
+		Entry.BuildupAmount = static_cast<float>(StatusPair.Value.BuildupAmount);
+		Entry.EffectRank = StatusPair.Value.Rank;
 
 		Result.Add(Entry);
 	}

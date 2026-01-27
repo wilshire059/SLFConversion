@@ -1,0 +1,78 @@
+{
+  "B_Interactable": {
+    "name": "B_Interactable",
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Interactable",
+    "generated_class": "B_Interactable_C",
+    "parent_class": "Error: Blueprint: Failed to find property 'parent_class' for attribute 'parent_class' on 'Blueprint'",
+    "parent_class_path": "Unknown",
+    "parent_is_cpp": "Unknown",
+    "cdo_component_count": 0,
+    "cdo_components": [],
+    "root_component": "None",
+    "event_graphs_error": "'Blueprint' object has no attribute 'ubergraph_pages'",
+    "function_graphs_error": "'Blueprint' object has no attribute 'function_graphs'",
+    "scs_error": "'Blueprint' object has no attribute 'simple_construction_script'"
+  },
+  "B_Container": {
+    "name": "B_Container",
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Container",
+    "generated_class": "B_Container_C",
+    "parent_class": "Error: Blueprint: Failed to find property 'parent_class' for attribute 'parent_class' on 'Blueprint'",
+    "parent_class_path": "Unknown",
+    "parent_is_cpp": "Unknown",
+    "cdo_component_count": 0,
+    "cdo_components": [],
+    "root_component": "None",
+    "event_graphs_error": "'Blueprint' object has no attribute 'ubergraph_pages'",
+    "function_graphs_error": "'Blueprint' object has no attribute 'function_graphs'",
+    "scs_error": "'Blueprint' object has no attribute 'simple_construction_script'"
+  },
+  "B_RestingPoint": {
+    "name": "B_RestingPoint",
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_RestingPoint",
+    "generated_class": "B_RestingPoint_C",
+    "parent_class": "Error: Blueprint: Failed to find property 'parent_class' for attribute 'parent_class' on 'Blueprint'",
+    "parent_class_path": "Unknown",
+    "parent_is_cpp": "Unknown",
+    "cdo_component_count": 0,
+    "cdo_components": [],
+    "root_component": "None",
+    "event_graphs_error": "'Blueprint' object has no attribute 'ubergraph_pages'",
+    "function_graphs_error": "'Blueprint' object has no attribute 'function_graphs'",
+    "scs_error": "'Blueprint' object has no attribute 'simple_construction_script'"
+  },
+  "B_Destructible": {
+    "name": "B_Destructible",
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_Destructible",
+    "generated_class": "B_Destructible_C",
+    "parent_class": "Error: Blueprint: Failed to find property 'parent_class' for attribute 'parent_class' on 'Blueprint'",
+    "parent_class_path": "Unknown",
+    "parent_is_cpp": "Unknown",
+    "cdo_component_count": 0,
+    "cdo_components": [],
+    "root_component": "None",
+    "event_graphs_error": "'Blueprint' object has no attribute 'ubergraph_pages'",
+    "function_graphs_error": "'Blueprint' object has no attribute 'function_graphs'",
+    "scs_error": "'Blueprint' object has no attribute 'simple_construction_script'"
+  },
+  "B_Chaos_ForceField": {
+    "name": "B_Chaos_ForceField",
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/B_Chaos_ForceField",
+    "generated_class": "B_Chaos_ForceField_C",
+    "parent_class": "Error: Blueprint: Failed to find property 'parent_class' for attribute 'parent_class' on 'Blueprint'",
+    "parent_class_path": "Unknown",
+    "parent_is_cpp": "Unknown",
+    "cdo_component_count": 1,
+    "cdo_components": [
+      {
+        "name": "FieldSystemComponent",
+        "class": "FieldSystemComponent"
+      }
+    ],
+    "root_component": "FieldSystemComponent",
+    "root_component_class": "FieldSystemComponent",
+    "event_graphs_error": "'Blueprint' object has no attribute 'ubergraph_pages'",
+    "function_graphs_error": "'Blueprint' object has no attribute 'function_graphs'",
+    "scs_error": "'Blueprint' object has no attribute 'simple_construction_script'"
+  }
+}

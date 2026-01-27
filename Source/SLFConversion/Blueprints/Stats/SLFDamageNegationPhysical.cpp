@@ -3,14 +3,14 @@
 
 USLFDamageNegationPhysical::USLFDamageNegationPhysical()
 {
-	StatInfo.Tag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.DamageNegation.Physical"));
-	StatInfo.DisplayName = FText::FromString(TEXT("Physical Defense"));
-	StatInfo.CurrentValue = 0.0;  // Percentage reduction
-	StatInfo.MaxValue = 100.0;    // Max 100% reduction
+	// Defaults from bp_only B_DN_Physical CDO
+	StatInfo.Tag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Defense.Negation.Physical"));
+	StatInfo.DisplayName = FText::FromString(TEXT("Physical Negation"));
+	StatInfo.CurrentValue = 0.0;
+	StatInfo.MaxValue = 9999.0;
 	StatInfo.bShowMaxValue = false;
-	StatInfo.bDisplayAsPercent = true;
+	StatInfo.bDisplayAsPercent = false;
 	StatInfo.RegenInfo.bCanRegenerate = false;
 	bShowMaxValueOnLevelUp = false;
-	MinValue = -100.0;  // Can be negative (increased damage taken)
-	UE_LOG(LogTemp, Log, TEXT("[DN_Physical] Initialized with %.1f%%"), StatInfo.CurrentValue);
+	MinValue = 0.0;
 }

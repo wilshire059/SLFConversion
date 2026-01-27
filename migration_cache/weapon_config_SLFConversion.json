@@ -1,0 +1,144 @@
+{
+  "B_Soulslike_Enemy_Guard": {
+    "class": "B_Soulslike_Enemy_Guard_C",
+    "parent": "None",
+    "components": [
+      {
+        "name": "CollisionCylinder",
+        "class": "CapsuleComponent",
+        "relative_location": "(0.00, 0.00, 0.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)"
+      },
+      {
+        "name": "Arrow",
+        "class": "ArrowComponent",
+        "relative_location": "(0.00, 0.00, 0.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "attach_parent": "CollisionCylinder"
+      },
+      {
+        "name": "CharMoveComp",
+        "class": "CharacterMovementComponent"
+      },
+      {
+        "name": "CharacterMesh0",
+        "class": "SkeletalMeshComponent",
+        "relative_location": "(0.00, 0.00, -89.00)",
+        "relative_rotation": "(0.00, 270.00, -0.00)",
+        "attach_parent": "CollisionCylinder"
+      },
+      {
+        "name": "StatManagerComponent",
+        "class": "StatManagerComponent"
+      },
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "relative_location": "(0.00, 0.00, 0.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "attach_parent": "CollisionCylinder"
+      },
+      {
+        "name": "AIStateMachine",
+        "class": "SLFAIStateMachineComponent"
+      },
+      {
+        "name": "HealthbarWidget",
+        "class": "WidgetComponent",
+        "relative_location": "(0.00, 0.00, 0.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "attach_parent": "CollisionCylinder"
+      },
+      {
+        "name": "CombatManagerComponent",
+        "class": "AICombatManagerComponent"
+      },
+      {
+        "name": "BehaviorManagerComponent",
+        "class": "AIBehaviorManagerComponent"
+      },
+      {
+        "name": "SoulsNiagaraComponent",
+        "class": "NiagaraComponent",
+        "relative_location": "(0.00, 0.00, 0.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "attach_parent": "CollisionCylinder"
+      },
+      {
+        "name": "LootDropManagerComponent",
+        "class": "LootDropManagerComponent"
+      }
+    ]
+  },
+  "B_Soulslike_Enemy_Showcase": {
+    "class": "B_Soulslike_Enemy_Showcase_C",
+    "parent": "None",
+    "components": [
+      {
+        "name": "CollisionCylinder",
+        "class": "CapsuleComponent",
+        "relative_location": "(0.00, 0.00, 0.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)"
+      },
+      {
+        "name": "Arrow",
+        "class": "ArrowComponent",
+        "relative_location": "(0.00, 0.00, 0.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "attach_parent": "CollisionCylinder"
+      },
+      {
+        "name": "CharMoveComp",
+        "class": "CharacterMovementComponent"
+      },
+      {
+        "name": "CharacterMesh0",
+        "class": "SkeletalMeshComponent",
+        "relative_location": "(0.00, 0.00, -89.00)",
+        "relative_rotation": "(0.00, 270.00, -0.00)",
+        "attach_parent": "CollisionCylinder"
+      },
+      {
+        "name": "StatManagerComponent",
+        "class": "StatManagerComponent"
+      },
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "relative_location": "(0.00, 0.00, 0.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "attach_parent": "CollisionCylinder"
+      },
+      {
+        "name": "AIStateMachine",
+        "class": "SLFAIStateMachineComponent"
+      },
+      {
+        "name": "HealthbarWidget",
+        "class": "WidgetComponent",
+        "relative_location": "(0.00, 0.00, 0.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "attach_parent": "CollisionCylinder"
+      },
+      {
+        "name": "CombatManagerComponent",
+        "class": "AICombatManagerComponent"
+      },
+      {
+        "name": "BehaviorManagerComponent",
+        "class": "AIBehaviorManagerComponent"
+      },
+      {
+        "name": "SoulsNiagaraComponent",
+        "class": "NiagaraComponent",
+        "relative_location": "(0.00, 0.00, 0.00)",
+        "relative_rotation": "(0.00, 0.00, 0.00)",
+        "attach_parent": "CollisionCylinder"
+      },
+      {
+        "name": "LootDropManagerComponent",
+        "class": "LootDropManagerComponent"
+      }
+    ]
+  }
+}

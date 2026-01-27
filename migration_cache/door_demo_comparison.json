@@ -1,0 +1,10 @@
+{
+  "slfconversion": {
+    "class": "B_Door_Demo_C",
+    "total_components": 0,
+    "components": [],
+    "has_default_door_mesh": false
+  },
+  "needs_fix": true,
+  "diagnosis": "B_Door_Demo has NO StaticMeshComponents. It should likely be a child of B_Door."
+}

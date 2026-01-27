@@ -134,15 +134,17 @@ public:
 	virtual void OnInputDeviceChanged_Implementation();
 
 	// Event Handlers (3 events)
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Settings_KeyMapping")
+	// Note: Blueprint calls this as "Event Initialize Key Mapping" with spaces - DisplayName maps it
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Settings_KeyMapping", meta = (DisplayName = "Event InitializeKeyMapping"))
 	void EventInitializeKeyMapping();
 	virtual void EventInitializeKeyMapping_Implementation();
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Settings_KeyMapping")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Settings_KeyMapping", meta = (DisplayName = "Event ReinitializeAllMappings"))
 	void EventReinitializeAllMappings();
 	virtual void EventReinitializeAllMappings_Implementation();
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Settings_KeyMapping")
+	// Note: Blueprint calls this as "Event Reset All Entries to Default" with spaces
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Settings_KeyMapping", meta = (DisplayName = "Event ResetAllEntriesToDefault"))
 	void EventResetAllEntriesToDefault();
 	virtual void EventResetAllEntriesToDefault_Implementation();
 

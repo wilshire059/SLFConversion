@@ -1,0 +1,78 @@
+{
+  "project": "SLFConversion",
+  "b_door": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Door",
+    "exists": true,
+    "parent_class": null,
+    "generated_class": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Door.B_Door_C",
+    "components": [],
+    "cdo_properties": {},
+    "spawned_components": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent"
+      },
+      {
+        "name": "Door Frame",
+        "class": "StaticMeshComponent",
+        "static_mesh": "/Game/SoulslikeFramework/Meshes/SM/PrisonDoor/SM_PrisonDoorArch.SM_PrisonDoorArch",
+        "visible": true
+      },
+      {
+        "name": "DEBUG_OpeningDirection",
+        "class": "ArrowComponent"
+      },
+      {
+        "name": "MoveTo",
+        "class": "BillboardComponent"
+      },
+      {
+        "name": "DoorTimeline",
+        "class": "TimelineComponent"
+      }
+    ]
+  },
+  "b_door_demo": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Door_Demo",
+    "exists": true,
+    "parent_class": null,
+    "generated_class": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Door_Demo.B_Door_Demo_C",
+    "components": [],
+    "cdo_properties": {},
+    "spawned_components": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent"
+      }
+    ]
+  },
+  "b_interactable": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Interactable",
+    "exists": true,
+    "parent_class": null,
+    "generated_class": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Interactable.B_Interactable_C",
+    "components": [],
+    "cdo_properties": {
+      "can_be_traced": true,
+      "is_activated": false,
+      "interactable_display_name": "",
+      "interaction_text": ""
+    },
+    "spawned_components": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent"
+      },
+      {
+        "name": "Interactable SM",
+        "class": "StaticMeshComponent",
+        "static_mesh": null,
+        "visible": true
+      },
+      {
+        "name": "Interactable SK",
+        "class": "SkeletalMeshComponent"
+      }
+    ]
+  }
+}

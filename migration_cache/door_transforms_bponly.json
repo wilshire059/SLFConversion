@@ -1,0 +1,121 @@
+{
+  "project": "bp_only",
+  "components": [
+    {
+      "name": "DefaultSceneRoot",
+      "class": "SceneComponent",
+      "relative_location": {
+        "x": 99999.0,
+        "y": 99999.0,
+        "z": 0.0
+      },
+      "relative_rotation": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "relative_scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    {
+      "name": "Interactable SM",
+      "class": "StaticMeshComponent",
+      "relative_location": {
+        "x": 0.0,
+        "y": -75.0,
+        "z": 0.0
+      },
+      "relative_rotation": {
+        "pitch": 0.0,
+        "yaw": 90.0,
+        "roll": 0.0
+      },
+      "relative_scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "mesh": "SM_PrisonDoor"
+    },
+    {
+      "name": "Interactable SK",
+      "class": "SkeletalMeshComponent",
+      "relative_location": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "relative_rotation": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "relative_scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    {
+      "name": "Door Frame",
+      "class": "StaticMeshComponent",
+      "relative_location": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "relative_rotation": {
+        "pitch": 0.0,
+        "yaw": 90.0,
+        "roll": 0.0
+      },
+      "relative_scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "mesh": "None"
+    },
+    {
+      "name": "DEBUG_OpeningDirection",
+      "class": "ArrowComponent",
+      "relative_location": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 150.0
+      },
+      "relative_rotation": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "relative_scale": {
+        "x": 2.0,
+        "y": 2.0000000596046448,
+        "z": 2.0000000596046448
+      }
+    },
+    {
+      "name": "MoveTo",
+      "class": "BillboardComponent",
+      "relative_location": {
+        "x": 100.0,
+        "y": 0.0,
+        "z": 60.00000071481972
+      },
+      "relative_rotation": {
+        "pitch": -0.0,
+        "yaw": -5.684341886080797e-14,
+        "roll": 0.0
+      },
+      "relative_scale": {
+        "x": 0.5,
+        "y": 0.5,
+        "z": 0.5
+      }
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+============================================================
+ANIMATION LAYER DIAGNOSIS
+============================================================
+Loaded: ABP_SoulslikeCharacter_Additive
+Class: AnimBlueprint
+
+--- INTERFACES ---
+Interface error: AnimBlueprint: Failed to find property 'implemented_interfaces' for attribute 'implemented_interfaces' on 'AnimBlueprint'
+
+--- SKELETON ---
+Target Skeleton: SK_Mannequin
+
+--- PARENT CLASS ---
+Parent error: AnimBlueprint: Failed to find property 'parent_class' for attribute 'parent_class' on 'AnimBlueprint'
+
+--- GRAPHS (via automation) ---
+Functions (17): ["AnimGraph", "BlueprintThreadSafeUpdateAnimation", "GetCharacterMovementComponent", "GetLocationData", "GetRotationData", "GetAccelerationData", "GetVelocityData", "GetEquipmentComponent", "GetGrantedTags", "GetCombatComponent", "GetIsBlocking", "GetIsResting", "GetOverlayStates", "GetIsCrouched", "GetActionComponent", "GetBlockSequenceForWeapon", "GetIkHitReactData"]
+
+--- VARIABLES ---
+Variables (23): ["WorldLocation", "WorldRotation", "Acceleration", "Acceleration2D", "bIsAccelerating", "Velocity", "Velocity2D", "Direction(Angle)", "Speed", "AnimDataAsset"]...
+
+============================================================
+CHECKING ANIMATION LAYER INTERFACES
+============================================================
+
+/Game/SoulslikeFramework/Demo/_Animations/Locomotion/_Misc/ALI_LocomotionStates
+  Name: ALI_LocomotionStates
+  Class: AnimBlueprint
+
+/Game/SoulslikeFramework/Demo/_Animations/Locomotion/_Misc/ALI_OverlayStates
+  Name: ALI_OverlayStates
+  Class: AnimBlueprint
+
+============================================================
+COMPLETE
+============================================================
+Full log saved to: C:/scripts/SLFConversion/migration_cache/animlayer_diagnosis.txt

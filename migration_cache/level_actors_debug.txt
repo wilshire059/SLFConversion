@@ -1,0 +1,7 @@
+Total actors: 0
+==================================================
+Status Effect Related Actors:
+  NONE FOUND
+
+==================================================
+All actor classes (unique):

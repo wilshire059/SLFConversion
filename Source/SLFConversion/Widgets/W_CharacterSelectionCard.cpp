@@ -29,7 +29,7 @@ void UW_CharacterSelectionCard::NativeDestruct()
 
 void UW_CharacterSelectionCard::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 
 void UW_CharacterSelectionCard::SetCardSelected_Implementation(bool InSelected)

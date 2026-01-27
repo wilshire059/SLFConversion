@@ -1,0 +1,23 @@
+
+================================================================================
+B_Destructible Diagnosis
+================================================================================
+
+Blueprint: /Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_Destructible
+Generated Class: B_Destructible_C
+
+CDO (Default Object): Default__B_Destructible_C
+  GeometryCollection: /Game/SoulslikeFramework/Meshes/SM/Barrel/Destructible/GC_Barrel.GC_Barrel
+  DestructionSound: None
+
+CDO Components:
+  GeometryCollectionComponents: 0
+
+----------------------------------------
+Checking GC_Barrel asset...
+  GC_Barrel found: /Game/SoulslikeFramework/Meshes/SM/Barrel/Destructible/GC_Barrel.GC_Barrel
+  Class: GeometryCollection
+
+================================================================================
+Diagnosis Complete
+================================================================================

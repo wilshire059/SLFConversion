@@ -1,0 +1,18 @@
+================================================================================
+B_WEIGHT REPARENT FIX (C++ Automation)
+================================================================================
+
+Loaded: B_Weight
+
+Using SLFAutomationLibrary::ReparentBlueprint...
+Reparent: SUCCESS
+Asset saved
+
+Verifying...
+StatInfo.Tag: None
+StatInfo.CurrentValue: 0.0
+StatInfo.MaxValue: 0.0
+
+*** Tag still None - Blueprint CDO override issue ***
+
+================================================================================

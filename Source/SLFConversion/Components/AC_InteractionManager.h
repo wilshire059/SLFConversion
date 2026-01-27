@@ -104,6 +104,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AC_InteractionManager|Events")
 	void EventOnRest(AActor* RestingPoint);
 
+	// Callback for when resting point is ready (bound to OnReady delegate)
+	UFUNCTION()
+	void OnRestingPointReady();
+
+	// Callback for when player exits rest menu (bound to OnExited delegate)
+	UFUNCTION()
+	void OnRestingPointExited();
+
 	// --- Custom Event: Event RestInitialized ---
 	// Called when resting is initialized (ready to show rest menu)
 	UFUNCTION(BlueprintCallable, Category = "AC_InteractionManager|Events")

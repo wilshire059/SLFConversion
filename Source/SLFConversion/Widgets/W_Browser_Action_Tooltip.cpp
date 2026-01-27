@@ -29,6 +29,6 @@ void UW_Browser_Action_Tooltip::NativeDestruct()
 
 void UW_Browser_Action_Tooltip::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 

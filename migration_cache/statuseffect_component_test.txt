@@ -1,0 +1,13 @@
+============================================================
+Testing StatusEffectManager Component
+============================================================
+
+============================================================
+Checking C++ Class Default Objects
+============================================================
+
+SLFBaseCharacter:
+  CachedStatusEffectManager: StatusEffectManager (AC_StatusEffectManager)
+
+SLFSoulslikeCharacter:
+  CachedStatusEffectManager: StatusEffectManager (AC_StatusEffectManager)

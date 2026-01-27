@@ -1,0 +1,36 @@
+ANIMBP COMPARISON REPORT - ABP_SoulslikeCharacter_Additive
+===========================================================
+Generated: 2026-01-10
+
+SUMMARY
+-------
+The transitions are broken because they were connected to Blueprint variables
+that NO LONGER EXIST after reparenting. The C++ class provides the same
+variables (just without the "?" suffix), but the transitions are not connected.
+
+ORIGINAL BLUEPRINT VARIABLES (now deleted):
+  - bIsFalling? -> Replaced by C++ bIsFalling
+  - IsResting?  -> Replaced by C++ IsResting  
+  - Speed       -> Replaced by C++ Speed (same name)
+
+THE 7 BROKEN TRANSITIONS:
+1. To Falling to Fall Loop   - needs: Get bIsFalling -> Result
+2. Land to Locomotion        - needs: Get bIsFalling -> NOT -> Result
+3. IDLE to CYCLE             - needs: Get Speed -> > 10.0 -> Result
+4. IDLE to SITTING           - needs: Get IsResting -> Result
+5. CYCLE to SITTING          - needs: Get IsResting -> Result
+6. CROUCH IDLE to SITTING    - needs: Get IsResting -> Result
+7. CROUCH CYCLE to SITTING   - needs: Get IsResting -> Result
+
+WHY THE USER'S FIXES DIDN'T WORK:
+If you followed the instructions and it still shows warnings, you may have:
+1. Connected to the wrong pin (must be the "Result" pin with "Can Enter Transition")
+2. Not compiled/saved after making changes
+3. The connection was made but the variable doesn't exist in current context
+
+VERIFY FIX:
+1. Open each transition (double-click the arrow between states)
+2. Look for the Result node with "Can Enter Transition" checkbox
+3. There should be a node chain ending at the Result pin
+4. If Result is not connected, add the appropriate Get node
+

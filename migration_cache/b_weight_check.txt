@@ -1,0 +1,19 @@
+================================================================================
+B_WEIGHT BLUEPRINT CHECK
+================================================================================
+
+B_Weight loaded: YES
+Asset path: /Game/SoulslikeFramework/Data/Stats/Misc/B_Weight
+Asset class: Blueprint
+Generated class: B_Weight_C
+Error getting class info: 'BlueprintGeneratedClass' object has no attribute 'get_super_class'
+
+--- Instance Check ---
+CDO name: Default__B_Weight_C
+CDO class: B_Weight_C
+Has stat_info property: YES
+StatInfo.Tag: None
+StatInfo.CurrentValue: 0.0
+StatInfo.MaxValue: 0.0
+
+================================================================================

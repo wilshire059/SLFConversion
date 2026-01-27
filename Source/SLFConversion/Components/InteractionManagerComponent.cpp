@@ -16,6 +16,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Net/UnrealNetwork.h"
 #include "Interfaces/BPI_Interactable.h"
+#include "Interfaces/SLFInteractableInterface.h"
 
 UInteractionManagerComponent::UInteractionManagerComponent()
 {
@@ -111,11 +112,21 @@ void UInteractionManagerComponent::TryInteract_Implementation()
 	{
 		UE_LOG(LogTemp, Log, TEXT("[InteractionManager] TryInteract with %s"), *NearestInteractable->GetName());
 
-		// Call OnInteract via interface
-		if (NearestInteractable->GetClass()->ImplementsInterface(UBPI_Interactable::StaticClass()))
+		// Call OnInteract via interface - check both BPI_Interactable and SLFInteractableInterface
+		// B_DeathCurrency and other interactables use ISLFInteractableInterface
+		if (NearestInteractable->GetClass()->ImplementsInterface(USLFInteractableInterface::StaticClass()))
+		{
+			ISLFInteractableInterface::Execute_OnInteract(NearestInteractable, GetOwner());
+			UE_LOG(LogTemp, Log, TEXT("[InteractionManager] Called ISLFInteractableInterface::OnInteract on %s"), *NearestInteractable->GetName());
+		}
+		else if (NearestInteractable->GetClass()->ImplementsInterface(UBPI_Interactable::StaticClass()))
 		{
 			IBPI_Interactable::Execute_OnInteract(NearestInteractable, GetOwner());
-			UE_LOG(LogTemp, Log, TEXT("[InteractionManager] Called OnInteract on %s"), *NearestInteractable->GetName());
+			UE_LOG(LogTemp, Log, TEXT("[InteractionManager] Called IBPI_Interactable::OnInteract on %s"), *NearestInteractable->GetName());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[InteractionManager] %s does not implement any interactable interface"), *NearestInteractable->GetName());
 		}
 	}
 }

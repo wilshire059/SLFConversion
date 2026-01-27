@@ -1,0 +1,8 @@
+{
+  "path": "/Game/SoulslikeFramework/Blueprints/_AI/Subtrees/BT_RandomRoam",
+  "exists": true,
+  "structure": "=== BehaviorTree: BT_RandomRoam ===\n\n--- Root Decorators ---\n[Root][0] Is State == Random Roam? - Key: State\n    IntValue: 1\n    ^^^ STATE KEY DECORATOR - IntValue=1 ^^^\n\n--- Node Tree ---\nNode: RANDOM ROAM MODE (BTComposite_Sequence)\n  NumChildren: 4\n  [Branch 0] Child: Toggle Focus (BTT_ToggleFocus_C), Decorators: 0\n  [Branch 1] Child: Set Movement Mode (BTT_SetMovementMode_C), Decorators: 0\n  [Branch 2] Child: BTT_GetRandomPoint (BTT_GetRandomPoint_C), Decorators: 0\n  [Branch 3] Child: Move To (BTTask_MoveTo), Decorators: 0\n\n=== Summary ===\nTotal Decorators: 1\nState Key Decorators: 1\nTotal Tasks: 4\n\n=== Expected State Values (ESLFAIStates) ===\n  0 = Idle\n  1 = RandomRoam\n  2 = Patrolling\n  3 = Investigating\n  4 = Combat\n  5 = PoiseBroken\n  6 = Uninterruptable\n  7 = OutOfBounds\n",
+  "error": null,
+  "name": "BT_RandomRoam",
+  "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'"
+}

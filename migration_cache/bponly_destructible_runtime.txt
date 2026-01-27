@@ -1,0 +1,31 @@
+================================================================================
+bp_only B_Destructible Runtime Analysis
+================================================================================
+
+=== GeometryCollection Asset: /Game/SoulslikeFramework/Meshes/SM/Barrel/Destructible/GC_Barrel ===
+DamageThreshold: [1.000000, 1.000000, 1.000000]
+DamageModel: <DamageModelTypeEnum.CHAOS_DAMAGE_MODEL_USER_DEFINED_DAMAGE_THRESHOLD: 0>
+EnableDamageFromCollision: Error - GeometryCollection: Failed to find property 'enable_damage_from_collision' for attribute 'enable_damage_from_collision' on 'GeometryCollection'
+MaxClusterLevelToDamage: Error - GeometryCollection: Failed to find property 'max_cluster_level_to_damage' for attribute 'max_cluster_level_to_damage' on 'GeometryCollection'
+
+=== Spawned Actor: B_Destructible_C_0 ===
+GeometryCollectionComponents: 1
+
+--- Component: GC_DestructibleMesh ---
+RestCollection: None!
+IsActive: False
+IsSimulatingPhysics: False
+IsVisible: True
+CollisionEnabled: <CollisionEnabled.QUERY_AND_PHYSICS: 3>
+CollisionObjectType: <CollisionChannel.ECC_DESTRUCTIBLE: 7>
+NotifyBreaks: True
+NotifyCollisions: False
+BodyInstance.SimulatePhysics: True
+BodyInstance.CollisionResponses: <Struct 'CollisionResponse' (0x0000027996856490) {}>
+Component.DamageThreshold: [5000.000000]
+EnableClustering: True
+
+--- Interfaces ---
+Interface check failed
+
+Done.

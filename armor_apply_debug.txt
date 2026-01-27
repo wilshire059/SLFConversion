@@ -1,0 +1,43 @@
+
+======================================================================
+APPLYING ARMOR DATA TO DATA ASSETS (via C++ Automation)
+======================================================================
+Loaded 7 armor items from cache
+
+[DA_ExampleArmor]
+  Path: /Game/SoulslikeFramework/Data/Items/DA_ExampleArmor
+  [OK] Applied 2 skeletal meshes
+  [OK] Applied 4 stats, 1 equip slots
+
+[DA_ExampleArmor02]
+  Path: /Game/SoulslikeFramework/Data/Items/DA_ExampleArmor02
+  [OK] Applied 2 skeletal meshes
+  [OK] Applied 4 stats, 1 equip slots
+
+[DA_ExampleHelmet]
+  Path: /Game/SoulslikeFramework/Data/Items/DA_ExampleHelmet
+  [OK] Applied 2 skeletal meshes
+  [OK] Applied 3 stats, 1 equip slots
+
+[DA_ExampleHat]
+  Path: /Game/SoulslikeFramework/Data/Items/DA_ExampleHat
+  [OK] Applied 2 skeletal meshes
+  [OK] Applied 1 stats, 1 equip slots
+
+[DA_ExampleBracers]
+  Path: /Game/SoulslikeFramework/Data/Items/DA_ExampleBracers
+  [OK] Applied 2 skeletal meshes
+  [OK] Applied 3 stats, 1 equip slots
+
+[DA_ExampleGreaves]
+  Path: /Game/SoulslikeFramework/Data/Items/DA_ExampleGreaves
+  [OK] Applied 2 skeletal meshes
+  [OK] Applied 4 stats, 1 equip slots
+
+[DA_ExampleTalisman]
+  Path: /Game/SoulslikeFramework/Data/Items/DA_ExampleTalisman
+  [SKIP] No data to apply
+
+======================================================================
+COMPLETE: 6 succeeded, 0 failed
+======================================================================

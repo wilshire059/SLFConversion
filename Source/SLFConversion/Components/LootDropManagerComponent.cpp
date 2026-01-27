@@ -134,8 +134,9 @@ void ULootDropManagerComponent::PickItem_Implementation()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[LootDropManager] No loot table or override set - nothing to spawn!"));
-		return;
+		// No loot table or override set - but still broadcast!
+		// For enemies, this allows death currency to spawn even without specific loot configured
+		UE_LOG(LogTemp, Warning, TEXT("[LootDropManager] No loot table or override - broadcasting empty item for fallback spawn"));
 	}
 
 	// Log selected item details
@@ -143,16 +144,15 @@ void ULootDropManagerComponent::PickItem_Implementation()
 		SelectedItem.ItemClass ? *SelectedItem.ItemClass->GetName() : TEXT("NULL"),
 		SelectedItem.Item ? *SelectedItem.Item->GetName() : TEXT("NULL"));
 
-	// Broadcast the selected item - broadcast if we have EITHER ItemClass OR Item
-	if (SelectedItem.ItemClass != nullptr || SelectedItem.Item != nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[LootDropManager] Broadcasting OnItemReadyForSpawn"));
-		OnItemReadyForSpawn.Broadcast(SelectedItem);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[LootDropManager] NOT broadcasting - no ItemClass and no Item"));
-	}
+	// Log selected item details
+	bool bHasValidItem = (SelectedItem.ItemClass != nullptr || SelectedItem.Item != nullptr);
+
+	// ALWAYS broadcast OnItemReadyForSpawn
+	// For enemies, HandleOnItemReadyForSpawn will spawn B_DeathCurrency even if SelectedItem is empty
+	// The currency amount comes from CombatManager->CurrencyReward, not from the item
+	UE_LOG(LogTemp, Warning, TEXT("[LootDropManager] Broadcasting OnItemReadyForSpawn (HasValidItem: %s)"),
+		bHasValidItem ? TEXT("YES") : TEXT("NO - will use death currency fallback"));
+	OnItemReadyForSpawn.Broadcast(SelectedItem);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════

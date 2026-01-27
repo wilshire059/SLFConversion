@@ -24,6 +24,8 @@
 
 // Forward declarations for widget types
 class UTextBlock;
+class UAC_StatusEffectManager;
+class UStatusEffectManagerComponent;
 
 // Forward declarations for Blueprint types
 
@@ -84,6 +86,20 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Bind to status effect manager events (matches bp_only Construct graph)
+	void BindToStatusEffectManager();
+
+	// Cached status effect manager reference
+	UPROPERTY(Transient)
+	UAC_StatusEffectManager* CachedStatusEffectManager;
+
+	UPROPERTY(Transient)
+	UStatusEffectManagerComponent* CachedStatusEffectManagerComponent;
+
+	// Handler called when status effect is triggered
+	UFUNCTION()
+	void OnStatusEffectTriggeredHandler(FText TriggeredText);
 
 	// Timer handle for notification duration
 	FTimerHandle NotificationTimerHandle;

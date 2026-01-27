@@ -1,0 +1,12 @@
+{
+  "SK_Mannequin": {
+    "path": "/Game/SoulslikeFramework/Demo/SKM/Mannequins/Meshes/SK_Mannequin",
+    "asset_type": "Skeleton",
+    "sockets": []
+  },
+  "SK_Mannequin_Skeleton": {
+    "path": "/Game/SoulslikeFramework/Demo/SKM/Mannequin_UE4/Meshes/SK_Mannequin_Skeleton",
+    "asset_type": "Skeleton",
+    "sockets": []
+  }
+}

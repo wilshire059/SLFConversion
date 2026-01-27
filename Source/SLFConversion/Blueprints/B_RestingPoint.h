@@ -141,4 +141,36 @@ public:
 
 	/** Get spawn position for respawning at this resting point */
 	virtual void GetRestingPointSpawnPosition_Implementation(bool& OutSuccess, FVector& OutLocation, FRotator& OutRotation) override;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// INTERFACE: ISLFInteractableInterface (EventGraph Logic)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	/** Handle interaction - either discover (first time) or rest (subsequent) */
+	virtual void OnInteract_Implementation(AActor* InteractingActor) override;
+
+	/** Update interaction text based on IsActivated state */
+	virtual void OnTraced_Implementation(AActor* TracedBy) override;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// CUSTOM FUNCTIONS (EventGraph)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	/** Called when player discovers this resting point for the first time */
+	UFUNCTION(BlueprintCallable, Category = "B_RestingPoint")
+	void DiscoverPoint(AActor* DiscoveringActor);
+
+protected:
+	/** Called after delay when sitting down - positions actor at SittingZone */
+	void PositionSittingActor();
+
+	/** Timer handle for delayed positioning */
+	FTimerHandle PositionTimerHandle;
+
+public:
+	// ═══════════════════════════════════════════════════════════════════════
+	// CONSTRUCTION (UserConstructionScript)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	virtual void OnConstruction(const FTransform& Transform) override;
 };

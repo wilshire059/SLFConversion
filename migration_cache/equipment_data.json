@@ -1,0 +1,74 @@
+{
+  "items": [
+    {
+      "name": "DA_BossMace",
+      "path": "/Game/SoulslikeFramework/Data/Items/DA_BossMace.DA_BossMace",
+      "item_class": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_BossMace.B_Item_Weapon_BossMace_C",
+      "left_socket": "soulslike_weapon_l",
+      "right_socket": "soulslike_weapon_r"
+    },
+    {
+      "name": "DA_Greatsword",
+      "path": "/Game/SoulslikeFramework/Data/Items/DA_Greatsword.DA_Greatsword",
+      "item_class": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Greatsword.B_Item_Weapon_Greatsword_C",
+      "left_socket": "soulslike_weapon_l",
+      "right_socket": "soulslike_weapon_r"
+    },
+    {
+      "name": "DA_Katana",
+      "path": "/Game/SoulslikeFramework/Data/Items/DA_Katana.DA_Katana",
+      "item_class": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Katana.B_Item_Weapon_Katana_C",
+      "left_socket": "soulslike_weapon_l",
+      "right_socket": "soulslike_weapon_r"
+    },
+    {
+      "name": "DA_Lantern",
+      "path": "/Game/SoulslikeFramework/Data/Items/DA_Lantern.DA_Lantern",
+      "item_class": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Usables/B_Item_Lantern.B_Item_Lantern_C",
+      "left_socket": "soulslike_weapon_l",
+      "right_socket": "soulslike_weapon_r"
+    },
+    {
+      "name": "DA_PoisonSword",
+      "path": "/Game/SoulslikeFramework/Data/Items/DA_PoisonSword.DA_PoisonSword",
+      "item_class": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_PoisonSword.B_Item_Weapon_PoisonSword_C",
+      "left_socket": "soulslike_weapon_l",
+      "right_socket": "soulslike_weapon_r"
+    },
+    {
+      "name": "DA_PrisonKey",
+      "path": "/Game/SoulslikeFramework/Data/Items/DA_PrisonKey.DA_PrisonKey",
+      "item_class": "",
+      "left_socket": "soulslike_weapon_l",
+      "right_socket": "soulslike_weapon_r"
+    },
+    {
+      "name": "DA_Shield01",
+      "path": "/Game/SoulslikeFramework/Data/Items/DA_Shield01.DA_Shield01",
+      "item_class": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_Shield.B_Item_Weapon_Shield_C",
+      "left_socket": "soulslike_shield_l",
+      "right_socket": ""
+    },
+    {
+      "name": "DA_Sword01",
+      "path": "/Game/SoulslikeFramework/Data/Items/DA_Sword01.DA_Sword01",
+      "item_class": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_SwordExample01.B_Item_Weapon_SwordExample01_C",
+      "left_socket": "soulslike_weapon_l",
+      "right_socket": "soulslike_weapon_r"
+    },
+    {
+      "name": "DA_Sword02",
+      "path": "/Game/SoulslikeFramework/Data/Items/DA_Sword02.DA_Sword02",
+      "item_class": "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/Player/B_Item_Weapon_SwordExample02.B_Item_Weapon_SwordExample02_C",
+      "left_socket": "soulslike_weapon_l",
+      "right_socket": "soulslike_weapon_r"
+    },
+    {
+      "name": "DA_ThrowingKnife",
+      "path": "/Game/SoulslikeFramework/Data/Items/DA_ThrowingKnife.DA_ThrowingKnife",
+      "item_class": "",
+      "left_socket": "soulslike_weapon_l",
+      "right_socket": "soulslike_weapon_r"
+    }
+  ]
+}

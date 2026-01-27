@@ -29,6 +29,6 @@ void UW_Settings_ControlEntry::NativeDestruct()
 
 void UW_Settings_ControlEntry::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 

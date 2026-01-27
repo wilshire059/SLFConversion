@@ -1,0 +1,411 @@
+=== INSPECTING TRANSITIONS (keyword: '') ===
+
+
+=== TRANSITION #1 ===
+Graph Name: Transition
+Node Count: 2
+
+  [AnimGraphNode_TransitionResult] Result
+    Pos: X=0, Y=0
+    Pin [IN] bCanEnterTransition --> Get bIsAccelerating
+
+  [K2Node_VariableGet] Get bIsAccelerating
+    Pos: X=-208, Y=23
+    Pin [OUT] bIsAccelerating --> Result
+
+
+=== TRANSITION #2 ===
+Graph Name: Transition
+Node Count: 3
+
+  [AnimGraphNode_TransitionResult] Result
+    Pos: X=0, Y=0
+    Pin [IN] bCanEnterTransition --> NOT Boolean
+
+  [K2Node_VariableGet] Get bIsAccelerating
+    Pos: X=-448, Y=23
+    Pin [OUT] bIsAccelerating --> NOT Boolean
+
+  [K2Node_CallFunction] NOT Boolean
+    Pos: X=-272, Y=23
+    Pin [IN] A --> Get bIsAccelerating
+    Pin [OUT] ReturnValue --> Result
+
+
+=== TRANSITION #3 ===
+Graph Name: Transition
+Node Count: 2
+
+  [AnimGraphNode_TransitionResult] Result
+    Pos: X=0, Y=0
+    Pin [IN] bCanEnterTransition --> Get IsResting
+
+  [K2Node_VariableGet] Get IsResting
+    Pos: X=-192, Y=16
+    Pin [OUT] IsResting --> Result
+
+
+=== TRANSITION #4 ===
+Graph Name: Transition
+Node Count: 2
+
+  [AnimGraphNode_TransitionResult] Result
+    Pos: X=0, Y=0
+    Pin [IN] bCanEnterTransition --> Get IsResting
+
+  [K2Node_VariableGet] Get IsResting
+    Pos: X=-192, Y=16
+    Pin [OUT] IsResting --> Result
+
+
+=== TRANSITION #5 ===
+Graph Name: Transition
+Node Count: 3
+
+  [AnimGraphNode_TransitionResult] Result
+    Pos: X=0, Y=0
+    Pin [IN] bCanEnterTransition --> NOT Boolean
+
+  [K2Node_VariableGet] Get IsResting
+    Pos: X=-384, Y=16
+    Pin [OUT] IsResting --> NOT Boolean
+
+  [K2Node_CallFunction] NOT Boolean
+    Pos: X=-256, Y=16
+    Pin [IN] A --> Get IsResting
+    Pin [OUT] ReturnValue --> Result
+
+
+=== TRANSITION #6 ===
+Graph Name: Transition
+Node Count: 5
+
+  [AnimGraphNode_TransitionResult] Result
+    Pos: X=0, Y=0
+    Pin [IN] bCanEnterTransition --> AND Boolean
+
+  [K2Node_VariableGet] Get IsResting
+    Pos: X=-512, Y=0
+    Pin [OUT] IsResting --> NOT Boolean
+
+  [K2Node_CallFunction] NOT Boolean
+    Pos: X=-384, Y=0
+    Pin [IN] A --> Get IsResting
+    Pin [OUT] ReturnValue --> AND Boolean
+
+  [K2Node_CommutativeAssociativeBinaryOperator] AND Boolean
+    Pos: X=-224, Y=0
+    Pin [IN] A --> NOT Boolean
+    Pin [IN] B --> Get bIsAccelerating
+    Pin [OUT] ReturnValue --> Result
+
+  [K2Node_VariableGet] Get bIsAccelerating
+    Pos: X=-448, Y=80
+    Pin [OUT] bIsAccelerating --> AND Boolean
+
+
+=== TRANSITION #7 ===
+Graph Name: Transition
+Node Count: 2
+
+  [AnimGraphNode_TransitionResult] Result
+    Pos: X=0, Y=0
+    Pin [IN] bCanEnterTransition --> Get IsCrouched
+
+  [K2Node_VariableGet] Get IsCrouched
+    Pos: X=-192, Y=16
+    Pin [OUT] IsCrouched --> Result
+
+
+=== TRANSITION #8 ===
+Graph Name: Transition
+Node Count: 3
+
+  [AnimGraphNode_TransitionResult] Result
+    Pos: X=0, Y=0
+    Pin [IN] bCanEnterTransition --> NOT Boolean
+
+  [K2Node_VariableGet] Get IsCrouched
+    Pos: X=-272, Y=0
+    Pin [OUT] IsCrouched --> NOT Boolean
+
+  [K2Node_CallFunction] NOT Boolean
+    Pos: X=-272, Y=48
+    Pin [IN] A --> Get IsCrouched
+    Pin [OUT] ReturnValue --> Result
+
+
+=== TRANSITION #9 ===
+Graph Name: Transition
+Node Count: 4
+
+  [AnimGraphNode_TransitionResult] Result
+    Pos: X=0, Y=0
+    Pin [IN] bCanEnterTransition --> AND Boolean
+
+  [K2Node_VariableGet] Get IsCrouched
+    Pos: X=-432, Y=0
+    Pin [OUT] IsCrouched --> AND Boolean
+
+  [K2Node_VariableGet] Get bIsAccelerating
+    Pos: X=-416, Y=64
+    Pin [OUT] bIsAccelerating --> AND Boolean
+
+  [K2Node_CommutativeAssociativeBinaryOperator] AND Boolean
+    Pos: X=-224, Y=32
+    Pin [IN] A --> Get IsCrouched
+    Pin [IN] B --> Get bIsAccelerating
+    Pin [OUT] ReturnValue --> Result
+
+
+=== TRANSITION #10 ===
+Graph Name: Transition
+Node Count: 5
+
+  [AnimGraphNode_TransitionResult] Result
+    Pos: X=0, Y=0
+    Pin [IN] bCanEnterTransition --> AND Boolean
+
+  [K2Node_VariableGet] Get IsCrouched
+    Pos: X=-512, Y=0
+    Pin [OUT] IsCrouched --> AND Boolean
+
+  [K2Node_VariableGet] Get bIsAccelerating
+    Pos: X=-512, Y=64
+    Pin [OUT] bIsAccelerating --> NOT Boolean
+
+  [K2Node_CommutativeAssociativeBinaryOperator] AND Boolean
+    Pos: X=-352, Y=16
+    Pin [IN] A --> Get IsCrouched
+    Pin [IN] B --> NOT Boolean
+    Pin [OUT] ReturnValue --> Result
+
+  [K2Node_CallFunction] NOT Boolean
+    Pos: X=-352, Y=80
+    Pin [IN] A --> Get bIsAccelerating
+    Pin [OUT] ReturnValue --> AND Boolean
+
+
+=== TRANSITION #11 ===
+Graph Name: Transition
+Node Count: 2
+
+  [AnimGraphNode_TransitionResult] Result
+    Pos: X=0, Y=0
+    Pin [IN] bCanEnterTransition --> Get IsCrouched
+
+  [K2Node_VariableGet] Get IsCrouched
+    Pos: X=-192, Y=16
+    Pin [OUT] IsCrouched --> Result
+
+
+=== TRANSITION #12 ===
+Graph Name: Transition
+Node Count: 5
+
+  [AnimGraphNode_TransitionResult] Result
+    Pos: X=0, Y=0
+    Pin [IN] bCanEnterTransition --> AND Boolean
+
+  [K2Node_VariableGet] Get IsCrouched
+    Pos: X=-544, Y=32
+    Pin [OUT] IsCrouched --> NOT Boolean
+
+  [K2Node_VariableGet] Get bIsAccelerating
+    Pos: X=-528, Y=96
+    Pin [OUT] bIsAccelerating --> AND Boolean
+
+  [K2Node_CommutativeAssociativeBinaryOperator] AND Boolean
+    Pos: X=-336, Y=64
+    Pin [IN] A --> NOT Boolean
+    Pin [IN] B --> Get bIsAccelerating
+    Pin [OUT] ReturnValue --> Result
+
+  [K2Node_CallFunction] NOT Boolean
+    Pos: X=-352, Y=-32
+    Pin [IN] A --> Get IsCrouched
+    Pin [OUT] ReturnValue --> AND Boolean
+
+
+=== TRANSITION #13 ===
+Graph Name: Transition
+Node Count: 2
+
+  [AnimGraphNode_TransitionResult] Result
+    Pos: X=0, Y=0
+    Pin [IN] bCanEnterTransition --> Get IsResting
+
+  [K2Node_VariableGet] Get IsResting
+    Pos: X=-176, Y=32
+    Pin [OUT] IsResting --> Result
+
+
+=== TRANSITION #14 ===
+Graph Name: Transition
+Node Count: 5
+
+  [AnimGraphNode_TransitionResult] Result
+    Pos: X=0, Y=0
+    Pin [IN] bCanEnterTransition --> AND Boolean
+
+  [K2Node_VariableGet] Get IsResting
+    Pos: X=-384, Y=32
+    Pin [OUT] IsResting --> NOT Boolean
+
+  [K2Node_CommutativeAssociativeBinaryOperator] AND Boolean
+    Pos: X=-208, Y=48
+    Pin [IN] A --> NOT Boolean
+    Pin [IN] B --> Get IsCrouched
+    Pin [OUT] ReturnValue --> Result
+
+  [K2Node_VariableGet] Get IsCrouched
+    Pos: X=-384, Y=112
+    Pin [OUT] IsCrouched --> AND Boolean
+
+  [K2Node_CallFunction] NOT Boolean
+    Pos: X=-240, Y=-32
+    Pin [IN] A --> Get IsResting
+    Pin [OUT] ReturnValue --> AND Boolean
+
+
+=== TRANSITION #15 ===
+Graph Name: Transition
+Node Count: 2
+
+  [AnimGraphNode_TransitionResult] Result
+    Pos: X=0, Y=0
+    Pin [IN] bCanEnterTransition --> Get IsResting
+
+  [K2Node_VariableGet] Get IsResting
+    Pos: X=-176, Y=32
+    Pin [OUT] IsResting --> Result
+
+
+=== TRANSITION #16 ===
+Graph Name: Transition
+Node Count: 6
+
+  [AnimGraphNode_TransitionResult] Result
+    Pos: X=0, Y=0
+    Pin [IN] bCanEnterTransition --> AND Boolean
+
+  [K2Node_VariableGet] Get IsResting
+    Pos: X=-688, Y=16
+    Pin [OUT] IsResting --> NOT Boolean
+
+  [K2Node_CallFunction] NOT Boolean
+    Pos: X=-560, Y=16
+    Pin [IN] A --> Get IsResting
+    Pin [OUT] ReturnValue --> AND Boolean
+
+  [K2Node_CommutativeAssociativeBinaryOperator] AND Boolean
+    Pos: X=-320, Y=64
+    Pin [IN] A --> NOT Boolean
+    Pin [IN] B --> Get bIsAccelerating
+    Pin [OUT] ReturnValue --> Result
+    Pin [IN] C --> Get IsCrouched
+
+  [K2Node_VariableGet] Get bIsAccelerating
+    Pos: X=-496, Y=96
+    Pin [OUT] bIsAccelerating --> AND Boolean
+
+  [K2Node_VariableGet] Get IsCrouched
+    Pos: X=-448, Y=192
+    Pin [OUT] IsCrouched --> AND Boolean
+
+
+=== TRANSITION #17 ===
+Graph Name: AnimationTransitionGraph_1
+Node Count: 5
+
+  [AnimGraphNode_TransitionResult] Result
+    Pos: X=-48, Y=6
+    Pin [IN] bCanEnterTransition --> AND Boolean
+
+  [K2Node_VariableGet] Get bIsFalling
+    Pos: X=-432, Y=-16
+    Pin [OUT] bIsFalling --> AND Boolean
+
+  [K2Node_CommutativeAssociativeBinaryOperator] AND Boolean
+    Pos: X=-272, Y=32
+    Pin [IN] A --> Get bIsFalling
+    Pin [IN] B --> float > float
+    Pin [OUT] ReturnValue --> Result
+
+  [K2Node_VariableGet] Get
+    Pos: X=-608, Y=64
+    Pin [OUT] Velocity = '0, 0, 0'
+    Pin [OUT] Velocity_X = '0.0'
+    Pin [OUT] Velocity_Y = '0.0'
+    Pin [OUT] Velocity_Z --> float > float
+
+  [K2Node_PromotableOperator] float > float
+    Pos: X=-464, Y=80
+    Pin [IN] A --> Get
+    Pin [IN] B = '100.000000'
+    Pin [OUT] ReturnValue --> AND Boolean
+
+
+=== TRANSITION #18 ===
+Graph Name: AnimationTransitionGraph_1
+Node Count: 2
+
+  [AnimGraphNode_TransitionResult] Result
+    Pos: X=0, Y=-7
+    Pin [IN] bCanEnterTransition --> Get bIsFalling
+
+  [K2Node_VariableGet] Get bIsFalling
+    Pos: X=-256, Y=16
+    Pin [OUT] bIsFalling --> Result
+
+
+=== TRANSITION #19 ===
+Graph Name: AnimationTransitionGraph_1
+Node Count: 1
+
+  [AnimGraphNode_TransitionResult] Result
+    Pos: X=0, Y=0
+    Pin [IN] bCanEnterTransition = 'False'
+
+
+=== TRANSITION #20 ===
+Graph Name: AnimationTransitionGraph_1
+Node Count: 3
+
+  [AnimGraphNode_TransitionResult] Result
+    Pos: X=0, Y=-22
+    Pin [IN] bCanEnterTransition --> NOT Boolean
+
+  [K2Node_VariableGet] Get bIsFalling
+    Pos: X=-336, Y=0
+    Pin [OUT] bIsFalling --> NOT Boolean
+
+  [K2Node_CallFunction] NOT Boolean
+    Pos: X=-192, Y=-1
+    Pin [IN] A --> Get bIsFalling
+    Pin [OUT] ReturnValue --> Result
+
+
+=== TRANSITION #21 ===
+Graph Name: AnimationTransitionGraph_1
+Node Count: 1
+
+  [AnimGraphNode_TransitionResult] Result
+    Pos: X=0, Y=0
+    Pin [IN] bCanEnterTransition = 'False'
+
+
+=== TRANSITION #22 ===
+Graph Name: AnimationTransitionGraph_1
+Node Count: 2
+
+  [AnimGraphNode_TransitionResult] Result
+    Pos: X=0, Y=-7
+    Pin [IN] bCanEnterTransition --> Get bIsAccelerating
+
+  [K2Node_VariableGet] Get bIsAccelerating
+    Pos: X=-192, Y=16
+    Pin [OUT] bIsAccelerating --> Result
+
+
+Total matching transitions: 22

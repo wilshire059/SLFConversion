@@ -29,7 +29,7 @@ void UW_NPC_Window::NativeDestruct()
 
 void UW_NPC_Window::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 void UW_NPC_Window::EventCloseNpcMenu_Implementation()
 {

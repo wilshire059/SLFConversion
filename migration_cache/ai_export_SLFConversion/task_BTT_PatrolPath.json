@@ -1,0 +1,11 @@
+{
+  "path": "/Game/SoulslikeFramework/Blueprints/_AI/Tasks/BTT_PatrolPath",
+  "exists": true,
+  "parent_class": "/Script/SLFConversion.BTT_PatrolPath",
+  "variables": [],
+  "functions": [],
+  "has_eventgraph": false,
+  "export_text": "Error: type object 'EditorAssetLibrary' has no attribute 'export_text'",
+  "error": null,
+  "name": "BTT_PatrolPath"
+}

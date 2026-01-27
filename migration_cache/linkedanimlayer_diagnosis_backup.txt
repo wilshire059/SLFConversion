@@ -1,0 +1,69 @@
+=== LINKEDANIMLAYER DIAGNOSIS: ABP_SoulslikeCharacter_Additive ===
+
+=== FUNCTION GRAPHS (Layer Implementations) ===
+  AnimGraph -> GUID: 42722C634BB0633999D916B983EFB94D
+  BlueprintThreadSafeUpdateAnimation -> GUID: A625F88348CF54164B6D0AB3A012CFCF
+  GetCharacterMovementComponent -> GUID: 11421CA44ABD4CA9E40987A69E43843A
+  GetLocationData -> GUID: C7CA372142FA3ABDC74A068281201A8F
+  GetRotationData -> GUID: 1562BEB14DFD02F0F030AD993F011B79
+  GetAccelerationData -> GUID: 88A983764E4E5E78C0C42597E9CFAE5C
+  GetVelocityData -> GUID: 0BD3FDE248F283076A802C8B3C642552
+  GetEquipmentComponent -> GUID: 1258DBF24B0086D616E1129FEF67B5F9
+  GetGrantedTags -> GUID: 883632A24B31E49EA5DE7CAA286F93FA
+  GetCombatComponent -> GUID: DD8BF1964B931C1FCCAFFA92F8456099
+  GetIsBlocking -> GUID: 70DB1AEA463C231DEB6E97858CFDC8C2
+  GetIsResting -> GUID: 21A912634A8EA454EAB82B86228EBD1A
+  GetOverlayStates -> GUID: 856FAC5648BF79F734DC52994EEBBDD5
+  GetIsCrouched -> GUID: C550B173431668DB5A291DB9810136DF
+  GetActionComponent -> GUID: 306BDE9F4A052587A25B9F96C766EDFA
+  GetBlockSequenceForWeapon -> GUID: 7A0E3463407ED41B5A65B7BC6F7D3ED1
+  GetIkHitReactData -> GUID: A89985ED4368985072AED7829B178FBF
+
+=== LINKEDANIMLAYER NODES ===
+
+Node: AnimGraphNode_LinkedAnimLayer_7
+  Layer: LL_OneHanded_Left
+  SelfLayer: NO
+  InterfaceGuid: F2FE32624E2A2E850D807B9076934632
+  Interface: ALI_OverlayStates_C
+  Status: [EXTERNAL] Uses external interface implementation
+
+Node: AnimGraphNode_LinkedAnimLayer_8
+  Layer: LL_Shield_Left
+  SelfLayer: NO
+  InterfaceGuid: FC119A8F4887BB8E79BEFB867EE994D6
+  Interface: ALI_OverlayStates_C
+  Status: [EXTERNAL] Uses external interface implementation
+
+Node: AnimGraphNode_LinkedAnimLayer_9
+  Layer: LL_TwoHanded_Left
+  SelfLayer: NO
+  InterfaceGuid: 240F5318423E063ABEF14E9FBBD7811A
+  Interface: ALI_OverlayStates_C
+  Status: [EXTERNAL] Uses external interface implementation
+
+Node: AnimGraphNode_LinkedAnimLayer_10
+  Layer: LL_OneHanded_Right
+  SelfLayer: NO
+  InterfaceGuid: F430698448233DC0D150FA92C3D78F28
+  Interface: ALI_OverlayStates_C
+  Status: [EXTERNAL] Uses external interface implementation
+
+Node: AnimGraphNode_LinkedAnimLayer_11
+  Layer: LL_TwoHanded_Right
+  SelfLayer: NO
+  InterfaceGuid: CD75FB65479C73761A2ADB996B29216B
+  Interface: ALI_OverlayStates_C
+  Status: [EXTERNAL] Uses external interface implementation
+
+Node: AnimGraphNode_LinkedAnimLayer_12
+  Layer: LL_Shield_Right
+  SelfLayer: NO
+  InterfaceGuid: 77533CB74A10410A2BC4B297127EE76A
+  Interface: ALI_OverlayStates_C
+  Status: [EXTERNAL] Uses external interface implementation
+
+=== SUMMARY ===
+Total LinkedAnimLayer nodes: 6
+GUID mismatches (fixable): 0
+Missing graph implementations: 0

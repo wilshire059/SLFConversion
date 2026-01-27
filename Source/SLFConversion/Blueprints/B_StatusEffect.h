@@ -18,6 +18,7 @@
 // Forward declarations
 class UAC_StatManager;
 class UPrimaryDataAsset;
+class UNiagaraComponent;
 
 // ═══════════════════════════════════════════════════════════════════════════
 // EVENT DISPATCHERS (3) - from JSON EventDispatchers.List
@@ -92,6 +93,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Runtime (Do Not Edit)")
 	TArray<FStatChange> StatsToAdjust;
 
+	// Reference to spawned looping VFX component (for cleanup)
+	UPROPERTY(Transient)
+	UNiagaraComponent* LoopingVFXComponent;
+
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (3 delegate properties)
 	// ═══════════════════════════════════════════════════════════════════════
@@ -118,11 +123,15 @@ public:
 	// PURE GETTER FUNCTIONS (5) - from JSON FunctionSignatures.Functions
 	// ═══════════════════════════════════════════════════════════════════════
 
-	// Get owner's stat manager component
+	// Get owner's stat manager component (UAC_StatManager only - use TryAdjustOwnerStat for dual support)
 	// Logic: Owner->GetComponentByClass<UAC_StatManager>(), return if valid
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, BlueprintPure, Category = "Getters")
 	UAC_StatManager* GetOwnerStatManager();
 	virtual UAC_StatManager* GetOwnerStatManager_Implementation();
+
+	// Helper to apply stat change using either UAC_StatManager or UStatManagerComponent
+	// This handles the dual stat manager class hierarchy issue
+	bool TryAdjustOwnerStat(FGameplayTag StatTag, ESLFValueType ValueType, double Amount, bool bLevelUp = false, bool bTriggerRegen = false);
 
 	// Get buildup percent as 0.0-1.0 value
 	// Logic: if Data valid, return BuildupPercent / 100.0, else return 0.0

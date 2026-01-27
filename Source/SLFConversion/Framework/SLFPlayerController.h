@@ -12,6 +12,7 @@
 class UInputAction;
 class UInputMappingContext;
 class UW_HUD;
+class URadarManagerComponent;
 
 UCLASS(Blueprintable, BlueprintType)
 class SLFCONVERSION_API ASLFPlayerController : public APlayerController, public IBPI_Controller
@@ -163,6 +164,12 @@ protected:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "HUD")
 	void Native_InitializeHUD();
+
+	/**
+	 * Initialize radar by connecting W_Radar widget to RadarManager.
+	 * Called after HUD is created and widget tree is fully constructed.
+	 */
+	void EventInitializeRadar();
 
 	// ═══════════════════════════════════════════════════════════════════
 	// BPI_CONTROLLER INTERFACE IMPLEMENTATIONS

@@ -1,0 +1,57 @@
+{
+  "steps": [
+    "Starting B_Door - remove ALL SCS components...",
+    "Loaded Blueprint: B_Door",
+    "Step 2: Checking current SCS components...",
+    "  Found 1 SCS components:",
+    "    - Door Frame_GEN_VARIABLE (StaticMeshComponent)",
+    "Step 3: Removing ALL SCS components...",
+    "  Removed StaticMeshComponent",
+    "Step 4: Checking SCS after removal...",
+    "  Now 0 SCS components",
+    "Step 5: Reparent to /Script/SLFConversion.B_Door...",
+    "  reparent_blueprint: True",
+    "Step 6: Compile and save...",
+    "  compile_and_save: True",
+    "Step 7: Checking final state...",
+    "  Final BP CDO component count: 4",
+    "    - DefaultSceneRoot: SceneComponent (mesh=None, visible=True)",
+    "    - Interactable SM: StaticMeshComponent (mesh=NO_MESH, visible=True)",
+    "    - Door Frame: StaticMeshComponent (mesh=SM_PrisonDoorArch, visible=True)",
+    "    - MoveTo: BillboardComponent (mesh=None, visible=False)",
+    "PARTIAL: Door mesh still missing (got: NO_MESH)"
+  ],
+  "final_state": {
+    "component_count": 4,
+    "components": [
+      {
+        "name": "DefaultSceneRoot",
+        "class": "SceneComponent",
+        "mesh": null,
+        "visible": true
+      },
+      {
+        "name": "Interactable SM",
+        "class": "StaticMeshComponent",
+        "mesh": "NO_MESH",
+        "visible": true
+      },
+      {
+        "name": "Door Frame",
+        "class": "StaticMeshComponent",
+        "mesh": "SM_PrisonDoorArch",
+        "visible": true
+      },
+      {
+        "name": "MoveTo",
+        "class": "BillboardComponent",
+        "mesh": null,
+        "visible": false
+      }
+    ],
+    "door_mesh": "NO_MESH",
+    "has_door_mesh": false,
+    "has_door_frame": true,
+    "has_moveto": true
+  }
+}

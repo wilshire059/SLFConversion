@@ -12,6 +12,7 @@
 #include "GameFramework/PlayerController.h"
 #include "GameplayTagContainer.h"
 #include "InputMappingContext.h"
+#include "InputAction.h"
 #include "Interfaces/BPI_Controller.h"
 #include "PC_SoulslikeFramework.generated.h"
 
@@ -38,6 +39,20 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void SetupInputComponent() override;
+
+	// Navigation input handlers
+	void HandleNavigateUp();
+	void HandleNavigateDown();
+	void HandleNavigateLeft();
+	void HandleNavigateRight();
+	void HandleNavigateOk();
+	void HandleNavigateBack();
+	void HandleNavigateCategoryLeft();
+	void HandleNavigateCategoryRight();
+	void HandleNavigateUnequip();
+	void HandleNavigateDetailedView();
+	void HandleNavigateResetToDefaults();
 
 public:
 	// ═══════════════════════════════════════════════════════════════════════
@@ -51,6 +66,47 @@ public:
 	/** Gameplay input mapping context */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
 	UInputMappingContext* GameplayMappingContext;
+
+	/** Navigable menu input mapping context (for UI navigation) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
+	UInputMappingContext* NavigableMenuMappingContext;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// NAVIGATION INPUT ACTIONS
+	// ═══════════════════════════════════════════════════════════════════════
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Navigation")
+	UInputAction* IA_NavigableMenu_Up;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Navigation")
+	UInputAction* IA_NavigableMenu_Down;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Navigation")
+	UInputAction* IA_NavigableMenu_Left;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Navigation")
+	UInputAction* IA_NavigableMenu_Right;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Navigation")
+	UInputAction* IA_NavigableMenu_Ok;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Navigation")
+	UInputAction* IA_NavigableMenu_Back;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Navigation")
+	UInputAction* IA_NavigableMenu_Left_Category;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Navigation")
+	UInputAction* IA_NavigableMenu_Right_Category;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Navigation")
+	UInputAction* IA_NavigableMenu_Unequip;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Navigation")
+	UInputAction* IA_NavigableMenu_DetailedView;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Navigation")
+	UInputAction* IA_NavigableMenu_ResetToDefaults;
 
 	/** Active level sequence player for cinematics */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Runtime")
@@ -109,6 +165,11 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "PC_SoulslikeFramework")
 	void GetNearestRestingPoint(bool& OutSuccess, AActor*& OutPoint);
 	virtual void GetNearestRestingPoint_Implementation(bool& OutSuccess, AActor*& OutPoint);
+
+	/** Initialize radar by connecting W_Radar widget to RadarManager */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "PC_SoulslikeFramework")
+	void EventInitializeRadar();
+	virtual void EventInitializeRadar_Implementation();
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// BPI_Controller INTERFACE IMPLEMENTATIONS [20/20]

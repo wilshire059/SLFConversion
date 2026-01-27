@@ -1,0 +1,18 @@
+
+================================================================================
+B_Destructible Parent Class Check
+================================================================================
+
+Blueprint: B_Destructible
+Generated Class: B_Destructible_C
+Generated Class Path: /Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_Destructible.B_Destructible_C
+Parent class error: Blueprint: Failed to find property 'parent_class' for attribute 'parent_class' on 'Blueprint'
+
+--- Spawn Test ---
+Spawned actor class: B_Destructible_C
+Spawned actor class path: /Game/SoulslikeFramework/Blueprints/_WorldActors/LevelDesign/B_Destructible.B_Destructible_C
+Has geometry_collection property: True (value: /Game/SoulslikeFramework/Meshes/SM/Barrel/Destructible/GC_Barrel.GC_Barrel)
+
+================================================================================
+Check Complete
+================================================================================

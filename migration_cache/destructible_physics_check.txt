@@ -1,0 +1,44 @@
+
+================================================================================
+B_Destructible Physics Settings Check
+================================================================================
+
+Spawned actor: B_Destructible_C_0
+
+GeometryCollectionComponents: 1
+
+  Component: GC_DestructibleMesh
+
+  Physics Settings:
+    is_simulating_physics(): False
+    BodyInstance found
+      bSimulatePhysics: True
+    Mobility: MOVABLE: 2>
+
+  Collision Settings:
+    CollisionEnabled: <CollisionEnabled.QUERY_AND_PHYSICS: 3>
+    collision_profile_name error: GeometryCollectionComponent: Failed to find property 'collision_profile_name' for attribute 'collision_profile_name' on 'GeometryCollectionComponent'
+    CollisionObjectType: <CollisionChannel.ECC_DESTRUCTIBLE: 7>
+
+  Geometry Collection:
+    RestCollection: /Game/SoulslikeFramework/Meshes/SM/Barrel/Destructible/GC_Barrel.GC_Barrel
+
+    GC Asset Physics Settings:
+      Asset class: GeometryCollection
+
+  Event Binding:
+    has OnChaosBreakEvent attribute: True
+    IsVisible: True
+    IsActive: False
+
+----------------------------------------
+All Components:
+  - GameplayEventDispatcher (ChaosGameplayEventDispatcher)
+  - GC_DestructibleMesh (GeometryCollectionComponent)
+  - Billboard (BillboardComponent)
+
+Cleaning up test actor...
+
+================================================================================
+Check Complete
+================================================================================

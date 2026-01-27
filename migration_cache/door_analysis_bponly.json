@@ -1,0 +1,9 @@
+{
+  "door_data": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_Door",
+    "parent_class_error": "Blueprint: Failed to find property 'parent_class' for attribute 'parent_class' on 'Blueprint'",
+    "generated_class": "B_Door_C",
+    "cdo_components": [],
+    "scs_components": []
+  }
+}

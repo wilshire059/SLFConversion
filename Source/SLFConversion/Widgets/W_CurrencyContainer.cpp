@@ -29,7 +29,7 @@ void UW_CurrencyContainer::NativeDestruct()
 
 void UW_CurrencyContainer::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 void UW_CurrencyContainer::EventOnCurrencyIncreased_Implementation(int32 IncreaseAmount)
 {

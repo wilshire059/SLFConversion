@@ -41,7 +41,7 @@ void UW_FirstLootNotification::NativeDestruct()
 
 void UW_FirstLootNotification::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 void UW_FirstLootNotification::EventOnFinish_Implementation()
 {

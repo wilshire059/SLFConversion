@@ -1,0 +1,14 @@
+{
+  "Unknown": {
+    "path": "/Game/SoulslikeFramework/Blueprints/Sky/B_SkyManager",
+    "generated_class": "B_SkyManager_C",
+    "parent_chain": [
+      "B_SkyManager_C"
+    ],
+    "project": "Unknown",
+    "components": [],
+    "cdo": {
+      "time": "14.976"
+    }
+  }
+}

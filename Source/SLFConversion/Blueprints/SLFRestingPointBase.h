@@ -2,24 +2,33 @@
 // C++ base class for B_RestingPoint
 //
 // ═══════════════════════════════════════════════════════════════════════════════
-// MIGRATION SUMMARY - B_RestingPoint
+// MIGRATION SUMMARY - B_RestingPoint (FULL EVENTGRAPH MIGRATION 2026-01-16)
 // ═══════════════════════════════════════════════════════════════════════════════
-// Variables:         10/10 migrated (excluding 2 dispatchers counted separately)
-// Functions:         1/1 migrated (excluding UserConstructionScript and EventGraph)
+// Variables:         10/10 migrated
+// Functions:         4/4 migrated (GetReplenishData, OnInteract, OnTraced, DiscoverPoint)
 // Event Dispatchers: 2/2 migrated
-// Graphs:            5 (logic in functions)
+// Components:        8 (SittingZone, Scene, CameraArm, LookatCamera, UnlockEffect, Effect, EffectLight, EnvironmentLight)
 // ═══════════════════════════════════════════════════════════════════════════════
 //
 // Original Blueprint: /Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_RestingPoint
 //
-// PURPOSE: Resting point actor - bonfires/checkpoints with stat replenishment
-// PARENT: B_Interactable
+// EVENTGRAPH LOGIC:
+// - OnInteract: Branch on IsActivated -> DiscoverPoint (first time) or Rest (subsequent)
+// - OnTraced: Set InteractionText based on IsActivated ("Discover Resting Point" vs "Rest")
+// - DiscoverPoint: Activate effect, play montage, save game, set IsActivated=true
+// - PositionSittingActor: Move player to SittingZone after 1s delay, broadcast OnReady
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "SLFInteractableBase.h"
 #include "Components/SceneComponent.h"
+#include "Components/BillboardComponent.h"
+#include "Components/SphereComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
+#include "Components/PointLightComponent.h"
+#include "NiagaraComponent.h"
 #include "GameplayTagContainer.h"
 #include "SLFRestingPointBase.generated.h"
 
@@ -70,6 +79,54 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	virtual void OnConstruction(const FTransform& Transform) override;
+
+	// ═══════════════════════════════════════════════════════════════════
+	// CACHED COMPONENT REFERENCES (from Blueprint SCS)
+	// ═══════════════════════════════════════════════════════════════════
+	// NOTE: These are NOT UPROPERTY to avoid naming conflicts with Blueprint SCS.
+	// Blueprint already defines these components in its SimpleConstructionScript.
+	// We cache references in BeginPlay for C++ logic access.
+	// Blueprint access is via the SCS components directly.
+
+protected:
+	/** Cached reference to SittingZone billboard from Blueprint SCS */
+	UBillboardComponent* CachedSittingZone;
+
+	/** Cached reference to Scene component from Blueprint SCS */
+	USceneComponent* CachedSpawnScene;
+
+	/** Cached reference to CameraArm from Blueprint SCS */
+	USpringArmComponent* CachedCameraArm;
+
+	/** Cached reference to LookatCamera from Blueprint SCS */
+	UCameraComponent* CachedLookatCamera;
+
+	/** Cached reference to UnlockEffect niagara from Blueprint SCS */
+	UNiagaraComponent* CachedUnlockEffect;
+
+	/** Cached reference to Effect niagara from Blueprint SCS */
+	UNiagaraComponent* CachedEffect;
+
+	/** Cached reference to EffectLight from Blueprint SCS */
+	UPointLightComponent* CachedEffectLight;
+
+	/** Cached reference to EnvironmentLight from Blueprint SCS */
+	UPointLightComponent* CachedEnvironmentLight;
+
+	// ═══════════════════════════════════════════════════════════════════
+	// C++ CREATED COMPONENTS (not from Blueprint SCS)
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** Interaction collision sphere - created in C++ for trace detection
+	 *  B_RestingPoint doesn't have a mesh, so we need this for AC_InteractionManager
+	 *  to detect this actor via sphere trace.
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USphereComponent* InteractionCollision;
+
+public:
+
 	// ═══════════════════════════════════════════════════════════════════
 	// VARIABLES: 10/10 migrated
 	// ═══════════════════════════════════════════════════════════════════
@@ -147,7 +204,28 @@ public:
 	FSLFReplenishData GetReplenishData();
 	virtual FSLFReplenishData GetReplenishData_Implementation();
 
-	// --- Interaction Override ---
+	// ═══════════════════════════════════════════════════════════════════
+	// INTERFACE OVERRIDES (EventGraph Logic)
+	// ═══════════════════════════════════════════════════════════════════
 
+	/** OnInteract: Branch on IsActivated -> DiscoverPoint or Rest flow */
 	virtual void OnInteract_Implementation(AActor* Interactor) override;
+
+	/** OnTraced: Set InteractionText based on IsActivated */
+	virtual void OnTraced_Implementation(AActor* TracedBy) override;
+
+	// ═══════════════════════════════════════════════════════════════════
+	// CUSTOM FUNCTIONS (EventGraph Logic)
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** Called when player discovers this resting point for the first time */
+	UFUNCTION(BlueprintCallable, Category = "RestingPoint")
+	void DiscoverPoint(AActor* DiscoveringActor);
+
+protected:
+	/** Timer handle for delayed positioning after rest */
+	FTimerHandle PositionTimerHandle;
+
+	/** Called after 1s delay to position sitting actor and broadcast OnReady */
+	void PositionSittingActor();
 };

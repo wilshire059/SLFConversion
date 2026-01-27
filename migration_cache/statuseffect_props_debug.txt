@@ -1,0 +1,19 @@
+=== Debugging StatusEffectArea Properties ===
+
+=== B_StatusEffectArea_C_1 ===
+Class: B_StatusEffectArea_C
+Class path: /Game/SoulslikeFramework/Data/StatusEffects/B_StatusEffectArea.B_StatusEffectArea_C
+
+Testing property access:
+  status_effect_to_apply: FAILED - SLFStatusEffectArea: Failed to find property 'status_effect_to_apply' for attribute 'status_effect_to_apply' on 'B_StatusEffectArea_C'
+  StatusEffectToApply: FAILED - SLFStatusEffectArea: Failed to find property 'StatusEffectToApply' for attribute 'StatusEffectToApply' on 'B_StatusEffectArea_C'
+  statuseffecttoapply: FAILED - SLFStatusEffectArea: Failed to find property 'statuseffecttoapply' for attribute 'statuseffecttoapply' on 'B_StatusEffectArea_C'
+  effect_rank: FAILED - SLFStatusEffectArea: Failed to find property 'effect_rank' for attribute 'effect_rank' on 'B_StatusEffectArea_C'
+  EffectRank: FAILED - SLFStatusEffectArea: Failed to find property 'EffectRank' for attribute 'EffectRank' on 'B_StatusEffectArea_C'
+  effectrank: FAILED - SLFStatusEffectArea: Failed to find property 'effectrank' for attribute 'effectrank' on 'B_StatusEffectArea_C'
+
+dir() on actor (filtered):
+  apply_effect_tick
+  area_effect
+  effect_volume
+  status_effect_tag

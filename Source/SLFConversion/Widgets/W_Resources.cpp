@@ -6,6 +6,7 @@
 #include "Widgets/W_Resources.h"
 #include "Components/ProgressBar.h"
 #include "Components/SizeBox.h"
+#include "TimerManager.h"
 
 UW_Resources::UW_Resources(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -90,6 +91,20 @@ void UW_Resources::NativeConstruct()
 	// Hide the slider widgets that create white lines
 	HideBarSeparators();
 
+	// Start the tick timer for back bar lerp (60fps like bp_only)
+	// bp_only comment: "We use a custom TimerTick() event running on 60 fps"
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().SetTimer(
+			TickTimer,
+			this,
+			&UW_Resources::EventTimerTick,
+			1.0f / 60.0f, // 60fps
+			true // loop
+		);
+		UE_LOG(LogTemp, Log, TEXT("[W_Resources] Started TickTimer for back bar lerp (60fps)"));
+	}
+
 	UE_LOG(LogTemp, Log, TEXT("[W_Resources] NativeConstruct - Forced BaseWidths: HP=%.1f, FP=%.1f, Stamina=%.1f -> Widths: HP=%.0f, FP=%.0f, Stamina=%.0f"),
 		BaseWidthHp, BaseWidthFp, BaseWidthStamina, InitialWidthHp, InitialWidthFp, InitialWidthStamina);
 }
@@ -113,6 +128,12 @@ void UW_Resources::HideBarSeparators()
 
 void UW_Resources::NativeDestruct()
 {
+	// Clear the tick timer
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(TickTimer);
+	}
+
 	Super::NativeDestruct();
 
 	UE_LOG(LogTemp, Log, TEXT("UW_Resources::NativeDestruct"));
@@ -241,7 +262,51 @@ void UW_Resources::EventRemoveBuff_Implementation(UPDA_Buff* Buff)
 
 void UW_Resources::EventTimerTick_Implementation()
 {
-	UE_LOG(LogTemp, Log, TEXT("UW_Resources::EventTimerTick_Implementation"));
+	// bp_only: This is called every frame (60fps) to lerp back bars toward front bars
+	// The back bar (yellow/damage preview) gradually catches up to the front bar (actual value)
+
+	const float DeltaTime = 1.0f / 60.0f; // 60fps tick rate
+	const float InterpSpeed = 2.0f; // Speed at which back bar catches up
+
+	// Health bar - lerp back to front
+	if (CachedHealthBar_Front && CachedHealthBar_Back)
+	{
+		float FrontPercent = CachedHealthBar_Front->GetPercent();
+		float BackPercent = CachedHealthBar_Back->GetPercent();
+
+		// Back bar should always catch up to front bar
+		if (!FMath::IsNearlyEqual(BackPercent, FrontPercent, 0.001f))
+		{
+			float NewBack = FMath::FInterpConstantTo(BackPercent, FrontPercent, DeltaTime, InterpSpeed);
+			CachedHealthBar_Back->SetPercent(NewBack);
+		}
+	}
+
+	// Focus bar - lerp back to front
+	if (CachedFocusBar_Front && CachedFocusBar_Back)
+	{
+		float FrontPercent = CachedFocusBar_Front->GetPercent();
+		float BackPercent = CachedFocusBar_Back->GetPercent();
+
+		if (!FMath::IsNearlyEqual(BackPercent, FrontPercent, 0.001f))
+		{
+			float NewBack = FMath::FInterpConstantTo(BackPercent, FrontPercent, DeltaTime, InterpSpeed);
+			CachedFocusBar_Back->SetPercent(NewBack);
+		}
+	}
+
+	// Stamina bar - lerp back to front
+	if (CachedStaminaBar_Front && CachedStaminaBar_Back)
+	{
+		float FrontPercent = CachedStaminaBar_Front->GetPercent();
+		float BackPercent = CachedStaminaBar_Back->GetPercent();
+
+		if (!FMath::IsNearlyEqual(BackPercent, FrontPercent, 0.001f))
+		{
+			float NewBack = FMath::FInterpConstantTo(BackPercent, FrontPercent, DeltaTime, InterpSpeed);
+			CachedStaminaBar_Back->SetPercent(NewBack);
+		}
+	}
 }
 
 
@@ -262,35 +327,32 @@ void UW_Resources::EventUpdateStat_Implementation(FStatInfo InStat)
 	FString TagString = InStat.Tag.ToString();
 
 	// Update the appropriate bar based on the stat tag
+	// FRONT bar = actual value, updates immediately
+	// BACK bar = damage preview (yellow), updated by TickTimer to catch up to front
+	// When healing (front > back), back bar immediately jumps to front
 	if (TagString.Contains(TEXT("HP")) || TagString.Contains(TEXT("Health")))
 	{
-		// Update health bars - Front bar updates immediately
+		// Front bar updates immediately
 		if (CachedHealthBar_Front)
 		{
 			CachedHealthBar_Front->SetPercent(Percent);
 		}
-		// Back bar catches up quickly (since EventUpdateStat is called once per damage)
-		// Using high interp speed (100.0) to make visible change per call
+		// Back bar: only update immediately if healing (percent > current back)
+		// Otherwise, let the TickTimer gradually move it down
 		if (CachedHealthBar_Back)
 		{
 			float CurrentBack = CachedHealthBar_Back->GetPercent();
-			// Only update if back bar is ahead of front (damage taken)
-			if (CurrentBack > Percent)
-			{
-				float NewBack = FMath::FInterpTo(CurrentBack, Percent, 0.016f, 15.0f);
-				CachedHealthBar_Back->SetPercent(NewBack);
-			}
-			else
+			if (Percent > CurrentBack)
 			{
 				// Healing - back bar matches front immediately
 				CachedHealthBar_Back->SetPercent(Percent);
 			}
+			// Damage case: back bar stays where it is, TickTimer will catch up
 		}
 		HealthPercentCache = Percent;
 	}
 	else if (TagString.Contains(TEXT("FP")) || TagString.Contains(TEXT("Focus")))
 	{
-		// Update focus/FP bars
 		if (CachedFocusBar_Front)
 		{
 			CachedFocusBar_Front->SetPercent(Percent);
@@ -298,12 +360,7 @@ void UW_Resources::EventUpdateStat_Implementation(FStatInfo InStat)
 		if (CachedFocusBar_Back)
 		{
 			float CurrentBack = CachedFocusBar_Back->GetPercent();
-			if (CurrentBack > Percent)
-			{
-				float NewBack = FMath::FInterpTo(CurrentBack, Percent, 0.016f, 15.0f);
-				CachedFocusBar_Back->SetPercent(NewBack);
-			}
-			else
+			if (Percent > CurrentBack)
 			{
 				CachedFocusBar_Back->SetPercent(Percent);
 			}
@@ -312,7 +369,6 @@ void UW_Resources::EventUpdateStat_Implementation(FStatInfo InStat)
 	}
 	else if (TagString.Contains(TEXT("Stamina")))
 	{
-		// Update stamina bars
 		if (CachedStaminaBar_Front)
 		{
 			CachedStaminaBar_Front->SetPercent(Percent);
@@ -320,12 +376,7 @@ void UW_Resources::EventUpdateStat_Implementation(FStatInfo InStat)
 		if (CachedStaminaBar_Back)
 		{
 			float CurrentBack = CachedStaminaBar_Back->GetPercent();
-			if (CurrentBack > Percent)
-			{
-				float NewBack = FMath::FInterpTo(CurrentBack, Percent, 0.016f, 15.0f);
-				CachedStaminaBar_Back->SetPercent(NewBack);
-			}
-			else
+			if (Percent > CurrentBack)
 			{
 				CachedStaminaBar_Back->SetPercent(Percent);
 			}

@@ -1,0 +1,8 @@
+{
+  "DA_Sword01": {
+    "error": "PrimaryDataAsset: Failed to find property 'item_information' for attribute 'item_information' on 'PDA_Item_C'"
+  },
+  "DA_Shield01": {
+    "error": "PrimaryDataAsset: Failed to find property 'item_information' for attribute 'item_information' on 'PDA_Item_C'"
+  }
+}

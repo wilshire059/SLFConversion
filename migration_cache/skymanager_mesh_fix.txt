@@ -1,0 +1,39 @@
+======================================================================
+FIXING SKYMANAGER SKY SPHERE MESH
+======================================================================
+
+Loading mesh: /Game/SoulslikeFramework/Blueprints/Sky/SM_SkySphere
+  Loaded: <Object '/Game/SoulslikeFramework/Blueprints/Sky/SM_SkySphere.SM_SkySphere' (0x0000029314DA2800) Class 'StaticMesh'>
+
+Loading material: /Game/SoulslikeFramework/Materials/M_SkySphere
+  Loaded: <Object '/Game/SoulslikeFramework/Materials/M_SkySphere.M_SkySphere' (0x00000293016D3800) Class 'Material'>
+
+Loading level: /Game/SoulslikeFramework/Maps/L_Demo_Showcase
+Loaded: <Object '/Game/SoulslikeFramework/Maps/L_Demo_Showcase.L_Demo_Showcase' (0x0000029327C23800) Class 'World'>
+
+Found: B_SkyManager_C_1 (B_SkyManager_C)
+
+  Found SM_SkySphere component: SM_SkySphere
+    Current mesh: None
+
+  Setting static mesh...
+    Set static_mesh to: <Object '/Game/SoulslikeFramework/Blueprints/Sky/SM_SkySphere.SM_SkySphere' (0x0000029314DA2800) Class 'StaticMesh'>
+
+  Setting material...
+    Set material[0] to: <Object '/Game/SoulslikeFramework/Materials/M_SkySphere.M_SkySphere' (0x00000293016D3800) Class 'Material'>
+
+  Verifying...
+    Mesh after fix: SM_SkySphere
+    Materials after fix: 1
+      [0]: M_SkySphere
+
+======================================================================
+SAVING LEVEL
+======================================================================
+Level saved!
+
+======================================================================
+FIX COMPLETE
+======================================================================
+
+Results: C:/scripts/SLFConversion/migration_cache/skymanager_mesh_fix.txt

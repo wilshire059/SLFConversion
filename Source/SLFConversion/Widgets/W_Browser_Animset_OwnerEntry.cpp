@@ -29,6 +29,6 @@ void UW_Browser_Animset_OwnerEntry::NativeDestruct()
 
 void UW_Browser_Animset_OwnerEntry::CacheWidgetReferences()
 {
-	// TODO: Cache any widget references needed for logic
+	// Widget reference caching intentionally empty - dev tool widget
 }
 

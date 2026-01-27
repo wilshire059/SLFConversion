@@ -1,0 +1,163 @@
+================================================================================
+C++ STAT CLASS TAG VERIFICATION
+================================================================================
+
+These are the tags set in C++ constructors and used at runtime.
+
+
+--- Primary (SoulslikeFramework.Stat.Primary) ---
+  [OK] Vigor
+       Class: SLFStatVigor
+       Tag: SoulslikeFramework.Stat.Primary.Vigor
+       Display: Vigor
+       Values: 0.0/99.0
+  [OK] Mind
+       Class: SLFStatMind
+       Tag: SoulslikeFramework.Stat.Primary.Mind
+       Display: Mind
+       Values: 0.0/99.0
+  [OK] Endurance
+       Class: SLFStatEndurance
+       Tag: SoulslikeFramework.Stat.Primary.Endurance
+       Display: Endurance
+       Values: 0.0/99.0
+  [OK] Strength
+       Class: SLFStatStrength
+       Tag: SoulslikeFramework.Stat.Primary.Strength
+       Display: Strength
+       Values: 0.0/99.0
+  [OK] Dexterity
+       Class: SLFStatDexterity
+       Tag: SoulslikeFramework.Stat.Primary.Dexterity
+       Display: Dexterity
+       Values: 0.0/99.0
+  [OK] Intelligence
+       Class: SLFStatIntelligence
+       Tag: SoulslikeFramework.Stat.Primary.Intelligence
+       Display: Intelligence
+       Values: 0.0/99.0
+  [OK] Faith
+       Class: SLFStatFaith
+       Tag: SoulslikeFramework.Stat.Primary.Faith
+       Display: Faith
+       Values: 0.0/99.0
+  [OK] Arcane
+       Class: SLFStatArcane
+       Tag: SoulslikeFramework.Stat.Primary.Arcane
+       Display: Arcane
+       Values: 0.0/99.0
+
+--- Secondary/Base (SoulslikeFramework.Stat.Secondary) ---
+  [OK] HP
+       Class: SLFStatHP
+       Tag: SoulslikeFramework.Stat.Secondary.HP
+       Display: HP
+       Values: 500.0/500.0
+  [OK] FP
+       Class: SLFStatFP
+       Tag: SoulslikeFramework.Stat.Secondary.FP
+       Display: FP
+       Values: 100.0/100.0
+  [OK] Stamina
+       Class: SLFStatStamina
+       Tag: SoulslikeFramework.Stat.Secondary.Stamina
+       Display: Stamina
+       Values: 50.0/50.0
+
+--- Attack Power (SoulslikeFramework.Stat.Secondary.AttackPower) ---
+  [OK] AP_Physical
+       Class: SLFAttackPowerPhysical
+       Tag: SoulslikeFramework.Stat.Secondary.AttackPower.Physical
+       Display: Physical Attack Power
+       Values: 0.0/9999.0
+  [OK] AP_Magic
+       Class: SLFAttackPowerMagic
+       Tag: SoulslikeFramework.Stat.Secondary.AttackPower.Magic
+       Display: Magic Attack Power
+       Values: 0.0/9999.0
+  [OK] AP_Fire
+       Class: SLFAttackPowerFire
+       Tag: SoulslikeFramework.Stat.Secondary.AttackPower.Fire
+       Display: Fiery Attack Power
+       Values: 0.0/9999.0
+  [OK] AP_Frost
+       Class: SLFAttackPowerFrost
+       Tag: SoulslikeFramework.Stat.Secondary.AttackPower.Frost
+       Display: Frost Attack Power
+       Values: 0.0/9999.0
+  [OK] AP_Lightning
+       Class: SLFAttackPowerLightning
+       Tag: SoulslikeFramework.Stat.Secondary.AttackPower.Lightning
+       Display: Lightning Attack Power
+       Values: 0.0/9999.0
+  [OK] AP_Holy
+       Class: SLFAttackPowerHoly
+       Tag: SoulslikeFramework.Stat.Secondary.AttackPower.Holy
+       Display: Holy Attack Power
+       Values: 0.0/9999.0
+
+--- Damage Negation (SoulslikeFramework.Stat.Defense.Negation) ---
+  [OK] DN_Physical
+       Class: SLFDamageNegationPhysical
+       Tag: SoulslikeFramework.Stat.Defense.Negation.Physical
+       Display: Physical Negation
+       Values: 0.0/9999.0
+  [OK] DN_Magic
+       Class: SLFDamageNegationMagic
+       Tag: SoulslikeFramework.Stat.Defense.Negation.Magic
+       Display: Magic Negation
+       Values: 0.0/9999.0
+  [OK] DN_Fire
+       Class: SLFDamageNegationFire
+       Tag: SoulslikeFramework.Stat.Defense.Negation.Fire
+       Display: Fire Negation
+       Values: 0.0/9999.0
+  [OK] DN_Frost
+       Class: SLFDamageNegationFrost
+       Tag: SoulslikeFramework.Stat.Defense.Negation.Frost
+       Display: Frost Negation
+       Values: 0.0/9999.0
+  [OK] DN_Lightning
+       Class: SLFDamageNegationLightning
+       Tag: SoulslikeFramework.Stat.Defense.Negation.Lightning
+       Display: Lightning Negation
+       Values: 0.0/9999.0
+  [OK] DN_Holy
+       Class: SLFDamageNegationHoly
+       Tag: SoulslikeFramework.Stat.Defense.Negation.Holy
+       Display: Holy Negation
+       Values: 0.0/9999.0
+
+--- Resistance (SoulslikeFramework.Stat.Defense.Resistances) ---
+  [OK] R_Focus
+       Class: SLFResistanceFocus
+       Tag: SoulslikeFramework.Stat.Defense.Resistances.Focus
+       Display: Focus
+       Values: 0.0/9999.0
+  [OK] R_Immunity
+       Class: SLFResistanceImmunity
+       Tag: SoulslikeFramework.Stat.Defense.Resistances.Immunity
+       Display: Immunity
+       Values: 0.0/9999.0
+  [OK] R_Robustness
+       Class: SLFResistanceRobustness
+       Tag: SoulslikeFramework.Stat.Defense.Resistances.Robustness
+       Display: Robustness
+       Values: 0.0/9999.0
+  [OK] R_Vitality
+       Class: SLFResistanceVitality
+       Tag: SoulslikeFramework.Stat.Defense.Resistances.Vitality
+       Display: Vitality
+       Values: 0.0/9999.0
+
+================================================================================
+WIDGET CATEGORY MAPPING CHECK
+================================================================================
+
+W_StatBlock_LevelUp category remapping (in C++):
+  - Secondary.AttackPower → SoulslikeFramework.Stat.Secondary.AttackPower
+  - DamageNegation/Negation → SoulslikeFramework.Stat.Defense.Negation
+  - Resistance → SoulslikeFramework.Stat.Defense.Resistances
+
+Secondary block EXCLUDES stats matching:
+  - SoulslikeFramework.Stat.Secondary.AttackPower (prevents attack stats in Base Stats)

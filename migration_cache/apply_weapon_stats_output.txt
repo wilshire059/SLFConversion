@@ -1,0 +1,27 @@
+Loaded 5 weapons from cache
+Processing DA_BossMace...
+  HasScaling: True, Scaling: ['Dexterity:A']
+  HasRequirement: False, Requirements: []
+  StatChanges: ['Physical:120']
+  OK: Applied stats to DA_BossMace
+Processing DA_Greatsword...
+  HasScaling: True, Scaling: ['Strength:S']
+  HasRequirement: False, Requirements: []
+  StatChanges: ['Physical:75']
+  OK: Applied stats to DA_Greatsword
+Processing DA_Katana...
+  HasScaling: True, Scaling: ['Dexterity:A']
+  HasRequirement: True, Requirements: ['Dexterity:10']
+  StatChanges: ['Physical:34']
+  OK: Applied stats to DA_Katana
+Processing DA_PoisonSword...
+  HasScaling: True, Scaling: ['Arcane:S']
+  HasRequirement: False, Requirements: []
+  StatChanges: ['Physical:15']
+  OK: Applied stats to DA_PoisonSword
+Processing DA_Sword01...
+  HasScaling: True, Scaling: ['Arcane:B']
+  HasRequirement: False, Requirements: []
+  StatChanges: ['Physical:15']
+  OK: Applied stats to DA_Sword01
+SUMMARY: 5 succeeded, 0 failed

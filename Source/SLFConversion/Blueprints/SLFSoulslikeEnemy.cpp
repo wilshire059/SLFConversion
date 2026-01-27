@@ -15,6 +15,8 @@
 
 #include "SLFSoulslikeEnemy.h"
 #include "AIC_SoulslikeFramework.h"
+#include "AIController.h"
+#include "BrainComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Perception/AIPerceptionComponent.h"
@@ -126,10 +128,27 @@ void ASLFSoulslikeEnemy::BeginPlay()
 	{
 		CombatManagerComponent->OnPoiseBroken.AddDynamic(this, &ASLFSoulslikeEnemy::HandleOnPoiseBroken);
 		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] *** BOUND to OnPoiseBroken event on CombatManager ***"));
+
+		// ═══════════════════════════════════════════════════════════════════════════════
+		// BIND TO OnDeath EVENT (bp_only: OnDeath -> PickAndSpawnLoot)
+		// ═══════════════════════════════════════════════════════════════════════════════
+		// When enemy dies, spawn death currency via LootDropManager
+		CombatManagerComponent->OnDeath.AddDynamic(this, &ASLFSoulslikeEnemy::HandleOnDeath);
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] *** BOUND to OnDeath event on CombatManager - will drop loot ***"));
+	}
+
+	// ═══════════════════════════════════════════════════════════════════════════════
+	// BIND TO OnItemReadyForSpawn EVENT (spawns death currency actor)
+	// ═══════════════════════════════════════════════════════════════════════════════
+	// bp_only flow: LootDropManager->PickItem() -> OnItemReadyForSpawn -> spawn B_DeathCurrency
+	if (LootDropManagerComponent)
+	{
+		LootDropManagerComponent->OnItemReadyForSpawn.AddDynamic(this, &ASLFSoulslikeEnemy::HandleOnItemReadyForSpawn);
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] *** BOUND to OnItemReadyForSpawn - will spawn death currency actor ***"));
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("[SoulslikeEnemy] CombatManagerComponent is NULL - cannot bind OnPoiseBroken!"));
+		UE_LOG(LogTemp, Error, TEXT("[SoulslikeEnemy] LootDropManagerComponent is NULL - cannot bind OnItemReadyForSpawn!"));
 	}
 
 	// Setup healthbar widget if WidgetClass is not set (lost during reparenting)
@@ -163,15 +182,34 @@ void ASLFSoulslikeEnemy::BeginPlay()
 		UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] Fixed HealthbarWidget position above head"));
 	}
 
-	// Enable debug logging on state machine for testing
-	if (AIStateMachine)
-	{
-		AIStateMachine->bDebugEnabled = true;
-		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] AI State Machine ENABLED - Combat AI will use C++ state machine instead of Behavior Tree!"));
-	}
+	// Check if we should use C++ state machine or Behavior Tree
+	// CRITICAL: Only ONE system should control AI - not both!
+	bool bUseStateMachine = (AIStateMachine != nullptr);
 
-	if (BehaviorManagerComponent)
+	if (bUseStateMachine)
 	{
+		// Use C++ State Machine for combat AI
+		AIStateMachine->bDebugEnabled = true;
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] %s - Using C++ STATE MACHINE for combat AI (Behavior Tree DISABLED)"),
+			*GetName());
+
+		// CRITICAL: Stop any running Behavior Tree to prevent conflicts
+		if (AController* MyController = GetController())
+		{
+			if (AAIController* AIC = Cast<AAIController>(MyController))
+			{
+				if (UBrainComponent* Brain = AIC->GetBrainComponent())
+				{
+					Brain->StopLogic(TEXT("Using C++ State Machine"));
+					UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] %s - Stopped Behavior Tree brain component"),
+						*GetName());
+				}
+			}
+		}
+	}
+	else if (BehaviorManagerComponent)
+	{
+		// Fallback to Behavior Tree if no state machine
 		UE_LOG(LogTemp, Log, TEXT("  BehaviorManager Behavior Tree: %s"),
 			BehaviorManagerComponent->Behavior ? *BehaviorManagerComponent->Behavior->GetName() : TEXT("NULL"));
 
@@ -815,24 +853,48 @@ void ASLFSoulslikeEnemy::PickAndSpawnLoot_Implementation()
 	// From Blueprint: Call AC_LootDropManager->PickItem()
 	// This triggers the OnItemPicked dispatcher which spawns the item
 
-	UE_LOG(LogTemp, Log, TEXT("[SoulslikeEnemy] PickAndSpawnLoot"));
+	UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] PickAndSpawnLoot - START"));
 
-	if (LootDropManagerComponent)
+	ULootDropManagerComponent* LootManager = LootDropManagerComponent;
+	if (!LootManager)
 	{
-		LootDropManagerComponent->PickItem();
+		LootManager = FindComponentByClass<ULootDropManagerComponent>();
 	}
-	else
+
+	if (LootManager)
 	{
-		// Try to find it on the actor
-		if (ULootDropManagerComponent* LootManager = FindComponentByClass<ULootDropManagerComponent>())
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] LootDropManager found: %s (Class: %s)"),
+			*LootManager->GetName(), *LootManager->GetClass()->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] LootTable: %s, OverrideItem.ItemClass: %s"),
+			LootManager->LootTable.IsNull() ? TEXT("NULL") : *LootManager->LootTable.ToString(),
+			LootManager->OverrideItem.ItemClass ? *LootManager->OverrideItem.ItemClass->GetName() : TEXT("NULL"));
+
+		// CRITICAL FIX: Check if this is a Blueprint-derived component with empty override
+		// If the class is a Blueprint (has CompiledFromBlueprint flag), the PickItem() call
+		// goes to the Blueprint's empty event graph instead of C++ _Implementation
+		// Solution: Call PickItem_Implementation() directly on C++ base
+		bool bIsBlueprintClass = LootManager->GetClass()->HasAnyClassFlags(CLASS_CompiledFromBlueprint);
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] IsBlueprintClass: %s"), bIsBlueprintClass ? TEXT("YES") : TEXT("NO"));
+
+		if (bIsBlueprintClass)
 		{
-			LootManager->PickItem();
+			// Blueprint class - call C++ implementation directly to bypass empty BP override
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] Calling PickItem_Implementation() directly (bypassing BP)"));
+			LootManager->ULootDropManagerComponent::PickItem_Implementation();
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] PickAndSpawnLoot - No LootDropManager found!"));
+			// Native C++ class - safe to call normally
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] Calling PickItem() normally"));
+			LootManager->PickItem();
 		}
 	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[SoulslikeEnemy] PickAndSpawnLoot - No LootDropManager found!"));
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] PickAndSpawnLoot - END"));
 }
 
 void ASLFSoulslikeEnemy::GetPatrolPath_Implementation(AActor*& OutPatrolPath)
@@ -1129,6 +1191,121 @@ void ASLFSoulslikeEnemy::OnBackstabbed_Implementation(FGameplayTag ExecutionTag)
 // ═══════════════════════════════════════════════════════════════════════════════
 // POISE BREAK / EXECUTION INDICATOR HANDLING
 // ═══════════════════════════════════════════════════════════════════════════════
+
+void ASLFSoulslikeEnemy::HandleOnDeath(AActor* Killer)
+{
+	// ═══════════════════════════════════════════════════════════════════════════════
+	// bp_only flow: OnDeath -> PickAndSpawnLoot (spawns death currency)
+	// This triggers the LootDropManager to spawn the death currency pickup
+	// ═══════════════════════════════════════════════════════════════════════════════
+
+	UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] *** HandleOnDeath *** - Killer: %s, Enemy: %s"),
+		Killer ? *Killer->GetName() : TEXT("None"), *GetName());
+
+	// Spawn loot (death currency) via BPI_Enemy interface
+	PickAndSpawnLoot_Implementation();
+
+	UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] HandleOnDeath - PickAndSpawnLoot called, death currency should spawn"));
+}
+
+void ASLFSoulslikeEnemy::HandleOnItemReadyForSpawn(FSLFLootItem Item)
+{
+	// ═══════════════════════════════════════════════════════════════════════════════
+	// bp_only flow (B_Soulslike_Enemy.json lines 12054-12220):
+	// OnItemReadyForSpawn event fires with FSLFLootItem parameter
+	// 1. Get player location
+	// 2. Spawn B_DeathCurrency actor at enemy location
+	// 3. Set CurrencyAmount from CombatManager->CurrencyReward
+	// 4. Set PlayerLocation on the currency actor
+	// ═══════════════════════════════════════════════════════════════════════════════
+
+	UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] *** HandleOnItemReadyForSpawn *** - Enemy: %s"), *GetName());
+
+	// Get currency reward from CombatManager
+	int32 CurrencyReward = 0;
+	if (CombatManagerComponent)
+	{
+		CurrencyReward = CombatManagerComponent->CurrencyReward;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] No CombatManager - defaulting currency to 100"));
+		CurrencyReward = 100; // Default fallback
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] Currency reward: %d"), CurrencyReward);
+
+	// Get player location
+	FVector PlayerLocation = FVector::ZeroVector;
+	if (UWorld* World = GetWorld())
+	{
+		if (APlayerController* PC = World->GetFirstPlayerController())
+		{
+			if (APawn* PlayerPawn = PC->GetPawn())
+			{
+				PlayerLocation = PlayerPawn->GetActorLocation();
+			}
+		}
+	}
+
+	// Load B_DeathCurrency class
+	static TSubclassOf<AActor> DeathCurrencyClass = nullptr;
+	if (!DeathCurrencyClass)
+	{
+		// Correct path: _WorldActors/Interactables, not _Items
+		DeathCurrencyClass = LoadClass<AActor>(nullptr,
+			TEXT("/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_DeathCurrency.B_DeathCurrency_C"));
+	}
+
+	if (!DeathCurrencyClass)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[SoulslikeEnemy] Failed to load B_DeathCurrency class!"));
+		return;
+	}
+
+	// Spawn at enemy location
+	FVector SpawnLocation = GetActorLocation();
+	FRotator SpawnRotation = FRotator::ZeroRotator;
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+	AActor* SpawnedCurrency = GetWorld()->SpawnActor<AActor>(DeathCurrencyClass, SpawnLocation, SpawnRotation, SpawnParams);
+
+	if (SpawnedCurrency)
+	{
+		// Set CurrencyAmount property
+		if (FProperty* CurrencyProp = SpawnedCurrency->GetClass()->FindPropertyByName(TEXT("CurrencyAmount")))
+		{
+			FIntProperty* IntProp = CastField<FIntProperty>(CurrencyProp);
+			if (IntProp)
+			{
+				IntProp->SetPropertyValue_InContainer(SpawnedCurrency, CurrencyReward);
+			}
+		}
+
+		// Set PlayerLocation property
+		if (FProperty* PlayerLocProp = SpawnedCurrency->GetClass()->FindPropertyByName(TEXT("PlayerLocation")))
+		{
+			FStructProperty* StructProp = CastField<FStructProperty>(PlayerLocProp);
+			if (StructProp && StructProp->Struct == TBaseStructure<FVector>::Get())
+			{
+				FVector* LocPtr = StructProp->ContainerPtrToValuePtr<FVector>(SpawnedCurrency);
+				if (LocPtr)
+				{
+					*LocPtr = PlayerLocation;
+				}
+			}
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeEnemy] *** SPAWNED B_DeathCurrency *** - Amount: %d, Location: %s"),
+			CurrencyReward, *SpawnLocation.ToString());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[SoulslikeEnemy] Failed to spawn B_DeathCurrency!"));
+	}
+}
 
 void ASLFSoulslikeEnemy::HandleOnPoiseBroken(bool bBroken)
 {

@@ -175,7 +175,7 @@ MIGRATION_MAP = {
     "BFL_Helper": "/Script/SLFConversion.BFL_Helper",
     "B_DeathTrigger": "/Script/SLFConversion.SLFInteractableBase",
     "B_Destructible": "/Script/SLFConversion.B_Destructible",
-    "B_LocationActor": "/Script/SLFConversion.SLFInteractableBase",
+    "B_LocationActor": "/Script/SLFConversion.AB_LocationActor",
     "B_Torch": "/Script/SLFConversion.SLFInteractableBase",
     "B_Projectile_Boss_Fireball": "/Script/SLFConversion.SLFProjectileBase",
     "B_Projectile_ThrowingKnife": "/Script/SLFConversion.SLFProjectileBase",
@@ -345,6 +345,7 @@ MIGRATION_MAP = {
     "AN_ApplyBuff": "/Script/SLFConversion.SLFAnimNotifyAdjustStat",
     "AN_ResetCombo": "/Script/SLFConversion.SLFAnimNotifyAdjustStat",
     # Anim Notify States - Use correct class names (SLFAnimNotifyState* not SLFANS_*)
+    "ANS_Trail": "/Script/SLFConversion.ANS_Trail",  # UANS_Trail
     "ANS_WeaponTrail": "/Script/SLFConversion.SLFAnimNotifyStateTrail",
     "ANS_SuperArmor": "/Script/SLFConversion.SLFAnimNotifyStateHyperArmor",
     "ANS_Invulnerable": "/Script/SLFConversion.SLFAnimNotifyStateInvincibility",

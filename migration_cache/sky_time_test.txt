@@ -1,0 +1,57 @@
+======================================================================
+SKY ROTATION TEST - VERIFYING FORMULA
+======================================================================
+
+Formula: SunPitch = (Time / 24.0) * 360.0
+         MoonPitch = SunPitch + 180.0
+
+Expected values (from formula):
+--------------------------------------------------
+  Midnight (Time=0.00):
+    Sun Pitch: 0.00°
+    Moon Pitch: 180.00° (normalized: 180.00°)
+
+  Sunrise (Time=6.00):
+    Sun Pitch: 90.00°
+    Moon Pitch: 270.00° (normalized: 270.00°)
+
+  Noon (Time=12.00):
+    Sun Pitch: 180.00°
+    Moon Pitch: 360.00° (normalized: 0.00°)
+
+  bp_only snapshot time (Time=14.98):
+    Sun Pitch: 224.64°
+    Moon Pitch: 404.64° (normalized: 44.64°)
+
+  Sunset (Time=18.00):
+    Sun Pitch: 270.00°
+    Moon Pitch: 450.00° (normalized: 90.00°)
+
+  Night (Time=21.00):
+    Sun Pitch: 315.00°
+    Moon Pitch: 495.00° (normalized: 135.00°)
+
+
+Loading level: /Game/SoulslikeFramework/Maps/L_Demo_Showcase
+
+Found: B_SkyManager_C_1
+  Current Time: 14.976
+
+  DirectionalLight_Sun:
+    RelativeRotation: (P=-180.00, Y=180.00, R=-44.64)
+    AtmosphereSunLight: True, Index: 0
+    Intensity: 4.0
+
+  DirectionalLight_Moon:
+    RelativeRotation: (P=0.00, Y=0.00, R=44.64)
+    AtmosphereSunLight: True, Index: 1
+    Intensity: 1.0
+
+  SkyLight:
+    RealTimeCapture: True
+
+======================================================================
+TEST COMPLETE
+======================================================================
+
+Results: C:/scripts/SLFConversion/migration_cache/sky_time_test.txt

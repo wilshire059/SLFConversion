@@ -1,0 +1,23 @@
+{
+  "DA_Sword01": {
+    "equip_slots": "<Struct 'GameplayTagContainer' (0x0000024714783218) {gameplay_tags: }>"
+  },
+  "DA_Sword02": {
+    "equip_slots": "<Struct 'GameplayTagContainer' (0x0000024714787418) {gameplay_tags: }>"
+  },
+  "DA_Greatsword": {
+    "equip_slots": "<Struct 'GameplayTagContainer' (0x0000024714788018) {gameplay_tags: }>"
+  },
+  "DA_Katana": {
+    "equip_slots": "<Struct 'GameplayTagContainer' (0x0000024714789818) {gameplay_tags: }>"
+  },
+  "DA_PoisonSword": {
+    "equip_slots": "<Struct 'GameplayTagContainer' (0x000002471478AA18) {gameplay_tags: }>"
+  },
+  "DA_BossMace": {
+    "equip_slots": "<Struct 'GameplayTagContainer' (0x000002471478B618) {gameplay_tags: }>"
+  },
+  "DA_Shield01": {
+    "equip_slots": "<Struct 'GameplayTagContainer' (0x000002471478D418) {gameplay_tags: }>"
+  }
+}

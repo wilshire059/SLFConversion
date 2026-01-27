@@ -1,0 +1,29 @@
+{
+  "blueprint_name": "B_Door_Demo",
+  "spawned_components": [
+    {
+      "name": "DefaultSceneRoot",
+      "class": "SceneComponent"
+    },
+    {
+      "name": "Interactable SM",
+      "class": "StaticMeshComponent",
+      "mesh": "SM_PrisonDoor",
+      "visible": true
+    },
+    {
+      "name": "Door Frame",
+      "class": "StaticMeshComponent",
+      "mesh": "SM_PrisonDoorArch",
+      "visible": true
+    },
+    {
+      "name": "MoveTo",
+      "class": "BillboardComponent"
+    },
+    {
+      "name": "DoorTimeline",
+      "class": "TimelineComponent"
+    }
+  ]
+}

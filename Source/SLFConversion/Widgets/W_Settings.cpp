@@ -25,7 +25,13 @@ void UW_Settings::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	// CRITICAL: Hide MainBlur widget - it's a BackgroundBlur at highest ZOrder that blurs everything
+	// CRITICAL: Hide blur widgets - BackgroundBlur at highest ZOrder that blurs everything
+	// W_Settings has TWO blur widgets: "Blur" and "MainBlur"
+	if (UWidget* Blur = GetWidgetFromName(TEXT("Blur")))
+	{
+		Blur->SetVisibility(ESlateVisibility::Collapsed);
+		UE_LOG(LogTemp, Log, TEXT("[W_Settings] Hidden Blur widget"));
+	}
 	if (UWidget* MainBlur = GetWidgetFromName(TEXT("MainBlur")))
 	{
 		MainBlur->SetVisibility(ESlateVisibility::Collapsed);
@@ -428,20 +434,23 @@ void UW_Settings::EventOnCategorySelected_Implementation(UW_Settings_CategoryEnt
 
 void UW_Settings::EventOnEntrySelected_Implementation(UW_Settings_Entry* InEntry)
 {
-	UE_LOG(LogTemp, Log, TEXT("[W_Settings] EventOnEntrySelected"));
+	UE_LOG(LogTemp, Log, TEXT("[W_Settings] EventOnEntrySelected - Entry: %s"),
+		InEntry ? *InEntry->GetName() : TEXT("null"));
 
 	if (!InEntry)
 	{
 		return;
 	}
 
-	// Find the index of this entry
+	// Find the index of this entry and update navigation index
+	// DO NOT call UpdateEntrySelection() here - that would cause infinite recursion:
+	// UpdateEntrySelection -> SetEntrySelected -> OnEntrySelected -> EventOnEntrySelected -> UpdateEntrySelection
 	for (int32 i = 0; i < SettingEntries.Num(); i++)
 	{
 		if (SettingEntries[i] == InEntry)
 		{
 			EntryNavigationIndex = i;
-			UpdateEntrySelection();
+			UE_LOG(LogTemp, Log, TEXT("[W_Settings] Entry navigation index set to: %d"), EntryNavigationIndex);
 			break;
 		}
 	}
@@ -553,12 +562,24 @@ void UW_Settings::GetEntriesForActiveCategory(TArray<UW_Settings_Entry*>& OutEnt
 	}
 
 	// Get all W_Settings_Entry children
+	// NOTE: Blueprint W_Settings_Entry_C may NOT inherit from C++ UW_Settings_Entry if restored from bp_only.
+	// So we try both the C++ class cast AND check for the Blueprint class by name.
 	TArray<UWidget*> EntryWidgets = VerticalBox->GetAllChildren();
 	for (UWidget* Widget : EntryWidgets)
 	{
+		// First try direct cast to C++ class
 		if (UW_Settings_Entry* Entry = Cast<UW_Settings_Entry>(Widget))
 		{
 			OutEntries.Add(Entry);
+		}
+		// Fallback: Check if it's a Blueprint-based entry by class name
+		else if (Widget && Widget->GetClass()->GetName().Contains(TEXT("W_Settings_Entry")))
+		{
+			// Cast to UW_Settings_Entry won't work for Blueprint classes, but we can still use it
+			// since they share the same interface. However, for now just log that we found one.
+			// TODO: Consider reparenting W_Settings_Entry Blueprint to C++ class for proper integration.
+			UE_LOG(LogTemp, Warning, TEXT("[W_Settings] Found Blueprint-based W_Settings_Entry: %s (class: %s) - cast failed, skipping"),
+				*Widget->GetName(), *Widget->GetClass()->GetName());
 		}
 	}
 }

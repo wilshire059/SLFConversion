@@ -1,0 +1,52 @@
+============================================================
+ANIMGRAPH VARIABLE VALIDATION
+============================================================
+
+Checking: /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive
+  Loaded: ABP_SoulslikeCharacter_Additive
+  Variables found: 23
+    - WorldLocation
+    - WorldRotation
+    - Acceleration
+    - Acceleration2D
+    - bIsAccelerating
+    - Velocity
+    - Velocity2D
+    - Direction(Angle)
+    - Speed
+    - AnimDataAsset
+    - GrantedTags
+    - bIsBlocking
+    - IsCrouched
+    - bIsFalling
+    - IsResting
+    - RightHandOverlayState
+    - LeftHandOverlayState
+    - EquipmentManager
+    - CombatManager
+    - ActionManager
+    - ActiveGuardSequence
+    - IkWeight
+    - ActiveHitNormal
+  [OK] Found 'bIsAccelerating'
+  [OK] Found 'bIsBlocking'
+  [OK] Found 'bIsFalling'
+  [OK] Found 'IsResting'
+
+Checking: /Game/SoulslikeFramework/Blueprints/Components/AC_CombatManager
+  Loaded: AC_CombatManager
+  Variables found: 0
+  [WARN] Neither 'IsGuarding' nor 'IsGuarding?' found
+
+============================================================
+COMPILE CHECK
+============================================================
+  [WARN] Compile returned false (may have warnings)
+
+============================================================
+SUMMARY: 4/5 expected variables found
+============================================================
+
+WARNING: Some variables may not have been renamed correctly
+
+Full log saved to: C:/scripts/SLFConversion/migration_cache/animgraph_validation.txt

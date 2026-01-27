@@ -1,0 +1,23 @@
+{
+  "blueprint_path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_RestingPoint",
+  "parent_class": null,
+  "components_scs": [],
+  "variables": [],
+  "cdo_properties": {
+    "is_activated": "ERROR: Actor: Failed to find property 'is_activated' for attribute 'is_activated' on 'B_RestingPoint_C'",
+    "can_be_traced": "ERROR: Actor: Failed to find property 'can_be_traced' for attribute 'can_be_traced' on 'B_RestingPoint_C'",
+    "interaction_text": "ERROR: Actor: Failed to find property 'interaction_text' for attribute 'interaction_text' on 'B_RestingPoint_C'",
+    "interactable_display_name": "ERROR: Actor: Failed to find property 'interactable_display_name' for attribute 'interactable_display_name' on 'B_RestingPoint_C'",
+    "location_name": "ERROR: Actor: Failed to find property 'location_name' for attribute 'location_name' on 'B_RestingPoint_C'",
+    "sitting_angle": "ERROR: Actor: Failed to find property 'sitting_angle' for attribute 'sitting_angle' on 'B_RestingPoint_C'",
+    "force_face_sitting_actor": "ERROR: Actor: Failed to find property 'force_face_sitting_actor' for attribute 'force_face_sitting_actor' on 'B_RestingPoint_C'",
+    "camera_distance": "ERROR: Actor: Failed to find property 'camera_distance' for attribute 'camera_distance' on 'B_RestingPoint_C'",
+    "camera_offset": "ERROR: Actor: Failed to find property 'camera_offset' for attribute 'camera_offset' on 'B_RestingPoint_C'",
+    "camera_rotation": "ERROR: Actor: Failed to find property 'camera_rotation' for attribute 'camera_rotation' on 'B_RestingPoint_C'",
+    "items_to_replenish": "ERROR: Actor: Failed to find property 'items_to_replenish' for attribute 'items_to_replenish' on 'B_RestingPoint_C'",
+    "stats_to_replenish": "ERROR: Actor: Failed to find property 'stats_to_replenish' for attribute 'stats_to_replenish' on 'B_RestingPoint_C'",
+    "discover_interaction_montage": "ERROR: Actor: Failed to find property 'discover_interaction_montage' for attribute 'discover_interaction_montage' on 'B_RestingPoint_C'"
+  },
+  "event_dispatchers": [],
+  "functions": []
+}

@@ -27,6 +27,7 @@
 class UW_RestMenu_Button;
 class UW_RestMenu_TimeEntry;
 class UW_TimePass;
+class UW_LevelUp;
 
 // Forward declarations for Blueprint types
 class AB_RestingPoint;
@@ -167,6 +168,9 @@ protected:
 	UFUNCTION()
 	void HandleTimePassEnd();
 
+	// Respawn all enemies in the level (called when resting)
+	void RespawnAllEnemies();
+
 	// Cached widget references (named differently from Blueprint's BindWidgets to avoid conflict)
 	UPROPERTY()
 	class UWidgetSwitcher* CachedSwitcher;
@@ -176,6 +180,7 @@ protected:
 	class UVerticalBox* TimeEntriesBoxWidget;
 	UW_TimePass* TimePassWidgetRef;
 	class UTextBlock* TimeOfDayTextWidget;
+	UW_LevelUp* LevelUpWidgetRef;
 
 	// Class for creating time entry widgets
 	UPROPERTY()

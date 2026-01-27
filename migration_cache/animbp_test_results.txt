@@ -1,0 +1,32 @@
+=== AnimBP PIE Test ===
+
+[TEST 1] Checking level: /Game/SoulslikeFramework/Maps/L_Demo_Showcase
+[PASS] Demo level exists
+
+[TEST 2] Loading AnimBP: /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeCharacter_Additive
+[PASS] AnimBP loaded successfully
+
+[TEST 3] Checking compile errors
+[INFO] Compile messages:
+=== COMPILE STATUS: ABP_SoulslikeCharacter_Additive ===
+
+Blueprint Status: UNKNOWN
+
+=== NODE ERRORS ===
+[WARNING] K2Node_PropertyAccess_1: Invalid field 'IsGuarding?' found in property path for  Property Access
+
+=== SUMMARY ===
+Errors: 0
+Warnings: 1
+
+[PASS] AnimBP has warnings only (acceptable)
+
+[TEST 4] Checking LinkedAnimLayer nodes
+[PASS] LinkedAnimLayer nodes OK
+
+[TEST 5] Checking Animation Layer Interfaces
+[PASS] ALI_OverlayStates exists
+[PASS] ALI_LocomotionStates exists
+
+=== ALL TESTS PASSED ===
+AnimBP is ready for PIE testing

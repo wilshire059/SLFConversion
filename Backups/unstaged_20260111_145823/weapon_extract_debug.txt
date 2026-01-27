@@ -1,0 +1,40 @@
+
+======================================================================
+EXTRACTING WEAPON MESH DATA (SCS direct access)
+======================================================================
+
+[B_Item_Weapon_SwordExample01]
+  [ERROR] SCS access failed: 'Blueprint' object has no attribute 'simple_construction_script'
+
+[B_Item_Weapon_SwordExample02]
+  [ERROR] SCS access failed: 'Blueprint' object has no attribute 'simple_construction_script'
+
+[B_Item_Weapon_Greatsword]
+  [ERROR] SCS access failed: 'Blueprint' object has no attribute 'simple_construction_script'
+
+[B_Item_Weapon_Katana]
+  [ERROR] SCS access failed: 'Blueprint' object has no attribute 'simple_construction_script'
+
+[B_Item_Weapon_BossMace]
+  [ERROR] SCS access failed: 'Blueprint' object has no attribute 'simple_construction_script'
+
+[B_Item_Weapon_Shield]
+  [ERROR] SCS access failed: 'Blueprint' object has no attribute 'simple_construction_script'
+
+[B_Item_AI_Weapon_Greatsword]
+  [ERROR] SCS access failed: 'Blueprint' object has no attribute 'simple_construction_script'
+
+[B_Item_AI_Weapon_Sword]
+  [ERROR] SCS access failed: 'Blueprint' object has no attribute 'simple_construction_script'
+
+[B_Item_AI_Weapon]
+  [ERROR] SCS access failed: 'Blueprint' object has no attribute 'simple_construction_script'
+
+[B_Item_Weapon]
+  [ERROR] SCS access failed: 'Blueprint' object has no attribute 'simple_construction_script'
+
+======================================================================
+SAVING TO C:/scripts/SLFConversion/migration_cache/weapon_mesh_data.json
+======================================================================
+
+Extracted data for 0 weapons
