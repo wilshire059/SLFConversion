@@ -10,6 +10,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/SizeBox.h"
 #include "GameplayTagContainer.h"
 #include "SLFEnums.h"
 #include "SLFGameTypes.h"
@@ -50,7 +51,7 @@ public:
 	virtual void NativeDestruct() override;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// WIDGET REFERENCES
+	// WIDGET REFERENCES (bp_only names: NameText, DamageText, HealthbarSizer)
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget, OptionalWidget = true), Category = "Widgets")
@@ -59,11 +60,17 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget, OptionalWidget = true), Category = "Widgets")
 	class UProgressBar* HealthBar_Back;
 
+	/** Boss name text - bp_only name: "NameText" */
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget, OptionalWidget = true), Category = "Widgets")
-	class UTextBlock* Txt_BossName;
+	class UTextBlock* NameText;
 
+	/** Damage amount text - bp_only name: "DamageText" */
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget, OptionalWidget = true), Category = "Widgets")
-	class UTextBlock* Txt_DamageAmount;
+	class UTextBlock* DamageText;
+
+	/** Health bar width sizer - bp_only name: "HealthbarSizer" */
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget, OptionalWidget = true), Category = "Widgets")
+	class USizeBox* HealthbarSizer;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (4)
@@ -81,6 +88,10 @@ public:
 	// Cached boss actor reference
 	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	AActor* CachedBossActor;
+
+	// Cached HP stat for binding/unbinding
+	UPROPERTY(Transient)
+	USLFStatBase* CachedBossHPStat;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (0)
