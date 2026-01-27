@@ -13,7 +13,7 @@ UW_ItemWheel_NextSlot::UW_ItemWheel_NextSlot(const FObjectInitializer& ObjectIni
 	: Super(ObjectInitializer)
 	, ParentWheelSlot(nullptr)
 	, ActiveItem(nullptr)
-	, ItemIcon(nullptr)
+	, CachedItemIcon(nullptr)
 {
 }
 
@@ -37,11 +37,11 @@ void UW_ItemWheel_NextSlot::NativeDestruct()
 void UW_ItemWheel_NextSlot::CacheWidgetReferences()
 {
 	// Cache UI widget references by name (matching Blueprint widget tree)
-	ItemIcon = Cast<UImage>(GetWidgetFromName(TEXT("ItemIcon")));
+	CachedItemIcon = Cast<UImage>(GetWidgetFromName(TEXT("CachedItemIcon")));
 
-	if (!ItemIcon)
+	if (!CachedItemIcon)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[W_ItemWheel_NextSlot] ItemIcon widget not found"));
+		UE_LOG(LogTemp, Warning, TEXT("[W_ItemWheel_NextSlot] CachedItemIcon widget not found"));
 	}
 }
 
@@ -54,7 +54,7 @@ void UW_ItemWheel_NextSlot::HandleChildItem_Implementation(UPrimaryDataAsset* In
 	ActiveItem = InItem;
 
 	// Update icon display
-	if (ItemIcon)
+	if (CachedItemIcon)
 	{
 		UPDA_Item* ItemData = Cast<UPDA_Item>(InItem);
 		if (ItemData)
@@ -63,20 +63,20 @@ void UW_ItemWheel_NextSlot::HandleChildItem_Implementation(UPrimaryDataAsset* In
 			TSoftObjectPtr<UTexture2D> IconTexture = ItemData->ItemInformation.IconSmall;
 			if (!IconTexture.IsNull())
 			{
-				ItemIcon->SetBrushFromSoftTexture(IconTexture);
-				ItemIcon->SetVisibility(ESlateVisibility::Visible);
-				UE_LOG(LogTemp, Log, TEXT("[W_ItemWheel_NextSlot] Set ItemIcon to: %s"), *IconTexture.ToString());
+				CachedItemIcon->SetBrushFromSoftTexture(IconTexture);
+				CachedItemIcon->SetVisibility(ESlateVisibility::Visible);
+				UE_LOG(LogTemp, Log, TEXT("[W_ItemWheel_NextSlot] Set CachedItemIcon to: %s"), *IconTexture.ToString());
 			}
 			else
 			{
 				// No icon, hide the image
-				ItemIcon->SetVisibility(ESlateVisibility::Collapsed);
+				CachedItemIcon->SetVisibility(ESlateVisibility::Collapsed);
 			}
 		}
 		else
 		{
 			// No valid item - hide the icon
-			ItemIcon->SetVisibility(ESlateVisibility::Collapsed);
+			CachedItemIcon->SetVisibility(ESlateVisibility::Collapsed);
 		}
 	}
 }
@@ -101,17 +101,17 @@ void UW_ItemWheel_NextSlot::EventPlayStanceFadeAnimation_Implementation(bool Pre
 
 	// Handle fade animation for stance changes (two-hand vs one-hand)
 	// The Blueprint fades out this slot when in two-hand stance
-	if (ItemIcon)
+	if (CachedItemIcon)
 	{
 		if (Pressed)
 		{
 			// Two-hand stance active - fade out / dim the icon
-			ItemIcon->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 1.0f, 0.3f));
+			CachedItemIcon->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 1.0f, 0.3f));
 		}
 		else
 		{
 			// Normal stance - full opacity
-			ItemIcon->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
+			CachedItemIcon->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
 		}
 	}
 }

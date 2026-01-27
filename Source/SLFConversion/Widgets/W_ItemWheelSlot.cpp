@@ -20,9 +20,9 @@ UW_ItemWheelSlot::UW_ItemWheelSlot(const FObjectInitializer& ObjectInitializer)
 	, ShowEmptySlots(false)
 	, VisuallyAffectedByStanceChange(false)
 	, EquipmentComponent(nullptr)
-	, ItemIcon(nullptr)
-	, Debug_IndexText(nullptr)
-	, SlotSizeBox(nullptr)
+	, CachedItemIcon(nullptr)
+	, CachedDebugIndexText(nullptr)
+	, CachedSlotSizeBox(nullptr)
 {
 }
 
@@ -74,13 +74,13 @@ void UW_ItemWheelSlot::NativeDestruct()
 void UW_ItemWheelSlot::CacheWidgetReferences()
 {
 	// Cache UI widget references by name (matching Blueprint widget tree)
-	ItemIcon = Cast<UImage>(GetWidgetFromName(TEXT("ItemIcon")));
-	Debug_IndexText = Cast<UTextBlock>(GetWidgetFromName(TEXT("Debug_IndexText")));
-	SlotSizeBox = Cast<USizeBox>(GetWidgetFromName(TEXT("SlotSizeBox")));
+	CachedItemIcon = Cast<UImage>(GetWidgetFromName(TEXT("CachedItemIcon")));
+	CachedDebugIndexText = Cast<UTextBlock>(GetWidgetFromName(TEXT("CachedDebugIndexText")));
+	CachedSlotSizeBox = Cast<USizeBox>(GetWidgetFromName(TEXT("CachedSlotSizeBox")));
 
-	if (!ItemIcon)
+	if (!CachedItemIcon)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[W_ItemWheelSlot] ItemIcon widget not found"));
+		UE_LOG(LogTemp, Warning, TEXT("[W_ItemWheelSlot] CachedItemIcon widget not found"));
 	}
 }
 
@@ -164,9 +164,9 @@ void UW_ItemWheelSlot::RefreshChildSlots_Implementation()
 	}
 
 	// Update debug index text
-	if (Debug_IndexText)
+	if (CachedDebugIndexText)
 	{
-		Debug_IndexText->SetText(FText::AsNumber(CurrentIndex));
+		CachedDebugIndexText->SetText(FText::AsNumber(CurrentIndex));
 	}
 }
 
@@ -196,21 +196,21 @@ void UW_ItemWheelSlot::EventItemEquipped_Implementation(UPDA_Item* InItem)
 		// Set ActiveItem
 		ActiveItem = InItem;
 
-		// Update ItemIcon from item's icon property
-		if (ItemIcon)
+		// Update CachedItemIcon from item's icon property
+		if (CachedItemIcon)
 		{
 			// Get icon from ItemInformation - use IconSmall (primary icon)
 			TSoftObjectPtr<UTexture2D> IconTexture = InItem->ItemInformation.IconSmall;
 			if (!IconTexture.IsNull())
 			{
-				ItemIcon->SetBrushFromSoftTexture(IconTexture);
-				ItemIcon->SetVisibility(ESlateVisibility::Visible);
-				UE_LOG(LogTemp, Log, TEXT("[W_ItemWheelSlot] Set ItemIcon to: %s"), *IconTexture.ToString());
+				CachedItemIcon->SetBrushFromSoftTexture(IconTexture);
+				CachedItemIcon->SetVisibility(ESlateVisibility::Visible);
+				UE_LOG(LogTemp, Log, TEXT("[W_ItemWheelSlot] Set CachedItemIcon to: %s"), *IconTexture.ToString());
 			}
 			else
 			{
 				// No icon, hide the image
-				ItemIcon->SetVisibility(ESlateVisibility::Collapsed);
+				CachedItemIcon->SetVisibility(ESlateVisibility::Collapsed);
 			}
 		}
 	}
@@ -218,9 +218,9 @@ void UW_ItemWheelSlot::EventItemEquipped_Implementation(UPDA_Item* InItem)
 	{
 		// No item - clear display
 		ActiveItem = nullptr;
-		if (ItemIcon)
+		if (CachedItemIcon)
 		{
-			ItemIcon->SetVisibility(ESlateVisibility::Collapsed);
+			CachedItemIcon->SetVisibility(ESlateVisibility::Collapsed);
 		}
 	}
 }
@@ -231,9 +231,9 @@ void UW_ItemWheelSlot::EventItemRemoved_Implementation()
 
 	// Clear the display
 	ActiveItem = nullptr;
-	if (ItemIcon)
+	if (CachedItemIcon)
 	{
-		ItemIcon->SetVisibility(ESlateVisibility::Collapsed);
+		CachedItemIcon->SetVisibility(ESlateVisibility::Collapsed);
 	}
 }
 
@@ -410,9 +410,9 @@ void UW_ItemWheelSlot::EventScrollWheel_Implementation()
 	OnItemWheelSlotSelected.Broadcast(NewSlotTag);
 
 	// Update debug text
-	if (Debug_IndexText)
+	if (CachedDebugIndexText)
 	{
-		Debug_IndexText->SetText(FText::AsNumber(CurrentIndex));
+		CachedDebugIndexText->SetText(FText::AsNumber(CurrentIndex));
 	}
 }
 

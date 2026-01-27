@@ -86,7 +86,7 @@ protected:
 	// Cache references
 	void CacheWidgetReferences();
 
-	// Cached UI widget references
+	// Cached UI widget references (prefixed to avoid Blueprint name conflicts)
 	UPROPERTY(Transient)
-	TObjectPtr<UImage> ItemIcon;
+	TObjectPtr<UImage> CachedItemIcon;
 };

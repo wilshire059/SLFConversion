@@ -160,15 +160,15 @@ protected:
 	UPROPERTY(Transient)
 	TObjectPtr<UAC_EquipmentManager> EquipmentComponent;
 
-	// Cached UI widget references
+	// Cached UI widget references (prefixed to avoid Blueprint name conflicts)
 	UPROPERTY(Transient)
-	TObjectPtr<UImage> ItemIcon;
+	TObjectPtr<UImage> CachedItemIcon;
 
 	UPROPERTY(Transient)
-	TObjectPtr<UTextBlock> Debug_IndexText;
+	TObjectPtr<UTextBlock> CachedDebugIndexText;
 
 	UPROPERTY(Transient)
-	TObjectPtr<USizeBox> SlotSizeBox;
+	TObjectPtr<USizeBox> CachedSlotSizeBox;
 
 	// Internal handlers for delegate binding
 	UFUNCTION()
