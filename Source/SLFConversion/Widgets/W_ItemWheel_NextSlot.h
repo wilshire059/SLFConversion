@@ -24,6 +24,7 @@
 
 // Forward declarations for widget types
 class UW_ItemWheelSlot;
+class UImage;
 
 // Forward declarations for Blueprint types
 
@@ -84,4 +85,8 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Cached UI widget references
+	UPROPERTY(Transient)
+	TObjectPtr<UImage> ItemIcon;
 };

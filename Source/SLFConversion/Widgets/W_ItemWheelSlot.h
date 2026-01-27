@@ -24,6 +24,10 @@
 
 // Forward declarations for widget types
 class UW_ItemWheel_NextSlot;
+class UAC_EquipmentManager;
+class UImage;
+class UTextBlock;
+class USizeBox;
 
 // Forward declarations for Blueprint types
 
@@ -60,8 +64,9 @@ public:
 	UPrimaryDataAsset* ActiveItem;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	FGameplayTag ActiveSlot;
+	// Key = Slot tag, Value = Item at that slot
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
-	TMap<FGameplayTag, FGameplayTag> TrackedItems;
+	TMap<FGameplayTag, TObjectPtr<UPrimaryDataAsset>> TrackedItems;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
 	FGameplayTag MainSlot;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
@@ -150,4 +155,28 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Cached component reference
+	UPROPERTY(Transient)
+	TObjectPtr<UAC_EquipmentManager> EquipmentComponent;
+
+	// Cached UI widget references
+	UPROPERTY(Transient)
+	TObjectPtr<UImage> ItemIcon;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UTextBlock> Debug_IndexText;
+
+	UPROPERTY(Transient)
+	TObjectPtr<USizeBox> SlotSizeBox;
+
+	// Internal handlers for delegate binding
+	UFUNCTION()
+	void HandleOnItemEquippedToSlot(FSLFCurrentEquipment ItemData, FGameplayTag TargetSlot);
+
+	UFUNCTION()
+	void HandleOnItemUnequippedFromSlot(UPrimaryDataAsset* Item, FGameplayTag TargetSlot);
+
+	UFUNCTION()
+	void HandleOnStanceChanged(bool RightHand, bool TwoHand);
 };
