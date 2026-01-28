@@ -24,9 +24,15 @@
 
 // Forward declarations
 class UNiagaraSystem;
+class UNiagaraComponent;
+class UProjectileMovementComponent;
+class USphereComponent;
 
 /**
  * Base projectile actor - ranged attack with collision, damage, and effects
+ *
+ * COMPONENT OWNERSHIP: Blueprint SCS owns all components.
+ * C++ only caches references at runtime. See CLAUDE.md for pattern.
  */
 UCLASS(Blueprintable, BlueprintType)
 class SLFCONVERSION_API ASLFProjectileBase : public AActor
@@ -41,6 +47,25 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 public:
+	// ═══════════════════════════════════════════════════════════════════
+	// COMPONENTS (created in C++ - Blueprint SCS was cleared during migration)
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** Root component */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USceneComponent* DefaultSceneRoot;
+
+	/** Projectile movement component */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UProjectileMovementComponent* ProjectileMovement;
+
+	/** Niagara effect for trail VFX */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UNiagaraComponent* Effect;
+
+	/** Collision trigger sphere */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USphereComponent* Trigger;
 	// ═══════════════════════════════════════════════════════════════════
 	// VARIABLES: 10/10 migrated
 	// ═══════════════════════════════════════════════════════════════════
@@ -146,4 +171,14 @@ protected:
 	/** Time remaining for homing */
 	UPROPERTY(BlueprintReadWrite, Category = "Projectile|Runtime")
 	float RemainingHomingTime;
+
+	/** Handle trigger overlap for damage and effects */
+	UFUNCTION()
+	void OnTriggerOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult);
 };

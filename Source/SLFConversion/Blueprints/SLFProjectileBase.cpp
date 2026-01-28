@@ -12,12 +12,43 @@
 #include "SLFProjectileBase.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
+#include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/DamageEvents.h"
+#include "Components/AC_AI_CombatManager.h"
+#include "Components/AC_CombatManager.h"
+#include "Components/AICombatManagerComponent.h"
+#include "Components/CombatManagerComponent.h"
 
 ASLFProjectileBase::ASLFProjectileBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	// Create root component
+	DefaultSceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("DefaultSceneRoot"));
+	SetRootComponent(DefaultSceneRoot);
+
+	// Create trigger sphere for collision detection
+	Trigger = CreateDefaultSubobject<USphereComponent>(TEXT("Trigger"));
+	Trigger->SetupAttachment(DefaultSceneRoot);
+	Trigger->SetSphereRadius(32.0f);
+	Trigger->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
+	Trigger->SetGenerateOverlapEvents(true);
+
+	// Create projectile movement component
+	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
+	ProjectileMovement->UpdatedComponent = DefaultSceneRoot;
+	ProjectileMovement->InitialSpeed = 3000.0f;
+	ProjectileMovement->MaxSpeed = 3000.0f;
+	ProjectileMovement->bRotationFollowsVelocity = true;
+	ProjectileMovement->bShouldBounce = false;
+	ProjectileMovement->ProjectileGravityScale = 0.0f;
+
+	// Create Niagara effect component (trail VFX - asset set in Blueprint child)
+	Effect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Effect"));
+	Effect->SetupAttachment(DefaultSceneRoot);
+	Effect->bAutoActivate = false;  // Activate in BeginPlay
 
 	// Initialize targeting
 	TargetTag = FName("Enemy");
@@ -46,10 +77,50 @@ void ASLFProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UE_LOG(LogTemp, Log, TEXT("[Projectile] BeginPlay: %s"), *GetName());
+	UE_LOG(LogTemp, Log, TEXT("[SLFProjectileBase] BeginPlay: %s"), *GetName());
 
+	// Setup lifespan
 	SetLifeSpan(Lifespan);
 	RemainingHomingTime = HomingDuration;
+
+	// Bind trigger overlap event
+	if (Trigger)
+	{
+		Trigger->OnComponentBeginOverlap.AddDynamic(this, &ASLFProjectileBase::OnTriggerOverlap);
+		UE_LOG(LogTemp, Log, TEXT("[SLFProjectileBase] Bound trigger overlap (radius=%.1f)"),
+			Trigger->GetScaledSphereRadius());
+	}
+
+	// Set initial velocity in forward direction
+	if (ProjectileMovement)
+	{
+		// Apply speed from Blueprint if set, otherwise use constructor defaults
+		if (ProjectileSpeed > 0.0f)
+		{
+			ProjectileMovement->InitialSpeed = ProjectileSpeed;
+			ProjectileMovement->MaxSpeed = ProjectileSpeed;
+		}
+
+		// Set velocity in actor's forward direction
+		ProjectileMovement->Velocity = GetActorForwardVector() * ProjectileMovement->InitialSpeed;
+
+		UE_LOG(LogTemp, Log, TEXT("[SLFProjectileBase] ProjectileMovement: Speed=%.1f, Velocity=%s"),
+			ProjectileMovement->InitialSpeed, *ProjectileMovement->Velocity.ToString());
+	}
+
+	// Activate Niagara trail effect
+	if (Effect && Effect->GetAsset())
+	{
+		Effect->Activate(true);
+		UE_LOG(LogTemp, Log, TEXT("[SLFProjectileBase] Activated Niagara effect: %s"),
+			*Effect->GetAsset()->GetName());
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[SLFProjectileBase] Components: Root=%s, Movement=%s, Trigger=%s, Effect=%s"),
+		DefaultSceneRoot ? TEXT("YES") : TEXT("NO"),
+		ProjectileMovement ? TEXT("YES") : TEXT("NO"),
+		Trigger ? TEXT("YES") : TEXT("NO"),
+		Effect ? TEXT("YES") : TEXT("NO"));
 }
 
 void ASLFProjectileBase::Tick(float DeltaTime)
@@ -90,46 +161,128 @@ void ASLFProjectileBase::SetupProjectile_Implementation()
 
 void ASLFProjectileBase::OnProjectileHit_Implementation(AActor* HitActor, const FHitResult& HitResult)
 {
-	UE_LOG(LogTemp, Log, TEXT("[Projectile] OnProjectileHit: %s"),
+	UE_LOG(LogTemp, Log, TEXT("[SLFProjectileBase] OnProjectileHit: %s"),
 		HitActor ? *HitActor->GetName() : TEXT("null"));
 
-	// Spawn hit effect
-	if (HitEffect)
+	if (!HitActor)
 	{
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(
-			this, HitEffect, HitResult.ImpactPoint,
-			HitResult.ImpactNormal.Rotation());
+		return;
 	}
 
-	// Apply damage
-	if (HitActor && HitActor->ActorHasTag(TargetTag))
-	{
-		float Damage = CalculateDamage();
-		
-		// Apply damage via UE5 damage system
-		FPointDamageEvent DamageEvent;
-		DamageEvent.Damage = Damage;
-		DamageEvent.HitInfo = HitResult;
-		DamageEvent.ShotDirection = GetVelocity().GetSafeNormal();
-		
-		HitActor->TakeDamage(Damage, DamageEvent, GetInstigatorController(), this);
-		
-		UE_LOG(LogTemp, Verbose, TEXT("[Projectile] Applied %.2f damage to %s"), Damage, *HitActor->GetName());
-	}
+	// Calculate damage
+	float Damage = CalculateDamage();
 
-	// Apply status effects to target
-	// Note: StatusEffects array contains tags; actual effect application requires data assets
-	// which would be looked up from a data table or registry in a full implementation
-	if (HitActor && StatusEffects.Num() > 0)
+	// Check if target has "Enemy" tag - apply damage via combat manager
+	if (HitActor->ActorHasTag(FName("Enemy")))
 	{
-		for (const FGameplayTag& EffectTag : StatusEffects)
+		bool bDamageApplied = false;
+
+		// Try UAICombatManagerComponent first (native C++ enemies)
+		UAICombatManagerComponent* AICombatComp = HitActor->FindComponentByClass<UAICombatManagerComponent>();
+		if (AICombatComp)
 		{
-			UE_LOG(LogTemp, Log, TEXT("[Projectile] Status effect %s would be applied to %s"), 
-				*EffectTag.ToString(), *HitActor->GetName());
+			UE_LOG(LogTemp, Log, TEXT("[SLFProjectileBase] Applying %.1f damage to Enemy via UAICombatManagerComponent"), Damage);
+			AICombatComp->HandleProjectileDamage_AI(this, Damage, 0.0f, HitResult);
+			bDamageApplied = true;
+		}
+
+		// Fallback to UAC_AI_CombatManager (Blueprint component)
+		if (!bDamageApplied)
+		{
+			UAC_AI_CombatManager* AICombatManager = HitActor->FindComponentByClass<UAC_AI_CombatManager>();
+			if (AICombatManager)
+			{
+				UE_LOG(LogTemp, Log, TEXT("[SLFProjectileBase] Applying %.1f damage to Enemy via UAC_AI_CombatManager"), Damage);
+
+				TMap<FGameplayTag, UPrimaryDataAsset*> StatusEffectsMap;
+				for (const FGameplayTag& EffectTag : StatusEffects)
+				{
+					StatusEffectsMap.Add(EffectTag, nullptr);
+				}
+
+				AICombatManager->HandleProjectileDamage_AI(Damage, HitEffect, NegationStat, StatusEffectsMap);
+				bDamageApplied = true;
+			}
+		}
+
+		if (bDamageApplied)
+		{
+			// Spawn hit effect at impact point
+			if (HitEffect)
+			{
+				FVector SpawnLocation = HitResult.ImpactPoint.IsZero() ? HitActor->GetActorLocation() : FVector(HitResult.ImpactPoint);
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, HitEffect, SpawnLocation);
+			}
+
+			// Destroy projectile after hit
+			SetLifeSpan(DestroyDelay);
+			return;
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[SLFProjectileBase] Enemy has no combat manager component!"));
 		}
 	}
 
-	// Destroy after delay
+	// Check if target has "Player" tag - apply damage via combat manager
+	if (HitActor->ActorHasTag(FName("Player")))
+	{
+		bool bDamageApplied = false;
+
+		// Try UCombatManagerComponent first (native C++ player)
+		UCombatManagerComponent* CombatComp = HitActor->FindComponentByClass<UCombatManagerComponent>();
+		if (CombatComp)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[SLFProjectileBase] Applying %.1f damage to Player via UCombatManagerComponent"), Damage);
+			CombatComp->HandleProjectileDamage(this, Damage, 0.0f, HitResult);
+			bDamageApplied = true;
+		}
+
+		// Fallback to UAC_CombatManager (Blueprint component)
+		if (!bDamageApplied)
+		{
+			UAC_CombatManager* CombatManager = HitActor->FindComponentByClass<UAC_CombatManager>();
+			if (CombatManager)
+			{
+				UE_LOG(LogTemp, Log, TEXT("[SLFProjectileBase] Applying %.1f damage to Player via UAC_CombatManager"), Damage);
+
+				TMap<FGameplayTag, UPrimaryDataAsset*> StatusEffectsMap;
+				for (const FGameplayTag& EffectTag : StatusEffects)
+				{
+					StatusEffectsMap.Add(EffectTag, nullptr);
+				}
+
+				CombatManager->HandleProjectileDamage(Damage, HitEffect, NegationStat, StatusEffectsMap);
+				bDamageApplied = true;
+			}
+		}
+
+		if (bDamageApplied)
+		{
+			if (HitEffect)
+			{
+				FVector SpawnLocation = HitResult.ImpactPoint.IsZero() ? HitActor->GetActorLocation() : FVector(HitResult.ImpactPoint);
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, HitEffect, SpawnLocation);
+			}
+
+			SetLifeSpan(DestroyDelay);
+			return;
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[SLFProjectileBase] Player has no combat manager component!"));
+		}
+	}
+
+	// Hit something else (world geometry, etc.) - just spawn effect and destroy
+	UE_LOG(LogTemp, Log, TEXT("[SLFProjectileBase] Hit non-target: %s (no Enemy/Player tag)"), *HitActor->GetName());
+
+	if (HitEffect)
+	{
+		FVector SpawnLocation = HitResult.ImpactPoint.IsZero() ? GetActorLocation() : FVector(HitResult.ImpactPoint);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, HitEffect, SpawnLocation);
+	}
+
 	SetLifeSpan(DestroyDelay);
 }
 
@@ -159,4 +312,25 @@ void ASLFProjectileBase::SetHomingTarget_Implementation(AActor* Target)
 float ASLFProjectileBase::CalculateDamage_Implementation()
 {
 	return FMath::RandRange(MinDamage, MaxDamage);
+}
+
+void ASLFProjectileBase::OnTriggerOverlap(
+	UPrimitiveComponent* OverlappedComponent,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex,
+	bool bFromSweep,
+	const FHitResult& SweepResult)
+{
+	// Ignore self
+	if (OtherActor == this || OtherActor == GetOwner())
+	{
+		return;
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[SLFProjectileBase] OnTriggerOverlap: Hit %s"),
+		OtherActor ? *OtherActor->GetName() : TEXT("null"));
+
+	// Call the projectile hit handler
+	OnProjectileHit(OtherActor, SweepResult);
 }

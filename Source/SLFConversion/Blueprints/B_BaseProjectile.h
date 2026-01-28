@@ -2,6 +2,7 @@
 // C++ class for Blueprint B_BaseProjectile
 //
 // 20-PASS VALIDATION: 2026-01-01 Autonomous Session
+// Updated 2026-01-28: Added ProjectileMovementComponent, NiagaraComponent, SphereComponent
 // Source: BlueprintDNA/Blueprint/B_BaseProjectile.json
 // Parent: Actor -> AActor
 // Variables: 10 | Functions: 1 | Dispatchers: 0
@@ -27,6 +28,10 @@
 // Forward declarations
 class UAnimMontage;
 class UDataTable;
+class UProjectileMovementComponent;
+class UNiagaraComponent;
+class USphereComponent;
+class USceneComponent;
 
 
 // Event Dispatchers
@@ -39,6 +44,34 @@ class SLFCONVERSION_API AB_BaseProjectile : public AActor, public ISLFProjectile
 
 public:
 	AB_BaseProjectile();
+
+	virtual void BeginPlay() override;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// INTERFACE IMPLEMENTATION (ISLFProjectileInterface)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	virtual void InitializeProjectile_Implementation(AActor* TargetActor) override;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// COMPONENTS (cached from Blueprint SCS - see CLAUDE.md pattern)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	/** Root component - cached from SCS */
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components")
+	USceneComponent* DefaultSceneRoot;
+
+	/** Projectile movement - cached from SCS */
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components")
+	UProjectileMovementComponent* ProjectileMovement;
+
+	/** Niagara effect for trail/impact VFX - cached from SCS */
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components")
+	UNiagaraComponent* Effect;
+
+	/** Collision trigger sphere - cached from SCS */
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components")
+	USphereComponent* Trigger;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (10)
@@ -75,4 +108,17 @@ public:
 	// FUNCTIONS (1)
 	// ═══════════════════════════════════════════════════════════════════════
 
+protected:
+	/** Cache component references from Blueprint SCS */
+	void CacheComponentReferences();
+
+	/** Handle trigger overlap for damage and effects */
+	UFUNCTION()
+	void OnTriggerOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult);
 };
