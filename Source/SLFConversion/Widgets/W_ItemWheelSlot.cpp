@@ -47,12 +47,21 @@ void UW_ItemWheelSlot::NativeConstruct()
 		EquipmentComponent->OnItemUnequippedFromSlot.AddUniqueDynamic(this, &UW_ItemWheelSlot::HandleOnItemUnequippedFromSlot);
 		EquipmentComponent->OnStanceChanged.AddUniqueDynamic(this, &UW_ItemWheelSlot::HandleOnStanceChanged);
 
-		UE_LOG(LogTemp, Log, TEXT("[W_ItemWheelSlot] Bound to EquipmentManager events, Identifier: %s, SlotsToTrack: %d"),
-			*Identifier.ToString(), SlotsToTrack.Num());
+		// Log tracked slots for debugging
+		TArray<FGameplayTag> Tags;
+		SlotsToTrack.GetGameplayTagArray(Tags);
+		FString TagsStr;
+		for (const FGameplayTag& Tag : Tags)
+		{
+			TagsStr += Tag.ToString() + TEXT(", ");
+		}
+		UE_LOG(LogTemp, Log, TEXT("[W_ItemWheelSlot] Bound to EquipmentManager events, Identifier: %s, SlotsToTrack(%d): [%s]"),
+			*Identifier.ToString(), SlotsToTrack.Num(), *TagsStr);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[W_ItemWheelSlot] EquipmentManager not found on PlayerController"));
+		UE_LOG(LogTemp, Warning, TEXT("[W_ItemWheelSlot] EquipmentManager not found on PlayerController, Identifier: %s"),
+			*Identifier.ToString());
 	}
 
 	// Initialize Length from SlotsToTrack
@@ -270,12 +279,16 @@ void UW_ItemWheelSlot::EventOnItemEquippedToSlot_Implementation(FSLFCurrentEquip
 	// Check if this slot is one we're tracking
 	if (!SlotsToTrack.HasTag(TargetSlot))
 	{
+		UE_LOG(LogTemp, Verbose, TEXT("[W_ItemWheelSlot] EventOnItemEquippedToSlot SKIPPED - Identifier: %s, TargetSlot: %s not in SlotsToTrack"),
+			*Identifier.ToString(), *TargetSlot.ToString());
 		return;
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("[W_ItemWheelSlot] EventOnItemEquippedToSlot - Slot: %s, Item: %s"),
+	UE_LOG(LogTemp, Log, TEXT("[W_ItemWheelSlot] EventOnItemEquippedToSlot MATCHED - Identifier: %s, Slot: %s, Item: %s, TrackedItems now: %d"),
+		*Identifier.ToString(),
 		*TargetSlot.ToString(),
-		ItemData.ItemAsset ? *ItemData.ItemAsset->GetName() : TEXT("None"));
+		ItemData.ItemAsset ? *ItemData.ItemAsset->GetName() : TEXT("None"),
+		TrackedItems.Num() + 1);
 
 	// Add to TrackedItems map: Key = TargetSlot, Value = ItemAsset
 	if (ItemData.ItemAsset)
@@ -367,11 +380,12 @@ void UW_ItemWheelSlot::EventOnStanceChanged_Implementation(bool RightHand, bool 
 
 void UW_ItemWheelSlot::EventScrollWheel_Implementation()
 {
-	UE_LOG(LogTemp, Log, TEXT("[W_ItemWheelSlot] EventScrollWheel - CurrentIndex: %d, Length: %d"),
-		CurrentIndex, Length);
+	UE_LOG(LogTemp, Log, TEXT("[W_ItemWheelSlot] EventScrollWheel - Identifier: %s, CurrentIndex: %d, Length: %d, TrackedItems: %d, SlotsToTrack: %d"),
+		*Identifier.ToString(), CurrentIndex, Length, TrackedItems.Num(), SlotsToTrack.Num());
 
 	if (Length <= 0)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_ItemWheelSlot] EventScrollWheel FAILED - Length is 0! SlotsToTrack may not be configured."));
 		return;
 	}
 

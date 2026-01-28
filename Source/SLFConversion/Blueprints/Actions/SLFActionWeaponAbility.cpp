@@ -81,7 +81,7 @@ void USLFActionWeaponAbility::ExecuteAction_Implementation()
 	// Check if we have enough FP to use the ability
 	if (FPCost > 0.0f)
 	{
-		UAC_StatManager* StatMgr = GetStatManager();
+		UStatManagerComponent* StatMgr = GetStatManager();
 		if (StatMgr)
 		{
 			FGameplayTag FPTag = FGameplayTag::RequestGameplayTag(FName("Stat.FP"), false);

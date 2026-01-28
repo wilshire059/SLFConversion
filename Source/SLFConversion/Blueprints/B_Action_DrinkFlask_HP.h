@@ -52,8 +52,11 @@ public:
 
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (1)
+	// FUNCTIONS (2)
 	// ═══════════════════════════════════════════════════════════════════════
+
+	// Override ExecuteAction to implement flask drinking logic
+	virtual void ExecuteAction_Implementation() override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "B_Action_DrinkFlask_HP")
 	double GetChangeAmountFromPercent(const FGameplayTag& Stat, double PercentChange);

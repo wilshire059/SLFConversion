@@ -12,11 +12,11 @@
 #include "SLFActionBase.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/Controller.h"
-#include "AC_StatManager.h"
+#include "Components/StatManagerComponent.h"  // Use UStatManagerComponent, NOT UAC_StatManager
+#include "Components/InventoryManagerComponent.h"  // Use UInventoryManagerComponent, NOT UAC_InventoryManager
 #include "AC_ActionManager.h"
 #include "AC_CombatManager.h"
 #include "AC_EquipmentManager.h"
-#include "AC_InventoryManager.h"
 #include "AC_InteractionManager.h"
 #include "AC_InputBuffer.h"
 #include "Animation/AnimInstance.h"
@@ -71,18 +71,18 @@ UAC_InteractionManager* USLFActionBase::GetInteractionManager_Implementation()
 	return nullptr;
 }
 
-UAC_InventoryManager* USLFActionBase::GetInventoryManager_Implementation()
+UInventoryManagerComponent* USLFActionBase::GetInventoryManager_Implementation()
 {
 	if (OwnerActor)
 	{
-		UAC_InventoryManager* Result = OwnerActor->FindComponentByClass<UAC_InventoryManager>();
+		UInventoryManagerComponent* Result = OwnerActor->FindComponentByClass<UInventoryManagerComponent>();
 		if (Result) return Result;
 
 		if (APawn* Pawn = Cast<APawn>(OwnerActor))
 		{
 			if (AController* Controller = Pawn->GetController())
 			{
-				Result = Controller->FindComponentByClass<UAC_InventoryManager>();
+				Result = Controller->FindComponentByClass<UInventoryManagerComponent>();
 				if (Result) return Result;
 			}
 		}
@@ -90,18 +90,18 @@ UAC_InventoryManager* USLFActionBase::GetInventoryManager_Implementation()
 	return nullptr;
 }
 
-UAC_StatManager* USLFActionBase::GetStatManager_Implementation()
+UStatManagerComponent* USLFActionBase::GetStatManager_Implementation()
 {
 	if (OwnerActor)
 	{
-		UAC_StatManager* Result = OwnerActor->FindComponentByClass<UAC_StatManager>();
+		UStatManagerComponent* Result = OwnerActor->FindComponentByClass<UStatManagerComponent>();
 		if (Result) return Result;
 
 		if (APawn* Pawn = Cast<APawn>(OwnerActor))
 		{
 			if (AController* Controller = Pawn->GetController())
 			{
-				Result = Controller->FindComponentByClass<UAC_StatManager>();
+				Result = Controller->FindComponentByClass<UStatManagerComponent>();
 				if (Result) return Result;
 			}
 		}
@@ -223,7 +223,7 @@ UDataAsset* USLFActionBase::GetWeaponAnimset_Implementation()
 
 bool USLFActionBase::CheckStatRequirement_Implementation(FGameplayTag StatTag, float RequiredValue)
 {
-	if (UAC_StatManager* StatManager = GetStatManager())
+	if (UStatManagerComponent* StatManager = GetStatManager())
 	{
 		return StatManager->IsStatMoreThan(StatTag, RequiredValue);
 	}
@@ -232,7 +232,7 @@ bool USLFActionBase::CheckStatRequirement_Implementation(FGameplayTag StatTag, f
 
 void USLFActionBase::AdjustStatByRequirement_Implementation(FGameplayTag StatTag, float Amount)
 {
-	if (UAC_StatManager* StatManager = GetStatManager())
+	if (UStatManagerComponent* StatManager = GetStatManager())
 	{
 		// New signature: (StatTag, ValueType, Change, bLevelUp, bTriggerRegen)
 		StatManager->AdjustStat(StatTag, ESLFValueType::CurrentValue, -Amount, false, true);

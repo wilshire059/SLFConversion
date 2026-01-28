@@ -67,6 +67,13 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	/** Delayed equip for starting flask (called after AC_EquipmentManager is ready) */
+	void EquipStartingFlask();
+
+	/** Cached flask asset for delayed equip */
+	UPROPERTY(Transient)
+	UDataAsset* CachedFlaskAsset;
+
 public:
 	// ═══════════════════════════════════════════════════════════════════
 	// VARIABLES: 7/7 migrated
@@ -171,6 +178,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory|Items")
 	void ReplenishItem(UDataAsset* ItemAsset, int32 Amount);
 	virtual void ReplenishItem_Implementation(UDataAsset* ItemAsset, int32 Amount);
+
+	/** Replenish all rechargeable items (flasks) - call this when resting */
+	UFUNCTION(BlueprintCallable, Category = "Inventory|Items")
+	void ReplenishAllRechargeableItems();
 
 	/** [6/35] Get empty slot index for slot type */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory|Items")

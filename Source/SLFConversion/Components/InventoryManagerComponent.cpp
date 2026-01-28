@@ -10,6 +10,8 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 #include "InventoryManagerComponent.h"
+#include "EquipmentManagerComponent.h"
+#include "AC_EquipmentManager.h"
 #include "SLFPrimaryDataAssets.h"
 #include "Blueprints/B_PickupItem.h"
 #include "GameFramework/Character.h"
@@ -17,6 +19,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Framework/SLFPlayerController.h"
 #include "Widgets/W_HUD.h"
+#include "GameplayTagContainer.h"
 
 UInventoryManagerComponent::UInventoryManagerComponent()
 {
@@ -36,6 +39,65 @@ void UInventoryManagerComponent::BeginPlay()
 	Super::BeginPlay();
 	OwnerActor = GetOwner();
 	UE_LOG(LogTemp, Log, TEXT("[InventoryManager] BeginPlay on %s"), *OwnerActor->GetName());
+
+	// Give player starting items (Health Flask)
+	static const FSoftObjectPath HealthFlaskPath(TEXT("/Game/SoulslikeFramework/Data/Items/DA_HealthFlask.DA_HealthFlask"));
+	if (UObject* FlaskAsset = HealthFlaskPath.TryLoad())
+	{
+		if (UDataAsset* FlaskData = Cast<UDataAsset>(FlaskAsset))
+		{
+			AddItem(FlaskData, 5, false); // 5 flasks (charges), no loot UI
+			UE_LOG(LogTemp, Log, TEXT("[InventoryManager] Added 5x Health Flask to inventory"));
+
+			// Delay the equip to ensure AC_EquipmentManager is ready
+			// (AC_EquipmentManager::BeginPlay runs after this)
+			CachedFlaskAsset = FlaskData;
+			GetWorld()->GetTimerManager().SetTimerForNextTick(this, &UInventoryManagerComponent::EquipStartingFlask);
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[InventoryManager] Failed to load DA_HealthFlask!"));
+	}
+}
+
+void UInventoryManagerComponent::EquipStartingFlask()
+{
+	if (!CachedFlaskAsset)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[InventoryManager] EquipStartingFlask - No cached flask asset!"));
+		return;
+	}
+
+	// AC_EquipmentManager is on the PlayerController (same as InventoryManagerComponent)
+	// NOT on the Pawn/Character!
+	UAC_EquipmentManager* EquipMgr = nullptr;
+	if (OwnerActor)
+	{
+		EquipMgr = OwnerActor->FindComponentByClass<UAC_EquipmentManager>();
+		UE_LOG(LogTemp, Log, TEXT("[InventoryManager] EquipStartingFlask - Looking for AC_EquipmentManager on %s: %s"),
+			*OwnerActor->GetName(), EquipMgr ? TEXT("YES") : TEXT("NO"));
+	}
+
+	if (EquipMgr)
+	{
+		// Use "Tool 1" (singular) to match ItemWheel SlotsToTrack configuration
+		FGameplayTag ToolSlot1 = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 1"));
+		bool bSuccess1, bSuccess2, bSuccess3;
+		EquipMgr->EquipToolToSlot(Cast<UPrimaryDataAsset>(CachedFlaskAsset), ToolSlot1, false, bSuccess1, bSuccess2, bSuccess3);
+		EquipMgr->SetActiveToolSlot(ToolSlot1);
+		UE_LOG(LogTemp, Log, TEXT("[InventoryManager] Equipped Health Flask to Tool 1 slot and set as active (success: %s)"),
+			bSuccess1 ? TEXT("YES") : TEXT("NO"));
+
+		// Only clear after successful equip
+		CachedFlaskAsset = nullptr;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[InventoryManager] EquipStartingFlask - AC_EquipmentManager not found, retrying..."));
+		// Retry next frame - keep CachedFlaskAsset for retry
+		GetWorld()->GetTimerManager().SetTimerForNextTick(this, &UInventoryManagerComponent::EquipStartingFlask);
+	}
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -245,6 +307,50 @@ void UInventoryManagerComponent::ReplenishItem_Implementation(UDataAsset* ItemAs
 	}
 }
 
+void UInventoryManagerComponent::ReplenishAllRechargeableItems()
+{
+	UE_LOG(LogTemp, Log, TEXT("[InventoryManager] ReplenishAllRechargeableItems"));
+
+	int32 ReplenishedCount = 0;
+
+	// Iterate through all inventory items
+	for (auto& Pair : Items)
+	{
+		FSLFInventoryItem& Item = Pair.Value;
+
+		// Check if this item is rechargeable
+		if (UPDA_Item* ItemData = Cast<UPDA_Item>(Item.ItemAsset))
+		{
+			if (ItemData->ItemInformation.bRechargeable)
+			{
+				// Get max amount from item data
+				int32 MaxAmount = ItemData->ItemInformation.MaxAmount;
+				if (MaxAmount <= 0) MaxAmount = 5; // Default max for flasks
+
+				int32 OldAmount = Item.Amount;
+				Item.Amount = MaxAmount;
+				ReplenishedCount++;
+
+				UE_LOG(LogTemp, Log, TEXT("  Replenished %s: %d -> %d"),
+					*ItemData->GetName(), OldAmount, MaxAmount);
+
+				// Broadcast update for this item
+				OnItemAmountUpdated.Broadcast(ItemData, OldAmount, MaxAmount);
+			}
+		}
+	}
+
+	if (ReplenishedCount > 0)
+	{
+		OnInventoryUpdated.Broadcast();
+		UE_LOG(LogTemp, Log, TEXT("  Total items replenished: %d"), ReplenishedCount);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("  No rechargeable items found to replenish"));
+	}
+}
+
 int32 UInventoryManagerComponent::GetEmptySlot_Implementation(ESLFInventorySlotType SlotType)
 {
 	const TMap<int32, FSLFInventoryItem>& TargetMap = (SlotType == ESLFInventorySlotType::StorageSlot) ? StoredItems : Items;
@@ -263,14 +369,25 @@ void UInventoryManagerComponent::UseItemAtSlot_Implementation(int32 SlotIndex)
 {
 	if (FSLFInventoryItem* Item = Items.Find(SlotIndex))
 	{
-		UE_LOG(LogTemp, Log, TEXT("[InventoryManager] UseItemAtSlot %d: %s"),
-			SlotIndex, Item->ItemAsset ? *Item->ItemAsset->GetName() : TEXT("null"));
+		UE_LOG(LogTemp, Log, TEXT("[InventoryManager] UseItemAtSlot %d: %s (Amount: %d)"),
+			SlotIndex, Item->ItemAsset ? *Item->ItemAsset->GetName() : TEXT("null"), Item->Amount);
+
+		// Check if item has charges to use
+		if (Item->Amount <= 0)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[InventoryManager] Item has no charges left!"));
+			return;
+		}
+
 		// Execute item use effect (IMPLEMENTED)
 		if (UPDA_Item* ItemData = Cast<UPDA_Item>(Item->ItemAsset))
 		{
 			// Check if item is usable
 			if (ItemData->ItemInformation.bUsable)
 			{
+				// Check if this is a rechargeable item (flask)
+				bool bIsRechargeable = ItemData->ItemInformation.bRechargeable;
+
 				// Broadcast that item amount is changing (no OnItemUsed dispatcher exists)
 				OnItemAmountUpdated.Broadcast(ItemData, Item->Amount, Item->Amount - 1);
 
@@ -279,11 +396,19 @@ void UInventoryManagerComponent::UseItemAtSlot_Implementation(int32 SlotIndex)
 				{
 					UE_LOG(LogTemp, Log, TEXT("[InventoryManager] Item triggers action: %s"),
 						*ItemData->ItemInformation.ActionToTrigger.ToString());
-					// The action is typically handled by the ActionManager component
-					// which listens to OnItemUsed or checks ActionToTrigger
+				}
+
+				// For rechargeable items, just decrement amount (don't remove at 0)
+				if (bIsRechargeable)
+				{
+					Item->Amount -= 1;
+					UE_LOG(LogTemp, Log, TEXT("[InventoryManager] Rechargeable item - new amount: %d"), Item->Amount);
+					OnInventoryUpdated.Broadcast();
+					return;
 				}
 			}
 		}
+		// For non-rechargeable items, use normal removal (removes at 0)
 		RemoveItemAtSlot(SlotIndex, 1);
 	}
 }

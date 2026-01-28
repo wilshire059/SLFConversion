@@ -7255,4 +7255,104 @@ FString USLFAutomationLibrary::ApplyAllStatusEffectRankInfo()
 	return Result;
 }
 
+// ============================================================================
+// FLASK DATA RESTORATION
+// ============================================================================
+
+FString USLFAutomationLibrary::ApplyFlaskData()
+{
+	UE_LOG(LogSLFAutomation, Log, TEXT("=== ApplyFlaskData ==="));
+
+	const FString ActionAssetPath = TEXT("/Game/SoulslikeFramework/Data/Actions/ActionData/DA_Action_DrinkFlask_HP");
+
+	// Load the action data asset
+	UPDA_ActionBase* ActionData = Cast<UPDA_ActionBase>(
+		StaticLoadObject(UPDA_ActionBase::StaticClass(), nullptr, *ActionAssetPath));
+
+	if (!ActionData)
+	{
+		FString Error = FString::Printf(TEXT("ERROR: Failed to load action data asset: %s"), *ActionAssetPath);
+		UE_LOG(LogSLFAutomation, Error, TEXT("%s"), *Error);
+		return Error;
+	}
+
+	UE_LOG(LogSLFAutomation, Log, TEXT("Loaded action data: %s"), *ActionData->GetName());
+
+	// Check current state of RelevantData
+	const FSLFFlaskData* CurrentFlaskData = ActionData->RelevantData.GetPtr<FSLFFlaskData>();
+	if (CurrentFlaskData && CurrentFlaskData->StatChangesPercent.Num() > 0)
+	{
+		UE_LOG(LogSLFAutomation, Log, TEXT("RelevantData already has valid FSLFFlaskData with %d stat changes"),
+			CurrentFlaskData->StatChangesPercent.Num());
+		return FString::Printf(TEXT("OK: FlaskData already valid with %d stat changes"), CurrentFlaskData->StatChangesPercent.Num());
+	}
+
+	// Create FSLFFlaskData struct
+	FSLFFlaskData FlaskData;
+
+	// Create stat change for HP heal at 40%
+	FStatChangePercent HPChange;
+	HPChange.StatTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"));
+	HPChange.ValueType = ESLFValueType::CurrentValue;
+	HPChange.PercentChange = 40.0;
+	HPChange.bTryActivateRegen = false;
+	FlaskData.StatChangesPercent.Add(HPChange);
+
+	// Set drinking montage
+	FlaskData.DrinkingMontage = TSoftObjectPtr<UAnimMontage>(
+		FSoftObjectPath(TEXT("/Game/SoulslikeFramework/Demo/_Animations/Interaction/Flask/AM_SLF_DrinkFlask.AM_SLF_DrinkFlask")));
+
+	// Set VFX
+	FlaskData.VFX = TSoftObjectPtr<UNiagaraSystem>(
+		FSoftObjectPath(TEXT("/Game/SoulslikeFramework/VFX/Systems/NS_Flask_HP.NS_Flask_HP")));
+
+	UE_LOG(LogSLFAutomation, Log, TEXT("Created FSLFFlaskData:"));
+	UE_LOG(LogSLFAutomation, Log, TEXT("  StatChangesPercent: %d entries"), FlaskData.StatChangesPercent.Num());
+	UE_LOG(LogSLFAutomation, Log, TEXT("  StatTag: %s, PercentChange: %.1f"),
+		*HPChange.StatTag.ToString(), HPChange.PercentChange);
+	UE_LOG(LogSLFAutomation, Log, TEXT("  DrinkingMontage: %s"),
+		*FlaskData.DrinkingMontage.GetAssetName());
+	UE_LOG(LogSLFAutomation, Log, TEXT("  VFX: %s"),
+		*FlaskData.VFX.GetAssetName());
+
+	// Set the InstancedStruct with FSLFFlaskData
+	ActionData->RelevantData.InitializeAs<FSLFFlaskData>(FlaskData);
+
+	// Verify the data was set
+	const FSLFFlaskData* VerifyData = ActionData->RelevantData.GetPtr<FSLFFlaskData>();
+	if (!VerifyData || VerifyData->StatChangesPercent.Num() == 0)
+	{
+		FString Error = TEXT("ERROR: Failed to set FSLFFlaskData on RelevantData");
+		UE_LOG(LogSLFAutomation, Error, TEXT("%s"), *Error);
+		return Error;
+	}
+
+	// Mark the package dirty and save
+	ActionData->MarkPackageDirty();
+	UPackage* Package = ActionData->GetOutermost();
+	if (Package)
+	{
+		FString PackageFilename = FPackageName::LongPackageNameToFilename(Package->GetName(), FPackageName::GetAssetPackageExtension());
+		FSavePackageArgs SaveArgs;
+		SaveArgs.TopLevelFlags = RF_Standalone;
+		SaveArgs.SaveFlags = SAVE_NoError | SAVE_KeepDirty;
+		bool bSaved = UPackage::SavePackage(Package, ActionData, *PackageFilename, SaveArgs);
+
+		if (bSaved)
+		{
+			UE_LOG(LogSLFAutomation, Log, TEXT("Saved package: %s"), *PackageFilename);
+		}
+		else
+		{
+			UE_LOG(LogSLFAutomation, Warning, TEXT("Failed to save package: %s"), *PackageFilename);
+		}
+	}
+
+	FString Result = FString::Printf(TEXT("SUCCESS: Applied FSLFFlaskData with %d stat changes, Montage: %s"),
+		FlaskData.StatChangesPercent.Num(),
+		*FlaskData.DrinkingMontage.GetAssetName());
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
 #endif // WITH_EDITOR

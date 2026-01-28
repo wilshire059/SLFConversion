@@ -8,7 +8,7 @@
 #include "Components/AC_EquipmentManager.h"
 #include "Components/AC_InteractionManager.h"
 #include "Components/AC_InventoryManager.h"
-#include "Components/AC_StatManager.h"
+#include "Components/StatManagerComponent.h"  // Use UStatManagerComponent
 #include "Components/AC_CombatManager.h"
 #include "Components/AC_ActionManager.h"
 #include "Components/AC_InputBuffer.h"
@@ -44,11 +44,11 @@ UAC_InventoryManager* UB_Action::GetInventoryManager_Implementation()
 	}
 	return nullptr;
 }
-UAC_StatManager* UB_Action::GetStatManager_Implementation()
+UStatManagerComponent* UB_Action::GetStatManager_Implementation()
 {
 	if (OwnerActor)
 	{
-		return OwnerActor->FindComponentByClass<UAC_StatManager>();
+		return OwnerActor->FindComponentByClass<UStatManagerComponent>();
 	}
 	return nullptr;
 }
@@ -176,7 +176,7 @@ void UB_Action::CheckStatRequirement_Implementation(ESLFActionWeaponSlot Stamina
 	OutSuccess = false;
 	OutSuccess1 = false;
 
-	UAC_StatManager* StatManager = GetStatManager();
+	UStatManagerComponent* StatManager = GetStatManager();
 	if (!StatManager)
 	{
 		// No stat manager - fail safe by allowing action
@@ -237,7 +237,7 @@ void UB_Action::AdjustStatByRequirement_Implementation(ESLFActionWeaponSlot Stam
 		return;
 	}
 
-	UAC_StatManager* StatManager = GetStatManager();
+	UStatManagerComponent* StatManager = GetStatManager();
 	if (!StatManager)
 	{
 		return;

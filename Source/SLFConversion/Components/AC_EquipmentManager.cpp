@@ -45,12 +45,12 @@ UAC_EquipmentManager::UAC_EquipmentManager()
 	RightHandSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Right Hand Weapon 2"), false));
 	RightHandSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Right Hand Weapon 3"), false));
 
-	// Tool slots
-	ToolSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tools 1"), false));
-	ToolSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tools 2"), false));
-	ToolSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tools 3"), false));
-	ToolSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tools 4"), false));
-	ToolSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tools 5"), false));
+	// Tool slots - use "Tool" (singular) to match ItemWheel SlotsToTrack configuration
+	ToolSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 1"), false));
+	ToolSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 2"), false));
+	ToolSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 3"), false));
+	ToolSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 4"), false));
+	ToolSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 5"), false));
 }
 
 void UAC_EquipmentManager::BeginPlay()
@@ -341,15 +341,35 @@ void UAC_EquipmentManager::UnequipArmorAtSlot_Implementation(const FGameplayTag&
 /**
  * HideItemAtSlot - Hide the visual representation of an item
  */
+/**
+ * HideItemAtSlot - Hide item at slot (opposite of WieldItemAtSlot)
+ *
+ * Blueprint Logic:
+ * 1. Add to HiddenItems map to track hidden state
+ * 2. Find spawned actor at slot
+ * 3. Call SetActorHiddenInGame(true) to HIDE the weapon
+ */
 void UAC_EquipmentManager::HideItemAtSlot_Implementation(const FGameplayTag& SlotTag)
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::HideItemAtSlot - Slot: %s"), *SlotTag.ToString());
 
-	if (TObjectPtr<UPrimaryDataAsset>* ItemPtr = AllEquippedItems.Find(SlotTag))
+	// Mark slot as hidden in tracking map
+	HiddenItems.Add(SlotTag, SlotTag);
+
+	// Find the spawned actor at this slot
+	TObjectPtr<AActor>* FoundActor = SpawnedItemsAtSlots.Find(SlotTag);
+	if (FoundActor && IsValid(FoundActor->Get()))
 	{
-		// Mark slot as hidden (for visual purposes)
-		// We use the slot tag itself as a marker since we store items directly now
-		HiddenItems.Add(SlotTag, SlotTag);
+		AActor* ItemActor = FoundActor->Get();
+		UE_LOG(LogTemp, Log, TEXT("  Found spawned actor: %s - hiding it"), *ItemActor->GetName());
+
+		// CRITICAL: Hide the weapon actor
+		ItemActor->SetActorHiddenInGame(true);
+		UE_LOG(LogTemp, Log, TEXT("  SetActorHiddenInGame(true) - Weapon is now HIDDEN"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  No spawned actor found at slot %s"), *SlotTag.ToString());
 	}
 }
 
@@ -465,21 +485,40 @@ void UAC_EquipmentManager::GetSpawnedItemAtSlot_Implementation(const FGameplayTa
 /**
  * GetActiveWeaponSlot - Get the currently active weapon slot for hand
  */
+/**
+ * GetActiveWeaponSlot - Get the currently WIELDED (visible) weapon slot for hand
+ *
+ * Returns the first occupied slot that is NOT hidden.
+ * This is the slot whose weapon is currently visible in the character's hand.
+ */
 FGameplayTag UAC_EquipmentManager::GetActiveWeaponSlot_Implementation(bool RightHand)
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::GetActiveWeaponSlot - RightHand: %s"),
 		RightHand ? TEXT("true") : TEXT("false"));
 
-	// Return first occupied slot from hand slots
+	// Return first occupied slot that is NOT hidden (i.e., the currently wielded one)
 	const FGameplayTagContainer& HandSlots = RightHand ? RightHandSlots : LeftHandSlots;
 
 	for (const FGameplayTag& SlotTag : HandSlots)
 	{
-		if (IsSlotOccupied(SlotTag))
+		if (IsSlotOccupied(SlotTag) && !HiddenItems.Contains(SlotTag))
 		{
+			UE_LOG(LogTemp, Log, TEXT("  Found active (non-hidden) slot: %s"), *SlotTag.ToString());
 			return SlotTag;
 		}
 	}
+
+	// Fallback: If all are hidden, return first occupied slot
+	for (const FGameplayTag& SlotTag : HandSlots)
+	{
+		if (IsSlotOccupied(SlotTag))
+		{
+			UE_LOG(LogTemp, Log, TEXT("  Fallback - returning first occupied slot: %s"), *SlotTag.ToString());
+			return SlotTag;
+		}
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("  No occupied slots found"));
 	return FGameplayTag();
 }
 
@@ -1142,6 +1181,14 @@ void UAC_EquipmentManager::IsDualWieldPossible_Implementation(bool& OutReturnVal
 
 /**
  * WieldItemAtSlot - Make item visible/active
+ *
+ * Blueprint Logic (from bp_only JSON):
+ * 1. Find the spawned item actor at SlotTag in SpawnedItemsAtSlots
+ * 2. If found:
+ *    - Remove from HiddenItems map
+ *    - UpdateOverlayStates() - update animation overlay state
+ *    - RefreshActiveGuardSequence() - refresh guard animation
+ *    - SetActorHiddenInGame(false) - SHOW the weapon
  */
 void UAC_EquipmentManager::WieldItemAtSlot_Implementation(const FGameplayTag& SlotTag)
 {
@@ -1149,6 +1196,28 @@ void UAC_EquipmentManager::WieldItemAtSlot_Implementation(const FGameplayTag& Sl
 
 	// Remove from hidden items if present
 	HiddenItems.Remove(SlotTag);
+
+	// Find the spawned actor at this slot
+	TObjectPtr<AActor>* FoundActor = SpawnedItemsAtSlots.Find(SlotTag);
+	if (FoundActor && IsValid(FoundActor->Get()))
+	{
+		AActor* ItemActor = FoundActor->Get();
+		UE_LOG(LogTemp, Log, TEXT("  Found spawned actor: %s"), *ItemActor->GetName());
+
+		// Update overlay states (for animation system)
+		UpdateOverlayStates();
+
+		// Refresh guard sequence (for blocking animations)
+		RefreshActiveGuardSequence();
+
+		// CRITICAL: Show the weapon actor
+		ItemActor->SetActorHiddenInGame(false);
+		UE_LOG(LogTemp, Log, TEXT("  SetActorHiddenInGame(false) - Weapon is now VISIBLE"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  No spawned actor found at slot %s"), *SlotTag.ToString());
+	}
 }
 
 /**

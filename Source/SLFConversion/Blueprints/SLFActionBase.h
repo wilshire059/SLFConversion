@@ -26,11 +26,11 @@
 class UDataAsset;
 class UAnimInstance;
 // Use AC_* component classes (the actual components on characters)
-class UAC_StatManager;
+class UStatManagerComponent;  // Character uses UStatManagerComponent, NOT UAC_StatManager
+class UInventoryManagerComponent;  // Controller uses UInventoryManagerComponent, NOT UAC_InventoryManager
 class UAC_ActionManager;
 class UAC_CombatManager;
 class UAC_EquipmentManager;
-class UAC_InventoryManager;
 class UAC_InteractionManager;
 class UAC_InputBuffer;
 
@@ -102,13 +102,13 @@ public:
 
 	/** [3/12] Get inventory manager from owner */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Action|Components")
-	UAC_InventoryManager* GetInventoryManager();
-	virtual UAC_InventoryManager* GetInventoryManager_Implementation();
+	UInventoryManagerComponent* GetInventoryManager();
+	virtual UInventoryManagerComponent* GetInventoryManager_Implementation();
 
 	/** [4/12] Get stat manager from owner */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Action|Components")
-	UAC_StatManager* GetStatManager();
-	virtual UAC_StatManager* GetStatManager_Implementation();
+	UStatManagerComponent* GetStatManager();
+	virtual UStatManagerComponent* GetStatManager_Implementation();
 
 	/** [5/12] Get combat manager from owner */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Action|Components")

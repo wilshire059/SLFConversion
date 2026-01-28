@@ -69,7 +69,14 @@ void UB_Action_ScrollWheel_LeftHand::ExecuteAction_Implementation()
 	UE_LOG(LogTemp, Log, TEXT("[ActionScrollWheelLeftHand] Cycling from slot %d to %d: %s"),
 		CurrentIndex, NextIndex, *NextSlot.ToString());
 
-	// Wield item at new slot
+	// CRITICAL: First unwield/hide the CURRENT slot's weapon
+	if (CurrentSlot.IsValid())
+	{
+		EquipMgr->UnwieldItemAtSlot(CurrentSlot);
+		UE_LOG(LogTemp, Log, TEXT("[ActionScrollWheelLeftHand] Unwielded previous slot: %s"), *CurrentSlot.ToString());
+	}
+
+	// Then wield item at new slot (shows the new weapon)
 	EquipMgr->WieldItemAtSlot(NextSlot);
 }
 

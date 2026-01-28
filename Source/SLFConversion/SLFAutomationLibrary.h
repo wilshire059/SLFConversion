@@ -439,5 +439,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
 	static FString ApplyAllStatusEffectRankInfo();
 
+	// FLASK DATA RESTORATION
+	// Apply FSLFFlaskData to DA_Action_DrinkFlask_HP after migration
+	// This data was lost during reparenting due to InstancedStruct serialization
+	// Returns: Result string with details
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
+	static FString ApplyFlaskData();
+
 #endif // WITH_EDITOR
 };

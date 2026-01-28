@@ -246,6 +246,18 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character|Input")
 	UInputAction* IA_Crouch;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character|Input")
+	UInputAction* IA_Scroll_RightHand;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character|Input")
+	UInputAction* IA_Scroll_LeftHand;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character|Input")
+	UInputAction* IA_Scroll_Tools;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character|Input")
+	UInputAction* IA_UseEquippedItem;
+
 	// ═══════════════════════════════════════════════════════════════════
 	// COMPONENT CACHE (populated in BeginPlay)
 	// ═══════════════════════════════════════════════════════════════════
@@ -372,6 +384,10 @@ protected:
 	void HandleInteractCompleted();
 	void HandleTargetLockInput();
 	void HandleCrouch();
+	void HandleScrollRightHand();
+	void HandleScrollLeftHand();
+	void HandleScrollTools();
+	void HandleUseEquippedItem();
 
 	/** Queue action to input buffer (checks buffer state) */
 	void QueueActionToBuffer(const FGameplayTag& ActionTag);

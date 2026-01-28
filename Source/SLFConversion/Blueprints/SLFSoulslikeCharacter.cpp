@@ -128,6 +128,35 @@ ASLFSoulslikeCharacter::ASLFSoulslikeCharacter()
 		IA_Crouch = CrouchActionFinder.Object;
 	}
 
+	// Load Scroll Wheel Input Actions (for weapon/item wheel cycling)
+	static ConstructorHelpers::FObjectFinder<UInputAction> ScrollRightHandActionFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/IA_Scroll_RightHand.IA_Scroll_RightHand"));
+	if (ScrollRightHandActionFinder.Succeeded())
+	{
+		IA_Scroll_RightHand = ScrollRightHandActionFinder.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> ScrollLeftHandActionFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/IA_Scroll_LeftHand.IA_Scroll_LeftHand"));
+	if (ScrollLeftHandActionFinder.Succeeded())
+	{
+		IA_Scroll_LeftHand = ScrollLeftHandActionFinder.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> ScrollToolsActionFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/IA_Scroll_Tools.IA_Scroll_Tools"));
+	if (ScrollToolsActionFinder.Succeeded())
+	{
+		IA_Scroll_Tools = ScrollToolsActionFinder.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> UseEquippedItemActionFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/IA_UseEquippedItem.IA_UseEquippedItem"));
+	if (UseEquippedItemActionFinder.Succeeded())
+	{
+		IA_UseEquippedItem = UseEquippedItemActionFinder.Object;
+	}
+
 	// Initialize camera config
 	CameraPitchLock = 0.0;
 
@@ -473,6 +502,47 @@ void ASLFSoulslikeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 		UE_LOG(LogTemp, Error, TEXT("[SoulslikeCharacter] !!! IA_Crouch is NULL - Crouch input will NOT work !!!"));
 	}
 
+	// Scroll Wheel Input Bindings (for weapon/item wheel cycling)
+	if (IA_Scroll_RightHand)
+	{
+		EnhancedInput->BindAction(IA_Scroll_RightHand, ETriggerEvent::Started, this, &ASLFSoulslikeCharacter::HandleScrollRightHand);
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] IA_Scroll_RightHand BOUND"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[SoulslikeCharacter] IA_Scroll_RightHand is NULL!"));
+	}
+
+	if (IA_Scroll_LeftHand)
+	{
+		EnhancedInput->BindAction(IA_Scroll_LeftHand, ETriggerEvent::Started, this, &ASLFSoulslikeCharacter::HandleScrollLeftHand);
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] IA_Scroll_LeftHand BOUND"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[SoulslikeCharacter] IA_Scroll_LeftHand is NULL!"));
+	}
+
+	if (IA_Scroll_Tools)
+	{
+		EnhancedInput->BindAction(IA_Scroll_Tools, ETriggerEvent::Started, this, &ASLFSoulslikeCharacter::HandleScrollTools);
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] IA_Scroll_Tools BOUND"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[SoulslikeCharacter] IA_Scroll_Tools is NULL!"));
+	}
+
+	if (IA_UseEquippedItem)
+	{
+		EnhancedInput->BindAction(IA_UseEquippedItem, ETriggerEvent::Started, this, &ASLFSoulslikeCharacter::HandleUseEquippedItem);
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] IA_UseEquippedItem BOUND"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[SoulslikeCharacter] IA_UseEquippedItem is NULL!"));
+	}
+
 	UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Enhanced input bindings set up"));
 }
 
@@ -763,6 +833,50 @@ void ASLFSoulslikeCharacter::HandleCrouch()
 			}
 		}
 	}
+}
+
+void ASLFSoulslikeCharacter::HandleScrollRightHand()
+{
+	// Scroll right hand weapon wheel (cycles through equipped right hand weapons)
+	// bp_only: IA_Scroll_RightHand triggers ActionManager.EventPerformAction(ScrollWheel.Right)
+	// ActionManager broadcasts OnScrollWheel, HUD's W_ItemWheelSlot listens and calls EventScrollWheel
+	UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] HandleScrollRightHand CALLED"));
+
+	static const FGameplayTag ScrollRightTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.ScrollWheel.Right"));
+	ExecuteActionImmediately(ScrollRightTag);
+}
+
+void ASLFSoulslikeCharacter::HandleScrollLeftHand()
+{
+	// Scroll left hand weapon wheel (cycles through equipped left hand items/shields)
+	UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] HandleScrollLeftHand CALLED"));
+
+	static const FGameplayTag ScrollLeftTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.ScrollWheel.Left"));
+	ExecuteActionImmediately(ScrollLeftTag);
+}
+
+void ASLFSoulslikeCharacter::HandleScrollTools()
+{
+	// Scroll tools wheel (cycles through consumables like health flasks)
+	UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] HandleScrollTools CALLED"));
+
+	static const FGameplayTag ScrollToolsTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.ScrollWheel.Bottom"));
+	ExecuteActionImmediately(ScrollToolsTag);
+}
+
+void ASLFSoulslikeCharacter::HandleUseEquippedItem()
+{
+	// Use equipped tool/consumable (e.g., health flask)
+	// From bp_only JSON: First cancel guard, then queue use equipped tool action
+	UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] HandleUseEquippedItem CALLED"));
+
+	// 1. Execute GuardCancel immediately (stops guarding if guarding)
+	static const FGameplayTag GuardCancelTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.GuardCancel"));
+	ExecuteActionImmediately(GuardCancelTag);
+
+	// 2. Queue UseEquippedTool action (uses the flask)
+	static const FGameplayTag UseToolTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.UseEquippedTool"));
+	QueueActionToBuffer(UseToolTag);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════

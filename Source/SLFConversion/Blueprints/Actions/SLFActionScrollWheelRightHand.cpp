@@ -44,27 +44,50 @@ void USLFActionScrollWheelRightHand::ExecuteAction_Implementation()
 	// Get current active slot
 	FGameplayTag CurrentSlot = EquipMgr->GetActiveWheelSlotForWeapon(true);
 
-	// Find current slot index
-	int32 CurrentIndex = -1;
-	TArray<FGameplayTag> SlotArray;
-	RightSlots.GetGameplayTagArray(SlotArray);
+	// Build array of OCCUPIED slots only (skip empty slots)
+	TArray<FGameplayTag> OccupiedSlots;
+	TArray<FGameplayTag> AllSlots;
+	RightSlots.GetGameplayTagArray(AllSlots);
 
-	for (int32 i = 0; i < SlotArray.Num(); i++)
+	for (const FGameplayTag& SlotTag : AllSlots)
 	{
-		if (SlotArray[i] == CurrentSlot)
+		if (EquipMgr->IsSlotOccupied(SlotTag))
+		{
+			OccupiedSlots.Add(SlotTag);
+		}
+	}
+
+	if (OccupiedSlots.Num() == 0)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[ActionScrollWheelRightHand] No occupied right hand slots"));
+		return;
+	}
+
+	// Find current slot index in occupied slots
+	int32 CurrentIndex = -1;
+	for (int32 i = 0; i < OccupiedSlots.Num(); i++)
+	{
+		if (OccupiedSlots[i] == CurrentSlot)
 		{
 			CurrentIndex = i;
 			break;
 		}
 	}
 
-	// Cycle to next slot
-	int32 NextIndex = (CurrentIndex + 1) % SlotArray.Num();
-	FGameplayTag NextSlot = SlotArray[NextIndex];
+	// Cycle to next occupied slot
+	int32 NextIndex = (CurrentIndex + 1) % OccupiedSlots.Num();
+	FGameplayTag NextSlot = OccupiedSlots[NextIndex];
 
 	UE_LOG(LogTemp, Log, TEXT("[ActionScrollWheelRightHand] Cycling from slot %d to %d: %s"),
 		CurrentIndex, NextIndex, *NextSlot.ToString());
 
-	// Wield item at new slot
+	// CRITICAL: First unwield/hide the CURRENT slot's weapon
+	if (CurrentSlot.IsValid())
+	{
+		EquipMgr->UnwieldItemAtSlot(CurrentSlot);
+		UE_LOG(LogTemp, Log, TEXT("[ActionScrollWheelRightHand] Unwielded previous slot: %s"), *CurrentSlot.ToString());
+	}
+
+	// Then wield item at new slot (shows the new weapon)
 	EquipMgr->WieldItemAtSlot(NextSlot);
 }

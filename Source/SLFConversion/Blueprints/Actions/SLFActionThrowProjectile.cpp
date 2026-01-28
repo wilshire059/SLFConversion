@@ -78,7 +78,7 @@ void USLFActionThrowProjectile::ExecuteAction_Implementation()
 	}
 
 	// Consume the item from inventory after throw
-	UAC_InventoryManager* InvMgr = GetInventoryManager();
+	UInventoryManagerComponent* InvMgr = GetInventoryManager();
 	if (InvMgr)
 	{
 		InvMgr->RemoveItem(ItemAsset, 1);

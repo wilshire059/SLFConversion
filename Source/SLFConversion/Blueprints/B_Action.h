@@ -29,7 +29,7 @@ class UDataTable;
 class UAC_EquipmentManager;
 class UAC_InteractionManager;
 class UAC_InventoryManager;
-class UAC_StatManager;
+class UStatManagerComponent;  // Use UStatManagerComponent, NOT UAC_StatManager
 class UAC_CombatManager;
 class UAC_ActionManager;
 class UAC_InputBuffer;
@@ -75,8 +75,8 @@ public:
 	UAC_InventoryManager* GetInventoryManager();
 	virtual UAC_InventoryManager* GetInventoryManager_Implementation();
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "B_Action")
-	UAC_StatManager* GetStatManager();
-	virtual UAC_StatManager* GetStatManager_Implementation();
+	UStatManagerComponent* GetStatManager();
+	virtual UStatManagerComponent* GetStatManager_Implementation();
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "B_Action")
 	UAC_CombatManager* GetCombatManager();
 	virtual UAC_CombatManager* GetCombatManager_Implementation();

@@ -33,6 +33,7 @@
 #include "Components/AC_CombatManager.h"
 #include "Components/AICombatManagerComponent.h"
 #include "Components/CombatManagerComponent.h"
+#include "Components/InventoryManagerComponent.h"
 
 UAC_InteractionManager::UAC_InteractionManager()
 {
@@ -431,6 +432,18 @@ void UAC_InteractionManager::EventOnRest(AActor* RestingPoint)
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("  Could not find AC_ActionManager on owner"));
+	}
+
+	// Replenish all rechargeable items (flasks) when resting
+	// InventoryManagerComponent is on the PlayerController, not the character
+	if (UInventoryManagerComponent* InventoryManager = Controller->FindComponentByClass<UInventoryManagerComponent>())
+	{
+		InventoryManager->ReplenishAllRechargeableItems();
+		UE_LOG(LogTemp, Log, TEXT("  Replenished rechargeable items"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  Could not find InventoryManagerComponent on controller"));
 	}
 
 	UE_LOG(LogTemp, Log, TEXT("  Resting point set, waiting for OnReady callback"));

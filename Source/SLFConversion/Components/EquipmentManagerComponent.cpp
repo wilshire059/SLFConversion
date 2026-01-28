@@ -33,6 +33,22 @@ UEquipmentManagerComponent::UEquipmentManagerComponent()
 	// Initialize runtime
 	ActiveBlockSequence = nullptr;
 	bIsAsyncWeaponBusy = false;
+
+	// Initialize tool slots (5 slots) - use "Tool" (singular) to match ItemWheel SlotsToTrack
+	ToolSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 1"), false));
+	ToolSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 2"), false));
+	ToolSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 3"), false));
+	ToolSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 4"), false));
+	ToolSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 5"), false));
+
+	// Initialize weapon slots (3 per hand like AC_EquipmentManager)
+	RightHandSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.RightHand 1"), false));
+	RightHandSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.RightHand 2"), false));
+	RightHandSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.RightHand 3"), false));
+
+	LeftHandSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.LeftHand 1"), false));
+	LeftHandSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.LeftHand 2"), false));
+	LeftHandSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.LeftHand 3"), false));
 }
 
 void UEquipmentManagerComponent::BeginPlay()

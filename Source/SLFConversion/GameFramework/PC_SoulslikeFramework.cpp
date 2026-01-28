@@ -9,6 +9,7 @@
 #include "Blueprint/UserWidget.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "GameplayTagContainer.h"
 #include "Components/InventoryManagerComponent.h"
 #include "Components/EquipmentManagerComponent.h"
 #include "Components/SaveLoadManagerComponent.h"
@@ -147,6 +148,29 @@ void APC_SoulslikeFramework::BeginPlay()
 	// Broadcast HUD initialized
 	OnHudInitialized.Broadcast();
 	UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] OnHudInitialized broadcast"));
+
+	// Give player starting items (Health Flask for tools slot)
+	if (AC_InventoryManager)
+	{
+		// Load and add Health Flask
+		static const FSoftObjectPath HealthFlaskPath(TEXT("/Game/SoulslikeFramework/Data/Items/DA_HealthFlask.DA_HealthFlask"));
+		if (UObject* FlaskAsset = HealthFlaskPath.TryLoad())
+		{
+			if (UDataAsset* FlaskData = Cast<UDataAsset>(FlaskAsset))
+			{
+				AC_InventoryManager->AddItem(FlaskData, 5, false); // 5 flasks, no loot UI
+				UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] Added 5x Health Flask to inventory"));
+
+				// Equip the flask to the first tool slot so it can be used
+				if (AC_EquipmentManager)
+				{
+					FGameplayTag ToolSlot1 = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tools 1"));
+					AC_EquipmentManager->EquipToolToSlot(ToolSlot1, FlaskData, false);
+					UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] Equipped Health Flask to Tools 1 slot"));
+				}
+			}
+		}
+	}
 
 	// Schedule radar initialization after HUD is ready (delayed to ensure widgets are constructed)
 	// Note: Uses 0.2s delay instead of 1.0s for faster radar visibility
