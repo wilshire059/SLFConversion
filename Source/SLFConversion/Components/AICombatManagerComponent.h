@@ -19,10 +19,12 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "GameplayTagContainer.h"
+#include "SLFGameTypes.h" // For FSLFStatusEffectApplication
 #include "AICombatManagerComponent.generated.h"
 
 // Forward declarations
 class UDataAsset;
+class UPrimaryDataAsset;
 class UAnimMontage;
 class UNiagaraSystem;
 class USoundBase;
@@ -322,6 +324,18 @@ public:
 	/** [38/41] Maximum unarmed poise damage */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Combat|HandTrace")
 	float MaxUnarmedPoiseDamage;
+
+	/** Minimum unarmed damage */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Combat|HandTrace")
+	double MinUnarmedDamage = 25.0;
+
+	/** Maximum unarmed damage */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Combat|HandTrace")
+	double MaxUnarmedDamage = 35.0;
+
+	/** Default status effects applied when this enemy attacks (for unarmed and weapon attacks) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Combat|StatusEffects")
+	TMap<UPrimaryDataAsset*, FSLFStatusEffectApplication> DefaultAttackStatusEffects;
 
 	// --- Abilities (3) ---
 

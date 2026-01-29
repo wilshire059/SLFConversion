@@ -131,11 +131,23 @@ void USLFAnimNotifyStateWeaponTrace::NotifyTick(USkeletalMeshComponent* MeshComp
 
 			if (EquipmentManager)
 			{
-				// Get damage values from equipped weapon
+				// Get damage values from equipped weapon (player)
 				Damage = EquipmentManager->GetWeaponDamage();
 				PoiseDamage = EquipmentManager->GetWeaponPoiseDamage();
 				// Get weapon's status effects with BuildupAmount
 				WeaponStatusEffects = EquipmentManager->GetWeaponStatusEffects();
+			}
+			else
+			{
+				// For AI enemies without EquipmentManager, get status effects from AICombatManagerComponent
+				UAICombatManagerComponent* OwnerAICombatManager = Owner->FindComponentByClass<UAICombatManagerComponent>();
+				if (OwnerAICombatManager)
+				{
+					// Get status effects from AI's DefaultAttackStatusEffects
+					WeaponStatusEffects = OwnerAICombatManager->DefaultAttackStatusEffects;
+					UE_LOG(LogTemp, Log, TEXT("[ANS_WeaponTrace] AI attacker - using DefaultAttackStatusEffects (%d effects)"),
+						WeaponStatusEffects.Num());
+				}
 			}
 
 			// Try player combat manager first (UAC_CombatManager)

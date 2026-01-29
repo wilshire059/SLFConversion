@@ -1097,10 +1097,12 @@ void UAICombatManagerComponent::ProcessHandTrace_Implementation(const TArray<FHi
 
 void UAICombatManagerComponent::ApplyFistDamage_Implementation(AActor* Target, const FHitResult& HitResult)
 {
-	float Damage = FMath::RandRange(MinUnarmedPoiseDamage, MaxUnarmedPoiseDamage);
+	// Calculate random damage within range
+	double Damage = FMath::RandRange(MinUnarmedDamage, MaxUnarmedDamage);
+	double PoiseDamage = FMath::RandRange(MinUnarmedPoiseDamage, MaxUnarmedPoiseDamage);
 
-	UE_LOG(LogTemp, Log, TEXT("[AICombatManager] ApplyFistDamage - Target: %s, Damage: %.2f"),
-		*Target->GetName(), Damage);
+	UE_LOG(LogTemp, Log, TEXT("[AICombatManager] ApplyFistDamage - Target: %s, Damage: %.2f, PoiseDamage: %.2f"),
+		*Target->GetName(), Damage, PoiseDamage);
 
 	// Apply damage via interface
 	if (Target->GetClass()->ImplementsInterface(UBPI_GenericCharacter::StaticClass()))
@@ -1115,11 +1117,41 @@ void UAICombatManagerComponent::ApplyFistDamage_Implementation(AActor* Target, c
 
 			// Apply poise damage
 			FGameplayTag PoiseTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Poise"));
-			float PoiseDamage = Damage * 0.5f;
 			TargetStatManager->AdjustStat(PoiseTag, ESLFValueType::CurrentValue, -PoiseDamage, false, true);
 
 			UE_LOG(LogTemp, Log, TEXT("[AICombatManager] Applied fist damage: %.2f HP, %.2f Poise to %s"),
 				Damage, PoiseDamage, *Target->GetName());
+		}
+	}
+
+	// Apply status effects from DefaultAttackStatusEffects
+	if (DefaultAttackStatusEffects.Num() > 0)
+	{
+		UStatusEffectManagerComponent* TargetStatusManager = Target->FindComponentByClass<UStatusEffectManagerComponent>();
+		if (TargetStatusManager)
+		{
+			for (const auto& EffectPair : DefaultAttackStatusEffects)
+			{
+				if (EffectPair.Key)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] Applying status effect %s to %s (Rank=%d, Buildup=%.1f)"),
+						*EffectPair.Key->GetName(),
+						*Target->GetName(),
+						EffectPair.Value.Rank,
+						EffectPair.Value.BuildupAmount);
+
+					TargetStatusManager->AddOneShotBuildup(
+						EffectPair.Key,
+						EffectPair.Value.Rank,
+						EffectPair.Value.BuildupAmount
+					);
+				}
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] Target %s has no StatusEffectManager - cannot apply status effects"),
+				*Target->GetName());
 		}
 	}
 }

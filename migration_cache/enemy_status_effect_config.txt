@@ -1,0 +1,74 @@
+======================================================================
+CONFIGURING ENEMY DEFAULT ATTACK STATUS EFFECTS (v2)
+======================================================================
+
+Loaded status effects:
+  Bleed: DA_StatusEffect_Bleed
+  Burn: DA_StatusEffect_Burn
+
+--- B_Soulslike_Enemy ---
+  Got CDO: Default__B_Soulslike_Enemy_C
+  Components on CDO: 15
+    - CapsuleComponent
+    - ArrowComponent
+    - CharacterMovementComponent
+    - SkeletalMeshComponent
+    - StatManagerComponent
+    - AC_StatusEffectManager
+    - SceneComponent
+    - WidgetComponent
+    - WidgetComponent
+    - SLFAIStateMachineComponent
+    - WidgetComponent
+    - AICombatManagerComponent
+  Found AI Combat Manager: CombatManagerComponent
+    Current: {}
+    Set to: DA_StatusEffect_Bleed (Rank=1, Buildup=30.0)
+    Verified: {"/Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/PDA_StatusEffect.PDA_StatusEffect_C'/Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Bleed.DA_StatusEffect_Bleed'": {rank: 1, buildup_amount: 30.000000}}
+  SAVED
+
+--- B_Soulslike_Enemy_Guard ---
+  Got CDO: Default__B_Soulslike_Enemy_Guard_C
+  Components on CDO: 15
+    - CapsuleComponent
+    - ArrowComponent
+    - CharacterMovementComponent
+    - SkeletalMeshComponent
+    - StatManagerComponent
+    - AC_StatusEffectManager
+    - SceneComponent
+    - WidgetComponent
+    - WidgetComponent
+    - SLFAIStateMachineComponent
+    - WidgetComponent
+    - AICombatManagerComponent
+  Found AI Combat Manager: CombatManagerComponent
+    Current: {}
+    Set to: DA_StatusEffect_Bleed (Rank=1, Buildup=40.0)
+    Verified: {"/Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/PDA_StatusEffect.PDA_StatusEffect_C'/Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Bleed.DA_StatusEffect_Bleed'": {rank: 1, buildup_amount: 40.000000}}
+  SAVED
+
+--- B_Soulslike_Enemy_Showcase ---
+  Got CDO: Default__B_Soulslike_Enemy_Showcase_C
+  Components on CDO: 15
+    - CapsuleComponent
+    - ArrowComponent
+    - CharacterMovementComponent
+    - SkeletalMeshComponent
+    - StatManagerComponent
+    - AC_StatusEffectManager
+    - SceneComponent
+    - WidgetComponent
+    - WidgetComponent
+    - SLFAIStateMachineComponent
+    - WidgetComponent
+    - AICombatManagerComponent
+  Found AI Combat Manager: CombatManagerComponent
+    Current: {}
+    Set to: DA_StatusEffect_Bleed (Rank=1, Buildup=30.0)
+    Verified: {"/Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/PDA_StatusEffect.PDA_StatusEffect_C'/Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Bleed.DA_StatusEffect_Bleed'": {rank: 1, buildup_amount: 30.000000}}
+  SAVED
+
+======================================================================
+RESULTS: 3/3 configured successfully
+======================================================================

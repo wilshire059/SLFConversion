@@ -264,7 +264,8 @@ TArray<UB_StatusEffect*> UAC_StatusEffectManager::GetAllActiveStatusEffects_Impl
  */
 void UAC_StatusEffectManager::HandleStatusEffectTriggered(FText TriggeredText)
 {
-	UE_LOG(LogTemp, Log, TEXT("UAC_StatusEffectManager::HandleStatusEffectTriggered - %s"), *TriggeredText.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("UAC_StatusEffectManager::HandleStatusEffectTriggered (0x%p) - %s, BoundCount=%d"),
+		this, *TriggeredText.ToString(), OnStatusEffectTriggered.IsBound() ? 1 : 0);
 	OnStatusEffectTriggered.Broadcast(TriggeredText);
 }
 

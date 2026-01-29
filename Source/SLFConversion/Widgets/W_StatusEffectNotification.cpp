@@ -30,10 +30,14 @@ void UW_StatusEffectNotification::NativeConstruct()
 	// Cache widget references
 	CacheWidgetReferences();
 
+	// Start hidden - only show when status effect triggers
+	// bp_only: Widget shows on OnStatusEffectTriggered, hides on EventFinishNotification
+	SetVisibility(ESlateVisibility::Collapsed);
+
 	// Bind to status effect manager (matches bp_only Construct graph)
 	BindToStatusEffectManager();
 
-	UE_LOG(LogTemp, Log, TEXT("UW_StatusEffectNotification::NativeConstruct"));
+	UE_LOG(LogTemp, Log, TEXT("UW_StatusEffectNotification::NativeConstruct - Widget starts collapsed, waiting for status effect"));
 }
 
 void UW_StatusEffectNotification::NativeDestruct()
@@ -72,20 +76,23 @@ void UW_StatusEffectNotification::CacheWidgetReferences()
 /**
  * EventFinishNotification
  *
- * Blueprint Logic (from JSON graphs):
+ * Blueprint Logic (from bp_only JSON graphs):
  * 1. Called when notification display is complete
- * 2. Plays fade-out animation
- * 3. Removes widget from parent
+ * 2. Plays FadeOut animation
+ * 3. When FadeOut finishes → SetVisibility(Collapsed)
  *
- * Note: Animation playback is handled by UMG in Blueprint.
- * C++ just removes the widget since animation is optional.
+ * CRITICAL: bp_only does NOT call RemoveFromParent()!
+ * The widget stays in the hierarchy but becomes collapsed/hidden.
+ * This allows it to be reused for subsequent status effect triggers.
  */
 void UW_StatusEffectNotification::EventFinishNotification_Implementation()
 {
-	UE_LOG(LogTemp, Log, TEXT("UW_StatusEffectNotification::EventFinishNotification"));
+	UE_LOG(LogTemp, Log, TEXT("UW_StatusEffectNotification::EventFinishNotification - Hiding widget (not removing)"));
 
-	// Remove from parent
-	RemoveFromParent();
+	// bp_only plays FadeOut animation here, then sets visibility to Collapsed
+	// Since we can't easily play Blueprint animations from C++, just hide immediately
+	// The widget stays in the hierarchy and can be reused
+	SetVisibility(ESlateVisibility::Collapsed);
 }
 
 /**
@@ -158,8 +165,8 @@ void UW_StatusEffectNotification::BindToStatusEffectManager()
 	{
 		// Bind to OnStatusEffectTriggered
 		CachedStatusEffectManager->OnStatusEffectTriggered.AddDynamic(this, &UW_StatusEffectNotification::OnStatusEffectTriggeredHandler);
-		UE_LOG(LogTemp, Log, TEXT("UW_StatusEffectNotification::BindToStatusEffectManager - Bound to AC_StatusEffectManager on %s"),
-			*OwningPawn->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("UW_StatusEffectNotification::BindToStatusEffectManager - Bound to AC_StatusEffectManager (0x%p) on %s"),
+			CachedStatusEffectManager, *OwningPawn->GetName());
 		return;
 	}
 
@@ -186,8 +193,8 @@ void UW_StatusEffectNotification::BindToStatusEffectManager()
  */
 void UW_StatusEffectNotification::OnStatusEffectTriggeredHandler(FText TriggeredText)
 {
-	UE_LOG(LogTemp, Log, TEXT("UW_StatusEffectNotification::OnStatusEffectTriggeredHandler - Received: %s"),
-		*TriggeredText.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("UW_StatusEffectNotification::OnStatusEffectTriggeredHandler - Received: %s (Widget 0x%p, Manager 0x%p)"),
+		*TriggeredText.ToString(), this, CachedStatusEffectManager);
 
 	// Call the event function to display the notification
 	EventOnStatusEffectTriggered(TriggeredText);
