@@ -59,6 +59,57 @@ void UInventoryManagerComponent::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[InventoryManager] Failed to load DA_HealthFlask!"));
 	}
+
+	// Give player starting Magic Spell (Tool 2)
+	static const FSoftObjectPath MagicSpellPath(TEXT("/Game/SoulslikeFramework/Data/Items/DA_MagicSpell.DA_MagicSpell"));
+	if (UObject* SpellAsset = MagicSpellPath.TryLoad())
+	{
+		if (UDataAsset* SpellData = Cast<UDataAsset>(SpellAsset))
+		{
+			AddItem(SpellData, 99, false); // 99 charges, no loot UI
+			UE_LOG(LogTemp, Log, TEXT("[InventoryManager] Added 99x Magic Spell to inventory"));
+
+			// Delay the equip to ensure AC_EquipmentManager is ready
+			CachedSpellAsset = SpellData;
+			GetWorld()->GetTimerManager().SetTimerForNextTick(this, &UInventoryManagerComponent::EquipStartingSpell);
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[InventoryManager] Failed to load DA_MagicSpell!"));
+	}
+
+	// Add ALL spell types to inventory for testing
+	// These are added to inventory but not auto-equipped - player can equip from inventory
+	static const TCHAR* SpellPaths[] = {
+		TEXT("/Game/SoulslikeFramework/Data/Items/Spells/DA_FireballSpell.DA_FireballSpell"),
+		TEXT("/Game/SoulslikeFramework/Data/Items/Spells/DA_IceShardSpell.DA_IceShardSpell"),
+		TEXT("/Game/SoulslikeFramework/Data/Items/Spells/DA_LightningBoltSpell.DA_LightningBoltSpell"),
+		TEXT("/Game/SoulslikeFramework/Data/Items/Spells/DA_HolyOrbSpell.DA_HolyOrbSpell"),
+		TEXT("/Game/SoulslikeFramework/Data/Items/Spells/DA_PoisonBlobSpell.DA_PoisonBlobSpell"),
+		TEXT("/Game/SoulslikeFramework/Data/Items/Spells/DA_ArcaneMissileSpell.DA_ArcaneMissileSpell"),
+		TEXT("/Game/SoulslikeFramework/Data/Items/Spells/DA_BlackholeSpell.DA_BlackholeSpell"),
+		TEXT("/Game/SoulslikeFramework/Data/Items/Spells/DA_BeamSpell.DA_BeamSpell"),
+		TEXT("/Game/SoulslikeFramework/Data/Items/Spells/DA_AOEExplosionSpell.DA_AOEExplosionSpell"),
+		TEXT("/Game/SoulslikeFramework/Data/Items/Spells/DA_ShieldSpell.DA_ShieldSpell"),
+		TEXT("/Game/SoulslikeFramework/Data/Items/Spells/DA_HealingSpell.DA_HealingSpell"),
+		TEXT("/Game/SoulslikeFramework/Data/Items/Spells/DA_SummoningCircleSpell.DA_SummoningCircleSpell"),
+	};
+
+	int32 SpellsAdded = 0;
+	for (const TCHAR* SpellPath : SpellPaths)
+	{
+		FSoftObjectPath Path(SpellPath);
+		if (UObject* LoadedSpell = Path.TryLoad())
+		{
+			if (UDataAsset* SpellDataAsset = Cast<UDataAsset>(LoadedSpell))
+			{
+				AddItem(SpellDataAsset, 99, false);
+				SpellsAdded++;
+			}
+		}
+	}
+	UE_LOG(LogTemp, Log, TEXT("[InventoryManager] Added %d spell types to inventory for testing"), SpellsAdded);
 }
 
 void UInventoryManagerComponent::EquipStartingFlask()
@@ -97,6 +148,43 @@ void UInventoryManagerComponent::EquipStartingFlask()
 		UE_LOG(LogTemp, Warning, TEXT("[InventoryManager] EquipStartingFlask - AC_EquipmentManager not found, retrying..."));
 		// Retry next frame - keep CachedFlaskAsset for retry
 		GetWorld()->GetTimerManager().SetTimerForNextTick(this, &UInventoryManagerComponent::EquipStartingFlask);
+	}
+}
+
+void UInventoryManagerComponent::EquipStartingSpell()
+{
+	if (!CachedSpellAsset)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[InventoryManager] EquipStartingSpell - No cached spell asset!"));
+		return;
+	}
+
+	// AC_EquipmentManager is on the PlayerController (same as InventoryManagerComponent)
+	UAC_EquipmentManager* EquipMgr = nullptr;
+	if (OwnerActor)
+	{
+		EquipMgr = OwnerActor->FindComponentByClass<UAC_EquipmentManager>();
+		UE_LOG(LogTemp, Log, TEXT("[InventoryManager] EquipStartingSpell - Looking for AC_EquipmentManager on %s: %s"),
+			*OwnerActor->GetName(), EquipMgr ? TEXT("YES") : TEXT("NO"));
+	}
+
+	if (EquipMgr)
+	{
+		// Use "Tool 2" to equip spell (Tool 1 has flask)
+		FGameplayTag ToolSlot2 = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 2"));
+		bool bSuccess1, bSuccess2, bSuccess3;
+		EquipMgr->EquipToolToSlot(Cast<UPrimaryDataAsset>(CachedSpellAsset), ToolSlot2, false, bSuccess1, bSuccess2, bSuccess3);
+		UE_LOG(LogTemp, Log, TEXT("[InventoryManager] Equipped Magic Spell to Tool 2 slot (success: %s)"),
+			bSuccess1 ? TEXT("YES") : TEXT("NO"));
+
+		// Clear after successful equip
+		CachedSpellAsset = nullptr;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[InventoryManager] EquipStartingSpell - AC_EquipmentManager not found, retrying..."));
+		// Retry next frame - keep CachedSpellAsset for retry
+		GetWorld()->GetTimerManager().SetTimerForNextTick(this, &UInventoryManagerComponent::EquipStartingSpell);
 	}
 }
 
@@ -699,13 +787,39 @@ TArray<FSLFInventoryItem> UInventoryManagerComponent::GetItemsForEquipmentSlot_I
 	bool bIsGloves = SlotTagStr.Contains(TEXT("Gloves"));
 	bool bIsGreaves = SlotTagStr.Contains(TEXT("Greaves"));
 	bool bIsTrinket = SlotTagStr.Contains(TEXT("Trinket"));
-	bool bIsArrow = SlotTagStr.Contains(TEXT("Arrow"));
-	bool bIsBullet = SlotTagStr.Contains(TEXT("Bullet"));
+	bool bIsToolSlot = SlotTagStr.Contains(TEXT("Tool"));
+	// Note: Arrow/Bullet slots removed - bp_only uses Tool slots for all consumables/projectiles
 
 	TArray<FSLFInventoryItem> Result;
 	for (const auto& Pair : Items)
 	{
-		if (UPDA_Item* ItemData = Cast<UPDA_Item>(Pair.Value.ItemAsset))
+		// Log item class for debugging
+		UObject* Asset = Pair.Value.ItemAsset;
+		if (Asset)
+		{
+			UClass* AssetClass = Asset->GetClass();
+			UClass* ParentClass = AssetClass ? AssetClass->GetSuperClass() : nullptr;
+			UE_LOG(LogTemp, Log, TEXT("[InventoryManager]   Item slot %d: %s (Class: %s, Parent: %s)"),
+				Pair.Key, *Asset->GetName(),
+				AssetClass ? *AssetClass->GetName() : TEXT("NULL"),
+				ParentClass ? *ParentClass->GetName() : TEXT("NULL"));
+
+			// Log full class path for debugging
+			UE_LOG(LogTemp, Log, TEXT("[InventoryManager]     Class Path: %s"),
+				AssetClass ? *AssetClass->GetPathName() : TEXT("NULL"));
+
+			// Check if it inherits from UPDA_Item
+			bool bIsPDAItem = AssetClass && AssetClass->IsChildOf(UPDA_Item::StaticClass());
+			UE_LOG(LogTemp, Log, TEXT("[InventoryManager]     IsChildOf(UPDA_Item): %s"),
+				bIsPDAItem ? TEXT("YES") : TEXT("NO"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[InventoryManager]   Item slot %d: NULL ASSET"), Pair.Key);
+			continue;
+		}
+
+		if (UPDA_Item* ItemData = Cast<UPDA_Item>(Asset))
 		{
 			bool bMatches = false;
 
@@ -776,15 +890,12 @@ TArray<FSLFInventoryItem> UInventoryManagerComponent::GetItemsForEquipmentSlot_I
 				{
 					bMatches = (SubCategory == ESLFItemSubCategory::Talismans);
 				}
-				// Arrow slot: Projectiles
-				else if (bIsArrow)
+				// Tool slots: Tools category, flasks, AND projectiles (bp_only uses Tool slots for everything)
+				else if (bIsToolSlot)
 				{
-					bMatches = (SubCategory == ESLFItemSubCategory::Projectiles);
-				}
-				// Bullet slot: Projectiles (same as arrows - both are ammo types)
-				else if (bIsBullet)
-				{
-					bMatches = (SubCategory == ESLFItemSubCategory::Projectiles);
+					bMatches = (Category == ESLFItemCategory::Tools) ||
+					           (SubCategory == ESLFItemSubCategory::Flasks) ||
+					           (SubCategory == ESLFItemSubCategory::Projectiles);
 				}
 			}
 
@@ -796,6 +907,11 @@ TArray<FSLFInventoryItem> UInventoryManagerComponent::GetItemsForEquipmentSlot_I
 					static_cast<int32>(ItemData->ItemInformation.Category.Category),
 					static_cast<int32>(ItemData->ItemInformation.Category.SubCategory));
 			}
+		}
+		else
+		{
+			// Cast failed - item is not a UPDA_Item
+			UE_LOG(LogTemp, Warning, TEXT("[InventoryManager]   CAST FAILED: %s is not UPDA_Item!"), *Asset->GetName());
 		}
 	}
 

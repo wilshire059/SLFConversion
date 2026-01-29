@@ -70,9 +70,16 @@ protected:
 	/** Delayed equip for starting flask (called after AC_EquipmentManager is ready) */
 	void EquipStartingFlask();
 
+	/** Delayed equip for starting spell */
+	void EquipStartingSpell();
+
 	/** Cached flask asset for delayed equip */
 	UPROPERTY(Transient)
 	UDataAsset* CachedFlaskAsset;
+
+	/** Cached spell asset for delayed equip */
+	UPROPERTY(Transient)
+	UDataAsset* CachedSpellAsset;
 
 public:
 	// ═══════════════════════════════════════════════════════════════════
