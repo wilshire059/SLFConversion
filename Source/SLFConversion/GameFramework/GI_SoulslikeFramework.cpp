@@ -7,5 +7,7 @@
 
 UGI_SoulslikeFramework::UGI_SoulslikeFramework()
 {
+	// Default to true so cinematic plays on first launch
+	FirstTimeOnDemoLevel = true;
 }
 

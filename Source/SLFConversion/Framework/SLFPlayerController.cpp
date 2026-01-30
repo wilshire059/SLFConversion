@@ -147,58 +147,62 @@ void ASLFPlayerController::BeginPlay()
 			// Get game instance and check if first time
 			if (USLFGameInstance* GI = Cast<USLFGameInstance>(GetGameInstance()))
 			{
-				UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] FirstTimeOnDemoLevel: %s"),
-					GI->FirstTimeOnDemoLevel ? TEXT("true") : TEXT("false"));
+				// Always play opening cinematic on PIE (removed FirstTimeOnDemoLevel check per user request)
+				UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] Playing opening cinematic..."));
 
-				if (GI->FirstTimeOnDemoLevel)
+				// Load the sequence to play
+				static const FSoftObjectPath ShowcaseSequencePath(TEXT("/Game/SoulslikeFramework/Cinematics/LS_ShowcaseRoom.LS_ShowcaseRoom"));
+				ULevelSequence* SequenceAsset = Cast<ULevelSequence>(ShowcaseSequencePath.TryLoad());
+
+				if (SequenceAsset)
 				{
-					// Load the sequence to play
-					static const FSoftObjectPath ShowcaseSequencePath(TEXT("/Game/SoulslikeFramework/Cinematics/LS_ShowcaseRoom.LS_ShowcaseRoom"));
-					ULevelSequence* SequenceAsset = Cast<ULevelSequence>(ShowcaseSequencePath.TryLoad());
+					// Load B_SequenceActor Blueprint class (parented to AB_SequenceActor)
+					static const FSoftClassPath SequenceActorBPPath(TEXT("/Game/SoulslikeFramework/Blueprints/_WorldActors/B_SequenceActor.B_SequenceActor_C"));
+					UClass* SequenceActorClass = SequenceActorBPPath.TryLoadClass<AB_SequenceActor>();
 
-					if (SequenceAsset)
+					if (SequenceActorClass)
 					{
-						// Load B_SequenceActor Blueprint class
-						static const FSoftClassPath SequenceActorBPPath(TEXT("/Game/SoulslikeFramework/Blueprints/_WorldActors/B_SequenceActor.B_SequenceActor_C"));
-						UClass* SequenceActorClass = SequenceActorBPPath.TryLoadClass<AB_SequenceActor>();
+						// Use SpawnActorDeferred so we can set SequenceToPlay BEFORE BeginPlay runs
+						// Regular SpawnActor triggers BeginPlay immediately, before we can set properties
+						FActorSpawnParameters SpawnParams;
+						SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-						if (SequenceActorClass)
+						FTransform SpawnTransform(FRotator::ZeroRotator, FVector::ZeroVector);
+
+						AB_SequenceActor* SequenceActor = World->SpawnActorDeferred<AB_SequenceActor>(
+							SequenceActorClass,
+							SpawnTransform,
+							nullptr,  // Owner
+							nullptr,  // Instigator
+							ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+						);
+
+						if (SequenceActor)
 						{
-							// Spawn the sequence actor
-							FActorSpawnParameters SpawnParams;
-							SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+							// Set properties BEFORE BeginPlay (this is why we use SpawnActorDeferred)
+							SequenceActor->SequenceToPlay = SequenceAsset;
+							SequenceActor->CanBeSkipped = true;
 
-							AB_SequenceActor* SequenceActor = World->SpawnActor<AB_SequenceActor>(SequenceActorClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+							UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] *** Set SequenceToPlay on deferred actor, now calling FinishSpawning... ***"));
 
-							if (SequenceActor)
-							{
-								// Set the sequence to play
-								SequenceActor->SequenceToPlay = SequenceAsset;
-								SequenceActor->CanBeSkipped = true;
+							// FinishSpawning triggers BeginPlay - NOW SequenceToPlay is set correctly
+							SequenceActor->FinishSpawning(SpawnTransform);
 
-								UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] *** SPAWNED B_SequenceActor with LS_ShowcaseRoom ***"));
-
-								// Toggle cinematic mode on HUD if available (after HUD is initialized)
-								// Note: HUD isn't initialized yet at this point, so we schedule this
-							}
-							else
-							{
-								UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] Failed to spawn B_SequenceActor"));
-							}
+							UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] *** SPAWNED B_SequenceActor with LS_ShowcaseRoom - Cinematic should be playing! ***"));
 						}
 						else
 						{
-							UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] Could not load B_SequenceActor Blueprint class"));
+							UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] Failed to spawn B_SequenceActor (deferred spawn returned null)"));
 						}
 					}
 					else
 					{
-						UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] Could not load LS_ShowcaseRoom sequence"));
+						UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] Could not load B_SequenceActor Blueprint class"));
 					}
-
-					// Set first time to false so we don't play again
-					GI->FirstTimeOnDemoLevel = false;
-					UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] Set FirstTimeOnDemoLevel = false"));
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] Could not load LS_ShowcaseRoom sequence"));
 				}
 			}
 		}

@@ -38,19 +38,24 @@ public:
 	// COMPONENTS
 	// ═══════════════════════════════════════════════════════════════════════
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UBillboardComponent* Billboard;
+	// COMPONENT OWNERSHIP: Blueprint SCS owns all components.
+	// C++ only caches references at runtime. See CLAUDE.md for pattern.
+	// Named "CachedBillboard" to avoid conflict with Blueprint SCS component "Billboard"
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components")
+	UBillboardComponent* CachedBillboard;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES
 	// ═══════════════════════════════════════════════════════════════════════
 
 	// The level sequence to play
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sequence")
+	// ExposeOnSpawn allows setting this from SpawnActor nodes in Level Blueprints
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sequence", meta = (ExposeOnSpawn = "true", DisplayName = "Sequence to Play"))
 	ULevelSequence* SequenceToPlay;
 
 	// Playback settings
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sequence")
+	// ExposeOnSpawn allows setting this from SpawnActor nodes in Level Blueprints
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sequence", meta = (ExposeOnSpawn = "true"))
 	FMovieSceneSequencePlaybackSettings Settings;
 
 	// The active sequence player (created at runtime)

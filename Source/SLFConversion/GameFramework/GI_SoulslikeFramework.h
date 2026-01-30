@@ -42,7 +42,8 @@ public:
 	FString SlotsSaveName;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Runtime")
 	FString ActiveSlot;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Demo Level")
+	// Note: DisplayName must match the original Blueprint variable name for Level BP compatibility
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Demo Level", meta = (DisplayName = "First Time on Demo Level?"))
 	bool FirstTimeOnDemoLevel;
 
 	// ═══════════════════════════════════════════════════════════════════════

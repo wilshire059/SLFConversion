@@ -13,9 +13,10 @@ AB_SequenceActor::AB_SequenceActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	// Create billboard component for editor visualization
-	Billboard = CreateDefaultSubobject<UBillboardComponent>(TEXT("Billboard"));
-	RootComponent = Billboard;
+	// COMPONENT OWNERSHIP: Blueprint SCS owns all components.
+	// C++ only caches references at runtime. See CLAUDE.md for pattern.
+	// Billboard component is created by Blueprint SCS, cached in BeginPlay.
+	CachedBillboard = nullptr;
 
 	// Default values
 	SequenceToPlay = nullptr;
@@ -28,12 +29,27 @@ AB_SequenceActor::AB_SequenceActor()
 
 void AB_SequenceActor::BeginPlay()
 {
+	UE_LOG(LogTemp, Warning, TEXT("[B_SequenceActor] BeginPlay called - SequenceToPlay: %s"),
+		SequenceToPlay ? *SequenceToPlay->GetName() : TEXT("NULL"));
+
 	Super::BeginPlay();
+
+	// Cache Billboard component from Blueprint SCS
+	if (!CachedBillboard)
+	{
+		TArray<UBillboardComponent*> BillboardComponents;
+		GetComponents<UBillboardComponent>(BillboardComponents);
+		if (BillboardComponents.Num() > 0)
+		{
+			CachedBillboard = BillboardComponents[0];
+		}
+	}
 
 	// Check if we have a sequence to play
 	if (!IsValid(SequenceToPlay))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("AB_SequenceActor: No SequenceToPlay assigned, destroying actor"));
+		UE_LOG(LogTemp, Error, TEXT("[B_SequenceActor] ERROR: No SequenceToPlay assigned! The Level Blueprint should set this via ExposeOnSpawn."));
+		UE_LOG(LogTemp, Error, TEXT("[B_SequenceActor] Check that the SpawnActor node has 'Sequence to Play' pin connected to a LevelSequence asset."));
 		EventDestroy();
 		return;
 	}
