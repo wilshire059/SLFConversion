@@ -12,6 +12,7 @@
 
 #include "SLFSoulslikeBoss.h"
 #include "Components/AIBossComponent.h"
+#include "Components/AC_AI_CombatManager.h"
 #include "Components/SphereComponent.h"
 #include "Components/SLFAIStateMachineComponent.h"
 
@@ -19,6 +20,13 @@ ASLFSoulslikeBoss::ASLFSoulslikeBoss()
 {
 	// Create AI Boss Component - use different FName than Blueprint SCS to avoid collision
 	BossComponent = CreateDefaultSubobject<UAIBossComponent>(TEXT("BossComponent"));
+
+	// Create AC_AI_CombatManager Component - bosses need this for poise break, hit reactions, death handling
+	// CRITICAL: Must use UAC_AI_CombatManager (not UAICombatManagerComponent) because the AnimBP
+	// property bindings were compiled expecting AC_AI_CombatManager type to access PoiseBreakAsset
+	AC_AI_CombatManagerComponent = CreateDefaultSubobject<UAC_AI_CombatManager>(TEXT("AC_AI_CombatManager"));
+	UE_LOG(LogTemp, Warning, TEXT("[SLFSoulslikeBoss] Constructor - Created AC_AI_CombatManager: %s"),
+		AC_AI_CombatManagerComponent ? TEXT("SUCCESS") : TEXT("FAILED"));
 
 	// Create Trigger Collision sphere for boss encounter activation - renamed to avoid collision
 	TriggerCollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("TriggerCollisionSphere"));

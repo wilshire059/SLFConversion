@@ -28,6 +28,7 @@
 
 // Forward declarations
 class UAIBossComponent;
+class UAC_AI_CombatManager;
 
 /**
  * Soulslike boss character - enemy with boss encounter functionality
@@ -56,6 +57,10 @@ public:
 	/** Trigger collision sphere for boss encounter activation - named TriggerCollisionSphere to avoid collision with Blueprint SCS "TriggerCollision" */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<USphereComponent> TriggerCollisionSphere;
+
+	/** AC_AI_CombatManager component - required for AnimBP property bindings that expect this type */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<UAC_AI_CombatManager> AC_AI_CombatManagerComponent;
 
 	// ═══════════════════════════════════════════════════════════════════
 	// HELPER FUNCTIONS

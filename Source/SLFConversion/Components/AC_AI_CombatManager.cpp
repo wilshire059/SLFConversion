@@ -8,6 +8,7 @@
 // PASS 10: Debug logging added
 
 #include "AC_AI_CombatManager.h"
+#include "UObject/ConstructorHelpers.h"
 #include "Components/AC_StatManager.h"
 #include "Components/AC_StatusEffectManager.h"
 #include "Components/AC_CombatManager.h"
@@ -16,12 +17,16 @@
 #include "Blueprints/B_Stat.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Engine/DataTable.h"
+#include "Engine/DataAsset.h"
 #include "GameFramework/Character.h"
 #include "Interfaces/BPI_GenericCharacter.h"
 
 UAC_AI_CombatManager::UAC_AI_CombatManager()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+
+	// PoiseBreakAsset is loaded in OnRegister - before AnimBP initializes
+	PoiseBreakAsset = nullptr;
 
 	// Initialize defaults
 	IsDead = false;
@@ -52,17 +57,65 @@ UAC_AI_CombatManager::UAC_AI_CombatManager()
 	SelectedAbility = nullptr;
 }
 
+void UAC_AI_CombatManager::OnRegister()
+{
+	Super::OnRegister();
+
+	// Load PoiseBreakAsset EARLY - before AnimBP initializes and tries to read it
+	// OnRegister runs when component is registered to an actor, before BeginPlay
+	if (!PoiseBreakAsset)
+	{
+		const FString BlueprintPath = TEXT("/Game/SoulslikeFramework/Data/_AnimationData/PDA_PoiseBreakAnimData.PDA_PoiseBreakAnimData_C");
+		UClass* PoiseBreakClass = LoadClass<UPDA_PoiseBreakAnimData>(nullptr, *BlueprintPath);
+		if (PoiseBreakClass)
+		{
+			PoiseBreakAsset = Cast<UPDA_PoiseBreakAnimData>(PoiseBreakClass->GetDefaultObject());
+			UE_LOG(LogTemp, Log, TEXT("[AC_AI_CombatManager] OnRegister - Loaded PoiseBreakAsset CDO: %s"),
+				PoiseBreakAsset ? *PoiseBreakAsset->GetName() : TEXT("NULL"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[AC_AI_CombatManager] OnRegister - Failed to load PoiseBreakAsset class"));
+		}
+	}
+}
+
 void UAC_AI_CombatManager::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(LogTemp, Log, TEXT("UAC_AI_CombatManager::BeginPlay"));
+
+	AActor* Owner = GetOwner();
+	UE_LOG(LogTemp, Warning, TEXT("[AC_AI_CombatManager] BeginPlay - Owner: %s, PoiseBreakAsset: %s"),
+		Owner ? *Owner->GetName() : TEXT("NULL"),
+		PoiseBreakAsset ? *PoiseBreakAsset->GetName() : TEXT("NULL"));
 
 	// Cache mesh reference
-	AActor* Owner = GetOwner();
 	if (IsValid(Owner))
 	{
 		Mesh = Owner->FindComponentByClass<USkeletalMeshComponent>();
 	}
+
+	// Load PoiseBreakAsset from Blueprint (if not already set)
+	// PDA_PoiseBreakAnimData is a Blueprint PDA, need to load Blueprint class and get CDO
+	if (!PoiseBreakAsset)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[AC_AI_CombatManager] PoiseBreakAsset is NULL, attempting to load..."));
+		const FString BlueprintPath = TEXT("/Game/SoulslikeFramework/Data/_AnimationData/PDA_PoiseBreakAnimData.PDA_PoiseBreakAnimData_C");
+		UClass* PoiseBreakClass = LoadClass<UPDA_PoiseBreakAnimData>(nullptr, *BlueprintPath);
+		if (PoiseBreakClass)
+		{
+			PoiseBreakAsset = Cast<UPDA_PoiseBreakAnimData>(PoiseBreakClass->GetDefaultObject());
+			UE_LOG(LogTemp, Log, TEXT("[AC_AI_CombatManager] Loaded PoiseBreakAsset CDO: %s"),
+				PoiseBreakAsset ? *PoiseBreakAsset->GetName() : TEXT("NULL"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[AC_AI_CombatManager] Failed to load PoiseBreakAsset class from %s"), *BlueprintPath);
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[AC_AI_CombatManager] BeginPlay COMPLETE - PoiseBreakAsset: %s"),
+		PoiseBreakAsset ? *PoiseBreakAsset->GetName() : TEXT("STILL NULL!"));
 }
 
 void UAC_AI_CombatManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

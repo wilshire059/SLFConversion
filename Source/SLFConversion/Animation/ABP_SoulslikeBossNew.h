@@ -14,11 +14,12 @@
 #include "Animation/AnimInstance.h"
 #include "ABP_SoulslikeBossNew.generated.h"
 
-// Forward declarations - avoid including Blueprint headers to prevent cascade loading
+// Forward declarations
 class UAnimMontage;
 class ACharacter;
 class UCharacterMovementComponent;
 class UActorComponent;
+class UAC_AI_CombatManager;
 
 UCLASS()
 class SLFCONVERSION_API UABP_SoulslikeBossNew : public UAnimInstance
@@ -34,6 +35,9 @@ public:
 	// Called when the animation instance is initialized
 	virtual void NativeInitializeAnimation() override;
 
+	// Called when the animation instance is uninitialized (before destruction)
+	virtual void NativeUninitializeAnimation() override;
+
 	// ═══════════════════════════════════════════════════════════════════════
 	// ANIMATION VARIABLES (10)
 	// These are updated in NativeUpdateAnimation and read by AnimGraph
@@ -44,8 +48,12 @@ public:
 	AActor* SoulslikeBoss;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	UCharacterMovementComponent* MovementComponent;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
-	UActorComponent* ACAICombatManager;
+	// NOTE: DisplayName MUST match Blueprint variable name exactly (with spaces)
+	// The AnimGraph reads "AC AI Combat Manager" not "ACAICombatManager"
+	// CRITICAL: Must use UAC_AI_CombatManager* because AnimGraph property bindings were compiled
+	// expecting this type to access PoiseBreakAsset
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default", meta = (DisplayName = "AC AI Combat Manager"))
+	UAC_AI_CombatManager* ACAICombatManager;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	FVector Velocity;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
@@ -77,7 +85,7 @@ protected:
 
 	// Cached component references
 	UPROPERTY()
-	UActorComponent* CachedCombatManager;
+	UAC_AI_CombatManager* CachedCombatManager;
 
 	// Helper to get owner velocity
 	FVector GetOwnerVelocity() const;

@@ -8,6 +8,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/ActorComponent.h"
+#include "Components/AC_AI_CombatManager.h"
 
 UABP_SoulslikeBossNew::UABP_SoulslikeBossNew()
 {
@@ -27,6 +28,33 @@ void UABP_SoulslikeBossNew::NativeInitializeAnimation()
 
 	UE_LOG(LogTemp, Log, TEXT("UABP_SoulslikeBossNew::NativeInitializeAnimation - Owner: %s"),
 		OwnerCharacter ? *OwnerCharacter->GetName() : TEXT("None"));
+
+	// Initialize component references early to prevent null access in AnimGraph
+	if (OwnerCharacter)
+	{
+		SoulslikeBoss = OwnerCharacter;
+		MovementComponent = OwnerCharacter->GetCharacterMovement();
+
+		// Find AC_AI_CombatManager component (the type AnimGraph property bindings expect)
+		CachedCombatManager = OwnerCharacter->FindComponentByClass<UAC_AI_CombatManager>();
+		ACAICombatManager = CachedCombatManager;
+
+		// Also try to set the Blueprint variable with spaces if it exists
+		SetBlueprintObjectVariable(FName(TEXT("AC AI Combat Manager")), CachedCombatManager);
+
+		// Initialize properties from combat manager (UAC_AI_CombatManager has these properties)
+		if (CachedCombatManager)
+		{
+			IkWeight = CachedCombatManager->IkWeight;
+			PhysicsWeight = CachedCombatManager->IkWeight;
+			CurrentHitNormal = CachedCombatManager->CurrentHitNormal;
+			HitLocation = CachedCombatManager->CurrentHitNormal;
+			PoiseBroken = CachedCombatManager->PoiseBroken;  // Note: PoiseBroken without 'b' prefix in UAC_AI_CombatManager
+		}
+
+		UE_LOG(LogTemp, Log, TEXT("UABP_SoulslikeBossNew::NativeInitializeAnimation - CombatMgr: %s"),
+			CachedCombatManager ? *CachedCombatManager->GetName() : TEXT("None"));
+	}
 }
 
 void UABP_SoulslikeBossNew::NativeUpdateAnimation(float DeltaSeconds)
@@ -37,6 +65,24 @@ void UABP_SoulslikeBossNew::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		OwnerCharacter = Cast<ACharacter>(TryGetPawnOwner());
 		if (!OwnerCharacter) return;
+	}
+
+	// Guard against PIE exit - don't update if world is tearing down
+	UWorld* World = GetWorld();
+	if (!World || World->bIsTearingDown)
+	{
+		// Clear references during teardown to prevent stale access
+		ACAICombatManager = nullptr;
+		CachedCombatManager = nullptr;
+		return;
+	}
+
+	// Check if owner is valid and not being destroyed
+	if (!IsValid(OwnerCharacter) || OwnerCharacter->IsPendingKillPending())
+	{
+		ACAICombatManager = nullptr;
+		CachedCombatManager = nullptr;
+		return;
 	}
 
 	// ═══════════════════════════════════════════════════════════════════════
@@ -61,27 +107,34 @@ void UABP_SoulslikeBossNew::NativeUpdateAnimation(float DeltaSeconds)
 	// Calculate direction relative to actor rotation
 	Direction = CalculateDirection(Velocity, OwnerCharacter->GetActorRotation());
 
-	// Default physics/IK weights
-	PhysicsWeight = 1.0f;
-	IkWeight = 1.0f;
-
-	// Get AI Combat Manager component if not cached
-	if (!CachedCombatManager)
+	// Get AC_AI_CombatManager component if not cached
+	if (!CachedCombatManager || !IsValid(CachedCombatManager))
 	{
-		for (UActorComponent* Comp : OwnerCharacter->GetComponents())
-		{
-			if (Comp && Comp->GetClass()->GetName().Contains(TEXT("AI_CombatManager")))
-			{
-				CachedCombatManager = Comp;
-				ACAICombatManager = Comp;
-				break;
-			}
-		}
+		CachedCombatManager = OwnerCharacter->FindComponentByClass<UAC_AI_CombatManager>();
 	}
+
+	// Validate component is still valid (not being destroyed)
+	if (!IsValid(CachedCombatManager))
+	{
+		ACAICombatManager = nullptr;
+		CachedCombatManager = nullptr;
+		return;
+	}
+
 	ACAICombatManager = CachedCombatManager;
 
-	// Copy HitLocation to CurrentHitNormal
-	CurrentHitNormal = HitLocation;
+	// Get properties from combat manager for AnimGraph (UAC_AI_CombatManager has these properties)
+	if (CachedCombatManager)
+	{
+		// Get PoiseBroken state (PoiseBroken without 'b' prefix in UAC_AI_CombatManager)
+		PoiseBroken = CachedCombatManager->PoiseBroken;
+		// Get IkWeight from combat manager
+		IkWeight = CachedCombatManager->IkWeight;
+		PhysicsWeight = CachedCombatManager->IkWeight;
+		// Get CurrentHitNormal from combat manager
+		CurrentHitNormal = CachedCombatManager->CurrentHitNormal;
+		HitLocation = CachedCombatManager->CurrentHitNormal;
+	}
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// BLUEPRINT VARIABLES WITH SPACES (set via reflection)
@@ -113,8 +166,32 @@ void UABP_SoulslikeBossNew::SetBlueprintObjectVariable(const FName& VarName, UOb
 	UClass* MyClass = GetClass();
 	if (!MyClass) return;
 
+	// Find the property by name (FName can contain spaces)
 	FProperty* Property = MyClass->FindPropertyByName(VarName);
-	if (!Property) return;
+	if (!Property)
+	{
+		// Try to find in the class hierarchy
+		for (UClass* SearchClass = MyClass; SearchClass; SearchClass = SearchClass->GetSuperClass())
+		{
+			Property = SearchClass->FindPropertyByName(VarName);
+			if (Property)
+			{
+				break;
+			}
+		}
+
+		if (!Property)
+		{
+			// DEBUG: Log that we couldn't find the property (only once per name)
+			static TSet<FName> LoggedNames;
+			if (!LoggedNames.Contains(VarName))
+			{
+				LoggedNames.Add(VarName);
+				UE_LOG(LogTemp, Warning, TEXT("[ABP_SoulslikeBossNew] SetBlueprintObjectVariable: Property '%s' not found in class hierarchy"), *VarName.ToString());
+			}
+			return;
+		}
+	}
 
 	FObjectProperty* ObjProp = CastField<FObjectProperty>(Property);
 	if (!ObjProp) return;
@@ -141,3 +218,15 @@ void UABP_SoulslikeBossNew::SetBlueprintVectorVariable(const FName& VarName, con
 }
 
 // AnimGraph function removed - conflicts with UE's internal AnimGraph function name
+
+void UABP_SoulslikeBossNew::NativeUninitializeAnimation()
+{
+	// Clear all references before destruction to prevent AnimGraph from accessing stale pointers
+	ACAICombatManager = nullptr;
+	CachedCombatManager = nullptr;
+	OwnerCharacter = nullptr;
+	SoulslikeBoss = nullptr;
+	MovementComponent = nullptr;
+
+	Super::NativeUninitializeAnimation();
+}
