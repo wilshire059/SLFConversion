@@ -124,6 +124,17 @@ public:
 	double MinUnarmedPoiseDamage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config|Unarmed")
 	double MaxUnarmedPoiseDamage;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config|Unarmed")
+	double MinUnarmedDamage = 25.0;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Config|Unarmed")
+	double MaxUnarmedDamage = 35.0;
+
+	/** Default status effects to apply when this enemy attacks.
+	 *  Key: Status effect data asset (e.g., DA_StatusEffect_Bleed)
+	 *  Value: Application data with Rank and BuildupAmount
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|StatusEffects")
+	TMap<UPrimaryDataAsset*, FSLFStatusEffectApplication> DefaultAttackStatusEffects;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Runtime")
 	TMap<FGameplayTag, UPrimaryDataAsset*> AbilityTimer;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Runtime")

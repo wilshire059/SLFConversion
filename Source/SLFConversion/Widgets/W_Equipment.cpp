@@ -434,9 +434,13 @@ void UW_Equipment::PopulateEquipmentSlots()
 	SlotDefinitions.Add({FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Trinket 1")), 0, 3});
 	SlotDefinitions.Add({FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Trinket 2")), 1, 3});
 
-	// Ammo (Column 4)
-	SlotDefinitions.Add({FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Arrow")), 0, 4});
-	SlotDefinitions.Add({FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Bullet")), 1, 4});
+	// Tools (Column 4) - bp_only uses Tool slots for all consumables/projectiles
+	// Tool 1 = Flasks, Tool 2 = Throwing knives, etc.
+	SlotDefinitions.Add({FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 1")), 0, 4});
+	SlotDefinitions.Add({FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 2")), 1, 4});
+	SlotDefinitions.Add({FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 3")), 2, 4});
+	SlotDefinitions.Add({FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 4")), 3, 4});
+	SlotDefinitions.Add({FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 5")), 4, 4});
 
 	UE_LOG(LogTemp, Log, TEXT("[W_Equipment] PopulateEquipmentSlots - Creating %d slots from C++ definitions"), SlotDefinitions.Num());
 
@@ -532,7 +536,7 @@ int32 UW_Equipment::GetMaxRowsInColumn(int32 Column) const
 		case 1: return 3;  // Left Hand Weapons 1-3
 		case 2: return 4;  // Head, Armor, Gloves, Greaves
 		case 3: return 2;  // Trinket 1-2
-		case 4: return 2;  // Arrow, Bullet
+		case 4: return 5;  // Tool 1-5 (flasks, projectiles, consumables)
 		default: return 0;
 	}
 }

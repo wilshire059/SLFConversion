@@ -57,9 +57,9 @@ public:
 	FString ActiveSlot;
 
 	/** Whether this is the first time on the demo level
-	 * Note: Blueprint name was "FirstTimeOnDemoLevel?" - C++ cannot use ? in identifiers */
-	UPROPERTY(BlueprintReadWrite, Category = "Demo Level", meta = (DisplayName = "FirstTimeOnDemoLevel?"))
-	bool bFirstTimeOnDemoLevel = true;
+	 * Note: DisplayName with ? suffix matches original Blueprint variable name */
+	UPROPERTY(BlueprintReadWrite, Category = "Demo Level", meta = (DisplayName = "First Time on Demo Level?"))
+	bool FirstTimeOnDemoLevel = true;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS [1/1]

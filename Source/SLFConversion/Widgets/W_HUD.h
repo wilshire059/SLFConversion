@@ -37,6 +37,7 @@ class UW_DialogWindow;
 class UW_InteractableWidget;
 class UW_BossBar;
 class UW_ItemWheel;
+class UW_ItemWheelSlot;
 class UW_AbilityDisplay;
 class UW_Interaction;
 class UW_LootNotification;
@@ -117,6 +118,9 @@ protected:
 	// Status effect bar widget class for dynamic creation
 	UPROPERTY()
 	TSubclassOf<UW_StatusEffectBar> StatusEffectBarWidgetClass;
+
+	// Item wheel widgets - cached to configure SlotsToTrack if needed
+	UW_ItemWheelSlot* CachedItemWheelTools;
 
 public:
 
@@ -321,7 +325,7 @@ public:
 
 	// Cinematic Events
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_HUD|Cinematic")
-	void EventToggleCinematicMode(bool bActive, bool bFadeOutIfNotCinematicMode);
+	void EventToggleCinematicMode(UPARAM(DisplayName = "Active?") bool bActive, bool bFadeOutIfNotCinematicMode);
 	virtual void EventToggleCinematicMode_Implementation(bool bActive, bool bFadeOutIfNotCinematicMode);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_HUD|Cinematic")
@@ -444,4 +448,8 @@ protected:
 	/** Internal handler bound to StatusEffectManagerComponent::OnStatusEffectAdded (takes UObject*) */
 	UFUNCTION()
 	void OnStatusEffectAddedFromComponent(UObject* StatusEffect);
+
+	/** Internal handler bound to ItemWheel_Tools::OnItemWheelSlotSelected - sets active tool slot */
+	UFUNCTION()
+	void OnItemWheelToolsSlotSelected(FGameplayTag SlotTag);
 };

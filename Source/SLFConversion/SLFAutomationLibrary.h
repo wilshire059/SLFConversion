@@ -131,6 +131,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "SLF Automation|DataAsset")
 	static bool ApplyWeaponOverlayTag(const FString& ItemAssetPath, const FString& OverlayTagString);
 
+	/**
+	 * Apply WeaponStatusEffectInfo TMap to a PDA_Item
+	 * @param ItemAssetPath - Path to the item data asset
+	 * @param StatusEffectPaths - Array of status effect data asset paths
+	 * @param Ranks - Array of corresponding rank values (int32)
+	 * @param BuildupAmounts - Array of corresponding buildup amounts (double)
+	 * @return true if successful
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|DataAsset")
+	static bool ApplyWeaponStatusEffects(const FString& ItemAssetPath, const TArray<FString>& StatusEffectPaths, const TArray<int32>& Ranks, const TArray<double>& BuildupAmounts);
+
 	// ANIMBP FIX FUNCTIONS
 	UFUNCTION(BlueprintCallable, Category = "SLF Automation|AnimBP")
 	static int32 FixPropertyAccessPaths(UObject* AnimBlueprintAsset, const FString& OldPropertyName, const FString& NewPropertyName);
@@ -206,6 +217,11 @@ public:
 	// Auto-fix all BlendListByEnum nodes for overlay states
 	UFUNCTION(BlueprintCallable, Category = "SLF Automation|AnimBP")
 	static int32 FixAllBlendListByEnumBindings(UObject* AnimBlueprintAsset);
+
+	// Redirect property bindings from old Blueprint variables (_0 suffix) to C++ properties
+	// Fixes compiler errors like "Invalid field 'LeftHandOverlayState_0' found in property path"
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|AnimBP")
+	static int32 RedirectOverlayStateBindings(UObject* AnimBlueprintAsset);
 
 	// Migrate BlendListByEnum nodes from Blueprint enum to C++ enum
 	// This properly replaces nodes: saves connections, clears enum, sets new enum, reconstructs, restores connections

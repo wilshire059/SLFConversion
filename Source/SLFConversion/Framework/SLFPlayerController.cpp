@@ -1,5 +1,8 @@
 // SLFPlayerController.cpp
 #include "SLFPlayerController.h"
+#include "SLFGameInstance.h"
+#include "Blueprints/B_SequenceActor.h"
+#include "LevelSequence.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "InputAction.h"
@@ -127,6 +130,79 @@ void ASLFPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] BeginPlay - C++ PlayerController active"));
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// STARTUP CUTSCENE - Check if first time on demo level
+	// This replaces the Level Blueprint logic that had broken variable references
+	// ═══════════════════════════════════════════════════════════════════════
+	if (UWorld* World = GetWorld())
+	{
+		// Check if we're on the demo level
+		FString LevelName = World->GetMapName();
+		LevelName.RemoveFromStart(World->StreamingLevelsPrefix);
+		UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] Current level: %s"), *LevelName);
+
+		if (LevelName.Contains(TEXT("Demo_Showcase")) || LevelName.Contains(TEXT("L_Demo")))
+		{
+			// Get game instance and check if first time
+			if (USLFGameInstance* GI = Cast<USLFGameInstance>(GetGameInstance()))
+			{
+				UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] FirstTimeOnDemoLevel: %s"),
+					GI->FirstTimeOnDemoLevel ? TEXT("true") : TEXT("false"));
+
+				if (GI->FirstTimeOnDemoLevel)
+				{
+					// Load the sequence to play
+					static const FSoftObjectPath ShowcaseSequencePath(TEXT("/Game/SoulslikeFramework/Cinematics/LS_ShowcaseRoom.LS_ShowcaseRoom"));
+					ULevelSequence* SequenceAsset = Cast<ULevelSequence>(ShowcaseSequencePath.TryLoad());
+
+					if (SequenceAsset)
+					{
+						// Load B_SequenceActor Blueprint class
+						static const FSoftClassPath SequenceActorBPPath(TEXT("/Game/SoulslikeFramework/Blueprints/_WorldActors/B_SequenceActor.B_SequenceActor_C"));
+						UClass* SequenceActorClass = SequenceActorBPPath.TryLoadClass<AB_SequenceActor>();
+
+						if (SequenceActorClass)
+						{
+							// Spawn the sequence actor
+							FActorSpawnParameters SpawnParams;
+							SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+							AB_SequenceActor* SequenceActor = World->SpawnActor<AB_SequenceActor>(SequenceActorClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+
+							if (SequenceActor)
+							{
+								// Set the sequence to play
+								SequenceActor->SequenceToPlay = SequenceAsset;
+								SequenceActor->CanBeSkipped = true;
+
+								UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] *** SPAWNED B_SequenceActor with LS_ShowcaseRoom ***"));
+
+								// Toggle cinematic mode on HUD if available (after HUD is initialized)
+								// Note: HUD isn't initialized yet at this point, so we schedule this
+							}
+							else
+							{
+								UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] Failed to spawn B_SequenceActor"));
+							}
+						}
+						else
+						{
+							UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] Could not load B_SequenceActor Blueprint class"));
+						}
+					}
+					else
+					{
+						UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] Could not load LS_ShowcaseRoom sequence"));
+					}
+
+					// Set first time to false so we don't play again
+					GI->FirstTimeOnDemoLevel = false;
+					UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] Set FirstTimeOnDemoLevel = false"));
+				}
+			}
+		}
+	}
 
 	// AAA Pattern: Pre-load widget classes FIRST to eliminate first-use freeze
 	PreloadWidgetClasses();

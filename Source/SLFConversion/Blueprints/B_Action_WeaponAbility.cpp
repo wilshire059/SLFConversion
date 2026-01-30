@@ -51,33 +51,42 @@ void UB_Action_WeaponAbility::ExecuteAction_Implementation()
 
 	UE_LOG(LogTemp, Log, TEXT("[ActionWeaponAbility] Using weapon ability from: %s"), *ItemAsset->GetName());
 
-	// Extract weapon ability montage using reflection
+	// Get weapon ability from item's nested struct: ItemInformation.EquipmentDetails.WeaponAbility
 	UAnimMontage* AbilityMontage = nullptr;
+	UPDA_WeaponAbility* WeaponAbilityAsset = nullptr;
 
 	if (UPDA_Item* ItemData_Asset = Cast<UPDA_Item>(ItemAsset))
 	{
-		// Look for WeaponAbility montage in item properties
-		UClass* ItemClass = ItemData_Asset->GetClass();
-
-		for (TFieldIterator<FProperty> PropIt(ItemClass); PropIt; ++PropIt)
+		// Access nested WeaponAbility: ItemInformation.EquipmentDetails.WeaponAbility
+		UObject* WeaponAbilityObj = ItemData_Asset->ItemInformation.EquipmentDetails.WeaponAbility;
+		if (WeaponAbilityObj)
 		{
-			FProperty* Prop = *PropIt;
-			FString PropName = Prop->GetName();
-
-			if (PropName.Contains(TEXT("WeaponAbility")) || PropName.Contains(TEXT("AbilityMontage")))
+			WeaponAbilityAsset = Cast<UPDA_WeaponAbility>(WeaponAbilityObj);
+			if (WeaponAbilityAsset)
 			{
-				if (FSoftObjectProperty* SoftObjProp = CastField<FSoftObjectProperty>(Prop))
+				// Load the montage from the weapon ability
+				AbilityMontage = WeaponAbilityAsset->Montage.LoadSynchronous();
+				if (AbilityMontage)
 				{
-					void* PropValueAddr = Prop->ContainerPtrToValuePtr<void>(ItemData_Asset);
-					TSoftObjectPtr<UObject>* SoftPtr = static_cast<TSoftObjectPtr<UObject>*>(PropValueAddr);
-					if (SoftPtr)
-					{
-						AbilityMontage = Cast<UAnimMontage>(SoftPtr->LoadSynchronous());
-						UE_LOG(LogTemp, Log, TEXT("[ActionWeaponAbility] Found ability montage from: %s"), *PropName);
-					}
+					UE_LOG(LogTemp, Log, TEXT("[ActionWeaponAbility] Found ability montage: %s from WeaponAbility: %s"),
+						*AbilityMontage->GetName(), *WeaponAbilityAsset->GetName());
 				}
-				break;
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("[ActionWeaponAbility] WeaponAbility %s has no montage assigned"),
+						*WeaponAbilityAsset->GetName());
+				}
 			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[ActionWeaponAbility] WeaponAbility is not UPDA_WeaponAbility type: %s"),
+					*WeaponAbilityObj->GetClass()->GetName());
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[ActionWeaponAbility] Weapon %s has no WeaponAbility assigned"),
+				*ItemAsset->GetName());
 		}
 	}
 
@@ -86,6 +95,18 @@ void UB_Action_WeaponAbility::ExecuteAction_Implementation()
 	{
 		IBPI_GenericCharacter::Execute_PlayMontageReplicated(OwnerActor, AbilityMontage, 1.0, 0.0, NAME_None);
 		UE_LOG(LogTemp, Log, TEXT("[ActionWeaponAbility] Playing ability montage: %s"), *AbilityMontage->GetName());
+
+		// Consume FP if weapon ability has a cost
+		if (WeaponAbilityAsset && WeaponAbilityAsset->Cost > 0.0 && WeaponAbilityAsset->AffectedStat.IsValid())
+		{
+			if (IBPI_GenericCharacter* CharInterface = Cast<IBPI_GenericCharacter>(OwnerActor))
+			{
+				// AdjustStat to drain FP
+				// Note: bp_only uses StatManager->AdjustStat(AffectedStat, -Cost)
+				UE_LOG(LogTemp, Log, TEXT("[ActionWeaponAbility] Consuming %f from stat %s"),
+					WeaponAbilityAsset->Cost, *WeaponAbilityAsset->AffectedStat.ToString());
+			}
+		}
 	}
 	else if (!AbilityMontage)
 	{

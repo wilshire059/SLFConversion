@@ -4,14 +4,19 @@
 // 20-PASS VALIDATION: 2026-01-06 - Full interface implementation
 
 #include "GameFramework/PC_SoulslikeFramework.h"
+#include "Framework/SLFGameInstance.h"
 #include "Widgets/W_HUD.h"
 #include "Kismet/GameplayStatics.h"
+#include "Blueprints/B_SequenceActor.h"
+#include "LevelSequence.h"
+#include "Engine/World.h"
 #include "Blueprint/UserWidget.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "GameplayTagContainer.h"
 #include "Components/InventoryManagerComponent.h"
 #include "Components/EquipmentManagerComponent.h"
+#include "Components/AC_EquipmentManager.h"
 #include "Components/SaveLoadManagerComponent.h"
 #include "Components/RadarManagerComponent.h"
 #include "Components/ProgressManagerComponent.h"
@@ -130,6 +135,82 @@ void APC_SoulslikeFramework::BeginPlay()
 
 	UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] BeginPlay"));
 
+	// ═══════════════════════════════════════════════════════════════════════
+	// STARTUP CUTSCENE - Check if first time on demo level
+	// This replaces the Level Blueprint logic that had broken variable references
+	// ═══════════════════════════════════════════════════════════════════════
+	if (UWorld* World = GetWorld())
+	{
+		// Check if we're on the demo level
+		FString LevelName = World->GetMapName();
+		LevelName.RemoveFromStart(World->StreamingLevelsPrefix);
+		UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] Current level: %s"), *LevelName);
+
+		if (LevelName.Contains(TEXT("Demo_Showcase")) || LevelName.Contains(TEXT("L_Demo")))
+		{
+			// Get game instance and check if first time
+			if (USLFGameInstance* GI = Cast<USLFGameInstance>(GetGameInstance()))
+			{
+				UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] FirstTimeOnDemoLevel: %s"),
+					GI->FirstTimeOnDemoLevel ? TEXT("true") : TEXT("false"));
+
+				if (GI->FirstTimeOnDemoLevel)
+				{
+					// Load the sequence to play
+					static const FSoftObjectPath ShowcaseSequencePath(TEXT("/Game/SoulslikeFramework/Cinematics/LS_ShowcaseRoom.LS_ShowcaseRoom"));
+					ULevelSequence* SequenceAsset = Cast<ULevelSequence>(ShowcaseSequencePath.TryLoad());
+
+					if (SequenceAsset)
+					{
+						// Load B_SequenceActor Blueprint class
+						static const FSoftClassPath SequenceActorBPPath(TEXT("/Game/SoulslikeFramework/Blueprints/_WorldActors/B_SequenceActor.B_SequenceActor_C"));
+						UClass* SequenceActorClass = SequenceActorBPPath.TryLoadClass<AB_SequenceActor>();
+
+						if (SequenceActorClass)
+						{
+							// Spawn the sequence actor
+							FActorSpawnParameters SpawnParams;
+							SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+							AB_SequenceActor* SequenceActor = World->SpawnActor<AB_SequenceActor>(SequenceActorClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+
+							if (SequenceActor)
+							{
+								// Set the sequence to play
+								SequenceActor->SequenceToPlay = SequenceAsset;
+								SequenceActor->CanBeSkipped = true;
+
+								UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] Spawned B_SequenceActor with LS_ShowcaseRoom"));
+
+								// Toggle cinematic mode on HUD if available
+								if (W_HUD)
+								{
+									W_HUD->EventToggleCinematicMode(true, true);
+								}
+							}
+							else
+							{
+								UE_LOG(LogTemp, Warning, TEXT("[PC_SoulslikeFramework] Failed to spawn B_SequenceActor"));
+							}
+						}
+						else
+						{
+							UE_LOG(LogTemp, Warning, TEXT("[PC_SoulslikeFramework] Could not load B_SequenceActor Blueprint class"));
+						}
+					}
+					else
+					{
+						UE_LOG(LogTemp, Warning, TEXT("[PC_SoulslikeFramework] Could not load LS_ShowcaseRoom sequence"));
+					}
+
+					// Set first time to false so we don't play again
+					GI->FirstTimeOnDemoLevel = false;
+					UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] Set FirstTimeOnDemoLevel = false"));
+				}
+			}
+		}
+	}
+
 	// Setup Enhanced Input mapping context
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
@@ -161,12 +242,29 @@ void APC_SoulslikeFramework::BeginPlay()
 				AC_InventoryManager->AddItem(FlaskData, 5, false); // 5 flasks, no loot UI
 				UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] Added 5x Health Flask to inventory"));
 
-				// Equip the flask to the first tool slot so it can be used
+				// CRITICAL: Use "Tool 1" (singular) to match ToolSlots configuration
+				FGameplayTag ToolSlot1 = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 1"));
+
+				// Equip to UEquipmentManagerComponent (for UI/widgets)
 				if (AC_EquipmentManager)
 				{
-					FGameplayTag ToolSlot1 = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tools 1"));
 					AC_EquipmentManager->EquipToolToSlot(ToolSlot1, FlaskData, false);
-					UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] Equipped Health Flask to Tools 1 slot"));
+					UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] Equipped Health Flask to Tool 1 (UEquipmentManagerComponent)"));
+				}
+
+				// ALSO equip to UAC_EquipmentManager on pawn (for Actions - they read from this component!)
+				if (APawn* ControlledPawn = GetPawn())
+				{
+					if (UAC_EquipmentManager* PawnEquipMgr = ControlledPawn->FindComponentByClass<UAC_EquipmentManager>())
+					{
+						bool bSuccess1, bSuccess2, bSuccess3;
+						PawnEquipMgr->EquipToolToSlot(Cast<UPrimaryDataAsset>(FlaskData), ToolSlot1, false, bSuccess1, bSuccess2, bSuccess3);
+						UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] Equipped Health Flask to Tool 1 (UAC_EquipmentManager on Pawn, success: %d)"), bSuccess1);
+					}
+					else
+					{
+						UE_LOG(LogTemp, Warning, TEXT("[PC_SoulslikeFramework] No UAC_EquipmentManager on pawn - actions may not see flask!"));
+					}
 				}
 			}
 		}
@@ -714,5 +812,54 @@ void APC_SoulslikeFramework::EventInitializeRadar_Implementation()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[PC_SoulslikeFramework] EventInitializeRadar - No AC_RadarManager!"));
+	}
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TEST/DEBUG FUNCTIONS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void APC_SoulslikeFramework::SpawnTestSpell()
+{
+	UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] SpawnTestSpell - Spawning spell projectile with C++ generated VFX"));
+
+	APawn* PlayerPawn = GetPawn();
+	if (!PlayerPawn)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[PC_SoulslikeFramework] SpawnTestSpell - No pawn!"));
+		return;
+	}
+
+	// Get spawn location in front of player
+	FVector SpellSpawnLocation = PlayerPawn->GetActorLocation() + PlayerPawn->GetActorForwardVector() * 100.0f;
+	SpellSpawnLocation.Z += 80.0f; // Raise to about chest height
+
+	// Get spawn rotation facing forward
+	FRotator SpellSpawnRotation = PlayerPawn->GetActorRotation();
+
+	// Spawn the spell projectile
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = PlayerPawn;
+	SpawnParams.Instigator = PlayerPawn;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	// Try to load the spell projectile class
+	UClass* SpellClass = LoadClass<AActor>(nullptr, TEXT("/Script/SLFConversion.SLFSpellProjectile"));
+	if (!SpellClass)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[PC_SoulslikeFramework] SpawnTestSpell - Could not find SLFSpellProjectile class!"));
+		return;
+	}
+
+	AActor* SpawnedSpell = GetWorld()->SpawnActor<AActor>(SpellClass, SpellSpawnLocation, SpellSpawnRotation, SpawnParams);
+
+	if (SpawnedSpell)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] SpawnTestSpell - SUCCESS! Spawned %s at %s"),
+			*SpawnedSpell->GetName(), *SpellSpawnLocation.ToString());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[PC_SoulslikeFramework] SpawnTestSpell - Failed to spawn projectile!"));
 	}
 }

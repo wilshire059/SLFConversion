@@ -48,26 +48,55 @@ void UB_Action_ScrollWheel_Tools::ExecuteAction_Implementation()
 	// Get current active tool slot
 	FGameplayTag CurrentSlot = EquipMgr->GetActiveToolSlot();
 
-	// Find current slot index
-	int32 CurrentIndex = -1;
-	TArray<FGameplayTag> SlotArray;
-	Tools.GetGameplayTagArray(SlotArray);
+	// Build array of ONLY occupied tool slots
+	TArray<FGameplayTag> AllSlots;
+	Tools.GetGameplayTagArray(AllSlots);
 
-	for (int32 i = 0; i < SlotArray.Num(); i++)
+	TArray<FGameplayTag> OccupiedSlots;
+	for (const FGameplayTag& Slot : AllSlots)
 	{
-		if (SlotArray[i] == CurrentSlot)
+		if (EquipMgr->IsSlotOccupied(Slot))
+		{
+			OccupiedSlots.Add(Slot);
+		}
+	}
+
+	if (OccupiedSlots.Num() == 0)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[ActionScrollWheelTools] No occupied tool slots to cycle"));
+		return;
+	}
+
+	if (OccupiedSlots.Num() == 1)
+	{
+		// Only one tool, nothing to cycle to
+		UE_LOG(LogTemp, Log, TEXT("[ActionScrollWheelTools] Only one tool equipped, no cycling needed"));
+		return;
+	}
+
+	// Find current slot index in occupied slots
+	int32 CurrentIndex = -1;
+	for (int32 i = 0; i < OccupiedSlots.Num(); i++)
+	{
+		if (OccupiedSlots[i] == CurrentSlot)
 		{
 			CurrentIndex = i;
 			break;
 		}
 	}
 
-	// Cycle to next slot
-	int32 NextIndex = (CurrentIndex + 1) % SlotArray.Num();
-	FGameplayTag NextSlot = SlotArray[NextIndex];
+	// If current slot not found in occupied slots, start from first
+	if (CurrentIndex < 0)
+	{
+		CurrentIndex = 0;
+	}
 
-	UE_LOG(LogTemp, Log, TEXT("[ActionScrollWheelTools] Cycling from slot %d to %d: %s"),
-		CurrentIndex, NextIndex, *NextSlot.ToString());
+	// Cycle to next occupied slot
+	int32 NextIndex = (CurrentIndex + 1) % OccupiedSlots.Num();
+	FGameplayTag NextSlot = OccupiedSlots[NextIndex];
+
+	UE_LOG(LogTemp, Log, TEXT("[ActionScrollWheelTools] Cycling from slot %d to %d: %s (occupied slots: %d)"),
+		CurrentIndex, NextIndex, *NextSlot.ToString(), OccupiedSlots.Num());
 
 	// Set new active tool slot
 	EquipMgr->SetActiveToolSlot(NextSlot);

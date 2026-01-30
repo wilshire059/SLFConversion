@@ -1889,6 +1889,88 @@ int32 USLFAutomationLibrary::FixAllBlendListByEnumBindings(UObject* AnimBlueprin
 }
 
 /**
+ * Redirect property bindings on BlendListByEnum nodes from Blueprint variables to C++ properties
+ * This fixes compiler errors like "Invalid field 'LeftHandOverlayState_0' found in property path"
+ *
+ * The old Blueprint variables (LeftHandOverlayState_0, RightHandOverlayState_0) were removed
+ * but the BlendListByEnum nodes still have internal property bindings referencing them.
+ * This function redirects those bindings to the C++ properties (LeftHandOverlayState, RightHandOverlayState).
+ */
+int32 USLFAutomationLibrary::RedirectOverlayStateBindings(UObject* AnimBlueprintAsset)
+{
+	if (!AnimBlueprintAsset) return 0;
+
+	UAnimBlueprint* AnimBP = Cast<UAnimBlueprint>(AnimBlueprintAsset);
+	if (!AnimBP)
+	{
+		UBlueprint* BP = Cast<UBlueprint>(AnimBlueprintAsset);
+		if (BP && BP->GeneratedClass)
+		{
+			AnimBP = Cast<UAnimBlueprint>(BP);
+		}
+	}
+	if (!AnimBP) return 0;
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("=== Fixing Overlay State Property Bindings ==="));
+
+	int32 TotalFixed = 0;
+
+	// Iterate all graphs looking for BlendListByEnum nodes with problematic bindings
+	TArray<UEdGraph*> AllGraphs;
+	AnimBP->GetAllGraphs(AllGraphs);
+	UE_LOG(LogSLFAutomation, Warning, TEXT("Searching %d graphs"), AllGraphs.Num());
+
+	for (UEdGraph* Graph : AllGraphs)
+	{
+		if (!Graph) continue;
+
+		for (UEdGraphNode* Node : Graph->Nodes)
+		{
+			if (!Node) continue;
+
+			// Only process BlendListByEnum nodes
+			UAnimGraphNode_BlendListByEnum* BlendListNode = Cast<UAnimGraphNode_BlendListByEnum>(Node);
+			if (!BlendListNode) continue;
+
+			UE_LOG(LogSLFAutomation, Warning, TEXT("  Processing BlendListByEnum: %s in graph %s"),
+				*Node->GetName(), *Graph->GetName());
+
+			// Check if it has a binding for ActiveEnumValue (this is where the property path is stored)
+			if (BlendListNode->HasBinding(FName(TEXT("ActiveEnumValue"))))
+			{
+				UE_LOG(LogSLFAutomation, Warning, TEXT("    Found ActiveEnumValue binding - removing"));
+
+				// Remove the problematic property binding
+				// The pin connection (K2Node_VariableGet -> ActiveEnumValue) will still work
+				BlendListNode->RemoveBindings(FName(TEXT("ActiveEnumValue")));
+				TotalFixed++;
+
+				UE_LOG(LogSLFAutomation, Warning, TEXT("    Removed property binding"));
+			}
+			else
+			{
+				UE_LOG(LogSLFAutomation, Warning, TEXT("    No ActiveEnumValue binding found"));
+			}
+
+			// Also check HasBinding without parameter to see what bindings exist
+			UE_LOG(LogSLFAutomation, Warning, TEXT("    Has BlendPose binding: %s"),
+				BlendListNode->HasBinding(FName(TEXT("BlendPose"))) ? TEXT("YES") : TEXT("NO"));
+			UE_LOG(LogSLFAutomation, Warning, TEXT("    Has BlendTime binding: %s"),
+				BlendListNode->HasBinding(FName(TEXT("BlendTime"))) ? TEXT("YES") : TEXT("NO"));
+		}
+	}
+
+	if (TotalFixed > 0)
+	{
+		FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(AnimBP);
+		FKismetEditorUtilities::CompileBlueprint(AnimBP, EBlueprintCompileOptions::SkipGarbageCollection);
+	}
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("=== Fixed %d BlendListByEnum nodes ==="), TotalFixed);
+	return TotalFixed;
+}
+
+/**
  * Migrate BlendListByEnum nodes from Blueprint enum to C++ enum
  * This properly replaces nodes: saves connections, maps enum entry names by VALUE, reconstructs, restores connections
  *

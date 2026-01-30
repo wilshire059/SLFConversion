@@ -18,9 +18,11 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/AC_CombatManager.h"
+#include "Components/AC_AI_CombatManager.h"
 #include "Components/AICombatManagerComponent.h"
 #include "GameFramework/Character.h"
 #include "SLFEnums.h" // For ESLFStatScaling
+#include "SLFPrimaryDataAssets.h" // For UPDA_StatusEffect
 
 ASLFWeaponBase::ASLFWeaponBase()
 {
@@ -641,17 +643,39 @@ void ASLFWeaponBase::OnActorTraced(AActor* Actor, FHitResult Hit, double Multipl
 	// Get poise damage
 	float PoiseDamage = GetWeaponPoiseDamage();
 
-	// Status effects from weapon
+	// Status effects from weapon - convert StatusData array to TMap
 	TMap<FGameplayTag, UPrimaryDataAsset*> StatusEffects;
 	TArray<FSLFWeaponStatusEffectData> StatusData = GetWeaponStatusEffectData();
-	// Note: Status effect conversion would require data asset lookup
+
+	// Convert status effect data to TMap format for combat managers
+	for (const FSLFWeaponStatusEffectData& Data : StatusData)
+	{
+		if (Data.StatusEffectAsset)
+		{
+			// Use the status effect's tag as the key (or a generic tag if not available)
+			FGameplayTag EffectTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.StatusEffect.Generic"), false);
+
+			// Try to get the tag from the status effect data asset
+			if (UPDA_StatusEffect* StatusEffectData = Cast<UPDA_StatusEffect>(Data.StatusEffectAsset))
+			{
+				if (StatusEffectData->Tag.IsValid())
+				{
+					EffectTag = StatusEffectData->Tag;
+				}
+			}
+
+			StatusEffects.Add(EffectTag, Data.StatusEffectAsset);
+			UE_LOG(LogTemp, Log, TEXT("[Weapon] Adding status effect to damage: %s (Buildup: %.1f)"),
+				*Data.StatusEffectAsset->GetName(), Data.BuildupAmount);
+		}
+	}
 
 	// Try player combat manager first (UAC_CombatManager)
 	UAC_CombatManager* TargetCombatManager = Actor->FindComponentByClass<UAC_CombatManager>();
 	if (TargetCombatManager)
 	{
-		UE_LOG(LogTemp, Log, TEXT("[Weapon] Applying damage to player: %.2f damage, %.2f poise"),
-			TotalDamage, PoiseDamage);
+		UE_LOG(LogTemp, Log, TEXT("[Weapon] Applying damage to player: %.2f damage, %.2f poise, %d status effects"),
+			TotalDamage, PoiseDamage, StatusEffects.Num());
 
 		TargetCombatManager->HandleIncomingWeaponDamage(
 			WeaponOwner,
@@ -665,19 +689,37 @@ void ASLFWeaponBase::OnActorTraced(AActor* Actor, FHitResult Hit, double Multipl
 	}
 	else
 	{
-		// Try AI combat manager (UAICombatManagerComponent)
-		UAICombatManagerComponent* AICombatManager = Actor->FindComponentByClass<UAICombatManagerComponent>();
-		if (AICombatManager)
+		// Try newer AI combat manager first (UAC_AI_CombatManager) - has status effects support
+		UAC_AI_CombatManager* NewAICombatManager = Actor->FindComponentByClass<UAC_AI_CombatManager>();
+		if (NewAICombatManager)
 		{
-			UE_LOG(LogTemp, Log, TEXT("[Weapon] Applying damage to AI: %.2f damage, %.2f poise"),
-				TotalDamage, PoiseDamage);
+			UE_LOG(LogTemp, Log, TEXT("[Weapon] Applying damage to AI (AC_AI_CombatManager): %.2f damage, %.2f poise, %d status effects"),
+				TotalDamage, PoiseDamage, StatusEffects.Num());
 
-			AICombatManager->HandleIncomingWeaponDamage_AI(
+			NewAICombatManager->HandleIncomingWeaponDamage_AI(
 				WeaponOwner,
+				Hit,
 				TotalDamage,
 				PoiseDamage,
-				Hit
+				StatusEffects
 			);
+		}
+		else
+		{
+			// Fall back to older AI combat manager (UAICombatManagerComponent) - no status effects
+			UAICombatManagerComponent* AICombatManager = Actor->FindComponentByClass<UAICombatManagerComponent>();
+			if (AICombatManager)
+			{
+				UE_LOG(LogTemp, Log, TEXT("[Weapon] Applying damage to AI (legacy): %.2f damage, %.2f poise (no status effects)"),
+					TotalDamage, PoiseDamage);
+
+				AICombatManager->HandleIncomingWeaponDamage_AI(
+					WeaponOwner,
+					TotalDamage,
+					PoiseDamage,
+					Hit
+				);
+			}
 		}
 	}
 }

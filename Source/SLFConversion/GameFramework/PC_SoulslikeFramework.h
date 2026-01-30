@@ -206,4 +206,12 @@ public:
 	// --- Other Functions ---
 	virtual void StartRespawn_Implementation(double FadeDelay) override;
 	virtual void BlendViewTarget_Implementation(AActor* TargetActor, double BlendTime, double BlendExp, bool bLockOutgoing) override;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// TEST/DEBUG FUNCTIONS
+	// ═══════════════════════════════════════════════════════════════════════
+
+	/** Spawn a test spell projectile with C++ generated VFX */
+	UFUNCTION(Exec, BlueprintCallable, Category = "Debug")
+	void SpawnTestSpell();
 };

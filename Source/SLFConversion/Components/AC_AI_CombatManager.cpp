@@ -10,6 +10,8 @@
 #include "AC_AI_CombatManager.h"
 #include "Components/AC_StatManager.h"
 #include "Components/AC_StatusEffectManager.h"
+#include "Components/AC_CombatManager.h"
+#include "Components/StatusEffectManagerComponent.h"
 #include "Blueprints/BFL_Helper.h"
 #include "Blueprints/B_Stat.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -580,9 +582,20 @@ void UAC_AI_CombatManager::ApplyIncomingStatusEffects_Implementation(const TMap<
 	{
 		for (const auto& Effect : StatusEffects)
 		{
-			// Apply each status effect
-			// StatusEffectManager->ApplyStatusEffect(Effect.Value, Multiplier);
+			FGameplayTag EffectTag = Effect.Key;
+			UPrimaryDataAsset* EffectData = Effect.Value;
+
+			if (IsValid(EffectData))
+			{
+				// Apply one-shot buildup with multiplier (matches AC_CombatManager)
+				StatusEffectManager->AddOneShotBuildup(EffectData, 1, Multiplier);
+				UE_LOG(LogTemp, Log, TEXT("  Applied status effect: %s with multiplier: %f"), *EffectTag.ToString(), Multiplier);
+			}
 		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  No status effect manager found on AI"));
 	}
 }
 
@@ -599,10 +612,107 @@ void UAC_AI_CombatManager::ApplyFistDamage_Implementation(AActor* TargetActor, c
 		return;
 	}
 
-	// Calculate random poise damage in range
+	AActor* Owner = GetOwner();
+
+	// Calculate random damage and poise in range
+	double Damage = FMath::RandRange(MinUnarmedDamage, MaxUnarmedDamage);
 	double PoiseDamage = FMath::RandRange(MinUnarmedPoiseDamage, MaxUnarmedPoiseDamage);
 
-	// Apply damage via interface or direct component call
+	UE_LOG(LogTemp, Log, TEXT("  Damage: %.1f, Poise: %.1f, StatusEffects: %d"),
+		Damage, PoiseDamage, DefaultAttackStatusEffects.Num());
+
+	// Convert our status effects TMap to the format expected by combat managers
+	TMap<FGameplayTag, UPrimaryDataAsset*> StatusEffectsForCombat;
+	for (const auto& EffectPair : DefaultAttackStatusEffects)
+	{
+		if (IsValid(EffectPair.Key))
+		{
+			// Use a generic tag or try to get tag from data asset
+			FGameplayTag EffectTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.StatusEffect.Generic"), false);
+			StatusEffectsForCombat.Add(EffectTag, EffectPair.Key);
+		}
+	}
+
+	// Try player combat manager first (UAC_CombatManager)
+	UAC_CombatManager* TargetCombatManager = TargetActor->FindComponentByClass<UAC_CombatManager>();
+	if (TargetCombatManager)
+	{
+		UE_LOG(LogTemp, Log, TEXT("  Applying fist damage to player via UAC_CombatManager"));
+
+		TargetCombatManager->HandleIncomingWeaponDamage(
+			Owner,
+			nullptr,  // GuardSound
+			nullptr,  // PerfectGuardSound
+			Hit,
+			Damage,
+			PoiseDamage,
+			StatusEffectsForCombat
+		);
+	}
+	else
+	{
+		// Try AI combat manager for AI targets
+		UAC_AI_CombatManager* TargetAICombatManager = TargetActor->FindComponentByClass<UAC_AI_CombatManager>();
+		if (TargetAICombatManager)
+		{
+			UE_LOG(LogTemp, Log, TEXT("  Applying fist damage to AI via UAC_AI_CombatManager"));
+
+			TargetAICombatManager->HandleIncomingWeaponDamage_AI(
+				Owner,
+				Hit,
+				Damage,
+				PoiseDamage,
+				StatusEffectsForCombat
+			);
+		}
+	}
+
+	// Also apply status effects directly to target's status effect manager
+	// This ensures status effects are applied with proper BuildupAmount values
+	if (DefaultAttackStatusEffects.Num() > 0)
+	{
+		UAC_StatusEffectManager* TargetStatusManager = TargetActor->FindComponentByClass<UAC_StatusEffectManager>();
+		if (TargetStatusManager)
+		{
+			for (const auto& EffectPair : DefaultAttackStatusEffects)
+			{
+				if (IsValid(EffectPair.Key))
+				{
+					UE_LOG(LogTemp, Log, TEXT("  Applying status effect %s to %s: Rank=%d, Buildup=%.1f"),
+						*EffectPair.Key->GetName(), *TargetActor->GetName(),
+						EffectPair.Value.Rank, EffectPair.Value.BuildupAmount);
+
+					TargetStatusManager->AddOneShotBuildup(
+						EffectPair.Key,
+						EffectPair.Value.Rank,
+						EffectPair.Value.BuildupAmount
+					);
+				}
+			}
+		}
+		else
+		{
+			// Try newer status effect component
+			UStatusEffectManagerComponent* TargetStatusComp = TargetActor->FindComponentByClass<UStatusEffectManagerComponent>();
+			if (TargetStatusComp)
+			{
+				for (const auto& EffectPair : DefaultAttackStatusEffects)
+				{
+					if (IsValid(EffectPair.Key))
+					{
+						UE_LOG(LogTemp, Log, TEXT("  Applying status effect %s to %s via StatusEffectManagerComponent"),
+							*EffectPair.Key->GetName(), *TargetActor->GetName());
+
+						TargetStatusComp->AddOneShotBuildup(
+							EffectPair.Key,
+							EffectPair.Value.Rank,
+							EffectPair.Value.BuildupAmount
+						);
+					}
+				}
+			}
+		}
+	}
 }
 
 /**

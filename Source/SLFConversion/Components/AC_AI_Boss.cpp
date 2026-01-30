@@ -16,6 +16,8 @@
 #include "GameFramework/Controller.h"
 #include "Interfaces/SLFControllerInterface.h"
 #include "Blueprints/B_Stat.h"
+#include "LevelSequencePlayer.h"
+#include "LevelSequenceActor.h"
 
 UAC_AI_Boss::UAC_AI_Boss()
 {
@@ -158,6 +160,12 @@ void UAC_AI_Boss::SetFightActive_Implementation(bool InFightActive)
 
 /**
  * SetPhase - Change the boss to a specific phase
+ *
+ * Blueprint Logic:
+ * 1. Get Phases[PhaseIndex]
+ * 2. Set ActivePhaseIndex and ActivePhase
+ * 3. If PhaseStartSequence is valid:
+ *    - Create and play level sequence player directly
  */
 void UAC_AI_Boss::SetPhase_Implementation(int32 PhaseIndex)
 {
@@ -167,6 +175,38 @@ void UAC_AI_Boss::SetPhase_Implementation(int32 PhaseIndex)
 	{
 		ActivePhaseIndex = PhaseIndex;
 		ActivePhase = Phases[PhaseIndex];
+
+		// Play the phase start sequence if valid
+		if (!ActivePhase.PhaseStartSequence.IsNull())
+		{
+			ULevelSequence* Sequence = ActivePhase.PhaseStartSequence.LoadSynchronous();
+			if (IsValid(Sequence))
+			{
+				UE_LOG(LogTemp, Log, TEXT("  Playing PhaseStartSequence: %s"), *Sequence->GetName());
+
+				// Create level sequence player and play directly
+				FMovieSceneSequencePlaybackSettings PlaybackSettings;
+				PlaybackSettings.bAutoPlay = true;
+
+				ALevelSequenceActor* OutActor = nullptr;
+				ULevelSequencePlayer* Player = ULevelSequencePlayer::CreateLevelSequencePlayer(
+					GetWorld(),
+					Sequence,
+					PlaybackSettings,
+					OutActor
+				);
+
+				if (IsValid(Player))
+				{
+					Player->Play();
+					UE_LOG(LogTemp, Log, TEXT("  Started playing phase sequence"));
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("  Failed to create level sequence player"));
+				}
+			}
+		}
 	}
 	else
 	{

@@ -51,24 +51,84 @@ void USLFActionUseEquippedTool::ExecuteAction_Implementation()
 
 	UE_LOG(LogTemp, Log, TEXT("[ActionUseEquippedTool] Using tool: %s"), *ItemAsset->GetName());
 
-	// Check if this is a flask based on item name/category
+	// Check item type based on category/subcategory
 	FString ItemName = ItemAsset->GetName();
 	UPDA_Item* ItemData = Cast<UPDA_Item>(ItemAsset);
 
 	bool bIsFlask = ItemName.Contains(TEXT("Flask")) || ItemName.Contains(TEXT("Potion"));
+	bool bIsProjectile = false;
 
-	// Also check category if available
+	// Check category and subcategory for proper item type detection
 	if (ItemData)
 	{
 		ESLFItemCategory Category = ItemData->ItemInformation.Category.Category;
+		ESLFItemSubCategory SubCategory = ItemData->ItemInformation.Category.SubCategory;
+
 		if (Category == ESLFItemCategory::Tools)
 		{
-			// Tools category can include flasks - check name for flask
-			bIsFlask = bIsFlask || ItemName.Contains(TEXT("Flask"));
+			// Tools category can include flasks - check name or subcategory
+			bIsFlask = bIsFlask || (SubCategory == ESLFItemSubCategory::Flasks) || ItemName.Contains(TEXT("Flask"));
+
+			// Check for projectiles (throwing knives, etc.)
+			bIsProjectile = (SubCategory == ESLFItemSubCategory::Projectiles);
 		}
 	}
 
-	if (bIsFlask)
+	// Projectile items (throwing knives, etc.) - trigger ThrowProjectile action
+	if (bIsProjectile)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[ActionUseEquippedTool] Projectile item detected - triggering ThrowProjectile action"));
+
+		// Check if we have any of this projectile left
+		UInventoryManagerComponent* InvMgr = GetInventoryManager();
+		if (InvMgr)
+		{
+			int32 SlotIndex = InvMgr->GetSlotWithItem(ItemAsset, ESLFInventorySlotType::InventorySlot);
+			if (SlotIndex < 0)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[ActionUseEquippedTool] Projectile not found in inventory!"));
+				return;
+			}
+
+			// Get current count
+			TArray<FSLFInventoryItem> AllItems = InvMgr->GetAllItems();
+			int32 CurrentCount = 0;
+			for (const FSLFInventoryItem& Item : AllItems)
+			{
+				if (Item.ItemAsset == ItemAsset)
+				{
+					CurrentCount = Item.Amount;
+					break;
+				}
+			}
+
+			if (CurrentCount <= 0)
+			{
+				UE_LOG(LogTemp, Log, TEXT("[ActionUseEquippedTool] No projectiles left!"));
+				return;
+			}
+
+			UE_LOG(LogTemp, Log, TEXT("[ActionUseEquippedTool] Has %d projectiles remaining"), CurrentCount);
+		}
+
+		// Trigger ThrowKnife action (throw projectile like throwing knife)
+		UAC_ActionManager* ActionMgr = GetActionManager();
+		if (ActionMgr)
+		{
+			// Use ThrowKnife tag which is mapped to DA_Action_Projectile in InitializeDefaultActions
+			FGameplayTag ProjectileTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.ThrowKnife"), false);
+			if (ProjectileTag.IsValid())
+			{
+				UE_LOG(LogTemp, Log, TEXT("[ActionUseEquippedTool] Triggering action: %s"), *ProjectileTag.ToString());
+				ActionMgr->EventPerformAction(ProjectileTag);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[ActionUseEquippedTool] ThrowKnife action tag not found!"));
+			}
+		}
+	}
+	else if (bIsFlask)
 	{
 		// Flask item - check charges BEFORE triggering action
 		UInventoryManagerComponent* InvMgr = GetInventoryManager();
@@ -128,7 +188,7 @@ void USLFActionUseEquippedTool::ExecuteAction_Implementation()
 	}
 	else
 	{
-		// Non-flask item - use via inventory manager
+		// Non-flask, non-projectile item - use via inventory manager
 		UInventoryManagerComponent* InvMgr = GetInventoryManager();
 		if (InvMgr)
 		{

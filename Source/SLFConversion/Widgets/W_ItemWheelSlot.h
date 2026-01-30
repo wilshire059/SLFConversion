@@ -179,4 +179,7 @@ protected:
 
 	UFUNCTION()
 	void HandleOnStanceChanged(bool RightHand, bool TwoHand);
+
+	UFUNCTION()
+	void HandleOnActiveToolSlotChanged(FGameplayTag NewSlot);
 };

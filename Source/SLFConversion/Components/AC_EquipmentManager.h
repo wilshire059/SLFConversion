@@ -32,6 +32,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAC_EquipmentManager_OnWeaponStatCheckFailed)
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAC_EquipmentManager_OnItemEffectRemoved);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAC_EquipmentManager_OnItemEffectAdded);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAC_EquipmentManager_OnStanceChanged, bool, RightHand, bool, TwoHand);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAC_EquipmentManager_OnActiveToolSlotChanged, FGameplayTag, NewSlot);
 
 UCLASS(ClassGroup=(SoulslikeFramework), meta=(BlueprintSpawnableComponent))
 class SLFCONVERSION_API UAC_EquipmentManager : public UActorComponent
@@ -118,6 +119,8 @@ public:
 	FAC_EquipmentManager_OnItemEffectAdded OnItemEffectAdded;
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FAC_EquipmentManager_OnStanceChanged OnStanceChanged;
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FAC_EquipmentManager_OnActiveToolSlotChanged OnActiveToolSlotChanged;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// FUNCTIONS (41)

@@ -442,17 +442,19 @@ enum class ESLFNpcState : uint8
 //////////////////////////////////////////////////////////////////////////
 // ESLFOverlayState
 // Replaces: /Game/SoulslikeFramework/Enums/E_OverlayState
-// CRITICAL: Values MUST match Blueprint E_OverlayState enum order!
-// Blueprint enum order (from E_OverlayState.json):
-//   0 = Unarmed, 1 = Shield, 2 = OneHanded, 3 = TwoHanded, 4 = DualWield
+// CRITICAL: Values MUST match AnimGraph BlendListByEnum BlendPose indices:
+//   BlendPose_0 = Unarmed, BlendPose_1 = OneHanded,
+//   BlendPose_2 = TwoHanded, BlendPose_3 = Shield
+// NOTE: This differs from E_OverlayState.json because AnimGraph wiring
+//       was designed with this order, not the Blueprint enum order.
 //////////////////////////////////////////////////////////////////////////
 UENUM(BlueprintType)
 enum class ESLFOverlayState : uint8
 {
 	Unarmed = 0		UMETA(DisplayName = "Unarmed"),
-	Shield = 1		UMETA(DisplayName = "Shield"),
-	OneHanded = 2	UMETA(DisplayName = "OneHanded"),
-	TwoHanded = 3	UMETA(DisplayName = "TwoHanded"),
+	OneHanded = 1	UMETA(DisplayName = "OneHanded"),
+	TwoHanded = 2	UMETA(DisplayName = "TwoHanded"),
+	Shield = 3		UMETA(DisplayName = "Shield"),
 	DualWield = 4	UMETA(DisplayName = "DualWield")
 };
 

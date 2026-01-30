@@ -2390,6 +2390,153 @@ bool USLFAutomationLibrary::ApplyWeaponOverlayTag(const FString& ItemAssetPath, 
 	return bSaved;
 }
 
+bool USLFAutomationLibrary::ApplyWeaponStatusEffects(const FString& ItemAssetPath, const TArray<FString>& StatusEffectPaths, const TArray<int32>& Ranks, const TArray<double>& BuildupAmounts)
+{
+	UE_LOG(LogSLFAutomation, Warning, TEXT("ApplyWeaponStatusEffects: %s with %d entries"), *ItemAssetPath, StatusEffectPaths.Num());
+
+	if (StatusEffectPaths.Num() != Ranks.Num() || StatusEffectPaths.Num() != BuildupAmounts.Num())
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Arrays must have same length (Paths=%d, Ranks=%d, Buildups=%d)"),
+			StatusEffectPaths.Num(), Ranks.Num(), BuildupAmounts.Num());
+		return false;
+	}
+
+	if (StatusEffectPaths.Num() == 0)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  No status effects to apply"));
+		return true;
+	}
+
+	// Load the item asset
+	UObject* Asset = LoadObject<UObject>(nullptr, *ItemAssetPath);
+	if (!Asset)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Failed to load asset: %s"), *ItemAssetPath);
+		return false;
+	}
+
+	// Get the ItemInformation property
+	FStructProperty* ItemInfoProp = FindFProperty<FStructProperty>(Asset->GetClass(), TEXT("ItemInformation"));
+	if (!ItemInfoProp)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  No ItemInformation property found"));
+		return false;
+	}
+
+	void* ItemInfoPtr = ItemInfoProp->ContainerPtrToValuePtr<void>(Asset);
+	if (!ItemInfoPtr)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Could not get ItemInformation pointer"));
+		return false;
+	}
+
+	// Get EquipmentDetails from ItemInformation
+	UScriptStruct* ItemInfoStruct = ItemInfoProp->Struct;
+	FStructProperty* EquipDetailsProp = FindFProperty<FStructProperty>(ItemInfoStruct, TEXT("EquipmentDetails"));
+	if (!EquipDetailsProp)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  No EquipmentDetails property found"));
+		return false;
+	}
+
+	void* EquipDetailsPtr = EquipDetailsProp->ContainerPtrToValuePtr<void>(ItemInfoPtr);
+	if (!EquipDetailsPtr)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Could not get EquipmentDetails pointer"));
+		return false;
+	}
+
+	// Get WeaponStatusEffectInfo TMap from EquipmentDetails
+	UScriptStruct* EquipDetailsStruct = EquipDetailsProp->Struct;
+	FMapProperty* StatusMapProp = FindFProperty<FMapProperty>(EquipDetailsStruct, TEXT("WeaponStatusEffectInfo"));
+	if (!StatusMapProp)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  No WeaponStatusEffectInfo property found"));
+		return false;
+	}
+
+	void* StatusMapPtr = StatusMapProp->ContainerPtrToValuePtr<void>(EquipDetailsPtr);
+	if (!StatusMapPtr)
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Could not get WeaponStatusEffectInfo pointer"));
+		return false;
+	}
+
+	// Get the map helper
+	FScriptMapHelper MapHelper(StatusMapProp, StatusMapPtr);
+
+	// Clear existing entries and add new ones
+	MapHelper.EmptyValues();
+
+	for (int32 i = 0; i < StatusEffectPaths.Num(); i++)
+	{
+		const FString& EffectPath = StatusEffectPaths[i];
+		int32 Rank = Ranks[i];
+		double Buildup = BuildupAmounts[i];
+
+		// Load the status effect data asset
+		UPrimaryDataAsset* StatusEffectAsset = LoadObject<UPrimaryDataAsset>(nullptr, *EffectPath);
+		if (!StatusEffectAsset)
+		{
+			UE_LOG(LogSLFAutomation, Error, TEXT("  Failed to load status effect: %s"), *EffectPath);
+			continue;
+		}
+
+		// Create the application struct
+		FSLFStatusEffectApplication Application;
+		Application.Rank = Rank;
+		Application.BuildupAmount = Buildup;
+
+		// Add to map - need to use AddPair with proper key/value pointers
+		int32 NewIndex = MapHelper.AddDefaultValue_Invalid_NeedsRehash();
+
+		// Get pointers to key and value in the new entry
+		uint8* KeyPtr = MapHelper.GetKeyPtr(NewIndex);
+		uint8* ValuePtr = MapHelper.GetValuePtr(NewIndex);
+
+		// Set key (UPrimaryDataAsset* - object pointer)
+		*reinterpret_cast<UPrimaryDataAsset**>(KeyPtr) = StatusEffectAsset;
+
+		// Set value (FSLFStatusEffectApplication struct)
+		FStructProperty* ValueProp = CastField<FStructProperty>(StatusMapProp->ValueProp);
+		if (ValueProp && ValueProp->Struct)
+		{
+			ValueProp->Struct->CopyScriptStruct(ValuePtr, &Application);
+		}
+
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  Added: %s (Rank=%d, Buildup=%.1f)"),
+			*StatusEffectAsset->GetName(), Rank, Buildup);
+	}
+
+	// Rehash the map after all modifications
+	MapHelper.Rehash();
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("  Map now has %d entries"), MapHelper.Num());
+
+	// Mark package dirty and save
+	Asset->MarkPackageDirty();
+
+	UPackage* Package = Asset->GetOutermost();
+	FString PackageFileName = FPackageName::LongPackageNameToFilename(Package->GetName(), FPackageName::GetAssetPackageExtension());
+
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Standalone;
+	SaveArgs.Error = GError;
+
+	bool bSaved = UPackage::SavePackage(Package, Asset, *PackageFileName, SaveArgs);
+
+	if (bSaved)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  Saved successfully"));
+	}
+	else
+	{
+		UE_LOG(LogSLFAutomation, Error, TEXT("  Failed to save"));
+	}
+
+	return bSaved;
+}
+
 // Include AnimBP Export/Diff/Fix implementations
 #include "SLFAnimBPExport.inl"
 

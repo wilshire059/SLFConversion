@@ -258,6 +258,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character|Input")
 	UInputAction* IA_UseEquippedItem;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character|Input")
+	UInputAction* IA_WeaponSkill;
+
 	// ═══════════════════════════════════════════════════════════════════
 	// COMPONENT CACHE (populated in BeginPlay)
 	// ═══════════════════════════════════════════════════════════════════
@@ -388,6 +391,7 @@ protected:
 	void HandleScrollLeftHand();
 	void HandleScrollTools();
 	void HandleUseEquippedItem();
+	void HandleWeaponSkill();
 
 	/** Queue action to input buffer (checks buffer state) */
 	void QueueActionToBuffer(const FGameplayTag& ActionTag);

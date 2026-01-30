@@ -39,6 +39,7 @@
 #include "Widgets/W_StatusEffectNotification.h"
 #include "Widgets/W_Radar.h"
 #include "Widgets/W_Boss_Healthbar.h"
+#include "Widgets/W_ItemWheelSlot.h"
 #include "Components/VerticalBox.h"
 #include "Components/WidgetSwitcher.h"
 #include "Components/Image.h"
@@ -47,6 +48,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/InventoryManagerComponent.h"
 #include "Components/AC_StatusEffectManager.h"
+#include "Components/AC_EquipmentManager.h"
+#include "Components/EquipmentManagerComponent.h"
 #include "Components/StatusEffectManagerComponent.h"
 #include "GameFramework/PC_SoulslikeFramework.h"
 #include "Framework/SLFPlayerController.h"
@@ -71,6 +74,7 @@ UW_HUD::UW_HUD(const FObjectInitializer& ObjectInitializer)
 	CachedW_StatusEffectNotification = nullptr;
 	LootNotificationWidgetClass = nullptr;
 	StatusEffectBarWidgetClass = nullptr;
+	CachedItemWheelTools = nullptr;
 	IsDialogActive = false;
 	CinematicMode = false;
 }
@@ -266,6 +270,50 @@ void UW_HUD::CacheWidgetReferences()
 	}
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - CachedW_Radar: %s"),
 		CachedW_Radar ? TEXT("Found") : TEXT("NOT FOUND"));
+
+	// Cache ItemWheel_Tools and configure SlotsToTrack if empty
+	// This fixes throwing knives not appearing in item wheel after C++ migration
+	if (!CachedItemWheelTools)
+	{
+		CachedItemWheelTools = Cast<UW_ItemWheelSlot>(GetWidgetFromName(TEXT("ItemWheel_Tools")));
+	}
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - CachedItemWheelTools: %s"),
+		CachedItemWheelTools ? TEXT("Found") : TEXT("NOT FOUND"));
+
+	// If SlotsToTrack is empty, configure it with tool slot tags
+	// SlotsToTrack is an instance-editable property that may have been lost during Blueprint reparenting
+	if (CachedItemWheelTools && CachedItemWheelTools->SlotsToTrack.Num() == 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::CacheWidgetReferences - ItemWheel_Tools SlotsToTrack is EMPTY! Configuring with tool slots..."));
+
+		// Add all 5 tool slots (matching AC_EquipmentManager::ToolSlots)
+		FGameplayTag ToolSlot1 = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 1"), false);
+		FGameplayTag ToolSlot2 = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 2"), false);
+		FGameplayTag ToolSlot3 = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 3"), false);
+		FGameplayTag ToolSlot4 = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 4"), false);
+		FGameplayTag ToolSlot5 = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 5"), false);
+
+		if (ToolSlot1.IsValid()) CachedItemWheelTools->SlotsToTrack.AddTag(ToolSlot1);
+		if (ToolSlot2.IsValid()) CachedItemWheelTools->SlotsToTrack.AddTag(ToolSlot2);
+		if (ToolSlot3.IsValid()) CachedItemWheelTools->SlotsToTrack.AddTag(ToolSlot3);
+		if (ToolSlot4.IsValid()) CachedItemWheelTools->SlotsToTrack.AddTag(ToolSlot4);
+		if (ToolSlot5.IsValid()) CachedItemWheelTools->SlotsToTrack.AddTag(ToolSlot5);
+
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - Configured ItemWheel_Tools with %d tool slots"),
+			CachedItemWheelTools->SlotsToTrack.Num());
+	}
+	else if (CachedItemWheelTools)
+	{
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - ItemWheel_Tools already has %d slots configured"),
+			CachedItemWheelTools->SlotsToTrack.Num());
+	}
+
+	// Bind to ItemWheel_Tools::OnItemWheelSlotSelected to update ActiveToolSlot
+	if (CachedItemWheelTools)
+	{
+		CachedItemWheelTools->OnItemWheelSlotSelected.AddDynamic(this, &UW_HUD::OnItemWheelToolsSlotSelected);
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - Bound to ItemWheel_Tools::OnItemWheelSlotSelected"));
+	}
 
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - END"));
 }
@@ -1801,4 +1849,44 @@ void UW_HUD::OnStatusEffectAddedFromComponent(UObject* StatusEffect)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::OnStatusEffectAddedFromComponent - Failed to cast StatusEffect to UB_StatusEffect"));
 	}
+}
+
+void UW_HUD::OnItemWheelToolsSlotSelected(FGameplayTag SlotTag)
+{
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnItemWheelToolsSlotSelected - SlotTag: %s"), *SlotTag.ToString());
+
+	// Get the equipment manager and set the active tool slot
+	APlayerController* OwningPlayer = GetOwningPlayer();
+	if (!OwningPlayer)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::OnItemWheelToolsSlotSelected - No OwningPlayer"));
+		return;
+	}
+
+	APawn* ControlledPawn = OwningPlayer->GetPawn();
+	if (!ControlledPawn)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::OnItemWheelToolsSlotSelected - No ControlledPawn"));
+		return;
+	}
+
+	// Try to find equipment manager component on the pawn
+	UAC_EquipmentManager* EquipMgr = ControlledPawn->FindComponentByClass<UAC_EquipmentManager>();
+	if (EquipMgr)
+	{
+		EquipMgr->SetActiveToolSlot(SlotTag);
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnItemWheelToolsSlotSelected - Set ActiveToolSlot on UAC_EquipmentManager"));
+		return;
+	}
+
+	// Also try UEquipmentManagerComponent
+	UEquipmentManagerComponent* EquipMgrComp = ControlledPawn->FindComponentByClass<UEquipmentManagerComponent>();
+	if (EquipMgrComp)
+	{
+		EquipMgrComp->SetActiveToolSlot(SlotTag);
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnItemWheelToolsSlotSelected - Set ActiveToolSlot on UEquipmentManagerComponent"));
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("UW_HUD::OnItemWheelToolsSlotSelected - No equipment manager found on pawn"));
 }

@@ -1,6 +1,14 @@
 // SLFActionWeaponAbility.cpp
 // Logic: Get currently equipped weapon, extract its WeaponAbility data,
-// play the ability animation and apply any associated effects
+// check FP cost, play the ability animation and spawn any associated effects
+//
+// bp_only Logic:
+// 1. ExecuteAction gets WeaponAbility from item's EquipmentDetails
+// 2. CheckStatRequirement with AffectedStat and Cost
+// 3. If success, call BeginSpecialAttack which:
+//    - Plays Montage via PlaySoftMontageReplicated
+//    - Spawns AdditionalEffectClass if valid
+//    - Calls AdjustStatByRequirement to consume the stat (FP)
 #include "SLFActionWeaponAbility.h"
 #include "AC_EquipmentManager.h"
 #include "AC_StatManager.h"
@@ -8,7 +16,9 @@
 #include "Components/StatManagerComponent.h"
 #include "Interfaces/BPI_GenericCharacter.h"
 #include "SLFPrimaryDataAssets.h"
-#include "UObject/UnrealType.h"
+#include "SLFGameTypes.h"
+#include "Engine/World.h"
+#include "GameFramework/Actor.h"
 
 USLFActionWeaponAbility::USLFActionWeaponAbility()
 {
@@ -41,77 +51,92 @@ void USLFActionWeaponAbility::ExecuteAction_Implementation()
 		return;
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("[ActionWeaponAbility] Using weapon ability from: %s"), *ItemAsset->GetName());
-
-	// Extract weapon ability data from item
-	// In UPDA_Item, this would be in ItemInformation.EquipmentDetails.WeaponAbility
-	UAnimMontage* AbilityMontage = nullptr;
-	float FPCost = 0.0f;
+	// Get WeaponAbility from item's EquipmentDetails
+	UPDA_WeaponAbility* WeaponAbility = nullptr;
 
 	if (UPDA_Item* ItemData = Cast<UPDA_Item>(ItemAsset))
 	{
-		// Look for WeaponAbility property in ItemInformation.EquipmentDetails
-		// This contains the PDA_WeaponAbility reference with the ability montage and FP cost
-		UClass* ItemClass = ItemData->GetClass();
+		// Access ItemInformation.EquipmentDetails.WeaponAbility directly
+		UObject* AbilityObj = ItemData->ItemInformation.EquipmentDetails.WeaponAbility;
+		WeaponAbility = Cast<UPDA_WeaponAbility>(AbilityObj);
 
-		// Try to get WeaponAbility from EquipmentDetails
-		for (TFieldIterator<FProperty> PropIt(ItemClass); PropIt; ++PropIt)
+		if (!WeaponAbility)
 		{
-			FProperty* Prop = *PropIt;
-			FString PropName = Prop->GetName();
+			UE_LOG(LogTemp, Log, TEXT("[ActionWeaponAbility] Weapon %s has no WeaponAbility assigned"), *ItemAsset->GetName());
+			return;
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[ActionWeaponAbility] ItemAsset is not UPDA_Item"));
+		return;
+	}
 
-			// Look for ability montage properties
-			if (PropName.Contains(TEXT("WeaponAbility")) || PropName.Contains(TEXT("AbilityMontage")))
+	UE_LOG(LogTemp, Log, TEXT("[ActionWeaponAbility] Found ability: %s, Cost: %.1f, AffectedStat: %s"),
+		*WeaponAbility->AbilityName.ToString(),
+		WeaponAbility->Cost,
+		*WeaponAbility->AffectedStat.ToString());
+
+	// Check if we have enough of the required stat (usually FP) to use the ability
+	if (WeaponAbility->AffectedStat.IsValid() && WeaponAbility->Cost > 0.0)
+	{
+		bool bHasEnough = CheckStatRequirement(WeaponAbility->AffectedStat, WeaponAbility->Cost);
+		if (!bHasEnough)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[ActionWeaponAbility] Insufficient %s for ability (need %.1f)"),
+				*WeaponAbility->AffectedStat.ToString(), WeaponAbility->Cost);
+			return;
+		}
+	}
+
+	// Begin special attack - now we execute the ability
+	BeginSpecialAttack(WeaponAbility);
+}
+
+void USLFActionWeaponAbility::BeginSpecialAttack(UPDA_WeaponAbility* Ability)
+{
+	if (!Ability || !OwnerActor) return;
+
+	UE_LOG(LogTemp, Log, TEXT("[ActionWeaponAbility] BeginSpecialAttack - %s"), *Ability->AbilityName.ToString());
+
+	// Play ability montage using PlaySoftMontageReplicated (matches bp_only)
+	if (!Ability->Montage.IsNull() && OwnerActor->GetClass()->ImplementsInterface(UBPI_GenericCharacter::StaticClass()))
+	{
+		// Convert to TSoftObjectPtr<UObject> for the interface call
+		TSoftObjectPtr<UObject> SoftMontageAsObject;
+		SoftMontageAsObject = TSoftObjectPtr<UObject>(Ability->Montage.ToSoftObjectPath());
+
+		IBPI_GenericCharacter::Execute_PlaySoftMontageReplicated(OwnerActor, SoftMontageAsObject, 1.0f, 0.0f, NAME_None, false);
+		UE_LOG(LogTemp, Log, TEXT("[ActionWeaponAbility] Playing ability montage: %s"), *Ability->Montage.ToString());
+	}
+	else if (Ability->Montage.IsNull())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[ActionWeaponAbility] Ability has no montage assigned"));
+	}
+
+	// Spawn AdditionalEffectClass if valid (e.g., projectile, buff effect, etc.)
+	if (!Ability->AdditionalEffectClass.IsNull())
+	{
+		UClass* EffectClass = Ability->AdditionalEffectClass.LoadSynchronous();
+		if (EffectClass && OwnerActor->GetWorld())
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = OwnerActor;
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+			AActor* SpawnedEffect = OwnerActor->GetWorld()->SpawnActor<AActor>(EffectClass, OwnerActor->GetActorLocation(), OwnerActor->GetActorRotation(), SpawnParams);
+			if (SpawnedEffect)
 			{
-				if (FSoftObjectProperty* SoftObjProp = CastField<FSoftObjectProperty>(Prop))
-				{
-					void* PropValueAddr = Prop->ContainerPtrToValuePtr<void>(ItemData);
-					TSoftObjectPtr<UObject>* SoftPtr = static_cast<TSoftObjectPtr<UObject>*>(PropValueAddr);
-					if (SoftPtr)
-					{
-						AbilityMontage = Cast<UAnimMontage>(SoftPtr->LoadSynchronous());
-						UE_LOG(LogTemp, Log, TEXT("[ActionWeaponAbility] Found ability montage from: %s"), *PropName);
-					}
-				}
-				break;
+				UE_LOG(LogTemp, Log, TEXT("[ActionWeaponAbility] Spawned additional effect: %s"), *EffectClass->GetName());
 			}
 		}
 	}
 
-	// Check if we have enough FP to use the ability
-	if (FPCost > 0.0f)
+	// Consume the stat (FP) after successful execution
+	if (Ability->AffectedStat.IsValid() && Ability->Cost > 0.0)
 	{
-		UStatManagerComponent* StatMgr = GetStatManager();
-		if (StatMgr)
-		{
-			FGameplayTag FPTag = FGameplayTag::RequestGameplayTag(FName("Stat.FP"), false);
-			if (!CheckStatRequirement(FPTag, FPCost))
-			{
-				UE_LOG(LogTemp, Log, TEXT("[ActionWeaponAbility] Insufficient FP for ability"));
-				return;
-			}
-			// Consume FP
-			AdjustStatByRequirement(FPTag, FPCost);
-		}
-	}
-
-	// Play ability animation
-	if (AbilityMontage && OwnerActor->GetClass()->ImplementsInterface(UBPI_GenericCharacter::StaticClass()))
-	{
-		IBPI_GenericCharacter::Execute_PlayMontageReplicated(OwnerActor, AbilityMontage, 1.0, 0.0, NAME_None);
-		UE_LOG(LogTemp, Log, TEXT("[ActionWeaponAbility] Playing ability montage: %s"), *AbilityMontage->GetName());
-	}
-	else if (!AbilityMontage)
-	{
-		// Fallback: use the action montage from the action data if no weapon-specific ability
-		if (UPDA_ActionBase* ActionData = Cast<UPDA_ActionBase>(Action))
-		{
-			UAnimMontage* DefaultMontage = ActionData->ActionMontage.LoadSynchronous();
-			if (DefaultMontage && OwnerActor->GetClass()->ImplementsInterface(UBPI_GenericCharacter::StaticClass()))
-			{
-				IBPI_GenericCharacter::Execute_PlayMontageReplicated(OwnerActor, DefaultMontage, 1.0, 0.0, NAME_None);
-				UE_LOG(LogTemp, Log, TEXT("[ActionWeaponAbility] Using default action montage: %s"), *DefaultMontage->GetName());
-			}
-		}
+		AdjustStatByRequirement(Ability->AffectedStat, Ability->Cost);
+		UE_LOG(LogTemp, Log, TEXT("[ActionWeaponAbility] Consumed %.1f of %s"),
+			Ability->Cost, *Ability->AffectedStat.ToString());
 	}
 }

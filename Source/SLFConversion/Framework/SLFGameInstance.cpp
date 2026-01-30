@@ -12,7 +12,7 @@ USLFGameInstance::USLFGameInstance()
 	CustomGameSettings = nullptr;
 	SelectedBaseClass = nullptr;
 	SGO_Slots = nullptr;
-	bFirstTimeOnDemoLevel = true;
+	FirstTimeOnDemoLevel = true;
 }
 
 void USLFGameInstance::Init()

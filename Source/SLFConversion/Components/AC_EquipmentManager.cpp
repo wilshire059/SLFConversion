@@ -51,6 +51,9 @@ UAC_EquipmentManager::UAC_EquipmentManager()
 	ToolSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 3"), false));
 	ToolSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 4"), false));
 	ToolSlots.AddTag(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 5"), false));
+
+	// CRITICAL: Initialize ActiveToolSlot to Tool 1 - this is where the default tool is selected
+	ActiveToolSlot = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Tool 1"), false);
 }
 
 void UAC_EquipmentManager::BeginPlay()
@@ -538,6 +541,9 @@ void UAC_EquipmentManager::SetActiveToolSlot_Implementation(const FGameplayTag& 
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::SetActiveToolSlot - %s"), *InActiveToolSlot.ToString());
 	ActiveToolSlot = InActiveToolSlot;
+
+	// Broadcast change so UI can update
+	OnActiveToolSlotChanged.Broadcast(InActiveToolSlot);
 }
 
 /**
@@ -928,8 +934,29 @@ void UAC_EquipmentManager::EquipToolToSlot_Implementation(UPrimaryDataAsset* Tar
 	// Store item directly
 	AllEquippedItems.Add(TargetEquipmentSlot, TargetItem);
 
-	// Set as active tool slot
-	SetActiveToolSlot(TargetEquipmentSlot);
+	// Only set as active tool slot if no valid active slot exists OR current active slot is empty
+	// This prevents equipping a 2nd tool from stealing focus from the 1st
+	bool bShouldSetActive = false;
+	if (!ActiveToolSlot.IsValid())
+	{
+		// No active slot set yet
+		bShouldSetActive = true;
+	}
+	else if (!IsSlotOccupied(ActiveToolSlot))
+	{
+		// Current active slot has no item
+		bShouldSetActive = true;
+	}
+
+	if (bShouldSetActive)
+	{
+		SetActiveToolSlot(TargetEquipmentSlot);
+		UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::EquipToolToSlot - Set ActiveToolSlot to %s (was empty/invalid)"), *TargetEquipmentSlot.ToString());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::EquipToolToSlot - Keeping ActiveToolSlot as %s (already has item)"), *ActiveToolSlot.ToString());
+	}
 
 	// Broadcast with item data
 	FSLFCurrentEquipment EquipData;
@@ -1244,6 +1271,18 @@ void UAC_EquipmentManager::AdjustForTwoHandStance_Implementation(bool RightHand)
 {
 	UE_LOG(LogTemp, Log, TEXT("UAC_EquipmentManager::AdjustForTwoHandStance - RightHand: %s"),
 		RightHand ? TEXT("true") : TEXT("false"));
+
+	// CRITICAL: Check if the hand being two-handed actually has a weapon
+	// If not, don't proceed - this prevents hiding the other hand's weapon when trying to two-hand an empty slot
+	FGameplayTag TargetHandSlot = GetActiveWeaponSlot(RightHand);
+	if (!TargetHandSlot.IsValid() || !IsSlotOccupied(TargetHandSlot))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  Cannot two-hand %s hand - no weapon equipped in that slot"),
+			RightHand ? TEXT("right") : TEXT("left"));
+		return;
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("  Target hand slot: %s"), *TargetHandSlot.ToString());
 
 	// Get the current overlay state for the target hand
 	ESLFOverlayState CurrentHandState = RightHand ? RightHandOverlayState : LeftHandOverlayState;

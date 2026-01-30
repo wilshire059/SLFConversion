@@ -33,11 +33,21 @@ void UW_ItemWheelSlot::NativeConstruct()
 	// Cache widget references
 	CacheWidgetReferences();
 
-	// Get EquipmentManager from owning PlayerController (not Pawn!)
-	// Blueprint: GetOwningPlayer() -> GetComponentByClass(AC_EquipmentManager)
+	// Get EquipmentManager - try Pawn first, then PlayerController
+	// The scroll wheel action modifies the equipment manager on the Pawn
 	if (APlayerController* PC = GetOwningPlayer())
 	{
-		EquipmentComponent = PC->FindComponentByClass<UAC_EquipmentManager>();
+		// First try the pawn (where the scroll wheel action looks)
+		if (APawn* Pawn = PC->GetPawn())
+		{
+			EquipmentComponent = Pawn->FindComponentByClass<UAC_EquipmentManager>();
+		}
+
+		// Fallback to controller if not on pawn
+		if (!EquipmentComponent)
+		{
+			EquipmentComponent = PC->FindComponentByClass<UAC_EquipmentManager>();
+		}
 	}
 
 	// Bind to EquipmentManager events (matching bp_only Event Construct logic)
@@ -46,6 +56,7 @@ void UW_ItemWheelSlot::NativeConstruct()
 		EquipmentComponent->OnItemEquippedToSlot.AddUniqueDynamic(this, &UW_ItemWheelSlot::HandleOnItemEquippedToSlot);
 		EquipmentComponent->OnItemUnequippedFromSlot.AddUniqueDynamic(this, &UW_ItemWheelSlot::HandleOnItemUnequippedFromSlot);
 		EquipmentComponent->OnStanceChanged.AddUniqueDynamic(this, &UW_ItemWheelSlot::HandleOnStanceChanged);
+		EquipmentComponent->OnActiveToolSlotChanged.AddUniqueDynamic(this, &UW_ItemWheelSlot::HandleOnActiveToolSlotChanged);
 
 		// Log tracked slots for debugging
 		TArray<FGameplayTag> Tags;
@@ -60,7 +71,7 @@ void UW_ItemWheelSlot::NativeConstruct()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[W_ItemWheelSlot] EquipmentManager not found on PlayerController, Identifier: %s"),
+		UE_LOG(LogTemp, Warning, TEXT("[W_ItemWheelSlot] EquipmentManager not found on Pawn or PlayerController, Identifier: %s"),
 			*Identifier.ToString());
 	}
 
@@ -76,6 +87,7 @@ void UW_ItemWheelSlot::NativeDestruct()
 		EquipmentComponent->OnItemEquippedToSlot.RemoveDynamic(this, &UW_ItemWheelSlot::HandleOnItemEquippedToSlot);
 		EquipmentComponent->OnItemUnequippedFromSlot.RemoveDynamic(this, &UW_ItemWheelSlot::HandleOnItemUnequippedFromSlot);
 		EquipmentComponent->OnStanceChanged.RemoveDynamic(this, &UW_ItemWheelSlot::HandleOnStanceChanged);
+		EquipmentComponent->OnActiveToolSlotChanged.RemoveDynamic(this, &UW_ItemWheelSlot::HandleOnActiveToolSlotChanged);
 	}
 
 	Super::NativeDestruct();
@@ -113,6 +125,77 @@ void UW_ItemWheelSlot::HandleOnStanceChanged(bool RightHand, bool TwoHand)
 {
 	// Forward to the BlueprintNativeEvent function
 	EventOnStanceChanged(RightHand, TwoHand);
+}
+
+void UW_ItemWheelSlot::HandleOnActiveToolSlotChanged(FGameplayTag NewSlot)
+{
+	// Check if this wheel slot tracks tool slots
+	if (!SlotsToTrack.HasTag(NewSlot))
+	{
+		// This slot change is not for us (e.g., weapon slots vs tool slots)
+		return;
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[W_ItemWheelSlot] HandleOnActiveToolSlotChanged - NewSlot: %s, Identifier: %s"),
+		*NewSlot.ToString(), *Identifier.ToString());
+
+	// Find the index of this slot in our tracked slots
+	TArray<FGameplayTag> Tags;
+	SlotsToTrack.GetGameplayTagArray(Tags);
+
+	int32 NewIndex = -1;
+	for (int32 i = 0; i < Tags.Num(); i++)
+	{
+		if (Tags[i] == NewSlot)
+		{
+			NewIndex = i;
+			break;
+		}
+	}
+
+	if (NewIndex >= 0 && NewIndex != CurrentIndex)
+	{
+		// Update current index and active slot
+		PreviousSlot = ActiveSlot;
+		CurrentIndex = NewIndex;
+		ActiveSlot = NewSlot;
+
+		// Update the item shown
+		if (TrackedItems.Contains(NewSlot))
+		{
+			ActiveItem = TrackedItems[NewSlot];
+		}
+
+		// Update the visual (icon, etc.)
+		if (CachedItemIcon && ActiveItem)
+		{
+			if (UPDA_Item* ItemData = Cast<UPDA_Item>(ActiveItem))
+			{
+				// Get icon from ItemInformation.IconSmall
+				if (!ItemData->ItemInformation.IconSmall.IsNull())
+				{
+					UTexture2D* IconTexture = ItemData->ItemInformation.IconSmall.LoadSynchronous();
+					if (IconTexture)
+					{
+						CachedItemIcon->SetBrushFromTexture(IconTexture);
+					}
+				}
+			}
+		}
+
+		// Update debug text
+		if (CachedDebugIndexText)
+		{
+			CachedDebugIndexText->SetText(FText::AsNumber(CurrentIndex));
+		}
+
+		// Notify child slots about the change
+		RefreshChildSlots();
+
+		UE_LOG(LogTemp, Log, TEXT("[W_ItemWheelSlot] Updated to slot %d (%s), item: %s"),
+			CurrentIndex, *NewSlot.ToString(),
+			ActiveItem ? *ActiveItem->GetName() : TEXT("None"));
+	}
 }
 
 // ==================== BlueprintNativeEvent Implementations ====================

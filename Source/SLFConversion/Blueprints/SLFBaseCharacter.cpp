@@ -279,6 +279,9 @@ void ASLFBaseCharacter::SpawnProjectile_Implementation(
 	AActor* InOwner,
 	APawn* InInstigator)
 {
+	UE_LOG(LogTemp, Warning, TEXT("[SLFBaseCharacter] SpawnProjectile - Class: %s"),
+		Projectile ? *Projectile->GetName() : TEXT("NULL"));
+
 	if (!Projectile)
 	{
 		return;

@@ -539,8 +539,8 @@ TArray<UPrimaryDataAsset*> UAC_InventoryManager::GetItemsForEquipmentSlot_Implem
 	bool bIsGloves = SlotTagStr.Contains(TEXT("Gloves"));
 	bool bIsGreaves = SlotTagStr.Contains(TEXT("Greaves"));
 	bool bIsTrinket = SlotTagStr.Contains(TEXT("Trinket"));
-	bool bIsArrow = SlotTagStr.Contains(TEXT("Arrow"));
-	bool bIsBullet = SlotTagStr.Contains(TEXT("Bullet"));
+	bool bIsToolSlot = SlotTagStr.Contains(TEXT("Tool"));
+	// Note: Arrow/Bullet slots removed - bp_only uses Tool slots for all consumables/projectiles
 
 	TArray<UPrimaryDataAsset*> Result;
 
@@ -618,15 +618,12 @@ TArray<UPrimaryDataAsset*> UAC_InventoryManager::GetItemsForEquipmentSlot_Implem
 				{
 					bMatches = (SubCategory == ESLFItemSubCategory::Talismans);
 				}
-				// Arrow slot: Projectiles
-				else if (bIsArrow)
+				// Tool slots: Tools category, flasks, AND projectiles (bp_only uses Tool slots for everything)
+				else if (bIsToolSlot)
 				{
-					bMatches = (SubCategory == ESLFItemSubCategory::Projectiles);
-				}
-				// Bullet slot: Projectiles (same as arrows - both are ammo types)
-				else if (bIsBullet)
-				{
-					bMatches = (SubCategory == ESLFItemSubCategory::Projectiles);
+					bMatches = (Category == ESLFItemCategory::Tools) ||
+					           (SubCategory == ESLFItemSubCategory::Flasks) ||
+					           (SubCategory == ESLFItemSubCategory::Projectiles);
 				}
 			}
 

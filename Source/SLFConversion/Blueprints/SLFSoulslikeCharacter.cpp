@@ -157,6 +157,13 @@ ASLFSoulslikeCharacter::ASLFSoulslikeCharacter()
 		IA_UseEquippedItem = UseEquippedItemActionFinder.Object;
 	}
 
+	static ConstructorHelpers::FObjectFinder<UInputAction> WeaponSkillActionFinder(
+		TEXT("/Game/SoulslikeFramework/Input/Actions/IA_WeaponSkill.IA_WeaponSkill"));
+	if (WeaponSkillActionFinder.Succeeded())
+	{
+		IA_WeaponSkill = WeaponSkillActionFinder.Object;
+	}
+
 	// Initialize camera config
 	CameraPitchLock = 0.0;
 
@@ -543,6 +550,17 @@ void ASLFSoulslikeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 		UE_LOG(LogTemp, Error, TEXT("[SoulslikeCharacter] IA_UseEquippedItem is NULL!"));
 	}
 
+	// Weapon Skill / Special Attack (L2 on gamepad with different modifier)
+	if (IA_WeaponSkill)
+	{
+		EnhancedInput->BindAction(IA_WeaponSkill, ETriggerEvent::Started, this, &ASLFSoulslikeCharacter::HandleWeaponSkill);
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] IA_WeaponSkill BOUND (Special Attack)"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[SoulslikeCharacter] IA_WeaponSkill is NULL! Special attacks will not work."));
+	}
+
 	UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Enhanced input bindings set up"));
 }
 
@@ -877,6 +895,18 @@ void ASLFSoulslikeCharacter::HandleUseEquippedItem()
 	// 2. Queue UseEquippedTool action (uses the flask)
 	static const FGameplayTag UseToolTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.UseEquippedTool"));
 	QueueActionToBuffer(UseToolTag);
+}
+
+void ASLFSoulslikeCharacter::HandleWeaponSkill()
+{
+	// SPECIAL ATTACK - Weapon ability (L2 without guard, triggered by IA_WeaponSkill)
+	// From bp_only JSON: "SPECIAL ATTACK - Weapon ability"
+	// Triggers SoulslikeFramework.Action.SpecialAttack immediately
+	// The action system then finds the weapon ability data and consumes FP
+	UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] HandleWeaponSkill CALLED - Special Attack"));
+
+	static const FGameplayTag SpecialAttackTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.SpecialAttack"));
+	ExecuteActionImmediately(SpecialAttackTag);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
