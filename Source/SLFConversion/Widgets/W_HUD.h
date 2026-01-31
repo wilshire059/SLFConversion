@@ -36,6 +36,7 @@ class UW_NPC_Window;
 class UW_DialogWindow;
 class UW_InteractableWidget;
 class UW_BossBar;
+class UW_Boss_Healthbar;
 class UW_ItemWheel;
 class UW_ItemWheelSlot;
 class UW_AbilityDisplay;
@@ -110,6 +111,9 @@ protected:
 	// Status effect widgets - cached from UMG
 	UVerticalBox* CachedStatusEffectBox;
 	UW_StatusEffectNotification* CachedW_StatusEffectNotification;
+
+	// Boss health bar widget - cached from UMG
+	UW_Boss_Healthbar* CachedBossHealthbar;
 
 	// Loot notification widget class for dynamic creation
 	UPROPERTY()
@@ -409,6 +413,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "W_HUD|Death")
 	void HideDeathScreen();
+
+	// Status Effect Widget Management
+	UFUNCTION(BlueprintCallable, Category = "W_HUD|StatusEffects")
+	void ClearStatusEffectWidgets();
 
 protected:
 	// Cache references

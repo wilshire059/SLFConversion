@@ -72,6 +72,7 @@ UW_HUD::UW_HUD(const FObjectInitializer& ObjectInitializer)
 	CachedW_FirstLootNotification = nullptr;
 	CachedStatusEffectBox = nullptr;
 	CachedW_StatusEffectNotification = nullptr;
+	CachedBossHealthbar = nullptr;
 	LootNotificationWidgetClass = nullptr;
 	StatusEffectBarWidgetClass = nullptr;
 	CachedItemWheelTools = nullptr;
@@ -262,6 +263,14 @@ void UW_HUD::CacheWidgetReferences()
 	}
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - StatusEffectBarWidgetClass: %s"),
 		StatusEffectBarWidgetClass ? TEXT("Loaded") : TEXT("NOT LOADED"));
+
+	// Cache boss health bar widget
+	if (!CachedBossHealthbar)
+	{
+		CachedBossHealthbar = Cast<UW_Boss_Healthbar>(GetWidgetFromName(TEXT("W_Boss_Healthbar")));
+	}
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - CachedBossHealthbar: %s"),
+		CachedBossHealthbar ? TEXT("Found") : TEXT("NOT FOUND"));
 
 	// Cache W_Radar widget for radar/compass functionality
 	if (!CachedW_Radar)
@@ -1173,6 +1182,12 @@ void UW_HUD::ShowDeathScreen()
 {
 	UE_LOG(LogTemp, Warning, TEXT("UW_HUD::ShowDeathScreen - Showing 'YOU DIED' screen"));
 
+	// Hide boss health bar when player dies
+	EventHideBossBar();
+
+	// Clear status effect widgets on death
+	ClearStatusEffectWidgets();
+
 	// Call EventBigScreenMessage with "YOU DIED" text
 	EventBigScreenMessage(FText::FromString(TEXT("YOU DIED")), nullptr, true, 1.0f);
 
@@ -1181,6 +1196,23 @@ void UW_HUD::ShowDeathScreen()
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("YOU DIED"));
 	}
+}
+
+void UW_HUD::ClearStatusEffectWidgets()
+{
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::ClearStatusEffectWidgets - Clearing all status effect widgets"));
+
+	if (!CachedStatusEffectBox)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  StatusEffectBox is null, cannot clear"));
+		return;
+	}
+
+	// Clear all children from the status effect box
+	int32 NumChildren = CachedStatusEffectBox->GetChildrenCount();
+	CachedStatusEffectBox->ClearChildren();
+
+	UE_LOG(LogTemp, Log, TEXT("  Cleared %d status effect widgets"), NumChildren);
 }
 
 void UW_HUD::HideDeathScreen()
@@ -1268,11 +1300,11 @@ void UW_HUD::EventShowBossBar_Implementation(const FText& BossName, AActor* Boss
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowBossBar - Boss: %s, Actor: %s"),
 		*BossName.ToString(), BossActor ? *BossActor->GetName() : TEXT("null"));
 
-	// Find the W_Boss_Healthbar widget (may be named "BossBar" or "W_Boss_Healthbar")
-	UW_Boss_Healthbar* BossHealthbar = Cast<UW_Boss_Healthbar>(GetWidgetFromName(TEXT("W_Boss_Healthbar")));
+	// Use cached reference first, fallback to GetWidgetFromName
+	UW_Boss_Healthbar* BossHealthbar = CachedBossHealthbar;
 	if (!BossHealthbar)
 	{
-		BossHealthbar = Cast<UW_Boss_Healthbar>(GetWidgetFromName(TEXT("BossBar")));
+		BossHealthbar = Cast<UW_Boss_Healthbar>(GetWidgetFromName(TEXT("W_Boss_Healthbar")));
 	}
 
 	if (BossHealthbar)
@@ -1303,9 +1335,23 @@ void UW_HUD::EventShowBossBar_Implementation(const FText& BossName, AActor* Boss
 void UW_HUD::EventHideBossBar_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventHideBossBar"));
-	if (UWidget* BossBar = GetWidgetFromName(TEXT("BossBar")))
+
+	// Use cached reference first, fallback to GetWidgetFromName
+	UW_Boss_Healthbar* BossHealthbar = CachedBossHealthbar;
+	if (!BossHealthbar)
 	{
-		BossBar->SetVisibility(ESlateVisibility::Collapsed);
+		BossHealthbar = Cast<UW_Boss_Healthbar>(GetWidgetFromName(TEXT("W_Boss_Healthbar")));
+	}
+
+	if (BossHealthbar)
+	{
+		// Call EventHideBossBar on the widget itself - this unbinds from HP stat, clears timers, and hides
+		BossHealthbar->EventHideBossBar();
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventHideBossBar - Called EventHideBossBar on boss healthbar widget"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::EventHideBossBar - No boss healthbar widget found!"));
 	}
 }
 

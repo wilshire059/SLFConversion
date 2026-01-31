@@ -11,12 +11,14 @@
 #include "Widgets/W_StatusEffectBar.h"
 #include "Blueprints/B_StatusEffect.h"
 #include "Components/ProgressBar.h"
+#include "Components/Image.h"
 
 UW_StatusEffectBar::UW_StatusEffectBar(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	Effect = nullptr;
 	Bar = nullptr;
+	StatusEffectIcon = nullptr;
 }
 
 void UW_StatusEffectBar::NativeConstruct()
@@ -44,12 +46,25 @@ void UW_StatusEffectBar::CacheWidgetReferences()
 	{
 		Bar = Cast<UProgressBar>(GetWidgetFromName(TEXT("Bar")));
 	}
+
+	// StatusEffectIcon is the Image widget for displaying the effect icon
+	if (!StatusEffectIcon)
+	{
+		StatusEffectIcon = Cast<UImage>(GetWidgetFromName(TEXT("StatusEffectIcon")));
+	}
 }
 
 /**
  * SetupEffect
  *
  * Call after Effect is assigned to bind to the effect's delegates.
+ * Also sets the icon and bar fill color from the effect data.
+ *
+ * Blueprint Logic (from JSON graphs):
+ * 1. Bind to OnBuildupUpdated delegate
+ * 2. Bind to OnStatusEffectFinished delegate
+ * 3. Set Bar fill color from EffectData->BarFillColor
+ * 4. Set StatusEffectIcon from EffectData->Icon
  */
 void UW_StatusEffectBar::SetupEffect()
 {
@@ -66,6 +81,38 @@ void UW_StatusEffectBar::SetupEffect()
 	Effect->OnStatusEffectFinished.AddUniqueDynamic(this, &UW_StatusEffectBar::OnStatusEffectFinishedHandler);
 
 	UE_LOG(LogTemp, Log, TEXT("UW_StatusEffectBar::SetupEffect - Bound to effect: %s"), *Effect->GetName());
+
+	// Get the effect data to retrieve icon and bar color
+	UPDA_StatusEffect* EffectData = Cast<UPDA_StatusEffect>(Effect->GetEffectData());
+	if (IsValid(EffectData))
+	{
+		// Set bar fill color
+		if (IsValid(Bar))
+		{
+			Bar->SetFillColorAndOpacity(EffectData->BarFillColor);
+			UE_LOG(LogTemp, Log, TEXT("  Set Bar fill color: R=%.2f G=%.2f B=%.2f"),
+				EffectData->BarFillColor.R, EffectData->BarFillColor.G, EffectData->BarFillColor.B);
+		}
+
+		// Set icon from effect data
+		if (IsValid(StatusEffectIcon) && !EffectData->Icon.IsNull())
+		{
+			StatusEffectIcon->SetBrushFromSoftTexture(EffectData->Icon);
+			UE_LOG(LogTemp, Log, TEXT("  Set StatusEffectIcon from: %s"), *EffectData->Icon.GetAssetName());
+		}
+		else if (!IsValid(StatusEffectIcon))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("  StatusEffectIcon widget not found!"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("  EffectData->Icon is null!"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  Could not get EffectData from Effect!"));
+	}
 
 	// Update initial progress
 	EventOnBuildupPercentChanged();

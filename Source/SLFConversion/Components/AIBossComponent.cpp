@@ -18,6 +18,8 @@
 #include "Interfaces/BPI_BossDoor.h"
 #include "Interfaces/BPI_Controller.h"
 #include "Widgets/W_HUD.h"
+#include "LevelSequencePlayer.h"
+#include "LevelSequenceActor.h"
 
 UAIBossComponent::UAIBossComponent()
 {
@@ -132,6 +134,18 @@ void UAIBossComponent::SetFightActive_Implementation(bool bActive)
 				ActiveMusicComponent = UGameplayStatics::SpawnSound2D(this, Music);
 			}
 		}
+
+		// Start phase 0 (or debug phase) - this plays the phase cinematic
+		if (bDebugActive)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[AIBoss] DebugActive, setting phase to DebugPhase: %d"), DebugPhase);
+			SetPhase(DebugPhase);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("[AIBoss] Setting initial phase 0"));
+			SetPhase(0);
+		}
 	}
 	else
 	{
@@ -175,6 +189,46 @@ void UAIBossComponent::SetPhase_Implementation(int32 PhaseIndex)
 		ActivePhase = Phases[PhaseIndex];
 
 		UE_LOG(LogTemp, Log, TEXT("[AIBoss] SetPhase: %d - %s"), PhaseIndex, *ActivePhase.PhaseName.ToString());
+
+		// Play the phase start sequence (cinematic) if valid
+		if (!ActivePhase.PhaseStartSequence.IsNull())
+		{
+			ULevelSequence* Sequence = ActivePhase.PhaseStartSequence.LoadSynchronous();
+			if (IsValid(Sequence))
+			{
+				UE_LOG(LogTemp, Log, TEXT("[AIBoss] Playing PhaseStartSequence: %s"), *Sequence->GetName());
+
+				// Create level sequence player and play directly
+				FMovieSceneSequencePlaybackSettings PlaybackSettings;
+				PlaybackSettings.bAutoPlay = true;
+
+				ALevelSequenceActor* OutActor = nullptr;
+				ULevelSequencePlayer* Player = ULevelSequencePlayer::CreateLevelSequencePlayer(
+					GetWorld(),
+					Sequence,
+					PlaybackSettings,
+					OutActor
+				);
+
+				if (IsValid(Player))
+				{
+					Player->Play();
+					UE_LOG(LogTemp, Log, TEXT("[AIBoss] Started playing phase sequence"));
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("[AIBoss] Failed to create level sequence player"));
+				}
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[AIBoss] PhaseStartSequence failed to load"));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("[AIBoss] No PhaseStartSequence configured for phase %d"), PhaseIndex);
+		}
 
 		HandlePhaseChange(PhaseIndex);
 	}

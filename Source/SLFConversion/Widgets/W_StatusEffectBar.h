@@ -28,6 +28,7 @@
 // Forward declarations for Blueprint types
 class UB_StatusEffect;
 class UProgressBar;
+class UImage;
 
 // Forward declarations for SaveGame types
 
@@ -60,6 +61,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget, OptionalWidget = true), Category = "Widgets")
 	UProgressBar* Bar;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget, OptionalWidget = true), Category = "Widgets")
+	UImage* StatusEffectIcon;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (0)
