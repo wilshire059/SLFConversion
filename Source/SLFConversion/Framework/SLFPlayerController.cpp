@@ -27,6 +27,7 @@
 #include "Components/InventoryManagerComponent.h"
 #include "Components/AC_InventoryManager.h"
 #include "Components/AC_ProgressManager.h"
+#include "Components/ProgressManagerComponent.h"
 #include "Components/AC_CombatManager.h"
 #include "Components/RadarManagerComponent.h"
 #include "Widgets/W_Radar.h"
@@ -53,6 +54,8 @@ ASLFPlayerController::ASLFPlayerController()
 	HUDWidgetClass = nullptr;
 	GameMenuWidgetClass = nullptr;
 	GameMenuWidgetRef = nullptr;
+	CachedProgressManager = nullptr;
+	// NOTE: Do NOT create ProgressManager here - Blueprint SCS owns it
 	IMC_Gameplay = nullptr;
 	IMC_NavigableMenu = nullptr;
 
@@ -130,6 +133,20 @@ void ASLFPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] BeginPlay - C++ PlayerController active"));
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// CACHE COMPONENT REFERENCES (Blueprint SCS owns components)
+	// Pattern from CLAUDE.md: Do NOT create components in C++, just find them
+	// ═══════════════════════════════════════════════════════════════════════
+
+	// Find ProgressManager component (could be UProgressManagerComponent or UAC_ProgressManager)
+	CachedProgressManager = FindComponentByClass<UProgressManagerComponent>();
+	if (!CachedProgressManager)
+	{
+		CachedProgressManager = FindComponentByClass<UAC_ProgressManager>();
+	}
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] CachedProgressManager: %s"),
+		CachedProgressManager ? *CachedProgressManager->GetClass()->GetName() : TEXT("NULL"));
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// STARTUP CUTSCENE - Check if first time on demo level
@@ -488,7 +505,8 @@ void ASLFPlayerController::HandleNavigateBack(const FInputActionValue& Value)
 	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] HandleNavigateBack - ActiveWidgetTag: %s"),
 		*ActiveWidgetTag.ToString());
 
-	if (HUDWidgetRef && ActiveWidgetTag.IsValid())
+	// Don't require valid ActiveWidgetTag - W_HUD::RouteNavigateCancel has fallback for dialog
+	if (HUDWidgetRef)
 	{
 		HUDWidgetRef->RouteNavigateCancel(ActiveWidgetTag);
 	}
@@ -499,7 +517,8 @@ void ASLFPlayerController::HandleNavigateOk(const FInputActionValue& Value)
 	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] HandleNavigateOk - ActiveWidgetTag: %s"),
 		*ActiveWidgetTag.ToString());
 
-	if (HUDWidgetRef && ActiveWidgetTag.IsValid())
+	// Don't require valid ActiveWidgetTag - W_HUD::RouteNavigateOk has fallback for dialog
+	if (HUDWidgetRef)
 	{
 		HUDWidgetRef->RouteNavigateOk(ActiveWidgetTag);
 	}
@@ -1166,17 +1185,21 @@ void ASLFPlayerController::GetCurrency_Implementation(int32& Currency)
 
 void ASLFPlayerController::GetProgressManager_Implementation(UActorComponent*& ProgressManager)
 {
-	// Try to find AC_ProgressManager on the controller first
-	ProgressManager = FindComponentByClass<UAC_ProgressManager>();
+	// Use cached reference (found in BeginPlay from Blueprint SCS)
+	ProgressManager = CachedProgressManager;
 
-	// If not on controller, try to find on pawn
+	// Fall back to FindComponentByClass if cache is somehow null (before BeginPlay)
 	if (!ProgressManager)
 	{
-		if (APawn* ControlledPawn = GetPawn())
-		{
-			ProgressManager = ControlledPawn->FindComponentByClass<UAC_ProgressManager>();
-		}
+		ProgressManager = FindComponentByClass<UProgressManagerComponent>();
 	}
+	if (!ProgressManager)
+	{
+		ProgressManager = FindComponentByClass<UAC_ProgressManager>();
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] GetProgressManager - Found: %s"),
+		ProgressManager ? *ProgressManager->GetClass()->GetName() : TEXT("NULL"));
 }
 
 void ASLFPlayerController::GetSoulslikeController_Implementation(APlayerController*& Controller)

@@ -13,6 +13,7 @@ class UInputAction;
 class UInputMappingContext;
 class UW_HUD;
 class URadarManagerComponent;
+class UProgressManagerComponent;
 
 UCLASS(Blueprintable, BlueprintType)
 class SLFCONVERSION_API ASLFPlayerController : public APlayerController, public IBPI_Controller
@@ -100,6 +101,15 @@ public:
 	/** Reference to the Game Menu widget instance */
 	UPROPERTY(BlueprintReadWrite, Category = "UI")
 	UUserWidget* GameMenuWidgetRef;
+
+	// ═══════════════════════════════════════════════════════════════════
+	// COMPONENTS (cached from Blueprint SCS - NOT created in C++)
+	// See CLAUDE.md: "Blueprint SCS owns components, C++ caches references"
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** Progress Manager component - cached reference, NOT created by C++ */
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components")
+	UActorComponent* CachedProgressManager;
 
 protected:
 	// ═══════════════════════════════════════════════════════════════════
