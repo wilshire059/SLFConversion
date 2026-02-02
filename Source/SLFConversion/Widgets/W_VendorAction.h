@@ -73,6 +73,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	ESLFVendorType ActionType;
 
+	// Currently selected button index (0 = OK, 1 = Cancel)
+	// Public so parent widgets can read it for input routing
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Navigation")
+	int32 SelectedButtonIndex;
+
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (3)
 	// ═══════════════════════════════════════════════════════════════════════
@@ -180,4 +185,14 @@ protected:
 
 	UPROPERTY(Transient)
 	UButton* CachedCancelButtonInner;
+
+	// Cached ButtonBorder widgets for visual highlight feedback
+	UPROPERTY(Transient)
+	UWidget* CachedOkButtonBorder;
+
+	UPROPERTY(Transient)
+	UWidget* CachedCancelButtonBorder;
+
+	// Update button highlight visuals based on SelectedButtonIndex
+	void UpdateButtonHighlights();
 };

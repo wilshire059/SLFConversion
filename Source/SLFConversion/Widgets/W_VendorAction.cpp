@@ -12,6 +12,7 @@
 #include "Interfaces/BPI_Controller.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
+#include "Components/Border.h"
 #include "Blueprint/WidgetTree.h"
 #include "GameFramework/Pawn.h"
 
@@ -35,6 +36,9 @@ UW_VendorAction::UW_VendorAction(const FObjectInitializer& ObjectInitializer)
 	CachedDecreaseButton = nullptr;
 	CachedOkButtonInner = nullptr;
 	CachedCancelButtonInner = nullptr;
+	CachedOkButtonBorder = nullptr;
+	CachedCancelButtonBorder = nullptr;
+	SelectedButtonIndex = 0; // Start with OK button selected
 }
 
 void UW_VendorAction::NativeConstruct()
@@ -84,7 +88,7 @@ FReply UW_VendorAction::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyE
 {
 	FKey Key = InKeyEvent.GetKey();
 
-	UE_LOG(LogTemp, Log, TEXT("[W_VendorAction] NativeOnKeyDown - Key: %s"), *Key.ToString());
+	UE_LOG(LogTemp, Log, TEXT("[W_VendorAction] NativeOnKeyDown - Key: %s, SelectedButtonIndex: %d"), *Key.ToString(), SelectedButtonIndex);
 
 	// Up navigation - increase amount
 	if (Key == EKeys::Up || Key == EKeys::W || Key == EKeys::Gamepad_DPad_Up || Key == EKeys::Gamepad_LeftStick_Up)
@@ -102,18 +106,37 @@ FReply UW_VendorAction::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyE
 		return FReply::Handled();
 	}
 
-	// Confirm/OK - execute action (buy or sell)
-	if (Key == EKeys::Enter || Key == EKeys::SpaceBar || Key == EKeys::Gamepad_FaceButton_Bottom)
+	// Left/Right navigation - toggle between OK and Cancel buttons
+	if (Key == EKeys::Left || Key == EKeys::A || Key == EKeys::Gamepad_DPad_Left || Key == EKeys::Gamepad_LeftStick_Left ||
+	    Key == EKeys::Right || Key == EKeys::D || Key == EKeys::Gamepad_DPad_Right || Key == EKeys::Gamepad_LeftStick_Right)
 	{
-		UE_LOG(LogTemp, Log, TEXT("[W_VendorAction] OK pressed - executing action"));
-		EventVendorActionBtnPressed();
+		UE_LOG(LogTemp, Log, TEXT("[W_VendorAction] Left/Right pressed - toggling button selection"));
+		EventNavigateConfirmButtonsHorizontal();
 		return FReply::Handled();
 	}
 
-	// Cancel - close popup
+	// Confirm - execute currently selected button action
+	if (Key == EKeys::Enter || Key == EKeys::SpaceBar || Key == EKeys::Gamepad_FaceButton_Bottom)
+	{
+		if (SelectedButtonIndex == 0)
+		{
+			// OK button selected - execute action
+			UE_LOG(LogTemp, Log, TEXT("[W_VendorAction] Confirm pressed with OK selected - executing action"));
+			EventVendorActionBtnPressed();
+		}
+		else
+		{
+			// Cancel button selected - close popup
+			UE_LOG(LogTemp, Log, TEXT("[W_VendorAction] Confirm pressed with Cancel selected - closing popup"));
+			OnVendorActionClosed.Broadcast();
+		}
+		return FReply::Handled();
+	}
+
+	// Escape/B - always close popup (regardless of selected button)
 	if (Key == EKeys::Escape || Key == EKeys::Gamepad_FaceButton_Right || Key == EKeys::Gamepad_Special_Right)
 	{
-		UE_LOG(LogTemp, Log, TEXT("[W_VendorAction] Cancel pressed - closing popup"));
+		UE_LOG(LogTemp, Log, TEXT("[W_VendorAction] Escape/B pressed - closing popup"));
 		OnVendorActionClosed.Broadcast();
 		return FReply::Handled();
 	}
@@ -138,9 +161,11 @@ void UW_VendorAction::CacheWidgetReferences()
 
 	// W_GB_OK and W_GB_Cancel are W_GenericButton Blueprint widgets
 	// The Blueprint was NOT reparented to UW_GenericButton C++ class, so Cast fails.
-	// Workaround: Find the W_GenericButton widgets and get their inner UButton
+	// Workaround: Find the W_GenericButton widgets and get their inner UButton and ButtonBorder
 	CachedOkButtonInner = nullptr;
 	CachedCancelButtonInner = nullptr;
+	CachedOkButtonBorder = nullptr;
+	CachedCancelButtonBorder = nullptr;
 
 	{
 		TArray<UWidget*> AllWidgets;
@@ -159,7 +184,7 @@ void UW_VendorAction::CacheWidgetReferences()
 			{
 				UE_LOG(LogTemp, Log, TEXT("[W_VendorAction] Found OK widget: %s"), *WidgetName);
 				// This is a W_GenericButton_C (UUserWidget subclass)
-				// Find the UButton inside it
+				// Find the UButton and ButtonBorder inside it
 				if (UUserWidget* GenericButtonWidget = Cast<UUserWidget>(Widget))
 				{
 					// Search for Button inside W_GenericButton
@@ -174,11 +199,13 @@ void UW_VendorAction::CacheWidgetReferences()
 								CachedOkButtonInner = InnerButton;
 								UE_LOG(LogTemp, Log, TEXT("[W_VendorAction] Found OK inner button: %s"), *InnerButton->GetName());
 							}
-							// Make ButtonBorder not block clicks (it sits on top of Button in Overlay)
+							// Cache ButtonBorder for highlight toggling
 							if (InnerWidget->GetName().Contains(TEXT("ButtonBorder")))
 							{
+								CachedOkButtonBorder = InnerWidget;
+								// Keep visible, will set color in UpdateButtonHighlights
 								InnerWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-								UE_LOG(LogTemp, Log, TEXT("[W_VendorAction] Set OK ButtonBorder to SelfHitTestInvisible"));
+								UE_LOG(LogTemp, Log, TEXT("[W_VendorAction] Cached OK ButtonBorder: %s"), *InnerWidget->GetName());
 							}
 						}
 					}
@@ -202,11 +229,13 @@ void UW_VendorAction::CacheWidgetReferences()
 								CachedCancelButtonInner = InnerButton;
 								UE_LOG(LogTemp, Log, TEXT("[W_VendorAction] Found Cancel inner button: %s"), *InnerButton->GetName());
 							}
-							// Make ButtonBorder not block clicks (it sits on top of Button in Overlay)
+							// Cache ButtonBorder for highlight toggling
 							if (InnerWidget->GetName().Contains(TEXT("ButtonBorder")))
 							{
+								CachedCancelButtonBorder = InnerWidget;
+								// Keep visible, will set color in UpdateButtonHighlights
 								InnerWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-								UE_LOG(LogTemp, Log, TEXT("[W_VendorAction] Set Cancel ButtonBorder to SelfHitTestInvisible"));
+								UE_LOG(LogTemp, Log, TEXT("[W_VendorAction] Cached Cancel ButtonBorder: %s"), *InnerWidget->GetName());
 							}
 						}
 					}
@@ -214,6 +243,10 @@ void UW_VendorAction::CacheWidgetReferences()
 			}
 		}
 	}
+
+	// Initialize button highlights (OK selected by default)
+	SelectedButtonIndex = 0;
+	UpdateButtonHighlights();
 
 	UE_LOG(LogTemp, Log, TEXT("[W_VendorAction] CacheWidgetReferences - ItemName: %s, CurrentAmount: %s, MaxAmount: %s, ReqCurrency: %s"),
 		CachedItemNameText ? TEXT("Found") : TEXT("NULL"),
@@ -665,10 +698,57 @@ void UW_VendorAction::SellItem_Implementation()
  */
 void UW_VendorAction::EventNavigateConfirmButtonsHorizontal_Implementation()
 {
-	UE_LOG(LogTemp, Log, TEXT("UW_VendorAction::EventNavigateConfirmButtonsHorizontal"));
+	// Toggle between OK (0) and Cancel (1)
+	SelectedButtonIndex = (SelectedButtonIndex == 0) ? 1 : 0;
 
-	// Would toggle selection between confirm and cancel buttons
-	// This is for horizontal navigation when confirm/cancel are side by side
+	UE_LOG(LogTemp, Log, TEXT("UW_VendorAction::EventNavigateConfirmButtonsHorizontal - SelectedButtonIndex: %d (%s)"),
+		SelectedButtonIndex, SelectedButtonIndex == 0 ? TEXT("OK") : TEXT("Cancel"));
+
+	// Update visual highlights
+	UpdateButtonHighlights();
+}
+
+/**
+ * UpdateButtonHighlights - Update button border colors based on selection
+ * Both buttons stay visible - only the color changes to indicate selection
+ */
+void UW_VendorAction::UpdateButtonHighlights()
+{
+	// Colors for button states
+	const FLinearColor SelectedColor = FLinearColor(1.0f, 0.8f, 0.2f, 1.0f);    // Gold/yellow for selected
+	const FLinearColor NormalColor = FLinearColor(0.15f, 0.15f, 0.15f, 1.0f);   // Dark gray for normal
+
+	// OK button highlight (index 0)
+	if (CachedOkButtonBorder)
+	{
+		// Always visible, change color based on selection
+		CachedOkButtonBorder->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+
+		// Cast to UBorder to change brush color
+		if (UBorder* OkBorder = Cast<UBorder>(CachedOkButtonBorder))
+		{
+			FLinearColor OkColor = (SelectedButtonIndex == 0) ? SelectedColor : NormalColor;
+			OkBorder->SetBrushColor(OkColor);
+			UE_LOG(LogTemp, Log, TEXT("[W_VendorAction] OK ButtonBorder color: %s"),
+				SelectedButtonIndex == 0 ? TEXT("SELECTED (Gold)") : TEXT("Normal (Gray)"));
+		}
+	}
+
+	// Cancel button highlight (index 1)
+	if (CachedCancelButtonBorder)
+	{
+		// Always visible, change color based on selection
+		CachedCancelButtonBorder->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+
+		// Cast to UBorder to change brush color
+		if (UBorder* CancelBorder = Cast<UBorder>(CachedCancelButtonBorder))
+		{
+			FLinearColor CancelColor = (SelectedButtonIndex == 1) ? SelectedColor : NormalColor;
+			CancelBorder->SetBrushColor(CancelColor);
+			UE_LOG(LogTemp, Log, TEXT("[W_VendorAction] Cancel ButtonBorder color: %s"),
+				SelectedButtonIndex == 1 ? TEXT("SELECTED (Gold)") : TEXT("Normal (Gray)"));
+		}
+	}
 }
 
 /**
@@ -759,6 +839,13 @@ void UW_VendorAction::EventSetupVendorAction_Implementation(UW_VendorSlot* InSel
 
 	// CRITICAL: Update the UI display with the new item info
 	UpdateDisplayedInfo();
+
+	// Reset button selection to OK when popup opens
+	SelectedButtonIndex = 0;
+	UpdateButtonHighlights();
+
+	// CRITICAL: Take focus so keyboard/gamepad input works
+	SetFocus();
 }
 
 /**

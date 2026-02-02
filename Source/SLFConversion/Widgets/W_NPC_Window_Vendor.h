@@ -25,6 +25,13 @@
 // Forward declarations for widget types
 class UW_Inventory_CategoryEntry;
 class UW_VendorSlot;
+class UW_VendorAction;
+class UUniformGridPanel;
+class UWidgetSwitcher;
+class UScrollBox;
+class UTextBlock;
+class UImage;
+class UOverlay;
 
 // Forward declarations for Blueprint types
 
@@ -47,6 +54,9 @@ public:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 
+	// Input handling - CRITICAL for keyboard/gamepad navigation
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+
 	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (9)
 	// ═══════════════════════════════════════════════════════════════════════
@@ -64,7 +74,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	int32 NavigationIndex;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
-	UPrimaryDataAsset* CurrentVendorAsset;
+	UDataAsset* CurrentVendorAsset;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	FText CurrentNpcName;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
@@ -98,8 +108,8 @@ public:
 	virtual void EventCloseVendorAction_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_NPC_Window_Vendor")
-	void EventInitializeVendor(const FText& NpcName, UPDA_Vendor* InVendorAsset, uint8 InVendorType);
-	virtual void EventInitializeVendor_Implementation(const FText& NpcName, UPDA_Vendor* InVendorAsset, uint8 InVendorType);
+	void EventInitializeVendor(const FText& NpcName, UDataAsset* InVendorAsset, uint8 InVendorType);
+	virtual void EventInitializeVendor_Implementation(const FText& NpcName, UDataAsset* InVendorAsset, uint8 InVendorType);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_NPC_Window_Vendor")
 	void EventNavigateCancel();
@@ -156,4 +166,61 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Bind slot events
+	void BindSlotEvents(UW_VendorSlot* VendorSlotWidget);
+
+	// Vendor action popup callbacks
+	UFUNCTION()
+	void HandleVendorItemPurchased(UW_VendorSlot* TargetSlot, int32 PurchasedAmount);
+
+	UFUNCTION()
+	void HandleVendorItemSold(UPrimaryDataAsset* Item, int32 Amount);
+
+	// Update selection highlighting
+	void UpdateSlotSelection(int32 NewIndex);
+
+	// Get slots per row from vendor asset
+	int32 GetSlotsPerRow() const;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// CACHED WIDGET REFERENCES (prefixed to avoid collision with Blueprint widgets)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	UPROPERTY(Transient)
+	UUniformGridPanel* CachedUniformInventoryGrid;
+
+	UPROPERTY(Transient)
+	UWidgetSwitcher* CachedItemInfoBoxSwitcher;
+
+	UPROPERTY(Transient)
+	UScrollBox* CachedInventoryScrollBox;
+
+	UPROPERTY(Transient)
+	UTextBlock* CachedVendorTitleText;
+
+	UPROPERTY(Transient)
+	UTextBlock* CachedItemNameText_Details;
+
+	UPROPERTY(Transient)
+	UTextBlock* CachedItemCategoryText;
+
+	UPROPERTY(Transient)
+	UTextBlock* CachedItemDescription;
+
+	UPROPERTY(Transient)
+	UImage* CachedItemIcon;
+
+	UPROPERTY(Transient)
+	UW_VendorAction* CachedVendorActionPopup;
+
+	// The overlay container that holds W_VendorAction (includes darkening border)
+	UPROPERTY(Transient)
+	UOverlay* CachedVendorActionPopupOverlay;
+
+	UPROPERTY(Transient)
+	UOverlay* CachedCharacterStatsOverlay;
+
+	// Track if action menu is open
+	bool bActionMenuOpen;
 };

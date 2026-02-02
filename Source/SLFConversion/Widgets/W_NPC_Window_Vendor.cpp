@@ -107,10 +107,30 @@ FReply UW_NPC_Window_Vendor::NativeOnKeyDown(const FGeometry& InGeometry, const 
 			return FReply::Handled();
 		}
 
-		// Confirm/OK - execute buy/sell
+		// Navigate Left/Right - toggle between OK and Cancel buttons
+		if (Key == EKeys::A || Key == EKeys::Left || Key == EKeys::Gamepad_DPad_Left || Key == EKeys::Gamepad_LeftStick_Left ||
+		    Key == EKeys::D || Key == EKeys::Right || Key == EKeys::Gamepad_DPad_Right || Key == EKeys::Gamepad_LeftStick_Right)
+		{
+			CachedVendorActionPopup->EventNavigateConfirmButtonsHorizontal();
+			return FReply::Handled();
+		}
+
+		// Confirm - execute currently selected button (OK or Cancel)
 		if (Key == EKeys::Enter || Key == EKeys::SpaceBar || Key == EKeys::Gamepad_FaceButton_Bottom)
 		{
-			CachedVendorActionPopup->EventVendorActionBtnPressed();
+			// Check which button is selected in the popup
+			if (CachedVendorActionPopup->SelectedButtonIndex == 0)
+			{
+				// OK button selected - execute action
+				UE_LOG(LogTemp, Log, TEXT("[W_NPC_Window_Vendor] Confirm with OK selected - executing action"));
+				CachedVendorActionPopup->EventVendorActionBtnPressed();
+			}
+			else
+			{
+				// Cancel button selected - close action menu
+				UE_LOG(LogTemp, Log, TEXT("[W_NPC_Window_Vendor] Confirm with Cancel selected - closing action menu"));
+				CachedVendorActionPopup->OnVendorActionClosed.Broadcast();
+			}
 			return FReply::Handled();
 		}
 
@@ -247,9 +267,24 @@ void UW_NPC_Window_Vendor::BindSlotEvents(UW_VendorSlot* VendorSlotWidget)
 
 void UW_NPC_Window_Vendor::UpdateSlotSelection(int32 NewIndex)
 {
+	UE_LOG(LogTemp, Warning, TEXT("[W_NPC_Window_Vendor] UpdateSlotSelection - NewIndex: %d, OccupiedSlots: %d, CurrentNavIndex: %d"),
+		NewIndex, OccupiedVendorSlots.Num(), NavigationIndex);
+
+	// Log all slots for debugging
+	for (int32 i = 0; i < OccupiedVendorSlots.Num(); i++)
+	{
+		UW_VendorSlot* VSlot = OccupiedVendorSlots[i];
+		UE_LOG(LogTemp, Warning, TEXT("[W_NPC_Window_Vendor]   Slot[%d]: %p, Item: %s"),
+			i, (void*)VSlot,
+			(VSlot && VSlot->AssignedItem) ? *VSlot->AssignedItem->GetName() : TEXT("NULL"));
+	}
+
 	// Deselect previous slot
 	if (SelectedSlot)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_NPC_Window_Vendor] Deselecting previous slot %p: %s"),
+			(void*)SelectedSlot,
+			SelectedSlot->AssignedItem ? *SelectedSlot->AssignedItem->GetName() : TEXT("Unknown"));
 		SelectedSlot->EventOnSelected(false);
 	}
 
@@ -259,8 +294,14 @@ void UW_NPC_Window_Vendor::UpdateSlotSelection(int32 NewIndex)
 		NavigationIndex = FMath::Clamp(NewIndex, 0, OccupiedVendorSlots.Num() - 1);
 		SelectedSlot = OccupiedVendorSlots[NavigationIndex];
 
+		UE_LOG(LogTemp, Warning, TEXT("[W_NPC_Window_Vendor] After clamp: NavigationIndex=%d, SelectedSlot=%p"),
+			NavigationIndex, (void*)SelectedSlot);
+
 		if (SelectedSlot)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("[W_NPC_Window_Vendor] Selecting slot %d (%p): %s"),
+				NavigationIndex, (void*)SelectedSlot,
+				SelectedSlot->AssignedItem ? *SelectedSlot->AssignedItem->GetName() : TEXT("Unknown"));
 			SelectedSlot->EventOnSelected(true);
 
 			// Update item info panel
@@ -272,12 +313,19 @@ void UW_NPC_Window_Vendor::UpdateSlotSelection(int32 NewIndex)
 				CachedInventoryScrollBox->ScrollWidgetIntoView(SelectedSlot, true, EDescendantScrollDestination::Center);
 			}
 		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[W_NPC_Window_Vendor] SelectedSlot is nullptr at index %d!"), NavigationIndex);
+		}
 	}
 	else
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_NPC_Window_Vendor] OccupiedVendorSlots is EMPTY - no slot to select!"));
 		NavigationIndex = 0;
 		SelectedSlot = nullptr;
 	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[W_NPC_Window_Vendor] UpdateSlotSelection END - NavigationIndex is now: %d"), NavigationIndex);
 }
 
 int32 UW_NPC_Window_Vendor::GetSlotsPerRow() const
@@ -503,7 +551,8 @@ void UW_NPC_Window_Vendor::EventInitializeVendor_Implementation(const FText& Npc
 								false,  // Not infinite - player has limited amount
 								InVendorType
 							);
-							OccupiedVendorSlots.Add(CurrentSlot);
+							// NOTE: Don't add here - EventOccupySlot broadcasts OnSlotAssigned
+							// which triggers EventOnVendorSlotAssigned to add it (avoids duplicates)
 						}
 					}
 					SlotIndex++;
@@ -566,7 +615,8 @@ void UW_NPC_Window_Vendor::EventInitializeVendor_Implementation(const FText& Npc
 						VendorItem.bInfiniteStock,
 						InVendorType
 					);
-					OccupiedVendorSlots.Add(CurrentSlot);
+					// NOTE: Don't add here - EventOccupySlot broadcasts OnSlotAssigned
+					// which triggers EventOnVendorSlotAssigned to add it (avoids duplicates)
 				}
 			}
 			SlotIndex++;
@@ -589,6 +639,9 @@ void UW_NPC_Window_Vendor::EventInitializeVendor_Implementation(const FText& Npc
 
 void UW_NPC_Window_Vendor::EventNavigateUp_Implementation()
 {
+	UE_LOG(LogTemp, Log, TEXT("[W_NPC_Window_Vendor] EventNavigateUp - bActionMenuOpen: %s, CurrentIndex: %d, OccupiedSlots: %d"),
+		bActionMenuOpen ? TEXT("true") : TEXT("false"), NavigationIndex, OccupiedVendorSlots.Num());
+
 	if (bActionMenuOpen)
 	{
 		// Forward to action popup - Up increases amount
@@ -603,16 +656,19 @@ void UW_NPC_Window_Vendor::EventNavigateUp_Implementation()
 	int32 SlotsPerRow = GetSlotsPerRow();
 	int32 NewIndex = NavigationIndex - SlotsPerRow;
 
+	UE_LOG(LogTemp, Log, TEXT("[W_NPC_Window_Vendor] NavigateUp: SlotsPerRow=%d, NewIndex=%d"), SlotsPerRow, NewIndex);
+
 	if (NewIndex >= 0)
 	{
 		UpdateSlotSelection(NewIndex);
 	}
-
-	UE_LOG(LogTemp, Verbose, TEXT("UW_NPC_Window_Vendor::EventNavigateUp - NewIndex: %d"), NavigationIndex);
 }
 
 void UW_NPC_Window_Vendor::EventNavigateDown_Implementation()
 {
+	UE_LOG(LogTemp, Log, TEXT("[W_NPC_Window_Vendor] EventNavigateDown - bActionMenuOpen: %s, CurrentIndex: %d, OccupiedSlots: %d"),
+		bActionMenuOpen ? TEXT("true") : TEXT("false"), NavigationIndex, OccupiedVendorSlots.Num());
+
 	if (bActionMenuOpen)
 	{
 		// Forward to action popup - Down decreases amount
@@ -627,16 +683,20 @@ void UW_NPC_Window_Vendor::EventNavigateDown_Implementation()
 	int32 SlotsPerRow = GetSlotsPerRow();
 	int32 NewIndex = NavigationIndex + SlotsPerRow;
 
+	UE_LOG(LogTemp, Log, TEXT("[W_NPC_Window_Vendor] NavigateDown: SlotsPerRow=%d, NewIndex=%d, MaxIndex=%d"),
+		SlotsPerRow, NewIndex, OccupiedVendorSlots.Num() - 1);
+
 	if (NewIndex < OccupiedVendorSlots.Num())
 	{
 		UpdateSlotSelection(NewIndex);
 	}
-
-	UE_LOG(LogTemp, Verbose, TEXT("UW_NPC_Window_Vendor::EventNavigateDown - NewIndex: %d"), NavigationIndex);
 }
 
 void UW_NPC_Window_Vendor::EventNavigateLeft_Implementation()
 {
+	UE_LOG(LogTemp, Log, TEXT("[W_NPC_Window_Vendor] EventNavigateLeft - bActionMenuOpen: %s, CurrentIndex: %d, OccupiedSlots: %d"),
+		bActionMenuOpen ? TEXT("true") : TEXT("false"), NavigationIndex, OccupiedVendorSlots.Num());
+
 	if (bActionMenuOpen)
 	{
 		// Forward to action popup - horizontal navigation for confirm buttons
@@ -650,16 +710,19 @@ void UW_NPC_Window_Vendor::EventNavigateLeft_Implementation()
 	// Move left one slot
 	int32 NewIndex = NavigationIndex - 1;
 
+	UE_LOG(LogTemp, Log, TEXT("[W_NPC_Window_Vendor] NavigateLeft: NewIndex=%d"), NewIndex);
+
 	if (NewIndex >= 0)
 	{
 		UpdateSlotSelection(NewIndex);
 	}
-
-	UE_LOG(LogTemp, Verbose, TEXT("UW_NPC_Window_Vendor::EventNavigateLeft - NewIndex: %d"), NavigationIndex);
 }
 
 void UW_NPC_Window_Vendor::EventNavigateRight_Implementation()
 {
+	UE_LOG(LogTemp, Log, TEXT("[W_NPC_Window_Vendor] EventNavigateRight - bActionMenuOpen: %s, CurrentIndex: %d, OccupiedSlots: %d"),
+		bActionMenuOpen ? TEXT("true") : TEXT("false"), NavigationIndex, OccupiedVendorSlots.Num());
+
 	if (bActionMenuOpen)
 	{
 		// Forward to action popup - horizontal navigation for confirm buttons
@@ -673,12 +736,12 @@ void UW_NPC_Window_Vendor::EventNavigateRight_Implementation()
 	// Move right one slot
 	int32 NewIndex = NavigationIndex + 1;
 
+	UE_LOG(LogTemp, Log, TEXT("[W_NPC_Window_Vendor] NavigateRight: NewIndex=%d, MaxIndex=%d"), NewIndex, OccupiedVendorSlots.Num() - 1);
+
 	if (NewIndex < OccupiedVendorSlots.Num())
 	{
 		UpdateSlotSelection(NewIndex);
 	}
-
-	UE_LOG(LogTemp, Verbose, TEXT("UW_NPC_Window_Vendor::EventNavigateRight - NewIndex: %d"), NavigationIndex);
 }
 
 void UW_NPC_Window_Vendor::EventNavigateOk_Implementation()
@@ -781,15 +844,21 @@ void UW_NPC_Window_Vendor::EventOnActionMenuVisibilityChanged_Implementation(uin
 
 void UW_NPC_Window_Vendor::EventOnSlotSelected_Implementation(bool Selected, UW_VendorSlot* InSlot)
 {
-	UE_LOG(LogTemp, Verbose, TEXT("UW_NPC_Window_Vendor::EventOnSlotSelected_Implementation - Selected: %s"),
-		Selected ? TEXT("true") : TEXT("false"));
+	UE_LOG(LogTemp, Warning, TEXT("[W_NPC_Window_Vendor] EventOnSlotSelected - Selected: %s, InSlot: %p, CurrentNavIndex: %d"),
+		Selected ? TEXT("true") : TEXT("false"), (void*)InSlot, NavigationIndex);
 
 	if (Selected && InSlot)
 	{
 		// Find the index of this slot
 		int32 FoundIndex = OccupiedVendorSlots.Find(InSlot);
+		UE_LOG(LogTemp, Warning, TEXT("[W_NPC_Window_Vendor] EventOnSlotSelected - FoundIndex: %d, NavigationIndex: %d"),
+			FoundIndex, NavigationIndex);
+
 		if (FoundIndex != INDEX_NONE && FoundIndex != NavigationIndex)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("[W_NPC_Window_Vendor] EventOnSlotSelected - Updating NavigationIndex from %d to %d"),
+				NavigationIndex, FoundIndex);
+
 			// Deselect previous slot
 			if (SelectedSlot && SelectedSlot != InSlot)
 			{
@@ -801,6 +870,11 @@ void UW_NPC_Window_Vendor::EventOnSlotSelected_Implementation(bool Selected, UW_
 
 			// Update item info panel
 			EventSetupItemInfoPanel(InSlot);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[W_NPC_Window_Vendor] EventOnSlotSelected - NOT updating (FoundIndex=%d, NavIndex=%d)"),
+				FoundIndex, NavigationIndex);
 		}
 	}
 }

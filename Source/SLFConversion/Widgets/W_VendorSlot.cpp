@@ -260,13 +260,16 @@ void UW_VendorSlot::EventOccupySlot_Implementation(UPDA_Item* AssignedItemAsset,
  */
 void UW_VendorSlot::EventOnSelected_Implementation(bool Selected)
 {
-	UE_LOG(LogTemp, Log, TEXT("UW_VendorSlot::EventOnSelected - Selected: %s"), Selected ? TEXT("true") : TEXT("false"));
+	UE_LOG(LogTemp, Warning, TEXT("UW_VendorSlot::EventOnSelected - Slot %p, Item: %s, Selected: %s"),
+		(void*)this,
+		AssignedItem ? *AssignedItem->GetName() : TEXT("NULL"),
+		Selected ? TEXT("true") : TEXT("false"));
 
 	// Blueprint uses "HightlightBorder" (note typo) - toggle visibility like other slot widgets
 	if (UBorder* HighlightBorder = Cast<UBorder>(GetWidgetFromName(TEXT("HightlightBorder"))))
 	{
 		HighlightBorder->SetVisibility(Selected ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
-		UE_LOG(LogTemp, Log, TEXT("  HightlightBorder visibility: %s"), Selected ? TEXT("Visible") : TEXT("Collapsed"));
+		UE_LOG(LogTemp, Warning, TEXT("  HightlightBorder FOUND - visibility: %s"), Selected ? TEXT("Visible") : TEXT("Collapsed"));
 	}
 	else
 	{
@@ -277,11 +280,17 @@ void UW_VendorSlot::EventOnSelected_Implementation(bool Selected)
 			if (Selected)
 			{
 				BackgroundBorder->SetBrushColor(FLinearColor(1.0f, 0.8f, 0.2f, 1.0f)); // Gold highlight
+				UE_LOG(LogTemp, Warning, TEXT("  BackgroundBorder set to GOLD"));
 			}
 			else
 			{
 				BackgroundBorder->SetBrushColor(SlotColor);
+				UE_LOG(LogTemp, Warning, TEXT("  BackgroundBorder set to SlotColor"));
 			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("  BackgroundBorder also NOT FOUND!"));
 		}
 	}
 

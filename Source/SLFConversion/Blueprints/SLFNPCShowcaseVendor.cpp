@@ -1,20 +1,56 @@
 // SLFNPCShowcaseVendor.cpp
 // C++ implementation for B_Soulslike_NPC_ShowcaseVendor
+//
+// MESH MERGING: This class implements runtime mesh merging exactly like bp_only:
+// 1. Collect meshes from Head, Body, Arms, Legs SCS components
+// 2. Use SkeletalMergingLibrary::MergeMeshes() to create single merged mesh
+// 3. Apply merged mesh to main character mesh
+// 4. Hide the modular components
 
 #include "SLFNPCShowcaseVendor.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/AIInteractionManagerComponent.h"
 #include "UObject/ConstructorHelpers.h"
+#include "SkeletalMergingLibrary.h"
 
 ASLFNPCShowcaseVendor::ASLFNPCShowcaseVendor()
 {
 	// Default display name for Vendor NPC
 	NPCDisplayName = FText::FromString(TEXT("Vendor"));
 
-	// Default vendor mesh - SKM_Manny (Manny character - different from Guide's Quinn)
-	// NOTE: bp_only used dynamic mesh merging with SkeletalMergingLibrary.MergeMeshes on:
-	// - SKM_MannyHead, SKM_MannyUpperBody, SKM_MannyArms, SKM_MannyLowerBody
-	// This is a simplified approach using the pre-merged Manny mesh
+	// ═══════════════════════════════════════════════════════════════════
+	// DEFAULT MANNY MODULAR MESH PARTS (exactly like bp_only)
+	// These will be merged at runtime using SkeletalMergingLibrary
+	// ═══════════════════════════════════════════════════════════════════
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> HeadMeshFinder(
+		TEXT("/Game/SoulslikeFramework/Meshes/SKM/SKM_MannyHead"));
+	if (HeadMeshFinder.Succeeded())
+	{
+		HeadMesh = HeadMeshFinder.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> UpperBodyMeshFinder(
+		TEXT("/Game/SoulslikeFramework/Meshes/SKM/SKM_MannyUpperBody"));
+	if (UpperBodyMeshFinder.Succeeded())
+	{
+		UpperBodyMesh = UpperBodyMeshFinder.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> ArmsMeshFinder(
+		TEXT("/Game/SoulslikeFramework/Meshes/SKM/SKM_MannyArms"));
+	if (ArmsMeshFinder.Succeeded())
+	{
+		ArmsMesh = ArmsMeshFinder.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> LowerBodyMeshFinder(
+		TEXT("/Game/SoulslikeFramework/Meshes/SKM/SKM_MannyLowerBody"));
+	if (LowerBodyMeshFinder.Succeeded())
+	{
+		LowerBodyMesh = LowerBodyMeshFinder.Object;
+	}
+
+	// Fallback mesh if merging fails
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> DefaultMeshFinder(
 		TEXT("/Game/SoulslikeFramework/Demo/SKM/Mannequins/Meshes/SKM_Manny"));
 	if (DefaultMeshFinder.Succeeded())
@@ -22,8 +58,13 @@ ASLFNPCShowcaseVendor::ASLFNPCShowcaseVendor()
 		DefaultVendorMesh = DefaultMeshFinder.Object;
 	}
 
+	// Initialize component pointers
+	HeadComponent = nullptr;
+	BodyComponent = nullptr;
+	ArmsComponent = nullptr;
+	LegsComponent = nullptr;
+
 	// Default dialog asset - DA_ExampleDialog_Vendor (vendor-specific: Buy/Sell/Trade/Leave)
-	// Located at: /Game/SoulslikeFramework/Data/Dialog/ShowcaseVendorNpc/DA_ExampleDialog_Vendor
 	static ConstructorHelpers::FObjectFinder<UPrimaryDataAsset> DefaultDialogFinder(
 		TEXT("/Game/SoulslikeFramework/Data/Dialog/ShowcaseVendorNpc/DA_ExampleDialog_Vendor"));
 	if (DefaultDialogFinder.Succeeded())
@@ -32,7 +73,6 @@ ASLFNPCShowcaseVendor::ASLFNPCShowcaseVendor()
 	}
 
 	// Default vendor asset - DA_ExampleVendor (items for sale)
-	// Located at: /Game/SoulslikeFramework/Data/Vendor/DA_ExampleVendor
 	static ConstructorHelpers::FObjectFinder<UPrimaryDataAsset> DefaultVendorFinder(
 		TEXT("/Game/SoulslikeFramework/Data/Vendor/DA_ExampleVendor"));
 	if (DefaultVendorFinder.Succeeded())
@@ -48,29 +88,6 @@ void ASLFNPCShowcaseVendor::BeginPlay()
 	UE_LOG(LogTemp, Warning, TEXT("[NPCShowcaseVendor] BeginPlay: %s - C++ class running"), *GetName());
 	UE_LOG(LogTemp, Warning, TEXT("[NPCShowcaseVendor] DefaultVendorAsset IsNull: %s"),
 		DefaultVendorAsset.IsNull() ? TEXT("YES") : TEXT("NO"));
-
-	// ═══════════════════════════════════════════════════════════════════
-	// STEP 0: Hide modular mesh components from Blueprint SCS
-	// bp_only had Head, Body, Arms, Legs components that it merged at runtime.
-	// We use pre-merged SKM_Manny instead, so hide the modular parts.
-	// ═══════════════════════════════════════════════════════════════════
-	TArray<USkeletalMeshComponent*> AllSkeletalMeshes;
-	GetComponents<USkeletalMeshComponent>(AllSkeletalMeshes);
-
-	for (USkeletalMeshComponent* SMC : AllSkeletalMeshes)
-	{
-		if (!SMC) continue;
-
-		FString CompName = SMC->GetName();
-		// Hide the modular parts (Head, Body, Arms, Legs) - they're attached to CharacterMesh0
-		if (CompName.Equals(TEXT("Head")) || CompName.Equals(TEXT("Body")) ||
-			CompName.Equals(TEXT("Arms")) || CompName.Equals(TEXT("Legs")))
-		{
-			SMC->SetVisibility(false);
-			SMC->SetHiddenInGame(true);
-			UE_LOG(LogTemp, Log, TEXT("[NPCShowcaseVendor] Hidden modular component: %s"), *CompName);
-		}
-	}
 
 	// ═══════════════════════════════════════════════════════════════════
 	// STEP 1: Configure AIInteractionManager with vendor-specific data
@@ -123,7 +140,41 @@ void ASLFNPCShowcaseVendor::BeginPlay()
 	}
 
 	// ═══════════════════════════════════════════════════════════════════
-	// STEP 2: Set up vendor mesh
+	// STEP 2: Cache references to Blueprint SCS modular mesh components
+	// ═══════════════════════════════════════════════════════════════════
+	TArray<USkeletalMeshComponent*> AllSkeletalMeshes;
+	GetComponents<USkeletalMeshComponent>(AllSkeletalMeshes);
+
+	for (USkeletalMeshComponent* SMC : AllSkeletalMeshes)
+	{
+		if (!SMC) continue;
+
+		FString CompName = SMC->GetName();
+		if (CompName.Equals(TEXT("Head")))
+		{
+			HeadComponent = SMC;
+			UE_LOG(LogTemp, Log, TEXT("[NPCShowcaseVendor] Found Head component"));
+		}
+		else if (CompName.Equals(TEXT("Body")))
+		{
+			BodyComponent = SMC;
+			UE_LOG(LogTemp, Log, TEXT("[NPCShowcaseVendor] Found Body component"));
+		}
+		else if (CompName.Equals(TEXT("Arms")))
+		{
+			ArmsComponent = SMC;
+			UE_LOG(LogTemp, Log, TEXT("[NPCShowcaseVendor] Found Arms component"));
+		}
+		else if (CompName.Equals(TEXT("Legs")))
+		{
+			LegsComponent = SMC;
+			UE_LOG(LogTemp, Log, TEXT("[NPCShowcaseVendor] Found Legs component"));
+		}
+	}
+
+	// ═══════════════════════════════════════════════════════════════════
+	// STEP 3: Set up mesh merge data and perform runtime mesh merging
+	// This matches bp_only BeginPlay logic exactly
 	// ═══════════════════════════════════════════════════════════════════
 	USkeletalMeshComponent* CharMesh = GetMesh();
 	if (!CharMesh)
@@ -132,40 +183,155 @@ void ASLFNPCShowcaseVendor::BeginPlay()
 		return;
 	}
 
-	bool bMeshWasChanged = false;
+	// Collect meshes to merge - first try from SCS components, then fallback to defaults
+	TArray<USkeletalMesh*> MeshesToMerge;
 
-	// Check if mesh is already set
-	if (CharMesh->GetSkeletalMeshAsset())
+	// Head mesh
+	if (HeadComponent && HeadComponent->GetSkeletalMeshAsset())
 	{
-		UE_LOG(LogTemp, Log, TEXT("[NPCShowcaseVendor] Character mesh already set: %s"),
-			*CharMesh->GetSkeletalMeshAsset()->GetName());
+		MeshesToMerge.Add(HeadComponent->GetSkeletalMeshAsset());
+		UE_LOG(LogTemp, Log, TEXT("[NPCShowcaseVendor] Using Head from SCS: %s"), *HeadComponent->GetSkeletalMeshAsset()->GetName());
+	}
+	else if (!HeadMesh.IsNull())
+	{
+		USkeletalMesh* LoadedMesh = HeadMesh.LoadSynchronous();
+		if (LoadedMesh)
+		{
+			MeshesToMerge.Add(LoadedMesh);
+			UE_LOG(LogTemp, Log, TEXT("[NPCShowcaseVendor] Using Head from default: %s"), *LoadedMesh->GetName());
+		}
+	}
+
+	// Body (UpperBody) mesh
+	if (BodyComponent && BodyComponent->GetSkeletalMeshAsset())
+	{
+		MeshesToMerge.Add(BodyComponent->GetSkeletalMeshAsset());
+		UE_LOG(LogTemp, Log, TEXT("[NPCShowcaseVendor] Using Body from SCS: %s"), *BodyComponent->GetSkeletalMeshAsset()->GetName());
+	}
+	else if (!UpperBodyMesh.IsNull())
+	{
+		USkeletalMesh* LoadedMesh = UpperBodyMesh.LoadSynchronous();
+		if (LoadedMesh)
+		{
+			MeshesToMerge.Add(LoadedMesh);
+			UE_LOG(LogTemp, Log, TEXT("[NPCShowcaseVendor] Using UpperBody from default: %s"), *LoadedMesh->GetName());
+		}
+	}
+
+	// Arms mesh
+	if (ArmsComponent && ArmsComponent->GetSkeletalMeshAsset())
+	{
+		MeshesToMerge.Add(ArmsComponent->GetSkeletalMeshAsset());
+		UE_LOG(LogTemp, Log, TEXT("[NPCShowcaseVendor] Using Arms from SCS: %s"), *ArmsComponent->GetSkeletalMeshAsset()->GetName());
+	}
+	else if (!ArmsMesh.IsNull())
+	{
+		USkeletalMesh* LoadedMesh = ArmsMesh.LoadSynchronous();
+		if (LoadedMesh)
+		{
+			MeshesToMerge.Add(LoadedMesh);
+			UE_LOG(LogTemp, Log, TEXT("[NPCShowcaseVendor] Using Arms from default: %s"), *LoadedMesh->GetName());
+		}
+	}
+
+	// Legs (LowerBody) mesh
+	if (LegsComponent && LegsComponent->GetSkeletalMeshAsset())
+	{
+		MeshesToMerge.Add(LegsComponent->GetSkeletalMeshAsset());
+		UE_LOG(LogTemp, Log, TEXT("[NPCShowcaseVendor] Using Legs from SCS: %s"), *LegsComponent->GetSkeletalMeshAsset()->GetName());
+	}
+	else if (!LowerBodyMesh.IsNull())
+	{
+		USkeletalMesh* LoadedMesh = LowerBodyMesh.LoadSynchronous();
+		if (LoadedMesh)
+		{
+			MeshesToMerge.Add(LoadedMesh);
+			UE_LOG(LogTemp, Log, TEXT("[NPCShowcaseVendor] Using LowerBody from default: %s"), *LoadedMesh->GetName());
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[NPCShowcaseVendor] Mesh merge: %d meshes collected"), MeshesToMerge.Num());
+
+	// Perform mesh merging if we have enough parts
+	bool bMeshMergeSuccessful = false;
+	if (MeshesToMerge.Num() >= 4)
+	{
+		// Set up merge parameters
+		MeshMergeData.MeshesToMerge = MeshesToMerge;
+
+		// Get skeleton from character mesh or first mesh part
+		if (CharMesh->GetSkeletalMeshAsset())
+		{
+			MeshMergeData.Skeleton = CharMesh->GetSkeletalMeshAsset()->GetSkeleton();
+		}
+		else if (MeshesToMerge.Num() > 0 && MeshesToMerge[0])
+		{
+			MeshMergeData.Skeleton = MeshesToMerge[0]->GetSkeleton();
+		}
+
+		// Perform the merge
+		USkeletalMesh* MergedMesh = USkeletalMergingLibrary::MergeMeshes(MeshMergeData);
+
+		if (IsValid(MergedMesh))
+		{
+			CharMesh->SetSkeletalMeshAsset(MergedMesh);
+			bMeshMergeSuccessful = true;
+			UE_LOG(LogTemp, Warning, TEXT("[NPCShowcaseVendor] Mesh merge SUCCESSFUL - applied to character mesh"));
+
+			// Hide the modular components after successful merge (like bp_only does)
+			if (HeadComponent)
+			{
+				HeadComponent->SetVisibility(false);
+				HeadComponent->SetHiddenInGame(true);
+			}
+			if (BodyComponent)
+			{
+				BodyComponent->SetVisibility(false);
+				BodyComponent->SetHiddenInGame(true);
+			}
+			if (ArmsComponent)
+			{
+				ArmsComponent->SetVisibility(false);
+				ArmsComponent->SetHiddenInGame(true);
+			}
+			if (LegsComponent)
+			{
+				LegsComponent->SetVisibility(false);
+				LegsComponent->SetHiddenInGame(true);
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[NPCShowcaseVendor] Mesh merge FAILED - MergedMesh is invalid"));
+		}
 	}
 	else
 	{
-		// Apply the default vendor mesh
+		UE_LOG(LogTemp, Warning, TEXT("[NPCShowcaseVendor] Not enough meshes to merge (%d), need 4"), MeshesToMerge.Num());
+	}
+
+	// Fallback: if mesh merge failed, use default vendor mesh
+	if (!bMeshMergeSuccessful)
+	{
 		if (!DefaultVendorMesh.IsNull())
 		{
 			USkeletalMesh* VendorMesh = DefaultVendorMesh.LoadSynchronous();
 			if (VendorMesh)
 			{
-				CharMesh->SetSkeletalMesh(VendorMesh);
-				bMeshWasChanged = true;
-				UE_LOG(LogTemp, Log, TEXT("[NPCShowcaseVendor] Applied default vendor mesh: %s"),
-					*VendorMesh->GetName());
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("[NPCShowcaseVendor] Failed to load default vendor mesh!"));
+				CharMesh->SetSkeletalMeshAsset(VendorMesh);
+				UE_LOG(LogTemp, Warning, TEXT("[NPCShowcaseVendor] FALLBACK: Applied default vendor mesh: %s"), *VendorMesh->GetName());
 			}
 		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("[NPCShowcaseVendor] No default vendor mesh configured!"));
-		}
+
+		// Still hide modular components
+		if (HeadComponent) { HeadComponent->SetVisibility(false); HeadComponent->SetHiddenInGame(true); }
+		if (BodyComponent) { BodyComponent->SetVisibility(false); BodyComponent->SetHiddenInGame(true); }
+		if (ArmsComponent) { ArmsComponent->SetVisibility(false); ArmsComponent->SetHiddenInGame(true); }
+		if (LegsComponent) { LegsComponent->SetVisibility(false); LegsComponent->SetHiddenInGame(true); }
 	}
 
 	// ═══════════════════════════════════════════════════════════════════
-	// STEP 3: Apply AnimClass - Always ensure correct AnimClass is set
+	// STEP 4: Apply AnimClass - Always ensure correct AnimClass is set
 	// This fixes the A-pose issue when Blueprint has wrong/no AnimClass
 	// ═══════════════════════════════════════════════════════════════════
 	UE_LOG(LogTemp, Log, TEXT("[NPCShowcaseVendor] NPCAnimClass: %s, Current AnimClass: %s, AnimInstance: %s"),
@@ -177,14 +343,12 @@ void ASLFNPCShowcaseVendor::BeginPlay()
 	{
 		UClass* CurrentAnimClass = CharMesh->GetAnimClass();
 
-		// ALWAYS apply if mesh changed, no anim instance, or wrong AnimClass
-		// This ensures NPCs animate correctly even if Blueprint had wrong settings
-		if (bMeshWasChanged || !CharMesh->GetAnimInstance() || CurrentAnimClass != NPCAnimClass)
+		// ALWAYS apply after mesh change to ensure animation works
+		if (!CharMesh->GetAnimInstance() || CurrentAnimClass != NPCAnimClass)
 		{
 			CharMesh->SetAnimInstanceClass(NPCAnimClass);
-			UE_LOG(LogTemp, Log, TEXT("[NPCShowcaseVendor] Applied NPCAnimClass: %s (mesh changed: %s, was: %s)"),
+			UE_LOG(LogTemp, Log, TEXT("[NPCShowcaseVendor] Applied NPCAnimClass: %s (was: %s)"),
 				*NPCAnimClass->GetName(),
-				bMeshWasChanged ? TEXT("yes") : TEXT("no"),
 				CurrentAnimClass ? *CurrentAnimClass->GetName() : TEXT("NULL"));
 
 			// Force initialize the anim instance
