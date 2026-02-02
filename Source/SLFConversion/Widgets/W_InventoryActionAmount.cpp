@@ -27,6 +27,10 @@ UW_InventoryActionAmount::UW_InventoryActionAmount(const FObjectInitializer& Obj
 	CachedMaxAmountText = nullptr;
 	CachedYesButton = nullptr;
 	CachedNoButton = nullptr;
+	CachedYesButtonInner = nullptr;
+	CachedNoButtonInner = nullptr;
+	CachedYesWidgetParent = nullptr;
+	CachedNoWidgetParent = nullptr;
 	ConfirmButtonIndex = 0;  // Start with YES selected
 }
 
@@ -58,8 +62,59 @@ void UW_InventoryActionAmount::CacheWidgetReferences()
 	CachedBtnDown = Cast<UButton>(GetWidgetFromName(TEXT("BtnDown")));
 	CachedAmountText = Cast<UTextBlock>(GetWidgetFromName(TEXT("AmountText")));
 	CachedMaxAmountText = Cast<UTextBlock>(GetWidgetFromName(TEXT("MaxAmountText")));
+
+	// W_GB_YES and W_GB_NO are W_GenericButton Blueprint widgets
+	// Try casting to C++ class first, fall back to finding inner Button if cast fails
 	CachedYesButton = Cast<UW_GenericButton>(GetWidgetFromName(TEXT("W_GB_YES")));
 	CachedNoButton = Cast<UW_GenericButton>(GetWidgetFromName(TEXT("W_GB_NO")));
+
+	// If cast failed, the Blueprint wasn't reparented - find inner buttons for direct binding
+	if (!CachedYesButton)
+	{
+		if (UUserWidget* YesWidget = Cast<UUserWidget>(GetWidgetFromName(TEXT("W_GB_YES"))))
+		{
+			UE_LOG(LogTemp, Log, TEXT("  W_GB_YES found as UUserWidget (class: %s), looking for inner Button"), *YesWidget->GetClass()->GetName());
+			CachedYesButtonInner = Cast<UButton>(YesWidget->GetWidgetFromName(TEXT("Button")));
+			if (CachedYesButtonInner)
+			{
+				UE_LOG(LogTemp, Log, TEXT("  Found inner Button in W_GB_YES"));
+				// Ensure button is clickable
+				CachedYesButtonInner->SetIsEnabled(true);
+				CachedYesButtonInner->SetVisibility(ESlateVisibility::Visible);
+			}
+			// Make ButtonBorder not block clicks (it sits on top of Button in Overlay)
+			if (UWidget* ButtonBorder = YesWidget->GetWidgetFromName(TEXT("ButtonBorder")))
+			{
+				ButtonBorder->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+				UE_LOG(LogTemp, Log, TEXT("  Set W_GB_YES ButtonBorder to SelfHitTestInvisible"));
+			}
+			// Also store the parent widget for potential use
+			CachedYesWidgetParent = YesWidget;
+		}
+	}
+	if (!CachedNoButton)
+	{
+		if (UUserWidget* NoWidget = Cast<UUserWidget>(GetWidgetFromName(TEXT("W_GB_NO"))))
+		{
+			UE_LOG(LogTemp, Log, TEXT("  W_GB_NO found as UUserWidget (class: %s), looking for inner Button"), *NoWidget->GetClass()->GetName());
+			CachedNoButtonInner = Cast<UButton>(NoWidget->GetWidgetFromName(TEXT("Button")));
+			if (CachedNoButtonInner)
+			{
+				UE_LOG(LogTemp, Log, TEXT("  Found inner Button in W_GB_NO"));
+				// Ensure button is clickable
+				CachedNoButtonInner->SetIsEnabled(true);
+				CachedNoButtonInner->SetVisibility(ESlateVisibility::Visible);
+			}
+			// Make ButtonBorder not block clicks (it sits on top of Button in Overlay)
+			if (UWidget* ButtonBorder = NoWidget->GetWidgetFromName(TEXT("ButtonBorder")))
+			{
+				ButtonBorder->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+				UE_LOG(LogTemp, Log, TEXT("  Set W_GB_NO ButtonBorder to SelfHitTestInvisible"));
+			}
+			// Also store the parent widget for potential use
+			CachedNoWidgetParent = NoWidget;
+		}
+	}
 
 	// bp_only: Set button text labels - these were instance properties on the parent widget
 	// that are lost during reparenting, so we must set them explicitly
@@ -72,13 +127,15 @@ void UW_InventoryActionAmount::CacheWidgetReferences()
 		CachedNoButton->EventSetButtonText(FText::FromString(TEXT("NO")));
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("UW_InventoryActionAmount::CacheWidgetReferences - BtnUp: %s, BtnDown: %s, AmountText: %s, MaxAmountText: %s, YES: %s, NO: %s"),
+	UE_LOG(LogTemp, Log, TEXT("UW_InventoryActionAmount::CacheWidgetReferences - BtnUp: %s, BtnDown: %s, AmountText: %s, MaxAmountText: %s, YES: %s/%s, NO: %s/%s"),
 		CachedBtnUp ? TEXT("found") : TEXT("null"),
 		CachedBtnDown ? TEXT("found") : TEXT("null"),
 		CachedAmountText ? TEXT("found") : TEXT("null"),
 		CachedMaxAmountText ? TEXT("found") : TEXT("null"),
-		CachedYesButton ? TEXT("found") : TEXT("null"),
-		CachedNoButton ? TEXT("found") : TEXT("null"));
+		CachedYesButton ? TEXT("C++") : TEXT("null"),
+		CachedYesButtonInner ? TEXT("inner") : TEXT("null"),
+		CachedNoButton ? TEXT("C++") : TEXT("null"),
+		CachedNoButtonInner ? TEXT("inner") : TEXT("null"));
 }
 
 void UW_InventoryActionAmount::BindButtonEvents()
@@ -95,16 +152,28 @@ void UW_InventoryActionAmount::BindButtonEvents()
 		CachedBtnDown->OnPressed.AddUniqueDynamic(this, &UW_InventoryActionAmount::OnBtnDownPressed);
 	}
 
-	// Bind YES button pressed event
+	// Bind YES button pressed event - prefer C++ class, fallback to inner button
 	if (CachedYesButton)
 	{
 		CachedYesButton->OnButtonPressed.AddUniqueDynamic(this, &UW_InventoryActionAmount::OnYesButtonPressed);
 	}
+	else if (CachedYesButtonInner)
+	{
+		// Bind to OnClicked for mouse clicks
+		CachedYesButtonInner->OnClicked.AddUniqueDynamic(this, &UW_InventoryActionAmount::OnYesButtonPressed);
+		UE_LOG(LogTemp, Log, TEXT("[W_InventoryActionAmount] Bound to CachedYesButtonInner->OnClicked"));
+	}
 
-	// Bind NO button pressed event
+	// Bind NO button pressed event - prefer C++ class, fallback to inner button
 	if (CachedNoButton)
 	{
 		CachedNoButton->OnButtonPressed.AddUniqueDynamic(this, &UW_InventoryActionAmount::OnNoButtonPressed);
+	}
+	else if (CachedNoButtonInner)
+	{
+		// Bind to OnClicked for mouse clicks
+		CachedNoButtonInner->OnClicked.AddUniqueDynamic(this, &UW_InventoryActionAmount::OnNoButtonPressed);
+		UE_LOG(LogTemp, Log, TEXT("[W_InventoryActionAmount] Bound to CachedNoButtonInner->OnClicked"));
 	}
 }
 
@@ -179,6 +248,20 @@ void UW_InventoryActionAmount::EventAmountConfirmButtonPressed_Implementation()
 	if (TargetButton)
 	{
 		TargetButton->EventPressButton();
+	}
+	else
+	{
+		// Fallback: If C++ UW_GenericButton cast failed, call handler directly
+		// This handles the case where W_GenericButton Blueprint wasn't reparented
+		UE_LOG(LogTemp, Log, TEXT("  C++ button not available - calling handler directly"));
+		if (ConfirmButtonIndex == 0)
+		{
+			OnYesButtonPressed();
+		}
+		else
+		{
+			OnNoButtonPressed();
+		}
 	}
 }
 

@@ -147,6 +147,20 @@ protected:
 	UPROPERTY()
 	UW_GenericButton* CachedNoButton;
 
+	// Fallback: inner UButton from W_GenericButton if C++ cast fails
+	UPROPERTY()
+	UButton* CachedYesButtonInner;
+
+	UPROPERTY()
+	UButton* CachedNoButtonInner;
+
+	// Parent W_GenericButton widgets (for accessing Blueprint functionality)
+	UPROPERTY()
+	UUserWidget* CachedYesWidgetParent;
+
+	UPROPERTY()
+	UUserWidget* CachedNoWidgetParent;
+
 	// Navigation state for YES/NO buttons (0 = YES, 1 = NO)
 	int32 ConfirmButtonIndex;
 };
