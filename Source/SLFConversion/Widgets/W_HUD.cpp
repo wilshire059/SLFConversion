@@ -19,7 +19,7 @@
 #include "Interfaces/SLFInteractableInterface.h"
 #include "Interfaces/BPI_Interactable.h"
 #include "Interfaces/BPI_Controller.h"
-#include "Components/AC_AI_InteractionManager.h"
+#include "Components/AIInteractionManagerComponent.h"
 #include "Widgets/W_LoadingScreen.h"
 #include "Widgets/W_Inventory.h"
 #include "Widgets/W_Equipment.h"
@@ -42,6 +42,8 @@
 #include "Widgets/W_ItemWheelSlot.h"
 #include "Components/VerticalBox.h"
 #include "Components/WidgetSwitcher.h"
+#include "Components/Overlay.h"
+#include "Components/OverlaySlot.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Animation/WidgetAnimation.h"
@@ -68,6 +70,7 @@ UW_HUD::UW_HUD(const FObjectInitializer& ObjectInitializer)
 	CachedW_Resources = nullptr;
 	CachedW_RestMenu = nullptr;
 	CachedW_Radar = nullptr;
+	CachedW_NPC_Window = nullptr;
 	CachedItemLootNotificationsBox = nullptr;
 	CachedW_FirstLootNotification = nullptr;
 	CachedStatusEffectBox = nullptr;
@@ -279,6 +282,105 @@ void UW_HUD::CacheWidgetReferences()
 	}
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - CachedW_Radar: %s"),
 		CachedW_Radar ? TEXT("Found") : TEXT("NOT FOUND"));
+
+	// Cache W_NPC_Window widget for NPC dialog
+	if (!CachedW_NPC_Window)
+	{
+		CachedW_NPC_Window = Cast<UW_NPC_Window>(GetWidgetFromName(TEXT("W_NPC_Window")));
+
+		// If widget not found in tree, create it dynamically
+		if (!CachedW_NPC_Window)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("UW_HUD::CacheWidgetReferences - W_NPC_Window not in widget tree, creating dynamically"));
+
+			// Load the Blueprint class
+			UClass* NPCWindowClass = LoadClass<UW_NPC_Window>(nullptr,
+				TEXT("/Game/SoulslikeFramework/Widgets/Vendor/W_NPC_Window.W_NPC_Window_C"));
+
+			if (NPCWindowClass)
+			{
+				CachedW_NPC_Window = CreateWidget<UW_NPC_Window>(GetOwningPlayer(), NPCWindowClass);
+
+				if (CachedW_NPC_Window)
+				{
+					// Find the root Overlay and add the widget
+					UOverlay* RootOverlay = Cast<UOverlay>(GetWidgetFromName(TEXT("Overlay_0")));
+					if (!RootOverlay)
+					{
+						// Try alternate name patterns
+						RootOverlay = Cast<UOverlay>(GetRootWidget());
+					}
+
+					if (RootOverlay)
+					{
+						UOverlaySlot* OverlaySlot = RootOverlay->AddChildToOverlay(CachedW_NPC_Window);
+						if (OverlaySlot)
+						{
+							OverlaySlot->SetHorizontalAlignment(HAlign_Fill);
+							OverlaySlot->SetVerticalAlignment(VAlign_Fill);
+						}
+						CachedW_NPC_Window->SetVisibility(ESlateVisibility::Collapsed);
+						UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - Created W_NPC_Window dynamically and added to Overlay"));
+					}
+					else
+					{
+						UE_LOG(LogTemp, Warning, TEXT("UW_HUD::CacheWidgetReferences - Could not find root Overlay to add W_NPC_Window"));
+					}
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("UW_HUD::CacheWidgetReferences - CreateWidget failed for W_NPC_Window"));
+				}
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("UW_HUD::CacheWidgetReferences - Could not load W_NPC_Window Blueprint class"));
+			}
+		}
+	}
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - CachedW_NPC_Window: %s"),
+		CachedW_NPC_Window ? TEXT("Found") : TEXT("NOT FOUND"));
+
+	// Cache W_Dialog widget for dialog text display (named "W_Dialog" in UMG)
+	if (!CachedW_Dialog)
+	{
+		UWidget* RawDialogWidget = GetWidgetFromName(TEXT("W_Dialog"));
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - GetWidgetFromName(W_Dialog) returned: %s"),
+			RawDialogWidget ? TEXT("VALID pointer") : TEXT("nullptr"));
+
+		if (RawDialogWidget)
+		{
+			UClass* WidgetClass = RawDialogWidget->GetClass();
+			UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - W_Dialog raw widget class: %s"),
+				WidgetClass ? *WidgetClass->GetName() : TEXT("null"));
+			UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - W_Dialog raw widget class path: %s"),
+				WidgetClass ? *WidgetClass->GetPathName() : TEXT("null"));
+
+			// Check if it's a subclass of UW_Dialog
+			UClass* ExpectedClass = UW_Dialog::StaticClass();
+			bool bIsSubclass = WidgetClass && WidgetClass->IsChildOf(ExpectedClass);
+			UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - IsChildOf(UW_Dialog): %s"),
+				bIsSubclass ? TEXT("YES") : TEXT("NO"));
+
+			// Log the class hierarchy
+			if (WidgetClass)
+			{
+				FString Hierarchy;
+				UClass* CurrentClass = WidgetClass;
+				while (CurrentClass)
+				{
+					if (!Hierarchy.IsEmpty()) Hierarchy += TEXT(" -> ");
+					Hierarchy += CurrentClass->GetName();
+					CurrentClass = CurrentClass->GetSuperClass();
+				}
+				UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - W_Dialog class hierarchy: %s"), *Hierarchy);
+			}
+		}
+
+		CachedW_Dialog = Cast<UW_Dialog>(RawDialogWidget);
+	}
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - CachedW_Dialog: %s"),
+		CachedW_Dialog ? TEXT("Found") : TEXT("NOT FOUND"));
 
 	// Cache ItemWheel_Tools and configure SlotsToTrack if empty
 	// This fixes throwing knives not appearing in item wheel after C++ migration
@@ -1110,11 +1212,65 @@ void UW_HUD::EventShowNpcInteractionWidget_Implementation()
 
 void UW_HUD::EventSetupDialog_Implementation(const FText& InText)
 {
-	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventSetupDialog"));
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventSetupDialog - Text: '%s' (len=%d)"), *InText.ToString(), InText.ToString().Len());
 	IsDialogActive = true;
-	if (UWidget* DialogWindow = GetWidgetFromName(TEXT("DialogWindow")))
+
+	// Set ActiveWidgetTag so navigation input routes to dialog
+	if (ASLFPlayerController* PC = Cast<ASLFPlayerController>(GetOwningPlayer()))
 	{
-		DialogWindow->SetVisibility(ESlateVisibility::Visible);
+		PC->ActiveWidgetTag = FGameplayTag::RequestGameplayTag(FName(TEXT("SoulslikeFramework.Backend.Widgets.Dialog")));
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventSetupDialog - Set ActiveWidgetTag to Dialog"));
+	}
+
+	// Cache W_Dialog if not already cached
+	if (!CachedW_Dialog)
+	{
+		UWidget* RawDialogWidget = GetWidgetFromName(TEXT("W_Dialog"));
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventSetupDialog - GetWidgetFromName(W_Dialog) returned: %s"),
+			RawDialogWidget ? TEXT("VALID") : TEXT("nullptr"));
+
+		if (RawDialogWidget)
+		{
+			UClass* WidgetClass = RawDialogWidget->GetClass();
+			UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventSetupDialog - Widget class: %s, path: %s"),
+				WidgetClass ? *WidgetClass->GetName() : TEXT("null"),
+				WidgetClass ? *WidgetClass->GetPathName() : TEXT("null"));
+
+			bool bIsSubclass = WidgetClass && WidgetClass->IsChildOf(UW_Dialog::StaticClass());
+			UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventSetupDialog - IsChildOf(UW_Dialog): %s"),
+				bIsSubclass ? TEXT("YES - Cast should work") : TEXT("NO - NEED TO REPARENT BLUEPRINT!"));
+		}
+
+		CachedW_Dialog = Cast<UW_Dialog>(RawDialogWidget);
+	}
+
+	// Call W_Dialog's EventInitializeDialog to set text and show the widget
+	if (CachedW_Dialog)
+	{
+		CachedW_Dialog->EventInitializeDialog(InText);
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventSetupDialog - Called EventInitializeDialog on W_Dialog"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::EventSetupDialog - CachedW_Dialog is null! Falling back to basic visibility"));
+		// Fallback: Set text on the widget directly if possible
+		if (UWidget* DialogWindow = GetWidgetFromName(TEXT("W_Dialog")))
+		{
+			DialogWindow->SetVisibility(ESlateVisibility::Visible);
+			// Try to find dialog text widget inside and set it
+			if (UUserWidget* DialogUserWidget = Cast<UUserWidget>(DialogWindow))
+			{
+				if (UTextBlock* DialogText = Cast<UTextBlock>(DialogUserWidget->GetWidgetFromName(TEXT("DialogText"))))
+				{
+					DialogText->SetText(InText);
+					UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventSetupDialog - Fallback: Set DialogText directly to '%s'"), *InText.ToString());
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("UW_HUD::EventSetupDialog - Fallback: Could not find DialogText widget"));
+				}
+			}
+		}
 	}
 }
 
@@ -1122,20 +1278,55 @@ void UW_HUD::EventFinishDialog_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventFinishDialog"));
 	IsDialogActive = false;
-	if (UWidget* DialogWindow = GetWidgetFromName(TEXT("DialogWindow")))
+
+	// Clear ActiveWidgetTag since dialog is ending
+	if (ASLFPlayerController* PC = Cast<ASLFPlayerController>(GetOwningPlayer()))
+	{
+		PC->ActiveWidgetTag = FGameplayTag();
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventFinishDialog - Cleared ActiveWidgetTag"));
+	}
+
+	if (UWidget* DialogWindow = GetWidgetFromName(TEXT("W_Dialog")))
 	{
 		DialogWindow->SetVisibility(ESlateVisibility::Collapsed);
 	}
 	OnDialogWindowClosed.Broadcast();
 }
 
-void UW_HUD::EventSetupNpcWindow_Implementation(const FText& NpcName, UPDA_Vendor* InVendorAsset, UAC_AI_InteractionManager* DialogComponent)
+void UW_HUD::EventSetupNpcWindow_Implementation(const FText& NpcName, UDataAsset* InVendorAsset, UAIInteractionManagerComponent* DialogComponent)
 {
-	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventSetupNpcWindow - NPC: %s"), *NpcName.ToString());
-	if (UWidget* NpcWindow = GetWidgetFromName(TEXT("NpcWindow")))
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventSetupNpcWindow - NPC: %s, VendorAsset: %s, DialogComponent: %s"),
+		*NpcName.ToString(),
+		InVendorAsset ? *InVendorAsset->GetName() : TEXT("None"),
+		DialogComponent ? *DialogComponent->GetName() : TEXT("None"));
+
+	// NOTE: Do NOT call EventFinishDialog here - W_Dialog shows alongside W_NPC_Window
+	// The dialog text is shown via EventSetupDialog, this function only shows the menu
+
+	// Cache reference if not already cached
+	if (!CachedW_NPC_Window)
 	{
-		NpcWindow->SetVisibility(ESlateVisibility::Visible);
+		CachedW_NPC_Window = Cast<UW_NPC_Window>(GetWidgetFromName(TEXT("W_NPC_Window")));
 	}
+
+	// Initialize and show the NPC window
+	if (CachedW_NPC_Window)
+	{
+		CachedW_NPC_Window->EventInitializeNpcWindow(NpcName, InVendorAsset, DialogComponent);
+		CachedW_NPC_Window->SetVisibility(ESlateVisibility::Visible);
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventSetupNpcWindow - Called EventInitializeNpcWindow on W_NPC_Window"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::EventSetupNpcWindow - CachedW_NPC_Window is null! Cannot initialize NPC window."));
+		// NOTE: Do NOT call EventToggleUiMode(true) when menu creation fails!
+		// UI-only mode blocks E key input. Without a working menu, we need game input
+		// to remain active so player can press E to advance/close dialogue via
+		// HandleInteractStarted → OnDialogWindowClosed.Broadcast()
+		return;
+	}
+
+	// Toggle UI mode for dialog - ONLY if menu was successfully shown
 	EventToggleUiMode(true);
 }
 
@@ -1614,6 +1805,10 @@ void UW_HUD::RouteNavigateCancel(const FGameplayTag& ActiveWidgetTag)
 	{
 		if (CachedW_RestMenu) CachedW_RestMenu->EventNavigateCancel();
 	}
+	else if (TagString.Contains(TEXT("NpcWindow")) || TagString.Contains(TEXT("NpcMenu")) || TagString.Contains(TEXT("Vendor")) || TagString.Contains(TEXT("Dialog")))
+	{
+		if (CachedW_NPC_Window) CachedW_NPC_Window->EventNavigateCancel();
+	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UW_HUD::RouteNavigateCancel - Unknown widget tag: %s"), *TagString);
@@ -1650,6 +1845,38 @@ void UW_HUD::RouteNavigateOk(const FGameplayTag& ActiveWidgetTag)
 	{
 		if (CachedW_RestMenu) CachedW_RestMenu->EventNavigateOk();
 	}
+	else if (TagString.Contains(TEXT("NpcWindow")) || TagString.Contains(TEXT("NpcMenu")) || TagString.Contains(TEXT("Vendor")) || TagString.Contains(TEXT("Dialog")))
+	{
+		// Check if W_Dialog is visible (showing dialog text that needs advancing)
+		UWidget* DialogWidget = GetWidgetFromName(TEXT("W_Dialog"));
+		bool bDialogVisible = DialogWidget && DialogWidget->GetVisibility() == ESlateVisibility::Visible;
+
+		if (bDialogVisible && IsDialogActive)
+		{
+			// Dialog text is showing - advance it by broadcasting OnDialogWindowClosed
+			UE_LOG(LogTemp, Log, TEXT("UW_HUD::RouteNavigateOk - W_Dialog visible, advancing dialog via OnDialogWindowClosed"));
+			OnDialogWindowClosed.Broadcast();
+		}
+		else if (CachedW_NPC_Window)
+		{
+			// NPC menu is showing - activate the selected button
+			UE_LOG(LogTemp, Log, TEXT("UW_HUD::RouteNavigateOk - W_Dialog not visible, calling W_NPC_Window->EventNavigateOk"));
+			CachedW_NPC_Window->EventNavigateOk();
+		}
+		else if (IsDialogActive)
+		{
+			// Fallback: dialog is active but neither widget found
+			UE_LOG(LogTemp, Log, TEXT("UW_HUD::RouteNavigateOk - Fallback: dialog active, broadcasting OnDialogWindowClosed"));
+			OnDialogWindowClosed.Broadcast();
+		}
+	}
+	else if (IsDialogActive)
+	{
+		// Fallback: If dialog is active but tag didn't match (e.g., tag not registered),
+		// still broadcast OnDialogWindowClosed to advance the dialog
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::RouteNavigateOk - Dialog active (fallback), broadcasting OnDialogWindowClosed"));
+		OnDialogWindowClosed.Broadcast();
+	}
 }
 
 void UW_HUD::RouteNavigateUp(const FGameplayTag& ActiveWidgetTag)
@@ -1681,6 +1908,10 @@ void UW_HUD::RouteNavigateUp(const FGameplayTag& ActiveWidgetTag)
 	else if (TagString.Contains(TEXT("RestMenu")))
 	{
 		if (CachedW_RestMenu) CachedW_RestMenu->EventNavigateUp();
+	}
+	else if (TagString.Contains(TEXT("NpcWindow")) || TagString.Contains(TEXT("NpcMenu")) || TagString.Contains(TEXT("Vendor")) || TagString.Contains(TEXT("Dialog")))
+	{
+		if (CachedW_NPC_Window) CachedW_NPC_Window->EventNavigateUp();
 	}
 }
 
@@ -1714,6 +1945,10 @@ void UW_HUD::RouteNavigateDown(const FGameplayTag& ActiveWidgetTag)
 	{
 		if (CachedW_RestMenu) CachedW_RestMenu->EventNavigateDown();
 	}
+	else if (TagString.Contains(TEXT("NpcWindow")) || TagString.Contains(TEXT("NpcMenu")) || TagString.Contains(TEXT("Vendor")) || TagString.Contains(TEXT("Dialog")))
+	{
+		if (CachedW_NPC_Window) CachedW_NPC_Window->EventNavigateDown();
+	}
 }
 
 void UW_HUD::RouteNavigateLeft(const FGameplayTag& ActiveWidgetTag)
@@ -1738,6 +1973,7 @@ void UW_HUD::RouteNavigateLeft(const FGameplayTag& ActiveWidgetTag)
 	{
 		if (CachedW_Settings) CachedW_Settings->EventNavigateLeft();
 	}
+	// Note: W_NPC_Window only has Up/Down/Ok/Cancel - no Left/Right navigation
 }
 
 void UW_HUD::RouteNavigateRight(const FGameplayTag& ActiveWidgetTag)
@@ -1762,6 +1998,7 @@ void UW_HUD::RouteNavigateRight(const FGameplayTag& ActiveWidgetTag)
 	{
 		if (CachedW_Settings) CachedW_Settings->EventNavigateRight();
 	}
+	// Note: W_NPC_Window only has Up/Down/Ok/Cancel - no Left/Right navigation
 }
 
 void UW_HUD::RouteNavigateCategoryLeft(const FGameplayTag& ActiveWidgetTag)
