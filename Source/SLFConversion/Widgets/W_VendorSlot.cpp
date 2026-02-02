@@ -9,6 +9,7 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Components/Border.h"
+#include "Components/Button.h"
 
 UW_VendorSlot::UW_VendorSlot(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -22,6 +23,7 @@ UW_VendorSlot::UW_VendorSlot(const FObjectInitializer& ObjectInitializer)
 	Currency = 0;
 	Infinite = false;
 	Type = ESLFVendorType::Buy;
+	CachedSlotButton = nullptr;
 }
 
 void UW_VendorSlot::NativeConstruct()
@@ -30,7 +32,15 @@ void UW_VendorSlot::NativeConstruct()
 
 	CacheWidgetReferences();
 
-	UE_LOG(LogTemp, Log, TEXT("UW_VendorSlot::NativeConstruct"));
+	// CRITICAL: Bind to SlotButton if it exists in the Blueprint
+	BindSlotButtonEvents();
+
+	// CRITICAL: Enable mouse input for this widget
+	// This allows NativeOnMouseButtonDown/Enter/Leave to be called as fallback
+	SetVisibility(ESlateVisibility::Visible);
+
+	UE_LOG(LogTemp, Log, TEXT("UW_VendorSlot::NativeConstruct - SlotButton: %s"),
+		CachedSlotButton ? TEXT("Bound") : TEXT("NULL (using native input)"));
 }
 
 void UW_VendorSlot::NativeDestruct()
@@ -38,6 +48,34 @@ void UW_VendorSlot::NativeDestruct()
 	Super::NativeDestruct();
 
 	UE_LOG(LogTemp, Log, TEXT("UW_VendorSlot::NativeDestruct"));
+}
+
+FReply UW_VendorSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[W_VendorSlot] Left mouse button pressed - calling EventSlotPressed"));
+		EventSlotPressed();
+		return FReply::Handled();
+	}
+
+	return Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+}
+
+void UW_VendorSlot::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
+
+	// Show hover highlight
+	EventSetHighlighted(true);
+}
+
+void UW_VendorSlot::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseLeave(InMouseEvent);
+
+	// Remove hover highlight
+	EventSetHighlighted(false);
 }
 
 void UW_VendorSlot::CacheWidgetReferences()
@@ -224,16 +262,26 @@ void UW_VendorSlot::EventOnSelected_Implementation(bool Selected)
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_VendorSlot::EventOnSelected - Selected: %s"), Selected ? TEXT("true") : TEXT("false"));
 
-	// Update border/background color based on selection
-	if (UBorder* SlotBorder = Cast<UBorder>(GetWidgetFromName(TEXT("SlotBorder"))))
+	// Blueprint uses "HightlightBorder" (note typo) - toggle visibility like other slot widgets
+	if (UBorder* HighlightBorder = Cast<UBorder>(GetWidgetFromName(TEXT("HightlightBorder"))))
 	{
-		if (Selected)
+		HighlightBorder->SetVisibility(Selected ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+		UE_LOG(LogTemp, Log, TEXT("  HightlightBorder visibility: %s"), Selected ? TEXT("Visible") : TEXT("Collapsed"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  HightlightBorder NOT FOUND - trying BackgroundBorder fallback"));
+		// Fallback: try BackgroundBorder with color change
+		if (UBorder* BackgroundBorder = Cast<UBorder>(GetWidgetFromName(TEXT("BackgroundBorder"))))
 		{
-			SlotBorder->SetBrushColor(FLinearColor(1.0f, 0.8f, 0.2f, 1.0f)); // Gold highlight
-		}
-		else
-		{
-			SlotBorder->SetBrushColor(SlotColor);
+			if (Selected)
+			{
+				BackgroundBorder->SetBrushColor(FLinearColor(1.0f, 0.8f, 0.2f, 1.0f)); // Gold highlight
+			}
+			else
+			{
+				BackgroundBorder->SetBrushColor(SlotColor);
+			}
 		}
 	}
 
@@ -248,15 +296,27 @@ void UW_VendorSlot::EventSetHighlighted_Implementation(bool Highlighted)
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_VendorSlot::EventSetHighlighted - Highlighted: %s"), Highlighted ? TEXT("true") : TEXT("false"));
 
-	if (UBorder* SlotBorder = Cast<UBorder>(GetWidgetFromName(TEXT("SlotBorder"))))
+	// Blueprint uses "HightlightBorder" (note typo) - matches W_InventorySlot and other widgets
+	if (UBorder* HighlightBorder = Cast<UBorder>(GetWidgetFromName(TEXT("HightlightBorder"))))
 	{
-		if (Highlighted)
+		// Toggle visibility like other slot widgets (inventory, equipment)
+		HighlightBorder->SetVisibility(Highlighted ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+		UE_LOG(LogTemp, Log, TEXT("  HightlightBorder visibility: %s"), Highlighted ? TEXT("Visible") : TEXT("Collapsed"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  HightlightBorder NOT FOUND - trying SlotBorder fallback"));
+		// Fallback: try SlotBorder with color change
+		if (UBorder* SlotBorder = Cast<UBorder>(GetWidgetFromName(TEXT("SlotBorder"))))
 		{
-			SlotBorder->SetBrushColor(FLinearColor(0.8f, 0.8f, 0.8f, 1.0f));
-		}
-		else
-		{
-			SlotBorder->SetBrushColor(SlotColor);
+			if (Highlighted)
+			{
+				SlotBorder->SetBrushColor(FLinearColor(0.8f, 0.8f, 0.8f, 1.0f));
+			}
+			else
+			{
+				SlotBorder->SetBrushColor(SlotColor);
+			}
 		}
 	}
 }
@@ -291,4 +351,42 @@ void UW_VendorSlot::EventToggleSlot_Implementation(bool IsEnabled)
 		SetRenderOpacity(0.5f);
 		SetIsEnabled(false);
 	}
+}
+
+void UW_VendorSlot::BindSlotButtonEvents()
+{
+	// Find the SlotButton widget (Button class in Blueprint)
+	CachedSlotButton = Cast<UButton>(GetWidgetFromName(TEXT("SlotButton")));
+
+	if (CachedSlotButton)
+	{
+		// Bind to button events
+		CachedSlotButton->OnClicked.AddDynamic(this, &UW_VendorSlot::HandleSlotButtonClicked);
+		CachedSlotButton->OnHovered.AddDynamic(this, &UW_VendorSlot::HandleSlotButtonHovered);
+		CachedSlotButton->OnUnhovered.AddDynamic(this, &UW_VendorSlot::HandleSlotButtonUnhovered);
+
+		UE_LOG(LogTemp, Log, TEXT("[W_VendorSlot] Bound to SlotButton events"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("[W_VendorSlot] SlotButton not found - using native mouse input"));
+	}
+}
+
+void UW_VendorSlot::HandleSlotButtonClicked()
+{
+	UE_LOG(LogTemp, Log, TEXT("[W_VendorSlot] SlotButton clicked - calling EventSlotPressed"));
+	EventSlotPressed();
+}
+
+void UW_VendorSlot::HandleSlotButtonHovered()
+{
+	UE_LOG(LogTemp, Verbose, TEXT("[W_VendorSlot] SlotButton hovered"));
+	EventSetHighlighted(true);
+}
+
+void UW_VendorSlot::HandleSlotButtonUnhovered()
+{
+	UE_LOG(LogTemp, Verbose, TEXT("[W_VendorSlot] SlotButton unhovered"));
+	EventSetHighlighted(false);
 }

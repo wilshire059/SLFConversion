@@ -11,11 +11,12 @@ ASLFNPCShowcaseVendor::ASLFNPCShowcaseVendor()
 	// Default display name for Vendor NPC
 	NPCDisplayName = FText::FromString(TEXT("Vendor"));
 
-	// Default vendor mesh - SKM_QuinnCape (Quinn with cape - different from Guide's SKM_Quinn_DemoGuide)
-	// NOTE: bp_only used dynamic mesh merging with SkeletalMergingLibrary.MergeMeshes
-	// This is a simplified approach using a pre-merged mesh with cape to differentiate from Guide
+	// Default vendor mesh - SKM_Manny (Manny character - different from Guide's Quinn)
+	// NOTE: bp_only used dynamic mesh merging with SkeletalMergingLibrary.MergeMeshes on:
+	// - SKM_MannyHead, SKM_MannyUpperBody, SKM_MannyArms, SKM_MannyLowerBody
+	// This is a simplified approach using the pre-merged Manny mesh
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> DefaultMeshFinder(
-		TEXT("/Game/SoulslikeFramework/Meshes/SKM/SKM_QuinnCape"));
+		TEXT("/Game/SoulslikeFramework/Demo/SKM/Mannequins/Meshes/SKM_Manny"));
 	if (DefaultMeshFinder.Succeeded())
 	{
 		DefaultVendorMesh = DefaultMeshFinder.Object;

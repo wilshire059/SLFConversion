@@ -23,6 +23,7 @@
 #include "W_VendorSlot.generated.h"
 
 // Forward declarations for widget types
+class UButton;
 
 
 // Forward declarations for Blueprint types
@@ -48,6 +49,11 @@ public:
 	// Widget lifecycle
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
+
+	// Input handling - for mouse clicks on slot
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (9)
@@ -126,4 +132,22 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Bind to SlotButton click if it exists in Blueprint
+	void BindSlotButtonEvents();
+
+	// Button click handler
+	UFUNCTION()
+	void HandleSlotButtonClicked();
+
+	// Button hover handlers
+	UFUNCTION()
+	void HandleSlotButtonHovered();
+
+	UFUNCTION()
+	void HandleSlotButtonUnhovered();
+
+	// Cached button reference
+	UPROPERTY(Transient)
+	UButton* CachedSlotButton;
 };
