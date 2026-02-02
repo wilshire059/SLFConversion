@@ -355,7 +355,10 @@ void UW_NPC_Window_Vendor::EventInitializeVendor_Implementation(const FText& Npc
 
 	// CRITICAL: Make this widget visible when initializing vendor
 	SetVisibility(ESlateVisibility::Visible);
-	UE_LOG(LogTemp, Log, TEXT("[W_NPC_Window_Vendor] Set visibility to Visible"));
+
+	// CRITICAL: Set keyboard focus so NativeOnKeyDown receives arrow/dpad input
+	SetKeyboardFocus();
+	UE_LOG(LogTemp, Log, TEXT("[W_NPC_Window_Vendor] Set visibility to Visible, keyboard focus set"));
 
 	// CRITICAL: Reset action menu state when reinitializing
 	// Only reset if action menu was previously open (shouldn't happen but log if it does)

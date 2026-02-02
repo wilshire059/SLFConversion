@@ -50,6 +50,29 @@ void ASLFNPCShowcaseVendor::BeginPlay()
 		DefaultVendorAsset.IsNull() ? TEXT("YES") : TEXT("NO"));
 
 	// ═══════════════════════════════════════════════════════════════════
+	// STEP 0: Hide modular mesh components from Blueprint SCS
+	// bp_only had Head, Body, Arms, Legs components that it merged at runtime.
+	// We use pre-merged SKM_Manny instead, so hide the modular parts.
+	// ═══════════════════════════════════════════════════════════════════
+	TArray<USkeletalMeshComponent*> AllSkeletalMeshes;
+	GetComponents<USkeletalMeshComponent>(AllSkeletalMeshes);
+
+	for (USkeletalMeshComponent* SMC : AllSkeletalMeshes)
+	{
+		if (!SMC) continue;
+
+		FString CompName = SMC->GetName();
+		// Hide the modular parts (Head, Body, Arms, Legs) - they're attached to CharacterMesh0
+		if (CompName.Equals(TEXT("Head")) || CompName.Equals(TEXT("Body")) ||
+			CompName.Equals(TEXT("Arms")) || CompName.Equals(TEXT("Legs")))
+		{
+			SMC->SetVisibility(false);
+			SMC->SetHiddenInGame(true);
+			UE_LOG(LogTemp, Log, TEXT("[NPCShowcaseVendor] Hidden modular component: %s"), *CompName);
+		}
+	}
+
+	// ═══════════════════════════════════════════════════════════════════
 	// STEP 1: Configure AIInteractionManager with vendor-specific data
 	// ═══════════════════════════════════════════════════════════════════
 	if (AIInteractionManager)
