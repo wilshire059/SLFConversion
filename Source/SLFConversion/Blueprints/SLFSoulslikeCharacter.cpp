@@ -29,6 +29,7 @@
 #include "Components/AC_InteractionManager.h"
 #include "Components/StatManagerComponent.h"  // For CachedStatManager->IsStatMoreThan()
 #include "Components/AC_EquipmentManager.h"
+#include "Components/ProgressManagerComponent.h"  // For dialog GameplayEvents
 #include "Interfaces/SLFInteractableInterface.h"
 #include "Interfaces/SLFDestructibleHelperInterface.h"  // For EnableChaosDestroy/DisableChaosDestroy
 #include "LevelSequence.h"
@@ -42,8 +43,11 @@
 #include "B_PickupItem.h"
 #include "Components/InventoryManagerComponent.h"
 #include "Framework/SLFPlayerController.h"
+#include "GameFramework/PC_SoulslikeFramework.h"
 #include "Widgets/W_HUD.h"
 #include "B_Interactable.h"
+#include "Components/AIInteractionManagerComponent.h"
+#include "Interfaces/BPI_Controller.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "KismetAnimationLibrary.h"
 #include "BFL_Helper.h"
@@ -54,12 +58,29 @@ ASLFSoulslikeCharacter::ASLFSoulslikeCharacter()
 	// LOAD INPUT ASSETS - Enhanced Input configuration
 	// ═══════════════════════════════════════════════════════════════════
 
-	// Load Input Mapping Context
+	// Load Input Mapping Contexts
 	static ConstructorHelpers::FObjectFinder<UInputMappingContext> MappingContextFinder(
 		TEXT("/Game/SoulslikeFramework/Input/IMC_Gameplay.IMC_Gameplay"));
 	if (MappingContextFinder.Succeeded())
 	{
 		PlayerMappingContext = MappingContextFinder.Object;
+	}
+
+	// Load Dialog Input Mapping Context (used during NPC dialog)
+	static ConstructorHelpers::FObjectFinder<UInputMappingContext> DialogMappingContextFinder(
+		TEXT("/Game/SoulslikeFramework/Input/IMC_Dialog.IMC_Dialog"));
+	if (DialogMappingContextFinder.Succeeded())
+	{
+		DialogMappingContext = DialogMappingContextFinder.Object;
+	}
+
+	// Load Navigable Menu Input Mapping Context (contains IA_NavigableMenu_Ok key mappings)
+	// This enables E key / SpaceBar to trigger menu navigation during dialog
+	static ConstructorHelpers::FObjectFinder<UInputMappingContext> NavigableMenuMappingContextFinder(
+		TEXT("/Game/SoulslikeFramework/Input/IMC_NavigableMenu.IMC_NavigableMenu"));
+	if (NavigableMenuMappingContextFinder.Succeeded())
+	{
+		NavigableMenuMappingContext = NavigableMenuMappingContextFinder.Object;
 	}
 
 	// Load Input Actions
@@ -192,6 +213,7 @@ ASLFSoulslikeCharacter::ASLFSoulslikeCharacter()
 	CachedActionManager = nullptr;
 	CachedCombatManager = nullptr;
 	CachedInteractionManager = nullptr;
+	CachedNpcInteractionManager = nullptr;  // Set during OnDialogStarted
 	// NOTE: CachedStatManager is inherited from ASLFBaseCharacter and initialized there
 	SprintDodgeStartTime = 0.0;
 
@@ -781,16 +803,55 @@ void ASLFSoulslikeCharacter::HandleGuardCompleted()
 
 void ASLFSoulslikeCharacter::HandleInteractStarted()
 {
+	UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] HandleInteractStarted CALLED"));
+
 	// From JSON: MAIN INTERACTION INPUT EVENT section
 	bCache_IsHoldingInteract = true;
 	Cache_InteractElapsed = 0.0;
 
+	// ═══════════════════════════════════════════════════════════════════════════
+	// DIALOG ADVANCEMENT - Check if dialog is active first
+	// If user presses E while dialog is showing, advance the dialog instead of
+	// normal interaction behavior. This allows using the same key (E) for both.
+	// ═══════════════════════════════════════════════════════════════════════════
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] HandleInteractStarted - PC: %s, Implements BPI_Controller: %s"),
+		PC ? TEXT("OK") : TEXT("NULL"),
+		(PC && PC->Implements<UBPI_Controller>()) ? TEXT("YES") : TEXT("NO"));
+
+	if (PC && PC->Implements<UBPI_Controller>())
+	{
+		UUserWidget* HUDWidget = nullptr;
+		IBPI_Controller::Execute_GetPlayerHUD(PC, HUDWidget);
+
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] HandleInteractStarted - HUDWidget: %s, Cast to UW_HUD: %s"),
+			HUDWidget ? TEXT("OK") : TEXT("NULL"),
+			Cast<UW_HUD>(HUDWidget) ? TEXT("OK") : TEXT("FAIL"));
+
+		if (UW_HUD* HUD = Cast<UW_HUD>(HUDWidget))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] HandleInteractStarted - IsDialogActive: %s"),
+				HUD->IsDialogActive ? TEXT("TRUE") : TEXT("FALSE"));
+
+			if (HUD->IsDialogActive)
+			{
+				// Dialog is active - advance it instead of interacting
+				UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] Dialog active - advancing dialog via OnDialogWindowClosed"));
+				HUD->OnDialogWindowClosed.Broadcast();
+				return;
+			}
+		}
+	}
+
+	// ═══════════════════════════════════════════════════════════════════════════
+	// NORMAL INTERACTION
 	// InteractionManager tracks NearestInteractable in TickComponent
 	// When interact is pressed, we call the interactable's interface method
+	// ═══════════════════════════════════════════════════════════════════════════
 	if (CachedInteractionManager && CachedInteractionManager->NearestInteractable)
 	{
 		AActor* Interactable = CachedInteractionManager->NearestInteractable;
-		
+
 		UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Interacting with: %s"), *Interactable->GetName());
 
 		// Call the OnInteract interface method on the interactable
@@ -798,7 +859,7 @@ void ASLFSoulslikeCharacter::HandleInteractStarted()
 		{
 			ISLFInteractableInterface::Execute_OnInteract(Interactable, this);
 		}
-		
+
 		// Also queue the interaction action for animation handling
 		QueueActionToBuffer(FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.Interact")));
 	}
@@ -1070,6 +1131,115 @@ void ASLFSoulslikeCharacter::RefreshModularPieces()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("  No meshes to merge - modular components may not have meshes assigned"));
 	}
+}
+
+void ASLFSoulslikeCharacter::EventOnDialogExit()
+{
+	UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] EventOnDialogExit"));
+
+	// Advance dialog or finish dialog sequence
+	if (CachedNpcInteractionManager)
+	{
+		CachedNpcInteractionManager->AdjustIndexForExit();
+		UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Called AdjustIndexForExit on CachedNpcInteractionManager"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] EventOnDialogExit - CachedNpcInteractionManager is null!"));
+	}
+}
+
+void ASLFSoulslikeCharacter::OnDialogFinished()
+{
+	UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] OnDialogFinished - Cleaning up dialog bindings"));
+
+	// Check if this NPC has a vendor asset - if so, the NPC menu handles input, not us
+	bool bIsVendorNpc = CachedNpcInteractionManager && CachedNpcInteractionManager->VendorAsset != nullptr;
+
+	APlayerController* PC = Cast<APlayerController>(GetController());
+
+	// Only switch input context if NOT a vendor NPC
+	// Vendor NPCs have their menu open, which manages its own input context
+	if (!bIsVendorNpc)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Non-vendor NPC - switching to gameplay input"));
+
+		if (PC && PC->Implements<UBPI_Controller>())
+		{
+			TArray<UInputMappingContext*> ContextsToEnable;
+			TArray<UInputMappingContext*> ContextsToDisable;
+
+			if (PlayerMappingContext)
+			{
+				ContextsToEnable.Add(PlayerMappingContext);
+			}
+			if (DialogMappingContext)
+			{
+				ContextsToDisable.Add(DialogMappingContext);
+			}
+			// Remove NavigableMenu context that was added for gamepad dialog progression
+			if (NavigableMenuMappingContext)
+			{
+				ContextsToDisable.Add(NavigableMenuMappingContext);
+			}
+
+			IBPI_Controller::Execute_SwitchInputContext(PC, ContextsToEnable, ContextsToDisable);
+			UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Switched to gameplay input context"));
+		}
+
+		// Toggle UI mode off and finish dialog only for non-vendor NPCs
+		if (PC && PC->Implements<UBPI_Controller>())
+		{
+			UUserWidget* HUDWidget = nullptr;
+			IBPI_Controller::Execute_GetPlayerHUD(PC, HUDWidget);
+
+			if (UW_HUD* HUD = Cast<UW_HUD>(HUDWidget))
+			{
+				// Unbind OnDialogWindowClosed
+				HUD->OnDialogWindowClosed.RemoveDynamic(this, &ASLFSoulslikeCharacter::EventOnDialogExit);
+				UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Unbound OnDialogWindowClosed"));
+
+				// Toggle UI mode off
+				HUD->EventToggleUiMode(false);
+				UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Toggled UI mode off"));
+
+				// Finish dialog on HUD (hides dialog widget)
+				HUD->EventFinishDialog();
+				UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Called EventFinishDialog on HUD"));
+			}
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Vendor NPC - menu is open, skipping input context switch"));
+
+		// For vendor NPCs, just unbind OnDialogWindowClosed but DON'T:
+		// - Switch input context (menu manages it)
+		// - Toggle UI mode off (menu is still open)
+		// - Call EventFinishDialog (would clear ActiveWidgetTag)
+		if (PC && PC->Implements<UBPI_Controller>())
+		{
+			UUserWidget* HUDWidget = nullptr;
+			IBPI_Controller::Execute_GetPlayerHUD(PC, HUDWidget);
+
+			if (UW_HUD* HUD = Cast<UW_HUD>(HUDWidget))
+			{
+				// Unbind OnDialogWindowClosed - we don't need it anymore
+				HUD->OnDialogWindowClosed.RemoveDynamic(this, &ASLFSoulslikeCharacter::EventOnDialogExit);
+				UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Unbound OnDialogWindowClosed (vendor)"));
+			}
+		}
+	}
+
+	// Unbind OnDialogFinished from the NPC's interaction manager
+	if (CachedNpcInteractionManager)
+	{
+		CachedNpcInteractionManager->OnDialogFinished.RemoveDynamic(this, &ASLFSoulslikeCharacter::OnDialogFinished);
+		UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Unbound OnDialogFinished"));
+	}
+
+	// Clear cached reference
+	CachedNpcInteractionManager = nullptr;
 }
 
 void ASLFSoulslikeCharacter::InitializeModularMesh()
@@ -1541,15 +1711,263 @@ void ASLFSoulslikeCharacter::OnDialogStarted_Implementation(UActorComponent* Dia
 {
 	UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] OnDialogStarted"));
 
-	// Disable player input during dialog
-	APlayerController* PC = Cast<APlayerController>(GetController());
-	if (PC)
+	// Cast to AIInteractionManagerComponent
+	UAIInteractionManagerComponent* AIInteractionMgr = Cast<UAIInteractionManagerComponent>(DialogComponent);
+	if (!AIInteractionMgr)
 	{
-		// Store current control state and disable movement
-		DisableInput(PC);
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] OnDialogStarted - DialogComponent is not UAIInteractionManagerComponent!"));
+		return;
 	}
 
-	// Focus camera on dialog target will be handled by timeline/sequencer
+	// Cache for EventOnDialogExit to call AdjustIndexForExit
+	CachedNpcInteractionManager = AIInteractionMgr;
+
+	// Switch to dialog input context (matches bp_only behavior)
+	// This enables IMC_Dialog AND IMC_NavigableMenu (for menu navigation), disables IMC_Gameplay (movement/combat)
+	// IMC_NavigableMenu is needed so PC_SoulslikeFramework's HandleNavigateOk gets called when player presses E/SpaceBar
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (PC && PC->Implements<UBPI_Controller>())
+	{
+		TArray<UInputMappingContext*> ContextsToEnable;
+		TArray<UInputMappingContext*> ContextsToDisable;
+
+		if (DialogMappingContext)
+		{
+			ContextsToEnable.Add(DialogMappingContext);
+		}
+		if (NavigableMenuMappingContext)
+		{
+			ContextsToEnable.Add(NavigableMenuMappingContext);
+		}
+		if (PlayerMappingContext)
+		{
+			ContextsToDisable.Add(PlayerMappingContext);
+		}
+
+		IBPI_Controller::Execute_SwitchInputContext(PC, ContextsToEnable, ContextsToDisable);
+		UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Switched to dialog input context (IMC_Dialog + IMC_NavigableMenu enabled, IMC_Gameplay disabled)"));
+	}
+
+	// Get HUD via BPI_Controller interface on the PlayerController
+	if (PC && PC->GetClass()->ImplementsInterface(UBPI_Controller::StaticClass()))
+	{
+		UUserWidget* HUDWidget = nullptr;
+		IBPI_Controller::Execute_GetPlayerHUD(PC, HUDWidget);
+
+		if (UW_HUD* HUD = Cast<UW_HUD>(HUDWidget))
+		{
+			// Get NPC name and vendor asset from dialog component
+			FText NpcName = AIInteractionMgr->Name;
+
+			// Check if vendor asset exists (don't cast - Blueprint PDA_Vendor may not inherit from UPDA_Vendor)
+			// We just need to know if this NPC has a vendor asset, not access its specific properties here
+			bool bHasVendorAsset = (AIInteractionMgr->VendorAsset != nullptr);
+
+			// DIAGNOSTIC: Trace exact component state
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] VENDOR DEBUG - AIInteractionMgr: %s, Owner: %s"),
+				*AIInteractionMgr->GetName(),
+				AIInteractionMgr->GetOwner() ? *AIInteractionMgr->GetOwner()->GetName() : TEXT("NULL"));
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] VENDOR DEBUG - VendorAsset exists: %s"),
+				bHasVendorAsset ? TEXT("YES") : TEXT("NO"));
+			if (bHasVendorAsset)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] VENDOR DEBUG - VendorAsset: %s (%s)"),
+					*AIInteractionMgr->VendorAsset->GetName(),
+					*AIInteractionMgr->VendorAsset->GetClass()->GetName());
+			}
+
+			// ═══════════════════════════════════════════════════════════════════
+			// STEP 1: Get dialog text from DialogAsset and show W_Dialog FIRST
+			// bp_only shows dialogue text at bottom of screen BEFORE any menu
+			// ═══════════════════════════════════════════════════════════════════
+			FText DialogText = FText::GetEmpty();
+
+			// CRITICAL: Get ProgressManager from PlayerController and store it on the AIInteractionMgr
+			// This is needed for AdjustIndexForExit to execute GameplayEvents
+			// Note: Can be either UProgressManagerComponent or UAC_ProgressManager
+			UActorComponent* ProgressManagerComp = nullptr;
+			IBPI_Controller::Execute_GetProgressManager(PC, ProgressManagerComp);
+
+			UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] PC class: %s"), *PC->GetClass()->GetName());
+			UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Execute_GetProgressManager returned: %s"),
+				ProgressManagerComp ? *ProgressManagerComp->GetClass()->GetName() : TEXT("NULL"));
+
+			// Store the component directly (AIInteractionMgr handles both class types)
+			AIInteractionMgr->ProgressManager = ProgressManagerComp;
+			UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] ProgressManager stored: %s"),
+				ProgressManagerComp ? *ProgressManagerComp->GetName() : TEXT("NULL"));
+
+			UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] DialogAsset: %s"),
+				AIInteractionMgr->DialogAsset ? *AIInteractionMgr->DialogAsset->GetName() : TEXT("NULL"));
+
+			if (UPDA_Dialog* DialogData = Cast<UPDA_Dialog>(AIInteractionMgr->DialogAsset))
+			{
+				UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Cast to UPDA_Dialog succeeded"));
+
+				// Get dialog table based on player's progress (uses the Requirements array)
+				TSoftObjectPtr<UDataTable> DialogTable;
+				DialogData->GetDialogTableBasedOnProgress(ProgressManagerComp, DialogTable);
+				UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] GetDialogTableBasedOnProgress returned: %s"),
+					DialogTable.IsNull() ? TEXT("NULL") : *DialogTable.ToString());
+
+				// Fallback to DefaultDialogTable if no progress-based table found
+				if (DialogTable.IsNull())
+				{
+					DialogTable = DialogData->DefaultDialogTable;
+					UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Using DefaultDialogTable: %s"),
+						DialogTable.IsNull() ? TEXT("NULL") : *DialogTable.ToString());
+
+					// FALLBACK: If DefaultDialogTable is the generic one, try to load the actual NPC table
+					// This handles the case where Requirement array data was lost during migration
+					if (!DialogTable.IsNull())
+					{
+						FString TablePath = DialogTable.ToString();
+						if (TablePath.Contains(TEXT("DT_GenericDefaultDialog")))
+						{
+							// Check if this is for the Guide NPC and try to load the correct table
+							FString DialogAssetName = DialogData->GetName();
+							UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Generic dialog detected for: %s, attempting fallback"), *DialogAssetName);
+
+							if (DialogAssetName.Contains(TEXT("ExampleDialog")) && !DialogAssetName.Contains(TEXT("Vendor")))
+							{
+								// Guide NPC fallback - load the NoProgress dialog table
+								static const FSoftObjectPath GuideDialogPath(TEXT("/Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DialogTables/DT_ShowcaseGuideNpc_NoProgress.DT_ShowcaseGuideNpc_NoProgress"));
+								UDataTable* FallbackTable = Cast<UDataTable>(GuideDialogPath.TryLoad());
+								if (FallbackTable)
+								{
+									DialogTable = TSoftObjectPtr<UDataTable>(FSoftObjectPath(FallbackTable));
+									UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] FALLBACK: Using DT_ShowcaseGuideNpc_NoProgress"));
+								}
+							}
+						}
+					}
+				}
+
+				UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] DefaultDialogTable IsNull: %s, Path: %s"),
+					DialogTable.IsNull() ? TEXT("YES") : TEXT("NO"),
+					DialogTable.IsNull() ? TEXT("N/A") : *DialogTable.ToString());
+
+				if (!DialogTable.IsNull())
+				{
+					UDataTable* LoadedTable = DialogTable.LoadSynchronous();
+					UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] LoadedTable: %s"),
+						LoadedTable ? *LoadedTable->GetName() : TEXT("NULL"));
+
+					if (LoadedTable)
+					{
+						// Get row names
+						TArray<FName> RowNames = LoadedTable->GetRowNames();
+						UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Row count: %d"), RowNames.Num());
+
+						// CRITICAL: Set ActiveTable and CachedHUD so AdjustIndexForExit can show subsequent entries
+						AIInteractionMgr->ActiveTable = DialogTable;
+						AIInteractionMgr->CachedHUD = HUD;  // Required for AdjustIndexForExit to call EventSetupDialog
+						AIInteractionMgr->MaxIndex = RowNames.Num();  // Total count, not count-1
+						AIInteractionMgr->CurrentIndex = 0;
+
+						if (RowNames.Num() > 0)
+						{
+							// Get first dialog entry
+							FSLFDialogEntry FirstEntry = AIInteractionMgr->GetCurrentDialogEntry(LoadedTable, RowNames);
+							DialogText = FirstEntry.Entry;
+
+							UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Got dialog text: '%s' (Index 0/%d)"),
+								*DialogText.ToString(), AIInteractionMgr->MaxIndex);
+						}
+						else
+						{
+							UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] DataTable has no rows!"));
+						}
+					}
+				}
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] Cast to UPDA_Dialog FAILED! Asset class: %s"),
+					AIInteractionMgr->DialogAsset ? *AIInteractionMgr->DialogAsset->GetClass()->GetName() : TEXT("NULL"));
+			}
+
+			// Show dialog text at bottom of screen (W_Dialog)
+			if (!DialogText.IsEmpty())
+			{
+				HUD->EventSetupDialog(DialogText);
+				UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Called EventSetupDialog with text: %s"), *DialogText.ToString());
+			}
+			else
+			{
+				// Fallback: show NPC name as greeting
+				DialogText = FText::Format(NSLOCTEXT("Dialog", "Greeting", "{0}"), NpcName);
+				HUD->EventSetupDialog(DialogText);
+				UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] No dialog data, showing NPC name: %s"), *DialogText.ToString());
+			}
+
+			// ═══════════════════════════════════════════════════════════════════
+			// STEP 2: Bind delegates for dialog advancement - same for all NPCs
+			// NOTE: Do NOT show W_NPC_Window here! It's shown by AdjustIndexForExit
+			// when dialog finishes (if VendorAsset exists)
+			// ═══════════════════════════════════════════════════════════════════
+			if (bHasVendorAsset)
+			{
+				UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Vendor NPC detected - menu will show AFTER dialog completes"));
+				// NOTE: EventSetupNpcWindow is now called by AdjustIndexForExit when dialog finishes
+
+				// Bind OnDialogWindowClosed so pressing E advances dialog
+				HUD->OnDialogWindowClosed.RemoveDynamic(this, &ASLFSoulslikeCharacter::EventOnDialogExit);
+				HUD->OnDialogWindowClosed.AddDynamic(this, &ASLFSoulslikeCharacter::EventOnDialogExit);
+				UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Bound OnDialogWindowClosed to EventOnDialogExit (vendor)"));
+
+				// Bind OnDialogFinished for cleanup when dialog ends
+				AIInteractionMgr->OnDialogFinished.RemoveDynamic(this, &ASLFSoulslikeCharacter::OnDialogFinished);
+				AIInteractionMgr->OnDialogFinished.AddDynamic(this, &ASLFSoulslikeCharacter::OnDialogFinished);
+				UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Bound OnDialogFinished for cleanup (vendor)"));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Non-vendor NPC (Guide) - dialogue only, NO menu"));
+				// For non-vendor NPCs: just show dialog, player presses E to advance/close
+				// Dialog is now handled in HandleInteractStarted - when E is pressed and
+				// IsDialogActive is true, it broadcasts OnDialogWindowClosed to advance.
+
+				// NOTE: Do NOT call EventToggleUiMode(true) here!
+				// It sets FInputModeUIOnly which blocks ALL game input including E key.
+				// We need game input to remain active so HandleInteractStarted receives E presses.
+
+				// Bind OnDialogWindowClosed to EventOnDialogExit so pressing E advances dialog
+				// Remove any existing binding first to prevent duplicate calls
+				HUD->OnDialogWindowClosed.RemoveDynamic(this, &ASLFSoulslikeCharacter::EventOnDialogExit);
+				HUD->OnDialogWindowClosed.AddDynamic(this, &ASLFSoulslikeCharacter::EventOnDialogExit);
+				UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Bound OnDialogWindowClosed to EventOnDialogExit"));
+
+				// Bind OnDialogFinished for cleanup when dialog ends
+				AIInteractionMgr->OnDialogFinished.RemoveDynamic(this, &ASLFSoulslikeCharacter::OnDialogFinished);
+				AIInteractionMgr->OnDialogFinished.AddDynamic(this, &ASLFSoulslikeCharacter::OnDialogFinished);
+				UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Bound OnDialogFinished for cleanup"));
+			}
+
+			// ═══════════════════════════════════════════════════════════════════
+			// STEP 3: Add NavigableMenu input context for gamepad dialog progression
+			// This allows gamepad "confirm" button (IA_NavigableMenu_Ok) to work
+			// alongside E key (IA_Interact) during dialog
+			// ═══════════════════════════════════════════════════════════════════
+			if (NavigableMenuMappingContext)
+			{
+				if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
+				{
+					// Add with higher priority (1) so it works alongside gameplay context (0)
+					Subsystem->AddMappingContext(NavigableMenuMappingContext, 1);
+					UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Added NavigableMenuMappingContext for gamepad dialog input"));
+				}
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] OnDialogStarted - Failed to cast HUD to UW_HUD!"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] OnDialogStarted - PlayerController does not implement BPI_Controller!"));
+	}
 }
 
 void ASLFSoulslikeCharacter::OnNpcTraced_Implementation(AActor* NPC)

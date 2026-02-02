@@ -24,6 +24,9 @@
 
 // Forward declarations for widget types
 class UW_VendorSlot;
+class UTextBlock;
+class UW_GenericButton;
+class UButton;
 
 // Forward declarations for Blueprint types
 
@@ -47,6 +50,9 @@ public:
 	// Widget lifecycle
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
+
+	// Input handling - handle gamepad/keyboard when popup has focus
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (7)
@@ -117,4 +123,61 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Bind button events
+	void BindButtonEvents();
+
+	// Update displayed text widgets
+	void UpdateDisplayedInfo();
+
+	// Update button states (enable/disable OK based on affordability)
+	void UpdateButtonStates();
+
+	// Button click handlers
+	UFUNCTION()
+	void HandleIncreaseButtonPressed();
+
+	UFUNCTION()
+	void HandleDecreaseButtonPressed();
+
+	UFUNCTION()
+	void HandleOkButtonPressed();
+
+	UFUNCTION()
+	void HandleCancelButtonPressed();
+
+	// Cached text widget references
+	UPROPERTY(Transient)
+	UTextBlock* CachedItemNameText;
+
+	UPROPERTY(Transient)
+	UTextBlock* CachedCurrentAmountText;
+
+	UPROPERTY(Transient)
+	UTextBlock* CachedMaxAmountText;
+
+	UPROPERTY(Transient)
+	UTextBlock* CachedPriceText;
+
+	UPROPERTY(Transient)
+	UTextBlock* CachedTotalPriceText;
+
+	UPROPERTY(Transient)
+	UTextBlock* CachedReqCurrencyText;
+
+	// Cached button references
+	// IncreaseButton and DecreaseButton are native UButton (not W_GenericButton)
+	UPROPERTY(Transient)
+	UButton* CachedIncreaseButton;
+
+	UPROPERTY(Transient)
+	UButton* CachedDecreaseButton;
+
+	// W_GB_OK and W_GB_Cancel are W_GenericButton widgets (Blueprint not reparented to C++)
+	// We store the inner UButton from these widgets instead
+	UPROPERTY(Transient)
+	UButton* CachedOkButtonInner;
+
+	UPROPERTY(Transient)
+	UButton* CachedCancelButtonInner;
 };

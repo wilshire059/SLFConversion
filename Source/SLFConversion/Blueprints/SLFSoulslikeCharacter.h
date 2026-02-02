@@ -36,6 +36,7 @@ class UInputBufferComponent;
 class UAC_ActionManager;
 class UAC_CombatManager;
 class UAC_InteractionManager;
+class UAIInteractionManagerComponent;
 class USpringArmComponent;
 class UCameraComponent;
 struct FInputActionValue;
@@ -98,9 +99,17 @@ public:
 
 	// --- Input Config (1) ---
 
-	/** [1/13] Player input mapping context */
+	/** [1/13] Player input mapping context (IMC_Gameplay) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Input")
 	UInputMappingContext* PlayerMappingContext;
+
+	/** Dialog input mapping context (IMC_Dialog) - used during NPC dialog */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Input")
+	UInputMappingContext* DialogMappingContext;
+
+	/** Navigable menu input mapping context (IMC_NavigableMenu) - for menu navigation during dialog */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Input")
+	UInputMappingContext* NavigableMenuMappingContext;
 
 	// --- Camera Config (1) ---
 
@@ -212,6 +221,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Character|Mesh")
 	void RefreshModularPieces();
 
+	/** Called when dialog window closes (via OnDialogWindowClosed delegate)
+	 * Advances to next dialog entry or finishes dialog
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Character|Dialog")
+	void EventOnDialogExit();
+
+	/** Called when dialog sequence finishes - cleans up bindings and re-enables input */
+	UFUNCTION()
+	void OnDialogFinished();
+
 	// ═══════════════════════════════════════════════════════════════════
 	// INPUT ACTIONS (Enhanced Input)
 	// ═══════════════════════════════════════════════════════════════════
@@ -276,6 +295,10 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Character|Components")
 	UAC_InteractionManager* CachedInteractionManager;
+
+	/** Cached NPC dialog manager - set during OnDialogStarted, used by EventOnDialogExit */
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Character|Dialog")
+	UAIInteractionManagerComponent* CachedNpcInteractionManager;
 
 	// NOTE: CachedStatManager is inherited from ASLFBaseCharacter (UStatManagerComponent*)
 	// Use the inherited variable for stat checks like IsStatMoreThan()
