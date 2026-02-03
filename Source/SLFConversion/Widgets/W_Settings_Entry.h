@@ -22,6 +22,7 @@ class UHorizontalBox;
 class UPrimaryDataAsset;
 class UComboBoxKey;
 class UW_Settings_CenteredText;
+class UPDA_CustomSettings;
 
 // Event Dispatchers
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FW_Settings_Entry_OnWindowModeChanged);
@@ -79,14 +80,20 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Runtime")
 	TArray<FIntPoint> SupportedResolutions;
 
+	// Resolution map: FName key (e.g., "1920x1080") → FIntPoint value
+	// Matches Blueprint: TMap<FName, FIntPoint>
 	UPROPERTY(BlueprintReadWrite, Category = "Runtime")
-	TMap<FGameplayTag, FName> Resolutions;
+	TMap<FName, FIntPoint> Resolutions;
 
+	// Window mode map: FName key (e.g., "Fullscreen") → EWindowMode::Type value
+	// Matches Blueprint: TMap<FName, EWindowMode::Type>
+	// Note: Use TEnumAsByte because EWindowMode is not a UENUM
 	UPROPERTY(BlueprintReadWrite, Category = "Runtime")
-	TMap<FGameplayTag, FName> WindowModes;
+	TMap<FName, TEnumAsByte<EWindowMode::Type>> WindowModes;
 
+	// Custom game settings asset - matches Blueprint PDA_CustomSettings_C type
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
-	UPrimaryDataAsset* CustomSettingsAsset;
+	UPDA_CustomSettings* CustomSettingsAsset;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// WIDGET BINDINGS (names must match Blueprint exactly)

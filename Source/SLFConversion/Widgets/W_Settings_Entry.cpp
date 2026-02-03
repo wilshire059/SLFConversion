@@ -5,6 +5,7 @@
 
 #include "Widgets/W_Settings_Entry.h"
 #include "Widgets/W_Settings_CenteredText.h"
+#include "SLFPrimaryDataAssets.h"  // For UPDA_CustomSettings
 #include "Components/Border.h"
 #include "Components/TextBlock.h"
 #include "Components/Slider.h"
