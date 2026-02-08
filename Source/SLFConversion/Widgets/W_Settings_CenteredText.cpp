@@ -8,7 +8,7 @@
 
 UW_Settings_CenteredText::UW_Settings_CenteredText(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
-	, CenteredText(nullptr)
+	, Text(nullptr)
 {
 }
 
@@ -35,10 +35,16 @@ void UW_Settings_CenteredText::CacheWidgetReferences()
 }
 void UW_Settings_CenteredText::EventSetText_Implementation(const FText& InText)
 {
-	UE_LOG(LogTemp, Log, TEXT("UW_Settings_CenteredText::EventSetText_Implementation: %s"), *InText.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("[W_Settings_CenteredText] EventSetText: %s (Text widget: %s)"),
+		*InText.ToString(),
+		Text ? TEXT("VALID") : TEXT("NULL"));
 
-	if (CenteredText)
+	if (Text)
 	{
-		CenteredText->SetText(InText);
+		Text->SetText(InText);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[W_Settings_CenteredText] Text widget is NULL! Cannot set text."));
 	}
 }

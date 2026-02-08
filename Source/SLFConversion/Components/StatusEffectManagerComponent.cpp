@@ -265,6 +265,34 @@ void UStatusEffectManagerComponent::AddOneShotBuildup_Implementation(UDataAsset*
 	{
 		TriggerStatusEffect(EffectTag, EffectRank);
 	}
+	else
+	{
+		// Threshold not reached - start decay timer after delay
+		// This ensures the status effect bar eventually disappears if not triggered
+		UWorld* World = GetWorld();
+		if (World)
+		{
+			// Clear any existing timers
+			World->GetTimerManager().ClearTimer(State->BuildupTimerHandle);
+			World->GetTimerManager().ClearTimer(State->DecayTimerHandle);
+
+			// Get decay delay from data asset (default 2.0 seconds)
+			double DecayDelay = 2.0;
+			if (EffectData)
+			{
+				DecayDelay = EffectData->DecayDelay > 0.0 ? EffectData->DecayDelay : 2.0;
+			}
+
+			// Start decay timer after delay
+			State->bIsBuildingUp = false;
+			FTimerDelegate DecayDelegate;
+			DecayDelegate.BindUObject(this, &UStatusEffectManagerComponent::OnDecayTimerTick, EffectTag);
+			World->GetTimerManager().SetTimer(State->DecayTimerHandle, DecayDelegate, 0.1f, true, DecayDelay);
+
+			UE_LOG(LogTemp, Log, TEXT("[StatusEffectManager] Started decay timer for %s (delay: %.1fs)"),
+				*EffectTag.ToString(), DecayDelay);
+		}
+	}
 }
 
 void UStatusEffectManagerComponent::StartBuildup_Implementation(UDataAsset* StatusEffect, int32 Rank)

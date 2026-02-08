@@ -54,6 +54,22 @@ public:
 	int32 PlayerLevel;
 
 	// ═══════════════════════════════════════════════════════════════════════
+	// WIDGET BINDINGS (from WidgetTree - IsVariable=true)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	class UTextBlock* LevelText;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	class UTextBlock* PlayTimeText;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	class UTextBlock* ZoneNameText;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	class UTextBlock* PlayerClassText;
+
+	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (0)
 	// ═══════════════════════════════════════════════════════════════════════
 

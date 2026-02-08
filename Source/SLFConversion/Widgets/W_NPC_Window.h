@@ -24,9 +24,10 @@
 
 // Forward declarations for widget types
 class UW_RestMenu_Button;
+class UW_NPC_Window_Vendor;
 
 // Forward declarations for Blueprint types
-class UAC_AI_InteractionManager;
+class UAIInteractionManagerComponent;
 
 // Forward declarations for SaveGame types
 
@@ -48,6 +49,9 @@ public:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 
+	// Keyboard/Gamepad input handling - CRITICAL for menu navigation
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+
 	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (5)
 	// ═══════════════════════════════════════════════════════════════════════
@@ -57,9 +61,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	int32 NavigationIndex;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Runtime")
-	UAC_AI_InteractionManager* ActiveDialogComponent;
+	UAIInteractionManagerComponent* ActiveDialogComponent;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
-	UPrimaryDataAsset* VendorAsset;
+	UDataAsset* VendorAsset;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	FText NpcName;
 
@@ -86,8 +90,8 @@ public:
 	virtual void EventCloseNpcMenu_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_NPC_Window")
-	void EventInitializeNpcWindow(const FText& InName, UPDA_Vendor* InVendorAsset, UAC_AI_InteractionManager* DialogComponent);
-	virtual void EventInitializeNpcWindow_Implementation(const FText& InName, UPDA_Vendor* InVendorAsset, UAC_AI_InteractionManager* DialogComponent);
+	void EventInitializeNpcWindow(const FText& InName, UDataAsset* InVendorAsset, UAIInteractionManagerComponent* DialogComponent);
+	virtual void EventInitializeNpcWindow_Implementation(const FText& InName, UDataAsset* InVendorAsset, UAIInteractionManagerComponent* DialogComponent);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_NPC_Window")
 	void EventNavigateCancel();
@@ -112,4 +116,39 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Bind button press handlers
+	void BindButtonHandler(UW_RestMenu_Button* Button);
+
+	// Button press handlers
+	UFUNCTION()
+	void HandleLeavePressed();
+
+	UFUNCTION()
+	void HandleTalkPressed();
+
+	UFUNCTION()
+	void HandleSellPressed();
+
+	UFUNCTION()
+	void HandleStorePressed();
+
+	UFUNCTION()
+	void HandleBuyPressed();
+
+	// Handler for when vendor window closes - restores navigation to NPC menu
+	UFUNCTION()
+	void HandleVendorWindowClosed();
+
+	// Cached gameplay context for restoring when menu closes
+	UPROPERTY(Transient)
+	UInputMappingContext* CachedGameplayContext;
+
+	// Cached reference to W_Vendor child widget (W_NPC_Window_Vendor)
+	UPROPERTY(Transient)
+	UW_NPC_Window_Vendor* CachedW_Vendor;
+
+	// Generic reference if Blueprint isn't reparented to C++ class
+	UPROPERTY(Transient)
+	UUserWidget* CachedW_VendorGeneric;
 };

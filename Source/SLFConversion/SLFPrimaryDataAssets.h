@@ -507,6 +507,15 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialog")
 	void GetDialogTableBasedOnProgress(UActorComponent* ProgressManager, TSoftObjectPtr<UDataTable>& Table);
+
+	/**
+	 * Get the progress tag that should be set when dialog completes
+	 * Extracts the first progress tag from Requirements that expects Completed state
+	 * @param OutProgressTag - Output: The GameplayTag to mark as Completed, or invalid if none
+	 * @return true if a valid progress tag was found
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Dialog")
+	bool GetCompletionProgressTag(FGameplayTag& OutProgressTag);
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -654,8 +663,24 @@ class SLFCONVERSION_API UPDA_BaseCharacterInfo : public UPDA_Base
 	GENERATED_BODY()
 
 public:
+	/** Character class name displayed in UI - matches Blueprint "CharacterClassName" variable exactly */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
+	FText CharacterClassName;
+
+	/** Texture for character selection card - matches Blueprint "BaseClassTexture" variable exactly */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Textures")
+	TSoftObjectPtr<UTexture2D> BaseClassTexture;
+
+	/** Texture for save slot display - matches Blueprint "SaveSlotTexture" variable exactly */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Textures")
+	TSoftObjectPtr<UTexture2D> SaveSlotTexture;
+
+	/** Texture for quit confirmation card - matches Blueprint "QuitCardTexture" variable exactly */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config|Textures")
+	TSoftObjectPtr<UTexture2D> QuitCardTexture;
+
 	/** Default mesh data asset for this character class */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
 	UDataAsset* DefaultMeshAsset;
 
 	/** Base stat values for this character class (maps stat class -> starting value)

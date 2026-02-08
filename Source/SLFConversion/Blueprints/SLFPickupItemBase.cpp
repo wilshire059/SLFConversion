@@ -11,11 +11,13 @@
 
 #include "SLFPickupItemBase.h"
 #include "Components/InventoryManagerComponent.h"
+#include "Components/SaveLoadManagerComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "NiagaraComponent.h"
 #include "NiagaraSystem.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "Interfaces/BPI_Player.h"
 #include "SLFPrimaryDataAssets.h"
 
@@ -187,6 +189,15 @@ void ASLFPickupItemBase::OnInteract_Implementation(AActor* Interactor)
 	{
 		IBPI_Player::Execute_OnLootItem(Interactor, this);
 		UE_LOG(LogTemp, Log, TEXT("[PickupItem] Called BPI_Player::OnLootItem on %s"), *Interactor->GetName());
+	}
+
+	// Mark this pickup as collected in the save system so it won't respawn on load
+	if (APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0))
+	{
+		if (USaveLoadManagerComponent* SaveMgr = PC->FindComponentByClass<USaveLoadManagerComponent>())
+		{
+			SaveMgr->MarkPickupCollected(this);
+		}
 	}
 
 	// Broadcast OnItemLooted dispatcher (no params)

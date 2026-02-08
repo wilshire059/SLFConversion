@@ -27,6 +27,7 @@ class UNiagaraSystem;
 class UCameraShakeBase;
 class USceneComponent;
 class UPrimaryDataAsset;
+class UAIInteractionManagerComponent;
 
 UINTERFACE(MinimalAPI, Blueprintable, BlueprintType)
 class USLFPlayerInterface : public UInterface
@@ -74,7 +75,7 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Player")
 	void OnNpcTraced(AB_Soulslike_NPC* NPC);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Player")
-	void OnDialogStarted(UAC_AI_InteractionManager* DialogComponent);
+	void OnDialogStarted(UAIInteractionManagerComponent* DialogComponent);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Player")
 	void DiscoverRestingPoint(UAnimMontage* InteractionMontage, AActor* Point);  // AActor* for compatibility with both AB_RestingPoint and ASLFRestingPointBase
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Player")

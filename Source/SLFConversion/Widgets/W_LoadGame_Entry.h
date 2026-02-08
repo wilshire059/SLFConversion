@@ -10,6 +10,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/TextBlock.h"
 #include "GameplayTagContainer.h"
 #include "SLFEnums.h"
 #include "SLFGameTypes.h"
@@ -100,4 +101,17 @@ public:
 protected:
 	// Cache references
 	void CacheWidgetReferences();
+
+	// Apply loaded save data to text widgets (called from both SetSaveSlotName and NativeConstruct)
+	void ApplySaveDataToWidgets();
+
+	// Cached text widget references (prefixed to avoid Blueprint widget name conflicts)
+	UPROPERTY(Transient)
+	UTextBlock* CachedCharacterClassText = nullptr;
+	UPROPERTY(Transient)
+	UTextBlock* CachedLevelText = nullptr;
+	UPROPERTY(Transient)
+	UTextBlock* CachedPlayTimeText = nullptr;
+	UPROPERTY(Transient)
+	UWidget* CachedHighlightBorder = nullptr;
 };

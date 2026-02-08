@@ -20,6 +20,10 @@
 // Forward declarations
 class UW_LoadingScreen;
 class UW_MainMenu_Button;
+class UW_CharacterSelection;
+class UW_LoadGame;
+class UW_Settings;
+class UW_Credits;
 class UPrimaryDataAsset;
 
 UCLASS()
@@ -83,6 +87,23 @@ public:
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
 	UW_MainMenu_Button* BtnQuitGame;
 
+	// Embedded overlay widgets (children in UMG designer hierarchy)
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UW_CharacterSelection* W_CharacterSelection;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UW_LoadGame* W_LoadGame;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UW_Settings* W_Settings;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UW_Credits* W_Credits;
+
+	// Track which overlay is currently active (nullptr = main menu)
+	UPROPERTY()
+	UWidget* ActiveOverlay;
+
 	// ═══════════════════════════════════════════════════════════════════════
 	// ANIMATIONS (UMG Designer References)
 	// ═══════════════════════════════════════════════════════════════════════
@@ -128,6 +149,18 @@ public:
 	void EventNavigateUp();
 	virtual void EventNavigateUp_Implementation();
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_MainMenu")
+	void EventNavigateCancel();
+	virtual void EventNavigateCancel_Implementation();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_MainMenu")
+	void EventNavigateLeft();
+	virtual void EventNavigateLeft_Implementation();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_MainMenu")
+	void EventNavigateRight();
+	virtual void EventNavigateRight_Implementation();
+
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS
 	// ═══════════════════════════════════════════════════════════════════════
@@ -169,4 +202,40 @@ protected:
 
 	UFUNCTION()
 	void OnQuitGameClicked();
+
+	// Overlay handlers
+	UFUNCTION()
+	void OnCharacterClassSelected(UPrimaryDataAsset* ClassAsset);
+
+	UFUNCTION()
+	void OnCharacterSelectionClosed();
+
+	UFUNCTION()
+	void OnLoadGameClosed();
+
+	// Called when a save slot is confirmed in W_LoadGame (slot already set as active)
+	UFUNCTION()
+	void OnSaveSlotConfirmed();
+
+	UFUNCTION()
+	void OnSettingsClosed();
+
+	UFUNCTION()
+	void OnCreditsClosed();
+
+	// Animation finish callback
+	UFUNCTION()
+	void OnFadeMenuOnlyFinished();
+
+	// Show an overlay widget with fade animation
+	void ShowOverlay(UWidget* Overlay);
+
+	// Return from overlay to main menu
+	void ReturnFromOverlay();
+
+	// Generate a unique save slot name for a new game: "SLF_{CharacterName}_{index}"
+	FString GenerateUniqueSlotName(UPrimaryDataAsset* CharacterClass);
+
+	// Open the game level via loading screen (or direct OpenLevel as fallback)
+	void LoadGameLevel();
 };

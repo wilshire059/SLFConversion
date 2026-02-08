@@ -95,6 +95,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	UPDA_CustomSettings* CustomSettingsAsset;
 
+	// Cached dropdown option names for index-based cycling (populated in PopulateDropdownOptions)
+	UPROPERTY(BlueprintReadWrite, Category = "Runtime")
+	TArray<FName> CachedDropdownOptions;
+
 	// ═══════════════════════════════════════════════════════════════════════
 	// WIDGET BINDINGS (names must match Blueprint exactly)
 	// ═══════════════════════════════════════════════════════════════════════
@@ -174,6 +178,11 @@ public:
 	void SetCurrentValue(const FString& InCurrentValue);
 	virtual void SetCurrentValue_Implementation(const FString& InCurrentValue);
 
+	// Int overload - Blueprint has "SetCurrentValue (Int)" as separate function
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Settings_Entry", meta = (DisplayName = "SetCurrentValue (Int)"))
+	void SetCurrentValueInt(int32 InCurrentValue);
+	virtual void SetCurrentValueInt_Implementation(int32 InCurrentValue);
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Settings_Entry")
 	int32 GetIncrementedValue(int32 MaxClamp);
 	virtual int32 GetIncrementedValue_Implementation(int32 MaxClamp);
@@ -185,9 +194,14 @@ public:
 	// NOTE: OnGenerateItemWidget is implemented in Blueprint, not C++
 	// The Blueprint creates W_Settings_CenteredText widgets for ComboBox items
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Settings_Entry")
-	void SetCurrentBoolValue(bool InCurrentValue);
-	virtual void SetCurrentBoolValue_Implementation(bool InCurrentValue);
+	// Bool overload - Blueprint has "SetCurrentValue (Bool)" as separate function
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Settings_Entry", meta = (DisplayName = "SetCurrentValue (Bool)"))
+	void SetCurrentValueBool(bool InCurrentValue);
+	virtual void SetCurrentValueBool_Implementation(bool InCurrentValue);
+
+	// Legacy name - keep for backwards compatibility
+	UFUNCTION(BlueprintCallable, Category = "W_Settings_Entry")
+	void SetCurrentBoolValue(bool InCurrentValue) { SetCurrentValueBool(InCurrentValue); }
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_Settings_Entry")
 	void SetCurrentScreenModeValue(EWindowMode::Type FullscreenMode);
@@ -264,6 +278,9 @@ public:
 	UWidget* OnGenerateContentWidget(FName Item);
 
 protected:
+	// Populate dropdown options based on SettingTag
+	void PopulateDropdownOptions();
+
 	// Update visuals based on configuration
 	void ApplyVisualConfig();
 

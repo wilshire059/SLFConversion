@@ -8,6 +8,8 @@
 #include "Blueprint/UserWidget.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Interfaces/BPI_GameInstance.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
@@ -92,6 +94,9 @@ void APC_Menu_SoulslikeFramework::CreateMainMenuWidget()
 	// Set CanContinueGame based on save game existence
 	W_MainMenu->CanContinueGame = SaveGameExists;
 
+	// Bind to menu button click events
+	W_MainMenu->OnMenuButtonClicked.AddDynamic(this, &APC_Menu_SoulslikeFramework::HandleMenuButtonClicked);
+
 	// Add to viewport
 	W_MainMenu->AddToViewport(0);
 
@@ -125,12 +130,18 @@ void APC_Menu_SoulslikeFramework::SetupMenuInput()
 
 bool APC_Menu_SoulslikeFramework::CheckSaveGameExists()
 {
-	// Check for any save game slot
-	// The original Blueprint called DoesAnySaveExist on the GameInstance
-	// For now, just check if a default save slot exists
-	return UGameplayStatics::DoesSaveGameExist(TEXT("SaveSlot_0"), 0) ||
-		   UGameplayStatics::DoesSaveGameExist(TEXT("SaveSlot_1"), 0) ||
-		   UGameplayStatics::DoesSaveGameExist(TEXT("SaveSlot_2"), 0);
+	// Use GameInstance BPI_GameInstance interface - matches bp_only logic
+	UGameInstance* GI = GetGameInstance();
+	if (GI && GI->GetClass()->ImplementsInterface(UBPI_GameInstance::StaticClass()))
+	{
+		bool bExists = false;
+		IBPI_GameInstance::Execute_DoesAnySaveExist(GI, bExists);
+		UE_LOG(LogTemp, Log, TEXT("[PC_Menu_SoulslikeFramework] DoesAnySaveExist via GameInstance: %s"), bExists ? TEXT("true") : TEXT("false"));
+		return bExists;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[PC_Menu_SoulslikeFramework] GameInstance does not implement BPI_GameInstance!"));
+	return false;
 }
 
 void APC_Menu_SoulslikeFramework::SetActiveWidgetForNavigation_Implementation(const FGameplayTag& InNavigableWidgetTag)
@@ -243,6 +254,47 @@ void APC_Menu_SoulslikeFramework::OnNavigateBack(const FInputActionValue& Value)
 {
 	UE_LOG(LogTemp, Log, TEXT("[PC_Menu_SoulslikeFramework] OnNavigateBack"));
 
-	// In main menu, back typically does nothing or could quit
-	// For now just log it
+	if (W_MainMenu)
+	{
+		W_MainMenu->EventNavigateCancel();
+	}
+}
+
+void APC_Menu_SoulslikeFramework::HandleMenuButtonClicked(FName ButtonName)
+{
+	UE_LOG(LogTemp, Log, TEXT("[PC_Menu_SoulslikeFramework] HandleMenuButtonClicked: %s"), *ButtonName.ToString());
+
+	if (ButtonName == FName(TEXT("NewGame")))
+	{
+		// NewGame is handled by W_MainMenu directly (shows W_CharacterSelection overlay)
+		// This fallback only fires if the overlay widget wasn't found
+		UE_LOG(LogTemp, Log, TEXT("[PC_Menu_SoulslikeFramework] NewGame fallback - loading L_Demo_Showcase"));
+		UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("L_Demo_Showcase")));
+	}
+	else if (ButtonName == FName(TEXT("Continue")))
+	{
+		// Continue from last save
+		UE_LOG(LogTemp, Log, TEXT("[PC_Menu_SoulslikeFramework] Continue Game - loading L_Demo_Showcase"));
+		UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("L_Demo_Showcase")));
+	}
+	else if (ButtonName == FName(TEXT("LoadGame")))
+	{
+		// LoadGame is handled by W_MainMenu directly (shows W_LoadGame overlay)
+		// This fallback only fires if the overlay widget wasn't found
+		UE_LOG(LogTemp, Log, TEXT("[PC_Menu_SoulslikeFramework] LoadGame fallback - loading L_Demo_Showcase"));
+		UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("L_Demo_Showcase")));
+	}
+	else if (ButtonName == FName(TEXT("Settings")))
+	{
+		UE_LOG(LogTemp, Log, TEXT("[PC_Menu_SoulslikeFramework] Settings requested"));
+	}
+	else if (ButtonName == FName(TEXT("Credits")))
+	{
+		UE_LOG(LogTemp, Log, TEXT("[PC_Menu_SoulslikeFramework] Credits requested"));
+	}
+	else if (ButtonName == FName(TEXT("QuitGame")))
+	{
+		UE_LOG(LogTemp, Log, TEXT("[PC_Menu_SoulslikeFramework] Quit Game to desktop"));
+		UKismetSystemLibrary::QuitGame(GetWorld(), this, EQuitPreference::Quit, false);
+	}
 }

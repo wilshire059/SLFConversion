@@ -478,12 +478,26 @@ void UW_LevelUp::SetAllStatEntries_Implementation()
 	CurrentChanges.Empty();
 
 	// Helper to collect stats from a block
+	// CRITICAL FIX: Also update each entry's ShowAdjustButtons from the block's ShowUpgradeButtons.
+	// Child widgets construct BEFORE parent, so entries are created with the block's constructor default (true).
+	// W_LevelUp::CacheWidgetReferences sets ShowUpgradeButtons=false on non-primary blocks AFTER construction.
+	// We must propagate this corrected value to entries here, before InitStatEntry is called below.
 	auto CollectFromBlock = [this](UW_StatBlock_LevelUp* Block, const TCHAR* BlockName)
 	{
 		if (IsValid(Block))
 		{
 			TArray<UW_StatEntry_LevelUp*> BlockStats = Block->GetAllStatsInBlock();
-			UE_LOG(LogTemp, Log, TEXT("  %s: %d entries"), BlockName, BlockStats.Num());
+			UE_LOG(LogTemp, Log, TEXT("  %s: %d entries (ShowUpgradeButtons=%s)"),
+				BlockName, BlockStats.Num(), Block->ShowUpgradeButtons ? TEXT("true") : TEXT("false"));
+
+			for (UW_StatEntry_LevelUp* Entry : BlockStats)
+			{
+				if (IsValid(Entry))
+				{
+					Entry->ShowAdjustButtons = Block->ShowUpgradeButtons;
+				}
+			}
+
 			AllStatEntries.Append(BlockStats);
 		}
 		else

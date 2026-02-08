@@ -31,6 +31,39 @@ void UABP_SoulslikeEnemy::NativeInitializeAnimation()
 
 	UE_LOG(LogTemp, Log, TEXT("UABP_SoulslikeEnemy::NativeInitializeAnimation - Owner: %s"),
 		OwnerCharacter ? *OwnerCharacter->GetName() : TEXT("None"));
+
+	// Initialize component references early to prevent null access in AnimGraph
+	if (OwnerCharacter)
+	{
+		SoulslikeEnemy = OwnerCharacter;
+		SoulslikeCharacter = OwnerCharacter;
+		MovementComponent = OwnerCharacter->GetCharacterMovement();
+
+		// Find AI Combat Manager component
+		CachedCombatManager = OwnerCharacter->FindComponentByClass<UAICombatManagerComponent>();
+		ACAICombatManager = CachedCombatManager;
+
+		// Also try to set the Blueprint variable with spaces if it exists
+		SetBlueprintObjectVariable(FName(TEXT("AC AI Combat Manager")), CachedCombatManager);
+
+		// Initialize PoiseBreakAsset from combat manager
+		if (UAICombatManagerComponent* AICombatMgr = Cast<UAICombatManagerComponent>(CachedCombatManager))
+		{
+			if (AICombatMgr->PoiseBreakAsset)
+			{
+				PoiseBreakAsset = Cast<UPDA_PoiseBreakAnimData>(AICombatMgr->PoiseBreakAsset);
+			}
+			IkWeight = AICombatMgr->IkWeight;
+			PhysicsWeight = AICombatMgr->IkWeight;
+			CurrentHitNormal = AICombatMgr->CurrentHitNormal;
+			HitLocation = AICombatMgr->CurrentHitNormal;
+			PoiseBroken = AICombatMgr->bPoiseBroken;
+		}
+
+		UE_LOG(LogTemp, Log, TEXT("UABP_SoulslikeEnemy::NativeInitializeAnimation - CombatMgr: %s, PoiseBreakAsset: %s"),
+			CachedCombatManager ? *CachedCombatManager->GetName() : TEXT("None"),
+			PoiseBreakAsset ? *PoiseBreakAsset->GetName() : TEXT("None"));
+	}
 }
 
 void UABP_SoulslikeEnemy::NativeUpdateAnimation(float DeltaSeconds)
@@ -161,8 +194,27 @@ void UABP_SoulslikeEnemy::SetBlueprintObjectVariable(const FName& VarName, UObje
 	FProperty* Property = MyClass->FindPropertyByName(VarName);
 	if (!Property)
 	{
-		// Property might be in parent class or not exist
-		return;
+		// Try to find in the class hierarchy
+		for (UClass* SearchClass = MyClass; SearchClass; SearchClass = SearchClass->GetSuperClass())
+		{
+			Property = SearchClass->FindPropertyByName(VarName);
+			if (Property)
+			{
+				break;
+			}
+		}
+
+		if (!Property)
+		{
+			// DEBUG: Log that we couldn't find the property (only once per name)
+			static TSet<FName> LoggedNames;
+			if (!LoggedNames.Contains(VarName))
+			{
+				LoggedNames.Add(VarName);
+				UE_LOG(LogTemp, Warning, TEXT("[ABP_SoulslikeEnemy] SetBlueprintObjectVariable: Property '%s' not found in class hierarchy"), *VarName.ToString());
+			}
+			return;
+		}
 	}
 
 	// Verify it's an object property

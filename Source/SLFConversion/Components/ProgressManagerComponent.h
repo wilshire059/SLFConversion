@@ -125,6 +125,13 @@ public:
 	void ExecuteGameplayEvents(const TArray<FInstancedStruct>& Events);
 	virtual void ExecuteGameplayEvents_Implementation(const TArray<FInstancedStruct>& Events);
 
+	/** Execute dialog gameplay events (items, progress, etc.)
+	 * @param GameplayEvents - Array of dialog gameplay events
+	 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Progress Manager")
+	void ExecuteDialogGameplayEvents(const TArray<FSLFDialogGameplayEvent>& GameplayEvents);
+	virtual void ExecuteDialogGameplayEvents_Implementation(const TArray<FSLFDialogGameplayEvent>& GameplayEvents);
+
 	// --- Serialization (1) ---
 
 	/** [5/10] Serialize progress data for saving */

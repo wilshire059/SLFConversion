@@ -6,6 +6,8 @@
 
 #include "Blueprints/B_PickupItem.h"
 #include "Interfaces/BPI_Player.h"
+#include "Components/SaveLoadManagerComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 AB_PickupItem::AB_PickupItem()
 {
@@ -51,9 +53,40 @@ void AB_PickupItem::OnInteract_Implementation(AActor* InteractingActor)
 		UE_LOG(LogTemp, Log, TEXT("[B_PickupItem] Called BPI_Player::OnLootItem on %s"), *InteractingActor->GetName());
 	}
 
+	// Mark this pickup as collected in the save system so it won't respawn on load
+	if (APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0))
+	{
+		if (USaveLoadManagerComponent* SaveMgr = PC->FindComponentByClass<USaveLoadManagerComponent>())
+		{
+			SaveMgr->MarkPickupCollected(this);
+		}
+	}
+
 	// Broadcast OnItemLooted dispatcher
 	OnItemLooted.Broadcast();
 
 	// Destroy after pickup
 	Destroy();
+}
+
+void AB_PickupItem::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	// When destroyed (by either C++ OnInteract_Implementation or Blueprint EventGraph),
+	// mark as collected so it won't respawn on save/load.
+	// This is defensive - if the Blueprint's EventGraph still handles OnInteract instead of
+	// the C++ _Implementation, the MarkPickupCollected in OnInteract_Implementation never fires.
+	// EndPlay always fires on Destroy() regardless of which code path triggered it.
+	if (EndPlayReason == EEndPlayReason::Destroyed && Item)
+	{
+		if (APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0))
+		{
+			if (USaveLoadManagerComponent* SaveMgr = PC->FindComponentByClass<USaveLoadManagerComponent>())
+			{
+				SaveMgr->MarkPickupCollected(this);
+				UE_LOG(LogTemp, Log, TEXT("[B_PickupItem] EndPlay - Marked pickup as collected: %s"), *GetName());
+			}
+		}
+	}
+
+	Super::EndPlay(EndPlayReason);
 }

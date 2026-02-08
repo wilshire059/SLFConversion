@@ -462,5 +462,125 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
 	static FString ApplyFlaskData();
 
+	// BOSS CONFIGURATION
+	// Configure boss with cinematic, weapons, and status effects
+	// BossBlueprintPath: e.g., "/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss_Malgareth"
+	// CinematicSequencePath: e.g., "/Game/SoulslikeFramework/Cinematics/LS_Boss_Start"
+	// WeaponBlueprintPath: e.g., "/Game/SoulslikeFramework/Blueprints/_WorldActors/_Items/Weapons/AI/B_Item_AI_Weapon_BossMace"
+	// StatusEffectPath: e.g., "/Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Burn"
+	// StatusEffectRank: rank for the status effect (default 1)
+	// StatusEffectBuildup: buildup amount per hit (default 25.0)
+	// Returns: Result string with configuration status
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
+	static FString ConfigureBoss(
+		const FString& BossBlueprintPath,
+		const FString& CinematicSequencePath,
+		const FString& WeaponBlueprintPath,
+		const FString& StatusEffectPath,
+		int32 StatusEffectRank = 1,
+		double StatusEffectBuildup = 25.0
+	);
+
+	// Diagnose boss configuration - check Phases, Weapons, StatusEffects
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Diagnostics")
+	static FString DiagnoseBossConfig(const FString& BossBlueprintPath);
+
+	// DIALOG DATATABLE MIGRATION
+	// Migrate Dialog DataTables from Blueprint FDialogEntry struct to C++ FSLFDialogEntry struct
+	// This is required because FindRow<FSLFDialogEntry>() fails when DataTable uses Blueprint struct
+	// DataTablePath: path to DataTable (e.g., "/Game/.../DT_ShowcaseGuideNpc_NoProgress")
+	// Returns: JSON string with migration result
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
+	static FString MigrateDialogDataTable(const FString& DataTablePath);
+
+	// Migrate ALL known dialog DataTables to C++ struct
+	// Returns: JSON string with all migration results
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
+	static FString MigrateAllDialogDataTables();
+
+	// Get dialog entry text for verification
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Query")
+	static FString GetDialogEntryText(const FString& DataTablePath, const FString& RowName);
+
+	// Get dialog entry GameplayEvents count for verification
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Query")
+	static int32 GetDialogEntryEventCount(const FString& DataTablePath, const FString& RowName);
+
+	// Verify all dialog DataTables have correct content
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Migration")
+	static FString VerifyDialogDataTables();
+
+	// ═══════════════════════════════════════════════════════════════════════════
+	// SETTINGS WIDGET MIGRATION
+	// Complete migration for W_Settings, W_Settings_Entry, W_Settings_CategoryEntry, PDA_CustomSettings
+	// ═══════════════════════════════════════════════════════════════════════════
+
+	/**
+	 * Extract ALL settings widget data from bp_only backup to JSON file
+	 * Extracts: colors, tags, icons, text, enums, references for all Settings widgets
+	 * Run this on bp_only project BEFORE migration
+	 * @param OutputFilePath - Path to write JSON (e.g., "C:/scripts/SLFConversion/migration_cache/settings_data.json")
+	 * @return JSON string with extracted values
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Settings")
+	static FString ExtractSettingsWidgetData(const FString& OutputFilePath);
+
+	/**
+	 * Apply extracted settings widget data after migration
+	 * Reads from JSON cache and applies to migrated Blueprints
+	 * Run this on SLFConversion project AFTER reparenting
+	 * @param JsonFilePath - Path to settings_data.json from extraction
+	 * @return Result string with success/failure counts
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Settings")
+	static FString ApplySettingsWidgetData(const FString& JsonFilePath);
+
+	/**
+	 * Verify settings widget migration by comparing current values to expected
+	 * Checks all colors, tags, icons, text, enums match original
+	 * @param JsonFilePath - Path to settings_data.json with expected values
+	 * @return Verification report showing matches/mismatches
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Settings")
+	static FString VerifySettingsWidgetData(const FString& JsonFilePath);
+
+	/**
+	 * Migrate settings widgets: reparent to C++, clear EventGraphs, apply data
+	 * Complete one-step migration for all Settings widgets
+	 * @param JsonFilePath - Path to settings_data.json (must be extracted first)
+	 * @return Complete migration result
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Settings")
+	static FString MigrateSettingsWidgets(const FString& JsonFilePath);
+
+	/**
+	 * Diagnose current state of settings widgets
+	 * Shows parent class, C++ properties accessible, EventGraph node counts
+	 * @return Diagnostic report for all Settings widgets
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Settings")
+	static FString DiagnoseSettingsWidgets();
+
+	/**
+	 * Extract ALL embedded widget instances from W_Settings WidgetBlueprint
+	 * This extracts the per-instance properties of:
+	 * - W_Settings_Entry widgets (ScreenMode, Resolution, TextureQuality, etc.)
+	 * - W_Settings_CategoryEntry widgets (Display, Camera, Gameplay, etc.)
+	 * Run on bp_only project to get the original configuration
+	 * @param OutputFilePath - Path to write JSON (e.g., "C:/scripts/SLFConversion/migration_cache/settings_embedded.json")
+	 * @return JSON string with all embedded widget properties
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Settings")
+	static FString ExtractEmbeddedSettingsWidgets(const FString& OutputFilePath, const FString& WidgetBlueprintPath = TEXT("/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings"));
+
+	/**
+	 * Apply embedded widget data to W_Settings after migration
+	 * Reads from JSON cache and applies to each embedded widget instance
+	 * @param JsonFilePath - Path to settings_embedded.json from extraction
+	 * @return Result string with success/failure counts
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Settings")
+	static FString ApplyEmbeddedSettingsWidgets(const FString& JsonFilePath);
+
 #endif // WITH_EDITOR
 };

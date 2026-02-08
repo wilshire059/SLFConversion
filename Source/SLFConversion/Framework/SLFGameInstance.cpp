@@ -33,7 +33,26 @@ void USLFGameInstance::Init()
 
 		if (SGO_Slots)
 		{
-			UE_LOG(LogTemp, Log, TEXT("[SLFGameInstance] Loaded save slots (%d slots)"), SGO_Slots->Slots.Num());
+			// Clean up invalid/empty slot names (legacy bp_only saves may have empty entries)
+			int32 OrigCount = SGO_Slots->Slots.Num();
+			SGO_Slots->Slots.RemoveAll([](const FString& S) { return S.IsEmpty(); });
+
+			for (int32 i = 0; i < SGO_Slots->Slots.Num(); ++i)
+			{
+				UE_LOG(LogTemp, Log, TEXT("[SLFGameInstance] Slot[%d] = '%s'"), i, *SGO_Slots->Slots[i]);
+			}
+
+			if (OrigCount != SGO_Slots->Slots.Num())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[SLFGameInstance] Removed %d empty slot entries (legacy save cleanup)"),
+					OrigCount - SGO_Slots->Slots.Num());
+
+				// Re-save cleaned slots
+				UGameplayStatics::SaveGameToSlot(SGO_Slots, SlotsSaveName, 0);
+			}
+
+			UE_LOG(LogTemp, Log, TEXT("[SLFGameInstance] Loaded save slots (%d valid slots, LastSavedSlot='%s')"),
+				SGO_Slots->Slots.Num(), *SGO_Slots->LastSavedSlot);
 		}
 		else
 		{
@@ -54,11 +73,18 @@ void USLFGameInstance::Init()
 
 void USLFGameInstance::GetAllSaveSlots_Implementation(TArray<FString>& SaveSlots)
 {
-	// JSON Logic: IsValid(SGO_Slots) → GetAllSlots() → Return SaveSlots
 	if (IsValid(SGO_Slots))
 	{
 		SaveSlots = SGO_Slots->GetAllSlots();
-		UE_LOG(LogTemp, Log, TEXT("[SLFGameInstance] GetAllSaveSlots: %d slots"), SaveSlots.Num());
+
+		// Filter out empty slot names (legacy cleanup)
+		SaveSlots.RemoveAll([](const FString& S) { return S.IsEmpty(); });
+
+		for (int32 i = 0; i < SaveSlots.Num(); ++i)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[SLFGameInstance] GetAllSaveSlots[%d]: '%s'"), i, *SaveSlots[i]);
+		}
+		UE_LOG(LogTemp, Log, TEXT("[SLFGameInstance] GetAllSaveSlots: %d valid slots"), SaveSlots.Num());
 	}
 	else
 	{
@@ -69,11 +95,20 @@ void USLFGameInstance::GetAllSaveSlots_Implementation(TArray<FString>& SaveSlots
 
 void USLFGameInstance::SetLastSlotNameToActive_Implementation()
 {
-	// JSON Logic: IsValid(SGO_Slots) → GetLastSaveSlot() → Set ActiveSlot
 	if (IsValid(SGO_Slots))
 	{
 		ActiveSlot = SGO_Slots->GetLastSaveSlot();
-		UE_LOG(LogTemp, Log, TEXT("[SLFGameInstance] SetLastSlotNameToActive: %s"), *ActiveSlot);
+
+		// Fallback: if LastSavedSlot is empty, use the last entry in Slots array
+		if (ActiveSlot.IsEmpty() && SGO_Slots->Slots.Num() > 0)
+		{
+			ActiveSlot = SGO_Slots->Slots.Last();
+			UE_LOG(LogTemp, Warning, TEXT("[SLFGameInstance] SetLastSlotNameToActive: LastSavedSlot was empty, falling back to last slot: '%s'"), *ActiveSlot);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("[SLFGameInstance] SetLastSlotNameToActive: %s"), *ActiveSlot);
+		}
 	}
 	else
 	{
@@ -83,9 +118,28 @@ void USLFGameInstance::SetLastSlotNameToActive_Implementation()
 
 void USLFGameInstance::DoesAnySaveExist_Implementation(bool& ReturnValue)
 {
-	// JSON Logic: DoesSaveGameExist(SlotsSaveName, 0) → Return
-	ReturnValue = UGameplayStatics::DoesSaveGameExist(SlotsSaveName, 0);
-	UE_LOG(LogTemp, Log, TEXT("[SLFGameInstance] DoesAnySaveExist: %s"), ReturnValue ? TEXT("true") : TEXT("false"));
+	// Check both that the file exists AND there are valid (non-empty) slots
+	if (UGameplayStatics::DoesSaveGameExist(SlotsSaveName, 0) && IsValid(SGO_Slots) && SGO_Slots->Slots.Num() > 0)
+	{
+		// Verify at least one slot actually has a corresponding save file
+		bool bHasValidSlot = false;
+		for (const FString& Slot : SGO_Slots->Slots)
+		{
+			if (!Slot.IsEmpty() && UGameplayStatics::DoesSaveGameExist(Slot, 0))
+			{
+				bHasValidSlot = true;
+				break;
+			}
+		}
+		ReturnValue = bHasValidSlot;
+	}
+	else
+	{
+		ReturnValue = false;
+	}
+	UE_LOG(LogTemp, Log, TEXT("[SLFGameInstance] DoesAnySaveExist: %s (Slots: %d)"),
+		ReturnValue ? TEXT("true") : TEXT("false"),
+		IsValid(SGO_Slots) ? SGO_Slots->Slots.Num() : 0);
 }
 
 void USLFGameInstance::AddAndSaveSlots_Implementation(const FString& NewSlotName)

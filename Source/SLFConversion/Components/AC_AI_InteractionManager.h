@@ -21,6 +21,7 @@ class UAC_ProgressManager;
 class UAnimMontage;
 class UDataTable;
 class UPrimaryDataAsset;
+class UW_HUD;
 
 // Event Dispatcher Declarations
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAC_AI_InteractionManager_OnDialogFinished);
@@ -59,6 +60,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
 	UPrimaryDataAsset* VendorAsset;
 
+	// Cached HUD reference for dialog callbacks
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Runtime")
+	UW_HUD* CachedHUD;
+
+	/** Guard flag to prevent re-entry during dialog finish sequence */
+	UPROPERTY(Transient)
+	bool bIsFinishingDialog;
+
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (1)
 	// ═══════════════════════════════════════════════════════════════════════
@@ -67,10 +76,34 @@ public:
 	FAC_AI_InteractionManager_OnDialogFinished OnDialogFinished;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (1)
+	// FUNCTIONS (4)
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_AI_InteractionManager")
 	FSLFDialogEntry GetCurrentDialogEntry(UDataTable* DataTable, const TArray<FName>& Rows);
 	virtual FSLFDialogEntry GetCurrentDialogEntry_Implementation(UDataTable* DataTable, const TArray<FName>& Rows);
+
+	/**
+	 * Begin dialog with NPC
+	 * @param InProgressManager - Progress manager for determining dialog table
+	 * @param InHUD - HUD widget to display dialog
+	 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_AI_InteractionManager|Dialog")
+	void EventBeginDialog(UAC_ProgressManager* InProgressManager, UW_HUD* InHUD);
+	virtual void EventBeginDialog_Implementation(UAC_ProgressManager* InProgressManager, UW_HUD* InHUD);
+
+	/**
+	 * Advance dialog to next entry or finish dialog
+	 * Called when player presses OK/interact during dialog
+	 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_AI_InteractionManager|Dialog")
+	void EventAdjustIndexForExit();
+	virtual void EventAdjustIndexForExit_Implementation();
+
+	/**
+	 * Reset dialog index to beginning
+	 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AC_AI_InteractionManager|Dialog")
+	void EventResetDialogIndex();
+	virtual void EventResetDialogIndex_Implementation();
 };

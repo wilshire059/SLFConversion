@@ -6,9 +6,11 @@
 
 #include "Blueprints/B_Soulslike_Character.h"
 #include "Components/AC_CombatManager.h"
+#include "Components/AIInteractionManagerComponent.h"
 
 AB_Soulslike_Character::AB_Soulslike_Character()
 {
+	CachedNpcInteractionManager = nullptr;
 }
 
 void AB_Soulslike_Character::HandleTargetLock_Implementation()

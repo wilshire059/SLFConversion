@@ -20,6 +20,7 @@ UW_Settings_CategoryEntry::UW_Settings_CategoryEntry(const FObjectInitializer& O
 	: Super(ObjectInitializer)
 {
 	SwitcherIndex = 0;
+	CategoryIndex = 0;  // Position in category list (set by W_Settings::InitializeCategories)
 	Selected = false;
 	SelectedColor = FLinearColor(1.0f, 0.84f, 0.0f, 1.0f); // Gold when selected
 	DeselectedColor = FLinearColor(0.5f, 0.5f, 0.5f, 1.0f); // Gray when deselected
@@ -44,7 +45,9 @@ void UW_Settings_CategoryEntry::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	// Fix SwitcherIndex based on widget name if it wasn't set (per-instance values lost during reparenting)
+	// Fix SwitcherIndex based on widget name (per-instance values lost during reparenting)
+	// Values from bp_only: Display=0, Camera=1, Gameplay=-1, Keybinds=2, Sounds=-1, Quit=3
+	// -1 means "no dedicated settings panel" for that category
 	FString WidgetName = GetName();
 	if (WidgetName.Contains(TEXT("Display")))
 	{
@@ -56,19 +59,19 @@ void UW_Settings_CategoryEntry::NativeConstruct()
 	}
 	else if (WidgetName.Contains(TEXT("Gameplay")))
 	{
-		SwitcherIndex = 2;
+		SwitcherIndex = -1;  // No dedicated panel (was incorrectly 2)
 	}
 	else if (WidgetName.Contains(TEXT("Keybind")))
 	{
-		SwitcherIndex = 3;
+		SwitcherIndex = 2;  // Panel index 2 (was incorrectly 3)
 	}
 	else if (WidgetName.Contains(TEXT("Sound")))
 	{
-		SwitcherIndex = 4;
+		SwitcherIndex = -1;  // No dedicated panel (was incorrectly 4)
 	}
 	else if (WidgetName.Contains(TEXT("Quit")))
 	{
-		SwitcherIndex = 5;
+		SwitcherIndex = 3;  // Panel index 3 (was incorrectly 5)
 	}
 
 	// CRITICAL FIX: Force correct colors - Blueprint CDO may have wrong serialized values
@@ -357,8 +360,9 @@ void UW_Settings_CategoryEntry::SetCategorySelected_Implementation(bool InSelect
 	// Only broadcast OnSelected when state actually changes from false to true
 	// This prevents infinite recursion: SetCategorySelected -> OnSelected.Broadcast ->
 	// EventOnCategorySelected -> UpdateCategorySelection -> SetCategorySelected
+	// CRITICAL: Broadcast CategoryIndex (position in list), NOT SwitcherIndex (panel index)
 	if (InSelected && bStateChanged)
 	{
-		OnSelected.Broadcast(this, SwitcherIndex);
+		OnSelected.Broadcast(this, CategoryIndex);
 	}
 }

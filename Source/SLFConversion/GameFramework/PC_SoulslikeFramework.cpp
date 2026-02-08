@@ -168,24 +168,40 @@ void APC_SoulslikeFramework::BeginPlay()
 
 						if (SequenceActorClass)
 						{
-							// Spawn the sequence actor
-							FActorSpawnParameters SpawnParams;
-							SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-							AB_SequenceActor* SequenceActor = World->SpawnActor<AB_SequenceActor>(SequenceActorClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+							// Use SpawnActorDeferred so we can set SequenceToPlay BEFORE BeginPlay runs
+							AB_SequenceActor* SequenceActor = World->SpawnActorDeferred<AB_SequenceActor>(
+								SequenceActorClass, FTransform::Identity);
 
 							if (SequenceActor)
 							{
-								// Set the sequence to play
+								// Set ExposeOnSpawn properties BEFORE BeginPlay
 								SequenceActor->SequenceToPlay = SequenceAsset;
 								SequenceActor->CanBeSkipped = true;
 
-								UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] Spawned B_SequenceActor with LS_ShowcaseRoom"));
+								// Finish spawning (this calls BeginPlay with SequenceToPlay set)
+								SequenceActor->FinishSpawning(FTransform::Identity);
+
+								UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] *** SPAWNED B_SequenceActor with LS_ShowcaseRoom - Cinematic should be playing! ***"));
 
 								// Toggle cinematic mode on HUD if available
 								if (W_HUD)
 								{
 									W_HUD->EventToggleCinematicMode(true, true);
+									UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] HUD set to cinematic mode"));
+								}
+								else
+								{
+									UE_LOG(LogTemp, Warning, TEXT("[PC_SoulslikeFramework] W_HUD is null - cannot hide HUD for cinematic! Will retry via timer."));
+									// Delayed HUD hide - W_HUD might be created after BeginPlay
+									FTimerHandle CinematicHudTimer;
+									World->GetTimerManager().SetTimer(CinematicHudTimer, [this]()
+									{
+										if (W_HUD)
+										{
+											W_HUD->EventToggleCinematicMode(true, true);
+											UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] Delayed: HUD set to cinematic mode"));
+										}
+									}, 0.5f, false);
 								}
 							}
 							else
@@ -286,6 +302,60 @@ void APC_SoulslikeFramework::SetupInputComponent()
 	Super::SetupInputComponent();
 
 	UE_LOG(LogTemp, Log, TEXT("[PC_SoulslikeFramework] SetupInputComponent"));
+
+	// ═══════════════════════════════════════════════════════════════════════════
+	// Fallback: Load navigation input actions if not set in Blueprint defaults
+	// ═══════════════════════════════════════════════════════════════════════════
+	if (!IA_NavigableMenu_Up)
+	{
+		IA_NavigableMenu_Up = LoadObject<UInputAction>(nullptr, TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Up.IA_NavigableMenu_Up"));
+		UE_LOG(LogTemp, Log, TEXT("  Loaded IA_NavigableMenu_Up: %s"), IA_NavigableMenu_Up ? TEXT("OK") : TEXT("FAILED"));
+	}
+	if (!IA_NavigableMenu_Down)
+	{
+		IA_NavigableMenu_Down = LoadObject<UInputAction>(nullptr, TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Down.IA_NavigableMenu_Down"));
+		UE_LOG(LogTemp, Log, TEXT("  Loaded IA_NavigableMenu_Down: %s"), IA_NavigableMenu_Down ? TEXT("OK") : TEXT("FAILED"));
+	}
+	if (!IA_NavigableMenu_Left)
+	{
+		IA_NavigableMenu_Left = LoadObject<UInputAction>(nullptr, TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Left.IA_NavigableMenu_Left"));
+		UE_LOG(LogTemp, Log, TEXT("  Loaded IA_NavigableMenu_Left: %s"), IA_NavigableMenu_Left ? TEXT("OK") : TEXT("FAILED"));
+	}
+	if (!IA_NavigableMenu_Right)
+	{
+		IA_NavigableMenu_Right = LoadObject<UInputAction>(nullptr, TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Right.IA_NavigableMenu_Right"));
+		UE_LOG(LogTemp, Log, TEXT("  Loaded IA_NavigableMenu_Right: %s"), IA_NavigableMenu_Right ? TEXT("OK") : TEXT("FAILED"));
+	}
+	if (!IA_NavigableMenu_Ok)
+	{
+		IA_NavigableMenu_Ok = LoadObject<UInputAction>(nullptr, TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Ok.IA_NavigableMenu_Ok"));
+		UE_LOG(LogTemp, Log, TEXT("  Loaded IA_NavigableMenu_Ok: %s"), IA_NavigableMenu_Ok ? TEXT("OK") : TEXT("FAILED"));
+	}
+	if (!IA_NavigableMenu_Back)
+	{
+		IA_NavigableMenu_Back = LoadObject<UInputAction>(nullptr, TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Back.IA_NavigableMenu_Back"));
+		UE_LOG(LogTemp, Log, TEXT("  Loaded IA_NavigableMenu_Back: %s"), IA_NavigableMenu_Back ? TEXT("OK") : TEXT("FAILED"));
+	}
+	if (!IA_NavigableMenu_Left_Category)
+	{
+		IA_NavigableMenu_Left_Category = LoadObject<UInputAction>(nullptr, TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Left_Category.IA_NavigableMenu_Left_Category"));
+	}
+	if (!IA_NavigableMenu_Right_Category)
+	{
+		IA_NavigableMenu_Right_Category = LoadObject<UInputAction>(nullptr, TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Right_Category.IA_NavigableMenu_Right_Category"));
+	}
+	if (!IA_NavigableMenu_Unequip)
+	{
+		IA_NavigableMenu_Unequip = LoadObject<UInputAction>(nullptr, TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_Unequip.IA_NavigableMenu_Unequip"));
+	}
+	if (!IA_NavigableMenu_DetailedView)
+	{
+		IA_NavigableMenu_DetailedView = LoadObject<UInputAction>(nullptr, TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_DetailedView.IA_NavigableMenu_DetailedView"));
+	}
+	if (!IA_NavigableMenu_ResetToDefaults)
+	{
+		IA_NavigableMenu_ResetToDefaults = LoadObject<UInputAction>(nullptr, TEXT("/Game/SoulslikeFramework/Input/Actions/MainMenu/IA_NavigableMenu_ResetToDefaults.IA_NavigableMenu_ResetToDefaults"));
+	}
 
 	if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(InputComponent))
 	{
@@ -539,9 +609,7 @@ void APC_SoulslikeFramework::RequestAddToSaveData_Implementation(FGameplayTag Sa
 
 	if (AC_SaveLoadManager)
 	{
-		// Forward to SaveLoadManager component
-		// JSON Logic: Get AC_SaveLoadManager -> AddSaveData(SaveTag, Data)
-		// Component handles the actual save data storage
+		AC_SaveLoadManager->AddToSaveData(SaveTag, Data);
 	}
 }
 
@@ -551,7 +619,7 @@ void APC_SoulslikeFramework::RequestUpdateSaveData_Implementation(FGameplayTag S
 
 	if (AC_SaveLoadManager)
 	{
-		// Forward to SaveLoadManager component
+		AC_SaveLoadManager->UpdateSaveData(SaveTag);
 	}
 }
 
@@ -561,7 +629,7 @@ void APC_SoulslikeFramework::SerializeDataForSaving_Implementation(ESLFSaveBehav
 
 	if (AC_SaveLoadManager)
 	{
-		// Forward to SaveLoadManager component
+		AC_SaveLoadManager->UpdateSaveData(SaveTag);
 	}
 }
 
@@ -571,7 +639,8 @@ void APC_SoulslikeFramework::SerializeAllDataForSaving_Implementation(ESLFSaveBe
 
 	if (AC_SaveLoadManager)
 	{
-		// Forward to SaveLoadManager component
+		AC_SaveLoadManager->SerializeAllData();
+		AC_SaveLoadManager->SaveToCheckpoint();
 	}
 }
 

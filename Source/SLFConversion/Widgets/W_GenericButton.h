@@ -77,9 +77,9 @@ public:
 	// EVENT DISPATCHERS (2)
 	// ═══════════════════════════════════════════════════════════════════════
 
-	UPROPERTY(BlueprintAssignable, Category = "Events")
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Events")
 	FW_GenericButton_OnButtonSelected OnButtonSelected;
-	UPROPERTY(BlueprintAssignable, Category = "Events")
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Events")
 	FW_GenericButton_OnButtonPressed OnButtonPressed;
 
 	// ═══════════════════════════════════════════════════════════════════════

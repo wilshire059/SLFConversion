@@ -75,4 +75,8 @@ public:
 
 	/** OnInteract - Called when player interacts with this pickup item */
 	virtual void OnInteract_Implementation(AActor* InteractingActor) override;
+
+protected:
+	/** Mark pickup as collected when destroyed (works even if Blueprint EventGraph handles OnInteract) */
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 };

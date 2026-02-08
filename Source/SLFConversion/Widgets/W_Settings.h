@@ -48,6 +48,9 @@ public:
 	virtual void NativeDestruct() override;
 
 	// Input handling (replaces Blueprint EventGraph input bindings)
+	// CRITICAL: Gamepad D-pad/stick events are consumed by UMG's built-in focus navigation
+	// before reaching NativeOnKeyDown. NativeOnPreviewKeyDown intercepts them first.
+	virtual FReply NativeOnPreviewKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 
 	// ═══════════════════════════════════════════════════════════════════════
@@ -185,7 +188,44 @@ protected:
 	UFUNCTION()
 	void HandleCategorySelected(UW_Settings_CategoryEntry* CategoryEntry, int32 Index);
 
+	// Re-entrance guard for category selection - prevents cascade from SetCategorySelected broadcasts
+	bool bHandlingCategorySelection;
+
 	// Handler for settings entry OnEntrySelected event
 	UFUNCTION()
 	void HandleEntrySelected(UW_Settings_Entry* Entry);
+
+	// Configure all embedded widgets with their proper settings
+	void ConfigureEmbeddedWidgets();
+
+	// Configure a single category entry
+	void ConfigureCategoryEntry(UW_Settings_CategoryEntry* Entry, int32 Index, const FString& IconPath);
+
+	// Configure a single settings entry
+	void ConfigureSettingsEntry(UW_Settings_Entry* Entry, const FString& SettingTagName, const FText& DisplayName, ESLFSettingEntry Type);
+
+	// Quit flow: button and confirmation widget references
+	void SetupQuitBindings();
+
+	UFUNCTION()
+	void HandleQuitButtonPressed();
+
+	UFUNCTION()
+	void HandleDesktopButtonPressed();
+
+	UFUNCTION()
+	void HandleQuitConfirmed();
+
+	UFUNCTION()
+	void HandleQuitCanceled();
+
+	// Toggle between Quit and Desktop buttons on the quit tab
+	void ToggleQuitTabButton();
+
+	// Cached quit widgets (found by name, not UPROPERTY to avoid WidgetTree conflicts)
+	UW_GenericButton* CachedQuitBtn;
+	UW_GenericButton* CachedDesktopBtn;
+
+	class UW_Settings_QuitConfirmation* CachedQuitConfirmation;
+	UWidget* CachedConfirmationBorder;
 };

@@ -18,6 +18,7 @@ class UW_LoadGame_Entry;
 
 // Event Dispatchers
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FW_LoadGame_OnLoadGameClosed);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FW_LoadGame_OnSaveSlotConfirmed);
 
 UCLASS()
 class SLFCONVERSION_API UW_LoadGame : public UW_Navigable_InputReader
@@ -57,6 +58,10 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FW_LoadGame_OnLoadGameClosed OnLoadGameClosed;
+
+	/** Fired when a save slot is selected and confirmed (active slot already set) */
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FW_LoadGame_OnSaveSlotConfirmed OnSaveSlotConfirmed;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// FUNCTIONS

@@ -48,6 +48,7 @@
 #include "Components/TextBlock.h"
 #include "Animation/WidgetAnimation.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Components/InventoryManagerComponent.h"
 #include "Components/AC_StatusEffectManager.h"
 #include "Components/AC_EquipmentManager.h"
@@ -88,7 +89,19 @@ void UW_HUD::NativeConstruct()
 	Super::NativeConstruct();
 	CacheWidgetReferences();
 	InitializeBindings();
-	UE_LOG(LogTemp, Log, TEXT("UW_HUD::NativeConstruct"));
+
+	// CRITICAL: Collapse all menu/window widgets on init.
+	// These are embedded children in the UMG tree (inside WindowsOL) and may default
+	// to Visible. They must be Collapsed until explicitly shown by their respective events.
+	if (CachedW_RestMenu) CachedW_RestMenu->SetVisibility(ESlateVisibility::Collapsed);
+	if (CachedW_Inventory) CachedW_Inventory->SetVisibility(ESlateVisibility::Collapsed);
+	if (CachedW_Equipment) CachedW_Equipment->SetVisibility(ESlateVisibility::Collapsed);
+	if (CachedW_Status) CachedW_Status->SetVisibility(ESlateVisibility::Collapsed);
+	if (CachedW_Crafting) CachedW_Crafting->SetVisibility(ESlateVisibility::Collapsed);
+	if (CachedW_Settings) CachedW_Settings->SetVisibility(ESlateVisibility::Collapsed);
+	if (CachedW_GameMenu) CachedW_GameMenu->SetVisibility(ESlateVisibility::Collapsed);
+
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::NativeConstruct - All menu widgets collapsed"));
 }
 
 void UW_HUD::NativeDestruct()
@@ -216,7 +229,8 @@ void UW_HUD::CacheWidgetReferences()
 	if (CachedW_Settings)
 	{
 		CachedW_Settings->OnSettingsClosed.AddUniqueDynamic(this, &UW_HUD::OnSettingsClosedHandler);
-		UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - Bound to CachedW_Settings::OnSettingsClosed"));
+		CachedW_Settings->OnQuitRequested.AddUniqueDynamic(this, &UW_HUD::OnQuitRequestedHandler);
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::CacheWidgetReferences - Bound to CachedW_Settings::OnSettingsClosed and OnQuitRequested"));
 	}
 
 	// Cache loot notification widgets
@@ -736,9 +750,16 @@ void UW_HUD::EventCloseCrafting_Implementation()
 void UW_HUD::EventShowSettings_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowSettings"));
-	if (UWidget* SettingsWidget = GetWidgetFromName(TEXT("W_Settings")))
+	if (CachedW_Settings)
 	{
-		UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowSettings - Found CachedW_Settings, setting visible"));
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowSettings - Found CachedW_Settings, setting visible and focus"));
+		CachedW_Settings->SetVisibility(ESlateVisibility::Visible);
+		// CRITICAL: Set keyboard focus so gamepad R1/L1 go to Settings, not GameMenu
+		CachedW_Settings->SetKeyboardFocus();
+	}
+	else if (UWidget* SettingsWidget = GetWidgetFromName(TEXT("W_Settings")))
+	{
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowSettings - Using GetWidgetFromName fallback"));
 		SettingsWidget->SetVisibility(ESlateVisibility::Visible);
 	}
 	else
@@ -759,6 +780,13 @@ void UW_HUD::EventCloseSettings_Implementation()
 
 void UW_HUD::EventShowGameMenu_Implementation()
 {
+	// Block menu opens during cinematic mode
+	if (CinematicMode)
+	{
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowGameMenu - BLOCKED (CinematicMode active)"));
+		return;
+	}
+
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowGameMenu"));
 	if (CachedW_GameMenu)
 	{
@@ -1471,18 +1499,59 @@ void UW_HUD::EventToggleCinematicMode_Implementation(bool bActive, bool bFadeOut
 		bActive ? TEXT("true") : TEXT("false"),
 		bFadeOutIfNotCinematicMode ? TEXT("true") : TEXT("false"));
 	CinematicMode = bActive;
-	if (UWidget* HudContent = GetWidgetFromName(TEXT("HudContent")))
+
+	// bp_only: Use ViewportSwitcher to swap between MainHUD (index 0) and CinematicHUD (index 1)
+	if (UWidgetSwitcher* ViewportSwitcher = Cast<UWidgetSwitcher>(GetWidgetFromName(TEXT("ViewportSwitcher"))))
 	{
-		HudContent->SetVisibility(bActive ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
+		ViewportSwitcher->SetActiveWidgetIndex(bActive ? 1 : 0);
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventToggleCinematicMode - ViewportSwitcher set to index %d"), bActive ? 1 : 0);
+	}
+
+	// CRITICAL: Hide WindowsCanvas during cinematic mode.
+	// WindowsCanvas contains WindowsOL which holds RestMenu, Inventory, Equipment, etc.
+	// These are siblings of ViewportSwitcher (not children), so switching ViewportSwitcher
+	// index doesn't affect them. We must explicitly hide/show the entire windows layer.
+	if (UWidget* WindowsCanvas = GetWidgetFromName(TEXT("WindowsCanvas")))
+	{
+		WindowsCanvas->SetVisibility(bActive ? ESlateVisibility::Collapsed : ESlateVisibility::SelfHitTestInvisible);
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventToggleCinematicMode - WindowsCanvas %s"),
+			bActive ? TEXT("HIDDEN") : TEXT("VISIBLE"));
 	}
 }
 
 void UW_HUD::EventShowSkipCinematicNotification_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowSkipCinematicNotification"));
-	if (UWidget* SkipNotification = GetWidgetFromName(TEXT("SkipCinematicNotification")))
+
+	// bp_only: Play SkipCinematicFadeIn animation to show the skip notification
+	// The W_SkipCinematic widget is inside CinematicHUD which is shown by ViewportSwitcher index 1
+	UWidgetAnimation* FadeInAnim = nullptr;
+
+	// Find SkipCinematicFadeIn animation by name (Blueprint UMG stores animations as UPROPERTY)
+	FProperty* AnimProp = GetClass()->FindPropertyByName(TEXT("SkipCinematicFadeIn"));
+	if (FObjectProperty* ObjProp = CastField<FObjectProperty>(AnimProp))
 	{
-		SkipNotification->SetVisibility(ESlateVisibility::Visible);
+		FadeInAnim = Cast<UWidgetAnimation>(ObjProp->GetObjectPropertyValue_InContainer(this));
+	}
+
+	if (FadeInAnim)
+	{
+		PlayAnimationForward(FadeInAnim);
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowSkipCinematicNotification - Playing SkipCinematicFadeIn animation"));
+	}
+	else
+	{
+		// Fallback: try to find the widget directly and set visibility
+		if (UWidget* SkipWidget = GetWidgetFromName(TEXT("W_SkipCinematic")))
+		{
+			SkipWidget->SetVisibility(ESlateVisibility::Visible);
+			UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowSkipCinematicNotification - Fallback: set W_SkipCinematic visible"));
+		}
+		else if (UWidget* SkipNotification = GetWidgetFromName(TEXT("SkipCinematicNotification")))
+		{
+			SkipNotification->SetVisibility(ESlateVisibility::Visible);
+			UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowSkipCinematicNotification - Fallback: set SkipCinematicNotification visible"));
+		}
 	}
 }
 
@@ -1675,6 +1744,30 @@ void UW_HUD::OnSettingsClosedHandler()
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnSettingsClosedHandler - Closing Settings, showing GameMenu"));
 	EventCloseSettings();
 	EventShowGameMenu();
+}
+
+void UW_HUD::OnQuitRequestedHandler(bool Desktop)
+{
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnQuitRequestedHandler - Desktop: %s"), Desktop ? TEXT("true") : TEXT("false"));
+
+	// Close settings UI first
+	EventCloseSettings();
+	EventCloseGameMenu();
+
+	if (Desktop)
+	{
+		// Quit to desktop
+		APlayerController* PC = GetOwningPlayer();
+		if (PC)
+		{
+			UKismetSystemLibrary::QuitGame(GetWorld(), PC, EQuitPreference::Quit, false);
+		}
+	}
+	else
+	{
+		// Quit to main menu - open the main menu level
+		UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("L_Demo_Menu")));
+	}
 }
 
 void UW_HUD::OnRestMenuClosedHandler()

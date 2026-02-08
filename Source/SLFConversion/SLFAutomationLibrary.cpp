@@ -66,6 +66,11 @@
 #include "Interfaces/SLFDestructibleHelperInterface.h"
 // WidgetBlueprint for widget delegate binding clearing
 #include "WidgetBlueprint.h"
+#include "Blueprint/WidgetTree.h"
+// DataTable factory for proper DataTable creation
+#include "AssetToolsModule.h"
+#include "IAssetTools.h"
+#include "Factories/DataTableFactory.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogSLFAutomation, Log, All);
 
@@ -7498,6 +7503,2737 @@ FString USLFAutomationLibrary::ApplyFlaskData()
 	FString Result = FString::Printf(TEXT("SUCCESS: Applied FSLFFlaskData with %d stat changes, Montage: %s"),
 		FlaskData.StatChangesPercent.Num(),
 		*FlaskData.DrinkingMontage.GetAssetName());
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+// ============================================================================
+// BOSS CONFIGURATION
+// ============================================================================
+
+#include "Components/AIBossComponent.h"
+#include "Components/AICombatManagerComponent.h"
+#include "Components/ChildActorComponent.h"
+#include "LevelSequence.h"
+
+FString USLFAutomationLibrary::DiagnoseBossConfig(const FString& BossBlueprintPath)
+{
+	TArray<FString> Lines;
+	Lines.Add(TEXT(""));
+	Lines.Add(TEXT("============================================================"));
+	Lines.Add(FString::Printf(TEXT("BOSS DIAGNOSTICS: %s"), *BossBlueprintPath));
+	Lines.Add(TEXT("============================================================"));
+
+	// Load Blueprint
+	UBlueprint* BossBlueprint = LoadObject<UBlueprint>(nullptr, *BossBlueprintPath);
+	if (!BossBlueprint)
+	{
+		Lines.Add(FString::Printf(TEXT("ERROR: Could not load Blueprint at %s"), *BossBlueprintPath));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	UClass* GeneratedClass = BossBlueprint->GeneratedClass;
+	if (!GeneratedClass)
+	{
+		Lines.Add(TEXT("ERROR: Blueprint has no GeneratedClass"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// Get CDO
+	UObject* CDO = GeneratedClass->GetDefaultObject();
+	if (!CDO)
+	{
+		Lines.Add(TEXT("ERROR: Could not get CDO"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	Lines.Add(FString::Printf(TEXT("CDO: %s"), *CDO->GetName()));
+	Lines.Add(TEXT(""));
+
+	// Check components on CDO
+	AActor* ActorCDO = Cast<AActor>(CDO);
+	if (!ActorCDO)
+	{
+		Lines.Add(TEXT("ERROR: CDO is not an AActor"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	Lines.Add(TEXT("--- CDO Components ---"));
+
+	// Find AIBossComponent
+	UAIBossComponent* BossComp = nullptr;
+	for (UActorComponent* Comp : ActorCDO->GetComponents())
+	{
+		if (!Comp) continue;
+
+		FString CompClass = Comp->GetClass()->GetName();
+		Lines.Add(FString::Printf(TEXT("  %s (%s)"), *Comp->GetName(), *CompClass));
+
+		if (UAIBossComponent* BC = Cast<UAIBossComponent>(Comp))
+		{
+			BossComp = BC;
+		}
+	}
+
+	// Check SCS components
+	Lines.Add(TEXT(""));
+	Lines.Add(TEXT("--- SCS Components ---"));
+	if (BossBlueprint->SimpleConstructionScript)
+	{
+		TArray<USCS_Node*> AllNodes = BossBlueprint->SimpleConstructionScript->GetAllNodes();
+		for (USCS_Node* Node : AllNodes)
+		{
+			if (Node && Node->ComponentTemplate)
+			{
+				FString CompName = Node->ComponentTemplate->GetName();
+				FString CompClass = Node->ComponentTemplate->GetClass()->GetName();
+				Lines.Add(FString::Printf(TEXT("  SCS: %s (%s)"), *CompName, *CompClass));
+
+				// Check for ChildActorComponent
+				if (UChildActorComponent* ChildActorComp = Cast<UChildActorComponent>(Node->ComponentTemplate))
+				{
+					UClass* ChildClass = ChildActorComp->GetChildActorClass();
+					Lines.Add(FString::Printf(TEXT("    ChildActorClass: %s"),
+						ChildClass ? *ChildClass->GetName() : TEXT("(None)")));
+				}
+
+				// Check for AIBossComponent
+				if (UAIBossComponent* BC = Cast<UAIBossComponent>(Node->ComponentTemplate))
+				{
+					BossComp = BC;
+				}
+
+				// Check for AICombatManagerComponent
+				if (UAICombatManagerComponent* CombatComp = Cast<UAICombatManagerComponent>(Node->ComponentTemplate))
+				{
+					Lines.Add(FString::Printf(TEXT("    DefaultAttackStatusEffects: %d entries"),
+						CombatComp->DefaultAttackStatusEffects.Num()));
+					for (const auto& Pair : CombatComp->DefaultAttackStatusEffects)
+					{
+						Lines.Add(FString::Printf(TEXT("      - %s: Rank=%d, Buildup=%.1f"),
+							Pair.Key ? *Pair.Key->GetName() : TEXT("(null)"),
+							Pair.Value.Rank, Pair.Value.BuildupAmount));
+					}
+				}
+			}
+		}
+	}
+
+	// Report on boss component phases
+	if (BossComp)
+	{
+		Lines.Add(TEXT(""));
+		Lines.Add(TEXT("--- AIBossComponent ---"));
+		Lines.Add(FString::Printf(TEXT("  Phases: %d entries"), BossComp->Phases.Num()));
+		for (int32 i = 0; i < BossComp->Phases.Num(); i++)
+		{
+			const FSLFAiBossPhase& Phase = BossComp->Phases[i];
+			Lines.Add(FString::Printf(TEXT("    Phase %d: %s"), i, *Phase.PhaseName.ToString()));
+			Lines.Add(FString::Printf(TEXT("      HealthThreshold: %.2f"), Phase.HealthThreshold));
+			Lines.Add(FString::Printf(TEXT("      PhaseStartSequence: %s"),
+				Phase.PhaseStartSequence.IsNull() ? TEXT("(None)") : *Phase.PhaseStartSequence.GetAssetName()));
+		}
+	}
+	else
+	{
+		Lines.Add(TEXT(""));
+		Lines.Add(TEXT("WARNING: No AIBossComponent found!"));
+	}
+
+	Lines.Add(TEXT(""));
+	Lines.Add(TEXT("============================================================"));
+
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+FString USLFAutomationLibrary::ConfigureBoss(
+	const FString& BossBlueprintPath,
+	const FString& CinematicSequencePath,
+	const FString& WeaponBlueprintPath,
+	const FString& StatusEffectPath,
+	int32 StatusEffectRank,
+	double StatusEffectBuildup)
+{
+	TArray<FString> Lines;
+	Lines.Add(TEXT(""));
+	Lines.Add(TEXT("============================================================"));
+	Lines.Add(TEXT("CONFIGURING BOSS"));
+	Lines.Add(TEXT("============================================================"));
+
+	// Load assets
+	Lines.Add(TEXT(""));
+	Lines.Add(TEXT("--- Loading Assets ---"));
+
+	UBlueprint* BossBlueprint = LoadObject<UBlueprint>(nullptr, *BossBlueprintPath);
+	if (!BossBlueprint)
+	{
+		Lines.Add(FString::Printf(TEXT("ERROR: Could not load Boss Blueprint at %s"), *BossBlueprintPath));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+	Lines.Add(FString::Printf(TEXT("  Boss Blueprint: %s"), *BossBlueprint->GetName()));
+
+	ULevelSequence* CinematicSequence = LoadObject<ULevelSequence>(nullptr, *CinematicSequencePath);
+	Lines.Add(FString::Printf(TEXT("  Cinematic Sequence: %s"), CinematicSequence ? *CinematicSequence->GetName() : TEXT("(Not Found)")));
+
+	UBlueprint* WeaponBlueprint = LoadObject<UBlueprint>(nullptr, *WeaponBlueprintPath);
+	Lines.Add(FString::Printf(TEXT("  Weapon Blueprint: %s"), WeaponBlueprint ? *WeaponBlueprint->GetName() : TEXT("(Not Found)")));
+
+	UPrimaryDataAsset* StatusEffectAsset = LoadObject<UPrimaryDataAsset>(nullptr, *StatusEffectPath);
+	Lines.Add(FString::Printf(TEXT("  Status Effect: %s"), StatusEffectAsset ? *StatusEffectAsset->GetName() : TEXT("(Not Found)")));
+
+	UClass* GeneratedClass = BossBlueprint->GeneratedClass;
+	if (!GeneratedClass)
+	{
+		Lines.Add(TEXT("ERROR: Blueprint has no GeneratedClass"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// Track what we fixed
+	bool bFixedPhases = false;
+	bool bFixedWeaponL = false;
+	bool bFixedWeaponR = false;
+	bool bFixedStatusEffects = false;
+
+	Lines.Add(TEXT(""));
+	Lines.Add(TEXT("--- Configuring SCS Components ---"));
+
+	// Find and configure components in SCS
+	if (BossBlueprint->SimpleConstructionScript)
+	{
+		TArray<USCS_Node*> AllNodes = BossBlueprint->SimpleConstructionScript->GetAllNodes();
+		for (USCS_Node* Node : AllNodes)
+		{
+			if (!Node || !Node->ComponentTemplate) continue;
+
+			FString CompName = Node->ComponentTemplate->GetName();
+
+			// Configure AIBossComponent Phases
+			if (UAIBossComponent* BossComp = Cast<UAIBossComponent>(Node->ComponentTemplate))
+			{
+				Lines.Add(FString::Printf(TEXT("  Found AIBossComponent: %s"), *CompName));
+				Lines.Add(FString::Printf(TEXT("    Current Phases: %d"), BossComp->Phases.Num()));
+
+				if (CinematicSequence && BossComp->Phases.Num() == 0)
+				{
+					// Create initial phase with cinematic
+					FSLFAiBossPhase Phase1;
+					Phase1.PhaseName = FName(TEXT("Phase1"));
+					Phase1.HealthThreshold = 1.0f;
+					Phase1.PhaseStartSequence = TSoftObjectPtr<ULevelSequence>(
+						FSoftObjectPath(CinematicSequencePath + TEXT(".") + CinematicSequence->GetName()));
+
+					BossComp->Phases.Add(Phase1);
+					bFixedPhases = true;
+					Lines.Add(FString::Printf(TEXT("    ADDED Phase1 with cinematic: %s"), *CinematicSequence->GetName()));
+				}
+				else if (CinematicSequence && BossComp->Phases.Num() > 0)
+				{
+					// Update first phase with cinematic
+					BossComp->Phases[0].PhaseStartSequence = TSoftObjectPtr<ULevelSequence>(
+						FSoftObjectPath(CinematicSequencePath + TEXT(".") + CinematicSequence->GetName()));
+					bFixedPhases = true;
+					Lines.Add(FString::Printf(TEXT("    UPDATED Phase0 cinematic: %s"), *CinematicSequence->GetName()));
+				}
+			}
+
+			// Configure ChildActorComponent for weapons
+			if (UChildActorComponent* ChildActorComp = Cast<UChildActorComponent>(Node->ComponentTemplate))
+			{
+				bool bIsWeapon = CompName.Contains(TEXT("Weapon"));
+
+				if (bIsWeapon && WeaponBlueprint)
+				{
+					UClass* WeaponClass = WeaponBlueprint->GeneratedClass;
+					if (WeaponClass)
+					{
+						UClass* CurrentClass = ChildActorComp->GetChildActorClass();
+						Lines.Add(FString::Printf(TEXT("  Found ChildActorComponent: %s"), *CompName));
+						Lines.Add(FString::Printf(TEXT("    Current ChildActorClass: %s"),
+							CurrentClass ? *CurrentClass->GetName() : TEXT("(None)")));
+
+						ChildActorComp->SetChildActorClass(WeaponClass);
+
+						Lines.Add(FString::Printf(TEXT("    SET ChildActorClass to: %s"), *WeaponClass->GetName()));
+
+						if (CompName.Contains(TEXT("_L")) || CompName.Contains(TEXT("Left")))
+						{
+							bFixedWeaponL = true;
+						}
+						else if (CompName.Contains(TEXT("_R")) || CompName.Contains(TEXT("Right")))
+						{
+							bFixedWeaponR = true;
+						}
+						else
+						{
+							// Generic weapon name, count as both
+							bFixedWeaponL = true;
+							bFixedWeaponR = true;
+						}
+					}
+				}
+			}
+
+			// Configure AICombatManagerComponent DefaultAttackStatusEffects
+			if (UAICombatManagerComponent* CombatComp = Cast<UAICombatManagerComponent>(Node->ComponentTemplate))
+			{
+				Lines.Add(FString::Printf(TEXT("  Found AICombatManagerComponent: %s"), *CompName));
+				Lines.Add(FString::Printf(TEXT("    Current DefaultAttackStatusEffects: %d"), CombatComp->DefaultAttackStatusEffects.Num()));
+
+				if (StatusEffectAsset)
+				{
+					FSLFStatusEffectApplication Application;
+					Application.Rank = StatusEffectRank;
+					Application.BuildupAmount = StatusEffectBuildup;
+
+					CombatComp->DefaultAttackStatusEffects.Add(StatusEffectAsset, Application);
+					bFixedStatusEffects = true;
+
+					Lines.Add(FString::Printf(TEXT("    ADDED %s: Rank=%d, Buildup=%.1f"),
+						*StatusEffectAsset->GetName(), StatusEffectRank, StatusEffectBuildup));
+				}
+			}
+		}
+	}
+
+	// Also check CDO components (components created by C++ parent classes, not in SCS)
+	Lines.Add(TEXT(""));
+	Lines.Add(TEXT("--- Configuring CDO Components ---"));
+
+	AActor* ActorCDO = Cast<AActor>(GeneratedClass->GetDefaultObject());
+	if (ActorCDO)
+	{
+		for (UActorComponent* Comp : ActorCDO->GetComponents())
+		{
+			if (!Comp) continue;
+
+			FString CompName = Comp->GetName();
+			FString CompClass = Comp->GetClass()->GetName();
+
+			// Configure AIBossComponent Phases on CDO
+			if (UAIBossComponent* BossComp = Cast<UAIBossComponent>(Comp))
+			{
+				if (!bFixedPhases) // Only if not already fixed via SCS
+				{
+					Lines.Add(FString::Printf(TEXT("  Found CDO AIBossComponent: %s"), *CompName));
+					Lines.Add(FString::Printf(TEXT("    Current Phases: %d"), BossComp->Phases.Num()));
+
+					if (CinematicSequence && BossComp->Phases.Num() == 0)
+					{
+						// Create initial phase with cinematic
+						FSLFAiBossPhase Phase1;
+						Phase1.PhaseName = FName(TEXT("Phase1"));
+						Phase1.HealthThreshold = 1.0f;
+						Phase1.PhaseStartSequence = TSoftObjectPtr<ULevelSequence>(
+							FSoftObjectPath(CinematicSequencePath + TEXT(".") + CinematicSequence->GetName()));
+
+						BossComp->Phases.Add(Phase1);
+						bFixedPhases = true;
+						Lines.Add(FString::Printf(TEXT("    ADDED Phase1 with cinematic: %s"), *CinematicSequence->GetName()));
+					}
+					else if (CinematicSequence && BossComp->Phases.Num() > 0)
+					{
+						// Update first phase with cinematic
+						BossComp->Phases[0].PhaseStartSequence = TSoftObjectPtr<ULevelSequence>(
+							FSoftObjectPath(CinematicSequencePath + TEXT(".") + CinematicSequence->GetName()));
+						bFixedPhases = true;
+						Lines.Add(FString::Printf(TEXT("    UPDATED Phase0 cinematic: %s"), *CinematicSequence->GetName()));
+					}
+				}
+			}
+
+			// Configure AICombatManagerComponent DefaultAttackStatusEffects on CDO
+			if (UAICombatManagerComponent* CombatComp = Cast<UAICombatManagerComponent>(Comp))
+			{
+				if (!bFixedStatusEffects) // Only if not already fixed via SCS
+				{
+					Lines.Add(FString::Printf(TEXT("  Found CDO AICombatManagerComponent: %s"), *CompName));
+					Lines.Add(FString::Printf(TEXT("    Current DefaultAttackStatusEffects: %d"), CombatComp->DefaultAttackStatusEffects.Num()));
+
+					if (StatusEffectAsset)
+					{
+						FSLFStatusEffectApplication Application;
+						Application.Rank = StatusEffectRank;
+						Application.BuildupAmount = StatusEffectBuildup;
+
+						CombatComp->DefaultAttackStatusEffects.Add(StatusEffectAsset, Application);
+						bFixedStatusEffects = true;
+
+						Lines.Add(FString::Printf(TEXT("    ADDED %s: Rank=%d, Buildup=%.1f"),
+							*StatusEffectAsset->GetName(), StatusEffectRank, StatusEffectBuildup));
+					}
+				}
+			}
+		}
+	}
+
+	// Save the Blueprint
+	Lines.Add(TEXT(""));
+	Lines.Add(TEXT("--- Saving Blueprint ---"));
+
+	BossBlueprint->MarkPackageDirty();
+
+	// Compile Blueprint
+	FKismetEditorUtilities::CompileBlueprint(BossBlueprint);
+
+	// Save package
+	UPackage* Package = BossBlueprint->GetOutermost();
+	if (Package)
+	{
+		FString PackageFilename = FPackageName::LongPackageNameToFilename(
+			Package->GetName(), FPackageName::GetAssetPackageExtension());
+
+		FSavePackageArgs SaveArgs;
+		SaveArgs.TopLevelFlags = RF_Standalone;
+		SaveArgs.SaveFlags = SAVE_NoError | SAVE_KeepDirty;
+		bool bSaved = UPackage::SavePackage(Package, BossBlueprint, *PackageFilename, SaveArgs);
+
+		if (bSaved)
+		{
+			Lines.Add(FString::Printf(TEXT("  Saved: %s"), *PackageFilename));
+		}
+		else
+		{
+			Lines.Add(TEXT("  WARNING: Failed to save package"));
+		}
+	}
+
+	// Summary
+	Lines.Add(TEXT(""));
+	Lines.Add(TEXT("--- Configuration Summary ---"));
+	Lines.Add(FString::Printf(TEXT("  Phases configured: %s"), bFixedPhases ? TEXT("YES") : TEXT("NO")));
+	Lines.Add(FString::Printf(TEXT("  Weapon_L configured: %s"), bFixedWeaponL ? TEXT("YES") : TEXT("NO")));
+	Lines.Add(FString::Printf(TEXT("  Weapon_R configured: %s"), bFixedWeaponR ? TEXT("YES") : TEXT("NO")));
+	Lines.Add(FString::Printf(TEXT("  Status effects configured: %s"), bFixedStatusEffects ? TEXT("YES") : TEXT("NO")));
+
+	Lines.Add(TEXT(""));
+	Lines.Add(TEXT("============================================================"));
+	Lines.Add(TEXT("BOSS CONFIGURATION COMPLETE"));
+	Lines.Add(TEXT("============================================================"));
+
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+// ============================================================================
+// DIALOG DATATABLE MIGRATION
+// ============================================================================
+
+FString USLFAutomationLibrary::MigrateDialogDataTable(const FString& DataTablePath)
+{
+	TArray<FString> Lines;
+	Lines.Add(TEXT(""));
+	Lines.Add(TEXT("============================================================"));
+	Lines.Add(TEXT("MIGRATING DIALOG DATATABLE TO C++ STRUCT"));
+	Lines.Add(FString::Printf(TEXT("Path: %s"), *DataTablePath));
+	Lines.Add(TEXT("============================================================"));
+
+	// Get C++ struct
+	UScriptStruct* CppStruct = FSLFDialogEntry::StaticStruct();
+	if (!CppStruct)
+	{
+		Lines.Add(TEXT("ERROR: Could not get FSLFDialogEntry::StaticStruct()"));
+		FString Result = FString::Join(Lines, TEXT("\n"));
+		UE_LOG(LogSLFAutomation, Error, TEXT("%s"), *Result);
+		return Result;
+	}
+
+	Lines.Add(FString::Printf(TEXT("  C++ struct: %s"), *CppStruct->GetPathName()));
+
+	// Delete existing asset using direct filesystem operation
+	// (UEditorAssetLibrary::DeleteAsset crashes on corrupt Blueprint-struct DataTables)
+	FString AssetFilename = FPackageName::LongPackageNameToFilename(DataTablePath, FPackageName::GetAssetPackageExtension());
+	Lines.Add(FString::Printf(TEXT("  Checking file: %s"), *AssetFilename));
+
+	if (FPaths::FileExists(AssetFilename))
+	{
+		Lines.Add(TEXT("  Deleting existing file via filesystem..."));
+		bool bDeleted = IFileManager::Get().Delete(*AssetFilename);
+		Lines.Add(bDeleted ? TEXT("  [OK] Deleted file") : TEXT("  WARNING: Could not delete file"));
+	}
+	else
+	{
+		Lines.Add(TEXT("  File doesn't exist, creating new"));
+	}
+
+	// Define dialog content based on table name
+	FString TableName = FPaths::GetBaseFilename(DataTablePath);
+	Lines.Add(FString::Printf(TEXT("  Table name: %s"), *TableName));
+
+	// Build FSLFDialogEntry rows with proper text and GameplayEvents
+	TArray<TPair<FName, FSLFDialogEntry>> DialogRows;
+
+	if (TableName == TEXT("DT_GenericDefaultDialog"))
+	{
+		FSLFDialogEntry Row;
+		Row.Entry = FText::FromString(TEXT("(Generic Dialogue Text)"));
+		DialogRows.Add(TPair<FName, FSLFDialogEntry>(TEXT("NewRow"), Row));
+	}
+	else if (TableName == TEXT("DT_ShowcaseGuideNpc_NoProgress"))
+	{
+		// Row 0: Welcome message
+		{
+			FSLFDialogEntry Row;
+			Row.Entry = FText::FromString(TEXT("Hello! Welcome to Soulslike Framework. You must be new here."));
+			DialogRows.Add(TPair<FName, FSLFDialogEntry>(TEXT("NewRow"), Row));
+		}
+		// Row 1: NPC introduction
+		{
+			FSLFDialogEntry Row;
+			Row.Entry = FText::FromString(TEXT("As you can see, I am an interactable NPC that says whatever you want."));
+			DialogRows.Add(TPair<FName, FSLFDialogEntry>(TEXT("NewRow_0"), Row));
+		}
+		// Row 2: Armor comment
+		{
+			FSLFDialogEntry Row;
+			Row.Entry = FText::FromString(TEXT("It's a shame that I have such cool armor but had to be placed here like a damn puppet."));
+			DialogRows.Add(TPair<FName, FSLFDialogEntry>(TEXT("NewRow_1"), Row));
+		}
+		// Row 3: Health flask announcement
+		{
+			FSLFDialogEntry Row;
+			Row.Entry = FText::FromString(TEXT("If you decide to continue further, bad things await. The almighty @isikdev has ordered me to provide you with some health flasks."));
+			DialogRows.Add(TPair<FName, FSLFDialogEntry>(TEXT("NewRow_2"), Row));
+		}
+		// Row 4: Gives health flasks - HAS GAMEPLAY EVENT: AddItem HealthFlask
+		{
+			FSLFDialogEntry Row;
+			Row.Entry = FText::FromString(TEXT("Take these, and ensure that you equip them from the Equipment menu. You will definitely need them if you want to fight Malgareth."));
+
+			// Add GameplayEvent for AddItem with HealthFlask
+			FSLFDialogGameplayEvent ItemEvent;
+			ItemEvent.EventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("SoulslikeFramework.GameplayEvents.AddItem")));
+			ItemEvent.AdditionalTag = FGameplayTag::RequestGameplayTag(FName(TEXT("SoulslikeFramework.Items.Examples.HealthFlask")));
+			Row.GameplayEvents.Add(ItemEvent);
+
+			DialogRows.Add(TPair<FName, FSLFDialogEntry>(TEXT("NewRow_3"), Row));
+		}
+		// Row 5: Farewell
+		{
+			FSLFDialogEntry Row;
+			Row.Entry = FText::FromString(TEXT("Best of luck to you now. I guess I'll keep staring at the wall."));
+			DialogRows.Add(TPair<FName, FSLFDialogEntry>(TEXT("NewRow_4"), Row));
+		}
+	}
+	else if (TableName == TEXT("DT_ShowcaseGuideNpc_Progress"))
+	{
+		// Row 0: Difficulty acknowledgment
+		{
+			FSLFDialogEntry Row;
+			Row.Entry = FText::FromString(TEXT("Having a good time? Malgareth can be quite hard to defeat."));
+			DialogRows.Add(TPair<FName, FSLFDialogEntry>(TEXT("NewRow"), Row));
+		}
+		// Row 1: Guarding hint
+		{
+			FSLFDialogEntry Row;
+			Row.Entry = FText::FromString(TEXT("@isikdev has told me to remind you about this if you were to struggle. You can guard Malgareth's attacks."));
+			DialogRows.Add(TPair<FName, FSLFDialogEntry>(TEXT("NewRow_0"), Row));
+		}
+		// Row 2: Practice tip
+		{
+			FSLFDialogEntry Row;
+			Row.Entry = FText::FromString(TEXT("Practice guarding on this poor Example Enemy I have to my left. Guarding will be very useful in situations where you are consistently being attacked and dodging is hard."));
+			DialogRows.Add(TPair<FName, FSLFDialogEntry>(TEXT("NewRow_1"), Row));
+		}
+		// Row 3: Vendor suggestion
+		{
+			FSLFDialogEntry Row;
+			Row.Entry = FText::FromString(TEXT("Also! You can talk to my friend next to me and buy some items that could make your life easier."));
+			DialogRows.Add(TPair<FName, FSLFDialogEntry>(TEXT("NewRow_2"), Row));
+		}
+		// Row 4: Farewell
+		{
+			FSLFDialogEntry Row;
+			Row.Entry = FText::FromString(TEXT("Good luck! I'll return back to staring at this wonderful ladder."));
+			DialogRows.Add(TPair<FName, FSLFDialogEntry>(TEXT("NewRow_3"), Row));
+		}
+	}
+	else if (TableName == TEXT("DT_ShowcaseGuideNpc_Completed"))
+	{
+		// Row 0: Congratulations
+		{
+			FSLFDialogEntry Row;
+			Row.Entry = FText::FromString(TEXT("Impressive! No one had successfully defeated Malgareth yet."));
+			DialogRows.Add(TPair<FName, FSLFDialogEntry>(TEXT("NewRow"), Row));
+		}
+		// Row 1: Self-deprecating humor
+		{
+			FSLFDialogEntry Row;
+			Row.Entry = FText::FromString(TEXT("I know, I know. He is a bit dumb. But blame that on the lack of animations!"));
+			DialogRows.Add(TPair<FName, FSLFDialogEntry>(TEXT("NewRow_0"), Row));
+		}
+		// Row 2: Thanks message
+		{
+			FSLFDialogEntry Row;
+			Row.Entry = FText::FromString(TEXT("@isikdev would like to thank you for playing the Soulslike Framework showcase demo!"));
+			DialogRows.Add(TPair<FName, FSLFDialogEntry>(TEXT("NewRow_1"), Row));
+		}
+		// Row 3: Currency reward - HAS GAMEPLAY EVENT: AddCurrency with 100
+		{
+			FSLFDialogEntry Row;
+			Row.Entry = FText::FromString(TEXT("Here is some money (not a bribe, really!)"));
+
+			// Add GameplayEvent for AddCurrency
+			FSLFDialogGameplayEvent CurrencyEvent;
+			CurrencyEvent.EventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("SoulslikeFramework.GameplayEvents.AddCurrency")));
+			// CustomData contains the int amount (100) - FInstancedStruct with FInt
+			// Note: The FInt struct type from bp_only may need custom handling
+			// For now, we set the tag; the amount may need to be in CustomData
+			Row.GameplayEvents.Add(CurrencyEvent);
+
+			DialogRows.Add(TPair<FName, FSLFDialogEntry>(TEXT("NewRow_2"), Row));
+		}
+		// Row 4: Final farewell
+		{
+			FSLFDialogEntry Row;
+			Row.Entry = FText::FromString(TEXT("If you enjoyed your time here - or not - please let @isikdev know! I'm excited - I'll soon be on Fab!"));
+			DialogRows.Add(TPair<FName, FSLFDialogEntry>(TEXT("NewRow_3"), Row));
+		}
+	}
+	else if (TableName == TEXT("DT_ShowcaseVendorNpc_Generic"))
+	{
+		// Row 0: Greeting
+		{
+			FSLFDialogEntry Row;
+			Row.Entry = FText::FromString(TEXT("A traveler..?"));
+			DialogRows.Add(TPair<FName, FSLFDialogEntry>(TEXT("NewRow"), Row));
+		}
+		// Row 1: Salute
+		{
+			FSLFDialogEntry Row;
+			Row.Entry = FText::FromString(TEXT("You must be worthy. I salute you - nameless traveler."));
+			DialogRows.Add(TPair<FName, FSLFDialogEntry>(TEXT("NewRow_0"), Row));
+		}
+		// Row 2: Vendor intro
+		{
+			FSLFDialogEntry Row;
+			Row.Entry = FText::FromString(TEXT("I am an NPC that has a vendor asset. I can sell you some stuff Soulslike Framework has to offer."));
+			DialogRows.Add(TPair<FName, FSLFDialogEntry>(TEXT("NewRow_1"), Row));
+		}
+		// Row 3: Land description
+		{
+			FSLFDialogEntry Row;
+			Row.Entry = FText::FromString(TEXT(" This is interesting. This land has been designed by @isikdev only for the best. "));
+			DialogRows.Add(TPair<FName, FSLFDialogEntry>(TEXT("NewRow_2"), Row));
+		}
+		// Row 4: Offer to browse
+		{
+			FSLFDialogEntry Row;
+			Row.Entry = FText::FromString(TEXT("Are you interested in browsing what I have to offer?"));
+			DialogRows.Add(TPair<FName, FSLFDialogEntry>(TEXT("NewRow_3"), Row));
+		}
+	}
+	else
+	{
+		// Unknown table - add single placeholder
+		FSLFDialogEntry Row;
+		Row.Entry = FText::FromString(TEXT("..."));
+		DialogRows.Add(TPair<FName, FSLFDialogEntry>(TEXT("NewRow"), Row));
+	}
+
+	Lines.Add(FString::Printf(TEXT("  Dialog rows to create: %d"), DialogRows.Num()));
+
+	// Parse path to get package and asset name
+	FString PackagePath = FPackageName::GetLongPackagePath(DataTablePath);
+	FString AssetName = FPackageName::GetShortName(DataTablePath);
+
+	Lines.Add(FString::Printf(TEXT("  Package path: %s"), *PackagePath));
+	Lines.Add(FString::Printf(TEXT("  Asset name: %s"), *AssetName));
+
+	// Create new DataTable using AssetTools factory
+	Lines.Add(TEXT(""));
+	Lines.Add(TEXT("--- Creating new DataTable ---"));
+
+	IAssetTools& AssetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
+
+	// Create the DataTable using factory
+	UDataTableFactory* Factory = NewObject<UDataTableFactory>();
+	Factory->Struct = CppStruct;
+
+	UObject* NewAsset = AssetTools.CreateAsset(AssetName, PackagePath, UDataTable::StaticClass(), Factory);
+	UDataTable* NewTable = Cast<UDataTable>(NewAsset);
+
+	if (!NewTable)
+	{
+		Lines.Add(TEXT("ERROR: Could not create DataTable via AssetTools"));
+		FString Result = FString::Join(Lines, TEXT("\n"));
+		UE_LOG(LogSLFAutomation, Error, TEXT("%s"), *Result);
+		return Result;
+	}
+
+	Lines.Add(FString::Printf(TEXT("  [OK] Created DataTable with RowStruct: %s"), *CppStruct->GetPathName()));
+
+	// Add rows using AddRow template
+	Lines.Add(TEXT(""));
+	Lines.Add(TEXT("--- Adding rows ---"));
+
+	for (const auto& RowData : DialogRows)
+	{
+		// AddRow makes a copy of the struct data
+		NewTable->AddRow(RowData.Key, RowData.Value);
+		Lines.Add(FString::Printf(TEXT("  [OK] %s: '%s' (Events: %d)"),
+			*RowData.Key.ToString(),
+			*RowData.Value.Entry.ToString().Left(40),
+			RowData.Value.GameplayEvents.Num()));
+	}
+
+	// Save using EditorAssetLibrary (more reliable than direct SavePackage)
+	Lines.Add(TEXT(""));
+	Lines.Add(TEXT("--- Saving ---"));
+
+	bool bSaved = UEditorAssetLibrary::SaveAsset(DataTablePath, false);
+
+	if (bSaved)
+	{
+		Lines.Add(FString::Printf(TEXT("  [OK] Saved: %s"), *DataTablePath));
+	}
+	else
+	{
+		Lines.Add(TEXT("  WARNING: SaveAsset returned false"));
+	}
+
+	// Verify
+	Lines.Add(TEXT(""));
+	Lines.Add(TEXT("--- Verification ---"));
+
+	const UScriptStruct* FinalStruct = NewTable->GetRowStruct();
+	if (FinalStruct)
+	{
+		bool bIsCpp = FinalStruct->GetPathName().Contains(TEXT("/Script/SLFConversion"));
+		Lines.Add(FString::Printf(TEXT("  RowStruct: %s"), *FinalStruct->GetPathName()));
+		Lines.Add(FString::Printf(TEXT("  Is C++: %s"), bIsCpp ? TEXT("YES") : TEXT("NO")));
+	}
+
+	TArray<FName> FinalRowNames = NewTable->GetRowNames();
+	Lines.Add(FString::Printf(TEXT("  Row count: %d"), FinalRowNames.Num()));
+
+	if (FinalRowNames.Num() > 0)
+	{
+		FSLFDialogEntry* TestRow = NewTable->FindRow<FSLFDialogEntry>(FinalRowNames[0], TEXT("Verify"));
+		if (TestRow)
+		{
+			Lines.Add(FString::Printf(TEXT("  [OK] Read test: '%s'"), *TestRow->Entry.ToString().Left(40)));
+		}
+		else
+		{
+			Lines.Add(TEXT("  WARNING: FindRow returned nullptr"));
+		}
+	}
+
+	Lines.Add(TEXT(""));
+	Lines.Add(TEXT("============================================================"));
+	Lines.Add(TEXT("MIGRATION COMPLETE"));
+	Lines.Add(TEXT("============================================================"));
+
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+FString USLFAutomationLibrary::MigrateAllDialogDataTables()
+{
+	TArray<FString> Lines;
+	Lines.Add(TEXT(""));
+	Lines.Add(TEXT("============================================================"));
+	Lines.Add(TEXT("MIGRATING ALL DIALOG DATATABLES"));
+	Lines.Add(TEXT("============================================================"));
+
+	// List of known dialog DataTables
+	TArray<FString> DialogTables = {
+		TEXT("/Game/SoulslikeFramework/Data/Dialog/DT_GenericDefaultDialog"),
+		TEXT("/Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DialogTables/DT_ShowcaseGuideNpc_NoProgress"),
+		TEXT("/Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DialogTables/DT_ShowcaseGuideNpc_Progress"),
+		TEXT("/Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DialogTables/DT_ShowcaseGuideNpc_Completed"),
+		TEXT("/Game/SoulslikeFramework/Data/Dialog/ShowcaseVendorNpc/DT_ShowcaseVendorNpc_Generic"),
+	};
+
+	int32 SuccessCount = 0;
+	int32 FailCount = 0;
+
+	for (const FString& TablePath : DialogTables)
+	{
+		Lines.Add(TEXT(""));
+		Lines.Add(FString::Printf(TEXT("--- Migrating: %s ---"), *TablePath));
+
+		FString MigrationResult = MigrateDialogDataTable(TablePath);
+
+		// Check if successful
+		if (MigrationResult.Contains(TEXT("[OK]")))
+		{
+			SuccessCount++;
+			Lines.Add(TEXT("  Result: SUCCESS"));
+		}
+		else if (MigrationResult.Contains(TEXT("ERROR")))
+		{
+			FailCount++;
+			Lines.Add(TEXT("  Result: FAILED"));
+		}
+		else
+		{
+			SuccessCount++; // "already uses C++ struct" counts as success
+			Lines.Add(TEXT("  Result: OK (already migrated)"));
+		}
+	}
+
+	Lines.Add(TEXT(""));
+	Lines.Add(TEXT("============================================================"));
+	Lines.Add(FString::Printf(TEXT("MIGRATION SUMMARY: %d succeeded, %d failed"), SuccessCount, FailCount));
+	Lines.Add(TEXT("============================================================"));
+
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+FString USLFAutomationLibrary::GetDialogEntryText(const FString& DataTablePath, const FString& RowName)
+{
+	UDataTable* DataTable = Cast<UDataTable>(UEditorAssetLibrary::LoadAsset(DataTablePath));
+	if (!DataTable)
+	{
+		return FString::Printf(TEXT("ERROR: Could not load DataTable: %s"), *DataTablePath);
+	}
+
+	FSLFDialogEntry* Row = DataTable->FindRow<FSLFDialogEntry>(FName(*RowName), TEXT("GetDialogEntryText"));
+	if (!Row)
+	{
+		return FString::Printf(TEXT("ERROR: Could not find row: %s"), *RowName);
+	}
+
+	return Row->Entry.ToString();
+}
+
+int32 USLFAutomationLibrary::GetDialogEntryEventCount(const FString& DataTablePath, const FString& RowName)
+{
+	UDataTable* DataTable = Cast<UDataTable>(UEditorAssetLibrary::LoadAsset(DataTablePath));
+	if (!DataTable)
+	{
+		return -1;
+	}
+
+	FSLFDialogEntry* Row = DataTable->FindRow<FSLFDialogEntry>(FName(*RowName), TEXT("GetDialogEntryEventCount"));
+	if (!Row)
+	{
+		return -1;
+	}
+
+	return Row->GameplayEvents.Num();
+}
+
+FString USLFAutomationLibrary::VerifyDialogDataTables()
+{
+	TArray<FString> Lines;
+	Lines.Add(TEXT(""));
+	Lines.Add(TEXT("============================================================"));
+	Lines.Add(TEXT("DIALOG DATATABLE VERIFICATION"));
+	Lines.Add(TEXT("============================================================"));
+
+	struct FTableVerify
+	{
+		FString Path;
+		TArray<TPair<FString, FString>> ExpectedRows;  // RowName -> ExpectedTextStart
+		TArray<TPair<FString, int32>> ExpectedEvents;   // RowName -> ExpectedEventCount
+	};
+
+	TArray<FTableVerify> TablesToVerify;
+
+	// NoProgress - first-time dialog with AddItem event
+	{
+		FTableVerify T;
+		T.Path = TEXT("/Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DialogTables/DT_ShowcaseGuideNpc_NoProgress");
+		T.ExpectedRows.Add(TPair<FString, FString>(TEXT("NewRow"), TEXT("Hello! Welcome")));
+		T.ExpectedRows.Add(TPair<FString, FString>(TEXT("NewRow_3"), TEXT("Take these")));
+		T.ExpectedEvents.Add(TPair<FString, int32>(TEXT("NewRow_3"), 1));  // Has AddItem GameplayEvent
+		TablesToVerify.Add(T);
+	}
+
+	// Completed - has AddCurrency event
+	{
+		FTableVerify T;
+		T.Path = TEXT("/Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DialogTables/DT_ShowcaseGuideNpc_Completed");
+		T.ExpectedRows.Add(TPair<FString, FString>(TEXT("NewRow"), TEXT("Impressive!")));
+		T.ExpectedRows.Add(TPair<FString, FString>(TEXT("NewRow_2"), TEXT("Here is some money")));
+		T.ExpectedEvents.Add(TPair<FString, int32>(TEXT("NewRow_2"), 1));  // Has AddCurrency GameplayEvent
+		TablesToVerify.Add(T);
+	}
+
+	int32 PassCount = 0;
+	int32 FailCount = 0;
+
+	for (const FTableVerify& T : TablesToVerify)
+	{
+		Lines.Add(TEXT(""));
+		Lines.Add(FString::Printf(TEXT("--- %s ---"), *FPaths::GetBaseFilename(T.Path)));
+
+		UDataTable* DataTable = Cast<UDataTable>(UEditorAssetLibrary::LoadAsset(T.Path));
+		if (!DataTable)
+		{
+			Lines.Add(TEXT("  [FAIL] Could not load DataTable"));
+			FailCount++;
+			continue;
+		}
+
+		// Verify RowStruct is C++
+		const UScriptStruct* RowStruct = DataTable->GetRowStruct();
+		if (RowStruct && RowStruct->GetPathName().Contains(TEXT("/Script/SLFConversion")))
+		{
+			Lines.Add(FString::Printf(TEXT("  [PASS] RowStruct: %s"), *RowStruct->GetPathName()));
+			PassCount++;
+		}
+		else
+		{
+			Lines.Add(TEXT("  [FAIL] RowStruct is not C++"));
+			FailCount++;
+		}
+
+		// Verify expected rows
+		for (const auto& ExpectedRow : T.ExpectedRows)
+		{
+			FSLFDialogEntry* Row = DataTable->FindRow<FSLFDialogEntry>(FName(*ExpectedRow.Key), TEXT("Verify"));
+			if (!Row)
+			{
+				Lines.Add(FString::Printf(TEXT("  [FAIL] Row %s: not found"), *ExpectedRow.Key));
+				FailCount++;
+			}
+			else if (Row->Entry.ToString().StartsWith(ExpectedRow.Value))
+			{
+				Lines.Add(FString::Printf(TEXT("  [PASS] Row %s: \"%s...\""), *ExpectedRow.Key, *Row->Entry.ToString().Left(30)));
+				PassCount++;
+			}
+			else
+			{
+				Lines.Add(FString::Printf(TEXT("  [FAIL] Row %s: expected \"%s...\" but got \"%s...\""),
+					*ExpectedRow.Key, *ExpectedRow.Value, *Row->Entry.ToString().Left(30)));
+				FailCount++;
+			}
+		}
+
+		// Verify expected events
+		for (const auto& ExpectedEvent : T.ExpectedEvents)
+		{
+			FSLFDialogEntry* Row = DataTable->FindRow<FSLFDialogEntry>(FName(*ExpectedEvent.Key), TEXT("VerifyEvents"));
+			if (!Row)
+			{
+				Lines.Add(FString::Printf(TEXT("  [FAIL] Row %s events: row not found"), *ExpectedEvent.Key));
+				FailCount++;
+			}
+			else if (Row->GameplayEvents.Num() == ExpectedEvent.Value)
+			{
+				Lines.Add(FString::Printf(TEXT("  [PASS] Row %s: %d GameplayEvents"), *ExpectedEvent.Key, Row->GameplayEvents.Num()));
+				if (Row->GameplayEvents.Num() > 0)
+				{
+					Lines.Add(FString::Printf(TEXT("         EventTag: %s"), *Row->GameplayEvents[0].EventTag.ToString()));
+				}
+				PassCount++;
+			}
+			else
+			{
+				Lines.Add(FString::Printf(TEXT("  [FAIL] Row %s events: expected %d, got %d"),
+					*ExpectedEvent.Key, ExpectedEvent.Value, Row->GameplayEvents.Num()));
+				FailCount++;
+			}
+		}
+	}
+
+	Lines.Add(TEXT(""));
+	Lines.Add(TEXT("============================================================"));
+	Lines.Add(FString::Printf(TEXT("VERIFICATION SUMMARY: %d passed, %d failed"), PassCount, FailCount));
+	Lines.Add(TEXT("============================================================"));
+
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+// ============================================================================
+// SETTINGS WIDGET MIGRATION
+// ============================================================================
+
+// Include widgets header for settings widget classes
+#include "Widgets/W_Settings.h"
+#include "Widgets/W_Settings_Entry.h"
+#include "Widgets/W_Settings_CategoryEntry.h"
+
+FString USLFAutomationLibrary::ExtractSettingsWidgetData(const FString& OutputFilePath)
+{
+	TArray<FString> Lines;
+	Lines.Add(TEXT("=== EXTRACTING SETTINGS WIDGET DATA ==="));
+
+	TSharedPtr<FJsonObject> RootJson = MakeShareable(new FJsonObject);
+
+	// Helper to convert FLinearColor to JSON
+	auto ColorToJson = [](const FLinearColor& Color) -> TSharedPtr<FJsonObject>
+	{
+		TSharedPtr<FJsonObject> Obj = MakeShareable(new FJsonObject);
+		Obj->SetNumberField(TEXT("R"), Color.R);
+		Obj->SetNumberField(TEXT("G"), Color.G);
+		Obj->SetNumberField(TEXT("B"), Color.B);
+		Obj->SetNumberField(TEXT("A"), Color.A);
+		return Obj;
+	};
+
+	// ─────────────────────────────────────────────────────────────────────────
+	// Extract W_Settings_Entry data
+	// ─────────────────────────────────────────────────────────────────────────
+	{
+		TSharedPtr<FJsonObject> EntryJson = MakeShareable(new FJsonObject);
+
+		UBlueprint* BP = LoadObject<UBlueprint>(nullptr, TEXT("/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings_Entry"));
+		if (BP && BP->GeneratedClass)
+		{
+			UObject* CDO = BP->GeneratedClass->GetDefaultObject();
+			if (CDO)
+			{
+				// Extract using reflection for Blueprint properties
+				for (TFieldIterator<FProperty> PropIt(BP->GeneratedClass); PropIt; ++PropIt)
+				{
+					FProperty* Prop = *PropIt;
+					FString PropName = Prop->GetName();
+
+					if (FStructProperty* StructProp = CastField<FStructProperty>(Prop))
+					{
+						// Handle FGameplayTag
+						if (StructProp->Struct == TBaseStructure<FGameplayTag>::Get())
+						{
+							FGameplayTag* Tag = StructProp->ContainerPtrToValuePtr<FGameplayTag>(CDO);
+							if (Tag && Tag->IsValid())
+							{
+								EntryJson->SetStringField(PropName, Tag->ToString());
+								Lines.Add(FString::Printf(TEXT("  W_Settings_Entry.%s = %s"), *PropName, *Tag->ToString()));
+							}
+						}
+						// Handle FLinearColor
+						else if (StructProp->Struct == TBaseStructure<FLinearColor>::Get())
+						{
+							FLinearColor* Color = StructProp->ContainerPtrToValuePtr<FLinearColor>(CDO);
+							if (Color)
+							{
+								EntryJson->SetObjectField(PropName, ColorToJson(*Color));
+								Lines.Add(FString::Printf(TEXT("  W_Settings_Entry.%s = (%.2f, %.2f, %.2f, %.2f)"),
+									*PropName, Color->R, Color->G, Color->B, Color->A));
+							}
+						}
+					}
+					else if (FTextProperty* TextProp = CastField<FTextProperty>(Prop))
+					{
+						FText* Text = TextProp->ContainerPtrToValuePtr<FText>(CDO);
+						if (Text && !Text->IsEmpty())
+						{
+							EntryJson->SetStringField(PropName, Text->ToString());
+							Lines.Add(FString::Printf(TEXT("  W_Settings_Entry.%s = \"%s\""), *PropName, *Text->ToString()));
+						}
+					}
+					else if (FByteProperty* ByteProp = CastField<FByteProperty>(Prop))
+					{
+						uint8* Value = ByteProp->ContainerPtrToValuePtr<uint8>(CDO);
+						if (Value)
+						{
+							EntryJson->SetNumberField(PropName, static_cast<double>(*Value));
+							Lines.Add(FString::Printf(TEXT("  W_Settings_Entry.%s = %d"), *PropName, static_cast<int32>(*Value)));
+						}
+					}
+					else if (FEnumProperty* EnumProp = CastField<FEnumProperty>(Prop))
+					{
+						void* ValuePtr = EnumProp->ContainerPtrToValuePtr<void>(CDO);
+						int64 Value = EnumProp->GetUnderlyingProperty()->GetSignedIntPropertyValue(ValuePtr);
+						EntryJson->SetNumberField(PropName, static_cast<double>(Value));
+						Lines.Add(FString::Printf(TEXT("  W_Settings_Entry.%s = %lld (enum)"), *PropName, Value));
+					}
+				}
+
+				// Also try to get C++ properties if reparented
+				if (UW_Settings_Entry* TypedCDO = Cast<UW_Settings_Entry>(CDO))
+				{
+					EntryJson->SetObjectField(TEXT("UnhoveredColor_CPP"), ColorToJson(TypedCDO->UnhoveredColor));
+					EntryJson->SetObjectField(TEXT("HoveredColor_CPP"), ColorToJson(TypedCDO->HoveredColor));
+					EntryJson->SetStringField(TEXT("SettingTag_CPP"), TypedCDO->SettingTag.ToString());
+					EntryJson->SetStringField(TEXT("SettingName_CPP"), TypedCDO->SettingName.ToString());
+					EntryJson->SetStringField(TEXT("SettingDescription_CPP"), TypedCDO->SettingDescription.ToString());
+					EntryJson->SetStringField(TEXT("ButtonText_CPP"), TypedCDO->ButtonText.ToString());
+					EntryJson->SetNumberField(TEXT("EntryType_CPP"), static_cast<int32>(TypedCDO->EntryType));
+
+					Lines.Add(FString::Printf(TEXT("  [C++] UnhoveredColor = (%.2f, %.2f, %.2f, %.2f)"),
+						TypedCDO->UnhoveredColor.R, TypedCDO->UnhoveredColor.G, TypedCDO->UnhoveredColor.B, TypedCDO->UnhoveredColor.A));
+					Lines.Add(FString::Printf(TEXT("  [C++] HoveredColor = (%.2f, %.2f, %.2f, %.2f)"),
+						TypedCDO->HoveredColor.R, TypedCDO->HoveredColor.G, TypedCDO->HoveredColor.B, TypedCDO->HoveredColor.A));
+				}
+			}
+		}
+		else
+		{
+			Lines.Add(TEXT("  ERROR: Failed to load W_Settings_Entry"));
+		}
+
+		RootJson->SetObjectField(TEXT("W_Settings_Entry"), EntryJson);
+	}
+
+	// ─────────────────────────────────────────────────────────────────────────
+	// Extract W_Settings_CategoryEntry data
+	// ─────────────────────────────────────────────────────────────────────────
+	{
+		TSharedPtr<FJsonObject> CategoryJson = MakeShareable(new FJsonObject);
+
+		UBlueprint* BP = LoadObject<UBlueprint>(nullptr, TEXT("/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings_CategoryEntry"));
+		if (BP && BP->GeneratedClass)
+		{
+			UObject* CDO = BP->GeneratedClass->GetDefaultObject();
+			if (CDO)
+			{
+				for (TFieldIterator<FProperty> PropIt(BP->GeneratedClass); PropIt; ++PropIt)
+				{
+					FProperty* Prop = *PropIt;
+					FString PropName = Prop->GetName();
+
+					if (FStructProperty* StructProp = CastField<FStructProperty>(Prop))
+					{
+						if (StructProp->Struct == TBaseStructure<FGameplayTag>::Get())
+						{
+							FGameplayTag* Tag = StructProp->ContainerPtrToValuePtr<FGameplayTag>(CDO);
+							if (Tag && Tag->IsValid())
+							{
+								CategoryJson->SetStringField(PropName, Tag->ToString());
+								Lines.Add(FString::Printf(TEXT("  W_Settings_CategoryEntry.%s = %s"), *PropName, *Tag->ToString()));
+							}
+						}
+						else if (StructProp->Struct == TBaseStructure<FLinearColor>::Get())
+						{
+							FLinearColor* Color = StructProp->ContainerPtrToValuePtr<FLinearColor>(CDO);
+							if (Color)
+							{
+								CategoryJson->SetObjectField(PropName, ColorToJson(*Color));
+								Lines.Add(FString::Printf(TEXT("  W_Settings_CategoryEntry.%s = (%.2f, %.2f, %.2f, %.2f)"),
+									*PropName, Color->R, Color->G, Color->B, Color->A));
+							}
+						}
+					}
+					else if (FSoftObjectProperty* SoftObjProp = CastField<FSoftObjectProperty>(Prop))
+					{
+						// Handle TSoftObjectPtr<UTexture2D> for Icon
+						FSoftObjectPtr* SoftPtr = SoftObjProp->ContainerPtrToValuePtr<FSoftObjectPtr>(CDO);
+						if (SoftPtr && !SoftPtr->IsNull())
+						{
+							FString Path = SoftPtr->ToSoftObjectPath().ToString();
+							CategoryJson->SetStringField(PropName, Path);
+							Lines.Add(FString::Printf(TEXT("  W_Settings_CategoryEntry.%s = %s"), *PropName, *Path));
+						}
+					}
+					else if (FIntProperty* IntProp = CastField<FIntProperty>(Prop))
+					{
+						int32* Value = IntProp->ContainerPtrToValuePtr<int32>(CDO);
+						if (Value)
+						{
+							CategoryJson->SetNumberField(PropName, static_cast<double>(*Value));
+							Lines.Add(FString::Printf(TEXT("  W_Settings_CategoryEntry.%s = %d"), *PropName, *Value));
+						}
+					}
+				}
+
+				// C++ properties if reparented
+				if (UW_Settings_CategoryEntry* TypedCDO = Cast<UW_Settings_CategoryEntry>(CDO))
+				{
+					CategoryJson->SetStringField(TEXT("SettingCategory_CPP"), TypedCDO->SettingCategory.ToString());
+					if (!TypedCDO->Icon.IsNull())
+					{
+						CategoryJson->SetStringField(TEXT("Icon_CPP"), TypedCDO->Icon.ToSoftObjectPath().ToString());
+						Lines.Add(FString::Printf(TEXT("  [C++] Icon = %s"), *TypedCDO->Icon.ToSoftObjectPath().ToString()));
+					}
+					CategoryJson->SetNumberField(TEXT("SwitcherIndex_CPP"), TypedCDO->SwitcherIndex);
+					CategoryJson->SetObjectField(TEXT("SelectedColor_CPP"), ColorToJson(TypedCDO->SelectedColor));
+					CategoryJson->SetObjectField(TEXT("DeselectedColor_CPP"), ColorToJson(TypedCDO->DeselectedColor));
+				}
+			}
+		}
+		else
+		{
+			Lines.Add(TEXT("  ERROR: Failed to load W_Settings_CategoryEntry"));
+		}
+
+		RootJson->SetObjectField(TEXT("W_Settings_CategoryEntry"), CategoryJson);
+	}
+
+	// ─────────────────────────────────────────────────────────────────────────
+	// Extract W_Settings data
+	// ─────────────────────────────────────────────────────────────────────────
+	{
+		TSharedPtr<FJsonObject> SettingsJson = MakeShareable(new FJsonObject);
+
+		UBlueprint* BP = LoadObject<UBlueprint>(nullptr, TEXT("/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings"));
+		if (BP && BP->GeneratedClass)
+		{
+			UObject* CDO = BP->GeneratedClass->GetDefaultObject();
+			if (CDO)
+			{
+				for (TFieldIterator<FProperty> PropIt(BP->GeneratedClass); PropIt; ++PropIt)
+				{
+					FProperty* Prop = *PropIt;
+					FString PropName = Prop->GetName();
+
+					if (FArrayProperty* ArrayProp = CastField<FArrayProperty>(Prop))
+					{
+						if (FStructProperty* InnerStructProp = CastField<FStructProperty>(ArrayProp->Inner))
+						{
+							if (InnerStructProp->Struct == TBaseStructure<FGameplayTag>::Get())
+							{
+								// TArray<FGameplayTag> - CategoriesToHide
+								FScriptArrayHelper ArrayHelper(ArrayProp, ArrayProp->ContainerPtrToValuePtr<void>(CDO));
+								TArray<TSharedPtr<FJsonValue>> JsonArray;
+								for (int32 i = 0; i < ArrayHelper.Num(); i++)
+								{
+									FGameplayTag* Tag = (FGameplayTag*)ArrayHelper.GetRawPtr(i);
+									if (Tag && Tag->IsValid())
+									{
+										JsonArray.Add(MakeShareable(new FJsonValueString(Tag->ToString())));
+									}
+								}
+								SettingsJson->SetArrayField(PropName, JsonArray);
+								Lines.Add(FString::Printf(TEXT("  W_Settings.%s = %d tags"), *PropName, JsonArray.Num()));
+							}
+						}
+					}
+					else if (FBoolProperty* BoolProp = CastField<FBoolProperty>(Prop))
+					{
+						bool Value = BoolProp->GetPropertyValue_InContainer(CDO);
+						SettingsJson->SetBoolField(PropName, Value);
+						Lines.Add(FString::Printf(TEXT("  W_Settings.%s = %s"), *PropName, Value ? TEXT("true") : TEXT("false")));
+					}
+				}
+
+				// C++ properties if reparented
+				if (UW_Settings* TypedCDO = Cast<UW_Settings>(CDO))
+				{
+					TArray<TSharedPtr<FJsonValue>> TagsArray;
+					for (const FGameplayTag& Tag : TypedCDO->CategoriesToHide)
+					{
+						TagsArray.Add(MakeShareable(new FJsonValueString(Tag.ToString())));
+					}
+					SettingsJson->SetArrayField(TEXT("CategoriesToHide_CPP"), TagsArray);
+					SettingsJson->SetBoolField(TEXT("QuitToDesktop_CPP"), TypedCDO->QuitToDesktop);
+					Lines.Add(FString::Printf(TEXT("  [C++] CategoriesToHide = %d tags"), TypedCDO->CategoriesToHide.Num()));
+				}
+			}
+		}
+		else
+		{
+			Lines.Add(TEXT("  ERROR: Failed to load W_Settings"));
+		}
+
+		RootJson->SetObjectField(TEXT("W_Settings"), SettingsJson);
+	}
+
+	// ─────────────────────────────────────────────────────────────────────────
+	// Extract PDA_CustomSettings data
+	// ─────────────────────────────────────────────────────────────────────────
+	{
+		TSharedPtr<FJsonObject> CustomSettingsJson = MakeShareable(new FJsonObject);
+
+		UBlueprint* BP = LoadObject<UBlueprint>(nullptr, TEXT("/Game/SoulslikeFramework/Data/PDA_CustomSettings"));
+		if (BP && BP->GeneratedClass)
+		{
+			UObject* CDO = BP->GeneratedClass->GetDefaultObject();
+			if (CDO)
+			{
+				for (TFieldIterator<FProperty> PropIt(BP->GeneratedClass); PropIt; ++PropIt)
+				{
+					FProperty* Prop = *PropIt;
+					FString PropName = Prop->GetName();
+
+					if (FBoolProperty* BoolProp = CastField<FBoolProperty>(Prop))
+					{
+						bool Value = BoolProp->GetPropertyValue_InContainer(CDO);
+						CustomSettingsJson->SetBoolField(PropName, Value);
+						Lines.Add(FString::Printf(TEXT("  PDA_CustomSettings.%s = %s"), *PropName, Value ? TEXT("true") : TEXT("false")));
+					}
+					else if (FDoubleProperty* DoubleProp = CastField<FDoubleProperty>(Prop))
+					{
+						double* Value = DoubleProp->ContainerPtrToValuePtr<double>(CDO);
+						if (Value)
+						{
+							CustomSettingsJson->SetNumberField(PropName, *Value);
+							Lines.Add(FString::Printf(TEXT("  PDA_CustomSettings.%s = %f"), *PropName, *Value));
+						}
+					}
+				}
+
+				// C++ properties if reparented
+				if (UPDA_CustomSettings* TypedCDO = Cast<UPDA_CustomSettings>(CDO))
+				{
+					CustomSettingsJson->SetBoolField(TEXT("bInvertCamX_CPP"), TypedCDO->bInvertCamX);
+					CustomSettingsJson->SetBoolField(TEXT("bInvertCamY_CPP"), TypedCDO->bInvertCamY);
+					CustomSettingsJson->SetNumberField(TEXT("CamSpeed_CPP"), TypedCDO->CamSpeed);
+					Lines.Add(FString::Printf(TEXT("  [C++] bInvertCamX = %s"), TypedCDO->bInvertCamX ? TEXT("true") : TEXT("false")));
+					Lines.Add(FString::Printf(TEXT("  [C++] bInvertCamY = %s"), TypedCDO->bInvertCamY ? TEXT("true") : TEXT("false")));
+					Lines.Add(FString::Printf(TEXT("  [C++] CamSpeed = %f"), TypedCDO->CamSpeed));
+				}
+			}
+		}
+		else
+		{
+			Lines.Add(TEXT("  ERROR: Failed to load PDA_CustomSettings"));
+		}
+
+		RootJson->SetObjectField(TEXT("PDA_CustomSettings"), CustomSettingsJson);
+	}
+
+	// Save to file
+	FString JsonString;
+	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&JsonString);
+	FJsonSerializer::Serialize(RootJson.ToSharedRef(), Writer);
+
+	if (!OutputFilePath.IsEmpty())
+	{
+		if (FFileHelper::SaveStringToFile(JsonString, *OutputFilePath))
+		{
+			Lines.Add(FString::Printf(TEXT("Saved to: %s"), *OutputFilePath));
+		}
+		else
+		{
+			Lines.Add(FString::Printf(TEXT("ERROR: Failed to save to: %s"), *OutputFilePath));
+		}
+	}
+
+	Lines.Add(TEXT("=== EXTRACTION COMPLETE ==="));
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+FString USLFAutomationLibrary::ApplySettingsWidgetData(const FString& JsonFilePath)
+{
+	TArray<FString> Lines;
+	Lines.Add(TEXT("=== APPLYING SETTINGS WIDGET DATA ==="));
+
+	// Load JSON file
+	FString JsonContent;
+	if (!FFileHelper::LoadFileToString(JsonContent, *JsonFilePath))
+	{
+		Lines.Add(FString::Printf(TEXT("ERROR: Failed to load JSON from: %s"), *JsonFilePath));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	TSharedPtr<FJsonObject> RootJson;
+	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonContent);
+	if (!FJsonSerializer::Deserialize(Reader, RootJson) || !RootJson.IsValid())
+	{
+		Lines.Add(TEXT("ERROR: Failed to parse JSON"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	int32 ApplyCount = 0;
+	int32 FailCount = 0;
+
+	// Helper to parse FLinearColor from JSON
+	auto JsonToColor = [](const TSharedPtr<FJsonObject>& Obj) -> FLinearColor
+	{
+		return FLinearColor(
+			Obj->GetNumberField(TEXT("R")),
+			Obj->GetNumberField(TEXT("G")),
+			Obj->GetNumberField(TEXT("B")),
+			Obj->GetNumberField(TEXT("A"))
+		);
+	};
+
+	// ─────────────────────────────────────────────────────────────────────────
+	// Apply W_Settings_Entry data
+	// ─────────────────────────────────────────────────────────────────────────
+	if (RootJson->HasField(TEXT("W_Settings_Entry")))
+	{
+		TSharedPtr<FJsonObject> EntryJson = RootJson->GetObjectField(TEXT("W_Settings_Entry"));
+		UBlueprint* BP = LoadObject<UBlueprint>(nullptr, TEXT("/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings_Entry"));
+		if (BP && BP->GeneratedClass)
+		{
+			UObject* CDO = BP->GeneratedClass->GetDefaultObject();
+			if (UW_Settings_Entry* TypedCDO = Cast<UW_Settings_Entry>(CDO))
+			{
+				// Apply colors
+				if (EntryJson->HasField(TEXT("UnhoveredColor")))
+				{
+					TypedCDO->UnhoveredColor = JsonToColor(EntryJson->GetObjectField(TEXT("UnhoveredColor")));
+					Lines.Add(FString::Printf(TEXT("  Applied W_Settings_Entry.UnhoveredColor")));
+					ApplyCount++;
+				}
+				if (EntryJson->HasField(TEXT("HoveredColor")))
+				{
+					TypedCDO->HoveredColor = JsonToColor(EntryJson->GetObjectField(TEXT("HoveredColor")));
+					Lines.Add(FString::Printf(TEXT("  Applied W_Settings_Entry.HoveredColor")));
+					ApplyCount++;
+				}
+
+				// Apply enum
+				if (EntryJson->HasField(TEXT("EntryType")))
+				{
+					TypedCDO->EntryType = static_cast<ESLFSettingEntry>(static_cast<int32>(EntryJson->GetNumberField(TEXT("EntryType"))));
+					Lines.Add(FString::Printf(TEXT("  Applied W_Settings_Entry.EntryType = %d"), static_cast<int32>(TypedCDO->EntryType)));
+					ApplyCount++;
+				}
+
+				// Apply text fields
+				if (EntryJson->HasField(TEXT("SettingName")))
+				{
+					TypedCDO->SettingName = FText::FromString(EntryJson->GetStringField(TEXT("SettingName")));
+					Lines.Add(FString::Printf(TEXT("  Applied W_Settings_Entry.SettingName = %s"), *TypedCDO->SettingName.ToString()));
+					ApplyCount++;
+				}
+				if (EntryJson->HasField(TEXT("SettingDescription")))
+				{
+					TypedCDO->SettingDescription = FText::FromString(EntryJson->GetStringField(TEXT("SettingDescription")));
+					Lines.Add(FString::Printf(TEXT("  Applied W_Settings_Entry.SettingDescription = %s"), *TypedCDO->SettingDescription.ToString()));
+					ApplyCount++;
+				}
+				if (EntryJson->HasField(TEXT("ButtonText")))
+				{
+					TypedCDO->ButtonText = FText::FromString(EntryJson->GetStringField(TEXT("ButtonText")));
+					Lines.Add(FString::Printf(TEXT("  Applied W_Settings_Entry.ButtonText = %s"), *TypedCDO->ButtonText.ToString()));
+					ApplyCount++;
+				}
+
+				// Apply SettingTag
+				if (EntryJson->HasField(TEXT("SettingTag")))
+				{
+					FString TagStr = EntryJson->GetStringField(TEXT("SettingTag"));
+					// Only apply if it looks like a valid tag (not a struct dump)
+					if (!TagStr.Contains(TEXT("Struct")) && !TagStr.IsEmpty())
+					{
+						TypedCDO->SettingTag = FGameplayTag::RequestGameplayTag(FName(*TagStr), false);
+						Lines.Add(FString::Printf(TEXT("  Applied W_Settings_Entry.SettingTag = %s"), *TagStr));
+						ApplyCount++;
+					}
+				}
+
+				// Mark dirty and save
+				BP->MarkPackageDirty();
+				UEditorAssetLibrary::SaveAsset(TEXT("/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings_Entry"), false);
+				Lines.Add(TEXT("  Saved W_Settings_Entry"));
+			}
+			else
+			{
+				Lines.Add(TEXT("  ERROR: W_Settings_Entry not reparented to C++"));
+				FailCount++;
+			}
+		}
+	}
+
+	// ─────────────────────────────────────────────────────────────────────────
+	// Apply W_Settings_CategoryEntry data
+	// ─────────────────────────────────────────────────────────────────────────
+	if (RootJson->HasField(TEXT("W_Settings_CategoryEntry")))
+	{
+		TSharedPtr<FJsonObject> CategoryJson = RootJson->GetObjectField(TEXT("W_Settings_CategoryEntry"));
+		UBlueprint* BP = LoadObject<UBlueprint>(nullptr, TEXT("/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings_CategoryEntry"));
+		if (BP && BP->GeneratedClass)
+		{
+			UObject* CDO = BP->GeneratedClass->GetDefaultObject();
+			if (UW_Settings_CategoryEntry* TypedCDO = Cast<UW_Settings_CategoryEntry>(CDO))
+			{
+				// Apply colors
+				if (CategoryJson->HasField(TEXT("SelectedColor")))
+				{
+					TypedCDO->SelectedColor = JsonToColor(CategoryJson->GetObjectField(TEXT("SelectedColor")));
+					Lines.Add(TEXT("  Applied W_Settings_CategoryEntry.SelectedColor"));
+					ApplyCount++;
+				}
+				if (CategoryJson->HasField(TEXT("DeselectedColor")))
+				{
+					TypedCDO->DeselectedColor = JsonToColor(CategoryJson->GetObjectField(TEXT("DeselectedColor")));
+					Lines.Add(TEXT("  Applied W_Settings_CategoryEntry.DeselectedColor"));
+					ApplyCount++;
+				}
+
+				// Apply icon
+				if (CategoryJson->HasField(TEXT("Icon")))
+				{
+					FString IconPath = CategoryJson->GetStringField(TEXT("Icon"));
+					TypedCDO->Icon = TSoftObjectPtr<UTexture2D>(FSoftObjectPath(IconPath));
+					Lines.Add(FString::Printf(TEXT("  Applied W_Settings_CategoryEntry.Icon = %s"), *IconPath));
+					ApplyCount++;
+				}
+
+				// Apply SwitcherIndex
+				if (CategoryJson->HasField(TEXT("SwitcherIndex")))
+				{
+					TypedCDO->SwitcherIndex = static_cast<int32>(CategoryJson->GetNumberField(TEXT("SwitcherIndex")));
+					Lines.Add(FString::Printf(TEXT("  Applied W_Settings_CategoryEntry.SwitcherIndex = %d"), TypedCDO->SwitcherIndex));
+					ApplyCount++;
+				}
+
+				// Apply SettingCategory tag
+				if (CategoryJson->HasField(TEXT("SettingCategory")))
+				{
+					FString TagStr = CategoryJson->GetStringField(TEXT("SettingCategory"));
+					TypedCDO->SettingCategory = FGameplayTag::RequestGameplayTag(FName(*TagStr), false);
+					Lines.Add(FString::Printf(TEXT("  Applied W_Settings_CategoryEntry.SettingCategory = %s"), *TagStr));
+					ApplyCount++;
+				}
+
+				BP->MarkPackageDirty();
+				UEditorAssetLibrary::SaveAsset(TEXT("/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings_CategoryEntry"), false);
+				Lines.Add(TEXT("  Saved W_Settings_CategoryEntry"));
+			}
+			else
+			{
+				Lines.Add(TEXT("  ERROR: W_Settings_CategoryEntry not reparented to C++"));
+				FailCount++;
+			}
+		}
+	}
+
+	// ─────────────────────────────────────────────────────────────────────────
+	// Apply W_Settings data
+	// ─────────────────────────────────────────────────────────────────────────
+	if (RootJson->HasField(TEXT("W_Settings")))
+	{
+		TSharedPtr<FJsonObject> SettingsJson = RootJson->GetObjectField(TEXT("W_Settings"));
+		UBlueprint* BP = LoadObject<UBlueprint>(nullptr, TEXT("/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings"));
+		if (BP && BP->GeneratedClass)
+		{
+			UObject* CDO = BP->GeneratedClass->GetDefaultObject();
+			if (UW_Settings* TypedCDO = Cast<UW_Settings>(CDO))
+			{
+				// Apply CategoriesToHide
+				if (SettingsJson->HasField(TEXT("CategoriesToHide")))
+				{
+					TypedCDO->CategoriesToHide.Empty();
+					TArray<TSharedPtr<FJsonValue>> TagsArray = SettingsJson->GetArrayField(TEXT("CategoriesToHide"));
+					for (const TSharedPtr<FJsonValue>& TagValue : TagsArray)
+					{
+						FString TagStr = TagValue->AsString();
+						FGameplayTag Tag = FGameplayTag::RequestGameplayTag(FName(*TagStr), false);
+						if (Tag.IsValid())
+						{
+							TypedCDO->CategoriesToHide.Add(Tag);
+						}
+					}
+					Lines.Add(FString::Printf(TEXT("  Applied W_Settings.CategoriesToHide = %d tags"), TypedCDO->CategoriesToHide.Num()));
+					ApplyCount++;
+				}
+
+				// Apply QuitToDesktop
+				if (SettingsJson->HasField(TEXT("QuitToDesktop?")))
+				{
+					TypedCDO->QuitToDesktop = SettingsJson->GetBoolField(TEXT("QuitToDesktop?"));
+					Lines.Add(FString::Printf(TEXT("  Applied W_Settings.QuitToDesktop = %s"), TypedCDO->QuitToDesktop ? TEXT("true") : TEXT("false")));
+					ApplyCount++;
+				}
+
+				BP->MarkPackageDirty();
+				UEditorAssetLibrary::SaveAsset(TEXT("/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings"), false);
+				Lines.Add(TEXT("  Saved W_Settings"));
+			}
+			else
+			{
+				Lines.Add(TEXT("  ERROR: W_Settings not reparented to C++"));
+				FailCount++;
+			}
+		}
+	}
+
+	// ─────────────────────────────────────────────────────────────────────────
+	// Apply PDA_CustomSettings data
+	// ─────────────────────────────────────────────────────────────────────────
+	if (RootJson->HasField(TEXT("PDA_CustomSettings")))
+	{
+		TSharedPtr<FJsonObject> CustomJson = RootJson->GetObjectField(TEXT("PDA_CustomSettings"));
+		UBlueprint* BP = LoadObject<UBlueprint>(nullptr, TEXT("/Game/SoulslikeFramework/Data/PDA_CustomSettings"));
+		if (BP && BP->GeneratedClass)
+		{
+			UObject* CDO = BP->GeneratedClass->GetDefaultObject();
+			if (UPDA_CustomSettings* TypedCDO = Cast<UPDA_CustomSettings>(CDO))
+			{
+				// Try both Blueprint property names and C++ names
+				if (CustomJson->HasField(TEXT("Invert Cam X")))
+				{
+					TypedCDO->bInvertCamX = CustomJson->GetBoolField(TEXT("Invert Cam X"));
+					Lines.Add(FString::Printf(TEXT("  Applied PDA_CustomSettings.bInvertCamX = %s"), TypedCDO->bInvertCamX ? TEXT("true") : TEXT("false")));
+					ApplyCount++;
+				}
+				if (CustomJson->HasField(TEXT("Invert Cam Y")))
+				{
+					TypedCDO->bInvertCamY = CustomJson->GetBoolField(TEXT("Invert Cam Y"));
+					Lines.Add(FString::Printf(TEXT("  Applied PDA_CustomSettings.bInvertCamY = %s"), TypedCDO->bInvertCamY ? TEXT("true") : TEXT("false")));
+					ApplyCount++;
+				}
+				if (CustomJson->HasField(TEXT("CamSpeed")))
+				{
+					TypedCDO->CamSpeed = CustomJson->GetNumberField(TEXT("CamSpeed"));
+					Lines.Add(FString::Printf(TEXT("  Applied PDA_CustomSettings.CamSpeed = %f"), TypedCDO->CamSpeed));
+					ApplyCount++;
+				}
+
+				BP->MarkPackageDirty();
+				UEditorAssetLibrary::SaveAsset(TEXT("/Game/SoulslikeFramework/Data/PDA_CustomSettings"), false);
+				Lines.Add(TEXT("  Saved PDA_CustomSettings"));
+			}
+			else
+			{
+				Lines.Add(TEXT("  ERROR: PDA_CustomSettings not reparented to C++"));
+				FailCount++;
+			}
+		}
+	}
+
+	Lines.Add(FString::Printf(TEXT("=== APPLY COMPLETE: %d applied, %d failed ==="), ApplyCount, FailCount));
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+FString USLFAutomationLibrary::VerifySettingsWidgetData(const FString& JsonFilePath)
+{
+	TArray<FString> Lines;
+	Lines.Add(TEXT("=== VERIFYING SETTINGS WIDGET DATA ==="));
+
+	// Load expected data from JSON
+	FString JsonContent;
+	if (!FFileHelper::LoadFileToString(JsonContent, *JsonFilePath))
+	{
+		Lines.Add(FString::Printf(TEXT("ERROR: Failed to load JSON from: %s"), *JsonFilePath));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	TSharedPtr<FJsonObject> RootJson;
+	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonContent);
+	if (!FJsonSerializer::Deserialize(Reader, RootJson) || !RootJson.IsValid())
+	{
+		Lines.Add(TEXT("ERROR: Failed to parse JSON"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	int32 PassCount = 0;
+	int32 FailCount = 0;
+
+	// Helper to compare colors
+	auto CompareColor = [](const FLinearColor& A, const TSharedPtr<FJsonObject>& B) -> bool
+	{
+		float Epsilon = 0.01f;
+		return FMath::IsNearlyEqual(A.R, B->GetNumberField(TEXT("R")), Epsilon) &&
+			FMath::IsNearlyEqual(A.G, B->GetNumberField(TEXT("G")), Epsilon) &&
+			FMath::IsNearlyEqual(A.B, B->GetNumberField(TEXT("B")), Epsilon) &&
+			FMath::IsNearlyEqual(A.A, B->GetNumberField(TEXT("A")), Epsilon);
+	};
+
+	// ─────────────────────────────────────────────────────────────────────────
+	// Verify W_Settings_Entry
+	// ─────────────────────────────────────────────────────────────────────────
+	Lines.Add(TEXT("\n--- W_Settings_Entry ---"));
+	if (RootJson->HasField(TEXT("W_Settings_Entry")))
+	{
+		TSharedPtr<FJsonObject> ExpectedJson = RootJson->GetObjectField(TEXT("W_Settings_Entry"));
+		UBlueprint* BP = LoadObject<UBlueprint>(nullptr, TEXT("/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings_Entry"));
+		if (BP && BP->GeneratedClass)
+		{
+			if (UW_Settings_Entry* CDO = Cast<UW_Settings_Entry>(BP->GeneratedClass->GetDefaultObject()))
+			{
+				// Check colors
+				if (ExpectedJson->HasField(TEXT("UnhoveredColor")))
+				{
+					if (CompareColor(CDO->UnhoveredColor, ExpectedJson->GetObjectField(TEXT("UnhoveredColor"))))
+					{
+						Lines.Add(TEXT("  [PASS] UnhoveredColor matches"));
+						PassCount++;
+					}
+					else
+					{
+						Lines.Add(FString::Printf(TEXT("  [FAIL] UnhoveredColor: got (%.2f,%.2f,%.2f,%.2f)"),
+							CDO->UnhoveredColor.R, CDO->UnhoveredColor.G, CDO->UnhoveredColor.B, CDO->UnhoveredColor.A));
+						FailCount++;
+					}
+				}
+				if (ExpectedJson->HasField(TEXT("HoveredColor")))
+				{
+					if (CompareColor(CDO->HoveredColor, ExpectedJson->GetObjectField(TEXT("HoveredColor"))))
+					{
+						Lines.Add(TEXT("  [PASS] HoveredColor matches"));
+						PassCount++;
+					}
+					else
+					{
+						Lines.Add(FString::Printf(TEXT("  [FAIL] HoveredColor: got (%.2f,%.2f,%.2f,%.2f)"),
+							CDO->HoveredColor.R, CDO->HoveredColor.G, CDO->HoveredColor.B, CDO->HoveredColor.A));
+						FailCount++;
+					}
+				}
+
+				// Check enum
+				if (ExpectedJson->HasField(TEXT("EntryType")))
+				{
+					int32 Expected = static_cast<int32>(ExpectedJson->GetNumberField(TEXT("EntryType")));
+					int32 Actual = static_cast<int32>(CDO->EntryType);
+					if (Expected == Actual)
+					{
+						Lines.Add(FString::Printf(TEXT("  [PASS] EntryType = %d"), Actual));
+						PassCount++;
+					}
+					else
+					{
+						Lines.Add(FString::Printf(TEXT("  [FAIL] EntryType: expected %d, got %d"), Expected, Actual));
+						FailCount++;
+					}
+				}
+
+				// Check text fields
+				if (ExpectedJson->HasField(TEXT("SettingName")))
+				{
+					FString Expected = ExpectedJson->GetStringField(TEXT("SettingName"));
+					FString Actual = CDO->SettingName.ToString();
+					if (Expected.Equals(Actual, ESearchCase::CaseSensitive))
+					{
+						Lines.Add(FString::Printf(TEXT("  [PASS] SettingName = %s"), *Actual));
+						PassCount++;
+					}
+					else
+					{
+						Lines.Add(FString::Printf(TEXT("  [FAIL] SettingName: expected '%s', got '%s'"), *Expected, *Actual));
+						FailCount++;
+					}
+				}
+				if (ExpectedJson->HasField(TEXT("SettingDescription")))
+				{
+					FString Expected = ExpectedJson->GetStringField(TEXT("SettingDescription"));
+					FString Actual = CDO->SettingDescription.ToString();
+					if (Expected.Equals(Actual, ESearchCase::CaseSensitive))
+					{
+						Lines.Add(FString::Printf(TEXT("  [PASS] SettingDescription = %s"), *Actual));
+						PassCount++;
+					}
+					else
+					{
+						Lines.Add(FString::Printf(TEXT("  [FAIL] SettingDescription: expected '%s', got '%s'"), *Expected, *Actual));
+						FailCount++;
+					}
+				}
+				if (ExpectedJson->HasField(TEXT("ButtonText")))
+				{
+					FString Expected = ExpectedJson->GetStringField(TEXT("ButtonText"));
+					FString Actual = CDO->ButtonText.ToString();
+					if (Expected.Equals(Actual, ESearchCase::CaseSensitive))
+					{
+						Lines.Add(FString::Printf(TEXT("  [PASS] ButtonText = %s"), *Actual));
+						PassCount++;
+					}
+					else
+					{
+						Lines.Add(FString::Printf(TEXT("  [FAIL] ButtonText: expected '%s', got '%s'"), *Expected, *Actual));
+						FailCount++;
+					}
+				}
+			}
+			else
+			{
+				Lines.Add(TEXT("  [FAIL] Not reparented to C++"));
+				FailCount++;
+			}
+		}
+	}
+
+	// ─────────────────────────────────────────────────────────────────────────
+	// Verify W_Settings_CategoryEntry
+	// ─────────────────────────────────────────────────────────────────────────
+	Lines.Add(TEXT("\n--- W_Settings_CategoryEntry ---"));
+	if (RootJson->HasField(TEXT("W_Settings_CategoryEntry")))
+	{
+		TSharedPtr<FJsonObject> ExpectedJson = RootJson->GetObjectField(TEXT("W_Settings_CategoryEntry"));
+		UBlueprint* BP = LoadObject<UBlueprint>(nullptr, TEXT("/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings_CategoryEntry"));
+		if (BP && BP->GeneratedClass)
+		{
+			if (UW_Settings_CategoryEntry* CDO = Cast<UW_Settings_CategoryEntry>(BP->GeneratedClass->GetDefaultObject()))
+			{
+				// Check Icon
+				if (ExpectedJson->HasField(TEXT("Icon")))
+				{
+					FString ExpectedPath = ExpectedJson->GetStringField(TEXT("Icon"));
+					FString ActualPath = CDO->Icon.ToSoftObjectPath().ToString();
+					if (ExpectedPath == ActualPath)
+					{
+						Lines.Add(FString::Printf(TEXT("  [PASS] Icon = %s"), *ActualPath));
+						PassCount++;
+					}
+					else
+					{
+						Lines.Add(FString::Printf(TEXT("  [FAIL] Icon: expected %s, got %s"), *ExpectedPath, *ActualPath));
+						FailCount++;
+					}
+				}
+
+				// Check colors
+				if (ExpectedJson->HasField(TEXT("SelectedColor")))
+				{
+					if (CompareColor(CDO->SelectedColor, ExpectedJson->GetObjectField(TEXT("SelectedColor"))))
+					{
+						Lines.Add(TEXT("  [PASS] SelectedColor matches"));
+						PassCount++;
+					}
+					else
+					{
+						Lines.Add(FString::Printf(TEXT("  [FAIL] SelectedColor: got (%.2f,%.2f,%.2f,%.2f)"),
+							CDO->SelectedColor.R, CDO->SelectedColor.G, CDO->SelectedColor.B, CDO->SelectedColor.A));
+						FailCount++;
+					}
+				}
+
+				// Check SwitcherIndex
+				if (ExpectedJson->HasField(TEXT("SwitcherIndex")))
+				{
+					int32 Expected = static_cast<int32>(ExpectedJson->GetNumberField(TEXT("SwitcherIndex")));
+					if (CDO->SwitcherIndex == Expected)
+					{
+						Lines.Add(FString::Printf(TEXT("  [PASS] SwitcherIndex = %d"), CDO->SwitcherIndex));
+						PassCount++;
+					}
+					else
+					{
+						Lines.Add(FString::Printf(TEXT("  [FAIL] SwitcherIndex: expected %d, got %d"), Expected, CDO->SwitcherIndex));
+						FailCount++;
+					}
+				}
+			}
+			else
+			{
+				Lines.Add(TEXT("  [FAIL] Not reparented to C++"));
+				FailCount++;
+			}
+		}
+	}
+
+	// ─────────────────────────────────────────────────────────────────────────
+	// Verify PDA_CustomSettings
+	// ─────────────────────────────────────────────────────────────────────────
+	Lines.Add(TEXT("\n--- PDA_CustomSettings ---"));
+	if (RootJson->HasField(TEXT("PDA_CustomSettings")))
+	{
+		TSharedPtr<FJsonObject> ExpectedJson = RootJson->GetObjectField(TEXT("PDA_CustomSettings"));
+		UBlueprint* BP = LoadObject<UBlueprint>(nullptr, TEXT("/Game/SoulslikeFramework/Data/PDA_CustomSettings"));
+		if (BP && BP->GeneratedClass)
+		{
+			if (UPDA_CustomSettings* CDO = Cast<UPDA_CustomSettings>(BP->GeneratedClass->GetDefaultObject()))
+			{
+				// Check camera settings
+				if (ExpectedJson->HasField(TEXT("CamSpeed")))
+				{
+					double Expected = ExpectedJson->GetNumberField(TEXT("CamSpeed"));
+					if (FMath::IsNearlyEqual(CDO->CamSpeed, Expected, 0.01))
+					{
+						Lines.Add(FString::Printf(TEXT("  [PASS] CamSpeed = %f"), CDO->CamSpeed));
+						PassCount++;
+					}
+					else
+					{
+						Lines.Add(FString::Printf(TEXT("  [FAIL] CamSpeed: expected %f, got %f"), Expected, CDO->CamSpeed));
+						FailCount++;
+					}
+				}
+
+				Lines.Add(FString::Printf(TEXT("  [INFO] bInvertCamX = %s"), CDO->bInvertCamX ? TEXT("true") : TEXT("false")));
+				Lines.Add(FString::Printf(TEXT("  [INFO] bInvertCamY = %s"), CDO->bInvertCamY ? TEXT("true") : TEXT("false")));
+				PassCount += 2;
+			}
+			else
+			{
+				Lines.Add(TEXT("  [FAIL] Not reparented to C++"));
+				FailCount++;
+			}
+		}
+	}
+
+	Lines.Add(TEXT(""));
+	Lines.Add(TEXT("============================================================"));
+	Lines.Add(FString::Printf(TEXT("VERIFICATION SUMMARY: %d passed, %d failed"), PassCount, FailCount));
+	Lines.Add(TEXT("============================================================"));
+
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+FString USLFAutomationLibrary::MigrateSettingsWidgets(const FString& JsonFilePath)
+{
+	TArray<FString> Lines;
+	Lines.Add(TEXT("=== FULL SETTINGS WIDGET MIGRATION ==="));
+
+	struct FMigrationTarget
+	{
+		FString BlueprintPath;
+		FString CppClassPath;
+	};
+
+	// CRITICAL: Order by dependency - leaf Blueprints FIRST, dependent ones LAST
+	// W_Settings depends on W_Settings_Entry and W_Settings_CategoryEntry
+	// If W_Settings is processed first, loading it triggers compile of dependencies
+	TArray<FMigrationTarget> Targets = {
+		// Leaf Blueprints - no dependencies, process first
+		{TEXT("/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings_Entry"), TEXT("/Script/SLFConversion.W_Settings_Entry")},
+		{TEXT("/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings_CategoryEntry"), TEXT("/Script/SLFConversion.W_Settings_CategoryEntry")},
+		{TEXT("/Game/SoulslikeFramework/Data/PDA_CustomSettings"), TEXT("/Script/SLFConversion.PDA_CustomSettings")},
+		// Dependent Blueprint - process LAST after dependencies are cleared
+		{TEXT("/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings"), TEXT("/Script/SLFConversion.W_Settings")},
+	};
+
+	// Step 1: Clear ALL Blueprint logic BEFORE reparenting
+	// This prevents function name conflicts between Blueprint and C++
+	Lines.Add(TEXT("\n--- Step 1: Clearing ALL Blueprint Logic ---"));
+
+	for (const FMigrationTarget& Target : Targets)
+	{
+		UBlueprint* BP = LoadObject<UBlueprint>(nullptr, *Target.BlueprintPath);
+		if (!BP)
+		{
+			Lines.Add(FString::Printf(TEXT("  [SKIP] %s - not found"), *Target.BlueprintPath));
+			continue;
+		}
+
+		// Count before clearing
+		int32 FunctionCount = BP->FunctionGraphs.Num();
+		int32 VarCount = BP->NewVariables.Num();
+		int32 EventGraphNodes = 0;
+		for (UEdGraph* Graph : BP->UbergraphPages)
+		{
+			if (Graph)
+			{
+				EventGraphNodes += Graph->Nodes.Num();
+			}
+		}
+
+		// Remove ALL function graphs (they conflict with C++ functions)
+		TArray<UEdGraph*> GraphsToRemove;
+		for (UEdGraph* Graph : BP->FunctionGraphs)
+		{
+			if (Graph)
+			{
+				GraphsToRemove.Add(Graph);
+			}
+		}
+		for (UEdGraph* Graph : GraphsToRemove)
+		{
+			FBlueprintEditorUtils::RemoveGraph(BP, Graph);
+		}
+
+		// Remove ALL macro graphs
+		TArray<UEdGraph*> MacrosToRemove;
+		for (UEdGraph* Graph : BP->MacroGraphs)
+		{
+			if (Graph)
+			{
+				MacrosToRemove.Add(Graph);
+			}
+		}
+		for (UEdGraph* Graph : MacrosToRemove)
+		{
+			FBlueprintEditorUtils::RemoveGraph(BP, Graph);
+		}
+
+		// Remove ALL event dispatchers (from NewVariables)
+		TArray<FName> DispatchersToRemove;
+		for (const FBPVariableDescription& Var : BP->NewVariables)
+		{
+			if (Var.VarType.PinCategory == UEdGraphSchema_K2::PC_MCDelegate)
+			{
+				DispatchersToRemove.Add(Var.VarName);
+			}
+		}
+		for (const FName& DispName : DispatchersToRemove)
+		{
+			FBlueprintEditorUtils::RemoveMemberVariable(BP, DispName);
+		}
+
+		// Remove ALL Blueprint variables (C++ defines them now)
+		TArray<FName> VarsToRemove;
+		for (const FBPVariableDescription& Var : BP->NewVariables)
+		{
+			VarsToRemove.Add(Var.VarName);
+		}
+		for (const FName& VarName : VarsToRemove)
+		{
+			FBlueprintEditorUtils::RemoveMemberVariable(BP, VarName);
+		}
+
+		// Clear ALL EventGraph nodes
+		for (UEdGraph* Graph : BP->UbergraphPages)
+		{
+			if (Graph)
+			{
+				TArray<UEdGraphNode*> NodesToRemove;
+				for (UEdGraphNode* Node : Graph->Nodes)
+				{
+					if (Node)
+					{
+						NodesToRemove.Add(Node);
+					}
+				}
+				for (UEdGraphNode* Node : NodesToRemove)
+				{
+					Graph->RemoveNode(Node);
+				}
+			}
+		}
+
+		// For WidgetBlueprints, also clear delegate bindings
+		if (UWidgetBlueprint* WidgetBP = Cast<UWidgetBlueprint>(BP))
+		{
+			// Clear widget delegate bindings (OnClicked -> function mappings)
+			ClearWidgetDelegateBindings(WidgetBP);
+
+			// Clear any animation bindings
+			WidgetBP->Bindings.Empty();
+		}
+
+		// DO NOT mark as structurally modified yet - that triggers compile
+		// Just mark the package as dirty
+		BP->GetOutermost()->MarkPackageDirty();
+		BP->Modify();
+
+		// CRITICAL: Set status to Unknown to prevent auto-compile
+		BP->Status = BS_Unknown;
+
+		// Save using EditorAssetLibrary which skips compilation
+		bool bSavedAfterClear = UEditorAssetLibrary::SaveAsset(Target.BlueprintPath, false);
+
+		Lines.Add(FString::Printf(TEXT("  [OK] %s - Removed %d funcs, %d vars, %d dispatchers, %d event nodes (Saved: %s)"),
+			*FPaths::GetBaseFilename(Target.BlueprintPath),
+			GraphsToRemove.Num(), VarsToRemove.Num(), DispatchersToRemove.Num(), EventGraphNodes,
+			bSavedAfterClear ? TEXT("YES") : TEXT("NO")));
+	}
+
+	// Force garbage collection to ensure changes are flushed
+	CollectGarbage(GARBAGE_COLLECTION_KEEPFLAGS);
+
+	// Step 2: Reparent all widgets to C++ (now safe - no conflicts)
+	Lines.Add(TEXT("\n--- Step 2: Reparenting to C++ ---"));
+
+	int32 ReparentSuccess = 0;
+	int32 ReparentFail = 0;
+
+	for (const FMigrationTarget& Target : Targets)
+	{
+		UBlueprint* BP = LoadObject<UBlueprint>(nullptr, *Target.BlueprintPath);
+		if (!BP)
+		{
+			Lines.Add(FString::Printf(TEXT("  [FAIL] %s - not found"), *Target.BlueprintPath));
+			ReparentFail++;
+			continue;
+		}
+
+		// Load new parent class
+		UClass* NewParent = LoadClass<UObject>(nullptr, *Target.CppClassPath);
+		if (!NewParent)
+		{
+			Lines.Add(FString::Printf(TEXT("  [FAIL] %s - C++ class not found: %s"), *Target.BlueprintPath, *Target.CppClassPath));
+			ReparentFail++;
+			continue;
+		}
+
+		// Check if already reparented
+		if (BP->ParentClass == NewParent)
+		{
+			Lines.Add(FString::Printf(TEXT("  [OK] %s - already reparented"), *FPaths::GetBaseFilename(Target.BlueprintPath)));
+			ReparentSuccess++;
+			continue;
+		}
+
+		// Reparent
+		BP->ParentClass = NewParent;
+		BP->Modify();
+
+		Lines.Add(FString::Printf(TEXT("  [OK] %s -> %s"), *FPaths::GetBaseFilename(Target.BlueprintPath), *NewParent->GetName()));
+		ReparentSuccess++;
+	}
+
+	Lines.Add(FString::Printf(TEXT("Reparenting: %d success, %d failed"), ReparentSuccess, ReparentFail));
+
+	// Step 3: Compile and save all Blueprints
+	Lines.Add(TEXT("\n--- Step 3: Compiling and Saving ---"));
+
+	int32 CompileSuccess = 0;
+	int32 CompileFail = 0;
+
+	for (const FMigrationTarget& Target : Targets)
+	{
+		UBlueprint* BP = LoadObject<UBlueprint>(nullptr, *Target.BlueprintPath);
+		if (!BP)
+		{
+			CompileFail++;
+			continue;
+		}
+
+		// Compile
+		FKismetEditorUtilities::CompileBlueprint(BP);
+
+		// Check for errors
+		bool bHasErrors = BP->Status == BS_Error;
+		if (bHasErrors)
+		{
+			Lines.Add(FString::Printf(TEXT("  [WARN] %s - Compiled with errors"), *FPaths::GetBaseFilename(Target.BlueprintPath)));
+		}
+
+		// Save
+		FString PackagePath = BP->GetOutermost()->GetPathName();
+		UPackage* Package = BP->GetOutermost();
+		FString PackageFilename = FPackageName::LongPackageNameToFilename(PackagePath, FPackageName::GetAssetPackageExtension());
+		bool bSaved = UPackage::SavePackage(Package, BP, *PackageFilename, FSavePackageArgs());
+
+		if (bSaved)
+		{
+			Lines.Add(FString::Printf(TEXT("  [OK] %s - Saved"), *FPaths::GetBaseFilename(Target.BlueprintPath)));
+			CompileSuccess++;
+		}
+		else
+		{
+			Lines.Add(FString::Printf(TEXT("  [FAIL] %s - Save failed"), *FPaths::GetBaseFilename(Target.BlueprintPath)));
+			CompileFail++;
+		}
+	}
+
+	Lines.Add(FString::Printf(TEXT("Compile/Save: %d success, %d failed"), CompileSuccess, CompileFail));
+
+	// Step 4: Apply data from JSON
+	Lines.Add(TEXT("\n--- Step 4: Applying Data from Cache ---"));
+	FString ApplyResult = ApplySettingsWidgetData(JsonFilePath);
+	Lines.Add(ApplyResult);
+
+	// Step 5: Final verification
+	Lines.Add(TEXT("\n--- Step 5: Verification ---"));
+	FString VerifyResult = VerifySettingsWidgetData(JsonFilePath);
+	Lines.Add(VerifyResult);
+
+	Lines.Add(TEXT("\n=== MIGRATION COMPLETE ==="));
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+FString USLFAutomationLibrary::DiagnoseSettingsWidgets()
+{
+	TArray<FString> Lines;
+	Lines.Add(TEXT("=== DIAGNOSING SETTINGS WIDGETS ==="));
+
+	struct FDiagTarget
+	{
+		FString Name;
+		FString Path;
+		FString ExpectedCppClass;
+	};
+
+	TArray<FDiagTarget> Targets = {
+		{TEXT("W_Settings"), TEXT("/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings"), TEXT("W_Settings")},
+		{TEXT("W_Settings_Entry"), TEXT("/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings_Entry"), TEXT("W_Settings_Entry")},
+		{TEXT("W_Settings_CategoryEntry"), TEXT("/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings_CategoryEntry"), TEXT("W_Settings_CategoryEntry")},
+		{TEXT("PDA_CustomSettings"), TEXT("/Game/SoulslikeFramework/Data/PDA_CustomSettings"), TEXT("PDA_CustomSettings")},
+	};
+
+	for (const FDiagTarget& Target : Targets)
+	{
+		Lines.Add(FString::Printf(TEXT("\n--- %s ---"), *Target.Name));
+
+		UBlueprint* BP = LoadObject<UBlueprint>(nullptr, *Target.Path);
+		if (!BP)
+		{
+			Lines.Add(TEXT("  ERROR: Blueprint not found"));
+			continue;
+		}
+
+		// Check parent class
+		if (BP->ParentClass)
+		{
+			FString ParentName = BP->ParentClass->GetName();
+			bool bIsReparented = ParentName.Contains(Target.ExpectedCppClass);
+			Lines.Add(FString::Printf(TEXT("  Parent: %s %s"),
+				*ParentName,
+				bIsReparented ? TEXT("[REPARENTED]") : TEXT("[NOT REPARENTED]")));
+		}
+
+		// Check generated class
+		if (BP->GeneratedClass)
+		{
+			Lines.Add(FString::Printf(TEXT("  Generated: %s"), *BP->GeneratedClass->GetName()));
+
+			// Try to cast to C++ class
+			UObject* CDO = BP->GeneratedClass->GetDefaultObject();
+			Lines.Add(FString::Printf(TEXT("  CDO: %s"), CDO ? *CDO->GetClass()->GetName() : TEXT("NULL")));
+
+			// Check if C++ properties are accessible
+			if (Target.Name == TEXT("W_Settings_Entry"))
+			{
+				if (UW_Settings_Entry* TypedCDO = Cast<UW_Settings_Entry>(CDO))
+				{
+					Lines.Add(FString::Printf(TEXT("  C++ Cast: SUCCESS")));
+					Lines.Add(FString::Printf(TEXT("  EntryType: %d"), static_cast<int32>(TypedCDO->EntryType)));
+					Lines.Add(FString::Printf(TEXT("  Resolutions TMap: %d entries"), TypedCDO->Resolutions.Num()));
+					Lines.Add(FString::Printf(TEXT("  WindowModes TMap: %d entries"), TypedCDO->WindowModes.Num()));
+				}
+				else
+				{
+					Lines.Add(TEXT("  C++ Cast: FAILED - not reparented to C++"));
+				}
+			}
+			else if (Target.Name == TEXT("PDA_CustomSettings"))
+			{
+				if (UPDA_CustomSettings* TypedCDO = Cast<UPDA_CustomSettings>(CDO))
+				{
+					Lines.Add(TEXT("  C++ Cast: SUCCESS"));
+					Lines.Add(FString::Printf(TEXT("  bInvertCamX: %s"), TypedCDO->bInvertCamX ? TEXT("true") : TEXT("false")));
+					Lines.Add(FString::Printf(TEXT("  bInvertCamY: %s"), TypedCDO->bInvertCamY ? TEXT("true") : TEXT("false")));
+					Lines.Add(FString::Printf(TEXT("  CamSpeed: %f"), TypedCDO->CamSpeed));
+				}
+				else
+				{
+					Lines.Add(TEXT("  C++ Cast: FAILED"));
+				}
+			}
+		}
+
+		// Check EventGraph node count
+		bool bHasLogic = HasEventGraphLogic(BP);
+		Lines.Add(FString::Printf(TEXT("  EventGraph has logic: %s"),
+			bHasLogic ? TEXT("YES (needs clearing)") : TEXT("NO (cleared)")));
+	}
+
+	Lines.Add(TEXT("\n=== DIAGNOSIS COMPLETE ==="));
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+FString USLFAutomationLibrary::ExtractEmbeddedSettingsWidgets(const FString& OutputFilePath, const FString& WidgetBlueprintPath)
+{
+	TArray<FString> Lines;
+	Lines.Add(TEXT("=== EXTRACTING EMBEDDED SETTINGS WIDGETS ==="));
+	Lines.Add(FString::Printf(TEXT("Source: %s"), *WidgetBlueprintPath));
+
+	TSharedPtr<FJsonObject> RootJson = MakeShareable(new FJsonObject);
+	TArray<TSharedPtr<FJsonValue>> EntriesArray;
+	TArray<TSharedPtr<FJsonValue>> CategoriesArray;
+
+	// Helper to convert FLinearColor to JSON
+	auto ColorToJson = [](const FLinearColor& Color) -> TSharedPtr<FJsonObject>
+	{
+		TSharedPtr<FJsonObject> Obj = MakeShareable(new FJsonObject);
+		Obj->SetNumberField(TEXT("R"), Color.R);
+		Obj->SetNumberField(TEXT("G"), Color.G);
+		Obj->SetNumberField(TEXT("B"), Color.B);
+		Obj->SetNumberField(TEXT("A"), Color.A);
+		return Obj;
+	};
+
+	// Load the W_Settings WidgetBlueprint
+	UWidgetBlueprint* WBP = LoadObject<UWidgetBlueprint>(nullptr, *WidgetBlueprintPath);
+	if (!WBP)
+	{
+		Lines.Add(TEXT("ERROR: Failed to load W_Settings WidgetBlueprint"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	Lines.Add(FString::Printf(TEXT("Loaded W_Settings WidgetBlueprint")));
+
+	// Get the WidgetTree
+	UWidgetTree* WidgetTree = WBP->WidgetTree;
+	if (!WidgetTree)
+	{
+		Lines.Add(TEXT("ERROR: WidgetTree is null"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// Iterate through all widgets in the tree
+	TArray<UWidget*> AllWidgets;
+	WidgetTree->GetAllWidgets(AllWidgets);
+	Lines.Add(FString::Printf(TEXT("Found %d widgets in WidgetTree"), AllWidgets.Num()));
+
+	for (UWidget* Widget : AllWidgets)
+	{
+		if (!Widget) continue;
+
+		FString WidgetName = Widget->GetName();
+		FString ClassName = Widget->GetClass()->GetName();
+
+		// Check if it's a W_Settings_Entry instance
+		if (ClassName.Contains(TEXT("W_Settings_Entry")) && !ClassName.Contains(TEXT("CategoryEntry")))
+		{
+			TSharedPtr<FJsonObject> EntryJson = MakeShareable(new FJsonObject);
+			EntryJson->SetStringField(TEXT("WidgetName"), WidgetName);
+			EntryJson->SetStringField(TEXT("ClassName"), ClassName);
+
+			Lines.Add(FString::Printf(TEXT("\n  Entry: %s (%s)"), *WidgetName, *ClassName));
+
+			// Extract properties using reflection
+			UClass* WidgetClass = Widget->GetClass();
+			for (TFieldIterator<FProperty> PropIt(WidgetClass); PropIt; ++PropIt)
+			{
+				FProperty* Prop = *PropIt;
+				FString PropName = Prop->GetName();
+
+				// Skip common UWidget properties we don't need
+				if (PropName.StartsWith(TEXT("b")) && PropName.Len() > 3 && FChar::IsUpper(PropName[1])) continue;
+				if (PropName == TEXT("Slot") || PropName == TEXT("ToolTipWidget") || PropName == TEXT("Cursor")) continue;
+
+				if (FStructProperty* StructProp = CastField<FStructProperty>(Prop))
+				{
+					// FGameplayTag
+					if (StructProp->Struct == TBaseStructure<FGameplayTag>::Get())
+					{
+						FGameplayTag* Tag = StructProp->ContainerPtrToValuePtr<FGameplayTag>(Widget);
+						if (Tag)
+						{
+							EntryJson->SetStringField(PropName, Tag->ToString());
+							if (Tag->IsValid())
+							{
+								Lines.Add(FString::Printf(TEXT("    %s = %s"), *PropName, *Tag->ToString()));
+							}
+						}
+					}
+					// FLinearColor
+					else if (StructProp->Struct == TBaseStructure<FLinearColor>::Get())
+					{
+						FLinearColor* Color = StructProp->ContainerPtrToValuePtr<FLinearColor>(Widget);
+						if (Color)
+						{
+							EntryJson->SetObjectField(PropName, ColorToJson(*Color));
+						}
+					}
+				}
+				else if (FTextProperty* TextProp = CastField<FTextProperty>(Prop))
+				{
+					FText* Text = TextProp->ContainerPtrToValuePtr<FText>(Widget);
+					if (Text && !Text->IsEmpty())
+					{
+						EntryJson->SetStringField(PropName, Text->ToString());
+						Lines.Add(FString::Printf(TEXT("    %s = \"%s\""), *PropName, *Text->ToString()));
+					}
+				}
+				else if (FStrProperty* StrProp = CastField<FStrProperty>(Prop))
+				{
+					FString* Str = StrProp->ContainerPtrToValuePtr<FString>(Widget);
+					if (Str && !Str->IsEmpty())
+					{
+						EntryJson->SetStringField(PropName, *Str);
+						Lines.Add(FString::Printf(TEXT("    %s = \"%s\""), *PropName, **Str));
+					}
+				}
+				else if (FEnumProperty* EnumProp = CastField<FEnumProperty>(Prop))
+				{
+					void* ValuePtr = EnumProp->ContainerPtrToValuePtr<void>(Widget);
+					int64 Value = EnumProp->GetUnderlyingProperty()->GetSignedIntPropertyValue(ValuePtr);
+					EntryJson->SetNumberField(PropName, static_cast<double>(Value));
+					Lines.Add(FString::Printf(TEXT("    %s = %lld (enum)"), *PropName, Value));
+				}
+				else if (FByteProperty* ByteProp = CastField<FByteProperty>(Prop))
+				{
+					// Could be enum stored as byte
+					uint8* Value = ByteProp->ContainerPtrToValuePtr<uint8>(Widget);
+					if (Value && ByteProp->Enum)
+					{
+						EntryJson->SetNumberField(PropName, static_cast<double>(*Value));
+						Lines.Add(FString::Printf(TEXT("    %s = %d (%s)"), *PropName, *Value, *ByteProp->Enum->GetName()));
+					}
+				}
+				else if (FIntProperty* IntProp = CastField<FIntProperty>(Prop))
+				{
+					int32* Value = IntProp->ContainerPtrToValuePtr<int32>(Widget);
+					if (Value)
+					{
+						EntryJson->SetNumberField(PropName, static_cast<double>(*Value));
+					}
+				}
+				else if (FBoolProperty* BoolProp = CastField<FBoolProperty>(Prop))
+				{
+					bool Value = BoolProp->GetPropertyValue_InContainer(Widget);
+					EntryJson->SetBoolField(PropName, Value);
+				}
+			}
+
+			EntriesArray.Add(MakeShareable(new FJsonValueObject(EntryJson)));
+		}
+		// Check if it's a W_Settings_CategoryEntry instance
+		else if (ClassName.Contains(TEXT("W_Settings_CategoryEntry")))
+		{
+			TSharedPtr<FJsonObject> CategoryJson = MakeShareable(new FJsonObject);
+			CategoryJson->SetStringField(TEXT("WidgetName"), WidgetName);
+			CategoryJson->SetStringField(TEXT("ClassName"), ClassName);
+
+			Lines.Add(FString::Printf(TEXT("\n  Category: %s (%s)"), *WidgetName, *ClassName));
+
+			// Extract properties
+			UClass* WidgetClass = Widget->GetClass();
+			for (TFieldIterator<FProperty> PropIt(WidgetClass); PropIt; ++PropIt)
+			{
+				FProperty* Prop = *PropIt;
+				FString PropName = Prop->GetName();
+
+				if (FStructProperty* StructProp = CastField<FStructProperty>(Prop))
+				{
+					if (StructProp->Struct == TBaseStructure<FGameplayTag>::Get())
+					{
+						FGameplayTag* Tag = StructProp->ContainerPtrToValuePtr<FGameplayTag>(Widget);
+						if (Tag)
+						{
+							CategoryJson->SetStringField(PropName, Tag->ToString());
+							if (Tag->IsValid())
+							{
+								Lines.Add(FString::Printf(TEXT("    %s = %s"), *PropName, *Tag->ToString()));
+							}
+						}
+					}
+					else if (StructProp->Struct == TBaseStructure<FLinearColor>::Get())
+					{
+						FLinearColor* Color = StructProp->ContainerPtrToValuePtr<FLinearColor>(Widget);
+						if (Color)
+						{
+							CategoryJson->SetObjectField(PropName, ColorToJson(*Color));
+						}
+					}
+				}
+				else if (FTextProperty* TextProp = CastField<FTextProperty>(Prop))
+				{
+					FText* Text = TextProp->ContainerPtrToValuePtr<FText>(Widget);
+					if (Text && !Text->IsEmpty())
+					{
+						CategoryJson->SetStringField(PropName, Text->ToString());
+						Lines.Add(FString::Printf(TEXT("    %s = \"%s\""), *PropName, *Text->ToString()));
+					}
+				}
+				else if (FIntProperty* IntProp = CastField<FIntProperty>(Prop))
+				{
+					int32* Value = IntProp->ContainerPtrToValuePtr<int32>(Widget);
+					if (Value)
+					{
+						CategoryJson->SetNumberField(PropName, static_cast<double>(*Value));
+						Lines.Add(FString::Printf(TEXT("    %s = %d"), *PropName, *Value));
+					}
+				}
+				else if (FSoftObjectProperty* SoftObjProp = CastField<FSoftObjectProperty>(Prop))
+				{
+					FSoftObjectPtr* SoftPtr = SoftObjProp->ContainerPtrToValuePtr<FSoftObjectPtr>(Widget);
+					if (SoftPtr && !SoftPtr->IsNull())
+					{
+						FString Path = SoftPtr->ToSoftObjectPath().ToString();
+						CategoryJson->SetStringField(PropName, Path);
+						Lines.Add(FString::Printf(TEXT("    %s = %s"), *PropName, *Path));
+					}
+				}
+				else if (FObjectProperty* ObjProp = CastField<FObjectProperty>(Prop))
+				{
+					UObject* Obj = ObjProp->GetObjectPropertyValue_InContainer(Widget);
+					if (Obj)
+					{
+						FString Path = Obj->GetPathName();
+						CategoryJson->SetStringField(PropName, Path);
+						Lines.Add(FString::Printf(TEXT("    %s = %s"), *PropName, *Path));
+					}
+				}
+			}
+
+			CategoriesArray.Add(MakeShareable(new FJsonValueObject(CategoryJson)));
+		}
+	}
+
+	RootJson->SetArrayField(TEXT("Entries"), EntriesArray);
+	RootJson->SetArrayField(TEXT("Categories"), CategoriesArray);
+
+	Lines.Add(FString::Printf(TEXT("\nExtracted %d entries, %d categories"), EntriesArray.Num(), CategoriesArray.Num()));
+
+	// Save to file
+	FString JsonString;
+	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&JsonString);
+	FJsonSerializer::Serialize(RootJson.ToSharedRef(), Writer);
+
+	if (!OutputFilePath.IsEmpty())
+	{
+		if (FFileHelper::SaveStringToFile(JsonString, *OutputFilePath))
+		{
+			Lines.Add(FString::Printf(TEXT("Saved to: %s"), *OutputFilePath));
+		}
+		else
+		{
+			Lines.Add(FString::Printf(TEXT("ERROR: Failed to save to: %s"), *OutputFilePath));
+		}
+	}
+
+	Lines.Add(TEXT("\n=== EXTRACTION COMPLETE ==="));
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+FString USLFAutomationLibrary::ApplyEmbeddedSettingsWidgets(const FString& JsonFilePath)
+{
+	TArray<FString> Lines;
+	Lines.Add(TEXT("=== APPLYING EMBEDDED SETTINGS WIDGETS ==="));
+
+	// Load JSON file
+	FString JsonContent;
+	if (!FFileHelper::LoadFileToString(JsonContent, *JsonFilePath))
+	{
+		Lines.Add(FString::Printf(TEXT("ERROR: Failed to load JSON from: %s"), *JsonFilePath));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	TSharedPtr<FJsonObject> RootJson;
+	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonContent);
+	if (!FJsonSerializer::Deserialize(Reader, RootJson) || !RootJson.IsValid())
+	{
+		Lines.Add(TEXT("ERROR: Failed to parse JSON"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// Load W_Settings WidgetBlueprint
+	UWidgetBlueprint* WBP = LoadObject<UWidgetBlueprint>(nullptr, TEXT("/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings"));
+	if (!WBP || !WBP->WidgetTree)
+	{
+		Lines.Add(TEXT("ERROR: Failed to load W_Settings WidgetBlueprint"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// Get all widgets
+	TArray<UWidget*> AllWidgets;
+	WBP->WidgetTree->GetAllWidgets(AllWidgets);
+
+	// Create map of widget name -> widget for quick lookup
+	TMap<FString, UWidget*> WidgetMap;
+	for (UWidget* Widget : AllWidgets)
+	{
+		if (Widget)
+		{
+			WidgetMap.Add(Widget->GetName(), Widget);
+		}
+	}
+
+	int32 EntriesApplied = 0;
+	int32 CategoriesApplied = 0;
+
+	// Helper to parse color from JSON
+	auto JsonToColor = [](const TSharedPtr<FJsonObject>& Obj) -> FLinearColor
+	{
+		return FLinearColor(
+			Obj->GetNumberField(TEXT("R")),
+			Obj->GetNumberField(TEXT("G")),
+			Obj->GetNumberField(TEXT("B")),
+			Obj->GetNumberField(TEXT("A"))
+		);
+	};
+
+	// Apply Entry data
+	const TArray<TSharedPtr<FJsonValue>>* EntriesArray;
+	if (RootJson->TryGetArrayField(TEXT("Entries"), EntriesArray))
+	{
+		for (const TSharedPtr<FJsonValue>& EntryValue : *EntriesArray)
+		{
+			TSharedPtr<FJsonObject> EntryJson = EntryValue->AsObject();
+			if (!EntryJson.IsValid()) continue;
+
+			FString WidgetName = EntryJson->GetStringField(TEXT("WidgetName"));
+			UWidget** FoundWidget = WidgetMap.Find(WidgetName);
+			if (!FoundWidget || !*FoundWidget)
+			{
+				Lines.Add(FString::Printf(TEXT("  WARNING: Widget not found: %s"), *WidgetName));
+				continue;
+			}
+
+			UWidget* Widget = *FoundWidget;
+			Lines.Add(FString::Printf(TEXT("  Applying to Entry: %s"), *WidgetName));
+
+			// Apply properties using reflection
+			UClass* WidgetClass = Widget->GetClass();
+
+			// Apply each property from JSON
+			for (const auto& Pair : EntryJson->Values)
+			{
+				FString PropName = Pair.Key;
+				if (PropName == TEXT("WidgetName") || PropName == TEXT("ClassName")) continue;
+
+				FProperty* Prop = WidgetClass->FindPropertyByName(*PropName);
+				if (!Prop)
+				{
+					// Try snake_case version
+					FString SnakeName = PropName;
+					for (int32 i = SnakeName.Len() - 1; i > 0; i--)
+					{
+						if (FChar::IsUpper(SnakeName[i]))
+						{
+							SnakeName.InsertAt(i, TEXT("_"));
+						}
+					}
+					SnakeName = SnakeName.ToLower();
+					Prop = WidgetClass->FindPropertyByName(*SnakeName);
+				}
+				if (!Prop) continue;
+
+				if (FStructProperty* StructProp = CastField<FStructProperty>(Prop))
+				{
+					if (StructProp->Struct == TBaseStructure<FGameplayTag>::Get())
+					{
+						FString TagStr = EntryJson->GetStringField(PropName);
+						if (!TagStr.IsEmpty() && TagStr != TEXT("None"))
+						{
+							FGameplayTag* Tag = StructProp->ContainerPtrToValuePtr<FGameplayTag>(Widget);
+							if (Tag)
+							{
+								*Tag = FGameplayTag::RequestGameplayTag(*TagStr, false);
+								Lines.Add(FString::Printf(TEXT("    Set %s = %s"), *PropName, *TagStr));
+							}
+						}
+					}
+					else if (StructProp->Struct == TBaseStructure<FLinearColor>::Get())
+					{
+						const TSharedPtr<FJsonObject>* ColorObj;
+						if (EntryJson->TryGetObjectField(PropName, ColorObj))
+						{
+							FLinearColor* Color = StructProp->ContainerPtrToValuePtr<FLinearColor>(Widget);
+							if (Color)
+							{
+								*Color = JsonToColor(*ColorObj);
+							}
+						}
+					}
+				}
+				else if (FTextProperty* TextProp = CastField<FTextProperty>(Prop))
+				{
+					FString TextStr = EntryJson->GetStringField(PropName);
+					FText* Text = TextProp->ContainerPtrToValuePtr<FText>(Widget);
+					if (Text)
+					{
+						*Text = FText::FromString(TextStr);
+						Lines.Add(FString::Printf(TEXT("    Set %s = \"%s\""), *PropName, *TextStr));
+					}
+				}
+				else if (FStrProperty* StrProp = CastField<FStrProperty>(Prop))
+				{
+					FString Str = EntryJson->GetStringField(PropName);
+					FString* StrPtr = StrProp->ContainerPtrToValuePtr<FString>(Widget);
+					if (StrPtr)
+					{
+						*StrPtr = Str;
+					}
+				}
+				else if (FEnumProperty* EnumProp = CastField<FEnumProperty>(Prop))
+				{
+					int64 Value = static_cast<int64>(EntryJson->GetNumberField(PropName));
+					void* ValuePtr = EnumProp->ContainerPtrToValuePtr<void>(Widget);
+					EnumProp->GetUnderlyingProperty()->SetIntPropertyValue(ValuePtr, Value);
+					Lines.Add(FString::Printf(TEXT("    Set %s = %lld"), *PropName, Value));
+				}
+				else if (FByteProperty* ByteProp = CastField<FByteProperty>(Prop))
+				{
+					uint8 Value = static_cast<uint8>(EntryJson->GetNumberField(PropName));
+					uint8* ValuePtr = ByteProp->ContainerPtrToValuePtr<uint8>(Widget);
+					if (ValuePtr)
+					{
+						*ValuePtr = Value;
+						Lines.Add(FString::Printf(TEXT("    Set %s = %d"), *PropName, Value));
+					}
+				}
+				else if (FIntProperty* IntProp = CastField<FIntProperty>(Prop))
+				{
+					int32 Value = static_cast<int32>(EntryJson->GetNumberField(PropName));
+					int32* ValuePtr = IntProp->ContainerPtrToValuePtr<int32>(Widget);
+					if (ValuePtr)
+					{
+						*ValuePtr = Value;
+					}
+				}
+				else if (FBoolProperty* BoolProp = CastField<FBoolProperty>(Prop))
+				{
+					bool Value = EntryJson->GetBoolField(PropName);
+					BoolProp->SetPropertyValue_InContainer(Widget, Value);
+				}
+			}
+
+			EntriesApplied++;
+		}
+	}
+
+	// Apply Category data
+	const TArray<TSharedPtr<FJsonValue>>* CategoriesArray;
+	if (RootJson->TryGetArrayField(TEXT("Categories"), CategoriesArray))
+	{
+		for (const TSharedPtr<FJsonValue>& CategoryValue : *CategoriesArray)
+		{
+			TSharedPtr<FJsonObject> CategoryJson = CategoryValue->AsObject();
+			if (!CategoryJson.IsValid()) continue;
+
+			FString WidgetName = CategoryJson->GetStringField(TEXT("WidgetName"));
+			UWidget** FoundWidget = WidgetMap.Find(WidgetName);
+			if (!FoundWidget || !*FoundWidget)
+			{
+				Lines.Add(FString::Printf(TEXT("  WARNING: Widget not found: %s"), *WidgetName));
+				continue;
+			}
+
+			UWidget* Widget = *FoundWidget;
+			Lines.Add(FString::Printf(TEXT("  Applying to Category: %s"), *WidgetName));
+
+			UClass* WidgetClass = Widget->GetClass();
+
+			for (const auto& Pair : CategoryJson->Values)
+			{
+				FString PropName = Pair.Key;
+				if (PropName == TEXT("WidgetName") || PropName == TEXT("ClassName")) continue;
+
+				FProperty* Prop = WidgetClass->FindPropertyByName(*PropName);
+				if (!Prop) continue;
+
+				if (FStructProperty* StructProp = CastField<FStructProperty>(Prop))
+				{
+					if (StructProp->Struct == TBaseStructure<FGameplayTag>::Get())
+					{
+						FString TagStr = CategoryJson->GetStringField(PropName);
+						if (!TagStr.IsEmpty() && TagStr != TEXT("None"))
+						{
+							FGameplayTag* Tag = StructProp->ContainerPtrToValuePtr<FGameplayTag>(Widget);
+							if (Tag)
+							{
+								*Tag = FGameplayTag::RequestGameplayTag(*TagStr, false);
+								Lines.Add(FString::Printf(TEXT("    Set %s = %s"), *PropName, *TagStr));
+							}
+						}
+					}
+					else if (StructProp->Struct == TBaseStructure<FLinearColor>::Get())
+					{
+						const TSharedPtr<FJsonObject>* ColorObj;
+						if (CategoryJson->TryGetObjectField(PropName, ColorObj))
+						{
+							FLinearColor* Color = StructProp->ContainerPtrToValuePtr<FLinearColor>(Widget);
+							if (Color)
+							{
+								*Color = JsonToColor(*ColorObj);
+							}
+						}
+					}
+				}
+				else if (FTextProperty* TextProp = CastField<FTextProperty>(Prop))
+				{
+					FString TextStr = CategoryJson->GetStringField(PropName);
+					FText* Text = TextProp->ContainerPtrToValuePtr<FText>(Widget);
+					if (Text)
+					{
+						*Text = FText::FromString(TextStr);
+						Lines.Add(FString::Printf(TEXT("    Set %s = \"%s\""), *PropName, *TextStr));
+					}
+				}
+				else if (FIntProperty* IntProp = CastField<FIntProperty>(Prop))
+				{
+					int32 Value = static_cast<int32>(CategoryJson->GetNumberField(PropName));
+					int32* ValuePtr = IntProp->ContainerPtrToValuePtr<int32>(Widget);
+					if (ValuePtr)
+					{
+						*ValuePtr = Value;
+						Lines.Add(FString::Printf(TEXT("    Set %s = %d"), *PropName, Value));
+					}
+				}
+			}
+
+			CategoriesApplied++;
+		}
+	}
+
+	// Mark package dirty and save
+	WBP->MarkPackageDirty();
+	UPackage* Package = WBP->GetOutermost();
+	FString PackageFileName = FPackageName::LongPackageNameToFilename(Package->GetName(), FPackageName::GetAssetPackageExtension());
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Standalone;
+	UPackage::SavePackage(Package, WBP, *PackageFileName, SaveArgs);
+
+	Lines.Add(FString::Printf(TEXT("\nApplied %d entries, %d categories"), EntriesApplied, CategoriesApplied));
+	Lines.Add(TEXT("Saved W_Settings"));
+	Lines.Add(TEXT("\n=== APPLICATION COMPLETE ==="));
+
+	FString Result = FString::Join(Lines, TEXT("\n"));
 	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
 	return Result;
 }

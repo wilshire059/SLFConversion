@@ -1,6 +1,7 @@
 // SLFPlayerController.cpp
 #include "SLFPlayerController.h"
 #include "SLFGameInstance.h"
+#include "Kismet/GameplayStatics.h"
 #include "Blueprints/B_SequenceActor.h"
 #include "LevelSequence.h"
 #include "EnhancedInputSubsystems.h"
@@ -164,7 +165,16 @@ void ASLFPlayerController::BeginPlay()
 			// Get game instance and check if first time
 			if (USLFGameInstance* GI = Cast<USLFGameInstance>(GetGameInstance()))
 			{
-				// Always play opening cinematic on PIE (removed FirstTimeOnDemoLevel check per user request)
+				// Check if save exists for the active slot - if so, this is a loaded game, skip cinematic
+				bool bIsLoadedGame = !GI->ActiveSlot.IsEmpty() && UGameplayStatics::DoesSaveGameExist(GI->ActiveSlot, 0);
+
+				UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] FirstTimeOnDemoLevel: %s, IsLoadedGame: %s, ActiveSlot: '%s'"),
+					GI->FirstTimeOnDemoLevel ? TEXT("true") : TEXT("false"),
+					bIsLoadedGame ? TEXT("true") : TEXT("false"),
+					*GI->ActiveSlot);
+
+				if (GI->FirstTimeOnDemoLevel && !bIsLoadedGame)
+				{
 				UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] Playing opening cinematic..."));
 
 				// Load the sequence to play
@@ -220,6 +230,14 @@ void ASLFPlayerController::BeginPlay()
 				else
 				{
 					UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] Could not load LS_ShowcaseRoom sequence"));
+				}
+
+				GI->FirstTimeOnDemoLevel = false;
+				UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] Set FirstTimeOnDemoLevel = false"));
+				}
+				else
+				{
+					UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] Skipping cinematic (loaded game or not first time)"));
 				}
 			}
 		}

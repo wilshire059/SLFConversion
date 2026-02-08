@@ -27,6 +27,7 @@
 // Forward declarations
 class UAnimMontage;
 class UDataTable;
+class UAIInteractionManagerComponent;
 
 
 // Event Dispatchers
@@ -72,6 +73,10 @@ public:
 	FRotator Cache_ControlRotation;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Mesh Merging")
 	bool IsMeshInitialized;
+
+	// Cached NPC dialog manager for dialog advancement
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Dialog")
+	UAIInteractionManagerComponent* CachedNpcInteractionManager;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (3)

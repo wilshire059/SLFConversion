@@ -378,31 +378,51 @@ void UB_StatusEffect::Decay()
 	// Logic from JSON Decay event graph (timer callback):
 	// Called every tick during decay phase
 	// Decrements BuildupPercent, broadcasts OnBuildupUpdated
-	// If BuildupPercent <= 0: Clear timer
+	// If BuildupPercent <= 0: Call EffectFinished to reset state
+	//
+	// NOTE: Decay runs REGARDLESS of bIsTriggered state
+	// For one-shot effects, decay runs AFTER trigger to reduce the bar
 
-	if (!bIsTriggered && IsValid(Data))
+	if (!IsValid(Data))
 	{
-		// Decrease buildup using decay rate from Data
-		double DecayAmount = 1.0;
-		if (UPDA_StatusEffect* StatusData = Cast<UPDA_StatusEffect>(Data))
+		return;
+	}
+
+	// Decrease buildup using decay rate from Data
+	// bp_only uses BaseDecayRate = 2.0, with 0.1 scale factor = 0.2 per tick
+	// At 60fps, this means ~500 ticks to go from 100% to 0% = ~8.3 seconds
+	double DecayAmount = 0.2; // Default slow decay
+	if (UPDA_StatusEffect* StatusData = Cast<UPDA_StatusEffect>(Data))
+	{
+		// Use BaseDecayRate with 0.1 scale factor to match StatusEffectManagerComponent
+		if (StatusData->BaseDecayRate > 0.0)
 		{
-			DecayAmount = StatusData->BaseDecayRate > 0.0 ? StatusData->BaseDecayRate : 1.0;
+			DecayAmount = StatusData->BaseDecayRate * 0.1;
 		}
+	}
 
-		BuildupPercent = FMath::Clamp(BuildupPercent - DecayAmount, 0.0, 100.0);
-		OnBuildupUpdated.Broadcast();
+	double OldPercent = BuildupPercent;
+	BuildupPercent = FMath::Clamp(BuildupPercent - DecayAmount, 0.0, 100.0);
+	OnBuildupUpdated.Broadcast();
 
-		UE_LOG(LogTemp, Verbose, TEXT("UB_StatusEffect::Decay - BuildupPercent: %f"), BuildupPercent);
+	// Log every 60 ticks (~1 second) to avoid spam
+	static int32 DecayLogCounter = 0;
+	if (DecayLogCounter++ % 60 == 0)
+	{
+		UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::Decay - BuildupPercent: %.1f%% (decay rate: %.2f/tick)"), BuildupPercent, DecayAmount);
+	}
 
-		if (BuildupPercent <= 0.0)
+	if (BuildupPercent <= 0.0)
+	{
+		// Clear decay timer
+		if (UWorld* World = GetWorld())
 		{
-			// Clear decay timer
-			if (UWorld* World = GetWorld())
-			{
-				World->GetTimerManager().ClearTimer(DecayTimerHandle);
-			}
-			UE_LOG(LogTemp, Verbose, TEXT("UB_StatusEffect::Decay - Buildup depleted, timer cleared"));
+			World->GetTimerManager().ClearTimer(DecayTimerHandle);
 		}
+		UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::Decay - Buildup depleted, calling EffectFinished"));
+
+		// Call EffectFinished to reset bIsTriggered and allow retrigger
+		EffectFinished();
 	}
 }
 
@@ -676,9 +696,10 @@ void UB_StatusEffect::EffectTriggered()
 		}
 	}
 
-	// Set up effect duration timer
+	// Set up effect duration timer OR start decay for one-shot effects
 	if (TickDuration > 0.0)
 	{
+		// Has explicit duration - set timer to call EffectFinished after duration
 		if (UWorld* World = GetWorld())
 		{
 			World->GetTimerManager().SetTimer(
@@ -690,6 +711,14 @@ void UB_StatusEffect::EffectTriggered()
 			);
 			UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::EffectTriggered - Effect will finish in %.2fs"), TickDuration);
 		}
+	}
+	else
+	{
+		// One-shot effect with no duration (e.g., Bleed rank 1-2)
+		// bp_only behavior: Wait for DecayDelay, then start decay to gradually reduce buildup bar
+		// When decay reaches 0, EffectFinished will be called by Decay()
+		UE_LOG(LogTemp, Log, TEXT("UB_StatusEffect::EffectTriggered - One-shot effect, waiting for decay delay"));
+		WaitForDecay(); // Starts decay after DecayDelay (default 2.0s)
 	}
 }
 
@@ -872,6 +901,21 @@ void UB_StatusEffect::AdjustBuildupOneshot_Implementation(double Delta)
 
 			// Set triggered flag
 			bIsTriggered = true;
+		}
+		else
+		{
+			// Threshold not reached - start/reset decay timer
+			// This ensures the status effect bar eventually disappears if not triggered
+			// Clear any existing decay timer first (reset on new hit)
+			if (UWorld* World = GetWorld())
+			{
+				World->GetTimerManager().ClearTimer(WaitForDecayTimerHandle);
+				World->GetTimerManager().ClearTimer(DecayTimerHandle);
+			}
+
+			// Start decay process (with delay)
+			WaitForDecay();
+			UE_LOG(LogTemp, Log, TEXT("  Threshold not reached, starting decay timer"));
 		}
 	}
 }

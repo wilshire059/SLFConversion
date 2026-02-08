@@ -199,6 +199,12 @@ void UW_GenericButton::SetButtonSelected_Implementation(bool InSelected)
 		ButtonBorder->SetBrush(NewBrush);
 	}
 
+	// Blueprint logic: Broadcast OnButtonSelected ONLY when Selected becomes true
+	if (Selected)
+	{
+		OnButtonSelected.Broadcast(this);
+	}
+
 	UE_LOG(LogTemp, Log, TEXT("UW_GenericButton::SetButtonSelected - Selected: %s"), InSelected ? TEXT("true") : TEXT("false"));
 }
 

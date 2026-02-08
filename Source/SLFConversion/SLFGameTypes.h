@@ -1024,8 +1024,9 @@ struct SLFCONVERSION_API FSLFDialogGameplayEvent
 };
 
 // Replaces: /Game/SoulslikeFramework/Structures/Dialog/FDialogEntry
+// CRITICAL: Must inherit from FTableRowBase to work with UDataTable::FindRow<T>()
 USTRUCT(BlueprintType)
-struct SLFCONVERSION_API FSLFDialogEntry
+struct SLFCONVERSION_API FSLFDialogEntry : public FTableRowBase
 {
 	GENERATED_BODY()
 
@@ -1035,7 +1036,7 @@ struct SLFCONVERSION_API FSLFDialogEntry
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog")
 	TArray<FSLFDialogGameplayEvent> GameplayEvents;
 
-	FSLFDialogEntry() {}
+	FSLFDialogEntry() : FTableRowBase() {}
 };
 
 // Replaces: /Game/SoulslikeFramework/Structures/Dialog/FDialogProgress
@@ -1116,6 +1117,22 @@ struct SLFCONVERSION_API FSLFSaveGameInfo
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	TArray<FInstancedStruct> ProgressData;
+
+	/** Names of pickup actors that have been collected (to prevent respawn on load) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	TArray<FString> CollectedPickups;
+
+	/** Two-hand stance state for right hand weapon */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	bool bRightHandTwoHandStance = false;
+
+	/** Two-hand stance state for left hand weapon */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	bool bLeftHandTwoHandStance = false;
+
+	/** Active overlay state (weapon hold animation) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
+	ESLFOverlayState ActiveOverlayState = ESLFOverlayState::Unarmed;
 
 	FSLFSaveGameInfo() {}
 };

@@ -216,8 +216,8 @@ void UW_LoadGame::EventOnSaveSlotSelected_Implementation(UW_LoadGame_Entry* Card
 		UE_LOG(LogTemp, Log, TEXT("  Set active slot: %s"), *SlotName);
 	}
 
-	// Broadcast close event - the main menu will handle the actual level load
-	OnLoadGameClosed.Broadcast();
+	// Broadcast slot confirmed - the main menu will handle the actual level load
+	OnSaveSlotConfirmed.Broadcast();
 }
 
 void UW_LoadGame::EventOnVisibilityChanged_Implementation(uint8 InVisibility)

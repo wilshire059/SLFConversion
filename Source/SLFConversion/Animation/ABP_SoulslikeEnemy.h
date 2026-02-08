@@ -61,7 +61,9 @@ public:
 	float PhysicsWeight;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	AActor* SoulslikeEnemy;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+	// NOTE: DisplayName MUST match Blueprint variable name exactly (with spaces)
+	// The AnimGraph reads "AC AI Combat Manager" not "ACAICombatManager"
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default", meta = (DisplayName = "AC AI Combat Manager"))
 	UActorComponent* ACAICombatManager;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	FVector HitLocation;

@@ -62,7 +62,32 @@ void UAC_SaveLoadManager::BeginPlay()
 			ProgressManager ? TEXT("OK") : TEXT("NULL"));
 	}
 
-	// Try to preload existing save data
+	// bp_only Sequence node flow:
+	//   Branch 0: GetGameInstance → GetActiveSlotName → Set CurrentSaveSlot
+	//   Branch 1: EventTryPreloadData (uses CurrentSaveSlot)
+	// Must set CurrentSaveSlot from GameInstance BEFORE preloading
+	UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(this);
+	if (IsValid(GameInstance) && GameInstance->GetClass()->ImplementsInterface(UBPI_GameInstance::StaticClass()))
+	{
+		FString ActiveSlotName;
+		IBPI_GameInstance::Execute_GetActiveSlotName(GameInstance, ActiveSlotName);
+
+		if (!ActiveSlotName.IsEmpty())
+		{
+			CurrentSaveSlot = ActiveSlotName;
+			UE_LOG(LogTemp, Log, TEXT("  Set CurrentSaveSlot from GameInstance: '%s'"), *CurrentSaveSlot);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("  GameInstance ActiveSlot is empty, keeping default: '%s'"), *CurrentSaveSlot);
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  GameInstance not available or doesn't implement BPI_GameInstance, keeping default: '%s'"), *CurrentSaveSlot);
+	}
+
+	// Try to preload existing save data using the (now correct) CurrentSaveSlot
 	EventTryPreloadData();
 }
 

@@ -10,8 +10,13 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 #include "ProgressManagerComponent.h"
+#include "InventoryManagerComponent.h"
 #include "TimerManager.h"
 #include "StructUtils/InstancedStruct.h"
+#include "Interfaces/BPI_Controller.h"
+#include "Kismet/GameplayStatics.h"
+#include "AssetRegistry/AssetRegistryModule.h"
+#include "Engine/AssetManager.h"
 
 UProgressManagerComponent::UProgressManagerComponent()
 {
@@ -102,6 +107,82 @@ void UProgressManagerComponent::ExecuteGameplayEvents_Implementation(const TArra
 		{
 			// Log unknown event type for debugging
 			UE_LOG(LogTemp, Warning, TEXT("[ProgressManager] Unknown event struct type in ExecuteGameplayEvents"));
+		}
+	}
+}
+
+void UProgressManagerComponent::ExecuteDialogGameplayEvents_Implementation(const TArray<FSLFDialogGameplayEvent>& GameplayEvents)
+{
+	UE_LOG(LogTemp, Log, TEXT("[ProgressManager] ExecuteDialogGameplayEvents: %d events"), GameplayEvents.Num());
+
+	for (const FSLFDialogGameplayEvent& Event : GameplayEvents)
+	{
+		FString TagString = Event.EventTag.ToString();
+		UE_LOG(LogTemp, Log, TEXT("[ProgressManager] Processing dialog event: %s"), *TagString);
+
+		if (TagString.Contains(TEXT("SetProgress")))
+		{
+			// Set progress using AdditionalTag
+			if (Event.AdditionalTag.IsValid())
+			{
+				SetProgress(Event.AdditionalTag, ESLFProgress::Completed);
+				UE_LOG(LogTemp, Log, TEXT("[ProgressManager] Set progress: %s = Completed"), *Event.AdditionalTag.ToString());
+			}
+		}
+		else if (TagString.Contains(TEXT("AddItem")) || TagString.Contains(TEXT("GiveItem")))
+		{
+			// Give item to player via InventoryManager
+			UE_LOG(LogTemp, Log, TEXT("[ProgressManager] AddItem event - AdditionalTag: %s"), *Event.AdditionalTag.ToString());
+
+			// Get player controller and inventory component
+			APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+			if (PC && PC->Implements<UBPI_Controller>())
+			{
+				UActorComponent* InventoryComp = nullptr;
+				IBPI_Controller::Execute_GetInventoryComponent(PC, InventoryComp);
+
+				if (UInventoryManagerComponent* InvMgr = Cast<UInventoryManagerComponent>(InventoryComp))
+				{
+					// Call EventAsyncAddItemByTag with AdditionalTag as ItemTag
+					// Count defaults to 1 if not specified in CustomData
+					int32 ItemCount = 1;
+					InvMgr->EventAsyncAddItemByTag(Event.AdditionalTag, ItemCount);
+					UE_LOG(LogTemp, Log, TEXT("[ProgressManager] Called EventAsyncAddItemByTag(%s, %d)"),
+						*Event.AdditionalTag.ToString(), ItemCount);
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("[ProgressManager] Could not get InventoryManagerComponent"));
+				}
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[ProgressManager] No player controller or doesn't implement BPI_Controller"));
+			}
+		}
+		else if (TagString.Contains(TEXT("GiveCurrency")))
+		{
+			// Give currency to player
+			APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+			if (PC && PC->Implements<UBPI_Controller>())
+			{
+				// Amount would be in CustomData
+				int32 Amount = 100; // Default amount, should parse from CustomData
+				IBPI_Controller::Execute_AdjustCurrency(PC, Amount);
+				UE_LOG(LogTemp, Log, TEXT("[ProgressManager] Gave %d currency"), Amount);
+			}
+		}
+		else if (TagString.Contains(TEXT("RemoveItem")))
+		{
+			UE_LOG(LogTemp, Log, TEXT("[ProgressManager] RemoveItem event"));
+		}
+		else if (TagString.Contains(TEXT("TeleportPlayer")))
+		{
+			UE_LOG(LogTemp, Log, TEXT("[ProgressManager] TeleportPlayer event"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("[ProgressManager] Unknown dialog event type: %s"), *TagString);
 		}
 	}
 }

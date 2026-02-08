@@ -11,7 +11,18 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "HAL/IConsoleManager.h"
 #include "Components/AC_SaveLoadManager.h"
+#include "Components/AIInteractionManagerComponent.h"
+#include "Interfaces/BPI_Interactable.h"
 #include "InstancedStruct.h"
+#include "Blueprint/UserWidget.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Components/TextBlock.h"
+#include "Components/ComboBoxKey.h"
+#include "GameplayTagContainer.h"
+#include "Widgets/W_HUD.h"
+#include "Widgets/W_Dialog.h"
+#include "GameFramework/HUD.h"
+#include "EngineUtils.h"
 
 // ========== CONSOLE COMMANDS ==========
 
@@ -63,6 +74,24 @@ static FAutoConsoleCommand CCmdTestSaveLoad(
 				if (USLFPIETestRunner* Runner = GI->GetSubsystem<USLFPIETestRunner>())
 				{
 					Runner->RunSaveLoadTest();
+				}
+			}
+		}
+	})
+);
+
+static FAutoConsoleCommand CCmdTestNPCDialog(
+	TEXT("SLF.Test.NPCDialog"),
+	TEXT("Run NPC dialog test - tests interaction with NPC and dialog text display"),
+	FConsoleCommandDelegate::CreateLambda([]()
+	{
+		if (UWorld* World = GEngine->GetWorldFromContextObject(GEngine->GetCurrentPlayWorld(), EGetWorldErrorMode::ReturnNull))
+		{
+			if (UGameInstance* GI = World->GetGameInstance())
+			{
+				if (USLFPIETestRunner* Runner = GI->GetSubsystem<USLFPIETestRunner>())
+				{
+					Runner->RunNPCDialogTest();
 				}
 			}
 		}
@@ -185,6 +214,86 @@ static FAutoConsoleCommand CCmdSimCrouch(
 		else
 		{
 			UE_LOG(LogTemp, Error, TEXT("[SLF.SimCrouch] No play world!"));
+		}
+	})
+);
+
+static FAutoConsoleCommand CCmdDiagnoseSettings(
+	TEXT("SLF.DiagnoseSettings"),
+	TEXT("Diagnose settings widgets at runtime - shows dropdown values, current selections"),
+	FConsoleCommandDelegate::CreateLambda([]()
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.DiagnoseSettings] ========== DIAGNOSING SETTINGS WIDGETS =========="));
+
+		if (UWorld* World = GEngine->GetCurrentPlayWorld())
+		{
+			// Find all W_Settings_Entry widgets in viewport
+			TArray<UUserWidget*> FoundWidgets;
+			UWidgetBlueprintLibrary::GetAllWidgetsOfClass(World, FoundWidgets, UUserWidget::StaticClass(), true);
+
+			int32 SettingsEntryCount = 0;
+			for (UUserWidget* Widget : FoundWidgets)
+			{
+				if (Widget && Widget->GetClass()->GetName().Contains(TEXT("Settings_Entry")))
+				{
+					SettingsEntryCount++;
+					UE_LOG(LogTemp, Warning, TEXT("  [Entry] %s"), *Widget->GetName());
+
+					// Get SettingTag via reflection
+					FProperty* TagProp = Widget->GetClass()->FindPropertyByName(TEXT("SettingTag"));
+					if (TagProp && TagProp->IsA<FStructProperty>())
+					{
+						FGameplayTag* Tag = TagProp->ContainerPtrToValuePtr<FGameplayTag>(Widget);
+						if (Tag)
+						{
+							UE_LOG(LogTemp, Warning, TEXT("    SettingTag: %s"), *Tag->ToString());
+						}
+					}
+
+					// Get EntryType via reflection
+					FProperty* TypeProp = Widget->GetClass()->FindPropertyByName(TEXT("EntryType"));
+					if (TypeProp && TypeProp->IsA<FEnumProperty>())
+					{
+						void* TypePtr = TypeProp->ContainerPtrToValuePtr<void>(Widget);
+						int64 TypeValue = CastField<FEnumProperty>(TypeProp)->GetUnderlyingProperty()->GetSignedIntPropertyValue(TypePtr);
+						UE_LOG(LogTemp, Warning, TEXT("    EntryType: %lld"), TypeValue);
+					}
+
+					// Get CurrentValue via reflection
+					FProperty* ValueProp = Widget->GetClass()->FindPropertyByName(TEXT("CurrentValue"));
+					if (ValueProp && ValueProp->IsA<FStrProperty>())
+					{
+						FString* Value = ValueProp->ContainerPtrToValuePtr<FString>(Widget);
+						if (Value)
+						{
+							UE_LOG(LogTemp, Warning, TEXT("    CurrentValue: %s"), **Value);
+						}
+					}
+
+					// Check for DropDown child widget
+					UWidget* DropDown = Widget->GetWidgetFromName(TEXT("DropDown"));
+					if (DropDown)
+					{
+						UE_LOG(LogTemp, Warning, TEXT("    DropDown: FOUND (%s)"), *DropDown->GetClass()->GetName());
+
+						// Try to get option count if it's a ComboBoxKey
+						if (UComboBoxKey* ComboBox = Cast<UComboBoxKey>(DropDown))
+						{
+							UE_LOG(LogTemp, Warning, TEXT("    DropDown SelectedOption: %s"), *ComboBox->GetSelectedOption().ToString());
+						}
+					}
+					else
+					{
+						UE_LOG(LogTemp, Warning, TEXT("    DropDown: NOT FOUND"));
+					}
+				}
+			}
+
+			UE_LOG(LogTemp, Warning, TEXT("[SLF.DiagnoseSettings] Found %d W_Settings_Entry widgets"), SettingsEntryCount);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("[SLF.DiagnoseSettings] No play world!"));
 		}
 	})
 );
@@ -513,4 +622,241 @@ void USLFPIETestRunner::RunSaveLoadTest()
 		UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] Save slot used: %s"), *TestSlotName);
 
 	}, 2.0f, false);
+}
+
+void USLFPIETestRunner::RunNPCDialogTest()
+{
+	UE_LOG(LogTemp, Warning, TEXT("[SLFPIETestRunner] ===== NPC DIALOG TEST ====="));
+
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		LogTestResult(FName("NPCDialog"), false, TEXT("No world"));
+		return;
+	}
+
+	// Get player controller and character
+	APlayerController* PC = World->GetFirstPlayerController();
+	ACharacter* PlayerChar = PC ? PC->GetCharacter() : nullptr;
+	if (!PC || !PlayerChar)
+	{
+		LogTestResult(FName("NPCDialog"), false, TEXT("No player controller or character"));
+		return;
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] Player: %s at %s"),
+		*PlayerChar->GetName(), *PlayerChar->GetActorLocation().ToString());
+
+	// Find all actors with AIInteractionManagerComponent (NPCs)
+	TArray<AActor*> NPCActors;
+	for (TActorIterator<AActor> It(World); It; ++It)
+	{
+		AActor* Actor = *It;
+		if (UAIInteractionManagerComponent* DialogComp = Actor->FindComponentByClass<UAIInteractionManagerComponent>())
+		{
+			NPCActors.Add(Actor);
+			UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] Found NPC with dialog: %s at %s (Name: %s)"),
+				*Actor->GetName(),
+				*Actor->GetActorLocation().ToString(),
+				*DialogComp->Name.ToString());
+		}
+	}
+
+	if (NPCActors.Num() == 0)
+	{
+		LogTestResult(FName("NPCDialog.FindNPC"), false, TEXT("No NPCs with AIInteractionManagerComponent found in level"));
+		return;
+	}
+
+	LogTestResult(FName("NPCDialog.FindNPC"), true,
+		FString::Printf(TEXT("Found %d NPCs with dialog component"), NPCActors.Num()));
+
+	// Find nearest NPC to player
+	AActor* NearestNPC = nullptr;
+	float NearestDist = FLT_MAX;
+	for (AActor* NPC : NPCActors)
+	{
+		float Dist = FVector::Dist(PlayerChar->GetActorLocation(), NPC->GetActorLocation());
+		if (Dist < NearestDist)
+		{
+			NearestDist = Dist;
+			NearestNPC = NPC;
+		}
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] Nearest NPC: %s at distance %.2f"),
+		*NearestNPC->GetName(), NearestDist);
+
+	// Move player towards NPC if too far
+	if (NearestDist > 300.0f)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] Player too far (%.2f), teleporting closer..."), NearestDist);
+		FVector TargetLocation = NearestNPC->GetActorLocation();
+		TargetLocation += (PlayerChar->GetActorLocation() - NearestNPC->GetActorLocation()).GetSafeNormal() * 150.0f;
+		TargetLocation.Z = PlayerChar->GetActorLocation().Z; // Keep same height
+		PlayerChar->SetActorLocation(TargetLocation);
+		UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] Teleported player to %s"), *TargetLocation.ToString());
+	}
+
+	// Wait a moment for overlap to register, then interact
+	FTimerHandle InteractTimer;
+	World->GetTimerManager().SetTimer(InteractTimer, [this, World, NearestNPC, PC]()
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SLFPIETestRunner] Simulating INTERACT key..."));
+
+		// Simulate interact key press (E key typically)
+		USLFInputSimulator::SimulateInteract(World);
+
+		// After interaction, check if dialog appeared
+		FTimerHandle DialogCheckTimer;
+		World->GetTimerManager().SetTimer(DialogCheckTimer, [this, PC, NearestNPC]()
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[SLFPIETestRunner] ===== CHECKING DIALOG STATE ====="));
+
+			// Get the HUD widget
+			UUserWidget* HUDWidget = nullptr;
+			if (AHUD* HUD = PC->GetHUD())
+			{
+				// Find the W_HUD widget
+				TArray<UUserWidget*> Widgets;
+				UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), Widgets, UW_HUD::StaticClass());
+				if (Widgets.Num() > 0)
+				{
+					HUDWidget = Widgets[0];
+				}
+			}
+
+			// Also try to find W_HUD directly
+			if (!HUDWidget)
+			{
+				TArray<UUserWidget*> AllWidgets;
+				UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), AllWidgets, UUserWidget::StaticClass());
+				for (UUserWidget* Widget : AllWidgets)
+				{
+					if (Widget->GetClass()->GetName().Contains(TEXT("W_HUD")))
+					{
+						HUDWidget = Widget;
+						UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] Found W_HUD via class name search: %s"), *Widget->GetClass()->GetName());
+						break;
+					}
+				}
+			}
+
+			if (UW_HUD* WHud = Cast<UW_HUD>(HUDWidget))
+			{
+				UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] Found W_HUD widget"));
+				LogTestResult(FName("NPCDialog.FindHUD"), true, TEXT("W_HUD found"));
+
+				// Check if dialog is active
+				bool bDialogActive = WHud->IsDialogActive;
+				UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] IsDialogActive: %s"), bDialogActive ? TEXT("TRUE") : TEXT("FALSE"));
+				LogTestResult(FName("NPCDialog.DialogActive"), bDialogActive,
+					FString::Printf(TEXT("IsDialogActive=%s"), bDialogActive ? TEXT("true") : TEXT("false")));
+
+				// Try to find W_Dialog widget from HUD widget tree
+				UWidget* DialogWidgetRaw = WHud->GetWidgetFromName(TEXT("W_Dialog"));
+				UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] GetWidgetFromName(W_Dialog) returned: %s"),
+					DialogWidgetRaw ? TEXT("VALID") : TEXT("nullptr"));
+
+				if (DialogWidgetRaw)
+				{
+					UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] Dialog widget class: %s"),
+						*DialogWidgetRaw->GetClass()->GetName());
+					UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] Dialog widget class path: %s"),
+						*DialogWidgetRaw->GetClass()->GetPathName());
+
+					// Check if it's a UW_Dialog subclass
+					UW_Dialog* DialogWidget = Cast<UW_Dialog>(DialogWidgetRaw);
+					if (DialogWidget)
+					{
+						UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] Cast to UW_Dialog SUCCEEDED"));
+						LogTestResult(FName("NPCDialog.WidgetCast"), true, TEXT("Cast to UW_Dialog succeeded"));
+
+						// Get dialog text if possible
+						if (UTextBlock* DialogText = Cast<UTextBlock>(DialogWidget->GetWidgetFromName(TEXT("DialogText"))))
+						{
+							FText CurrentText = DialogText->GetText();
+							FString TextStr = CurrentText.ToString();
+							UE_LOG(LogTemp, Warning, TEXT("[SLFPIETestRunner] Dialog text: '%s'"), *TextStr);
+
+							bool bIsPlaceholder = TextStr.Contains(TEXT("Lorem")) || TextStr.Contains(TEXT("ipsum")) || TextStr.IsEmpty();
+							LogTestResult(FName("NPCDialog.TextContent"), !bIsPlaceholder,
+								FString::Printf(TEXT("Dialog text: '%s' (Placeholder=%s)"),
+									*TextStr.Left(50), bIsPlaceholder ? TEXT("YES-FAIL") : TEXT("NO-GOOD")));
+						}
+						else
+						{
+							UE_LOG(LogTemp, Warning, TEXT("[SLFPIETestRunner] Could not find DialogText widget inside W_Dialog"));
+							LogTestResult(FName("NPCDialog.TextWidget"), false, TEXT("DialogText widget not found"));
+						}
+					}
+					else
+					{
+						UE_LOG(LogTemp, Error, TEXT("[SLFPIETestRunner] Cast to UW_Dialog FAILED - Blueprint not reparented!"));
+						LogTestResult(FName("NPCDialog.WidgetCast"), false, TEXT("Cast to UW_Dialog failed - need to reparent Blueprint"));
+
+						// Try to read text directly from the UserWidget
+						if (UUserWidget* DialogUserWidget = Cast<UUserWidget>(DialogWidgetRaw))
+						{
+							if (UTextBlock* DialogText = Cast<UTextBlock>(DialogUserWidget->GetWidgetFromName(TEXT("DialogText"))))
+							{
+								FText CurrentText = DialogText->GetText();
+								FString TextStr = CurrentText.ToString();
+								UE_LOG(LogTemp, Warning, TEXT("[SLFPIETestRunner] (Fallback) Dialog text: '%s'"), *TextStr);
+							}
+						}
+					}
+				}
+				else
+				{
+					UE_LOG(LogTemp, Error, TEXT("[SLFPIETestRunner] W_Dialog widget not found in HUD!"));
+					LogTestResult(FName("NPCDialog.WidgetFound"), false, TEXT("W_Dialog widget not found"));
+				}
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("[SLFPIETestRunner] Could not find or cast to W_HUD"));
+				LogTestResult(FName("NPCDialog.FindHUD"), false, TEXT("W_HUD not found or cast failed"));
+			}
+
+			// Also check the AIInteractionManagerComponent directly
+			if (UAIInteractionManagerComponent* DialogComp = NearestNPC->FindComponentByClass<UAIInteractionManagerComponent>())
+			{
+				UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] Checking AIInteractionManagerComponent state:"));
+				UE_LOG(LogTemp, Log, TEXT("  Name: %s"), *DialogComp->Name.ToString());
+				UE_LOG(LogTemp, Log, TEXT("  CurrentIndex: %d"), DialogComp->CurrentIndex);
+				UE_LOG(LogTemp, Log, TEXT("  MaxIndex: %d"), DialogComp->MaxIndex);
+				UE_LOG(LogTemp, Log, TEXT("  DialogAsset: %s"), DialogComp->DialogAsset ? *DialogComp->DialogAsset->GetName() : TEXT("None"));
+
+				// ActiveTable is a TSoftObjectPtr, need to load it
+				UDataTable* Table = DialogComp->ActiveTable.Get();
+				UE_LOG(LogTemp, Log, TEXT("  ActiveTable: %s"), Table ? *Table->GetName() : TEXT("None/Not Loaded"));
+
+				if (Table)
+				{
+					TArray<FName> RowNames = Table->GetRowNames();
+					UE_LOG(LogTemp, Log, TEXT("  ActiveTable RowNames (%d):"), RowNames.Num());
+					for (int32 i = 0; i < FMath::Min(5, RowNames.Num()); i++)
+					{
+						UE_LOG(LogTemp, Log, TEXT("    [%d]: %s"), i, *RowNames[i].ToString());
+					}
+
+					// Try to get current dialog entry
+					FSLFDialogEntry Entry = DialogComp->GetCurrentDialogEntry(Table, RowNames);
+					FString EntryText = Entry.Entry.ToString();
+					UE_LOG(LogTemp, Warning, TEXT("[SLFPIETestRunner] GetCurrentDialogEntry returned: '%s'"),
+						EntryText.IsEmpty() ? TEXT("<EMPTY>") : *EntryText.Left(80));
+
+					bool bHasValidText = !EntryText.IsEmpty() && !EntryText.Contains(TEXT("Lorem"));
+					LogTestResult(FName("NPCDialog.DialogEntry"), bHasValidText,
+						FString::Printf(TEXT("Entry text: '%s'"), EntryText.IsEmpty() ? TEXT("<EMPTY>") : *EntryText.Left(50)));
+				}
+			}
+
+			UE_LOG(LogTemp, Warning, TEXT("[SLFPIETestRunner] ===== NPC DIALOG TEST COMPLETE ====="));
+			UE_LOG(LogTemp, Log, TEXT("%s"), *GetTestResultsReport());
+
+		}, 2.0f, false); // Wait 2 seconds for dialog to appear
+
+	}, 0.5f, false); // Wait 0.5 seconds for overlap to register
 }

@@ -19,12 +19,14 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Engine/DataTable.h"
+#include "SLFGameTypes.h"
 #include "AIInteractionManagerComponent.generated.h"
 
 // Forward declarations
 class UDataAsset;
 class UProgressManagerComponent;
 class UUserWidget;
+class UW_HUD;
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // EVENT DISPATCHERS: 1/1 migrated
@@ -61,9 +63,9 @@ public:
 
 	// --- Runtime Variables (4) ---
 
-	/** [4/7] Cached progress manager reference */
+	/** [4/7] Cached progress manager reference (can be UProgressManagerComponent or UAC_ProgressManager) */
 	UPROPERTY(BlueprintReadWrite, Category = "Runtime")
-	UProgressManagerComponent* ProgressManager;
+	UActorComponent* ProgressManager;
 
 	/** [5/7] Current dialog entry index */
 	UPROPERTY(BlueprintReadWrite, Category = "Runtime")
@@ -77,6 +79,14 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Runtime")
 	TSoftObjectPtr<UDataTable> ActiveTable;
 
+	/** Cached HUD reference for dialog UI callbacks */
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Runtime")
+	UW_HUD* CachedHUD;
+
+	/** Guard flag to prevent re-entry during dialog finish sequence */
+	UPROPERTY(Transient)
+	bool bIsFinishingDialog;
+
 	// ═══════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS: 1/1 migrated
 	// ═══════════════════════════════════════════════════════════════════
@@ -89,17 +99,25 @@ public:
 	// FUNCTIONS: 6/6 migrated
 	// ═══════════════════════════════════════════════════════════════════
 
-	// --- Dialog Access (1) ---
+	// --- Dialog Access (2) ---
 
-	/** [1/6] Get current dialog entry from active table
+	/** Get current dialog entry - OVERLOAD that returns FSLFDialogEntry
+	 * Used by SLFSoulslikeCharacter::OnDialogStarted
+	 * @param DataTable - The dialog data table
+	 * @param Rows - Array of row names
+	 * @return FSLFDialogEntry - The dialog entry at CurrentIndex
+	 */
+	UFUNCTION(BlueprintCallable, Category = "AI Interaction|Dialog")
+	FSLFDialogEntry GetCurrentDialogEntry(UDataTable* DataTable, const TArray<FName>& Rows);
+
+	/** Get current dialog entry from active table (legacy out-params version)
 	 * @param DataTable - The dialog data table
 	 * @param OutRowName - Row name at current index
 	 * @param OutRow - Dialog entry struct
 	 * @param bSuccess - Whether entry was found
 	 */
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AI Interaction|Dialog")
-	void GetCurrentDialogEntry(UDataTable* DataTable, FName& OutRowName, FTableRowBase& OutRow, bool& bSuccess);
-	virtual void GetCurrentDialogEntry_Implementation(UDataTable* DataTable, FName& OutRowName, FTableRowBase& OutRow, bool& bSuccess);
+	UFUNCTION(BlueprintCallable, Category = "AI Interaction|Dialog", meta = (DisplayName = "Get Current Dialog Entry (Out Params)"))
+	void GetCurrentDialogEntryOutParams(UDataTable* DataTable, FName& OutRowName, FTableRowBase& OutRow, bool& bSuccess);
 
 	// --- Dialog Control (3) ---
 

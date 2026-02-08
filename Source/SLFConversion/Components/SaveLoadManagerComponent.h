@@ -28,6 +28,8 @@ class UStatManagerComponent;
 class UInventoryManagerComponent;
 class UEquipmentManagerComponent;
 class UProgressManagerComponent;
+class UAC_InventoryManager;
+class UAC_EquipmentManager;
 class USaveGame;
 
 // Types used from SLFGameTypes.h:
@@ -140,6 +142,14 @@ public:
 	/** [11/13] ProgressManager component reference */
 	UPROPERTY(BlueprintReadWrite, Category = "Runtime|Components")
 	UProgressManagerComponent* ProgressManager;
+
+	/** Pawn's inventory manager (Blueprint-derived UAC_InventoryManager - different from PC's UInventoryManagerComponent) */
+	UPROPERTY(Transient)
+	UAC_InventoryManager* PawnInventoryManager;
+
+	/** Pawn's equipment manager (Blueprint-derived UAC_EquipmentManager - different from PC's UEquipmentManagerComponent) */
+	UPROPERTY(Transient)
+	UAC_EquipmentManager* PawnEquipmentManager;
 
 	/** [12/13] Character save game object */
 	UPROPERTY(BlueprintReadWrite, Category = "Runtime")
@@ -298,4 +308,11 @@ public:
 	/** Remove a spawned actor from save data */
 	UFUNCTION(BlueprintCallable, Category = "Save Load")
 	void EventRemoveSpawnedActorFromSaveData(AActor* Actor);
+
+	/** Mark a pickup actor as collected so it won't respawn on load */
+	UFUNCTION(BlueprintCallable, Category = "Save Load")
+	void MarkPickupCollected(AActor* PickupActor);
+
+	/** Destroy collected pickups from the level based on saved names */
+	void DestroyCollectedPickups();
 };

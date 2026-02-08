@@ -53,6 +53,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
 	int32 SwitcherIndex;
 
+	// CategoryIndex = position in the category list (0-5)
+	// SwitcherIndex = index in WidgetSwitcher panels (-1 if no panel)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
+	int32 CategoryIndex;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	bool Selected;
 

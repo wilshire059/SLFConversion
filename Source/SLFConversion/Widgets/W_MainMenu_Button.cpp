@@ -119,7 +119,8 @@ void UW_MainMenu_Button::OnButtonHovered()
 	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu_Button] OnButtonHovered"));
 
 	// When hovered, set this button as selected
-	SetMenuButtonSelected(true);
+	// Must use Execute_ to properly dispatch BlueprintNativeEvent interface function
+	ISLFMainMenuInterface::Execute_SetMenuButtonSelected(this, true);
 }
 
 void UW_MainMenu_Button::OnButtonClicked_Internal()

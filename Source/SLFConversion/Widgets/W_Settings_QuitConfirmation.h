@@ -1,8 +1,7 @@
 // W_Settings_QuitConfirmation.h
 // C++ Widget class for W_Settings_QuitConfirmation
 //
-// 20-PASS VALIDATION: 2026-01-01 Autonomous Session
-// Source: BlueprintDNA/WidgetBlueprint/W_Settings_QuitConfirmation.json
+// Source: BlueprintDNA_v2/WidgetBlueprint/W_Settings_QuitConfirmation.json
 // Parent: UUserWidget
 // Variables: 1 | Functions: 0 | Dispatchers: 2
 
@@ -10,26 +9,13 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "GameplayTagContainer.h"
-#include "SLFEnums.h"
-#include "SLFGameTypes.h"
-#include "SLFPrimaryDataAssets.h"
-#include "InputMappingContext.h"
-#include "GameFramework/InputSettings.h"
-#include "GenericPlatform/GenericWindow.h"
-#include "MediaPlayer.h"
-#include "Components/Button.h"
+#include "Components/SlateWrapperTypes.h"
 
 #include "W_Settings_QuitConfirmation.generated.h"
 
-// Forward declarations for widget types
+// Forward declarations
 class UW_GenericButton;
-
-// Forward declarations for Blueprint types
-
-
-// Forward declarations for SaveGame types
-
+class UTextBlock;
 
 // Event Dispatchers
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FW_Settings_QuitConfirmation_OnQuitGameConfirmed);
@@ -47,11 +33,13 @@ public:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 
+	// Gamepad/keyboard input handling
+	virtual FReply NativeOnPreviewKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+
 	// ═══════════════════════════════════════════════════════════════════════
 	// VARIABLES (1)
 	// ═══════════════════════════════════════════════════════════════════════
 
-	// Note: This is NOT a BindWidget - it's a runtime reference set by Blueprint logic
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
 	UW_GenericButton* ActiveBtn;
 
@@ -59,17 +47,28 @@ public:
 	// EVENT DISPATCHERS (2)
 	// ═══════════════════════════════════════════════════════════════════════
 
-	UPROPERTY(BlueprintAssignable, Category = "Events")
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Events")
 	FW_Settings_QuitConfirmation_OnQuitGameConfirmed OnQuitGameConfirmed;
-	UPROPERTY(BlueprintAssignable, Category = "Events")
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Events")
 	FW_Settings_QuitConfirmation_OnQuitGameCanceled OnQuitGameCanceled;
 
-	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (0)
-	// ═══════════════════════════════════════════════════════════════════════
-
-
 protected:
-	// Cache references
 	void CacheWidgetReferences();
+
+	// Cached widget refs - NOT UPROPERTY to avoid conflict with Blueprint WidgetTree IsVariable=true
+	UW_GenericButton* CachedYesBtn;
+	UW_GenericButton* CachedNoBtn;
+
+	// Button event handlers
+	UFUNCTION()
+	void OnYesButtonPressed();
+
+	UFUNCTION()
+	void OnNoButtonPressed();
+
+	UFUNCTION()
+	void OnYesButtonSelected(UW_GenericButton* Button);
+
+	UFUNCTION()
+	void OnNoButtonSelected(UW_GenericButton* Button);
 };

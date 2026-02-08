@@ -27,6 +27,9 @@
 
 // Forward declarations
 class UPrimitiveComponent;
+class USphereComponent;
+class UAIInteractionManagerComponent;
+class UAnimInstance;
 
 /**
  * Soulslike NPC character - look-at targeting, dialogue system, interaction
@@ -40,9 +43,26 @@ class SLFCONVERSION_API ASLFSoulslikeNPC : public ASLFBaseCharacter, public ISLF
 public:
 	ASLFSoulslikeNPC();
 
-	/** Look-at component for targeting (AnimBP property access) */
+	// ═══════════════════════════════════════════════════════════════════
+	// COMPONENTS - Created in C++ since Blueprint SCS was lost during migration
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** AI Interaction Manager - handles NPC dialog, vendor data, name */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UAIInteractionManagerComponent* AIInteractionManager;
+
+	/** Look At Radius - sphere for targeting/look-at system */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USphereComponent* LookAtRadius;
+
+	/** Look-at component for targeting (AnimBP property access) - points to LookAtRadius */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	UPrimitiveComponent* LookAtComponent;
+
+	/** Animation Blueprint class for this NPC - set on SkeletalMeshComponent in BeginPlay
+	 * Default: ABP_SoulslikeNPC. Override in child Blueprints for different animations. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Animation")
+	TSubclassOf<UAnimInstance> NPCAnimClass;
 
 protected:
 	virtual void BeginPlay() override;

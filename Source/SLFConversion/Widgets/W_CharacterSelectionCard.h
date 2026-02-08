@@ -1,35 +1,23 @@
 // W_CharacterSelectionCard.h
 // C++ Widget class for W_CharacterSelectionCard
 //
-// 20-PASS VALIDATION: 2026-01-01 Autonomous Session
 // Source: BlueprintDNA/WidgetBlueprint/W_CharacterSelectionCard.json
 // Parent: UUserWidget
-// Variables: 2 | Functions: 2 | Dispatchers: 2
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "GameplayTagContainer.h"
-#include "SLFEnums.h"
-#include "SLFGameTypes.h"
 #include "SLFPrimaryDataAssets.h"
-#include "InputMappingContext.h"
-#include "GameFramework/InputSettings.h"
-#include "GenericPlatform/GenericWindow.h"
-#include "MediaPlayer.h"
-
 
 #include "W_CharacterSelectionCard.generated.h"
 
-// Forward declarations for widget types
-
-
-// Forward declarations for Blueprint types
-
-
-// Forward declarations for SaveGame types
-
+// Forward declarations
+class UTextBlock;
+class UImage;
+class UBorder;
+class UButton;
+class UVerticalBox;
 
 // Event Dispatchers
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FW_CharacterSelectionCard_OnCardSelected, UW_CharacterSelectionCard*, Card);
@@ -48,41 +36,69 @@ public:
 	virtual void NativeDestruct() override;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// VARIABLES (2)
+	// VARIABLES
 	// ═══════════════════════════════════════════════════════════════════════
 
+	// The character class this card represents (set by parent before AddChild)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default")
 	UPrimaryDataAsset* CharacterClassAsset;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+
+	// Whether this card is currently selected
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	bool Selected;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// EVENT DISPATCHERS (2)
+	// BIND WIDGETS (UMG Designer References)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UBorder* SelectionBorder;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UTextBlock* ClassNameText;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UImage* CharacterImage;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UButton* CardBtn;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UVerticalBox* StatBox;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// EVENT DISPATCHERS
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FW_CharacterSelectionCard_OnCardSelected OnCardSelected;
+
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FW_CharacterSelectionCard_OnCardClicked OnCardClicked;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (2)
+	// FUNCTIONS
 	// ═══════════════════════════════════════════════════════════════════════
 
+	// Toggle selection state and highlight border
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_CharacterSelectionCard")
 	void SetCardSelected(bool InSelected);
 	virtual void SetCardSelected_Implementation(bool InSelected);
+
+	// Initialize stat display entries
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_CharacterSelectionCard")
 	void InitializeStatEntries(const TMap<FGameplayTag, TSubclassOf<UB_Stat>>& InputPin);
 	virtual void InitializeStatEntries_Implementation(const TMap<FGameplayTag, TSubclassOf<UB_Stat>>& InputPin);
 
-
-	// Event Handlers (1 events)
+	// Called when card is confirmed (broadcasts OnCardClicked)
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_CharacterSelectionCard")
 	void EventOnCardPressed();
 	virtual void EventOnCardPressed_Implementation();
 
 protected:
-	// Cache references
-	void CacheWidgetReferences();
+	UFUNCTION()
+	void OnCardBtnClicked();
+
+	// Display character name from CharacterClassAsset
+	void PopulateCardDisplay();
 };

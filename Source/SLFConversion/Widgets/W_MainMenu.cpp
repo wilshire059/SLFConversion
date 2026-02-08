@@ -6,9 +6,17 @@
 #include "Widgets/W_MainMenu.h"
 #include "Widgets/W_MainMenu_Button.h"
 #include "Widgets/W_LoadingScreen.h"
+#include "Widgets/W_CharacterSelection.h"
+#include "Widgets/W_LoadGame.h"
+#include "Widgets/W_Settings.h"
+#include "Widgets/W_Credits.h"
 #include "Interfaces/SLFMainMenuInterface.h"
+#include "Interfaces/BPI_GameInstance.h"
+#include "SLFPrimaryDataAssets.h"
 #include "Components/PanelWidget.h"
 #include "Blueprint/WidgetTree.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 UW_MainMenu::UW_MainMenu(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -24,6 +32,11 @@ UW_MainMenu::UW_MainMenu(const FObjectInitializer& ObjectInitializer)
 	, BtnSettings(nullptr)
 	, BtnCredits(nullptr)
 	, BtnQuitGame(nullptr)
+	, W_CharacterSelection(nullptr)
+	, W_LoadGame(nullptr)
+	, W_Settings(nullptr)
+	, W_Credits(nullptr)
+	, ActiveOverlay(nullptr)
 	, Fade(nullptr)
 	, FadeMenuOnly(nullptr)
 {
@@ -38,17 +51,106 @@ void UW_MainMenu::NativeConstruct()
 	// Make focusable for keyboard input
 	SetIsFocusable(true);
 
+	// Handle CanContinueGame - show or hide Continue and LoadGame buttons
+	// NOTE: These buttons default to Collapsed in UMG designer, so we MUST explicitly
+	// set them Visible when a save exists
+	if (CanContinueGame)
+	{
+		if (BtnContinue)
+		{
+			BtnContinue->SetVisibility(ESlateVisibility::Visible);
+		}
+		if (BtnLoadGame)
+		{
+			BtnLoadGame->SetVisibility(ESlateVisibility::Visible);
+		}
+		UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Save exists - showing Continue and LoadGame buttons (BtnContinue: %s, BtnLoadGame: %s)"),
+			BtnContinue ? TEXT("OK") : TEXT("NULL"), BtnLoadGame ? TEXT("OK") : TEXT("NULL"));
+	}
+	else
+	{
+		if (BtnContinue)
+		{
+			BtnContinue->SetVisibility(ESlateVisibility::Collapsed);
+		}
+		if (BtnLoadGame)
+		{
+			BtnLoadGame->SetVisibility(ESlateVisibility::Collapsed);
+		}
+		UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] No save game - hiding Continue and LoadGame buttons"));
+	}
+
 	// Initialize buttons from ButtonsBox
 	InitializeButtons();
 
 	// Bind button events
 	BindButtonEvents();
 
+	// Make all buttons visible via PlayButtonInitAnimation with staggered timing
+	float StartDelay = 0.0f;
+	for (UWidget* ButtonWidget : Buttons)
+	{
+		if (ButtonWidget && ButtonWidget->Implements<USLFMainMenuInterface>())
+		{
+			ISLFMainMenuInterface::Execute_PlayButtonInitAnimation(ButtonWidget, StartDelay, 1, EUMGSequencePlayMode::Forward, 1.0);
+			StartDelay += 0.15;
+		}
+	}
+
 	// Set first button as selected
 	if (Buttons.Num() > 0)
 	{
 		NavigationIndex = 0;
 		UpdateButtonSelection();
+	}
+
+	// Setup overlay widgets (embedded children in UMG hierarchy)
+	ActiveOverlay = nullptr;
+
+	if (W_CharacterSelection)
+	{
+		W_CharacterSelection->SetVisibility(ESlateVisibility::Collapsed);
+		W_CharacterSelection->OnClassCardClicked.AddDynamic(this, &UW_MainMenu::OnCharacterClassSelected);
+		W_CharacterSelection->OnCharacterSelectionClosed.AddDynamic(this, &UW_MainMenu::OnCharacterSelectionClosed);
+		UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] W_CharacterSelection bound (embedded child)"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_MainMenu] W_CharacterSelection NOT found (BindWidgetOptional)"));
+	}
+
+	if (W_LoadGame)
+	{
+		W_LoadGame->SetVisibility(ESlateVisibility::Collapsed);
+		W_LoadGame->OnLoadGameClosed.AddDynamic(this, &UW_MainMenu::OnLoadGameClosed);
+		W_LoadGame->OnSaveSlotConfirmed.AddDynamic(this, &UW_MainMenu::OnSaveSlotConfirmed);
+		UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] W_LoadGame bound (embedded child)"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_MainMenu] W_LoadGame NOT found (BindWidgetOptional)"));
+	}
+
+	if (W_Settings)
+	{
+		W_Settings->SetVisibility(ESlateVisibility::Collapsed);
+		W_Settings->OnSettingsClosed.AddDynamic(this, &UW_MainMenu::OnSettingsClosed);
+		UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] W_Settings bound (embedded child)"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_MainMenu] W_Settings NOT found (BindWidgetOptional)"));
+	}
+
+	if (W_Credits)
+	{
+		W_Credits->SetVisibility(ESlateVisibility::Collapsed);
+		W_Credits->OnCreditsClosed.AddDynamic(this, &UW_MainMenu::OnCreditsClosed);
+		UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] W_Credits bound (embedded child)"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_MainMenu] W_Credits NOT found (BindWidgetOptional)"));
 	}
 
 	// Play fade-in animation
@@ -63,6 +165,26 @@ void UW_MainMenu::NativeDestruct()
 {
 	// Unbind button events before destruction
 	UnbindButtonEvents();
+
+	// Unbind overlay events
+	if (W_CharacterSelection)
+	{
+		W_CharacterSelection->OnClassCardClicked.RemoveAll(this);
+		W_CharacterSelection->OnCharacterSelectionClosed.RemoveAll(this);
+	}
+	if (W_LoadGame)
+	{
+		W_LoadGame->OnLoadGameClosed.RemoveAll(this);
+		W_LoadGame->OnSaveSlotConfirmed.RemoveAll(this);
+	}
+	if (W_Settings)
+	{
+		W_Settings->OnSettingsClosed.RemoveAll(this);
+	}
+	if (W_Credits)
+	{
+		W_Credits->OnCreditsClosed.RemoveAll(this);
+	}
 
 	Super::NativeDestruct();
 
@@ -89,11 +211,50 @@ FReply UW_MainMenu::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent
 		return FReply::Handled();
 	}
 
+	// Navigate Left: A, Left Arrow, Gamepad DPad Left, Left Stick Left
+	if (Key == EKeys::A || Key == EKeys::Left || Key == EKeys::Gamepad_DPad_Left || Key == EKeys::Gamepad_LeftStick_Left)
+	{
+		EventNavigateLeft();
+		return FReply::Handled();
+	}
+
+	// Navigate Right: D, Right Arrow, Gamepad DPad Right, Left Stick Right
+	if (Key == EKeys::D || Key == EKeys::Right || Key == EKeys::Gamepad_DPad_Right || Key == EKeys::Gamepad_LeftStick_Right)
+	{
+		EventNavigateRight();
+		return FReply::Handled();
+	}
+
 	// Navigate Ok/Confirm: Enter, Space, Gamepad A (FaceButton_Bottom)
 	if (Key == EKeys::Enter || Key == EKeys::SpaceBar || Key == EKeys::Gamepad_FaceButton_Bottom)
 	{
 		EventNavigateOk();
 		return FReply::Handled();
+	}
+
+	// Navigate Cancel/Back: Escape, Gamepad B (FaceButton_Right)
+	if (Key == EKeys::Escape || Key == EKeys::Gamepad_FaceButton_Right)
+	{
+		EventNavigateCancel();
+		return FReply::Handled();
+	}
+
+	// Category Left/Right: Q/E or LB/RB (for Settings tab switching)
+	if (Key == EKeys::Q || Key == EKeys::Gamepad_LeftShoulder)
+	{
+		if (ActiveOverlay && W_Settings && ActiveOverlay == W_Settings)
+		{
+			W_Settings->EventNavigateCategoryLeft();
+			return FReply::Handled();
+		}
+	}
+	if (Key == EKeys::E || Key == EKeys::Gamepad_RightShoulder)
+	{
+		if (ActiveOverlay && W_Settings && ActiveOverlay == W_Settings)
+		{
+			W_Settings->EventNavigateCategoryRight();
+			return FReply::Handled();
+		}
 	}
 
 	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);
@@ -105,7 +266,8 @@ void UW_MainMenu::InitializeButtons()
 
 	// Use the individually bound button references
 	// Order matters for navigation: Continue, NewGame, LoadGame, Settings, Credits, QuitGame
-	if (BtnContinue && BtnContinue->IsVisible())
+	// Only add visible buttons (Continue/LoadGame hidden when no save exists)
+	if (BtnContinue && BtnContinue->GetVisibility() != ESlateVisibility::Collapsed && BtnContinue->GetVisibility() != ESlateVisibility::Hidden)
 	{
 		Buttons.Add(BtnContinue);
 		UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Added button: BtnContinue"));
@@ -117,7 +279,7 @@ void UW_MainMenu::InitializeButtons()
 		UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Added button: BtnNewGame"));
 	}
 
-	if (BtnLoadGame)
+	if (BtnLoadGame && BtnLoadGame->GetVisibility() != ESlateVisibility::Collapsed && BtnLoadGame->GetVisibility() != ESlateVisibility::Hidden)
 	{
 		Buttons.Add(BtnLoadGame);
 		UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Added button: BtnLoadGame"));
@@ -188,31 +350,75 @@ void UW_MainMenu::UnbindButtonEvents()
 void UW_MainMenu::OnContinueClicked()
 {
 	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Continue button clicked"));
-	OnMenuButtonClicked.Broadcast(FName(TEXT("Continue")));
+
+	// bp_only flow: SetLastSlotNameToActive → OpenLevel via LoadingScreen
+	UGameInstance* GI = UGameplayStatics::GetGameInstance(this);
+	if (GI && GI->GetClass()->ImplementsInterface(UBPI_GameInstance::StaticClass()))
+	{
+		IBPI_GameInstance::Execute_SetLastSlotNameToActive(GI);
+		UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] SetLastSlotNameToActive called on GameInstance"));
+	}
+
+	LoadGameLevel();
 }
 
 void UW_MainMenu::OnNewGameClicked()
 {
-	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] New Game button clicked"));
-	OnMenuButtonClicked.Broadcast(FName(TEXT("NewGame")));
+	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] New Game button clicked - showing character selection"));
+	if (W_CharacterSelection)
+	{
+		ShowOverlay(W_CharacterSelection);
+	}
+	else
+	{
+		// Fallback: broadcast to PC if no overlay available
+		UE_LOG(LogTemp, Warning, TEXT("[W_MainMenu] W_CharacterSelection not available, broadcasting to PC"));
+		OnMenuButtonClicked.Broadcast(FName(TEXT("NewGame")));
+	}
 }
 
 void UW_MainMenu::OnLoadGameClicked()
 {
-	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Load Game button clicked"));
-	OnMenuButtonClicked.Broadcast(FName(TEXT("LoadGame")));
+	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Load Game button clicked - showing load game screen"));
+	if (W_LoadGame)
+	{
+		ShowOverlay(W_LoadGame);
+	}
+	else
+	{
+		// Fallback: broadcast to PC if no overlay available
+		UE_LOG(LogTemp, Warning, TEXT("[W_MainMenu] W_LoadGame not available, broadcasting to PC"));
+		OnMenuButtonClicked.Broadcast(FName(TEXT("LoadGame")));
+	}
 }
 
 void UW_MainMenu::OnSettingsClicked()
 {
-	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Settings button clicked"));
-	OnMenuButtonClicked.Broadcast(FName(TEXT("Settings")));
+	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Settings button clicked - showing settings overlay"));
+	if (W_Settings)
+	{
+		ShowOverlay(W_Settings);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_MainMenu] W_Settings not available, broadcasting to PC"));
+		OnMenuButtonClicked.Broadcast(FName(TEXT("Settings")));
+	}
 }
 
 void UW_MainMenu::OnCreditsClicked()
 {
-	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Credits button clicked"));
-	OnMenuButtonClicked.Broadcast(FName(TEXT("Credits")));
+	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Credits button clicked - showing credits overlay"));
+	if (W_Credits)
+	{
+		W_Credits->EventInitializeCredits();
+		ShowOverlay(W_Credits);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_MainMenu] W_Credits not available, broadcasting to PC"));
+		OnMenuButtonClicked.Broadcast(FName(TEXT("Credits")));
+	}
 }
 
 void UW_MainMenu::OnQuitGameClicked()
@@ -261,6 +467,12 @@ bool UW_MainMenu::CanNavigate_Implementation()
 		return false;
 	}
 
+	// Block main menu navigation when an overlay is active
+	if (ActiveOverlay)
+	{
+		return false;
+	}
+
 	return true;
 }
 
@@ -304,7 +516,24 @@ void UW_MainMenu::EventFadeInMenu_Implementation(float PlaybackSpeed)
 
 void UW_MainMenu::EventNavigateDown_Implementation()
 {
-	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] EventNavigateDown"));
+	// Forward to active overlay
+	if (ActiveOverlay)
+	{
+		if (W_LoadGame && ActiveOverlay == W_LoadGame)
+		{
+			W_LoadGame->EventNavigateDown();
+		}
+		else if (W_Settings && ActiveOverlay == W_Settings)
+		{
+			W_Settings->EventNavigateDown();
+		}
+		else if (W_Credits && ActiveOverlay == W_Credits)
+		{
+			W_Credits->EventNavigateDown();
+		}
+		// CharacterSelection uses Left/Right, not Up/Down
+		return;
+	}
 
 	if (!CanNavigate())
 	{
@@ -328,7 +557,24 @@ void UW_MainMenu::EventNavigateDown_Implementation()
 
 void UW_MainMenu::EventNavigateUp_Implementation()
 {
-	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] EventNavigateUp"));
+	// Forward to active overlay
+	if (ActiveOverlay)
+	{
+		if (W_LoadGame && ActiveOverlay == W_LoadGame)
+		{
+			W_LoadGame->EventNavigateUp();
+		}
+		else if (W_Settings && ActiveOverlay == W_Settings)
+		{
+			W_Settings->EventNavigateUp();
+		}
+		else if (W_Credits && ActiveOverlay == W_Credits)
+		{
+			W_Credits->EventNavigateUp();
+		}
+		// CharacterSelection uses Left/Right, not Up/Down
+		return;
+	}
 
 	if (!CanNavigate())
 	{
@@ -352,7 +598,23 @@ void UW_MainMenu::EventNavigateUp_Implementation()
 
 void UW_MainMenu::EventNavigateOk_Implementation()
 {
-	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] EventNavigateOk"));
+	// Forward to active overlay
+	if (ActiveOverlay)
+	{
+		if (W_CharacterSelection && ActiveOverlay == W_CharacterSelection)
+		{
+			W_CharacterSelection->EventNavigateOk();
+		}
+		else if (W_LoadGame && ActiveOverlay == W_LoadGame)
+		{
+			W_LoadGame->EventNavigateOk();
+		}
+		else if (W_Settings && ActiveOverlay == W_Settings)
+		{
+			W_Settings->EventNavigateOk();
+		}
+		return;
+	}
 
 	if (!CanNavigate())
 	{
@@ -370,5 +632,261 @@ void UW_MainMenu::EventNavigateOk_Implementation()
 	{
 		ISLFMainMenuInterface::Execute_OnMenuButtonPressed(CurrentButton);
 		UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Called OnMenuButtonPressed on button %d"), NavigationIndex);
+	}
+}
+
+void UW_MainMenu::EventNavigateCancel_Implementation()
+{
+	// Forward to active overlay
+	if (ActiveOverlay)
+	{
+		if (W_CharacterSelection && ActiveOverlay == W_CharacterSelection)
+		{
+			W_CharacterSelection->EventNavigateCancel();
+		}
+		else if (W_LoadGame && ActiveOverlay == W_LoadGame)
+		{
+			W_LoadGame->EventNavigateCancel();
+		}
+		else if (W_Settings && ActiveOverlay == W_Settings)
+		{
+			W_Settings->EventNavigateCancel();
+		}
+		else if (W_Credits && ActiveOverlay == W_Credits)
+		{
+			W_Credits->EventNavigateCancel();
+		}
+		return;
+	}
+
+	// No overlay active - cancel on main menu does nothing
+}
+
+void UW_MainMenu::EventNavigateLeft_Implementation()
+{
+	// Forward to active overlay
+	if (ActiveOverlay)
+	{
+		if (W_CharacterSelection && ActiveOverlay == W_CharacterSelection)
+		{
+			W_CharacterSelection->EventNavigateLeft();
+		}
+		else if (W_Settings && ActiveOverlay == W_Settings)
+		{
+			W_Settings->EventNavigateLeft();
+		}
+		return;
+	}
+}
+
+void UW_MainMenu::EventNavigateRight_Implementation()
+{
+	// Forward to active overlay
+	if (ActiveOverlay)
+	{
+		if (W_CharacterSelection && ActiveOverlay == W_CharacterSelection)
+		{
+			W_CharacterSelection->EventNavigateRight();
+		}
+		else if (W_Settings && ActiveOverlay == W_Settings)
+		{
+			W_Settings->EventNavigateRight();
+		}
+		return;
+	}
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// OVERLAY MANAGEMENT
+// ═══════════════════════════════════════════════════════════════════════
+
+void UW_MainMenu::ShowOverlay(UWidget* Overlay)
+{
+	if (!Overlay)
+	{
+		return;
+	}
+
+	ActiveOverlay = Overlay;
+
+	if (FadeMenuOnly)
+	{
+		// Play fade-out animation for menu buttons, then show overlay
+		FWidgetAnimationDynamicEvent Delegate;
+		Delegate.BindDynamic(this, &UW_MainMenu::OnFadeMenuOnlyFinished);
+		BindToAnimationFinished(FadeMenuOnly, Delegate);
+		PlayAnimationForward(FadeMenuOnly);
+		UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Playing FadeMenuOnly, will show overlay on finish"));
+	}
+	else
+	{
+		// No animation available, show immediately
+		Overlay->SetVisibility(ESlateVisibility::Visible);
+		UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Showing overlay immediately (no FadeMenuOnly animation)"));
+	}
+}
+
+void UW_MainMenu::OnFadeMenuOnlyFinished()
+{
+	UnbindAllFromAnimationFinished(FadeMenuOnly);
+
+	if (ActiveOverlay)
+	{
+		ActiveOverlay->SetVisibility(ESlateVisibility::Visible);
+		UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] FadeMenuOnly finished - overlay now visible"));
+	}
+}
+
+void UW_MainMenu::ReturnFromOverlay()
+{
+	if (ActiveOverlay)
+	{
+		ActiveOverlay->SetVisibility(ESlateVisibility::Collapsed);
+		UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Overlay hidden"));
+	}
+	ActiveOverlay = nullptr;
+
+	// Fade menu back in (plays FadeMenuOnly in reverse)
+	EventFadeInMenu(1.0f);
+
+	// Restore focus to main menu for keyboard navigation
+	SetFocus();
+}
+
+void UW_MainMenu::OnCharacterClassSelected(UPrimaryDataAsset* ClassAsset)
+{
+	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Character class selected: %s"), *GetNameSafe(ClassAsset));
+
+	// Hide overlay
+	if (ActiveOverlay)
+	{
+		ActiveOverlay->SetVisibility(ESlateVisibility::Collapsed);
+		ActiveOverlay = nullptr;
+	}
+
+	// bp_only flow: SetSelectedClass → GetUniqueSlotName → SetActiveSlot → OpenLevel
+	UGameInstance* GI = UGameplayStatics::GetGameInstance(this);
+	if (GI && GI->GetClass()->ImplementsInterface(UBPI_GameInstance::StaticClass()))
+	{
+		// 1. Set the selected character class
+		IBPI_GameInstance::Execute_SetSelectedClass(GI, ClassAsset);
+		UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] SetSelectedClass: %s"), *GetNameSafe(ClassAsset));
+
+		// 2. Generate a unique slot name: "SLF_{CharacterName}_{index}"
+		FString NewSlotName = GenerateUniqueSlotName(ClassAsset);
+
+		// 3. Register the new slot in SGO_Slots so Continue/Load can find it
+		IBPI_GameInstance::Execute_AddAndSaveSlots(GI, NewSlotName);
+		UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] AddAndSaveSlots: %s"), *NewSlotName);
+
+		// 4. Set this as the active slot
+		IBPI_GameInstance::Execute_SetActiveSlot(GI, NewSlotName);
+		UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] SetActiveSlot: %s"), *NewSlotName);
+	}
+
+	// 5. Load the game level
+	LoadGameLevel();
+}
+
+void UW_MainMenu::OnCharacterSelectionClosed()
+{
+	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Character selection closed - returning to main menu"));
+	ReturnFromOverlay();
+}
+
+void UW_MainMenu::OnLoadGameClosed()
+{
+	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Load game closed (cancelled) - returning to main menu"));
+	ReturnFromOverlay();
+}
+
+void UW_MainMenu::OnSaveSlotConfirmed()
+{
+	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Save slot confirmed - loading game level"));
+
+	// Hide overlay
+	if (ActiveOverlay)
+	{
+		ActiveOverlay->SetVisibility(ESlateVisibility::Collapsed);
+		ActiveOverlay = nullptr;
+	}
+
+	// Active slot was already set by W_LoadGame::EventOnSaveSlotSelected
+	// Just open the level
+	LoadGameLevel();
+}
+
+void UW_MainMenu::OnSettingsClosed()
+{
+	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Settings closed - returning to main menu"));
+	ReturnFromOverlay();
+}
+
+void UW_MainMenu::OnCreditsClosed()
+{
+	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Credits closed - returning to main menu"));
+	ReturnFromOverlay();
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// SAVE/LOAD HELPERS
+// ═══════════════════════════════════════════════════════════════════════
+
+FString UW_MainMenu::GenerateUniqueSlotName(UPrimaryDataAsset* CharacterClass)
+{
+	// bp_only format: "SLF_{CharacterClassName}_{index}"
+	// Uses BFL_Helper::GetUniqueSlotName logic: loop until DoesSaveGameExist returns false
+
+	FString CharName = TEXT("Character");
+
+	if (UPDA_BaseCharacterInfo* CharInfo = Cast<UPDA_BaseCharacterInfo>(CharacterClass))
+	{
+		// Use DisplayName (inherited from UPDA_Base), which maps to bp_only CharacterClassName
+		FString DisplayStr = CharInfo->DisplayName.ToString();
+		if (!DisplayStr.IsEmpty())
+		{
+			CharName = DisplayStr;
+		}
+	}
+	else if (CharacterClass)
+	{
+		// Fallback to asset name
+		CharName = CharacterClass->GetName();
+	}
+
+	// Find unique index
+	for (int32 Index = 0; Index < 999; ++Index)
+	{
+		FString SlotName = FString::Printf(TEXT("SLF_%s_%d"), *CharName, Index);
+		if (!UGameplayStatics::DoesSaveGameExist(SlotName, 0))
+		{
+			UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Generated unique slot name: %s"), *SlotName);
+			return SlotName;
+		}
+	}
+
+	// Fallback with timestamp if somehow 999 slots exist
+	FString Fallback = FString::Printf(TEXT("SLF_%s_%lld"), *CharName, FDateTime::Now().GetTicks());
+	UE_LOG(LogTemp, Warning, TEXT("[W_MainMenu] All slot indices taken, using timestamp: %s"), *Fallback);
+	return Fallback;
+}
+
+void UW_MainMenu::LoadGameLevel()
+{
+	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] LoadGameLevel - using LoadingScreen: %s"),
+		LoadingScreen ? TEXT("YES") : TEXT("NO"));
+
+	// Use loading screen if available (matches bp_only: EventOpenLevelByNameAndFadeOut)
+	if (LoadingScreen)
+	{
+		LoadingScreen->SetVisibility(ESlateVisibility::Visible);
+		LoadingScreen->EventOpenLevelByNameAndFadeOut(FName(TEXT("L_Demo_Showcase")), true, TEXT(""));
+		UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Loading L_Demo_Showcase via LoadingScreen"));
+	}
+	else
+	{
+		// Fallback: direct level load
+		UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("L_Demo_Showcase")));
+		UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Loading L_Demo_Showcase directly (no LoadingScreen)"));
 	}
 }

@@ -20,6 +20,7 @@
 #include "Framework/SLFPlayerController.h"
 #include "Widgets/W_HUD.h"
 #include "GameplayTagContainer.h"
+#include "AssetRegistry/AssetRegistryModule.h"
 
 UInventoryManagerComponent::UInventoryManagerComponent()
 {
@@ -31,7 +32,7 @@ UInventoryManagerComponent::UInventoryManagerComponent()
 
 	// Initialize runtime
 	OwnerActor = nullptr;
-	Currency = 0;
+	Currency = 1000;  // Starting currency for testing vendor system
 }
 
 void UInventoryManagerComponent::BeginPlay()
@@ -980,13 +981,71 @@ void UInventoryManagerComponent::EventAsyncAddItemByTag(FGameplayTag ItemTag, in
 {
 	UE_LOG(LogTemp, Log, TEXT("[InventoryManager] EventAsyncAddItemByTag: %s x%d"), *ItemTag.ToString(), Amount);
 
-	// In a full implementation, this would:
-	// 1. Look up the item asset path from tag
-	// 2. Async load the asset
-	// 3. Call AddItem when complete
+	// Use Asset Registry to find the item with matching ItemTag
+	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+	IAssetRegistry& AssetRegistry = AssetRegistryModule.Get();
 
-	// For now, log and attempt to find item in asset registry
-	// This would typically use StreamableManager for async loading
+	// Search for all assets in the items folder (no class filter - Blueprint classes are tricky)
+	TArray<FAssetData> AssetList;
+	FARFilter Filter;
+	Filter.PackagePaths.Add(FName("/Game/SoulslikeFramework/Data/Items"));
+	Filter.bRecursivePaths = true;
+	// Don't filter by class - let Cast<UPDA_Item> handle filtering
+
+	AssetRegistry.GetAssets(Filter, AssetList);
+	UE_LOG(LogTemp, Log, TEXT("[InventoryManager] Found %d item assets to search"), AssetList.Num());
+
+	// First try: Match by ItemTag
+	for (const FAssetData& AssetData : AssetList)
+	{
+		UObject* LoadedAsset = AssetData.GetAsset();
+		if (!LoadedAsset) continue;
+
+		UPDA_Item* ItemAsset = Cast<UPDA_Item>(LoadedAsset);
+		if (ItemAsset)
+		{
+			FGameplayTag AssetItemTag = ItemAsset->ItemInformation.ItemTag;
+			if (AssetItemTag.IsValid() && AssetItemTag.MatchesTagExact(ItemTag))
+			{
+				UE_LOG(LogTemp, Log, TEXT("[InventoryManager] Found item by ItemTag: %s"), *AssetData.AssetName.ToString());
+				AddItem(ItemAsset, Amount, true);
+				return;
+			}
+		}
+	}
+
+	// Second try: Match by asset name from tag
+	// Tag format: "SoulslikeFramework.Items.Examples.HealthFlask" -> look for "DA_HealthFlask"
+	FString TagString = ItemTag.ToString();
+	FString ItemName;
+	int32 LastDotIndex;
+	if (TagString.FindLastChar('.', LastDotIndex))
+	{
+		ItemName = TagString.Mid(LastDotIndex + 1);
+	}
+	else
+	{
+		ItemName = TagString;
+	}
+
+	FString ExpectedAssetName = FString::Printf(TEXT("DA_%s"), *ItemName);
+	UE_LOG(LogTemp, Log, TEXT("[InventoryManager] No ItemTag match, trying asset name: %s"), *ExpectedAssetName);
+
+	for (const FAssetData& AssetData : AssetList)
+	{
+		if (AssetData.AssetName.ToString().Equals(ExpectedAssetName, ESearchCase::IgnoreCase))
+		{
+			UObject* LoadedAsset = AssetData.GetAsset();
+			if (UPDA_Item* ItemAsset = Cast<UPDA_Item>(LoadedAsset))
+			{
+				UE_LOG(LogTemp, Log, TEXT("[InventoryManager] Found item by asset name: %s"), *AssetData.AssetName.ToString());
+				AddItem(ItemAsset, Amount, true);
+				return;
+			}
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[InventoryManager] EventAsyncAddItemByTag: No item found with tag %s or name DA_%s"), *ItemTag.ToString(), *ItemName);
 }
 
 void UInventoryManagerComponent::EventAsyncUseItem(UDataAsset* ItemAsset)

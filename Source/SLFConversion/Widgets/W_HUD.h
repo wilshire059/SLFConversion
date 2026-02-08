@@ -34,6 +34,7 @@ class UW_Settings;
 class UW_RestMenu;
 class UW_NPC_Window;
 class UW_DialogWindow;
+class UW_Dialog;
 class UW_InteractableWidget;
 class UW_BossBar;
 class UW_Boss_Healthbar;
@@ -57,7 +58,7 @@ class UPDA_Buff;
 class UPDA_Vendor;
 class AB_Interactable;
 class AB_RestingPoint;
-class UAC_AI_InteractionManager;
+class UAIInteractionManagerComponent;
 class UMaterialInterface;
 
 
@@ -103,6 +104,10 @@ protected:
 	UW_Resources* CachedW_Resources;
 	UW_RestMenu* CachedW_RestMenu;
 	UW_Radar* CachedW_Radar;
+
+	// NPC dialog widgets - cached from UMG
+	UW_NPC_Window* CachedW_NPC_Window;
+	UW_Dialog* CachedW_Dialog;
 
 	// Loot notification widgets - cached from UMG
 	UVerticalBox* CachedItemLootNotificationsBox;
@@ -289,8 +294,8 @@ public:
 	virtual void EventFinishDialog_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_HUD|Dialog")
-	void EventSetupNpcWindow(const FText& NpcName, UPDA_Vendor* InVendorAsset, UAC_AI_InteractionManager* DialogComponent);
-	virtual void EventSetupNpcWindow_Implementation(const FText& NpcName, UPDA_Vendor* InVendorAsset, UAC_AI_InteractionManager* DialogComponent);
+	void EventSetupNpcWindow(const FText& NpcName, UDataAsset* InVendorAsset, UAIInteractionManagerComponent* DialogComponent);
+	virtual void EventSetupNpcWindow_Implementation(const FText& NpcName, UDataAsset* InVendorAsset, UAIInteractionManagerComponent* DialogComponent);
 
 	// Visual Effects Events
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_HUD|Visual")
@@ -445,6 +450,10 @@ protected:
 
 	UFUNCTION()
 	void OnSettingsClosedHandler();
+
+	/** Internal handler bound to W_Settings::OnQuitRequested */
+	UFUNCTION()
+	void OnQuitRequestedHandler(bool Desktop);
 
 	UFUNCTION()
 	void OnRestMenuClosedHandler();

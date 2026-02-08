@@ -1,35 +1,21 @@
 // W_CharacterSelection.h
 // C++ Widget class for W_CharacterSelection
 //
-// 20-PASS VALIDATION: 2026-01-01 Autonomous Session
 // Source: BlueprintDNA/WidgetBlueprint/W_CharacterSelection.json
 // Parent: UW_Navigable_InputReader
-// Variables: 4 | Functions: 2 | Dispatchers: 2
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Widgets/W_Navigable_InputReader.h"
 #include "GameplayTagContainer.h"
-#include "SLFEnums.h"
-#include "SLFGameTypes.h"
 #include "SLFPrimaryDataAssets.h"
-#include "InputMappingContext.h"
-#include "GameFramework/InputSettings.h"
-#include "GenericPlatform/GenericWindow.h"
-#include "MediaPlayer.h"
-
 
 #include "W_CharacterSelection.generated.h"
 
-// Forward declarations for widget types
+// Forward declarations
 class UW_CharacterSelectionCard;
-
-// Forward declarations for Blueprint types
-
-
-// Forward declarations for SaveGame types
-
+class UScrollBox;
 
 // Event Dispatchers
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FW_CharacterSelection_OnClassCardClicked, UPrimaryDataAsset*, ClassAsset);
@@ -48,37 +34,52 @@ public:
 	virtual void NativeDestruct() override;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// VARIABLES (4)
+	// VARIABLES
 	// ═══════════════════════════════════════════════════════════════════════
 
+	// The base class to scan for in the AssetRegistry (set in Blueprint editor)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config")
 	TSubclassOf<UObject> PrimaryClassAsset;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+
+	// Populated by InitializeAndStoreClassAssets - all character info data assets
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	TArray<UPrimaryDataAsset*> BaseCharacterAssets;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+
+	// Card widgets created for each character
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	TArray<UW_CharacterSelectionCard*> CharacterCardEntries;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Default")
+
+	// Current selected card index
+	UPROPERTY(BlueprintReadWrite, Category = "Default")
 	int32 NavigationIndex;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// EVENT DISPATCHERS (2)
+	// BIND WIDGETS (UMG Designer References)
+	// ═══════════════════════════════════════════════════════════════════════
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UScrollBox* ClassesScrollBox;
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// EVENT DISPATCHERS
 	// ═══════════════════════════════════════════════════════════════════════
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FW_CharacterSelection_OnClassCardClicked OnClassCardClicked;
+
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FW_CharacterSelection_OnCharacterSelectionClosed OnCharacterSelectionClosed;
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// FUNCTIONS (2)
+	// FUNCTIONS
 	// ═══════════════════════════════════════════════════════════════════════
 
+	// Scan AssetRegistry for all PDA_BaseCharacterInfo assets
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_CharacterSelection")
 	void InitializeAndStoreClassAssets();
 	virtual void InitializeAndStoreClassAssets_Implementation();
 
-
-	// Event Handlers (7 events)
+	// Navigation events
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_CharacterSelection")
 	void EventNavigateCancel();
 	virtual void EventNavigateCancel_Implementation();
@@ -108,6 +109,16 @@ public:
 	virtual void EventOnVisibilityChanged_Implementation(uint8 InVisibility);
 
 protected:
-	// Cache references
-	void CacheWidgetReferences();
+	// Create card widgets and populate ClassesScrollBox
+	void CreateCardWidgets();
+
+	// Update card selection visuals
+	void UpdateCardSelection();
+
+	// Card delegate handlers
+	UFUNCTION()
+	void OnCardClickedHandler(UPrimaryDataAsset* ClassAsset);
+
+	UFUNCTION()
+	void OnCardSelectedHandler(UW_CharacterSelectionCard* Card);
 };

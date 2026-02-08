@@ -50,9 +50,9 @@ public:
 	// WIDGET BINDINGS
 	// ═══════════════════════════════════════════════════════════════════════
 
-	// Text block to display centered text
+	// Text block to display centered text - NOTE: Blueprint widget is named "Text", not "CenteredText"
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
-	class UTextBlock* CenteredText;
+	class UTextBlock* Text;
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS (0)

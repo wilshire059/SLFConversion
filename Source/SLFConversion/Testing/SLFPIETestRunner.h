@@ -54,6 +54,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "PIE Testing")
 	void RunSaveLoadTest();
 
+	/** Run NPC dialog test - tests NPC interaction and dialog text display */
+	UFUNCTION(BlueprintCallable, Category = "PIE Testing")
+	void RunNPCDialogTest();
+
 	/** Event fired when a test completes */
 	UPROPERTY(BlueprintAssignable, Category = "PIE Testing")
 	FOnTestCompleted OnTestCompleted;

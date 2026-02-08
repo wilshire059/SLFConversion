@@ -117,4 +117,10 @@ private:
 
 	// Handle GameMenu input
 	void OnGameMenuInput();
+
+	// Deferred cinematic mode entry (HUD may not exist at BeginPlay time)
+	void EnterCinematicMode();
+
+	// Timer handle for deferred cinematic mode
+	FTimerHandle CinematicModeTimerHandle;
 };

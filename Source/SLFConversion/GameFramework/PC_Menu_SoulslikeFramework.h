@@ -87,6 +87,10 @@ protected:
 	// Create and display the main menu widget
 	void CreateMainMenuWidget();
 
+	// Handle menu button clicks from W_MainMenu
+	UFUNCTION()
+	void HandleMenuButtonClicked(FName ButtonName);
+
 	// Setup input for menu navigation
 	void SetupMenuInput();
 

@@ -17,7 +17,7 @@
 UW_StatBlock_LevelUp::UW_StatBlock_LevelUp(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	ShowUpgradeButtons = true;
+	ShowUpgradeButtons = false;  // Default false - only PrimaryAttributes sets true (via W_LevelUp::CacheWidgetReferences)
 	CachedStatBox = nullptr;
 	CachedStatManager = nullptr;
 }

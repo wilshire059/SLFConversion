@@ -2,7 +2,27 @@
 // Implementation for Primary Data Asset classes
 
 #include "SLFPrimaryDataAssets.h"
+#include "Components/ProgressManagerComponent.h"
 #include "Components/AC_ProgressManager.h"
+
+// Helper lambda to get progress from either manager type
+static bool GetProgressFromManager(UActorComponent* Manager, const FGameplayTag& Tag, ESLFProgress& OutState, bool& bFound)
+{
+	bFound = false;
+	OutState = ESLFProgress::NotStarted;
+
+	if (UProgressManagerComponent* PMC = Cast<UProgressManagerComponent>(Manager))
+	{
+		PMC->GetProgress(Tag, OutState, bFound);
+		return true;
+	}
+	else if (UAC_ProgressManager* ACPM = Cast<UAC_ProgressManager>(Manager))
+	{
+		ACPM->GetProgress(Tag, bFound, OutState);
+		return true;
+	}
+	return false;
+}
 
 void UPDA_Dialog::GetDialogTableBasedOnProgress(UActorComponent* ProgressManager, TSoftObjectPtr<UDataTable>& Table)
 {
@@ -12,15 +32,12 @@ void UPDA_Dialog::GetDialogTableBasedOnProgress(UActorComponent* ProgressManager
 	// Need a valid progress manager to check conditions
 	if (!ProgressManager)
 	{
+		UE_LOG(LogTemp, Log, TEXT("[PDA_Dialog] GetDialogTableBasedOnProgress - No ProgressManager, using default table"));
 		return;
 	}
 
-	// Try to cast to our progress manager type
-	UAC_ProgressManager* PM = Cast<UAC_ProgressManager>(ProgressManager);
-	if (!PM)
-	{
-		return;
-	}
+	UE_LOG(LogTemp, Log, TEXT("[PDA_Dialog] GetDialogTableBasedOnProgress - ProgressManager type: %s, Checking %d requirements"),
+		*ProgressManager->GetClass()->GetName(), Requirement.Num());
 
 	// Iterate through Requirements (For Each Loop with Break)
 	for (const FSLFDialogRequirement& Req : Requirement)
@@ -40,8 +57,18 @@ void UPDA_Dialog::GetDialogTableBasedOnProgress(UActorComponent* ProgressManager
 				bool bFound = false;
 				ESLFProgress CurrentState = ESLFProgress::NotStarted;
 
-				// Call GetProgress on the ProgressManager
-				PM->GetProgress(Tag, bFound, CurrentState);
+				// Call GetProgress on the ProgressManager (supports both class types)
+				if (!GetProgressFromManager(ProgressManager, Tag, CurrentState, bFound))
+				{
+					UE_LOG(LogTemp, Warning, TEXT("[PDA_Dialog] Unknown ProgressManager type: %s"),
+						*ProgressManager->GetClass()->GetName());
+					bAllConditionsMet = false;
+					break;
+				}
+
+				UE_LOG(LogTemp, Log, TEXT("[PDA_Dialog] Checking tag %s: Found=%s, State=%d (Required=%d)"),
+					*Tag.ToString(), bFound ? TEXT("true") : TEXT("false"),
+					static_cast<int32>(CurrentState), static_cast<int32>(Progress.State));
 
 				// Check if the state matches what we're looking for
 				if (!bFound || CurrentState != Progress.State)
@@ -58,14 +85,52 @@ void UPDA_Dialog::GetDialogTableBasedOnProgress(UActorComponent* ProgressManager
 		}
 
 		// If all conditions met, use this requirement's dialog table and break
-		if (bAllConditionsMet && Req.RelatedDialogTable.IsValid())
+		UE_LOG(LogTemp, Log, TEXT("[PDA_Dialog] After checking: bAllConditionsMet=%s, TableIsNull=%s, TableIsValid=%s, TablePath=%s"),
+			bAllConditionsMet ? TEXT("true") : TEXT("false"),
+			Req.RelatedDialogTable.IsNull() ? TEXT("true") : TEXT("false"),
+			Req.RelatedDialogTable.IsValid() ? TEXT("true") : TEXT("false"),
+			*Req.RelatedDialogTable.ToString());
+
+		if (bAllConditionsMet && !Req.RelatedDialogTable.IsNull())
 		{
+			UE_LOG(LogTemp, Log, TEXT("[PDA_Dialog] All conditions met, using table: %s"),
+				*Req.RelatedDialogTable.GetAssetName());
 			Table = Req.RelatedDialogTable;
 			return; // Break out of outer loop
 		}
 	}
 
+	UE_LOG(LogTemp, Log, TEXT("[PDA_Dialog] No matching requirement, using default table"));
 	// If no matching requirement found, Table remains as DefaultDialogTable
+}
+
+bool UPDA_Dialog::GetCompletionProgressTag(FGameplayTag& OutProgressTag)
+{
+	// Find the first Requirement that checks for Completed state
+	// This is the progress tag that should be set when dialog completes
+	for (const FSLFDialogRequirement& Req : Requirement)
+	{
+		for (const FSLFDialogProgress& Progress : Req.Container)
+		{
+			// Look for requirements that check for Completed state
+			if (Progress.State == ESLFProgress::Completed)
+			{
+				// Get the first tag from the container
+				TArray<FGameplayTag> Tags;
+				Progress.ProgressContainer.GetGameplayTagArray(Tags);
+				if (Tags.Num() > 0)
+				{
+					OutProgressTag = Tags[0];
+					UE_LOG(LogTemp, Log, TEXT("[PDA_Dialog] GetCompletionProgressTag: Found tag %s"),
+						*OutProgressTag.ToString());
+					return true;
+				}
+			}
+		}
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[PDA_Dialog] GetCompletionProgressTag: No completion tag found in Requirements"));
+	return false;
 }
 
 void UPDA_Vendor::ReduceItemStock(UObject* Item, int32 Delta)
