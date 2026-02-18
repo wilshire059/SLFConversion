@@ -26,6 +26,8 @@ description: Migrate SoulslikeFramework Blueprints to C++ with 20-pass validatio
 4. **NO ASSUMPTIONS** - Always verify from JSON exports
 5. **NO STUB IMPLEMENTATIONS** - Full logic required
 6. **DATA FLOW ANALYSIS FIRST** - Identify runtime setup and reflection needs BEFORE coding
+7. **NEVER USE PYTHON API** - Always extend SLFAutomationLibrary in C++
+8. **VISUAL VALIDATION** - Pass 19 (PIE test) must include screenshot capture
 
 **Reference:** `C:\scripts\SLFConversion\DEFINITION_OF_DONE.md`
 
@@ -328,8 +330,8 @@ UW_GenericButton* ActiveQuitButton;
 | 16 | Compile C++ |
 | 17 | Run migration script |
 | 18 | Compile Blueprints |
-| 19 | PIE test |
-| 20 | Final review |
+| 19 | PIE test + screenshot capture (use play-test-loop skill) |
+| 20 | Final review + visual validation |
 
 ---
 

@@ -19,6 +19,7 @@ class SLFCONVERSION_API UBlueprintFixerLibrary : public UBlueprintFunctionLibrar
 	GENERATED_BODY()
 
 public:
+#if WITH_EDITOR
 	/**
 	 * Refresh all nodes in a Blueprint that call functions on a specific class.
 	 * This rebinds function calls to inherited implementations after reparenting.
@@ -266,4 +267,5 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Blueprint Fixer", meta = (DevelopmentOnly))
 	static int32 DeleteNodesByGuids(UBlueprint* Blueprint, TArray<FString> NodeGuids);
+#endif // WITH_EDITOR
 };

@@ -34,8 +34,8 @@ UAIBossComponent::UAIBossComponent()
 	TriggerCollisionRadius = 1000.0;
 	DoorCheckDistance = 500.0;
 
-	// Initialize phase config
-	ActivePhaseIndex = 0;
+	// Initialize phase config (-1 = no phase set yet, prevents SetPhase guard from blocking first call)
+	ActivePhaseIndex = -1;
 
 	// Initialize death config
 	DeathSequence = nullptr;
@@ -53,6 +53,10 @@ UAIBossComponent::UAIBossComponent()
 	// Initialize debug
 	bDebugActive = false;
 	DebugPhase = 0;
+
+	// Initialize sequence tracking
+	ActiveSequencePlayer = nullptr;
+	ActiveSequenceActor = nullptr;
 }
 
 void UAIBossComponent::BeginPlay()
@@ -61,13 +65,6 @@ void UAIBossComponent::BeginPlay()
 
 	UE_LOG(LogTemp, Log, TEXT("[AIBoss] BeginPlay on %s - Boss: %s, Phases: %d"),
 		*GetOwner()->GetName(), *Name.ToString(), Phases.Num());
-
-	// Initialize first phase if phases exist
-	if (Phases.Num() > 0)
-	{
-		ActivePhase = Phases[0];
-		ActivePhaseIndex = 0;
-	}
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -76,6 +73,13 @@ void UAIBossComponent::BeginPlay()
 
 void UAIBossComponent::SetFightActive_Implementation(bool bActive)
 {
+	// Guard: don't re-trigger if already in the requested state
+	if (bActive && bFightActive)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[AIBoss] SetFightActive: already active, ignoring duplicate call"));
+		return;
+	}
+
 	bFightActive = bActive;
 
 	UE_LOG(LogTemp, Log, TEXT("[AIBoss] SetFightActive: %s, bShowBossBar: %s"),
@@ -126,16 +130,7 @@ void UAIBossComponent::SetFightActive_Implementation(bool bActive)
 				PlayerHUD ? TEXT("valid") : TEXT("null"));
 		}
 
-		// Play phase music
-		if (!ActivePhase.PhaseMusic.IsNull() && !ActiveMusicComponent)
-		{
-			if (USoundBase* Music = ActivePhase.PhaseMusic.LoadSynchronous())
-			{
-				ActiveMusicComponent = UGameplayStatics::SpawnSound2D(this, Music);
-			}
-		}
-
-		// Start phase 0 (or debug phase) - this plays the phase cinematic
+		// Start phase 0 (or debug phase) - this plays the phase cinematic and music
 		if (bDebugActive)
 		{
 			UE_LOG(LogTemp, Log, TEXT("[AIBoss] DebugActive, setting phase to DebugPhase: %d"), DebugPhase);
@@ -166,6 +161,9 @@ void UAIBossComponent::EndFight_Implementation()
 
 	bFightActive = false;
 
+	// Stop any active cinematic
+	CleanupActiveSequence();
+
 	// Stop music
 	if (ActiveMusicComponent)
 	{
@@ -183,6 +181,13 @@ void UAIBossComponent::EndFight_Implementation()
 
 void UAIBossComponent::SetPhase_Implementation(int32 PhaseIndex)
 {
+	// Guard: don't re-enter same phase (matches bp_only "Not Equal" check)
+	if (PhaseIndex == ActivePhaseIndex)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[AIBoss] SetPhase: already at phase %d, ignoring"), PhaseIndex);
+		return;
+	}
+
 	if (PhaseIndex >= 0 && PhaseIndex < Phases.Num())
 	{
 		ActivePhaseIndex = PhaseIndex;
@@ -190,46 +195,7 @@ void UAIBossComponent::SetPhase_Implementation(int32 PhaseIndex)
 
 		UE_LOG(LogTemp, Log, TEXT("[AIBoss] SetPhase: %d - %s"), PhaseIndex, *ActivePhase.PhaseName.ToString());
 
-		// Play the phase start sequence (cinematic) if valid
-		if (!ActivePhase.PhaseStartSequence.IsNull())
-		{
-			ULevelSequence* Sequence = ActivePhase.PhaseStartSequence.LoadSynchronous();
-			if (IsValid(Sequence))
-			{
-				UE_LOG(LogTemp, Log, TEXT("[AIBoss] Playing PhaseStartSequence: %s"), *Sequence->GetName());
-
-				// Create level sequence player and play directly
-				FMovieSceneSequencePlaybackSettings PlaybackSettings;
-				PlaybackSettings.bAutoPlay = true;
-
-				ALevelSequenceActor* OutActor = nullptr;
-				ULevelSequencePlayer* Player = ULevelSequencePlayer::CreateLevelSequencePlayer(
-					GetWorld(),
-					Sequence,
-					PlaybackSettings,
-					OutActor
-				);
-
-				if (IsValid(Player))
-				{
-					Player->Play();
-					UE_LOG(LogTemp, Log, TEXT("[AIBoss] Started playing phase sequence"));
-				}
-				else
-				{
-					UE_LOG(LogTemp, Warning, TEXT("[AIBoss] Failed to create level sequence player"));
-				}
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("[AIBoss] PhaseStartSequence failed to load"));
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Log, TEXT("[AIBoss] No PhaseStartSequence configured for phase %d"), PhaseIndex);
-		}
-
+		// HandlePhaseChange plays the cinematic, montage, and sets combat state
 		HandlePhaseChange(PhaseIndex);
 	}
 }
@@ -254,52 +220,110 @@ void UAIBossComponent::HandlePhaseChange_Implementation(int32 NewPhaseIndex)
 {
 	UE_LOG(LogTemp, Log, TEXT("[AIBoss] HandlePhaseChange: %d"), NewPhaseIndex);
 
-	if (NewPhaseIndex >= 0 && NewPhaseIndex < Phases.Num())
+	if (NewPhaseIndex < 0 || NewPhaseIndex >= Phases.Num())
 	{
-		const FSLFAiBossPhase& NewPhase = Phases[NewPhaseIndex];
+		return;
+	}
 
-		// Play transition montage if available
-		if (!NewPhase.PhaseTransitionMontage.IsNull())
+	const FSLFAiBossPhase& NewPhase = Phases[NewPhaseIndex];
+
+	// Clean up any previous cinematic before starting a new one
+	CleanupActiveSequence();
+
+	// --- TRY PLAY PHASE SEQUENCE (cinematic) ---
+	// Matches bp_only: play level sequence, bind OnFinished → OnPhaseSequenceFinished
+	if (!NewPhase.PhaseStartSequence.IsNull())
+	{
+		ULevelSequence* Sequence = NewPhase.PhaseStartSequence.LoadSynchronous();
+		if (IsValid(Sequence))
 		{
-			// Play montage on owner's skeletal mesh
-			if (ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner()))
+			UE_LOG(LogTemp, Log, TEXT("[AIBoss] Playing PhaseStartSequence: %s"), *Sequence->GetName());
+
+			FMovieSceneSequencePlaybackSettings PlaybackSettings;
+			PlaybackSettings.bAutoPlay = false; // We'll call Play() ourselves after binding
+
+			ALevelSequenceActor* OutActor = nullptr;
+			ULevelSequencePlayer* Player = ULevelSequencePlayer::CreateLevelSequencePlayer(
+				GetWorld(),
+				Sequence,
+				PlaybackSettings,
+				OutActor
+			);
+
+			if (IsValid(Player))
 			{
-				if (USkeletalMeshComponent* Mesh = OwnerCharacter->GetMesh())
+				// Store references for cleanup
+				ActiveSequencePlayer = Player;
+				ActiveSequenceActor = OutActor;
+
+				// Position the sequence actor at the boss location so it lines up
+				if (OutActor && GetOwner())
 				{
-					if (UAnimInstance* AnimInstance = Mesh->GetAnimInstance())
-					{
-						UAnimMontage* TransitionMontage = NewPhase.PhaseTransitionMontage.LoadSynchronous();
-						if (TransitionMontage)
-						{
-							float MontageLength = AnimInstance->Montage_Play(TransitionMontage);
-							// Schedule OnPhaseSequenceFinished after montage completes
-							if (MontageLength > 0.0f)
-							{
-								FTimerHandle PhaseTimer;
-								GetWorld()->GetTimerManager().SetTimer(PhaseTimer, this, &UAIBossComponent::OnPhaseSequenceFinished_Implementation, MontageLength, false);
-							}
-							else
-							{
-								OnPhaseSequenceFinished();
-							}
-						}
-					}
+					OutActor->SetActorTransform(GetOwner()->GetActorTransform());
 				}
+
+				// Bind OnFinished BEFORE playing (matches bp_only "Bind Event to On Finished")
+				Player->OnFinished.AddDynamic(this, &UAIBossComponent::OnLevelSequenceFinished);
+				Player->Play();
+
+				UE_LOG(LogTemp, Log, TEXT("[AIBoss] Started playing phase sequence, bound OnFinished"));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[AIBoss] Failed to create level sequence player"));
 			}
 		}
 		else
 		{
-			OnPhaseSequenceFinished();
+			UE_LOG(LogTemp, Warning, TEXT("[AIBoss] PhaseStartSequence failed to load"));
 		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("[AIBoss] No PhaseStartSequence configured for phase %d"), NewPhaseIndex);
+	}
 
-		// Switch music if different
-		if (!NewPhase.PhaseMusic.IsNull() && ActiveMusicComponent)
+	// --- TRY PLAY PHASE MONTAGE ---
+	// Play PhaseStartMontage (for phase-start animations like boss intro pose)
+	UAnimMontage* MontageToPlay = nullptr;
+	if (!NewPhase.PhaseStartMontage.IsNull())
+	{
+		MontageToPlay = NewPhase.PhaseStartMontage.LoadSynchronous();
+	}
+	else if (!NewPhase.PhaseTransitionMontage.IsNull())
+	{
+		// Fallback to PhaseTransitionMontage if no start montage
+		MontageToPlay = NewPhase.PhaseTransitionMontage.LoadSynchronous();
+	}
+
+	if (MontageToPlay)
+	{
+		if (ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner()))
+		{
+			if (USkeletalMeshComponent* Mesh = OwnerCharacter->GetMesh())
+			{
+				if (UAnimInstance* AnimInstance = Mesh->GetAnimInstance())
+				{
+					float MontageLength = AnimInstance->Montage_Play(MontageToPlay);
+					UE_LOG(LogTemp, Log, TEXT("[AIBoss] Playing phase montage: %s (%.2fs)"),
+						*MontageToPlay->GetName(), MontageLength);
+				}
+			}
+		}
+	}
+
+	// --- SWITCH MUSIC ---
+	if (!NewPhase.PhaseMusic.IsNull())
+	{
+		// Stop current music
+		if (ActiveMusicComponent)
 		{
 			ActiveMusicComponent->Stop();
-			if (USoundBase* Music = NewPhase.PhaseMusic.LoadSynchronous())
-			{
-				ActiveMusicComponent = UGameplayStatics::SpawnSound2D(this, Music);
-			}
+			ActiveMusicComponent = nullptr;
+		}
+		if (USoundBase* Music = NewPhase.PhaseMusic.LoadSynchronous())
+		{
+			ActiveMusicComponent = UGameplayStatics::SpawnSound2D(this, Music);
 		}
 	}
 }
@@ -308,7 +332,31 @@ void UAIBossComponent::OnPhaseSequenceFinished_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("[AIBoss] OnPhaseSequenceFinished - Phase %d"), ActivePhaseIndex);
 
+	// Clean up the sequence actor/player now that it's done
+	CleanupActiveSequence();
+
 	// Phase transition complete - resume AI behavior
+}
+
+void UAIBossComponent::OnLevelSequenceFinished()
+{
+	UE_LOG(LogTemp, Log, TEXT("[AIBoss] Level sequence finished playing - calling OnPhaseSequenceFinished"));
+	OnPhaseSequenceFinished();
+}
+
+void UAIBossComponent::CleanupActiveSequence()
+{
+	if (ActiveSequencePlayer)
+	{
+		ActiveSequencePlayer->OnFinished.RemoveAll(this);
+		ActiveSequencePlayer->Stop();
+		ActiveSequencePlayer = nullptr;
+	}
+	if (ActiveSequenceActor)
+	{
+		ActiveSequenceActor->Destroy();
+		ActiveSequenceActor = nullptr;
+	}
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -425,6 +473,9 @@ void UAIBossComponent::ShowDeathText_Implementation()
 
 void UAIBossComponent::OnStatUpdated_Implementation(FGameplayTag StatTag, float CurrentValue, float MaxValue)
 {
+	// Only evaluate phase transitions during an active fight
+	if (!bFightActive) return;
+
 	// Check if this is health stat
 	if (StatTag.MatchesTagExact(FGameplayTag::RequestGameplayTag(FName("Stat.Health"))))
 	{

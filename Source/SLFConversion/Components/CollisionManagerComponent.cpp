@@ -42,13 +42,11 @@ UCollisionManagerComponent::UCollisionManagerComponent()
 
 	// CRITICAL: Initialize TraceTypes to detect hittable objects
 	// Without this, SphereTraceMultiForObjects will never hit anything!
-	TraceTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));           // Characters
+	TraceTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));           // Characters (enemies/player)
 	TraceTypes.Add(UEngineTypes::ConvertToObjectType(ECC_WorldDynamic));   // Destructibles, physics props
 	TraceTypes.Add(UEngineTypes::ConvertToObjectType(ECC_PhysicsBody));    // Physics-simulated bodies
-	TraceTypes.Add(UEngineTypes::ConvertToObjectType(ECC_WorldStatic));    // Static world geometry
 	TraceTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Destructible));   // Chaos Destructibles (GeometryCollection)
 	TraceTypes.Add(UEngineTypes::ConvertToObjectType(ECC_GameTraceChannel1)); // Custom channel 1 (ObjectType=7, used by B_Destructible)
-	TraceTypes.Add(UEngineTypes::ConvertToObjectType(ECC_GameTraceChannel2)); // Custom channel 2 (in case other objects use it)
 }
 
 void UCollisionManagerComponent::BeginPlay()
@@ -97,16 +95,60 @@ void UCollisionManagerComponent::GetTraceLocations(FVector& OutTraceStart, FVect
 	OutTraceStart = FVector::ZeroVector;
 	OutTraceEnd = FVector::ZeroVector;
 
+	if (!TargetMesh)
+	{
+		return;
+	}
+
 	if (USkeletalMeshComponent* SkelMesh = Cast<USkeletalMeshComponent>(TargetMesh))
 	{
-		OutTraceStart = SkelMesh->GetSocketLocation(TraceSocketStart);
-		OutTraceEnd = SkelMesh->GetSocketLocation(TraceSocketEnd);
+		if (SkelMesh->DoesSocketExist(TraceSocketStart) && SkelMesh->DoesSocketExist(TraceSocketEnd))
+		{
+			OutTraceStart = SkelMesh->GetSocketLocation(TraceSocketStart);
+			OutTraceEnd = SkelMesh->GetSocketLocation(TraceSocketEnd);
+			return;
+		}
 	}
 	else if (UStaticMeshComponent* StaticMesh = Cast<UStaticMeshComponent>(TargetMesh))
 	{
-		OutTraceStart = StaticMesh->GetSocketLocation(TraceSocketStart);
-		OutTraceEnd = StaticMesh->GetSocketLocation(TraceSocketEnd);
+		if (StaticMesh->DoesSocketExist(TraceSocketStart) && StaticMesh->DoesSocketExist(TraceSocketEnd))
+		{
+			OutTraceStart = StaticMesh->GetSocketLocation(TraceSocketStart);
+			OutTraceEnd = StaticMesh->GetSocketLocation(TraceSocketEnd);
+			return;
+		}
+
+		// FALLBACK: Sockets don't exist on this static mesh.
+		// Compute trace line from the mesh bounding box along its longest axis.
+		// This covers grip-to-tip for swords, katanas, greatswords, etc.
+		UStaticMesh* Mesh = StaticMesh->GetStaticMesh();
+		if (Mesh)
+		{
+			FBox Box = Mesh->GetBoundingBox();
+			FVector Size = Box.GetSize();
+			FVector Center = Box.GetCenter();
+
+			// Find the longest local axis (the blade direction)
+			FVector HalfExtent = FVector::ZeroVector;
+			if (Size.X >= Size.Y && Size.X >= Size.Z)
+				HalfExtent = FVector(Size.X * 0.5f, 0, 0);
+			else if (Size.Y >= Size.X && Size.Y >= Size.Z)
+				HalfExtent = FVector(0, Size.Y * 0.5f, 0);
+			else
+				HalfExtent = FVector(0, 0, Size.Z * 0.5f);
+
+			// Transform from local mesh space to world space
+			FTransform CompTransform = StaticMesh->GetComponentTransform();
+			OutTraceStart = CompTransform.TransformPosition(Center - HalfExtent);
+			OutTraceEnd = CompTransform.TransformPosition(Center + HalfExtent);
+			return;
+		}
 	}
+
+	// Last resort fallback: use component location with a forward extension
+	OutTraceStart = TargetMesh->GetComponentLocation();
+	FVector Forward = TargetMesh->GetForwardVector();
+	OutTraceEnd = OutTraceStart + Forward * 100.0f;
 }
 
 void UCollisionManagerComponent::SubsteppedTrace_Implementation(double StepSize)
@@ -135,6 +177,14 @@ void UCollisionManagerComponent::SubsteppedTrace_Implementation(double StepSize)
 		TArray<FHitResult> HitResults;
 		TArray<AActor*> ActorsToIgnore;
 		ActorsToIgnore.Add(GetOwner());
+		// Also ignore the character wielding this weapon
+		if (AActor* OwnerActor = GetOwner())
+		{
+			if (AActor* AttachParent = OwnerActor->GetAttachParentActor())
+			{
+				ActorsToIgnore.Add(AttachParent);
+			}
+		}
 
 		bool bHit = UKismetSystemLibrary::SphereTraceMultiForObjects(
 			this,
@@ -360,14 +410,19 @@ void UCollisionManagerComponent::ProcessTrace_Implementation(const TArray<FHitRe
 
 void UCollisionManagerComponent::ToggleTrace_Implementation(bool bEnabled)
 {
-	UE_LOG(LogTemp, Log, TEXT("[CollisionManager] ToggleTrace: %s"), bEnabled ? TEXT("true") : TEXT("false"));
-
 	if (bEnabled)
 	{
 		// Reset traced actors and last positions
 		TracedActors.Empty();
 		LastStartPosition = FVector::ZeroVector;
 		LastEndPosition = FVector::ZeroVector;
+
+		// Debug: Log trace positions at start
+		FVector DebugStart, DebugEnd;
+		GetTraceLocations(DebugStart, DebugEnd);
+		float TraceLength = FVector::Dist(DebugStart, DebugEnd);
+		UE_LOG(LogTemp, Log, TEXT("[CollisionManager] ToggleTrace: true - Start: %s, End: %s, Length: %.1f, Radius: %.1f"),
+			*DebugStart.ToString(), *DebugEnd.ToString(), TraceLength, TraceRadius * TraceSizeMultiplier);
 
 		// Enable tick
 		SetComponentTickEnabled(true);

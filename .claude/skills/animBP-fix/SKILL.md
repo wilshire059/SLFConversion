@@ -222,8 +222,31 @@ void AMyCharacter::OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightA
 
 ---
 
+## IMPORTANT: NEVER USE PYTHON API
+
+Do NOT use the Unreal Python API for AnimBP diagnosis or fixes. Always use C++ SLFAutomationLibrary functions:
+- `DiagnoseAnimBP()` - Find all broken nodes and state machines
+- `FixAllBrokenTransitions()` - Auto-fix broken transition inputs
+- `ExportAnimGraphComplete()` - Full node-by-node AnimGraph export
+- `ValidateAnimBPSetup()` - Validate parent class, variables, AnimGraph
+
+---
+
+## VISUAL VALIDATION
+
+After any AnimBP fix, validate visually using the Play-Test Loop:
+1. Build C++
+2. Launch PIE: `SLF.Test.SpawnEnemy <CharacterBPPath> 500`
+3. Capture screenshot: `SLF.Test.Screenshot AnimFix_After`
+4. Compare with before screenshot
+
+See `.claude/skills/play-test-loop/SKILL.md` for full workflow.
+
+---
+
 ## RELATED FILES
 
 - `Source/SLFConversion/Blueprints/SLFSoulslikeCharacter.cpp` - Example of crouch fix
 - `Source/SLFConversion/Components/AC_ActionManager.h` - IsCrouched property definition
+- `Source/SLFConversion/SLFAutomationLibrary.h` - AnimBP diagnosis/fix functions
 - AnimBP exports in `Exports/BlueprintDNA_v2/` - Check EventGraph for original logic

@@ -967,8 +967,9 @@ FString UPythonBridge::ExportBlueprintDNA(UBlueprint* Blueprint)
 // OTHER EXPORT FUNCTIONS
 // ============================================================================
 
-FString UPythonBridge::ExportWidgetBlueprintDNA(UWidgetBlueprint* WidgetBlueprint)
+FString UPythonBridge::ExportWidgetBlueprintDNA(UObject* WidgetBlueprintObj)
 {
+	UWidgetBlueprint* WidgetBlueprint = Cast<UWidgetBlueprint>(WidgetBlueprintObj);
 	if (!WidgetBlueprint)
 	{
 		return TEXT("{}");
@@ -1736,8 +1737,9 @@ FString UPythonBridge::GetAssetDependencyReport(UObject* Asset)
 // WIDGET HELPERS
 // ============================================================================
 
-UObject* UPythonBridge::GetWidgetTreeFromBP(UWidgetBlueprint* WidgetBlueprint)
+UObject* UPythonBridge::GetWidgetTreeFromBP(UObject* WidgetBlueprintObj)
 {
+	UWidgetBlueprint* WidgetBlueprint = Cast<UWidgetBlueprint>(WidgetBlueprintObj);
 	if (!WidgetBlueprint)
 	{
 		return nullptr;
@@ -1745,8 +1747,9 @@ UObject* UPythonBridge::GetWidgetTreeFromBP(UWidgetBlueprint* WidgetBlueprint)
 	return WidgetBlueprint->WidgetTree;
 }
 
-UObject* UPythonBridge::GetRootWidgetFromBP(UWidgetBlueprint* WidgetBlueprint)
+UObject* UPythonBridge::GetRootWidgetFromBP(UObject* WidgetBlueprintObj)
 {
+	UWidgetBlueprint* WidgetBlueprint = Cast<UWidgetBlueprint>(WidgetBlueprintObj);
 	if (!WidgetBlueprint || !WidgetBlueprint->WidgetTree)
 	{
 		return nullptr;

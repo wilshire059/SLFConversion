@@ -18,6 +18,7 @@ class SLFCONVERSION_API USLFYAMLExporter : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
+#if WITH_EDITOR
 	// ═══════════════════════════════════════════════════════════════════
 	// MAIN EXPORT FUNCTIONS
 	// ═══════════════════════════════════════════════════════════════════
@@ -71,4 +72,5 @@ public:
 
 	/** Convert FText to readable string */
 	static FString FTextToString(const FText& Text);
+#endif // WITH_EDITOR
 };

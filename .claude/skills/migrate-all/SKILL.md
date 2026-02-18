@@ -98,16 +98,24 @@ cp "C:/scripts/bp_only/Content/[path]/[BLUEPRINT].uasset" \
 
 **Expected Result:** Only the specific Blueprint is migrated. All other assets remain untouched.
 
-### Step 5: PIE Test
+### Step 5: PIE Test + Visual Validation
 
+Use the play-test-loop to validate with screenshots:
 ```bash
 "C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" ^
   "C:/scripts/SLFConversion/SLFConversion.uproject" ^
-  -run=pythonscript -script="C:/scripts/SLFConversion/Source/SLFConversion/Testing/SLFPIETestRunner.py" ^
-  -stdout -unattended -nosplash 2>&1
+  -ExecCmds="SLF.Test.Actions;SLF.Test.Screenshot PostMigration;SLF.Test.ExportLog" ^
+  -game -log -unattended -nosplash 2>&1
 ```
 
-**Expected Result:** 0 errors
+For character/enemy migrations, also spawn and validate:
+```bash
+-ExecCmds="SLF.Test.SpawnEnemy /Game/Path/To/Blueprint 500;SLF.Test.Screenshot Validate"
+```
+
+**Expected Result:** 0 errors, screenshots match expected state
+
+**NEVER use Python API for validation.** Always use SLF.Test.* console commands.
 
 ### Step 6: Verify JSON Match
 

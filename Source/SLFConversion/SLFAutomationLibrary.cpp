@@ -12,6 +12,7 @@
 #include "Animation/AnimBlueprint.h"
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
+#include "Animation/SLFAnimNotifyStateWeaponTrace.h"
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "Kismet2/KismetEditorUtilities.h"
 #include "K2Node_Variable.h"
@@ -27,7 +28,8 @@
 #include "UObject/UObjectGlobals.h"
 #include "UObject/SavePackage.h"
 #include "GameplayTagContainer.h"
-// AnimBP LinkedAnimLayer node support (AAA-quality fix)
+// AnimBP node support
+#include "AnimGraphNode_Base.h"
 #include "AnimGraphNode_LinkedAnimLayer.h"
 #include "Animation/AnimNode_LinkedAnimLayer.h"
 // AnimBP State Machine support for variable reference replacement
@@ -71,6 +73,19 @@
 #include "AssetToolsModule.h"
 #include "IAssetTools.h"
 #include "Factories/DataTableFactory.h"
+// FBX import
+#include "Factories/FbxFactory.h"
+#include "Factories/FbxImportUI.h"
+#include "Factories/FbxSkeletalMeshImportData.h"
+#include "Factories/FbxAnimSequenceImportData.h"
+// Animation pipeline
+#include "Animation/Skeleton.h"
+#include "Animation/AnimSequence.h"
+#include "Animation/BlendSpace1D.h"
+#include "Animation/BlendSpace.h"
+#include "Engine/SkeletalMesh.h"
+#include "Engine/SkeletalMeshSocket.h"
+#include "AssetCompilingManager.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogSLFAutomation, Log, All);
 
@@ -10235,6 +10250,1791 @@ FString USLFAutomationLibrary::ApplyEmbeddedSettingsWidgets(const FString& JsonF
 
 	FString Result = FString::Join(Lines, TEXT("\n"));
 	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+// ============================================================================
+// ANIMATION PIPELINE - Import, Socket, AnimBP, Montage, BlendSpace
+// ============================================================================
+
+FString USLFAutomationLibrary::ImportSkeletalMeshFromFBX(
+	const FString& FBXFilePath,
+	const FString& DestinationPath,
+	const FString& AssetName,
+	const FString& SkeletonPath,
+	float ImportScale)
+{
+	TArray<FString> Lines;
+	Lines.Add(TEXT("=== ImportSkeletalMeshFromFBX ==="));
+	Lines.Add(FString::Printf(TEXT("FBX: %s"), *FBXFilePath));
+	Lines.Add(FString::Printf(TEXT("Dest: %s/%s"), *DestinationPath, *AssetName));
+	Lines.Add(FString::Printf(TEXT("Scale: %.1f"), ImportScale));
+
+	// Verify FBX file exists
+	if (!FPaths::FileExists(FBXFilePath))
+	{
+		Lines.Add(FString::Printf(TEXT("ERROR: FBX file not found: %s"), *FBXFilePath));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// Create destination package
+	FString PackagePath = DestinationPath / AssetName;
+	UPackage* Package = CreatePackage(*PackagePath);
+	if (!Package)
+	{
+		Lines.Add(TEXT("ERROR: Failed to create package"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// Use FBX factory for import
+	UFbxFactory* FbxFactory = NewObject<UFbxFactory>();
+	FbxFactory->AddToRoot();
+
+	// Configure import settings
+	UFbxImportUI* ImportUI = FbxFactory->ImportUI;
+	ImportUI->bImportMesh = true;
+	ImportUI->bImportAnimations = false;
+	ImportUI->bImportMaterials = false;
+	ImportUI->bImportTextures = false;
+	ImportUI->bCreatePhysicsAsset = false;
+	ImportUI->MeshTypeToImport = FBXIT_SkeletalMesh;
+	ImportUI->bIsObjImport = false;
+	ImportUI->bOverrideFullName = true;
+
+	// Skeletal mesh import settings
+	ImportUI->SkeletalMeshImportData->bImportMeshesInBoneHierarchy = true;
+	ImportUI->SkeletalMeshImportData->bConvertScene = true;
+	ImportUI->SkeletalMeshImportData->ImportUniformScale = ImportScale;
+
+	// Use existing skeleton if specified
+	if (SkeletonPath != TEXT("_") && !SkeletonPath.IsEmpty())
+	{
+		USkeleton* ExistingSkeleton = LoadObject<USkeleton>(nullptr, *SkeletonPath);
+		if (ExistingSkeleton)
+		{
+			ImportUI->Skeleton = ExistingSkeleton;
+			Lines.Add(FString::Printf(TEXT("Using existing skeleton: %s"), *SkeletonPath));
+		}
+		else
+		{
+			Lines.Add(FString::Printf(TEXT("WARNING: Skeleton not found: %s, will create new"), *SkeletonPath));
+		}
+	}
+
+	// Import
+	bool bCancelled = false;
+	UObject* ImportedObject = FbxFactory->ImportObject(
+		USkeletalMesh::StaticClass(),
+		Package,
+		FName(*AssetName),
+		RF_Public | RF_Standalone,
+		FBXFilePath,
+		nullptr,
+		bCancelled
+	);
+
+	FbxFactory->RemoveFromRoot();
+
+	if (!ImportedObject)
+	{
+		Lines.Add(TEXT("ERROR: FBX import failed"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	USkeletalMesh* ImportedMesh = Cast<USkeletalMesh>(ImportedObject);
+	if (!ImportedMesh)
+	{
+		Lines.Add(TEXT("ERROR: Imported object is not a SkeletalMesh"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// The FBX factory may create the mesh with a different name/package than requested.
+	// Use the mesh's actual package for saving.
+	UPackage* MeshPackage = ImportedMesh->GetOutermost();
+	Lines.Add(FString::Printf(TEXT("Imported mesh: %s (package: %s)"), *ImportedMesh->GetPathName(), *MeshPackage->GetName()));
+
+	// If the mesh ended up in a different package than requested, rename it to our target
+	if (MeshPackage != Package)
+	{
+		Lines.Add(FString::Printf(TEXT("Renaming mesh from %s to %s/%s"), *ImportedMesh->GetName(), *Package->GetName(), *AssetName));
+		ImportedMesh->Rename(*AssetName, Package, REN_DontCreateRedirectors | REN_NonTransactional);
+		MeshPackage = Package;
+	}
+
+	// Notify asset registry
+	FAssetRegistryModule::AssetCreated(ImportedMesh);
+
+	// Save mesh package
+	MeshPackage->MarkPackageDirty();
+	FString MeshPackageFileName = FPackageName::LongPackageNameToFilename(MeshPackage->GetName(), FPackageName::GetAssetPackageExtension());
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Standalone;
+	UPackage::SavePackage(MeshPackage, ImportedMesh, *MeshPackageFileName, SaveArgs);
+
+	// Save skeleton package separately (it's in its own package)
+	USkeleton* Skeleton = ImportedMesh->GetSkeleton();
+	if (Skeleton)
+	{
+		UPackage* SkelPackage = Skeleton->GetOutermost();
+
+		// Rename skeleton to match our naming convention: {AssetName}_Skeleton
+		FString DesiredSkelName = AssetName + TEXT("_Skeleton");
+		FString DesiredSkelPkgName = DestinationPath / DesiredSkelName;
+		if (Skeleton->GetName() != DesiredSkelName)
+		{
+			UPackage* NewSkelPkg = CreatePackage(*DesiredSkelPkgName);
+			Lines.Add(FString::Printf(TEXT("Renaming skeleton from %s to %s"), *Skeleton->GetName(), *DesiredSkelName));
+			Skeleton->Rename(*DesiredSkelName, NewSkelPkg, REN_DontCreateRedirectors | REN_NonTransactional);
+			SkelPackage = NewSkelPkg;
+		}
+
+		SkelPackage->MarkPackageDirty();
+		FString SkelPackageFileName = FPackageName::LongPackageNameToFilename(SkelPackage->GetName(), FPackageName::GetAssetPackageExtension());
+		UPackage::SavePackage(SkelPackage, Skeleton, *SkelPackageFileName, SaveArgs);
+		Lines.Add(FString::Printf(TEXT("Saved skeleton: %s"), *Skeleton->GetPathName()));
+
+		// List bone names
+		const FReferenceSkeleton& RefSkel = Skeleton->GetReferenceSkeleton();
+		Lines.Add(FString::Printf(TEXT("Skeleton bones: %d"), RefSkel.GetNum()));
+		for (int32 i = 0; i < RefSkel.GetNum(); i++)
+		{
+			Lines.Add(FString::Printf(TEXT("  [%d] %s"), i, *RefSkel.GetBoneName(i).ToString()));
+		}
+	}
+
+	Lines.Add(TEXT("=== IMPORT COMPLETE ==="));
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+
+FString USLFAutomationLibrary::BatchImportAnimationsFromFBX(
+	const FString& FBXDirectory,
+	const FString& DestinationPath,
+	const FString& SkeletonPath,
+	float ImportScale)
+{
+	TArray<FString> Lines;
+	Lines.Add(TEXT("=== BatchImportAnimationsFromFBX ==="));
+	Lines.Add(FString::Printf(TEXT("FBX Dir: %s"), *FBXDirectory));
+	Lines.Add(FString::Printf(TEXT("Dest: %s"), *DestinationPath));
+	Lines.Add(FString::Printf(TEXT("Skeleton: %s"), *SkeletonPath));
+	Lines.Add(FString::Printf(TEXT("Scale: %.1f"), ImportScale));
+
+	// Load target skeleton
+	USkeleton* TargetSkeleton = LoadObject<USkeleton>(nullptr, *SkeletonPath);
+	if (!TargetSkeleton)
+	{
+		Lines.Add(FString::Printf(TEXT("ERROR: Skeleton not found: %s"), *SkeletonPath));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// Find all FBX files in directory
+	TArray<FString> FBXFiles;
+	IFileManager::Get().FindFiles(FBXFiles, *FBXDirectory, TEXT("*.fbx"));
+
+	Lines.Add(FString::Printf(TEXT("Found %d FBX files"), FBXFiles.Num()));
+
+	if (FBXFiles.Num() == 0)
+	{
+		Lines.Add(TEXT("ERROR: No FBX files found"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	int32 Imported = 0;
+	int32 Failed = 0;
+
+	for (const FString& FBXFile : FBXFiles)
+	{
+		FString FullPath = FBXDirectory / FBXFile;
+		FString AnimName = FPaths::GetBaseFilename(FBXFile);
+		FString PackagePath = DestinationPath / AnimName;
+
+		UPackage* Package = CreatePackage(*PackagePath);
+		if (!Package)
+		{
+			Lines.Add(FString::Printf(TEXT("  FAIL: %s (package creation)"), *AnimName));
+			Failed++;
+			continue;
+		}
+
+		UFbxFactory* FbxFactory = NewObject<UFbxFactory>();
+		FbxFactory->AddToRoot();
+
+		UFbxImportUI* ImportUI = FbxFactory->ImportUI;
+		ImportUI->bImportMesh = false;
+		ImportUI->bImportAnimations = true;
+		ImportUI->bImportMaterials = false;
+		ImportUI->bImportTextures = false;
+		ImportUI->bCreatePhysicsAsset = false;
+		ImportUI->MeshTypeToImport = FBXIT_Animation;
+		ImportUI->bOverrideFullName = true;
+		ImportUI->Skeleton = TargetSkeleton;
+
+		ImportUI->AnimSequenceImportData->bConvertScene = true;
+		ImportUI->AnimSequenceImportData->ImportUniformScale = ImportScale;
+		ImportUI->AnimSequenceImportData->bImportBoneTracks = true;
+		ImportUI->AnimSequenceImportData->AnimationLength = FBXALIT_ExportedTime;
+		ImportUI->bIsObjImport = false;
+
+		bool bCancelled = false;
+		UObject* ImportedObject = FbxFactory->ImportObject(
+			UAnimSequence::StaticClass(),
+			Package,
+			FName(*AnimName),
+			RF_Public | RF_Standalone,
+			FullPath,
+			nullptr,
+			bCancelled
+		);
+
+		FbxFactory->RemoveFromRoot();
+
+		if (!ImportedObject)
+		{
+			// Check if factory produced objects in a different package
+			UObject* FoundObj = StaticFindObjectFast(UAnimSequence::StaticClass(), Package, FName(*AnimName));
+			if (!FoundObj)
+			{
+				// Search all packages for this anim
+				FoundObj = StaticFindFirstObject(UAnimSequence::StaticClass(), *AnimName, EFindFirstObjectOptions::None);
+			}
+			if (FoundObj)
+			{
+				ImportedObject = FoundObj;
+				UE_LOG(LogSLFAutomation, Warning, TEXT("  ImportObject returned null but found %s at %s"), *AnimName, *FoundObj->GetPathName());
+			}
+			else
+			{
+				Lines.Add(FString::Printf(TEXT("  FAIL: %s (cancelled=%s)"), *AnimName, bCancelled ? TEXT("yes") : TEXT("no")));
+				Failed++;
+				continue;
+			}
+		}
+
+		UAnimSequence* AnimSeq = Cast<UAnimSequence>(ImportedObject);
+		if (AnimSeq)
+		{
+			// DDC compression (CRITICAL for UE5.7)
+			AnimSeq->CacheDerivedDataForCurrentPlatform();
+			FAssetCompilingManager::Get().FinishAllCompilation();
+
+			// Save
+			FAssetRegistryModule::AssetCreated(AnimSeq);
+			Package->MarkPackageDirty();
+			FString PackageFileName = FPackageName::LongPackageNameToFilename(Package->GetName(), FPackageName::GetAssetPackageExtension());
+			FSavePackageArgs SaveArgs;
+			SaveArgs.TopLevelFlags = RF_Standalone;
+			UPackage::SavePackage(Package, AnimSeq, *PackageFileName, SaveArgs);
+
+			Imported++;
+			if (Imported % 10 == 0)
+			{
+				Lines.Add(FString::Printf(TEXT("  Imported %d/%d..."), Imported, FBXFiles.Num()));
+			}
+		}
+		else
+		{
+			Lines.Add(FString::Printf(TEXT("  FAIL: %s (not AnimSequence)"), *AnimName));
+			Failed++;
+		}
+
+		// GC periodically to prevent memory buildup
+		if (Imported % 20 == 0)
+		{
+			CollectGarbage(GARBAGE_COLLECTION_KEEPFLAGS);
+		}
+	}
+
+	Lines.Add(FString::Printf(TEXT("\nImported: %d, Failed: %d, Total: %d"), Imported, Failed, FBXFiles.Num()));
+	Lines.Add(TEXT("=== BATCH IMPORT COMPLETE ==="));
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+
+FString USLFAutomationLibrary::AddSocketToSkeleton(
+	const FString& SkeletonPath,
+	const FString& SocketName,
+	const FString& ParentBoneName,
+	FVector RelativeLocation,
+	FRotator RelativeRotation)
+{
+	TArray<FString> Lines;
+	Lines.Add(FString::Printf(TEXT("=== AddSocket: %s on %s ==="), *SocketName, *ParentBoneName));
+
+	USkeleton* Skeleton = LoadObject<USkeleton>(nullptr, *SkeletonPath);
+	if (!Skeleton)
+	{
+		Lines.Add(FString::Printf(TEXT("ERROR: Skeleton not found: %s"), *SkeletonPath));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// Check if bone exists
+	int32 BoneIndex = Skeleton->GetReferenceSkeleton().FindBoneIndex(FName(*ParentBoneName));
+	if (BoneIndex == INDEX_NONE)
+	{
+		Lines.Add(FString::Printf(TEXT("ERROR: Bone not found: %s"), *ParentBoneName));
+		// List available bones for reference
+		const FReferenceSkeleton& RefSkel = Skeleton->GetReferenceSkeleton();
+		Lines.Add(FString::Printf(TEXT("Available bones (%d):"), RefSkel.GetNum()));
+		for (int32 i = 0; i < FMath::Min(RefSkel.GetNum(), 30); i++)
+		{
+			Lines.Add(FString::Printf(TEXT("  [%d] %s"), i, *RefSkel.GetBoneName(i).ToString()));
+		}
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// Check if socket already exists
+	USkeletalMeshSocket* ExistingSocket = Skeleton->FindSocket(FName(*SocketName));
+	if (ExistingSocket)
+	{
+		Lines.Add(FString::Printf(TEXT("Socket '%s' already exists on bone '%s', updating..."),
+			*SocketName, *ExistingSocket->BoneName.ToString()));
+		ExistingSocket->BoneName = FName(*ParentBoneName);
+		ExistingSocket->RelativeLocation = RelativeLocation;
+		ExistingSocket->RelativeRotation = RelativeRotation;
+	}
+	else
+	{
+		// Create new socket
+		USkeletalMeshSocket* NewSocket = NewObject<USkeletalMeshSocket>(Skeleton);
+		NewSocket->SocketName = FName(*SocketName);
+		NewSocket->BoneName = FName(*ParentBoneName);
+		NewSocket->RelativeLocation = RelativeLocation;
+		NewSocket->RelativeRotation = RelativeRotation;
+		Skeleton->Sockets.Add(NewSocket);
+		Lines.Add(FString::Printf(TEXT("Created socket '%s' on bone '%s' at (%.1f, %.1f, %.1f)"),
+			*SocketName, *ParentBoneName,
+			RelativeLocation.X, RelativeLocation.Y, RelativeLocation.Z));
+	}
+
+	// Save skeleton
+	Skeleton->MarkPackageDirty();
+	UPackage* Package = Skeleton->GetOutermost();
+	FString PackageFileName = FPackageName::LongPackageNameToFilename(Package->GetName(), FPackageName::GetAssetPackageExtension());
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Standalone;
+	UPackage::SavePackage(Package, Skeleton, *PackageFileName, SaveArgs);
+	Lines.Add(TEXT("Saved skeleton"));
+
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+
+FString USLFAutomationLibrary::DuplicateAnimBPForSkeleton(
+	const FString& SourceAnimBPPath,
+	const FString& TargetSkeletonPath,
+	const FString& NewAnimBPPath)
+{
+	TArray<FString> Lines;
+	Lines.Add(TEXT("=== DuplicateAnimBPForSkeleton ==="));
+	Lines.Add(FString::Printf(TEXT("Source: %s"), *SourceAnimBPPath));
+	Lines.Add(FString::Printf(TEXT("Target Skeleton: %s"), *TargetSkeletonPath));
+	Lines.Add(FString::Printf(TEXT("Output: %s"), *NewAnimBPPath));
+
+	// Force fully load source package first (avoids "partially loaded" error)
+	FString SourcePackageName = FPackageName::ObjectPathToPackageName(SourceAnimBPPath);
+	UPackage* SourcePkg = LoadPackage(nullptr, *SourcePackageName, LOAD_None);
+	if (SourcePkg)
+	{
+		SourcePkg->FullyLoad();
+	}
+
+	// Load source AnimBP
+	UAnimBlueprint* SourceABP = LoadObject<UAnimBlueprint>(nullptr, *SourceAnimBPPath);
+	if (!SourceABP)
+	{
+		Lines.Add(TEXT("ERROR: Source AnimBP not found"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+	Lines.Add(FString::Printf(TEXT("Source AnimBP loaded: %s (class=%s)"), *SourceABP->GetName(), SourceABP->ParentClass ? *SourceABP->ParentClass->GetName() : TEXT("None")));
+
+	// Load target skeleton
+	USkeleton* TargetSkeleton = LoadObject<USkeleton>(nullptr, *TargetSkeletonPath);
+	if (!TargetSkeleton)
+	{
+		Lines.Add(TEXT("ERROR: Target skeleton not found"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// Create destination package (fully load if it already exists)
+	FString PackageName = FPackageName::ObjectPathToPackageName(NewAnimBPPath);
+	FString ObjectName = FPaths::GetBaseFilename(NewAnimBPPath);
+	UPackage* ExistingDestPkg = FindPackage(nullptr, *PackageName);
+	if (ExistingDestPkg)
+	{
+		ExistingDestPkg->FullyLoad();
+		// Remove existing object
+		UObject* ExistingObj = StaticFindObjectFast(nullptr, ExistingDestPkg, FName(*ObjectName));
+		if (ExistingObj)
+		{
+			ExistingObj->Rename(nullptr, GetTransientPackage(), REN_DontCreateRedirectors | REN_NonTransactional);
+		}
+	}
+	UPackage* DestPackage = CreatePackage(*PackageName);
+	DestPackage->FullyLoad();
+
+	// Duplicate the AnimBP
+	UObject* DuplicatedObj = StaticDuplicateObject(SourceABP, DestPackage, *ObjectName);
+	UAnimBlueprint* NewABP = Cast<UAnimBlueprint>(DuplicatedObj);
+	if (!NewABP)
+	{
+		Lines.Add(TEXT("ERROR: Failed to duplicate AnimBP"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// Set new target skeleton
+	NewABP->TargetSkeleton = TargetSkeleton;
+	Lines.Add(FString::Printf(TEXT("Set target skeleton to: %s"), *TargetSkeleton->GetPathName()));
+
+	// Register with asset registry
+	FAssetRegistryModule::AssetCreated(NewABP);
+
+	// Compile
+	FKismetEditorUtilities::CompileBlueprint(NewABP, EBlueprintCompileOptions::SkipGarbageCollection);
+	Lines.Add(TEXT("Compiled AnimBP"));
+
+	// Save
+	DestPackage->MarkPackageDirty();
+	FString PackageFileName = FPackageName::LongPackageNameToFilename(DestPackage->GetName(), FPackageName::GetAssetPackageExtension());
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Standalone;
+	UPackage::SavePackage(DestPackage, NewABP, *PackageFileName, SaveArgs);
+	Lines.Add(TEXT("Saved AnimBP"));
+
+	Lines.Add(TEXT("=== DUPLICATION COMPLETE ==="));
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+
+FString USLFAutomationLibrary::AddWeaponTraceToMontage(
+	const FString& MontagePath,
+	float StartTime,
+	float EndTime,
+	float InTraceRadius,
+	const FName& InStartSocket,
+	const FName& InEndSocket)
+{
+	UAnimMontage* Montage = LoadObject<UAnimMontage>(nullptr, *MontagePath);
+	if (!Montage)
+	{
+		return FString::Printf(TEXT("ERROR: Montage not found: %s"), *MontagePath);
+	}
+
+	// Clear any existing weapon trace notifies (idempotent for commandlet reruns)
+	Montage->Notifies.RemoveAll([](const FAnimNotifyEvent& Evt) {
+		return Evt.NotifyStateClass && Evt.NotifyStateClass->IsA<USLFAnimNotifyStateWeaponTrace>();
+	});
+
+	// Create the weapon trace notify state
+	USLFAnimNotifyStateWeaponTrace* WeaponTrace = NewObject<USLFAnimNotifyStateWeaponTrace>(Montage);
+	WeaponTrace->StartSocketName = InStartSocket;
+	WeaponTrace->EndSocketName = InEndSocket;
+	WeaponTrace->TraceRadius = InTraceRadius;
+
+	// Create the notify event
+	FAnimNotifyEvent NewEvent;
+	NewEvent.NotifyStateClass = WeaponTrace;
+	NewEvent.NotifyName = FName(TEXT("ANS_WeaponTrace"));
+
+	// Clamp times to montage length
+	float MontageLen = Montage->GetPlayLength();
+	StartTime = FMath::Clamp(StartTime, 0.0f, MontageLen);
+	EndTime = FMath::Clamp(EndTime, StartTime + 0.01f, MontageLen);
+
+	NewEvent.SetTime(StartTime);
+	NewEvent.SetDuration(EndTime - StartTime);
+	NewEvent.TriggerTimeOffset = 0.0f;
+	NewEvent.EndTriggerTimeOffset = 0.0f;
+	NewEvent.TrackIndex = 0;
+	NewEvent.bTriggerOnDedicatedServer = true;
+	NewEvent.bTriggerOnFollower = true;
+
+	Montage->Notifies.Add(NewEvent);
+
+	// Save the montage
+	UPackage* Package = Montage->GetOutermost();
+	Package->MarkPackageDirty();
+	FString FileName = FPackageName::LongPackageNameToFilename(Package->GetName(), FPackageName::GetAssetPackageExtension());
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Standalone;
+	UPackage::SavePackage(Package, Montage, *FileName, SaveArgs);
+
+	return FString::Printf(TEXT("OK: Added WeaponTrace to %s (%.3f-%.3fs, radius=%.0f)"),
+		*FPaths::GetBaseFilename(MontagePath), StartTime, EndTime, InTraceRadius);
+}
+
+FString USLFAutomationLibrary::CreateMontageFromSequence(
+	const FString& SequencePath,
+	const FString& OutputPath,
+	const FString& SlotName)
+{
+	TArray<FString> Lines;
+	Lines.Add(FString::Printf(TEXT("=== CreateMontage: %s ==="), *FPaths::GetBaseFilename(OutputPath)));
+
+	// Load source AnimSequence
+	UAnimSequence* Sequence = LoadObject<UAnimSequence>(nullptr, *SequencePath);
+	if (!Sequence)
+	{
+		Lines.Add(FString::Printf(TEXT("ERROR: AnimSequence not found: %s"), *SequencePath));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	USkeleton* Skeleton = Sequence->GetSkeleton();
+	if (!Skeleton)
+	{
+		Lines.Add(TEXT("ERROR: AnimSequence has no skeleton"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// Create package (fully load if it already exists on disk)
+	FString PackageName = FPackageName::ObjectPathToPackageName(OutputPath);
+	FString ObjectName = FPaths::GetBaseFilename(OutputPath);
+	UPackage* ExistingPkg = FindPackage(nullptr, *PackageName);
+	if (ExistingPkg)
+	{
+		ExistingPkg->FullyLoad();
+	}
+	UPackage* Package = CreatePackage(*PackageName);
+	Package->FullyLoad();
+
+	// Remove existing object if any
+	UObject* ExistingObj = StaticFindObjectFast(UAnimMontage::StaticClass(), Package, FName(*ObjectName));
+	if (ExistingObj)
+	{
+		ExistingObj->Rename(nullptr, GetTransientPackage(), REN_DontCreateRedirectors | REN_NonTransactional);
+	}
+
+	// Create montage
+	UAnimMontage* Montage = NewObject<UAnimMontage>(Package, *ObjectName, RF_Public | RF_Standalone);
+	Montage->SetSkeleton(Skeleton);
+
+	// Set up the montage with the sequence
+	// Add a slot track
+	Montage->SlotAnimTracks.Empty();
+	FSlotAnimationTrack NewSlotTrack;
+	NewSlotTrack.SlotName = FName(*SlotName);
+
+	// Get play length - try GetPlayLength first, fall back to DataModel
+	float PlayLength = Sequence->GetPlayLength();
+	if (PlayLength <= 0.0f)
+	{
+		// Try getting from number of frames and frame rate
+		int32 NumFrames = Sequence->GetNumberOfSampledKeys();
+		double FrameRate = Sequence->GetSamplingFrameRate().AsDecimal();
+		if (NumFrames > 0 && FrameRate > 0.0)
+		{
+			PlayLength = (float)(NumFrames / FrameRate);
+		}
+	}
+	Lines.Add(FString::Printf(TEXT("Source length: %.3f sec"), PlayLength));
+
+	// Add the animation segment
+	FAnimSegment Segment;
+	Segment.SetAnimReference(Sequence);
+	Segment.StartPos = 0.0f;
+	Segment.AnimStartTime = 0.0f;
+	Segment.AnimEndTime = PlayLength;
+	Segment.AnimPlayRate = 1.0f;
+	Segment.LoopingCount = 1;
+	NewSlotTrack.AnimTrack.AnimSegments.Add(Segment);
+	Montage->SlotAnimTracks.Add(NewSlotTrack);
+
+	// Create a composite section
+	Montage->CompositeSections.Empty();
+	FCompositeSection NewSection;
+	NewSection.SectionName = FName(TEXT("Default"));
+	NewSection.SetTime(0.0f);
+	Montage->CompositeSections.Add(NewSection);
+
+	// Calculate and SET montage length from segments
+	// CalculateSequenceLength() returns the value but does NOT set it internally
+	float CalcLength = Montage->CalculateSequenceLength();
+	if (CalcLength <= 0.0f && PlayLength > 0.0f)
+	{
+		// Fallback: use source sequence's known play length
+		CalcLength = PlayLength;
+	}
+	Montage->SetCompositeLength(CalcLength);
+
+	// Set blend in/out
+	Montage->BlendIn.SetBlendTime(0.15f);
+	Montage->BlendOut.SetBlendTime(0.15f);
+
+	Lines.Add(FString::Printf(TEXT("Length: %.2f sec, Slot: %s"), Montage->GetPlayLength(), *SlotName));
+
+	// Ensure SequenceLength field is set for GetPlayLength() at runtime.
+	// SetCompositeLength's WITH_EDITOR path uses DataModel controller which may not
+	// sync back to the protected SequenceLength field for newly created montages.
+	// Use UE property reflection to set the protected field directly.
+	{
+		float FinalLength = CalcLength > 0.0f ? CalcLength : PlayLength;
+		FProperty* SeqLenProp = UAnimSequenceBase::StaticClass()->FindPropertyByName(TEXT("SequenceLength"));
+		if (SeqLenProp)
+		{
+			float* LenPtr = SeqLenProp->ContainerPtrToValuePtr<float>(Montage);
+			if (LenPtr)
+			{
+				*LenPtr = FinalLength;
+				Lines.Add(FString::Printf(TEXT("Set SequenceLength via reflection: %.3f"), FinalLength));
+			}
+		}
+	}
+
+	Lines.Add(FString::Printf(TEXT("Post-fix Length: %.2f sec"), Montage->GetPlayLength()));
+
+	// Register and save
+	FAssetRegistryModule::AssetCreated(Montage);
+	Package->MarkPackageDirty();
+	FString PackageFileName = FPackageName::LongPackageNameToFilename(Package->GetName(), FPackageName::GetAssetPackageExtension());
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Standalone;
+	UPackage::SavePackage(Package, Montage, *PackageFileName, SaveArgs);
+
+	Lines.Add(FString::Printf(TEXT("Saved: %s"), *OutputPath));
+
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+
+FString USLFAutomationLibrary::CreateBlendSpace1DFromSequences(
+	const FString& OutputPath,
+	const FString& SkeletonPath,
+	const FString& IdleSequencePath,
+	const FString& WalkSequencePath,
+	const FString& RunSequencePath)
+{
+	TArray<FString> Lines;
+	Lines.Add(TEXT("=== CreateBlendSpace1D ==="));
+
+	// Load skeleton
+	USkeleton* Skeleton = LoadObject<USkeleton>(nullptr, *SkeletonPath);
+	if (!Skeleton)
+	{
+		Lines.Add(FString::Printf(TEXT("ERROR: Skeleton not found: %s"), *SkeletonPath));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// Load animations
+	UAnimSequence* IdleAnim = LoadObject<UAnimSequence>(nullptr, *IdleSequencePath);
+	UAnimSequence* WalkAnim = LoadObject<UAnimSequence>(nullptr, *WalkSequencePath);
+	UAnimSequence* RunAnim = LoadObject<UAnimSequence>(nullptr, *RunSequencePath);
+
+	if (!IdleAnim) Lines.Add(FString::Printf(TEXT("WARNING: Idle anim not found: %s"), *IdleSequencePath));
+	if (!WalkAnim) Lines.Add(FString::Printf(TEXT("WARNING: Walk anim not found: %s"), *WalkSequencePath));
+	if (!RunAnim) Lines.Add(FString::Printf(TEXT("WARNING: Run anim not found: %s"), *RunSequencePath));
+
+	// Create package (fully load if it already exists)
+	FString PackageName = FPackageName::ObjectPathToPackageName(OutputPath);
+	FString ObjectName = FPaths::GetBaseFilename(OutputPath);
+	UPackage* ExistingBSPkg = FindPackage(nullptr, *PackageName);
+	if (ExistingBSPkg)
+	{
+		ExistingBSPkg->FullyLoad();
+		UObject* ExistingObj = StaticFindObjectFast(nullptr, ExistingBSPkg, FName(*ObjectName));
+		if (ExistingObj)
+		{
+			ExistingObj->Rename(nullptr, GetTransientPackage(), REN_DontCreateRedirectors | REN_NonTransactional);
+		}
+	}
+	UPackage* Package = CreatePackage(*PackageName);
+	Package->FullyLoad();
+
+	// Create BlendSpace1D
+	UBlendSpace1D* BlendSpace = NewObject<UBlendSpace1D>(Package, *ObjectName, RF_Public | RF_Standalone);
+	BlendSpace->SetSkeleton(Skeleton);
+
+	// Configure axis: Speed (0 to 600)
+	// BlendParameters is protected, use const_cast on GetBlendParameter (we own this object)
+	FBlendParameter* SpeedParam = const_cast<FBlendParameter*>(&BlendSpace->GetBlendParameter(0));
+	SpeedParam->DisplayName = TEXT("Speed");
+	SpeedParam->Min = 0.0f;
+	SpeedParam->Max = 600.0f;
+	SpeedParam->GridNum = 4;
+
+	// Add samples
+	if (IdleAnim) BlendSpace->AddSample(IdleAnim, FVector(0.0f, 0.0f, 0.0f));
+	if (WalkAnim) BlendSpace->AddSample(WalkAnim, FVector(200.0f, 0.0f, 0.0f));
+	if (RunAnim) BlendSpace->AddSample(RunAnim, FVector(450.0f, 0.0f, 0.0f));
+
+	Lines.Add(FString::Printf(TEXT("Created BlendSpace1D with %d samples"), BlendSpace->GetNumberOfBlendSamples()));
+
+	// Register and save
+	FAssetRegistryModule::AssetCreated(BlendSpace);
+	Package->MarkPackageDirty();
+	FString PackageFileName = FPackageName::LongPackageNameToFilename(Package->GetName(), FPackageName::GetAssetPackageExtension());
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Standalone;
+	UPackage::SavePackage(Package, BlendSpace, *PackageFileName, SaveArgs);
+
+	Lines.Add(FString::Printf(TEXT("Saved: %s"), *OutputPath));
+	Lines.Add(TEXT("=== BLEND SPACE COMPLETE ==="));
+
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+
+FString USLFAutomationLibrary::CreateBlendSpace2DFromSequences(
+	const FString& OutputPath,
+	const FString& SkeletonPath,
+	const FString& IdleSequencePath,
+	const FString& WalkSequencePath,
+	const FString& RunSequencePath)
+{
+	TArray<FString> Lines;
+	Lines.Add(TEXT("=== CreateBlendSpace2D ==="));
+
+	USkeleton* Skeleton = LoadObject<USkeleton>(nullptr, *SkeletonPath);
+	if (!Skeleton)
+	{
+		Lines.Add(FString::Printf(TEXT("ERROR: Skeleton not found: %s"), *SkeletonPath));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	UAnimSequence* IdleAnim = LoadObject<UAnimSequence>(nullptr, *IdleSequencePath);
+	UAnimSequence* WalkAnim = LoadObject<UAnimSequence>(nullptr, *WalkSequencePath);
+	UAnimSequence* RunAnim = LoadObject<UAnimSequence>(nullptr, *RunSequencePath);
+
+	// Create package
+	FString PackageName = FPackageName::ObjectPathToPackageName(OutputPath);
+	FString ObjectName = FPaths::GetBaseFilename(OutputPath);
+	UPackage* ExistingPkg = FindPackage(nullptr, *PackageName);
+	if (ExistingPkg)
+	{
+		ExistingPkg->FullyLoad();
+		UObject* ExistingObj = StaticFindObjectFast(nullptr, ExistingPkg, FName(*ObjectName));
+		if (ExistingObj)
+		{
+			ExistingObj->Rename(nullptr, GetTransientPackage(), REN_DontCreateRedirectors | REN_NonTransactional);
+		}
+	}
+	UPackage* Package = CreatePackage(*PackageName);
+	Package->FullyLoad();
+
+	// Create 2D BlendSpace (matches original ABS_SoulslikeEnemy layout)
+	UBlendSpace* BlendSpace = NewObject<UBlendSpace>(Package, *ObjectName, RF_Public | RF_Standalone);
+	BlendSpace->SetSkeleton(Skeleton);
+
+	// X axis: Direction (-180 to 180) - matches original
+	FBlendParameter* DirParam = const_cast<FBlendParameter*>(&BlendSpace->GetBlendParameter(0));
+	DirParam->DisplayName = TEXT("Direction");
+	DirParam->Min = -180.0f;
+	DirParam->Max = 180.0f;
+	DirParam->GridNum = 4;
+
+	// Y axis: Speed (0 to 600) - matches original
+	FBlendParameter* SpeedParam = const_cast<FBlendParameter*>(&BlendSpace->GetBlendParameter(1));
+	SpeedParam->DisplayName = TEXT("Speed");
+	SpeedParam->Min = 0.0f;
+	SpeedParam->Max = 600.0f;
+	SpeedParam->GridNum = 4;
+
+	// Add samples at Direction=0 (c3100 has no directional walk anims)
+	// X=Direction, Y=Speed
+	if (IdleAnim) BlendSpace->AddSample(IdleAnim, FVector(0.0f, 0.0f, 0.0f));
+	if (WalkAnim) BlendSpace->AddSample(WalkAnim, FVector(0.0f, 200.0f, 0.0f));
+	if (RunAnim) BlendSpace->AddSample(RunAnim, FVector(0.0f, 450.0f, 0.0f));
+
+	Lines.Add(FString::Printf(TEXT("Created BlendSpace2D with %d samples (Dir X, Speed Y)"),
+		BlendSpace->GetNumberOfBlendSamples()));
+
+	// Register and save
+	FAssetRegistryModule::AssetCreated(BlendSpace);
+	Package->MarkPackageDirty();
+	FString PackageFileName = FPackageName::LongPackageNameToFilename(Package->GetName(), FPackageName::GetAssetPackageExtension());
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Standalone;
+	UPackage::SavePackage(Package, BlendSpace, *PackageFileName, SaveArgs);
+
+	Lines.Add(FString::Printf(TEXT("Saved: %s"), *OutputPath));
+	Lines.Add(TEXT("=== BLEND SPACE 2D COMPLETE ==="));
+
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+
+FString USLFAutomationLibrary::ConfigureGuardAnimations(
+	const FString& GuardBlueprintPath,
+	const FString& MeshPath,
+	const FString& AnimBPPath,
+	const FString& BlendSpacePath,
+	const TArray<FString>& AttackMontagePaths,
+	const FString& HitReactMontagePath,
+	const TArray<FString>& DeathMontagePaths)
+{
+	TArray<FString> Lines;
+	Lines.Add(TEXT("=== ConfigureGuardAnimations ==="));
+	Lines.Add(FString::Printf(TEXT("Guard: %s"), *GuardBlueprintPath));
+
+	// Load the guard Blueprint
+	UBlueprint* GuardBP = LoadObject<UBlueprint>(nullptr, *GuardBlueprintPath);
+	if (!GuardBP)
+	{
+		Lines.Add(TEXT("ERROR: Guard Blueprint not found"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	UClass* GeneratedClass = GuardBP->GeneratedClass;
+	if (!GeneratedClass)
+	{
+		Lines.Add(TEXT("ERROR: No generated class"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// Get CDO
+	UObject* CDO = GeneratedClass->GetDefaultObject();
+	if (!CDO)
+	{
+		Lines.Add(TEXT("ERROR: No CDO"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// Find and configure the skeletal mesh component
+	USkeletalMesh* Mesh = LoadObject<USkeletalMesh>(nullptr, *MeshPath);
+	if (Mesh)
+	{
+		// Find the Mesh component in CDO
+		for (TFieldIterator<FObjectProperty> It(GeneratedClass); It; ++It)
+		{
+			FObjectProperty* Prop = *It;
+			if (Prop->PropertyClass->IsChildOf(USkeletalMeshComponent::StaticClass()))
+			{
+				USkeletalMeshComponent* MeshComp = Cast<USkeletalMeshComponent>(Prop->GetObjectPropertyValue(Prop->ContainerPtrToValuePtr<void>(CDO)));
+				if (MeshComp)
+				{
+					MeshComp->SetSkeletalMeshAsset(Mesh);
+					Lines.Add(FString::Printf(TEXT("Set mesh: %s"), *MeshPath));
+
+					// Set AnimBP
+					UClass* AnimBPClass = LoadObject<UClass>(nullptr, *(AnimBPPath + TEXT("_C")));
+					if (!AnimBPClass)
+					{
+						// Try loading as UAnimBlueprint and getting generated class
+						UAnimBlueprint* AnimBP = LoadObject<UAnimBlueprint>(nullptr, *AnimBPPath);
+						if (AnimBP)
+						{
+							AnimBPClass = AnimBP->GeneratedClass;
+						}
+					}
+					if (AnimBPClass)
+					{
+						MeshComp->SetAnimInstanceClass(AnimBPClass);
+						Lines.Add(FString::Printf(TEXT("Set AnimBP: %s"), *AnimBPPath));
+					}
+					else
+					{
+						Lines.Add(FString::Printf(TEXT("WARNING: AnimBP not found: %s"), *AnimBPPath));
+					}
+					break;
+				}
+			}
+		}
+	}
+	else
+	{
+		Lines.Add(FString::Printf(TEXT("WARNING: Mesh not found: %s"), *MeshPath));
+	}
+
+	// Save CDO changes
+	GuardBP->MarkPackageDirty();
+	UPackage* Package = GuardBP->GetOutermost();
+	FString PackageFileName = FPackageName::LongPackageNameToFilename(Package->GetName(), FPackageName::GetAssetPackageExtension());
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Standalone;
+	UPackage::SavePackage(Package, GuardBP, *PackageFileName, SaveArgs);
+
+	Lines.Add(TEXT("Saved guard Blueprint"));
+	Lines.Add(TEXT("=== CONFIGURATION COMPLETE ==="));
+
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+
+FString USLFAutomationLibrary::ListSkeletonBones(const FString& SkeletonPath)
+{
+	USkeleton* Skeleton = LoadObject<USkeleton>(nullptr, *SkeletonPath);
+	if (!Skeleton)
+	{
+		return FString::Printf(TEXT("ERROR: Skeleton not found: %s"), *SkeletonPath);
+	}
+
+	TArray<FString> Lines;
+	const FReferenceSkeleton& RefSkel = Skeleton->GetReferenceSkeleton();
+	Lines.Add(FString::Printf(TEXT("Skeleton: %s (%d bones)"), *SkeletonPath, RefSkel.GetNum()));
+
+	for (int32 i = 0; i < RefSkel.GetNum(); i++)
+	{
+		int32 ParentIdx = RefSkel.GetParentIndex(i);
+		FString ParentName = ParentIdx >= 0 ? RefSkel.GetBoneName(ParentIdx).ToString() : TEXT("(root)");
+		Lines.Add(FString::Printf(TEXT("  [%3d] %-30s  parent: %s"), i, *RefSkel.GetBoneName(i).ToString(), *ParentName));
+	}
+
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+
+FString USLFAutomationLibrary::ReplaceAnimReferencesInAnimBP(
+	const FString& AnimBPPath,
+	const TMap<FString, FString>& ReplacementMap)
+{
+	TArray<FString> Lines;
+	Lines.Add(FString::Printf(TEXT("=== ReplaceAnimReferences: %s ==="), *AnimBPPath));
+
+	// Load AnimBP
+	UAnimBlueprint* AnimBP = LoadObject<UAnimBlueprint>(nullptr, *AnimBPPath);
+	if (!AnimBP)
+	{
+		Lines.Add(TEXT("ERROR: Could not load AnimBP"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// Build replacement map of loaded assets
+	TMap<UAnimationAsset*, UAnimationAsset*> AssetReplacementMap;
+	for (const auto& Pair : ReplacementMap)
+	{
+		UAnimationAsset* OldAsset = LoadObject<UAnimationAsset>(nullptr, *Pair.Key);
+		UAnimationAsset* NewAsset = LoadObject<UAnimationAsset>(nullptr, *Pair.Value);
+		if (OldAsset && NewAsset)
+		{
+			AssetReplacementMap.Add(OldAsset, NewAsset);
+			Lines.Add(FString::Printf(TEXT("  Mapped: %s -> %s"), *OldAsset->GetName(), *NewAsset->GetName()));
+		}
+		else
+		{
+			Lines.Add(FString::Printf(TEXT("  SKIP: %s -> %s (old=%s, new=%s)"),
+				*Pair.Key, *Pair.Value,
+				OldAsset ? TEXT("found") : TEXT("NOT FOUND"),
+				NewAsset ? TEXT("found") : TEXT("NOT FOUND")));
+		}
+	}
+
+	if (AssetReplacementMap.Num() == 0)
+	{
+		Lines.Add(TEXT("WARNING: No valid replacements found"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// Iterate all AnimGraph nodes in all graphs
+	int32 ReplacedCount = 0;
+	TArray<UEdGraph*> AllGraphs;
+	AllGraphs.Append(AnimBP->FunctionGraphs);
+	for (UEdGraph* Graph : AnimBP->UbergraphPages)
+	{
+		AllGraphs.Add(Graph);
+	}
+
+	// Also get AnimGraph-specific graphs
+	for (TObjectIterator<UEdGraph> It; It; ++It)
+	{
+		UEdGraph* Graph = *It;
+		if (Graph && Graph->GetOutermost() == AnimBP->GetOutermost() && !AllGraphs.Contains(Graph))
+		{
+			AllGraphs.Add(Graph);
+		}
+	}
+
+	Lines.Add(FString::Printf(TEXT("Scanning %d graphs..."), AllGraphs.Num()));
+
+	for (UEdGraph* Graph : AllGraphs)
+	{
+		if (!Graph) continue;
+		for (UEdGraphNode* Node : Graph->Nodes)
+		{
+			if (!Node) continue;
+
+			// Check if this node has animation references
+			// Use the UAnimGraphNode_Base interface
+			UAnimGraphNode_Base* AnimNode = Cast<UAnimGraphNode_Base>(Node);
+			if (!AnimNode) continue;
+
+			// Get current references
+			TArray<UAnimationAsset*> CurrentAssets;
+			AnimNode->GetAllAnimationSequencesReferred(CurrentAssets);
+
+			if (CurrentAssets.Num() > 0)
+			{
+				// Check if any need replacing
+				bool bHasReplacement = false;
+				for (UAnimationAsset* Asset : CurrentAssets)
+				{
+					if (Asset && AssetReplacementMap.Contains(Asset))
+					{
+						bHasReplacement = true;
+						break;
+					}
+				}
+
+				if (bHasReplacement)
+				{
+					AnimNode->ReplaceReferredAnimations(AssetReplacementMap);
+					ReplacedCount++;
+					Lines.Add(FString::Printf(TEXT("  Replaced in node: %s (%s)"),
+						*Node->GetNodeTitle(ENodeTitleType::ListView).ToString(),
+						*Node->GetClass()->GetName()));
+				}
+			}
+		}
+	}
+
+	Lines.Add(FString::Printf(TEXT("Replaced %d node(s)"), ReplacedCount));
+
+	// Compile and save
+	FKismetEditorUtilities::CompileBlueprint(AnimBP);
+	UPackage* Pkg = AnimBP->GetOutermost();
+	Pkg->MarkPackageDirty();
+	FString FileName = FPackageName::LongPackageNameToFilename(Pkg->GetName(), FPackageName::GetAssetPackageExtension());
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Standalone;
+	bool bSaved = UPackage::SavePackage(Pkg, AnimBP, *FileName, SaveArgs);
+	Lines.Add(FString::Printf(TEXT("Save: %s"), bSaved ? TEXT("SUCCESS") : TEXT("FAILED")));
+
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+FString USLFAutomationLibrary::DisableControlRigInAnimBP(const FString& AnimBPPath)
+{
+	TArray<FString> Lines;
+	Lines.Add(FString::Printf(TEXT("=== DisableControlRig: %s ==="), *AnimBPPath));
+
+	UAnimBlueprint* AnimBP = LoadObject<UAnimBlueprint>(nullptr, *AnimBPPath);
+	if (!AnimBP)
+	{
+		Lines.Add(TEXT("ERROR: Could not load AnimBP"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// Collect all graphs in the AnimBP package
+	TArray<UEdGraph*> AllGraphs;
+	for (TObjectIterator<UEdGraph> It; It; ++It)
+	{
+		UEdGraph* Graph = *It;
+		if (Graph && Graph->GetOutermost() == AnimBP->GetOutermost())
+		{
+			AllGraphs.Add(Graph);
+		}
+	}
+
+	int32 RemovedCount = 0;
+	for (UEdGraph* Graph : AllGraphs)
+	{
+		if (!Graph) continue;
+
+		// Collect CR and IK Rig nodes to remove (can't modify array while iterating)
+		TArray<UEdGraphNode*> NodesToRemove;
+		for (UEdGraphNode* Node : Graph->Nodes)
+		{
+			if (!Node) continue;
+			FString ClassName = Node->GetClass()->GetName();
+			if (ClassName.Contains(TEXT("ControlRig")) || ClassName.Contains(TEXT("IKRig")))
+			{
+				NodesToRemove.Add(Node);
+			}
+		}
+
+		for (UEdGraphNode* CRNode : NodesToRemove)
+		{
+			Lines.Add(FString::Printf(TEXT("  Removing ControlRig node: %s (%s)"),
+				*CRNode->GetNodeTitle(ENodeTitleType::ListView).ToString(),
+				*CRNode->GetClass()->GetName()));
+
+			// Find the Source (input pose) and Result (output pose) pins
+			// Must be FPoseLink or FComponentSpacePoseLink, not arbitrary struct pins
+			UEdGraphPin* InputPosePin = nullptr;
+			UEdGraphPin* OutputPosePin = nullptr;
+
+			auto IsPosePin = [](UEdGraphPin* Pin) -> bool
+			{
+				if (!Pin || Pin->PinType.PinCategory != UEdGraphSchema_K2::PC_Struct)
+					return false;
+				UScriptStruct* PinStruct = Cast<UScriptStruct>(Pin->PinType.PinSubCategoryObject.Get());
+				if (!PinStruct) return false;
+				FString StructName = PinStruct->GetName();
+				return StructName.Contains(TEXT("PoseLink")) || StructName.Contains(TEXT("ComponentSpacePoseLink"));
+			};
+
+			for (UEdGraphPin* Pin : CRNode->Pins)
+			{
+				if (Pin->Direction == EGPD_Input && IsPosePin(Pin))
+				{
+					InputPosePin = Pin;
+				}
+				if (Pin->Direction == EGPD_Output && IsPosePin(Pin))
+				{
+					OutputPosePin = Pin;
+				}
+			}
+
+			// Log all pins for debugging
+			for (UEdGraphPin* Pin : CRNode->Pins)
+			{
+				Lines.Add(FString::Printf(TEXT("    Pin: %s, Dir=%s, Category=%s, Links=%d"),
+					*Pin->PinName.ToString(),
+					Pin->Direction == EGPD_Input ? TEXT("IN") : TEXT("OUT"),
+					*Pin->PinType.PinCategory.ToString(),
+					Pin->LinkedTo.Num()));
+			}
+
+			// Rewire: connect whatever fed into CR's input directly to CR's output target
+			if (InputPosePin && OutputPosePin &&
+				InputPosePin->LinkedTo.Num() > 0 && OutputPosePin->LinkedTo.Num() > 0)
+			{
+				UEdGraphPin* UpstreamPin = InputPosePin->LinkedTo[0];
+				UEdGraphPin* DownstreamPin = OutputPosePin->LinkedTo[0];
+
+				// Break existing connections
+				InputPosePin->BreakAllPinLinks();
+				OutputPosePin->BreakAllPinLinks();
+
+				// Connect upstream directly to downstream (bypass CR)
+				UpstreamPin->MakeLinkTo(DownstreamPin);
+
+				Lines.Add(FString::Printf(TEXT("    Rewired: %s -> %s (bypassed CR)"),
+					*UpstreamPin->GetOwningNode()->GetNodeTitle(ENodeTitleType::ListView).ToString(),
+					*DownstreamPin->GetOwningNode()->GetNodeTitle(ENodeTitleType::ListView).ToString()));
+			}
+			else
+			{
+				Lines.Add(TEXT("    WARNING: Could not find pose input/output pins to rewire"));
+				// Still break all connections
+				CRNode->BreakAllNodeLinks();
+			}
+
+			// Remove the node from the graph
+			Graph->RemoveNode(CRNode);
+			RemovedCount++;
+			Lines.Add(TEXT("    -> Node REMOVED from graph"));
+		}
+	}
+
+	Lines.Add(FString::Printf(TEXT("Removed %d ControlRig/IKRig node(s)"), RemovedCount));
+
+	// Compile and save
+	FKismetEditorUtilities::CompileBlueprint(AnimBP);
+	UPackage* Pkg = AnimBP->GetOutermost();
+	Pkg->MarkPackageDirty();
+	FString FileName = FPackageName::LongPackageNameToFilename(Pkg->GetName(), FPackageName::GetAssetPackageExtension());
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Standalone;
+	bool bSaved = UPackage::SavePackage(Pkg, AnimBP, *FileName, SaveArgs);
+	Lines.Add(FString::Printf(TEXT("Save: %s"), bSaved ? TEXT("SUCCESS") : TEXT("FAILED")));
+
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+FString USLFAutomationLibrary::DiagnoseAnimBPDetailed(const FString& AnimBPPath)
+{
+	TArray<FString> Lines;
+	Lines.Add(FString::Printf(TEXT("=== DETAILED ANIMBP DIAGNOSTIC: %s ==="), *AnimBPPath));
+
+	UAnimBlueprint* AnimBP = LoadObject<UAnimBlueprint>(nullptr, *AnimBPPath);
+	if (!AnimBP)
+	{
+		Lines.Add(TEXT("ERROR: Could not load AnimBP"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// Target skeleton info
+	USkeleton* Skeleton = AnimBP->TargetSkeleton;
+	if (Skeleton)
+	{
+		const FReferenceSkeleton& RefSkel = Skeleton->GetReferenceSkeleton();
+		Lines.Add(FString::Printf(TEXT("Target Skeleton: %s"), *Skeleton->GetPathName()));
+		Lines.Add(FString::Printf(TEXT("Bone Count: %d"), RefSkel.GetNum()));
+
+		// List first 10 bones
+		int32 MaxBones = FMath::Min(10, RefSkel.GetNum());
+		for (int32 i = 0; i < MaxBones; i++)
+		{
+			Lines.Add(FString::Printf(TEXT("  Bone[%d]: %s (parent=%d)"),
+				i, *RefSkel.GetBoneName(i).ToString(), RefSkel.GetParentIndex(i)));
+		}
+		if (RefSkel.GetNum() > 10)
+		{
+			Lines.Add(FString::Printf(TEXT("  ... (%d more bones)"), RefSkel.GetNum() - 10));
+		}
+
+		// List sockets
+		TArray<USkeletalMeshSocket*> Sockets = Skeleton->Sockets;
+		Lines.Add(FString::Printf(TEXT("Sockets: %d"), Sockets.Num()));
+		for (USkeletalMeshSocket* Socket : Sockets)
+		{
+			if (Socket)
+			{
+				Lines.Add(FString::Printf(TEXT("  Socket: %s -> Bone: %s Offset=(%.1f, %.1f, %.1f)"),
+					*Socket->SocketName.ToString(), *Socket->BoneName.ToString(),
+					Socket->RelativeLocation.X, Socket->RelativeLocation.Y, Socket->RelativeLocation.Z));
+			}
+		}
+	}
+	else
+	{
+		Lines.Add(TEXT("Target Skeleton: NULL!"));
+	}
+
+	// Collect all graphs in the AnimBP package
+	TArray<UEdGraph*> AllGraphs;
+	for (TObjectIterator<UEdGraph> It; It; ++It)
+	{
+		UEdGraph* Graph = *It;
+		if (Graph && Graph->GetOutermost() == AnimBP->GetOutermost())
+		{
+			AllGraphs.Add(Graph);
+		}
+	}
+
+	Lines.Add(FString::Printf(TEXT("\nTotal Graphs: %d"), AllGraphs.Num()));
+
+	for (UEdGraph* Graph : AllGraphs)
+	{
+		if (!Graph) continue;
+
+		FString GraphName = Graph->GetName();
+		Lines.Add(FString::Printf(TEXT("\n--- Graph: %s (Nodes=%d) ---"), *GraphName, Graph->Nodes.Num()));
+
+		// Only detailed dump for AnimGraph and state machine graphs
+		bool bIsAnimGraph = GraphName.Contains(TEXT("AnimGraph"));
+		bool bIsStateMachine = GraphName.Contains(TEXT("StateMachine")) || GraphName.Contains(TEXT("Locomotion"));
+
+		if (!bIsAnimGraph && !bIsStateMachine && Graph->Nodes.Num() > 20)
+		{
+			// Just summarize large non-AnimGraph graphs
+			Lines.Add(FString::Printf(TEXT("  (skipped - %d nodes)"), Graph->Nodes.Num()));
+			continue;
+		}
+
+		for (UEdGraphNode* Node : Graph->Nodes)
+		{
+			if (!Node) continue;
+
+			FString NodeClass = Node->GetClass()->GetName();
+			FString NodeTitle = Node->GetNodeTitle(ENodeTitleType::FullTitle).ToString();
+			NodeTitle = NodeTitle.Replace(TEXT("\n"), TEXT(" | "));
+
+			Lines.Add(FString::Printf(TEXT("  [%s] %s"), *NodeClass, *NodeTitle));
+
+			// Check for anim-specific node types
+			if (UAnimGraphNode_Base* AnimNode = Cast<UAnimGraphNode_Base>(Node))
+			{
+				// Get the inner FAnimNode struct type
+				UScriptStruct* NodeStruct = AnimNode->GetFNodeType();
+				if (NodeStruct)
+				{
+					Lines.Add(FString::Printf(TEXT("    FAnimNode: %s"), *NodeStruct->GetName()));
+				}
+			}
+
+			// Check for Control Rig / IK Rig
+			if (NodeClass.Contains(TEXT("ControlRig")) || NodeClass.Contains(TEXT("IKRig")))
+			{
+				Lines.Add(TEXT("    *** CONTROL RIG / IK RIG NODE ***"));
+			}
+
+			// Check for BlendSpace references
+			if (NodeClass.Contains(TEXT("BlendSpace")))
+			{
+				Lines.Add(TEXT("    *** BLEND SPACE NODE ***"));
+				// Try to find the referenced BlendSpace
+				for (UEdGraphPin* Pin : Node->Pins)
+				{
+					if (Pin && Pin->DefaultObject)
+					{
+						Lines.Add(FString::Printf(TEXT("    DefaultObject: %s"), *Pin->DefaultObject->GetPathName()));
+					}
+				}
+			}
+
+			// Dump all pins with connections
+			for (UEdGraphPin* Pin : Node->Pins)
+			{
+				if (!Pin) continue;
+				if (Pin->LinkedTo.Num() > 0 || Pin->bHidden == false)
+				{
+					FString Dir = (Pin->Direction == EGPD_Input) ? TEXT("IN") : TEXT("OUT");
+					FString PinType = Pin->PinType.PinCategory.ToString();
+
+					if (Pin->LinkedTo.Num() > 0)
+					{
+						for (UEdGraphPin* LinkedPin : Pin->LinkedTo)
+						{
+							if (LinkedPin && LinkedPin->GetOwningNode())
+							{
+								FString LinkedNodeTitle = LinkedPin->GetOwningNode()->GetNodeTitle(ENodeTitleType::ListView).ToString();
+								Lines.Add(FString::Printf(TEXT("    Pin[%s %s:%s] -> %s.%s"),
+									*Dir, *PinType, *Pin->PinName.ToString(),
+									*LinkedNodeTitle, *LinkedPin->PinName.ToString()));
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Check AnimBP compilation status
+	Lines.Add(TEXT("\n--- Compilation Status ---"));
+	Lines.Add(FString::Printf(TEXT("GeneratedClass: %s"),
+		AnimBP->GeneratedClass ? *AnimBP->GeneratedClass->GetName() : TEXT("NULL")));
+	Lines.Add(FString::Printf(TEXT("Status: %d"), (int32)AnimBP->Status));
+
+	// Check compatible skeletons
+	if (Skeleton)
+	{
+		TArray<FAssetData> CompatSkels;
+		Skeleton->GetCompatibleSkeletonAssets(CompatSkels);
+		Lines.Add(FString::Printf(TEXT("Compatible Skeletons: %d"), CompatSkels.Num()));
+		for (const auto& Compat : CompatSkels)
+		{
+			Lines.Add(FString::Printf(TEXT("  %s"), *Compat.GetSoftObjectPath().ToString()));
+		}
+	}
+
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *Result);
+	return Result;
+}
+
+FString USLFAutomationLibrary::DumpAnimBPExhaustive(const FString& AnimBPPath)
+{
+	TArray<FString> L;
+	L.Add(FString::Printf(TEXT("========== EXHAUSTIVE ANIMBP DUMP: %s =========="), *AnimBPPath));
+
+	UAnimBlueprint* AnimBP = LoadObject<UAnimBlueprint>(nullptr, *AnimBPPath);
+	if (!AnimBP)
+	{
+		L.Add(TEXT("ERROR: Could not load AnimBP"));
+		return FString::Join(L, TEXT("\n"));
+	}
+
+	// --- Section 1: Basic Info ---
+	L.Add(TEXT("\n[BASIC INFO]"));
+	L.Add(FString::Printf(TEXT("Class: %s"), *AnimBP->GetClass()->GetName()));
+	L.Add(FString::Printf(TEXT("ParentClass: %s"), AnimBP->ParentClass ? *AnimBP->ParentClass->GetName() : TEXT("NULL")));
+	L.Add(FString::Printf(TEXT("GeneratedClass: %s"), AnimBP->GeneratedClass ? *AnimBP->GeneratedClass->GetName() : TEXT("NULL")));
+	L.Add(FString::Printf(TEXT("Status: %d"), (int32)AnimBP->Status));
+
+	USkeleton* Skeleton = AnimBP->TargetSkeleton;
+	L.Add(FString::Printf(TEXT("TargetSkeleton: %s (%d bones)"),
+		Skeleton ? *Skeleton->GetPathName() : TEXT("NULL"),
+		Skeleton ? Skeleton->GetReferenceSkeleton().GetNum() : 0));
+
+	// --- Section 2: CDO Properties ---
+	L.Add(TEXT("\n[CDO PROPERTIES]"));
+	if (AnimBP->GeneratedClass)
+	{
+		UObject* CDO = AnimBP->GeneratedClass->GetDefaultObject();
+		if (CDO)
+		{
+			for (TFieldIterator<FProperty> PropIt(AnimBP->GeneratedClass); PropIt; ++PropIt)
+			{
+				FProperty* Prop = *PropIt;
+				if (!Prop) continue;
+				// Skip inherited UObject/AActor properties
+				if (Prop->GetOwnerClass() == UObject::StaticClass() || Prop->GetOwnerClass() == UAnimInstance::StaticClass())
+					continue;
+
+				FString ValueStr;
+				Prop->ExportText_InContainer(0, ValueStr, CDO, CDO, CDO, PPF_None);
+				L.Add(FString::Printf(TEXT("  %s (%s) = %s"),
+					*Prop->GetName(), *Prop->GetCPPType(), *ValueStr.Left(200)));
+			}
+		}
+	}
+
+	// --- Section 3: All Variables ---
+	L.Add(TEXT("\n[BLUEPRINT VARIABLES]"));
+	for (FBPVariableDescription& Var : AnimBP->NewVariables)
+	{
+		L.Add(FString::Printf(TEXT("  %s: Category=%s Type=%s Default=%s"),
+			*Var.VarName.ToString(),
+			*Var.Category.ToString(),
+			*Var.VarType.PinCategory.ToString(),
+			*Var.DefaultValue.Left(100)));
+	}
+
+	// --- Section 4: All Graphs (no skipping) ---
+	L.Add(TEXT("\n[ALL GRAPHS]"));
+	TArray<UEdGraph*> AllGraphs;
+	for (TObjectIterator<UEdGraph> It; It; ++It)
+	{
+		if (*It && (*It)->GetOutermost() == AnimBP->GetOutermost())
+			AllGraphs.Add(*It);
+	}
+	// Sort by name for consistent ordering
+	AllGraphs.Sort([](const UEdGraph& A, const UEdGraph& B) { return A.GetName() < B.GetName(); });
+
+	L.Add(FString::Printf(TEXT("Total Graphs: %d"), AllGraphs.Num()));
+
+	for (UEdGraph* Graph : AllGraphs)
+	{
+		FString GN = Graph->GetName();
+		L.Add(FString::Printf(TEXT("\n--- GRAPH: %s (Nodes=%d, Class=%s) ---"),
+			*GN, Graph->Nodes.Num(), *Graph->GetClass()->GetName()));
+
+		// Sort nodes by position for consistent ordering
+		TArray<UEdGraphNode*> SortedNodes = Graph->Nodes;
+		SortedNodes.Sort([](const UEdGraphNode& A, const UEdGraphNode& B) {
+			if (A.NodePosY != B.NodePosY) return A.NodePosY < B.NodePosY;
+			return A.NodePosX < B.NodePosX;
+		});
+
+		for (UEdGraphNode* Node : SortedNodes)
+		{
+			if (!Node) continue;
+
+			FString NodeClass = Node->GetClass()->GetName();
+			FString NodeTitle = Node->GetNodeTitle(ENodeTitleType::FullTitle).ToString().Replace(TEXT("\n"), TEXT(" | "));
+			FString NodeComment = Node->NodeComment;
+			L.Add(FString::Printf(TEXT("  NODE [%s] \"%s\" Pos=(%d,%d)%s"),
+				*NodeClass, *NodeTitle, Node->NodePosX, Node->NodePosY,
+				NodeComment.IsEmpty() ? TEXT("") : *FString::Printf(TEXT(" Comment=\"%s\""), *NodeComment)));
+
+			// AnimGraphNode details
+			if (UAnimGraphNode_Base* AnimNode = Cast<UAnimGraphNode_Base>(Node))
+			{
+				UScriptStruct* NodeStruct = AnimNode->GetFNodeType();
+				if (NodeStruct)
+				{
+					L.Add(FString::Printf(TEXT("    FAnimNode: %s"), *NodeStruct->GetName()));
+
+					// Dump FAnimNode properties via reflection
+					uint8* NodeData = (uint8*)AnimNode->GetFNode();
+					if (NodeData)
+					{
+						for (TFieldIterator<FProperty> PropIt(NodeStruct); PropIt; ++PropIt)
+						{
+							FProperty* Prop = *PropIt;
+							FString Val;
+							Prop->ExportTextItem_Direct(Val, Prop->ContainerPtrToValuePtr<void>(NodeData), nullptr, nullptr, PPF_None);
+							if (!Val.IsEmpty() && Val != TEXT("()") && Val != TEXT("None") && Val != TEXT("0") && Val != TEXT("0.000000"))
+							{
+								L.Add(FString::Printf(TEXT("    .%s = %s"), *Prop->GetName(), *Val.Left(300)));
+							}
+						}
+					}
+				}
+			}
+
+			// State machine node details
+			if (NodeClass.Contains(TEXT("AnimStateNode")))
+			{
+				// Try to get the inner graph (state body)
+				if (UAnimStateNodeBase* StateNode = Cast<UAnimStateNodeBase>(Node))
+				{
+					UEdGraph* InnerGraph = StateNode->GetBoundGraph();
+					if (InnerGraph)
+					{
+						L.Add(FString::Printf(TEXT("    InnerGraph: %s (%d nodes)"),
+							*InnerGraph->GetName(), InnerGraph->Nodes.Num()));
+					}
+				}
+			}
+
+			// Transition node details
+			if (NodeClass.Contains(TEXT("TransitionNode")))
+			{
+				if (UAnimStateTransitionNode* TransNode = Cast<UAnimStateTransitionNode>(Node))
+				{
+					L.Add(FString::Printf(TEXT("    LogicType: %d"), (int32)TransNode->LogicType));
+					L.Add(FString::Printf(TEXT("    bAutomaticRuleBasedOnSequencePlayerInState: %s"),
+						TransNode->bAutomaticRuleBasedOnSequencePlayerInState ? TEXT("true") : TEXT("false")));
+					L.Add(FString::Printf(TEXT("    TransitionDuration: %.3f"), TransNode->CrossfadeDuration));
+					// CrossfadeMode omitted (enum access issue)
+					if (TransNode->BoundGraph)
+					{
+						L.Add(FString::Printf(TEXT("    BoundGraph: %s (%d nodes)"),
+							*TransNode->BoundGraph->GetName(), TransNode->BoundGraph->Nodes.Num()));
+					}
+				}
+			}
+
+			// ALL pins (including defaults)
+			for (UEdGraphPin* Pin : Node->Pins)
+			{
+				if (!Pin) continue;
+				FString Dir = (Pin->Direction == EGPD_Input) ? TEXT("IN") : TEXT("OUT");
+				FString PinCat = Pin->PinType.PinCategory.ToString();
+				FString PinSub = Pin->PinType.PinSubCategory.ToString();
+				FString SubObj = Pin->PinType.PinSubCategoryObject.IsValid() ?
+					Pin->PinType.PinSubCategoryObject->GetName() : TEXT("");
+
+				FString DefaultVal = Pin->DefaultValue;
+				FString DefaultObj = Pin->DefaultObject ? Pin->DefaultObject->GetPathName() : TEXT("");
+				FString DefaultText = Pin->DefaultTextValue.ToString();
+
+				// Build connections string
+				FString ConnStr;
+				for (UEdGraphPin* Linked : Pin->LinkedTo)
+				{
+					if (Linked && Linked->GetOwningNode())
+					{
+						FString LT = Linked->GetOwningNode()->GetNodeTitle(ENodeTitleType::ListView).ToString();
+						ConnStr += FString::Printf(TEXT(" -> %s.%s"), *LT, *Linked->PinName.ToString());
+					}
+				}
+
+				// Only print pins with interesting data
+				bool bHasData = !ConnStr.IsEmpty() || !DefaultVal.IsEmpty() || !DefaultObj.IsEmpty() || !DefaultText.IsEmpty();
+				if (bHasData || !Pin->bHidden)
+				{
+					FString Line = FString::Printf(TEXT("    Pin[%s %s:%s]"), *Dir, *PinCat, *Pin->PinName.ToString());
+					if (!PinSub.IsEmpty() && PinSub != TEXT("None")) Line += FString::Printf(TEXT(" Sub=%s"), *PinSub);
+					if (!SubObj.IsEmpty()) Line += FString::Printf(TEXT(" SubObj=%s"), *SubObj);
+					if (!DefaultVal.IsEmpty()) Line += FString::Printf(TEXT(" Default=\"%s\""), *DefaultVal.Left(100));
+					if (!DefaultObj.IsEmpty()) Line += FString::Printf(TEXT(" DefaultObj=%s"), *DefaultObj.Left(200));
+					if (!ConnStr.IsEmpty()) Line += ConnStr;
+					if (Pin->bHidden) Line += TEXT(" [HIDDEN]");
+					L.Add(Line);
+				}
+			}
+		}
+	}
+
+	// --- Section 5: Blend Space Details ---
+	L.Add(TEXT("\n[BLEND SPACE DETAILS]"));
+	// Look for any blend space assets referenced
+	TArray<FString> BSPaths;
+	BSPaths.Add(AnimBPPath.Replace(TEXT("ABP_"), TEXT("BS_")).Replace(TEXT("_Guard"), TEXT("_Locomotion")));
+	// Also check common paths
+	FString BaseDir = FPaths::GetPath(AnimBPPath);
+	BSPaths.Add(BaseDir / TEXT("BS_c3100_Locomotion"));
+
+	for (const FString& BSPath : BSPaths)
+	{
+		UBlendSpace1D* BS = LoadObject<UBlendSpace1D>(nullptr, *BSPath);
+		if (!BS) continue;
+
+		L.Add(FString::Printf(TEXT("\nBlendSpace: %s"), *BS->GetPathName()));
+		L.Add(FString::Printf(TEXT("  Skeleton: %s"), BS->GetSkeleton() ? *BS->GetSkeleton()->GetPathName() : TEXT("NULL")));
+
+		// Get axis info
+		const FBlendParameter& Axis = BS->GetBlendParameter(0);
+		L.Add(FString::Printf(TEXT("  Axis[0]: Name=%s Min=%.1f Max=%.1f GridNum=%d"),
+			*Axis.DisplayName, Axis.Min, Axis.Max, Axis.GridNum));
+
+		// Dump samples
+		const TArray<FBlendSample>& Samples = BS->GetBlendSamples();
+		L.Add(FString::Printf(TEXT("  Samples: %d"), Samples.Num()));
+		for (int32 i = 0; i < Samples.Num(); i++)
+		{
+			const FBlendSample& Sample = Samples[i];
+			L.Add(FString::Printf(TEXT("    [%d] Anim=%s Value=(%.1f) Rate=%.2f"),
+				i,
+				Sample.Animation ? *Sample.Animation->GetPathName() : TEXT("NULL"),
+				Sample.SampleValue.X,
+				Sample.RateScale));
+		}
+	}
+
+	// Also check original enemy blend space
+	UBlendSpace1D* OrigBS = LoadObject<UBlendSpace1D>(nullptr,
+		TEXT("/Game/SoulslikeFramework/Demo/_Animations/Locomotion/Blendspaces/ABS_SoulslikeEnemy"));
+	if (OrigBS)
+	{
+		L.Add(FString::Printf(TEXT("\nOriginal BlendSpace: %s"), *OrigBS->GetPathName()));
+		L.Add(FString::Printf(TEXT("  Skeleton: %s"), OrigBS->GetSkeleton() ? *OrigBS->GetSkeleton()->GetPathName() : TEXT("NULL")));
+		const FBlendParameter& Axis = OrigBS->GetBlendParameter(0);
+		L.Add(FString::Printf(TEXT("  Axis[0]: Name=%s Min=%.1f Max=%.1f GridNum=%d"),
+			*Axis.DisplayName, Axis.Min, Axis.Max, Axis.GridNum));
+		const TArray<FBlendSample>& Samples = OrigBS->GetBlendSamples();
+		L.Add(FString::Printf(TEXT("  Samples: %d"), Samples.Num()));
+		for (int32 i = 0; i < Samples.Num(); i++)
+		{
+			const FBlendSample& Sample = Samples[i];
+			L.Add(FString::Printf(TEXT("    [%d] Anim=%s Value=(%.1f) Rate=%.2f"),
+				i,
+				Sample.Animation ? *Sample.Animation->GetPathName() : TEXT("NULL"),
+				Sample.SampleValue.X,
+				Sample.RateScale));
+		}
+	}
+
+	return FString::Join(L, TEXT("\n"));
+}
+
+FString USLFAutomationLibrary::FixBlendSpace1DPinWiring(const FString& AnimBPPath)
+{
+	TArray<FString> Lines;
+	Lines.Add(FString::Printf(TEXT("=== FixBlendSpace1DPinWiring: %s ==="), *AnimBPPath));
+
+	UAnimBlueprint* AnimBP = LoadObject<UAnimBlueprint>(nullptr, *AnimBPPath);
+	if (!AnimBP)
+	{
+		Lines.Add(TEXT("ERROR: Could not load AnimBP"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// Collect all graphs in the AnimBP package
+	TArray<UEdGraph*> AllGraphs;
+	for (TObjectIterator<UEdGraph> It; It; ++It)
+	{
+		UEdGraph* Graph = *It;
+		if (Graph && Graph->GetOutermost() == AnimBP->GetOutermost())
+		{
+			AllGraphs.Add(Graph);
+		}
+	}
+
+	int32 FixedCount = 0;
+	for (UEdGraph* Graph : AllGraphs)
+	{
+		if (!Graph) continue;
+
+		for (UEdGraphNode* Node : Graph->Nodes)
+		{
+			if (!Node) continue;
+			FString ClassName = Node->GetClass()->GetName();
+
+			// Match BlendSpacePlayer or BlendSpaceGraph nodes
+			if (!ClassName.Contains(TEXT("BlendSpace")))
+				continue;
+
+			Lines.Add(FString::Printf(TEXT("  Found BlendSpace node: %s (%s) in graph '%s'"),
+				*Node->GetNodeTitle(ENodeTitleType::ListView).ToString(),
+				*ClassName, *Graph->GetName()));
+
+			// Check if the referenced BlendSpace is a 1D type
+			// Look for the Sequence/BlendSpace property via pins or reflection
+			UEdGraphPin* XPin = nullptr;
+			UEdGraphPin* YPin = nullptr;
+
+			for (UEdGraphPin* Pin : Node->Pins)
+			{
+				if (!Pin) continue;
+				FString PinName = Pin->PinName.ToString();
+
+				if (PinName == TEXT("X") && Pin->Direction == EGPD_Input)
+				{
+					XPin = Pin;
+				}
+				else if (PinName == TEXT("Y") && Pin->Direction == EGPD_Input)
+				{
+					YPin = Pin;
+				}
+			}
+
+			if (!XPin)
+			{
+				Lines.Add(TEXT("    No X pin found, skipping"));
+				continue;
+			}
+
+			Lines.Add(FString::Printf(TEXT("    X pin: %d links, Y pin: %s"),
+				XPin->LinkedTo.Num(),
+				YPin ? *FString::Printf(TEXT("%d links"), YPin->LinkedTo.Num()) : TEXT("not found")));
+
+			// Log current wiring
+			for (UEdGraphPin* Link : XPin->LinkedTo)
+			{
+				Lines.Add(FString::Printf(TEXT("    X currently wired from: %s.%s"),
+					*Link->GetOwningNode()->GetNodeTitle(ENodeTitleType::ListView).ToString(),
+					*Link->PinName.ToString()));
+			}
+			if (YPin)
+			{
+				for (UEdGraphPin* Link : YPin->LinkedTo)
+				{
+					Lines.Add(FString::Printf(TEXT("    Y currently wired from: %s.%s"),
+						*Link->GetOwningNode()->GetNodeTitle(ENodeTitleType::ListView).ToString(),
+						*Link->PinName.ToString()));
+				}
+			}
+
+			// For BlendSpace1D, only X matters.
+			// If Y has connections (GroundSpeed) and X has connections (Direction), swap them.
+			if (YPin && XPin->LinkedTo.Num() > 0 && YPin->LinkedTo.Num() > 0)
+			{
+				// Save current connections
+				TArray<UEdGraphPin*> OldXLinks = XPin->LinkedTo;
+				TArray<UEdGraphPin*> OldYLinks = YPin->LinkedTo;
+
+				// Break all connections on both pins
+				XPin->BreakAllPinLinks();
+				YPin->BreakAllPinLinks();
+
+				// Swap: old Y connections → X, old X connections → Y
+				for (UEdGraphPin* Link : OldYLinks)
+				{
+					XPin->MakeLinkTo(Link);
+				}
+				for (UEdGraphPin* Link : OldXLinks)
+				{
+					YPin->MakeLinkTo(Link);
+				}
+
+				Lines.Add(TEXT("    SWAPPED X and Y pin connections"));
+				FixedCount++;
+
+				// Log new wiring
+				for (UEdGraphPin* Link : XPin->LinkedTo)
+				{
+					Lines.Add(FString::Printf(TEXT("    X now wired from: %s.%s"),
+						*Link->GetOwningNode()->GetNodeTitle(ENodeTitleType::ListView).ToString(),
+						*Link->PinName.ToString()));
+				}
+				for (UEdGraphPin* Link : YPin->LinkedTo)
+				{
+					Lines.Add(FString::Printf(TEXT("    Y now wired from: %s.%s"),
+						*Link->GetOwningNode()->GetNodeTitle(ENodeTitleType::ListView).ToString(),
+						*Link->PinName.ToString()));
+				}
+			}
+			else if (YPin && YPin->LinkedTo.Num() > 0 && XPin->LinkedTo.Num() == 0)
+			{
+				// Y has connections but X doesn't - just move Y connections to X
+				TArray<UEdGraphPin*> OldYLinks = YPin->LinkedTo;
+				YPin->BreakAllPinLinks();
+				for (UEdGraphPin* Link : OldYLinks)
+				{
+					XPin->MakeLinkTo(Link);
+				}
+				Lines.Add(TEXT("    Moved Y connections to X (X was empty)"));
+				FixedCount++;
+			}
+			else
+			{
+				Lines.Add(TEXT("    No swap needed (X already has correct wiring or no Y connections)"));
+			}
+		}
+	}
+
+	Lines.Add(FString::Printf(TEXT("Fixed %d BlendSpace node(s)"), FixedCount));
+
+	if (FixedCount > 0)
+	{
+		// Compile and save
+		FKismetEditorUtilities::CompileBlueprint(AnimBP);
+		UPackage* Pkg = AnimBP->GetOutermost();
+		Pkg->MarkPackageDirty();
+		FString FileName = FPackageName::LongPackageNameToFilename(Pkg->GetName(), FPackageName::GetAssetPackageExtension());
+		FSavePackageArgs SaveArgs;
+		SaveArgs.TopLevelFlags = RF_Standalone;
+		bool bSaved = UPackage::SavePackage(Pkg, AnimBP, *FileName, SaveArgs);
+		Lines.Add(FString::Printf(TEXT("Save: %s"), bSaved ? TEXT("SUCCESS") : TEXT("FAILED")));
+	}
+
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *Result);
 	return Result;
 }
 

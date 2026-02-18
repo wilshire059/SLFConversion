@@ -8,6 +8,7 @@
 #include "SLFPrimaryDataAssets.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Engine/World.h"
+#include "Engine/EngineTypes.h"
 
 FString USLFAnimNotifyStateWeaponTrace::GetNotifyName_Implementation() const
 {
@@ -25,7 +26,14 @@ void USLFAnimNotifyStateWeaponTrace::NotifyBegin(USkeletalMeshComponent* MeshCom
 	// Clear hit actors list at start of trace
 	HitActors.Empty();
 
-	UE_LOG(LogTemp, Log, TEXT("[ANS_WeaponTrace] Begin on %s - Duration: %.2fs"), *Owner->GetName(), TotalDuration);
+	// Log socket availability for debugging
+	bool bHasStart = MeshComp->DoesSocketExist(StartSocketName);
+	bool bHasEnd = MeshComp->DoesSocketExist(EndSocketName);
+	UE_LOG(LogTemp, Log, TEXT("[ANS_WeaponTrace] Begin on %s - Duration: %.2fs, Sockets: %s=%s %s=%s, Radius: %.0f"),
+		*Owner->GetName(), TotalDuration,
+		*StartSocketName.ToString(), bHasStart ? TEXT("YES") : TEXT("NO"),
+		*EndSocketName.ToString(), bHasEnd ? TEXT("YES") : TEXT("NO"),
+		TraceRadius);
 }
 
 void USLFAnimNotifyStateWeaponTrace::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
@@ -83,22 +91,37 @@ void USLFAnimNotifyStateWeaponTrace::NotifyTick(USkeletalMeshComponent* MeshComp
 		}
 	}
 
-	// Setup trace parameters
+	// Setup trace parameters - use SphereTraceMultiForObjects (by object type)
+	// instead of SweepMultiByChannel which depends on collision channel responses
 	TArray<FHitResult> HitResults;
-	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(Owner);
-	QueryParams.bTraceComplex = false;
-	QueryParams.bReturnPhysicalMaterial = true;
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(Owner);
 
-	// Sphere trace between weapon sockets
-	bool bHit = World->SweepMultiByChannel(
-		HitResults,
+	// Also ignore attached weapons (so we don't hit our own equipment)
+	TArray<AActor*> AttachedActors;
+	Owner->GetAttachedActors(AttachedActors);
+	for (AActor* Attached : AttachedActors)
+	{
+		ActorsToIgnore.Add(Attached);
+	}
+
+	// Trace against Pawns, WorldDynamic, and Destructible objects
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
+	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
+	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_WorldDynamic));
+	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Destructible));
+
+	bool bHit = UKismetSystemLibrary::SphereTraceMultiForObjects(
+		Owner,
 		StartPos,
 		EndPos,
-		FQuat::Identity,
-		ECC_Pawn,  // Trace against pawns
-		FCollisionShape::MakeSphere(TraceRadius),
-		QueryParams
+		TraceRadius,
+		ObjectTypes,
+		false, // bTraceComplex
+		ActorsToIgnore,
+		EDrawDebugTrace::None,
+		HitResults,
+		true // bIgnoreSelf
 	);
 
 	if (bHit)

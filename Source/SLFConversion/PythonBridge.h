@@ -5,10 +5,12 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#if WITH_EDITOR
+#include "WidgetBlueprint.h"
+#endif
 #include "PythonBridge.generated.h"
 
 class UBlueprint;
-class UWidgetBlueprint;
 class UAnimBlueprint;
 class UUserDefinedEnum;
 class UUserDefinedStruct;
@@ -53,7 +55,7 @@ public:
 	 * Includes widget hierarchy, bindings, and animations.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Python Bridge|Export")
-	static FString ExportWidgetBlueprintDNA(UWidgetBlueprint* WidgetBlueprint);
+	static FString ExportWidgetBlueprintDNA(UObject* WidgetBlueprintObj);
 
 	/**
 	 * Export Animation Blueprint to JSON string.
@@ -188,13 +190,13 @@ public:
 	 * Get the widget tree from a Widget Blueprint.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Python Bridge|Widget")
-	static UObject* GetWidgetTreeFromBP(UWidgetBlueprint* WidgetBlueprint);
+	static UObject* GetWidgetTreeFromBP(UObject* WidgetBlueprintObj);
 
 	/**
 	 * Get the root widget from a Widget Blueprint.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Python Bridge|Widget")
-	static UObject* GetRootWidgetFromBP(UWidgetBlueprint* WidgetBlueprint);
+	static UObject* GetRootWidgetFromBP(UObject* WidgetBlueprintObj);
 
 private:
 	// Helper functions for JSON serialization

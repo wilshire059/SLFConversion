@@ -2,6 +2,7 @@
 // Complete asset property export for validation
 
 #include "SLFAssetValidator.h"
+#if WITH_EDITOR
 #include "Engine/Blueprint.h"
 #include "Engine/SCS_Node.h"
 #include "Engine/SimpleConstructionScript.h"
@@ -528,3 +529,5 @@ int32 USLFAssetValidator::ExportAllDialogAssets(const FString& OutputFolder)
 	UE_LOG(LogTemp, Log, TEXT("[AssetValidator] Exported %d dialog-related assets to: %s"), ExportCount, *OutputFolder);
 	return ExportCount;
 }
+
+#endif // WITH_EDITOR

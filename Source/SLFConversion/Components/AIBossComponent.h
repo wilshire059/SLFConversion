@@ -25,6 +25,8 @@
 // Forward declarations
 class UAnimMontage;
 class UAudioComponent;
+class ULevelSequencePlayer;
+class ALevelSequenceActor;
 
 // Types used from SLFEnums.h/SLFGameTypes.h:
 // - ESLFAIBossEncounterType
@@ -227,4 +229,20 @@ public:
 	/** [17/17] Get phase count */
 	UFUNCTION(BlueprintPure, Category = "Boss|Getters")
 	int32 GetPhaseCount() const { return Phases.Num(); }
+
+private:
+	/** Active level sequence player for cinematic cleanup */
+	UPROPERTY(Transient)
+	ULevelSequencePlayer* ActiveSequencePlayer;
+
+	/** Active level sequence actor for cinematic cleanup */
+	UPROPERTY(Transient)
+	ALevelSequenceActor* ActiveSequenceActor;
+
+	/** Handler for level sequence OnFinished delegate */
+	UFUNCTION()
+	void OnLevelSequenceFinished();
+
+	/** Stop and clean up any active cinematic sequence */
+	void CleanupActiveSequence();
 };

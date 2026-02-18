@@ -2,6 +2,7 @@
 // Complete implementation for YAML asset documentation
 
 #include "SLFYAMLExporter.h"
+#if WITH_EDITOR
 #include "Engine/Blueprint.h"
 #include "Engine/DataTable.h"
 #include "Engine/UserDefinedStruct.h"
@@ -650,3 +651,5 @@ int32 USLFYAMLExporter::ExportNPCSystemToYAML(const FString& OutputFolder)
 	UE_LOG(LogTemp, Log, TEXT("[YAMLExporter] Exported %d NPC system assets to: %s"), ExportCount, *OutputFolder);
 	return ExportCount;
 }
+
+#endif // WITH_EDITOR

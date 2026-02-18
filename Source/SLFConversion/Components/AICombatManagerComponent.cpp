@@ -511,8 +511,27 @@ void UAICombatManagerComponent::HandleHitReaction_Implementation(
 		return;
 	}
 
-	// Load hit reaction montage directly by direction
-	// Montages are: AM_SLF_HitReaction_Fwd, AM_SLF_HitReaction_Bwd, AM_SLF_HitReaction_L, AM_SLF_HitReaction_R
+	// Try ReactionAnimset first (supports per-enemy custom montages like c3100)
+	if (ReactionAnimset)
+	{
+		if (UPDA_CombatReactionAnimData* ReactionData = Cast<UPDA_CombatReactionAnimData>(ReactionAnimset))
+		{
+			if (!ReactionData->ReactionMontage.IsNull())
+			{
+				UAnimMontage* ReactionMontage = ReactionData->ReactionMontage.LoadSynchronous();
+				if (ReactionMontage)
+				{
+					float PlayRate = (ReactionType == ESLFHitReactType::Light) ? 1.2f : 0.8f;
+					AnimInstance->Montage_Play(ReactionMontage, PlayRate);
+					UE_LOG(LogTemp, Log, TEXT("[AICombatManager] Playing hit reaction from ReactionAnimset: %s at rate %.2f"),
+						*ReactionMontage->GetName(), PlayRate);
+					return;
+				}
+			}
+		}
+	}
+
+	// Fallback: Load default SLF hit reaction montage by direction
 	FString MontagePath = FString::Printf(
 		TEXT("/Game/SoulslikeFramework/Demo/_Animations/HitReactions/AM_SLF_HitReaction_%s.AM_SLF_HitReaction_%s"),
 		*DirectionSuffix, *DirectionSuffix);
@@ -520,25 +539,15 @@ void UAICombatManagerComponent::HandleHitReaction_Implementation(
 	UAnimMontage* HitReactionMontage = LoadObject<UAnimMontage>(nullptr, *MontagePath);
 	if (HitReactionMontage)
 	{
-		float PlayRate = 1.0f;
-		// Play slightly faster for light reactions, slower for heavy
-		if (ReactionType == ESLFHitReactType::Light)
-		{
-			PlayRate = 1.2f;
-		}
-		else if (ReactionType == ESLFHitReactType::Heavy)
-		{
-			PlayRate = 0.8f;
-		}
-
+		float PlayRate = (ReactionType == ESLFHitReactType::Light) ? 1.2f : 0.8f;
 		AnimInstance->Montage_Play(HitReactionMontage, PlayRate);
-		UE_LOG(LogTemp, Log, TEXT("[AICombatManager] Playing hit reaction montage: %s at rate %.2f"),
+		UE_LOG(LogTemp, Log, TEXT("[AICombatManager] Playing default hit reaction montage: %s at rate %.2f"),
 			*HitReactionMontage->GetName(), PlayRate);
 		return;
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] No hit reaction montage available - tried path: %s"), *MontagePath);
+		UE_LOG(LogTemp, Warning, TEXT("[AICombatManager] No hit reaction montage available"));
 	}
 }
 

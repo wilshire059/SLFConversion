@@ -97,6 +97,22 @@ void USLFAIStateMachineComponent::CacheReferences()
 	}
 }
 
+void USLFAIStateMachineComponent::RefreshCachedAnimInstance()
+{
+	if (CachedPawn.IsValid())
+	{
+		if (ACharacter* Character = Cast<ACharacter>(CachedPawn.Get()))
+		{
+			if (USkeletalMeshComponent* Mesh = Character->GetMesh())
+			{
+				CachedAnimInstance = Mesh->GetAnimInstance();
+				UE_LOG(LogTemp, Warning, TEXT("[AIStateMachine] RefreshCachedAnimInstance - AnimInstance: %s"),
+					CachedAnimInstance.IsValid() ? *CachedAnimInstance->GetClass()->GetName() : TEXT("NULL"));
+			}
+		}
+	}
+}
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // TICK - MAIN STATE MACHINE LOOP
 // ═══════════════════════════════════════════════════════════════════════════════

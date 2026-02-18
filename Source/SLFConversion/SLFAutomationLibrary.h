@@ -582,5 +582,211 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Settings")
 	static FString ApplyEmbeddedSettingsWidgets(const FString& JsonFilePath);
 
+	// ═══════════════════════════════════════════════════════════════════════════
+	// ANIMATION PIPELINE - Import, Socket, AnimBP, Montage, BlendSpace
+	// ═══════════════════════════════════════════════════════════════════════════
+
+	/**
+	 * Import a skeletal mesh from FBX file
+	 * Creates SkeletalMesh + Skeleton assets in the target directory
+	 * @param FBXFilePath - Absolute path to FBX file on disk
+	 * @param DestinationPath - UE content path (e.g., "/Game/MyMeshes")
+	 * @param AssetName - Name for the mesh asset (skeleton will be AssetName_Skeleton)
+	 * @param SkeletonPath - Existing skeleton to use ("_" to create new)
+	 * @param ImportScale - Scale multiplier (100 = meter to cm)
+	 * @return Result string with created asset paths
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Animation")
+	static FString ImportSkeletalMeshFromFBX(
+		const FString& FBXFilePath,
+		const FString& DestinationPath,
+		const FString& AssetName,
+		const FString& SkeletonPath = TEXT("_"),
+		float ImportScale = 1.0f
+	);
+
+	/**
+	 * Batch import animation FBX files into UE5
+	 * @param FBXDirectory - Directory containing animation FBX files
+	 * @param DestinationPath - UE content path for imported animations
+	 * @param SkeletonPath - UE path to target skeleton asset
+	 * @param ImportScale - Scale multiplier (100 = meter to cm)
+	 * @return Result string with import counts
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Animation")
+	static FString BatchImportAnimationsFromFBX(
+		const FString& FBXDirectory,
+		const FString& DestinationPath,
+		const FString& SkeletonPath,
+		float ImportScale = 1.0f
+	);
+
+	/**
+	 * Add a socket to a skeleton asset
+	 * @param SkeletonPath - UE path to skeleton asset
+	 * @param SocketName - Name for the new socket
+	 * @param ParentBoneName - Bone to attach socket to
+	 * @param RelativeLocation - Socket offset from bone
+	 * @param RelativeRotation - Socket rotation relative to bone
+	 * @return Result string
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Animation")
+	static FString AddSocketToSkeleton(
+		const FString& SkeletonPath,
+		const FString& SocketName,
+		const FString& ParentBoneName,
+		FVector RelativeLocation = FVector::ZeroVector,
+		FRotator RelativeRotation = FRotator::ZeroRotator
+	);
+
+	/**
+	 * Duplicate an AnimBP and retarget to a different skeleton
+	 * @param SourceAnimBPPath - Path to source AnimBP
+	 * @param TargetSkeletonPath - Path to new target skeleton
+	 * @param NewAnimBPPath - Path for the duplicated AnimBP
+	 * @return Result string
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Animation")
+	static FString DuplicateAnimBPForSkeleton(
+		const FString& SourceAnimBPPath,
+		const FString& TargetSkeletonPath,
+		const FString& NewAnimBPPath
+	);
+
+	/**
+	 * Create an AnimMontage from an AnimSequence
+	 * @param SequencePath - UE path to source AnimSequence
+	 * @param OutputPath - UE path for new montage
+	 * @param SlotName - Montage slot name (default "DefaultSlot")
+	 * @return Result string
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Animation")
+	static FString CreateMontageFromSequence(
+		const FString& SequencePath,
+		const FString& OutputPath,
+		const FString& SlotName = TEXT("DefaultSlot")
+	);
+
+	/**
+	 * Create a 1D BlendSpace with idle/walk/run samples
+	 * @param OutputPath - UE path for new BlendSpace
+	 * @param SkeletonPath - UE path to skeleton
+	 * @param IdleSequencePath - Path to idle animation
+	 * @param WalkSequencePath - Path to walk animation
+	 * @param RunSequencePath - Path to run animation
+	 * @return Result string
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Animation")
+	static FString CreateBlendSpace1DFromSequences(
+		const FString& OutputPath,
+		const FString& SkeletonPath,
+		const FString& IdleSequencePath,
+		const FString& WalkSequencePath,
+		const FString& RunSequencePath
+	);
+
+	/** Create a 2D BlendSpace matching the original ABP_SoulslikeEnemy layout (Direction X, Speed Y) */
+	static FString CreateBlendSpace2DFromSequences(
+		const FString& OutputPath,
+		const FString& SkeletonPath,
+		const FString& IdleSequencePath,
+		const FString& WalkSequencePath,
+		const FString& RunSequencePath
+	);
+
+	/**
+	 * Add an ANS_WeaponTrace notify state to a montage at specified time range.
+	 * Uses TAE (Time Act Event) timings from Elden Ring for accurate hitbox windows.
+	 * @param MontagePath - UE path to the montage
+	 * @param StartTime - Start time in seconds
+	 * @param EndTime - End time in seconds
+	 * @param InTraceRadius - Sphere trace radius (default 30)
+	 * @param InStartSocket - Start socket name (default weapon_start)
+	 * @param InEndSocket - End socket name (default weapon_end)
+	 * @return Result string
+	 */
+	static FString AddWeaponTraceToMontage(
+		const FString& MontagePath,
+		float StartTime,
+		float EndTime,
+		float InTraceRadius = 30.0f,
+		const FName& InStartSocket = FName("weapon_start"),
+		const FName& InEndSocket = FName("weapon_end")
+	);
+
+	/**
+	 * Configure guard enemy with new mesh, AnimBP, and animation data
+	 * @param GuardBlueprintPath - Path to guard Blueprint
+	 * @param MeshPath - Path to skeletal mesh
+	 * @param AnimBPPath - Path to AnimBP class
+	 * @param BlendSpacePath - Path to locomotion blend space
+	 * @param AttackMontagePaths - Paths to attack montages
+	 * @param HitReactMontagePath - Path to hit reaction montage
+	 * @param DeathMontagePaths - Paths to death montages (Fwd, Bwd, Left, Right)
+	 * @return Result string
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Animation")
+	static FString ConfigureGuardAnimations(
+		const FString& GuardBlueprintPath,
+		const FString& MeshPath,
+		const FString& AnimBPPath,
+		const FString& BlendSpacePath,
+		const TArray<FString>& AttackMontagePaths,
+		const FString& HitReactMontagePath,
+		const TArray<FString>& DeathMontagePaths
+	);
+
+	/**
+	 * List all bone names in a skeleton asset (for socket setup reference)
+	 * @param SkeletonPath - UE path to skeleton asset
+	 * @return Newline-separated list of bone names
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Animation")
+	static FString ListSkeletonBones(const FString& SkeletonPath);
+
+	/**
+	 * Replace animation references in an AnimBP's AnimGraph nodes
+	 * @param AnimBPPath - UE path to AnimBP
+	 * @param ReplacementMap - Map of old asset path -> new asset path
+	 * @return Result string
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Animation")
+	static FString ReplaceAnimReferencesInAnimBP(
+		const FString& AnimBPPath,
+		const TMap<FString, FString>& ReplacementMap
+	);
+
+	/**
+	 * Disable Control Rig nodes in an AnimBP by setting Alpha to 0
+	 * Use when AnimBP is duplicated for a skeleton with different bone hierarchy
+	 * @param AnimBPPath - UE path to AnimBP
+	 * @return Result string
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Animation")
+	static FString DisableControlRigInAnimBP(const FString& AnimBPPath);
+
+	/**
+	 * Detailed AnimBP diagnostic: skeleton, all nodes, blend space samples, Control Rig, IK, graph chain
+	 * @param AnimBPPath - UE path to AnimBP
+	 * @return Detailed diagnostic string
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Animation")
+	static FString DiagnoseAnimBPDetailed(const FString& AnimBPPath);
+
+	/**
+	 * Exhaustive AnimBP dump: every graph, every node, every pin (defaults+connections),
+	 * AnimNode struct properties via reflection, CDO defaults, blend space samples.
+	 */
+	static FString DumpAnimBPExhaustive(const FString& AnimBPPath);
+
+	/**
+	 * Fix BlendSpace1D pin wiring in AnimBP.
+	 * BlendSpace1D only uses the X axis. If GroundSpeed is wired to Y instead of X,
+	 * this swaps the connections so GroundSpeed feeds X (the only axis that matters).
+	 * @param AnimBPPath - UE path to AnimBP
+	 * @return Diagnostic/result string
+	 */
+	static FString FixBlendSpace1DPinWiring(const FString& AnimBPPath);
+
 #endif // WITH_EDITOR
 };

@@ -535,6 +535,12 @@ private:
 	// ═══════════════════════════════════════════════════════════════════════════
 
 	void CacheReferences();
+
+public:
+	/** Refresh the cached AnimInstance (call after AnimBP changes at runtime) */
+	void RefreshCachedAnimInstance();
+
+private:
 	bool HasValidTarget() const;
 	float GetDistanceToTarget() const;
 	FVector GetDirectionToTarget() const;

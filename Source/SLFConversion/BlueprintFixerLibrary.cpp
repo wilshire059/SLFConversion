@@ -1,6 +1,7 @@
 // BlueprintFixerLibrary.cpp
 
 #include "BlueprintFixerLibrary.h"
+#if WITH_EDITOR
 #include "Engine/Blueprint.h"
 #include "EdGraph/EdGraph.h"
 #include "EdGraph/EdGraphNode.h"
@@ -1168,3 +1169,5 @@ int32 UBlueprintFixerLibrary::DeleteNodesByGuids(UBlueprint* Blueprint, TArray<F
 
 	return DeletedCount;
 }
+
+#endif // WITH_EDITOR

@@ -17,6 +17,7 @@ class SLFCONVERSION_API USLFAssetValidator : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
+#if WITH_EDITOR
 	/**
 	 * Export all properties of a Blueprint asset to a text file
 	 * Includes: Variables, Components, Default values, References
@@ -66,4 +67,5 @@ public:
 	 * Export struct properties
 	 */
 	static void ExportStructProperties(const void* StructData, const UStruct* StructType, FString& OutText, int32 IndentLevel);
+#endif // WITH_EDITOR
 };
