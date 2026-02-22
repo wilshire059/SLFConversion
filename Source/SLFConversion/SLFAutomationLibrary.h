@@ -622,6 +622,39 @@ public:
 	);
 
 	/**
+	 * Import animation from FBX directly using FBX SDK + DataModel bracket API.
+	 * Bypasses UE5.7's ControlRig import pipeline which doesn't populate bone tracks
+	 * in commandlet mode. Reads FBX bone animation curves and writes directly to
+	 * DataModel bone tracks, then DDC compresses and saves.
+	 * @param FBXPath - Full filesystem path to the FBX file
+	 * @param DestPackagePath - UE content path for the output AnimSequence
+	 * @param AnimName - Name for the AnimSequence asset
+	 * @param SkeletonPath - UE path to target skeleton asset
+	 * @param ImportScale - Scale for translation values (1.0 = use as-is)
+	 * @return Result string with bone track counts
+	 */
+	static FString ImportAnimFBXDirect(
+		const FString& FBXPath,
+		const FString& DestPackagePath,
+		const FString& AnimName,
+		const FString& SkeletonPath,
+		float ImportScale = 1.0f,
+		bool bPoseSpaceDeltas = false
+	);
+
+	/**
+	 * Batch import animations from FBX directory using direct FBX SDK method.
+	 * Calls ImportAnimFBXDirect for each .fbx file in the directory.
+	 */
+	static FString BatchImportAnimsFBXDirect(
+		const FString& FBXDirectory,
+		const FString& DestinationPath,
+		const FString& SkeletonPath,
+		float ImportScale = 1.0f,
+		bool bPoseSpaceDeltas = false
+	);
+
+	/**
 	 * Add a socket to a skeleton asset
 	 * @param SkeletonPath - UE path to skeleton asset
 	 * @param SocketName - Name for the new socket
@@ -788,5 +821,126 @@ public:
 	 */
 	static FString FixBlendSpace1DPinWiring(const FString& AnimBPPath);
 
+	/**
+	 * Bake an animation with forensically distinct transforms.
+	 * Reads source AnimSequence, resamples to target FPS, applies time warp,
+	 * smooth noise, and bone rotation offsets, then writes a new AnimSequence.
+	 *
+	 * @param SourceAnimPath - UE path to source AnimSequence
+	 * @param OutputPath - UE content directory for output
+	 * @param NewAssetName - Name for the new asset
+	 * @param NoiseAmplitudeDegrees - Max noise rotation amplitude in degrees (default 2.0)
+	 * @param TimeWarpStrength - Sine-based time warp strength 0-0.95 (default 0.15)
+	 * @param BoneRotationOffsetDegrees - Static rotation offset per bone (scaled by region weight)
+	 * @param TargetFrameRate - Output frame rate (default 24fps)
+	 * @param RandomSeed - Deterministic seed (0 = random)
+	 * @return Result string with asset path or error
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Animation")
+	static FString BakeAnimationTransforms(
+		const FString& SourceAnimPath,
+		const FString& OutputPath,
+		const FString& NewAssetName,
+		float NoiseAmplitudeDegrees = 2.0f,
+		float TimeWarpStrength = 0.15f,
+		FVector BoneRotationOffsetDegrees = FVector(0, 10, 0),
+		float TargetFrameRate = 24.0f,
+		int32 RandomSeed = 0,
+		const FString& TargetSkeletonPath = TEXT("")
+	);
+
+	/**
+	 * Bake animation with explicit bone name mapping for cross-skeleton retarget.
+	 * Maps target skeleton bone names to source skeleton bone names when they differ
+	 * (e.g., FromSoft "Pelvis" -> UE5 "pelvis").
+	 * NOT a UFUNCTION - use for C++ commandlet calls with custom bone mapping.
+	 *
+	 * @param BoneNameMapping - Maps target bone name -> source bone name
+	 */
+	static FString BakeAnimWithBoneMapping(
+		const FString& SourceAnimPath,
+		const FString& OutputPath,
+		const FString& NewAssetName,
+		const FString& TargetSkeletonPath,
+		const TMap<FName, FName>& BoneNameMapping,
+		float NoiseAmplitudeDegrees = 2.0f,
+		float TimeWarpStrength = 0.15f,
+		FVector BoneRotationOffsetDegrees = FVector(0.f, 10.f, 0.f),
+		float TargetFrameRate = 24.0f,
+		int32 RandomSeed = 0
+	);
+
+	/**
+	 * Apply forensic transforms (noise, time warp, resample) to an EXISTING animation in-place.
+	 * Unlike BakeAnimationTransforms, this does NOT do cross-skeleton retarget.
+	 * Reads the animation's own bone data, applies modifications, writes back to same skeleton.
+	 *
+	 * @param AnimPath - Path to existing UAnimSequence to modify
+	 * @param NoiseAmplitudeDegrees - Smooth Catmull-Rom noise (default 2.0)
+	 * @param TimeWarpStrength - Sine-based time warp (default 0.15)
+	 * @param BoneRotationOffsetDegrees - Static rotation offset (scaled by region weight)
+	 * @param TargetFrameRate - Resample to this fps (default 24.0, 0 = keep original)
+	 * @param RandomSeed - Deterministic seed (0 = random)
+	 * @return Result string
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Animation")
+	static FString ApplyForensicTransforms(
+		const FString& AnimPath,
+		float NoiseAmplitudeDegrees = 2.0f,
+		float TimeWarpStrength = 0.15f,
+		FVector BoneRotationOffsetDegrees = FVector(0, 10, 0),
+		float TargetFrameRate = 24.0f,
+		int32 RandomSeed = 0
+	);
+
+	/**
+	 * Compare two skeletons' reference poses and an animation's first frame.
+	 * Outputs detailed bone-by-bone comparison to a file for analysis.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Animation")
+	static FString DiagnoseSkeletonMismatch(
+		const FString& SkeletonPathA,
+		const FString& SkeletonPathB,
+		const FString& AnimPathOnA = TEXT(""),
+		const FString& OutputFilePath = TEXT("")
+	);
+
+	/** Diagnose animation bone data using DataModel Controller (works in commandlet).
+	 * Reports which bones have non-identity transforms at frame 0 and mid-frame. */
+	static FString DiagnoseAnimDataModel(const FString& AnimPath);
+
+	/** Deep comparison of two animations - compares skeleton, DataModel, and compressed evaluation */
+	static FString CompareAnimations(const FString& AnimPathA, const FString& AnimPathB);
+
+	/**
+	 * Place a Blueprint actor in a level (editor-time, no BeginPlay)
+	 * @param MapPath - UE content path to the map (e.g., /Game/.../L_Demo_Showcase)
+	 * @param BlueprintPath - UE content path to the Blueprint (e.g., /Game/.../B_Soulslike_Enemy_Sentinel)
+	 * @param Location - World location to place the actor
+	 * @param Rotation - World rotation for the actor
+	 * @return Result string
+	 */
+	static FString PlaceActorInLevel(
+		const FString& MapPath,
+		const FString& BlueprintPath,
+		FVector Location,
+		FRotator Rotation = FRotator::ZeroRotator
+	);
+
 #endif // WITH_EDITOR
+
+	/**
+	 * Dump comprehensive actor state for debugging spawned characters.
+	 * Writes class hierarchy, all components (with collision, transform, physics),
+	 * capsule, movement, mesh, AnimBP, CDO comparison to a file.
+	 * Works at runtime (PIE).
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Debug")
+	static FString DumpCharacterState(AActor* Actor);
+
+	/**
+	 * Compare two characters side by side. Dumps both to file and highlights differences.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Debug")
+	static FString CompareCharacters(AActor* ActorA, AActor* ActorB, const FString& OutputPath);
 };

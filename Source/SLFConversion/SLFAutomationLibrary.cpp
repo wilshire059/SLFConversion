@@ -26,6 +26,7 @@
 #include "EdGraphSchema_K2.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "UObject/UObjectGlobals.h"
+#include "UObject/UObjectHash.h"
 #include "UObject/SavePackage.h"
 #include "GameplayTagContainer.h"
 // AnimBP node support
@@ -78,6 +79,7 @@
 #include "Factories/FbxImportUI.h"
 #include "Factories/FbxSkeletalMeshImportData.h"
 #include "Factories/FbxAnimSequenceImportData.h"
+#include "FbxImporter.h"
 // Animation pipeline
 #include "Animation/Skeleton.h"
 #include "Animation/AnimSequence.h"
@@ -10393,6 +10395,14 @@ FString USLFAutomationLibrary::ImportSkeletalMeshFromFBX(
 		UPackage::SavePackage(SkelPackage, Skeleton, *SkelPackageFileName, SaveArgs);
 		Lines.Add(FString::Printf(TEXT("Saved skeleton: %s"), *Skeleton->GetPathName()));
 
+		// Re-save the mesh so its skeleton reference points to the renamed skeleton path
+		// (mesh was saved earlier with old skeleton path before rename)
+		ImportedMesh->SetSkeleton(Skeleton);
+		MeshPackage->MarkPackageDirty();
+		MeshPackageFileName = FPackageName::LongPackageNameToFilename(MeshPackage->GetName(), FPackageName::GetAssetPackageExtension());
+		UPackage::SavePackage(MeshPackage, ImportedMesh, *MeshPackageFileName, SaveArgs);
+		Lines.Add(TEXT("Re-saved mesh with updated skeleton reference"));
+
 		// List bone names
 		const FReferenceSkeleton& RefSkel = Skeleton->GetReferenceSkeleton();
 		Lines.Add(FString::Printf(TEXT("Skeleton bones: %d"), RefSkel.GetNum()));
@@ -10461,6 +10471,10 @@ FString USLFAutomationLibrary::BatchImportAnimationsFromFBX(
 
 		UFbxFactory* FbxFactory = NewObject<UFbxFactory>();
 		FbxFactory->AddToRoot();
+		// CRITICAL: Disable auto-detection so it doesn't override FBXIT_Animation
+		// when the FBX contains a mesh. Without this, DetectImportType() detects
+		// the mesh and changes MeshTypeToImport to FBXIT_SkeletalMesh.
+		FbxFactory->SetDetectImportTypeOnImport(false);
 
 		UFbxImportUI* ImportUI = FbxFactory->ImportUI;
 		ImportUI->bImportMesh = false;
@@ -10471,6 +10485,7 @@ FString USLFAutomationLibrary::BatchImportAnimationsFromFBX(
 		ImportUI->MeshTypeToImport = FBXIT_Animation;
 		ImportUI->bOverrideFullName = true;
 		ImportUI->Skeleton = TargetSkeleton;
+		ImportUI->bIsReimport = false;
 
 		ImportUI->AnimSequenceImportData->bConvertScene = true;
 		ImportUI->AnimSequenceImportData->ImportUniformScale = ImportScale;
@@ -10478,7 +10493,21 @@ FString USLFAutomationLibrary::BatchImportAnimationsFromFBX(
 		ImportUI->AnimSequenceImportData->AnimationLength = FBXALIT_ExportedTime;
 		ImportUI->bIsObjImport = false;
 
+		// Also set the skeleton directly on the FBX importer's import options.
+		// The factory's FactoryCreateFile reads ImportOptions->SkeletonForAnimation
+		// which SHOULD be copied from ImportUI->Skeleton by GetImportOptions(),
+		// but in automated/commandlet mode this copy can fail silently.
+		{
+			UnFbx::FFbxImporter* FbxImporterInstance = UnFbx::FFbxImporter::GetInstance();
+			UnFbx::FBXImportOptions* DirectOpts = FbxImporterInstance->GetImportOptions();
+			DirectOpts->SkeletonForAnimation = TargetSkeleton;
+			DirectOpts->bImportAnimations = true;
+			DirectOpts->bImportMorph = false;
+		}
+
 		bool bCancelled = false;
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  [IMPORT] %s: Calling ImportObject..."), *AnimName);
+
 		UObject* ImportedObject = FbxFactory->ImportObject(
 			UAnimSequence::StaticClass(),
 			Package,
@@ -10491,31 +10520,158 @@ FString USLFAutomationLibrary::BatchImportAnimationsFromFBX(
 
 		FbxFactory->RemoveFromRoot();
 
-		if (!ImportedObject)
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  [IMPORT] %s: ImportObject returned %s (cancelled=%s)"),
+			*AnimName,
+			ImportedObject ? *FString::Printf(TEXT("%s (class=%s)"), *ImportedObject->GetName(), *ImportedObject->GetClass()->GetName()) : TEXT("NULL"),
+			bCancelled ? TEXT("yes") : TEXT("no"));
+
+		// Log ALL objects created in the package
 		{
-			// Check if factory produced objects in a different package
+			int32 ObjCount = 0;
+			ForEachObjectWithPackage(Package, [&ObjCount, &AnimName](UObject* Obj)
+			{
+				UE_LOG(LogSLFAutomation, Warning, TEXT("    [PKG] %s: %s (class=%s)"),
+					*AnimName, *Obj->GetName(), *Obj->GetClass()->GetName());
+				ObjCount++;
+				return true;
+			});
+			UE_LOG(LogSLFAutomation, Warning, TEXT("  [IMPORT] %s: %d objects in package after import"), *AnimName, ObjCount);
+		}
+
+		UAnimSequence* AnimSeq = nullptr;
+
+		if (ImportedObject)
+		{
+			// Check if the returned object IS an AnimSequence
+			AnimSeq = Cast<UAnimSequence>(ImportedObject);
+			if (!AnimSeq)
+			{
+				// Factory returned something else (likely SkeletalMesh).
+				// The AnimSequence may have been created alongside it.
+				UE_LOG(LogSLFAutomation, Warning, TEXT("  %s: ImportObject returned %s (class=%s), searching for AnimSequence..."),
+					*AnimName, *ImportedObject->GetName(), *ImportedObject->GetClass()->GetName());
+
+				// Search this package for AnimSequence
+				ForEachObjectWithPackage(Package, [&AnimSeq, &AnimName](UObject* Obj)
+				{
+					if (UAnimSequence* Seq = Cast<UAnimSequence>(Obj))
+					{
+						AnimSeq = Seq;
+						UE_LOG(LogSLFAutomation, Warning, TEXT("    Found AnimSequence in package: %s"), *Seq->GetName());
+						return false; // stop iteration
+					}
+					return true; // continue
+				});
+
+				// Search all packages for any AnimSequence with matching name
+				if (!AnimSeq)
+				{
+					UObject* FoundObj = StaticFindFirstObject(UAnimSequence::StaticClass(), *AnimName, EFindFirstObjectOptions::None);
+					if (!FoundObj)
+					{
+						// Try with armature prefix (Blender exports as "ArmatureName|ActionName")
+						FString AltName = FString::Printf(TEXT("FLVER_armature|%s"), *AnimName);
+						FoundObj = StaticFindFirstObject(UAnimSequence::StaticClass(), *AltName, EFindFirstObjectOptions::None);
+					}
+					if (FoundObj)
+					{
+						AnimSeq = Cast<UAnimSequence>(FoundObj);
+						UE_LOG(LogSLFAutomation, Warning, TEXT("    Found AnimSequence globally: %s"), *FoundObj->GetPathName());
+					}
+				}
+
+				// Search ALL loaded packages for any recently created AnimSequence
+				if (!AnimSeq)
+				{
+					for (TObjectIterator<UAnimSequence> It; It; ++It)
+					{
+						if (It->GetName().Contains(AnimName) || AnimName.Contains(It->GetName()))
+						{
+							AnimSeq = *It;
+							UE_LOG(LogSLFAutomation, Warning, TEXT("    Found AnimSequence via iterator: %s at %s"),
+								*AnimSeq->GetName(), *AnimSeq->GetPathName());
+							break;
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			// ImportObject returned null
+			UE_LOG(LogSLFAutomation, Warning, TEXT("  %s: ImportObject returned null (cancelled=%s), searching..."),
+				*AnimName, bCancelled ? TEXT("yes") : TEXT("no"));
+
+			// Search package
 			UObject* FoundObj = StaticFindObjectFast(UAnimSequence::StaticClass(), Package, FName(*AnimName));
 			if (!FoundObj)
 			{
-				// Search all packages for this anim
 				FoundObj = StaticFindFirstObject(UAnimSequence::StaticClass(), *AnimName, EFindFirstObjectOptions::None);
 			}
 			if (FoundObj)
 			{
-				ImportedObject = FoundObj;
-				UE_LOG(LogSLFAutomation, Warning, TEXT("  ImportObject returned null but found %s at %s"), *AnimName, *FoundObj->GetPathName());
-			}
-			else
-			{
-				Lines.Add(FString::Printf(TEXT("  FAIL: %s (cancelled=%s)"), *AnimName, bCancelled ? TEXT("yes") : TEXT("no")));
-				Failed++;
-				continue;
+				AnimSeq = Cast<UAnimSequence>(FoundObj);
+				UE_LOG(LogSLFAutomation, Warning, TEXT("    Found AnimSequence: %s at %s"), *AnimName, *FoundObj->GetPathName());
 			}
 		}
 
-		UAnimSequence* AnimSeq = Cast<UAnimSequence>(ImportedObject);
 		if (AnimSeq)
 		{
+			// Move to correct package if needed
+			if (AnimSeq->GetOutermost() != Package)
+			{
+				AnimSeq->Rename(*AnimName, Package, REN_DontCreateRedirectors | REN_NonTransactional);
+			}
+			else if (AnimSeq->GetName() != AnimName)
+			{
+				AnimSeq->Rename(*AnimName, Package, REN_DontCreateRedirectors | REN_NonTransactional);
+			}
+
+			// === DIAGNOSTIC: Check bone track state BEFORE DDC ===
+			{
+				IAnimationDataModel* DataModel = AnimSeq->GetDataModel();
+				USkeleton* AnimSkel = AnimSeq->GetSkeleton();
+				int32 PreDDCTracks = DataModel ? DataModel->GetNumBoneTracks() : -1;
+				double AnimDuration = AnimSeq->GetPlayLength();
+				int32 NumKeys = DataModel ? DataModel->GetNumberOfKeys() : 0;
+
+				UE_LOG(LogSLFAutomation, Warning, TEXT("  [DIAG] %s: Skeleton=%s, Duration=%.3f, Keys=%d, BoneTracks(pre-DDC)=%d"),
+					*AnimName,
+					AnimSkel ? *AnimSkel->GetName() : TEXT("NULL"),
+					AnimDuration, NumKeys, PreDDCTracks);
+
+				if (PreDDCTracks == 0 && DataModel)
+				{
+					// Log what the FBX importer DID create
+					UE_LOG(LogSLFAutomation, Warning, TEXT("  [DIAG] 0 bone tracks! Checking skeleton bones vs FBX..."));
+
+					// Log target skeleton bone names (first 10)
+					if (AnimSkel)
+					{
+						const FReferenceSkeleton& RefSkel = AnimSkel->GetReferenceSkeleton();
+						UE_LOG(LogSLFAutomation, Warning, TEXT("  [DIAG] Target skeleton bones (%d):"), RefSkel.GetNum());
+						for (int32 i = 0; i < FMath::Min(RefSkel.GetNum(), 15); i++)
+						{
+							UE_LOG(LogSLFAutomation, Warning, TEXT("    [%d] %s (parent=%d)"),
+								i, *RefSkel.GetBoneName(i).ToString(), RefSkel.GetParentIndex(i));
+						}
+					}
+
+					// Check if DataModel has any curve data at all
+					TArray<FName> TrackNames;
+					DataModel->GetBoneTrackNames(TrackNames);
+					UE_LOG(LogSLFAutomation, Warning, TEXT("  [DIAG] GetBoneTrackNames returned %d names"), TrackNames.Num());
+
+					// Check float curves
+					int32 NumFloatCurves = DataModel->GetNumberOfFloatCurves();
+					UE_LOG(LogSLFAutomation, Warning, TEXT("  [DIAG] Float curves: %d"), NumFloatCurves);
+				}
+				else if (PreDDCTracks > 0)
+				{
+					UE_LOG(LogSLFAutomation, Warning, TEXT("  [DIAG] %d bone tracks found - import OK"), PreDDCTracks);
+				}
+			}
+
 			// DDC compression (CRITICAL for UE5.7)
 			AnimSeq->CacheDerivedDataForCurrentPlatform();
 			FAssetCompilingManager::Get().FinishAllCompilation();
@@ -10536,12 +10692,483 @@ FString USLFAutomationLibrary::BatchImportAnimationsFromFBX(
 		}
 		else
 		{
-			Lines.Add(FString::Printf(TEXT("  FAIL: %s (not AnimSequence)"), *AnimName));
+			// Log all objects that WERE created for debugging
+			FString CreatedClasses;
+			ForEachObjectWithPackage(Package, [&CreatedClasses](UObject* Obj)
+			{
+				CreatedClasses += FString::Printf(TEXT("%s(%s) "), *Obj->GetName(), *Obj->GetClass()->GetName());
+				return true;
+			});
+			Lines.Add(FString::Printf(TEXT("  FAIL: %s (no AnimSequence found. Objects in package: %s)"), *AnimName, *CreatedClasses));
 			Failed++;
 		}
 
 		// GC periodically to prevent memory buildup
 		if (Imported % 20 == 0)
+		{
+			CollectGarbage(GARBAGE_COLLECTION_KEEPFLAGS);
+		}
+	}
+
+	Lines.Add(FString::Printf(TEXT("\nImported: %d, Failed: %d, Total: %d"), Imported, Failed, FBXFiles.Num()));
+	Lines.Add(TEXT("=== BATCH IMPORT COMPLETE ==="));
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════
+// ImportAnimFBXDirect: Bypass UE5.7 ControlRig pipeline
+// Reads FBX bone animation curves directly via FBX SDK, writes to
+// DataModel bone tracks via bracket API. Works in commandlet mode.
+// ═══════════════════════════════════════════════════════════════════════
+
+FString USLFAutomationLibrary::ImportAnimFBXDirect(
+	const FString& FBXPath,
+	const FString& DestPackagePath,
+	const FString& AnimName,
+	const FString& SkeletonPath,
+	float ImportScale,
+	bool bPoseSpaceDeltas)
+{
+	TArray<FString> Lines;
+	Lines.Add(FString::Printf(TEXT("=== ImportAnimFBXDirect: %s ==="), *AnimName));
+
+	// Load target skeleton
+	USkeleton* TargetSkeleton = LoadObject<USkeleton>(nullptr, *SkeletonPath);
+	if (!TargetSkeleton)
+	{
+		Lines.Add(FString::Printf(TEXT("ERROR: Skeleton not found: %s"), *SkeletonPath));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+	const FReferenceSkeleton& RefSkel = TargetSkeleton->GetReferenceSkeleton();
+	int32 NumBones = RefSkel.GetNum();
+	Lines.Add(FString::Printf(TEXT("  Skeleton: %s (%d bones)"), *TargetSkeleton->GetName(), NumBones));
+
+	// Open FBX file using UE5's FBX SDK wrapper
+	UnFbx::FFbxImporter* FbxImporter = UnFbx::FFbxImporter::GetInstance();
+	if (!FbxImporter->ImportFromFile(*FBXPath, FPaths::GetExtension(FBXPath), false))
+	{
+		Lines.Add(FString::Printf(TEXT("ERROR: Failed to open FBX: %s"), *FBXPath));
+		FbxImporter->ReleaseScene();
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	FbxScene* Scene = FbxImporter->Scene;
+	if (!Scene)
+	{
+		Lines.Add(TEXT("ERROR: FBX Scene is null"));
+		FbxImporter->ReleaseScene();
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// Convert FBX scene axis system to match UE5's: MayaZUp (Z-up, right-handed).
+	// CRITICAL: Use ConvertScene (root only), NOT DeepConvertScene. UE5's mesh importer
+	// (FFbxImporter::ConvertScene) uses root-only conversion, then applies manual
+	// per-value conversion via FFbxDataConverter::ConvertPos (negate Y) and
+	// ConvertRotToQuat (negate Y,W). DeepConvertScene modifies ALL node transforms
+	// recursively which produces different per-bone local transforms for hierarchical
+	// skeletons, causing distortion (skinny waist, skinny head).
+	{
+		FbxAxisSystem SceneAxisSystem = Scene->GetGlobalSettings().GetAxisSystem();
+		FbxAxisSystem UE5TargetSystem(FbxAxisSystem::eMayaZUp);
+		if (SceneAxisSystem != UE5TargetSystem)
+		{
+			Lines.Add(TEXT("  Converting FBX axis system to MayaZUp (root only, matching UE5)"));
+			UE5TargetSystem.ConvertScene(Scene);
+		}
+	}
+
+	// Get animation stack (take)
+	int32 NumStacks = Scene->GetSrcObjectCount<FbxAnimStack>();
+	Lines.Add(FString::Printf(TEXT("  FBX has %d animation stacks"), NumStacks));
+	if (NumStacks == 0)
+	{
+		Lines.Add(TEXT("ERROR: No animation stacks in FBX"));
+		FbxImporter->ReleaseScene();
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	FbxAnimStack* AnimStack = Scene->GetSrcObject<FbxAnimStack>(0);
+	Scene->SetCurrentAnimationStack(AnimStack);
+	FbxAnimLayer* AnimLayer = AnimStack->GetMember<FbxAnimLayer>(0);
+
+	// Get time span and frame rate
+	FbxTimeSpan TimeSpan = AnimStack->GetLocalTimeSpan();
+	FbxTime Start = TimeSpan.GetStart();
+	FbxTime End = TimeSpan.GetStop();
+	double DurationSec = (End - Start).GetSecondDouble();
+
+	// Use the FBX file's frame rate
+	FbxGlobalSettings& GlobalSettings = Scene->GetGlobalSettings();
+	FbxTime::EMode TimeMode = GlobalSettings.GetTimeMode();
+	double FbxFrameRate = FbxTime::GetFrameRate(TimeMode);
+	if (FbxFrameRate <= 0) FbxFrameRate = 30.0;
+
+	int32 NumFrames = FMath::RoundToInt32(DurationSec * FbxFrameRate) + 1;
+	Lines.Add(FString::Printf(TEXT("  Duration: %.3f sec, FPS: %.1f, Frames: %d"),
+		DurationSec, FbxFrameRate, NumFrames));
+
+	// Build FBX node lookup by name
+	// UE5's FBX mesh importer replaces dots with underscores in bone names,
+	// so we index FBX nodes under BOTH the original name and the sanitized name.
+	TMap<FName, FbxNode*> FbxNodeMap;
+	TFunction<void(FbxNode*)> BuildNodeMap = [&](FbxNode* Node)
+	{
+		if (!Node) return;
+		FString NodeName = UTF8_TO_TCHAR(Node->GetName());
+		FbxNodeMap.Add(FName(*NodeName), Node);
+		// Also add with dots replaced by underscores (UE5 bone name convention)
+		FString Sanitized = NodeName.Replace(TEXT("."), TEXT("_"));
+		if (Sanitized != NodeName)
+		{
+			FbxNodeMap.Add(FName(*Sanitized), Node);
+		}
+		for (int32 i = 0; i < Node->GetChildCount(); i++)
+		{
+			BuildNodeMap(Node->GetChild(i));
+		}
+	};
+	BuildNodeMap(Scene->GetRootNode());
+	Lines.Add(FString::Printf(TEXT("  FBX nodes indexed: %d"), FbxNodeMap.Num()));
+
+	// Create AnimSequence
+	// NOTE: Existing .uasset files must be deleted from disk BEFORE running the commandlet.
+	// UE5's asset registry lazy-loads packages at startup, causing "partially loaded" save
+	// errors that cannot be resolved via LoadObject/FullyLoad/Rename in commandlet mode.
+	FString PkgName = DestPackagePath / AnimName;
+	UPackage* Package = CreatePackage(*PkgName);
+	if (!Package)
+	{
+		Lines.Add(TEXT("ERROR: Failed to create package"));
+		FbxImporter->ReleaseScene();
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	UAnimSequence* NewAnim = NewObject<UAnimSequence>(Package, FName(*AnimName), RF_Public | RF_Standalone);
+	NewAnim->SetSkeleton(TargetSkeleton);
+
+	// Use DataModel bracket API to write bone tracks
+	IAnimationDataController& Controller = NewAnim->GetController();
+	FFrameRate OutFrameRate(FMath::RoundToInt32(FbxFrameRate), 1);
+
+	// Use bShouldTransact=false — both true/false produce same result
+	Controller.OpenBracket(NSLOCTEXT("SLFAutomation", "ImportFBXDirect", "Import FBX Direct"), false);
+	Controller.InitializeModel();
+	Controller.SetFrameRate(OutFrameRate, false);
+	Controller.SetNumberOfFrames(FFrameNumber(NumFrames - 1), false);
+
+	// Checkpoint: what does the DataModel have after InitializeModel?
+	{
+		IAnimationDataModel* DM = NewAnim->GetDataModel();
+		int32 DMTracks = DM ? DM->GetNumBoneTracks() : -1;
+		const USkeleton* AnimSkel = NewAnim->GetSkeleton();
+		Lines.Add(FString::Printf(TEXT("  [CHECKPOINT-INIT] DataModel tracks=%d, AnimSkeleton=%s, numBones=%d"),
+			DMTracks,
+			AnimSkel ? *AnimSkel->GetName() : TEXT("NULL"),
+			AnimSkel ? AnimSkel->GetReferenceSkeleton().GetNum() : 0));
+
+		// List first 5 skeleton bone names for comparison
+		if (AnimSkel)
+		{
+			const FReferenceSkeleton& DMRefSkel = AnimSkel->GetReferenceSkeleton();
+			for (int32 b = 0; b < FMath::Min(5, DMRefSkel.GetNum()); b++)
+			{
+				Lines.Add(FString::Printf(TEXT("  [CHECKPOINT-INIT] SkelBone[%d]='%s'"), b, *DMRefSkel.GetBoneName(b).ToString()));
+			}
+		}
+	}
+
+	int32 TracksAdded = 0;
+	int32 TracksSkipped = 0;
+	int32 TracksWithCurves = 0;
+	int32 TracksWithMotion = 0;
+
+
+	for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+	{
+		FName BoneName = RefSkel.GetBoneName(BoneIdx);
+
+		// Find matching FBX node
+		FbxNode** FoundNode = FbxNodeMap.Find(BoneName);
+		if (!FoundNode || !(*FoundNode))
+		{
+			TracksSkipped++;
+			continue;
+		}
+
+		FbxNode* BoneNode = *FoundNode;
+
+		// Check if this node has any animation curves
+		bool bHasTranslationCurve = false;
+		bool bHasRotationCurve = false;
+		int32 NumTranslationKeys = 0;
+		int32 NumRotationKeys = 0;
+		if (AnimLayer)
+		{
+			FbxAnimCurve* TxCurve = BoneNode->LclTranslation.GetCurve(AnimLayer, FBXSDK_CURVENODE_COMPONENT_X);
+			FbxAnimCurve* RxCurve = BoneNode->LclRotation.GetCurve(AnimLayer, FBXSDK_CURVENODE_COMPONENT_X);
+			bHasTranslationCurve = (TxCurve != nullptr);
+			bHasRotationCurve = (RxCurve != nullptr);
+			if (TxCurve) NumTranslationKeys = TxCurve->KeyGetCount();
+			if (RxCurve) NumRotationKeys = RxCurve->KeyGetCount();
+		}
+		if (bHasTranslationCurve || bHasRotationCurve) TracksWithCurves++;
+
+		// Sample bone local transforms at each frame
+		TArray<FVector3f> PosKeys;
+		TArray<FQuat4f> RotKeys;
+		TArray<FVector3f> ScaleKeys;
+		PosKeys.SetNum(NumFrames);
+		RotKeys.SetNum(NumFrames);
+		ScaleKeys.SetNum(NumFrames);
+
+		float MaxPosDelta = 0.0f;
+		float MaxRotDelta = 0.0f;
+		float MaxScaleDeviation = 0.0f;
+
+		for (int32 Frame = 0; Frame < NumFrames; Frame++)
+		{
+			FbxTime FrameTime = Start + FbxTime::GetOneFrameValue(TimeMode) * Frame;
+
+			// Get local transform at this frame
+			FbxAMatrix LocalMatrix = BoneNode->EvaluateLocalTransform(FrameTime);
+
+			FbxVector4 T = LocalMatrix.GetT();
+			FbxQuaternion Q = LocalMatrix.GetQ();
+			FbxVector4 S = LocalMatrix.GetS();
+
+			// Apply FFbxDataConverter conversion (matching UE5's mesh importer exactly):
+			// ConvertPos: negate Y — converts RH to LH coordinate system
+			// ConvertRotToQuat: negate Y and W — converts RH to LH quaternion
+			// ConvertScale: pass through as-is
+			PosKeys[Frame] = FVector3f(
+				(float)(T[0] * ImportScale),
+				(float)(-T[1] * ImportScale),
+				(float)(T[2] * ImportScale));
+
+			RotKeys[Frame] = FQuat4f(
+				(float)(Q[0]),
+				(float)(-Q[1]),
+				(float)(Q[2]),
+				(float)(-Q[3]));
+			RotKeys[Frame].Normalize();
+
+			// Track raw scale deviation from (1,1,1) before clamping
+			{
+				float SDev = FMath::Max3(
+					FMath::Abs((float)S[0] - 1.0f),
+					FMath::Abs((float)S[1] - 1.0f),
+					FMath::Abs((float)S[2] - 1.0f));
+				MaxScaleDeviation = FMath::Max(MaxScaleDeviation, SDev);
+			}
+
+			// Force scale to (1,1,1) — ARP stretch bones (arm_stretch, leg_stretch, etc.)
+			// inject non-uniform scale from IK solving. Character animations should never
+			// use bone scale; the stretch is an ARP baking artifact that causes limb distortion.
+			ScaleKeys[Frame] = FVector3f(1.0f, 1.0f, 1.0f);
+
+			// Track deviation from frame 0 to detect actual motion
+			if (Frame > 0)
+			{
+				float PosDelta = (PosKeys[Frame] - PosKeys[0]).Size();
+				float RotDelta = FQuat4f::ErrorAutoNormalize(RotKeys[Frame], RotKeys[0]);
+				MaxPosDelta = FMath::Max(MaxPosDelta, PosDelta);
+				MaxRotDelta = FMath::Max(MaxRotDelta, RotDelta);
+			}
+
+			// Diagnostic: print raw FBX values for key bones at frame 0 and mid-frame
+			if (BoneIdx < 5 && (Frame == 0 || Frame == NumFrames / 2))
+			{
+				Lines.Add(FString::Printf(
+					TEXT("  [DIAG] Bone=%s F=%d | FBX: T=(%.4f,%.4f,%.4f) Q=(%.4f,%.4f,%.4f,%.4f) | UE5: T=(%.4f,%.4f,%.4f) Q=(%.4f,%.4f,%.4f,%.4f) | HasCurve: T=%d(%d keys) R=%d(%d keys)"),
+					*BoneName.ToString(), Frame,
+					T[0], T[1], T[2], Q[0], Q[1], Q[2], Q[3],
+					PosKeys[Frame].X, PosKeys[Frame].Y, PosKeys[Frame].Z,
+					RotKeys[Frame].X, RotKeys[Frame].Y, RotKeys[Frame].Z, RotKeys[Frame].W,
+					bHasTranslationCurve ? 1 : 0, NumTranslationKeys,
+					bHasRotationCurve ? 1 : 0, NumRotationKeys));
+			}
+		}
+
+		if (MaxPosDelta > 0.001f || MaxRotDelta > 0.001f) TracksWithMotion++;
+
+		// Log bones with significant scale deviation (confirms ARP stretch hypothesis)
+		if (MaxScaleDeviation > 0.01f)
+		{
+			Lines.Add(FString::Printf(TEXT("  [SCALE] Bone=%s MaxScaleDev=%.4f (clamped to 1,1,1)"),
+				*BoneName.ToString(), MaxScaleDeviation));
+		}
+
+		// Rebase animation data to match skeleton bind pose.
+		// The mesh FBX and animation FBXes may have different rest poses (e.g., the "rig"
+		// root bone has 180° Z in the mesh but identity in the animation). This causes
+		// facing direction issues and limb distortion during animation.
+		// Fix: compute the delta between animation F0 and bind pose, then apply it to ALL frames.
+		// At F0: Corrected = AnimF0 * Rebase = AnimF0 * AnimF0^-1 * BindPose = BindPose ✓
+		// At F[i]: Corrected = AnimF[i] * Rebase = (AnimDelta * AnimF0) * AnimF0^-1 * BindPose
+		//        = AnimDelta * BindPose (animation delta preserved, applied in bind pose space) ✓
+		if (BoneIdx < RefSkel.GetRefBonePose().Num())
+		{
+			FTransform BindLocal = RefSkel.GetRefBonePose()[BoneIdx];
+
+			// Build animation frame 0 transform
+			FTransform AnimF0(
+				FQuat((double)RotKeys[0].X, (double)RotKeys[0].Y, (double)RotKeys[0].Z, (double)RotKeys[0].W),
+				FVector((double)PosKeys[0].X, (double)PosKeys[0].Y, (double)PosKeys[0].Z),
+				FVector(1.0, 1.0, 1.0));
+
+			// Check if rebase is needed (significant mismatch between F0 and bind pose)
+			float PosDiff = (AnimF0.GetLocation() - BindLocal.GetLocation()).Size();
+			float RotDiff = FQuat::ErrorAutoNormalize(AnimF0.GetRotation(), BindLocal.GetRotation());
+
+			if (PosDiff > 0.001f || RotDiff > 0.001f)
+			{
+				// Compute rebase: Rebase = AnimF0^-1 * BindLocal
+				FTransform AnimF0Inv = AnimF0.Inverse();
+				FTransform Rebase;
+				FTransform::Multiply(&Rebase, &AnimF0Inv, &BindLocal);
+
+				if (BoneIdx < 5 || RotDiff > 0.1f)
+				{
+					Lines.Add(FString::Printf(
+						TEXT("  [REBASE] Bone[%d]=%s PosDiff=%.4f RotDiff=%.4f"),
+						BoneIdx, *BoneName.ToString(), PosDiff, RotDiff));
+				}
+
+				for (int32 Frame = 0; Frame < NumFrames; Frame++)
+				{
+					FTransform AnimFrame(
+						FQuat((double)RotKeys[Frame].X, (double)RotKeys[Frame].Y, (double)RotKeys[Frame].Z, (double)RotKeys[Frame].W),
+						FVector((double)PosKeys[Frame].X, (double)PosKeys[Frame].Y, (double)PosKeys[Frame].Z),
+						FVector(1.0, 1.0, 1.0));
+
+					// Corrected = AnimFrame * Rebase
+					// FTransform A * B means "apply A first, then B"
+					FTransform Corrected;
+					FTransform::Multiply(&Corrected, &AnimFrame, &Rebase);
+
+					PosKeys[Frame] = FVector3f(Corrected.GetLocation());
+					RotKeys[Frame] = FQuat4f(Corrected.GetRotation());
+					RotKeys[Frame].Normalize();
+				}
+			}
+		}
+
+		// Add bone track
+		Controller.AddBoneCurve(BoneName, false);
+		Controller.SetBoneTrackKeys(BoneName, PosKeys, RotKeys, ScaleKeys, false);
+		TracksAdded++;
+	}
+
+	Controller.NotifyPopulated();
+	Controller.CloseBracket(false);
+
+	// Force skeleton (InitializeModel can reset it)
+	NewAnim->SetSkeleton(TargetSkeleton);
+
+	// Force root lock to first frame (prevents snap-back, Bug #17)
+	NewAnim->bForceRootLock = true;
+	NewAnim->RootMotionRootLock = ERootMotionRootLock::AnimFirstFrame;
+
+	Lines.Add(FString::Printf(TEXT("  Bone tracks: %d added, %d skipped (no FBX node), %d with curves, %d with motion"),
+		TracksAdded, TracksSkipped, TracksWithCurves, TracksWithMotion));
+
+	// Verify curve data is present (UE5.7 stores anim data in curves, not InternalTrackData)
+	{
+		IAnimationDataModel* DataModel = NewAnim->GetDataModel();
+		if (DataModel)
+		{
+			int32 DMTrackCount = DataModel->GetNumBoneTracks();
+			int32 DMFrames = DataModel->GetNumberOfFrames();
+			FFrameRate DMFR = DataModel->GetFrameRate();
+			TArray<FName> TNames;
+			DataModel->GetBoneTrackNames(TNames);
+
+			int32 CurveNonIdentity = 0;
+			for (int32 i = 0; i < FMath::Min(3, TNames.Num()); i++)
+			{
+				FTransform T0 = DataModel->GetBoneTrackTransform(TNames[i], FFrameNumber(0));
+				if (!T0.GetLocation().IsNearlyZero(0.01) || !T0.GetRotation().Equals(FQuat::Identity, 0.001))
+					CurveNonIdentity++;
+			}
+			Lines.Add(FString::Printf(TEXT("  DataModel: %d tracks, %d frames, %d/%d fps, CurveEval: %d/%d non-identity"),
+				DMTrackCount, DMFrames, DMFR.Numerator, DMFR.Denominator,
+				CurveNonIdentity, FMath::Min(3, TNames.Num())));
+		}
+	}
+
+	// Trigger DDC compression and wait for it to complete before saving.
+	// This requires a real RHI — run commandlet WITHOUT -NullRHI.
+	NewAnim->CacheDerivedDataForCurrentPlatform();
+	NewAnim->WaitOnExistingCompression(true);
+	FAssetCompilingManager::Get().FinishAllCompilation();
+
+	bool bCompressedValid = NewAnim->IsCompressedDataValid();
+	bool bBoneCompressedValid = NewAnim->IsBoneCompressedDataValid();
+	Lines.Add(FString::Printf(TEXT("  Compression: Valid=%d, BoneValid=%d"),
+		bCompressedValid ? 1 : 0, bBoneCompressedValid ? 1 : 0));
+
+	// Save the animation asset (with compressed data baked in)
+	FAssetRegistryModule::AssetCreated(NewAnim);
+	Package->MarkPackageDirty();
+	FString FileName = FPackageName::LongPackageNameToFilename(Package->GetName(), FPackageName::GetAssetPackageExtension());
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Standalone;
+	bool bSaved = UPackage::SavePackage(Package, NewAnim, *FileName, SaveArgs);
+	Lines.Add(FString::Printf(TEXT("  Save: %s"), bSaved ? TEXT("OK") : TEXT("FAILED")));
+
+	// Release FBX scene
+	FbxImporter->ReleaseScene();
+
+	Lines.Add(TEXT("=== ImportAnimFBXDirect COMPLETE ==="));
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Warning, TEXT("%s"), *Result);
+	return Result;
+}
+
+
+FString USLFAutomationLibrary::BatchImportAnimsFBXDirect(
+	const FString& FBXDirectory,
+	const FString& DestinationPath,
+	const FString& SkeletonPath,
+	float ImportScale,
+	bool bPoseSpaceDeltas)
+{
+	TArray<FString> Lines;
+	Lines.Add(TEXT("=== BatchImportAnimsFBXDirect ==="));
+	Lines.Add(FString::Printf(TEXT("FBX Dir: %s"), *FBXDirectory));
+	Lines.Add(FString::Printf(TEXT("Dest: %s"), *DestinationPath));
+	Lines.Add(FString::Printf(TEXT("Skeleton: %s"), *SkeletonPath));
+
+	TArray<FString> FBXFiles;
+	IFileManager::Get().FindFiles(FBXFiles, *FBXDirectory, TEXT("*.fbx"));
+	Lines.Add(FString::Printf(TEXT("Found %d FBX files"), FBXFiles.Num()));
+
+	int32 Imported = 0;
+	int32 Failed = 0;
+
+	for (const FString& FBXFile : FBXFiles)
+	{
+		FString FullPath = FBXDirectory / FBXFile;
+		FString Name = FPaths::GetBaseFilename(FBXFile);
+
+		FString Result = ImportAnimFBXDirect(FullPath, DestinationPath, Name, SkeletonPath, ImportScale, bPoseSpaceDeltas);
+
+		if (Result.Contains(TEXT("tracks: 0 added")) || Result.Contains(TEXT("ERROR")))
+		{
+			Lines.Add(FString::Printf(TEXT("  FAIL: %s"), *Name));
+			Failed++;
+		}
+		else
+		{
+			Lines.Add(FString::Printf(TEXT("  OK: %s"), *Name));
+			Imported++;
+		}
+
+		// GC periodically
+		if ((Imported + Failed) % 10 == 0)
 		{
 			CollectGarbage(GARBAGE_COLLECTION_KEEPFLAGS);
 		}
@@ -12038,4 +12665,1754 @@ FString USLFAutomationLibrary::FixBlendSpace1DPinWiring(const FString& AnimBPPat
 	return Result;
 }
 
+// ============================================================================
+// ANIMATION BAKE: Forensically distinct animation generation
+// ============================================================================
+
+namespace
+{
+	/**
+	 * Compute region weight for a bone by name.
+	 * Controls how much noise/offset to apply per bone region.
+	 */
+	float ComputeBoneRegionWeight(const FName& BoneName)
+	{
+		FString Name = BoneName.ToString().ToLower();
+
+		// Root/Master/IK: no noise
+		if (Name.Contains(TEXT("root")) || Name.Contains(TEXT("master")) ||
+			Name.Contains(TEXT("ik_")) || Name.Contains(TEXT("foottarget")))
+			return 0.0f;
+
+		// Pelvis
+		if (Name.Contains(TEXT("pelvis")) || Name.Contains(TEXT("hip")))
+			return 0.15f;
+
+		// Fingers
+		if (Name.Contains(TEXT("finger")) || Name.Contains(TEXT("thumb")) ||
+			Name.Contains(TEXT("index")) || Name.Contains(TEXT("middle")) ||
+			Name.Contains(TEXT("ring")) || Name.Contains(TEXT("pinky")))
+			return 0.1f;
+
+		// Feet
+		if (Name.Contains(TEXT("foot")) || Name.Contains(TEXT("toe")))
+			return 0.2f;
+
+		// Hands
+		if (Name.Contains(TEXT("hand")))
+			return 0.3f;
+
+		// Legs
+		if (Name.Contains(TEXT("thigh")) || Name.Contains(TEXT("calf")) ||
+			Name.Contains(TEXT("upperleg")) || Name.Contains(TEXT("lowerleg")) ||
+			Name.Contains(TEXT("knee")))
+			return 0.45f;
+
+		// Head
+		if (Name.Contains(TEXT("head")) || Name.Contains(TEXT("neck")))
+			return 0.6f;
+
+		// Upper arms
+		if (Name.Contains(TEXT("upperarm")) || Name.Contains(TEXT("clavicle")) ||
+			Name.Contains(TEXT("shoulder")))
+			return 0.7f;
+
+		// Lower arms
+		if (Name.Contains(TEXT("lowerarm")) || Name.Contains(TEXT("forearm")) ||
+			Name.Contains(TEXT("elbow")))
+			return 0.9f;
+
+		// Spine/chest
+		if (Name.Contains(TEXT("spine")) || Name.Contains(TEXT("chest")))
+			return 1.0f;
+
+		// Weapon bones - no noise
+		if (Name.Contains(TEXT("sword")) || Name.Contains(TEXT("weapon")) ||
+			Name.Contains(TEXT("shield")) || Name.Contains(TEXT("armor")))
+			return 0.0f;
+
+		// Default
+		return 0.5f;
+	}
+
+	/**
+	 * Generate smooth noise curve using Catmull-Rom spline interpolation.
+	 * Creates sparse random control points and interpolates smoothly between them.
+	 * Returns noise values for each output frame.
+	 */
+	TArray<FQuat> GenerateSmoothNoiseCurve(
+		int32 NumFrames,
+		float AmplitudeDegrees,
+		float BoneWeight,
+		FRandomStream& RNG)
+	{
+		TArray<FQuat> NoisePerFrame;
+		NoisePerFrame.SetNum(NumFrames);
+
+		float EffectiveAmplitude = AmplitudeDegrees * BoneWeight;
+		if (EffectiveAmplitude < 0.01f || NumFrames <= 1)
+		{
+			for (int32 i = 0; i < NumFrames; i++)
+				NoisePerFrame[i] = FQuat::Identity;
+			return NoisePerFrame;
+		}
+
+		// Create sparse control points (one every ~8-12 frames)
+		int32 ControlPointSpacing = FMath::Max(8, NumFrames / 10);
+		int32 NumControlPoints = FMath::Max(3, NumFrames / ControlPointSpacing + 2);
+
+		TArray<FVector> ControlPointEulers;
+		ControlPointEulers.SetNum(NumControlPoints);
+		ControlPointEulers[0] = FVector::ZeroVector; // Start at zero
+		ControlPointEulers[NumControlPoints - 1] = FVector::ZeroVector; // End at zero
+		for (int32 i = 1; i < NumControlPoints - 1; i++)
+		{
+			ControlPointEulers[i] = FVector(
+				RNG.FRandRange(-EffectiveAmplitude, EffectiveAmplitude),
+				RNG.FRandRange(-EffectiveAmplitude, EffectiveAmplitude),
+				RNG.FRandRange(-EffectiveAmplitude, EffectiveAmplitude)
+			);
+		}
+
+		// Catmull-Rom interpolation
+		for (int32 Frame = 0; Frame < NumFrames; Frame++)
+		{
+			float T = (float)Frame / FMath::Max(1.0f, (float)(NumFrames - 1));
+			float ScaledT = T * (NumControlPoints - 1);
+			int32 Seg = FMath::Clamp((int32)ScaledT, 0, NumControlPoints - 2);
+			float LocalT = ScaledT - Seg;
+
+			// 4 control points for Catmull-Rom
+			int32 P0 = FMath::Max(0, Seg - 1);
+			int32 P1 = Seg;
+			int32 P2 = FMath::Min(Seg + 1, NumControlPoints - 1);
+			int32 P3 = FMath::Min(Seg + 2, NumControlPoints - 1);
+
+			// Catmull-Rom formula
+			float T2 = LocalT * LocalT;
+			float T3 = T2 * LocalT;
+
+			FVector Interp =
+				0.5f * ((2.0f * ControlPointEulers[P1]) +
+				(-ControlPointEulers[P0] + ControlPointEulers[P2]) * LocalT +
+				(2.0f * ControlPointEulers[P0] - 5.0f * ControlPointEulers[P1] + 4.0f * ControlPointEulers[P2] - ControlPointEulers[P3]) * T2 +
+				(-ControlPointEulers[P0] + 3.0f * ControlPointEulers[P1] - 3.0f * ControlPointEulers[P2] + ControlPointEulers[P3]) * T3);
+
+			NoisePerFrame[Frame] = FQuat(FRotator(Interp.Y, Interp.Z, Interp.X));
+		}
+
+		return NoisePerFrame;
+	}
+}
+
+// ── ApplyForensicTransforms: in-place modification, no cross-skeleton retarget ──
+
+FString USLFAutomationLibrary::ApplyForensicTransforms(
+	const FString& AnimPath,
+	float NoiseAmplitudeDegrees,
+	float TimeWarpStrength,
+	FVector BoneRotationOffsetDegrees,
+	float TargetFrameRate,
+	int32 RandomSeed)
+{
+	TArray<FString> Lines;
+	Lines.Add(FString::Printf(TEXT("=== ApplyForensicTransforms: %s ==="), *AnimPath));
+
+	UAnimSequence* Anim = LoadObject<UAnimSequence>(nullptr, *AnimPath);
+	if (!Anim)
+	{
+		Lines.Add(TEXT("ERROR: Animation not found"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	USkeleton* Skeleton = Anim->GetSkeleton();
+	if (!Skeleton)
+	{
+		Lines.Add(TEXT("ERROR: Animation has no skeleton"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	const FReferenceSkeleton& RefSkel = Skeleton->GetReferenceSkeleton();
+	int32 NumBones = RefSkel.GetNum();
+	float SourceDuration = Anim->GetPlayLength();
+	int32 SourceNumKeys = Anim->GetNumberOfSampledKeys();
+	float SourceFPS = (SourceNumKeys > 1) ? (float)(SourceNumKeys - 1) / FMath::Max(0.001f, SourceDuration) : 30.0f;
+
+	Lines.Add(FString::Printf(TEXT("  Skeleton: %s (%d bones)"), *Skeleton->GetName(), NumBones));
+	Lines.Add(FString::Printf(TEXT("  Source: %d keys, %.1f fps, %.3fs"), SourceNumKeys, SourceFPS, SourceDuration));
+
+	// Read all bone transforms (use bUseRawData=true to read from DataModel)
+	TArray<TArray<FTransform>> BoneFrames;
+	BoneFrames.SetNum(NumBones);
+	int32 NonIdentityBones = 0;
+
+	for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+	{
+		BoneFrames[BoneIdx].SetNum(SourceNumKeys);
+		bool bHasData = false;
+		for (int32 Frame = 0; Frame < SourceNumKeys; Frame++)
+		{
+			float Time = (SourceNumKeys > 1)
+				? (float)Frame / (float)(SourceNumKeys - 1) * SourceDuration
+				: 0.0f;
+			FTransform BoneT;
+			Anim->GetBoneTransform(BoneT, FSkeletonPoseBoneIndex(BoneIdx), Time, true); // true = raw/DataModel
+			BoneFrames[BoneIdx][Frame] = BoneT;
+			if (!BoneT.GetRotation().Equals(FQuat::Identity, 0.001f) ||
+				BoneT.GetLocation().Size() > 0.001f)
+				bHasData = true;
+		}
+		if (bHasData) NonIdentityBones++;
+	}
+
+	Lines.Add(FString::Printf(TEXT("  Read: %d/%d bones have non-identity data"), NonIdentityBones, NumBones));
+
+	if (NonIdentityBones == 0)
+	{
+		Lines.Add(TEXT("WARNING: All bones are identity! Animation may not have raw data."));
+		Lines.Add(TEXT("  Trying compressed read..."));
+		// Fallback: try reading compressed data
+		NonIdentityBones = 0;
+		for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+		{
+			bool bHasData = false;
+			for (int32 Frame = 0; Frame < SourceNumKeys; Frame++)
+			{
+				float Time = (SourceNumKeys > 1)
+					? (float)Frame / (float)(SourceNumKeys - 1) * SourceDuration
+					: 0.0f;
+				FTransform BoneT;
+				Anim->GetBoneTransform(BoneT, FSkeletonPoseBoneIndex(BoneIdx), Time, false);
+				BoneFrames[BoneIdx][Frame] = BoneT;
+				if (!BoneT.GetRotation().Equals(FQuat::Identity, 0.001f) ||
+					BoneT.GetLocation().Size() > 0.001f)
+					bHasData = true;
+			}
+			if (bHasData) NonIdentityBones++;
+		}
+		Lines.Add(FString::Printf(TEXT("  Compressed read: %d/%d bones have data"), NonIdentityBones, NumBones));
+	}
+
+	// Determine output key count
+	bool bResample = (TargetFrameRate > 0.1f && FMath::Abs(TargetFrameRate - SourceFPS) > 0.5f);
+	int32 OutputNumKeys = bResample
+		? FMath::Max(2, FMath::RoundToInt32(SourceDuration * TargetFrameRate) + 1)
+		: SourceNumKeys;
+	float OutputFPS = bResample ? TargetFrameRate : SourceFPS;
+
+	Lines.Add(FString::Printf(TEXT("  Output: %d keys at %.1f fps"), OutputNumKeys, OutputFPS));
+
+	// Setup RNG and noise curves
+	float ClampedWarp = FMath::Clamp(TimeWarpStrength, 0.0f, 0.95f);
+	FRandomStream RNG(RandomSeed != 0 ? RandomSeed : FMath::Rand());
+
+	TArray<TArray<FQuat>> BoneNoiseCurves;
+	BoneNoiseCurves.SetNum(NumBones);
+	TArray<float> BoneWeights;
+	BoneWeights.SetNum(NumBones);
+
+	for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+	{
+		FName BoneName = RefSkel.GetBoneName(BoneIdx);
+		BoneWeights[BoneIdx] = ComputeBoneRegionWeight(BoneName);
+		BoneNoiseCurves[BoneIdx] = GenerateSmoothNoiseCurve(
+			OutputNumKeys, NoiseAmplitudeDegrees, BoneWeights[BoneIdx], RNG);
+	}
+
+	FQuat BaseOffsetQuat = FQuat(FRotator(
+		BoneRotationOffsetDegrees.Y,
+		BoneRotationOffsetDegrees.Z,
+		BoneRotationOffsetDegrees.X
+	));
+
+	// Apply forensic transforms
+	TArray<TArray<FTransform>> OutputFrames;
+	OutputFrames.SetNum(NumBones);
+
+	for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+	{
+		OutputFrames[BoneIdx].SetNum(OutputNumKeys);
+		float Weight = BoneWeights[BoneIdx];
+
+		for (int32 OutFrame = 0; OutFrame < OutputNumKeys; OutFrame++)
+		{
+			float T = (OutputNumKeys > 1)
+				? (float)OutFrame / (float)(OutputNumKeys - 1)
+				: 0.0f;
+
+			// Time warp
+			float WarpedT = T + ClampedWarp * FMath::Sin(2.0f * PI * T) / (2.0f * PI);
+			WarpedT = FMath::Clamp(WarpedT, 0.0f, 1.0f);
+
+			// Map to source frame
+			float SourceFrameF = WarpedT * (float)(SourceNumKeys - 1);
+			int32 FrameA = FMath::Clamp(FMath::FloorToInt32(SourceFrameF), 0, SourceNumKeys - 1);
+			int32 FrameB = FMath::Clamp(FrameA + 1, 0, SourceNumKeys - 1);
+			float Alpha = SourceFrameF - (float)FrameA;
+
+			const FTransform& TransA = BoneFrames[BoneIdx][FrameA];
+			const FTransform& TransB = BoneFrames[BoneIdx][FrameB];
+
+			FTransform Interp;
+			Interp.SetLocation(FMath::Lerp(TransA.GetLocation(), TransB.GetLocation(), Alpha));
+			Interp.SetRotation(FQuat::Slerp(TransA.GetRotation(), TransB.GetRotation(), Alpha));
+			Interp.SetScale3D(FMath::Lerp(TransA.GetScale3D(), TransB.GetScale3D(), Alpha));
+
+			// Apply noise + offset
+			if (Weight > 0.001f)
+			{
+				FQuat NoiseQuat = BoneNoiseCurves[BoneIdx][OutFrame];
+				FQuat ScaledOffset = FQuat::Slerp(FQuat::Identity, BaseOffsetQuat, Weight);
+				Interp.SetRotation(Interp.GetRotation() * NoiseQuat * ScaledOffset);
+				Interp.NormalizeRotation();
+			}
+
+			OutputFrames[BoneIdx][OutFrame] = Interp;
+		}
+	}
+
+	// Write back to the animation using bracket API
+	IAnimationDataController& Controller = Anim->GetController();
+	Controller.OpenBracket(NSLOCTEXT("SLFAutomation", "ForensicTransforms", "Apply Forensic Transforms"), false);
+	Controller.InitializeModel();
+	FFrameRate OutFrameRate(FMath::RoundToInt32(OutputFPS), 1);
+	Controller.SetFrameRate(OutFrameRate, false);
+	Controller.SetNumberOfFrames(FFrameNumber(OutputNumKeys - 1), false);
+
+	int32 TracksWritten = 0;
+	for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+	{
+		FName BoneName = RefSkel.GetBoneName(BoneIdx);
+		Controller.AddBoneCurve(BoneName, false);
+
+		TArray<FVector3f> PosKeys;
+		TArray<FQuat4f> RotKeys;
+		TArray<FVector3f> ScaleKeys;
+		PosKeys.SetNum(OutputNumKeys);
+		RotKeys.SetNum(OutputNumKeys);
+		ScaleKeys.SetNum(OutputNumKeys);
+
+		for (int32 Frame = 0; Frame < OutputNumKeys; Frame++)
+		{
+			const FTransform& T = OutputFrames[BoneIdx][Frame];
+			PosKeys[Frame] = FVector3f(T.GetLocation());
+			RotKeys[Frame] = FQuat4f(T.GetRotation());
+			ScaleKeys[Frame] = FVector3f(T.GetScale3D());
+		}
+
+		Controller.SetBoneTrackKeys(BoneName, PosKeys, RotKeys, ScaleKeys, false);
+		TracksWritten++;
+	}
+
+	Controller.NotifyPopulated();
+	Controller.CloseBracket(false);
+
+	// Force skeleton (InitializeModel can reset it)
+	Anim->SetSkeleton(Skeleton);
+
+	// Root lock
+	Anim->bForceRootLock = true;
+	Anim->RootMotionRootLock = ERootMotionRootLock::AnimFirstFrame;
+
+	// DDC compression (Bug #11)
+	Anim->CacheDerivedDataForCurrentPlatform();
+	FAssetCompilingManager::Get().FinishAllCompilation();
+
+	// Verify skeleton survived DDC
+	if (Anim->GetSkeleton() != Skeleton)
+	{
+		Anim->SetSkeleton(Skeleton);
+		Lines.Add(TEXT("  WARNING: Skeleton reset by DDC, forced back"));
+	}
+
+	// Save
+	UPackage* Package = Anim->GetOutermost();
+	Package->MarkPackageDirty();
+	FString FileName = FPackageName::LongPackageNameToFilename(Package->GetName(), FPackageName::GetAssetPackageExtension());
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Standalone;
+	bool bSaved = UPackage::SavePackage(Package, Anim, *FileName, SaveArgs);
+
+	Lines.Add(FString::Printf(TEXT("  Wrote %d tracks, %d keys"), TracksWritten, OutputNumKeys));
+	Lines.Add(FString::Printf(TEXT("  Save: %s"), bSaved ? TEXT("SUCCESS") : TEXT("FAILED")));
+
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *Result);
+	return Result;
+}
+
+// ── File-scope helper: core bake logic with bone name mapping support ──
+static FString BakeAnimationTransformsImpl(
+	const FString& SourceAnimPath,
+	const FString& OutputPath,
+	const FString& NewAssetName,
+	float NoiseAmplitudeDegrees,
+	float TimeWarpStrength,
+	FVector BoneRotationOffsetDegrees,
+	float TargetFrameRate,
+	int32 RandomSeed,
+	const FString& TargetSkeletonPath,
+	const TMap<FName, FName>& BoneNameMapping)
+{
+	TArray<FString> Lines;
+	Lines.Add(FString::Printf(TEXT("=== BakeAnimationTransforms: %s -> %s/%s ==="),
+		*SourceAnimPath, *OutputPath, *NewAssetName));
+
+	// ── Phase 1: READ source animation ──────────────────────────────────
+	UAnimSequence* SourceAnim = LoadObject<UAnimSequence>(nullptr, *SourceAnimPath);
+	if (!SourceAnim)
+	{
+		Lines.Add(FString::Printf(TEXT("ERROR: Source animation not found: %s"), *SourceAnimPath));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	USkeleton* SourceSkeleton = SourceAnim->GetSkeleton();
+	if (!SourceSkeleton)
+	{
+		Lines.Add(TEXT("ERROR: Source animation has no skeleton"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// Use target skeleton for output if specified, otherwise use source skeleton
+	USkeleton* OutputSkeleton = SourceSkeleton;
+	if (!TargetSkeletonPath.IsEmpty())
+	{
+		USkeleton* TargetSkel = LoadObject<USkeleton>(nullptr, *TargetSkeletonPath);
+		if (TargetSkel)
+		{
+			OutputSkeleton = TargetSkel;
+			Lines.Add(FString::Printf(TEXT("  Using target skeleton: %s"), *TargetSkeletonPath));
+		}
+		else
+		{
+			Lines.Add(FString::Printf(TEXT("WARNING: Target skeleton not found: %s, using source skeleton"), *TargetSkeletonPath));
+		}
+	}
+
+	// Use source skeleton's reference for reading bone data
+	const FReferenceSkeleton& RefSkel = SourceSkeleton->GetReferenceSkeleton();
+	int32 NumBones = RefSkel.GetNum();
+	float SourceDuration = SourceAnim->GetPlayLength();
+	int32 SourceNumKeys = SourceAnim->GetNumberOfSampledKeys();
+	float SourceFPS = (SourceNumKeys > 1) ? (float)(SourceNumKeys - 1) / FMath::Max(0.001f, SourceDuration) : 30.0f;
+
+	Lines.Add(FString::Printf(TEXT("  Source: %d bones, %d keys, %.1f fps, %.3fs duration"),
+		NumBones, SourceNumKeys, SourceFPS, SourceDuration));
+
+	// ── Read per-bone per-frame local transforms from source ──
+	// Structure: SourceBoneFrames[BoneIdx][FrameIdx]
+	TArray<TArray<FTransform>> SourceBoneFrames;
+	SourceBoneFrames.SetNum(NumBones);
+
+	for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+	{
+		SourceBoneFrames[BoneIdx].SetNum(SourceNumKeys);
+		for (int32 Frame = 0; Frame < SourceNumKeys; Frame++)
+		{
+			float Time = (SourceNumKeys > 1)
+				? (float)Frame / (float)(SourceNumKeys - 1) * SourceDuration
+				: 0.0f;
+
+			FTransform BoneT;
+			SourceAnim->GetBoneTransform(BoneT, FSkeletonPoseBoneIndex(BoneIdx), Time, false);
+			SourceBoneFrames[BoneIdx][Frame] = BoneT;
+		}
+	}
+
+	// ── Phase 2: RESAMPLE to target frame rate ──────────────────────────
+	float ClampedWarp = FMath::Clamp(TimeWarpStrength, 0.0f, 0.95f);
+	int32 OutputNumKeys = FMath::Max(2, FMath::RoundToInt32(SourceDuration * TargetFrameRate) + 1);
+	float OutputDuration = SourceDuration; // Keep same duration
+
+	Lines.Add(FString::Printf(TEXT("  Output: %d keys at %.1f fps, warp=%.2f, noise=%.1f deg"),
+		OutputNumKeys, TargetFrameRate, ClampedWarp, NoiseAmplitudeDegrees));
+
+	// OutputBoneFrames[BoneIdx][FrameIdx]
+	TArray<TArray<FTransform>> OutputBoneFrames;
+	OutputBoneFrames.SetNum(NumBones);
+
+	// Setup RNG
+	FRandomStream RNG(RandomSeed != 0 ? RandomSeed : FMath::Rand());
+
+	// Pre-generate noise curves per bone
+	TArray<TArray<FQuat>> BoneNoiseCurves;
+	BoneNoiseCurves.SetNum(NumBones);
+	TArray<float> BoneWeights;
+	BoneWeights.SetNum(NumBones);
+
+	for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+	{
+		FName BoneName = RefSkel.GetBoneName(BoneIdx);
+		BoneWeights[BoneIdx] = ComputeBoneRegionWeight(BoneName);
+		BoneNoiseCurves[BoneIdx] = GenerateSmoothNoiseCurve(
+			OutputNumKeys, NoiseAmplitudeDegrees, BoneWeights[BoneIdx], RNG);
+	}
+
+	// Compute static rotation offset quaternion (applied scaled by bone weight)
+	FQuat BaseOffsetQuat = FQuat(FRotator(
+		BoneRotationOffsetDegrees.Y,  // Pitch
+		BoneRotationOffsetDegrees.Z,  // Yaw
+		BoneRotationOffsetDegrees.X   // Roll
+	));
+
+	for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+	{
+		OutputBoneFrames[BoneIdx].SetNum(OutputNumKeys);
+		float Weight = BoneWeights[BoneIdx];
+
+		for (int32 OutFrame = 0; OutFrame < OutputNumKeys; OutFrame++)
+		{
+			// Normalized time [0, 1]
+			float T = (OutputNumKeys > 1)
+				? (float)OutFrame / (float)(OutputNumKeys - 1)
+				: 0.0f;
+
+			// ── Phase 3: TIME WARP ──
+			// Non-linear sine easing: preserves start/end, creates accel/decel
+			float WarpedT = T + ClampedWarp * FMath::Sin(2.0f * PI * T) / (2.0f * PI);
+			WarpedT = FMath::Clamp(WarpedT, 0.0f, 1.0f);
+
+			// Map warped T to source frame space
+			float SourceFrameF = WarpedT * (float)(SourceNumKeys - 1);
+			int32 FrameA = FMath::Clamp(FMath::FloorToInt32(SourceFrameF), 0, SourceNumKeys - 1);
+			int32 FrameB = FMath::Clamp(FrameA + 1, 0, SourceNumKeys - 1);
+			float Alpha = SourceFrameF - (float)FrameA;
+
+			// Lerp/Slerp between source frames
+			const FTransform& TransA = SourceBoneFrames[BoneIdx][FrameA];
+			const FTransform& TransB = SourceBoneFrames[BoneIdx][FrameB];
+
+			FTransform Interp;
+			Interp.SetLocation(FMath::Lerp(TransA.GetLocation(), TransB.GetLocation(), Alpha));
+			Interp.SetRotation(FQuat::Slerp(TransA.GetRotation(), TransB.GetRotation(), Alpha));
+			Interp.SetScale3D(FMath::Lerp(TransA.GetScale3D(), TransB.GetScale3D(), Alpha));
+
+			// ── Phase 4: NOISE + OFFSETS ──
+			if (Weight > 0.001f)
+			{
+				// Apply smooth noise rotation
+				FQuat NoiseQuat = BoneNoiseCurves[BoneIdx][OutFrame];
+
+				// Apply static offset (scaled by bone weight via Slerp from identity)
+				FQuat ScaledOffset = FQuat::Slerp(FQuat::Identity, BaseOffsetQuat, Weight);
+
+				// Combine: original * noise * offset
+				Interp.SetRotation(Interp.GetRotation() * NoiseQuat * ScaledOffset);
+				Interp.NormalizeRotation();
+			}
+
+			OutputBoneFrames[BoneIdx][OutFrame] = Interp;
+		}
+	}
+
+	// ── Phase 4b + 5: COMPONENT-SPACE RETARGET & WRITE ──────────────────
+	// The per-bone local retarget formula is WRONG when skeletons have different
+	// component-space reference poses (different root orientations cascade to all children).
+	// Correct approach: work in component space to preserve skin matrices.
+	//   SkinMatrix = AnimCS * RefCS^-1
+	//   For SkinMatrix_tgt = SkinMatrix_src:
+	//   TgtAnimCS = SrcAnimCS * SrcRefCS^-1 * TgtRefCS  (in matrix math)
+	//   In UE FTransform: TgtAnimCS = TgtRefCS * SrcRefCS.Inverse() * SrcAnimCS
+
+	// Prepare output animation package
+	FString PkgName = OutputPath / NewAssetName;
+	UPackage* ExistingPkg = FindPackage(nullptr, *PkgName);
+	if (ExistingPkg)
+	{
+		ExistingPkg->FullyLoad();
+		UObject* ExistingObj = StaticFindObjectFast(nullptr, ExistingPkg, FName(*NewAssetName));
+		if (ExistingObj)
+		{
+			ExistingObj->Rename(nullptr, GetTransientPackage(), REN_DontCreateRedirectors | REN_NonTransactional);
+		}
+	}
+	UPackage* Package = CreatePackage(*PkgName);
+	Package->FullyLoad();
+
+	UAnimSequence* NewAnim = NewObject<UAnimSequence>(Package, FName(*NewAssetName), RF_Public | RF_Standalone);
+	NewAnim->SetSkeleton(OutputSkeleton);
+
+	IAnimationDataController& Controller = NewAnim->GetController();
+	Controller.OpenBracket(NSLOCTEXT("SLFAutomation", "BakeAnim", "Bake Animation"), false);
+	Controller.InitializeModel();
+
+	FFrameRate OutFrameRate(FMath::RoundToInt32(TargetFrameRate), 1);
+	Controller.SetFrameRate(OutFrameRate, false);
+	Controller.SetNumberOfFrames(FFrameNumber(OutputNumKeys - 1), false);
+
+	int32 TracksAdded = 0;
+	int32 TracksSkipped = 0;
+
+	if (OutputSkeleton != SourceSkeleton)
+	{
+		// Component-space retarget: preserves skin deformation when reference poses differ.
+		// This correctly handles the 180° root bone rotation from FBX round-tripping.
+		//
+		// Formula per bone: TgtAnimCS = SrcAnimCS * SrcRefCS^-1 * TgtRefCS
+		// Then convert back to bone-local: TgtLocal = TgtAnimCS * TgtAnimCS_Parent^-1
+		//
+		// UE5 FTransform convention: CS[child] = Local[child] * CS[parent]
+		// So Local[child] = CS[child] * CS[parent]^-1
+
+		const FReferenceSkeleton& TgtRefSkel = OutputSkeleton->GetReferenceSkeleton();
+		int32 NumSrcBones = RefSkel.GetNum();
+		int32 NumTgtBones = TgtRefSkel.GetNum();
+
+		// Pre-compute source reference pose in component space
+		TArray<FTransform> SrcRefCS;
+		SrcRefCS.SetNum(NumSrcBones);
+		for (int32 i = 0; i < NumSrcBones; i++)
+		{
+			int32 Parent = RefSkel.GetParentIndex(i);
+			if (Parent == INDEX_NONE)
+				SrcRefCS[i] = RefSkel.GetRefBonePose()[i];
+			else
+				SrcRefCS[i] = RefSkel.GetRefBonePose()[i] * SrcRefCS[Parent];
+		}
+
+		// Pre-compute target reference pose in component space
+		TArray<FTransform> TgtRefCS;
+		TgtRefCS.SetNum(NumTgtBones);
+		for (int32 i = 0; i < NumTgtBones; i++)
+		{
+			int32 Parent = TgtRefSkel.GetParentIndex(i);
+			if (Parent == INDEX_NONE)
+				TgtRefCS[i] = TgtRefSkel.GetRefBonePose()[i];
+			else
+				TgtRefCS[i] = TgtRefSkel.GetRefBonePose()[i] * TgtRefCS[Parent];
+		}
+
+		// Build source bone name->index map
+		TMap<FName, int32> SrcBoneNameMap;
+		for (int32 i = 0; i < NumSrcBones; i++)
+			SrcBoneNameMap.Add(RefSkel.GetBoneName(i), i);
+
+		// Build target->source bone index mapping (with optional name mapping)
+		TArray<int32> TgtToSrc;
+		TgtToSrc.SetNum(NumTgtBones);
+		int32 NameMatches = 0;
+		int32 MappedMatches = 0;
+		for (int32 TgtIdx = 0; TgtIdx < NumTgtBones; TgtIdx++)
+		{
+			FName TgtBoneName = TgtRefSkel.GetBoneName(TgtIdx);
+			const int32* SrcIdxPtr = SrcBoneNameMap.Find(TgtBoneName);
+
+			// If direct name match failed, try the bone name mapping (target→source)
+			if (!SrcIdxPtr && BoneNameMapping.Num() > 0)
+			{
+				const FName* MappedSrcName = BoneNameMapping.Find(TgtBoneName);
+				if (MappedSrcName)
+				{
+					SrcIdxPtr = SrcBoneNameMap.Find(*MappedSrcName);
+					if (SrcIdxPtr)
+						MappedMatches++;
+				}
+			}
+
+			if (SrcIdxPtr)
+			{
+				TgtToSrc[TgtIdx] = *SrcIdxPtr;
+				NameMatches++;
+			}
+			else
+			{
+				TgtToSrc[TgtIdx] = INDEX_NONE;
+			}
+		}
+
+		if (MappedMatches > 0)
+		{
+			Lines.Add(FString::Printf(TEXT("  Bone mapping: %d direct matches, %d via name mapping"), NameMatches - MappedMatches, MappedMatches));
+		}
+
+		Lines.Add(FString::Printf(TEXT("  CS retarget: %d/%d target bones match source by name"),
+			NameMatches, NumTgtBones));
+
+		// Log reference pose differences for first few bones
+		for (int32 TgtIdx = 0; TgtIdx < FMath::Min(5, NumTgtBones); TgtIdx++)
+		{
+			int32 SrcIdx = TgtToSrc[TgtIdx];
+			if (SrcIdx != INDEX_NONE)
+			{
+				FQuat SrcQ = SrcRefCS[SrcIdx].GetRotation();
+				FQuat TgtQ = TgtRefCS[TgtIdx].GetRotation();
+				float AngDiff = FMath::RadiansToDegrees(SrcQ.AngularDistance(TgtQ));
+				Lines.Add(FString::Printf(TEXT("    [%d] %s: SrcCS rot=(%.4f,%.4f,%.4f,%.4f) TgtCS rot=(%.4f,%.4f,%.4f,%.4f) diff=%.1f deg"),
+					TgtIdx, *TgtRefSkel.GetBoneName(TgtIdx).ToString(),
+					SrcQ.X, SrcQ.Y, SrcQ.Z, SrcQ.W,
+					TgtQ.X, TgtQ.Y, TgtQ.Z, TgtQ.W,
+					AngDiff));
+			}
+		}
+
+		// Pre-compute inverse source reference CS (avoids recomputing per frame)
+		TArray<FTransform> SrcRefCSInv;
+		SrcRefCSInv.SetNum(NumSrcBones);
+		for (int32 i = 0; i < NumSrcBones; i++)
+			SrcRefCSInv[i] = SrcRefCS[i].Inverse();
+
+		// For each frame, compute retargeted bone-locals for target skeleton
+		// Allocate storage for target bone-locals [tgtBone][frame]
+		TArray<TArray<FTransform>> TgtBoneLocals;
+		TgtBoneLocals.SetNum(NumTgtBones);
+		for (int32 i = 0; i < NumTgtBones; i++)
+			TgtBoneLocals[i].SetNum(OutputNumKeys);
+
+		for (int32 Frame = 0; Frame < OutputNumKeys; Frame++)
+		{
+			// 1. Chain source bone-locals to get source animation in component space
+			TArray<FTransform> SrcAnimCS;
+			SrcAnimCS.SetNum(NumSrcBones);
+			for (int32 SrcIdx = 0; SrcIdx < NumSrcBones; SrcIdx++)
+			{
+				int32 Parent = RefSkel.GetParentIndex(SrcIdx);
+				if (Parent == INDEX_NONE)
+					SrcAnimCS[SrcIdx] = OutputBoneFrames[SrcIdx][Frame];
+				else
+					SrcAnimCS[SrcIdx] = OutputBoneFrames[SrcIdx][Frame] * SrcAnimCS[Parent];
+			}
+
+			// 2. Retarget each target bone: TgtAnimCS = TgtRefCS * SrcRefCS^-1 * SrcAnimCS
+			// UE5 FTransform A*B means "apply A first, then B". So this composition:
+			//   TgtRefCS (tgt bone-local -> component) * SrcRefCSInv (component -> src bone-local)
+			//   * SrcAnimCS (src bone-local -> component animated)
+			// = tgt bone-local -> component (animated), preserving skin deformation.
+			TArray<FTransform> TgtAnimCS;
+			TgtAnimCS.SetNum(NumTgtBones);
+			for (int32 TgtIdx = 0; TgtIdx < NumTgtBones; TgtIdx++)
+			{
+				int32 SrcIdx = TgtToSrc[TgtIdx];
+				if (SrcIdx != INDEX_NONE)
+				{
+					TgtAnimCS[TgtIdx] = TgtRefCS[TgtIdx] * SrcRefCSInv[SrcIdx] * SrcAnimCS[SrcIdx];
+				}
+				else
+				{
+					// Unmatched bone: hold at target reference pose
+					TgtAnimCS[TgtIdx] = TgtRefCS[TgtIdx];
+				}
+			}
+
+			// 3. Convert component space back to bone-local
+			for (int32 TgtIdx = 0; TgtIdx < NumTgtBones; TgtIdx++)
+			{
+				int32 Parent = TgtRefSkel.GetParentIndex(TgtIdx);
+				if (Parent == INDEX_NONE)
+				{
+					TgtBoneLocals[TgtIdx][Frame] = TgtAnimCS[TgtIdx];
+				}
+				else
+				{
+					TgtBoneLocals[TgtIdx][Frame] = TgtAnimCS[TgtIdx] * TgtAnimCS[Parent].Inverse();
+				}
+			}
+		}
+
+		// 4. Write retargeted tracks to animation
+		for (int32 TgtIdx = 0; TgtIdx < NumTgtBones; TgtIdx++)
+		{
+			FName BoneName = TgtRefSkel.GetBoneName(TgtIdx);
+			Controller.AddBoneCurve(BoneName, false);
+
+			TArray<FVector3f> PosKeys;
+			TArray<FQuat4f> RotKeys;
+			TArray<FVector3f> ScaleKeys;
+			PosKeys.SetNum(OutputNumKeys);
+			RotKeys.SetNum(OutputNumKeys);
+			ScaleKeys.SetNum(OutputNumKeys);
+
+			for (int32 Frame = 0; Frame < OutputNumKeys; Frame++)
+			{
+				const FTransform& T = TgtBoneLocals[TgtIdx][Frame];
+				PosKeys[Frame] = FVector3f(T.GetLocation());
+				RotKeys[Frame] = FQuat4f(T.GetRotation());
+				ScaleKeys[Frame] = FVector3f(T.GetScale3D());
+			}
+
+			Controller.SetBoneTrackKeys(BoneName, PosKeys, RotKeys, ScaleKeys, false);
+
+			if (TgtToSrc[TgtIdx] != INDEX_NONE)
+				TracksAdded++;
+			else
+			{
+				TracksSkipped++;
+				Lines.Add(FString::Printf(TEXT("  Unmatched bone '%s' -> reference pose"), *BoneName.ToString()));
+			}
+		}
+
+		Lines.Add(FString::Printf(TEXT("  Retargeted %d tracks, %d unmatched (ref pose)"), TracksAdded, TracksSkipped));
+	}
+	else
+	{
+		// No retargeting needed - write source bones directly to matching target bones
+		TSet<FName> OutputBoneNames;
+		{
+			const FReferenceSkeleton& OutRefSkel = OutputSkeleton->GetReferenceSkeleton();
+			for (int32 i = 0; i < OutRefSkel.GetNum(); i++)
+				OutputBoneNames.Add(OutRefSkel.GetBoneName(i));
+		}
+
+		for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+		{
+			FName BoneName = RefSkel.GetBoneName(BoneIdx);
+			if (!OutputBoneNames.Contains(BoneName))
+			{
+				TracksSkipped++;
+				continue;
+			}
+
+			Controller.AddBoneCurve(BoneName, false);
+
+			TArray<FVector3f> PosKeys;
+			TArray<FQuat4f> RotKeys;
+			TArray<FVector3f> ScaleKeys;
+			PosKeys.SetNum(OutputNumKeys);
+			RotKeys.SetNum(OutputNumKeys);
+			ScaleKeys.SetNum(OutputNumKeys);
+
+			for (int32 Frame = 0; Frame < OutputNumKeys; Frame++)
+			{
+				const FTransform& T = OutputBoneFrames[BoneIdx][Frame];
+				PosKeys[Frame] = FVector3f(T.GetLocation());
+				RotKeys[Frame] = FQuat4f(T.GetRotation());
+				ScaleKeys[Frame] = FVector3f(T.GetScale3D());
+			}
+
+			Controller.SetBoneTrackKeys(BoneName, PosKeys, RotKeys, ScaleKeys, false);
+			TracksAdded++;
+		}
+	}
+
+	Controller.NotifyPopulated();
+	Controller.CloseBracket(false);
+
+	// Force skeleton AFTER bracket close (InitializeModel can reset it)
+	NewAnim->SetSkeleton(OutputSkeleton);
+	UE_LOG(LogSLFAutomation, Warning, TEXT("  Skeleton after bracket: %s (wanted: %s)"),
+		NewAnim->GetSkeleton() ? *NewAnim->GetSkeleton()->GetPathName() : TEXT("NULL"),
+		*OutputSkeleton->GetPathName());
+
+	// Force root lock to first frame (prevents snap-back, Bug #17)
+	NewAnim->bForceRootLock = true;
+	NewAnim->RootMotionRootLock = ERootMotionRootLock::AnimFirstFrame;
+
+	// DDC compression (CRITICAL for UE5.7 - Bug #11)
+	NewAnim->CacheDerivedDataForCurrentPlatform();
+	FAssetCompilingManager::Get().FinishAllCompilation();
+
+	// Force skeleton again after DDC (compression may reset skeleton ref)
+	if (NewAnim->GetSkeleton() != OutputSkeleton)
+	{
+		UE_LOG(LogSLFAutomation, Warning, TEXT("  Skeleton was reset by DDC! Forcing back to: %s"), *OutputSkeleton->GetPathName());
+		NewAnim->SetSkeleton(OutputSkeleton);
+	}
+
+	// Save
+	FAssetRegistryModule::AssetCreated(NewAnim);
+	Package->MarkPackageDirty();
+	FString FileName = FPackageName::LongPackageNameToFilename(Package->GetName(), FPackageName::GetAssetPackageExtension());
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Standalone;
+	bool bSaved = UPackage::SavePackage(Package, NewAnim, *FileName, SaveArgs);
+
+	Lines.Add(FString::Printf(TEXT("  Wrote %d bone tracks (%d skipped), %d frames"), TracksAdded, TracksSkipped, OutputNumKeys));
+	Lines.Add(FString::Printf(TEXT("  Save: %s -> %s"), bSaved ? TEXT("SUCCESS") : TEXT("FAILED"), *PkgName));
+	Lines.Add(TEXT("=== BakeAnimationTransforms COMPLETE ==="));
+
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Warning, TEXT("%s"), *Result);
+	return Result;
+}
+
+// ── Public UFUNCTION wrapper (no bone mapping) ──
+FString USLFAutomationLibrary::BakeAnimationTransforms(
+	const FString& SourceAnimPath,
+	const FString& OutputPath,
+	const FString& NewAssetName,
+	float NoiseAmplitudeDegrees,
+	float TimeWarpStrength,
+	FVector BoneRotationOffsetDegrees,
+	float TargetFrameRate,
+	int32 RandomSeed,
+	const FString& TargetSkeletonPath)
+{
+	return BakeAnimationTransformsImpl(
+		SourceAnimPath, OutputPath, NewAssetName,
+		NoiseAmplitudeDegrees, TimeWarpStrength, BoneRotationOffsetDegrees,
+		TargetFrameRate, RandomSeed, TargetSkeletonPath,
+		TMap<FName, FName>());
+}
+
+// ── Public wrapper with bone name mapping (not UFUNCTION) ──
+FString USLFAutomationLibrary::BakeAnimWithBoneMapping(
+	const FString& SourceAnimPath,
+	const FString& OutputPath,
+	const FString& NewAssetName,
+	const FString& TargetSkeletonPath,
+	const TMap<FName, FName>& BoneNameMapping,
+	float NoiseAmplitudeDegrees,
+	float TimeWarpStrength,
+	FVector BoneRotationOffsetDegrees,
+	float TargetFrameRate,
+	int32 RandomSeed)
+{
+	return BakeAnimationTransformsImpl(
+		SourceAnimPath, OutputPath, NewAssetName,
+		NoiseAmplitudeDegrees, TimeWarpStrength, BoneRotationOffsetDegrees,
+		TargetFrameRate, RandomSeed, TargetSkeletonPath,
+		BoneNameMapping);
+}
+
+FString USLFAutomationLibrary::DiagnoseSkeletonMismatch(
+	const FString& SkeletonPathA,
+	const FString& SkeletonPathB,
+	const FString& AnimPathOnA,
+	const FString& OutputFilePath)
+{
+	TArray<FString> Lines;
+	Lines.Add(TEXT("=== SKELETON MISMATCH DIAGNOSIS ==="));
+	Lines.Add(FString::Printf(TEXT("Skeleton A: %s"), *SkeletonPathA));
+	Lines.Add(FString::Printf(TEXT("Skeleton B: %s"), *SkeletonPathB));
+
+	USkeleton* SkelA = LoadObject<USkeleton>(nullptr, *SkeletonPathA);
+	USkeleton* SkelB = LoadObject<USkeleton>(nullptr, *SkeletonPathB);
+	if (!SkelA) { Lines.Add(TEXT("ERROR: Skeleton A not found")); return FString::Join(Lines, TEXT("\n")); }
+	if (!SkelB) { Lines.Add(TEXT("ERROR: Skeleton B not found")); return FString::Join(Lines, TEXT("\n")); }
+
+	const FReferenceSkeleton& RefA = SkelA->GetReferenceSkeleton();
+	const FReferenceSkeleton& RefB = SkelB->GetReferenceSkeleton();
+	int32 NumA = RefA.GetNum();
+	int32 NumB = RefB.GetNum();
+	Lines.Add(FString::Printf(TEXT("Skeleton A bones: %d, Skeleton B bones: %d"), NumA, NumB));
+
+	// Build name->index map for B
+	TMap<FName, int32> BoneMapB;
+	for (int32 i = 0; i < NumB; i++)
+		BoneMapB.Add(RefB.GetBoneName(i), i);
+
+	// Compare reference poses for matching bones
+	Lines.Add(TEXT(""));
+	Lines.Add(TEXT("=== REFERENCE POSE COMPARISON (matching bones) ==="));
+	Lines.Add(TEXT("Format: BoneName | A: Pos Rot Scale | B: Pos Rot Scale | Delta"));
+
+	int32 MatchCount = 0;
+	int32 MismatchCount = 0;
+	TArray<FName> OnlyInA, OnlyInB;
+
+	for (int32 i = 0; i < NumA; i++)
+	{
+		FName BoneName = RefA.GetBoneName(i);
+		const int32* BIdxPtr = BoneMapB.Find(BoneName);
+		if (!BIdxPtr)
+		{
+			OnlyInA.Add(BoneName);
+			continue;
+		}
+
+		int32 BIdx = *BIdxPtr;
+		FTransform RefPoseA = RefA.GetRefBonePose()[i];
+		FTransform RefPoseB = RefB.GetRefBonePose()[BIdx];
+
+		FVector PosA = RefPoseA.GetLocation();
+		FQuat RotA = RefPoseA.GetRotation();
+		FVector ScaleA = RefPoseA.GetScale3D();
+		FVector PosB = RefPoseB.GetLocation();
+		FQuat RotB = RefPoseB.GetRotation();
+		FVector ScaleB = RefPoseB.GetScale3D();
+
+		float PosDelta = (PosA - PosB).Size();
+		float RotDelta = RotA.AngularDistance(RotB) * (180.0f / PI);
+		float ScaleDelta = (ScaleA - ScaleB).Size();
+
+		bool bSignificant = PosDelta > 0.01f || RotDelta > 0.1f || ScaleDelta > 0.001f;
+
+		if (bSignificant)
+		{
+			MismatchCount++;
+			Lines.Add(FString::Printf(TEXT("[DIFF] %s (A[%d] B[%d]):"), *BoneName.ToString(), i, BIdx));
+			Lines.Add(FString::Printf(TEXT("  A Pos=(%.4f, %.4f, %.4f) Rot=(%.4f, %.4f, %.4f, %.4f) Scale=(%.4f, %.4f, %.4f)"),
+				PosA.X, PosA.Y, PosA.Z, RotA.X, RotA.Y, RotA.Z, RotA.W,
+				ScaleA.X, ScaleA.Y, ScaleA.Z));
+			Lines.Add(FString::Printf(TEXT("  B Pos=(%.4f, %.4f, %.4f) Rot=(%.4f, %.4f, %.4f, %.4f) Scale=(%.4f, %.4f, %.4f)"),
+				PosB.X, PosB.Y, PosB.Z, RotB.X, RotB.Y, RotB.Z, RotB.W,
+				ScaleB.X, ScaleB.Y, ScaleB.Z));
+			Lines.Add(FString::Printf(TEXT("  Delta: Pos=%.4f Rot=%.2f deg Scale=%.6f"),
+				PosDelta, RotDelta, ScaleDelta));
+		}
+		else
+		{
+			MatchCount++;
+		}
+	}
+
+	// Bones only in B
+	for (int32 i = 0; i < NumB; i++)
+	{
+		FName BoneName = RefB.GetBoneName(i);
+		bool bFoundInA = false;
+		for (int32 j = 0; j < NumA; j++)
+		{
+			if (RefA.GetBoneName(j) == BoneName) { bFoundInA = true; break; }
+		}
+		if (!bFoundInA) OnlyInB.Add(BoneName);
+	}
+
+	Lines.Add(TEXT(""));
+	Lines.Add(FString::Printf(TEXT("Matching bones (identical ref pose): %d"), MatchCount));
+	Lines.Add(FString::Printf(TEXT("Matching bones (DIFFERENT ref pose): %d"), MismatchCount));
+	Lines.Add(FString::Printf(TEXT("Bones only in A: %d"), OnlyInA.Num()));
+	for (const FName& N : OnlyInA) Lines.Add(FString::Printf(TEXT("  A-only: %s"), *N.ToString()));
+	Lines.Add(FString::Printf(TEXT("Bones only in B: %d"), OnlyInB.Num()));
+	for (const FName& N : OnlyInB) Lines.Add(FString::Printf(TEXT("  B-only: %s"), *N.ToString()));
+
+	// Compare parent hierarchy for matching bones
+	Lines.Add(TEXT(""));
+	Lines.Add(TEXT("=== PARENT HIERARCHY COMPARISON ==="));
+	for (int32 i = 0; i < NumA; i++)
+	{
+		FName BoneName = RefA.GetBoneName(i);
+		const int32* BIdxPtr = BoneMapB.Find(BoneName);
+		if (!BIdxPtr) continue;
+
+		int32 ParentIdxA = RefA.GetParentIndex(i);
+		int32 ParentIdxB = RefB.GetParentIndex(*BIdxPtr);
+		FName ParentA = (ParentIdxA >= 0) ? RefA.GetBoneName(ParentIdxA) : FName("ROOT");
+		FName ParentB = (ParentIdxB >= 0) ? RefB.GetBoneName(ParentIdxB) : FName("ROOT");
+
+		if (ParentA != ParentB)
+		{
+			Lines.Add(FString::Printf(TEXT("[PARENT DIFF] %s: A parent=%s, B parent=%s"),
+				*BoneName.ToString(), *ParentA.ToString(), *ParentB.ToString()));
+		}
+	}
+
+	// If animation provided, compare frame 0 transforms
+	if (!AnimPathOnA.IsEmpty())
+	{
+		UAnimSequence* Anim = LoadObject<UAnimSequence>(nullptr, *AnimPathOnA);
+		if (Anim)
+		{
+			Lines.Add(TEXT(""));
+			Lines.Add(FString::Printf(TEXT("=== ANIMATION FRAME 0: %s ==="), *AnimPathOnA));
+			Lines.Add(FString::Printf(TEXT("Anim skeleton: %s"), Anim->GetSkeleton() ? *Anim->GetSkeleton()->GetPathName() : TEXT("NULL")));
+
+			const FReferenceSkeleton& AnimRefSkel = Anim->GetSkeleton()->GetReferenceSkeleton();
+			int32 NumAnimBones = AnimRefSkel.GetNum();
+			Lines.Add(FString::Printf(TEXT("Anim bone count: %d"), NumAnimBones));
+
+			// Show first 20 bones' frame-0 transforms
+			for (int32 i = 0; i < FMath::Min(NumAnimBones, 30); i++)
+			{
+				FName BoneName = AnimRefSkel.GetBoneName(i);
+				FTransform BoneT;
+				Anim->GetBoneTransform(BoneT, FSkeletonPoseBoneIndex(i), 0.0f, false);
+				FVector Pos = BoneT.GetLocation();
+				FQuat Rot = BoneT.GetRotation();
+				FVector Scale = BoneT.GetScale3D();
+
+				// Also get ref pose for comparison
+				FTransform RefT = AnimRefSkel.GetRefBonePose()[i];
+				float PosDelta = (Pos - RefT.GetLocation()).Size();
+				float RotDelta = Rot.AngularDistance(RefT.GetRotation()) * (180.0f / PI);
+
+				Lines.Add(FString::Printf(TEXT("  [%d] %s: Pos=(%.2f,%.2f,%.2f) Rot=(%.4f,%.4f,%.4f,%.4f) Scale=(%.4f,%.4f,%.4f) | vs RefPose: dPos=%.2f dRot=%.1f°"),
+					i, *BoneName.ToString(),
+					Pos.X, Pos.Y, Pos.Z, Rot.X, Rot.Y, Rot.Z, Rot.W,
+					Scale.X, Scale.Y, Scale.Z,
+					PosDelta, RotDelta));
+			}
+		}
+		else
+		{
+			Lines.Add(FString::Printf(TEXT("WARNING: Animation not found: %s"), *AnimPathOnA));
+		}
+	}
+
+	FString Result = FString::Join(Lines, TEXT("\n"));
+
+	// Write to file if requested
+	if (!OutputFilePath.IsEmpty())
+	{
+		FFileHelper::SaveStringToFile(Result, *OutputFilePath);
+		UE_LOG(LogSLFAutomation, Warning, TEXT("Diagnosis written to: %s"), *OutputFilePath);
+	}
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("%s"), *Result);
+	return Result;
+}
+
+FString USLFAutomationLibrary::DiagnoseAnimDataModel(const FString& AnimPath)
+{
+	TArray<FString> Lines;
+	Lines.Add(FString::Printf(TEXT("=== ANIM DATAMODEL DIAGNOSIS: %s ==="), *AnimPath));
+
+	UAnimSequence* Anim = LoadObject<UAnimSequence>(nullptr, *AnimPath);
+	if (!Anim)
+	{
+		Lines.Add(TEXT("ERROR: Animation not found"));
+		FString Result = FString::Join(Lines, TEXT("\n"));
+		UE_LOG(LogSLFAutomation, Warning, TEXT("%s"), *Result);
+		return Result;
+	}
+
+	USkeleton* Skel = Anim->GetSkeleton();
+	if (!Skel)
+	{
+		Lines.Add(TEXT("ERROR: No skeleton"));
+		FString Result = FString::Join(Lines, TEXT("\n"));
+		UE_LOG(LogSLFAutomation, Warning, TEXT("%s"), *Result);
+		return Result;
+	}
+
+	const FReferenceSkeleton& RefSkel = Skel->GetReferenceSkeleton();
+	int32 NumBones = RefSkel.GetNum();
+	int32 NumKeys = Anim->GetNumberOfSampledKeys();
+	double Duration = Anim->GetPlayLength();
+
+	Lines.Add(FString::Printf(TEXT("Skeleton: %s (%d bones)"), *Skel->GetName(), NumBones));
+	Lines.Add(FString::Printf(TEXT("Keys: %d, Duration: %.3f sec"), NumKeys, Duration));
+
+	// Use DataModel Controller to read bone tracks (works in commandlet, unlike GetBoneTransform)
+	IAnimationDataModel* DataModel = Anim->GetDataModel();
+	if (!DataModel)
+	{
+		Lines.Add(TEXT("ERROR: No DataModel"));
+		FString Result = FString::Join(Lines, TEXT("\n"));
+		UE_LOG(LogSLFAutomation, Warning, TEXT("%s"), *Result);
+		return Result;
+	}
+
+	int32 NumModelBones = DataModel->GetNumBoneTracks();
+	Lines.Add(FString::Printf(TEXT("DataModel bone tracks: %d"), NumModelBones));
+
+	// Read bone transforms at frame 0 and mid-frame
+	int32 MidFrame = NumKeys / 2;
+	int32 NonIdentityFrame0 = 0;
+	int32 NonIdentityMidFrame = 0;
+
+	const TCHAR* KeyBones[] = {
+		TEXT("root"), TEXT("pelvis"), TEXT("spine_01"), TEXT("head"),
+		TEXT("hand_r"), TEXT("hand_l"), TEXT("foot_l"), TEXT("foot_r"),
+		TEXT("thigh_l"), TEXT("upperarm_r"), TEXT("weapon_r")
+	};
+
+	// Use modern API: GetBoneTrackNames + FindBoneTrackByName (GetBoneAnimationTracks is deprecated/broken in UE5.7)
+	TArray<FName> BoneTrackNames;
+	DataModel->GetBoneTrackNames(BoneTrackNames);
+	Lines.Add(FString::Printf(TEXT("BoneTrackNames.Num(): %d"), BoneTrackNames.Num()));
+
+	for (const FName& BoneName : BoneTrackNames)
+	{
+		const FBoneAnimationTrack& Track = DataModel->GetBoneTrackByName(BoneName);
+		const FRawAnimSequenceTrack& RawTrack = Track.InternalTrackData;
+
+		bool bIsKeyBone = false;
+		for (const TCHAR* KB : KeyBones)
+		{
+			if (BoneName == FName(KB)) { bIsKeyBone = true; break; }
+		}
+
+		// Check frame 0
+		FVector Pos0 = RawTrack.PosKeys.Num() > 0 ? FVector(RawTrack.PosKeys[0]) : FVector::ZeroVector;
+		FQuat Rot0 = RawTrack.RotKeys.Num() > 0 ? FQuat(RawTrack.RotKeys[0]) : FQuat::Identity;
+		bool bIdentity0 = Pos0.IsNearlyZero(0.01f) && Rot0.Equals(FQuat::Identity, 0.001f);
+		if (!bIdentity0) NonIdentityFrame0++;
+
+		// Check mid frame
+		int32 MidIdx = FMath::Min(MidFrame, FMath::Max(0, RawTrack.PosKeys.Num() - 1));
+		int32 MidRotIdx = FMath::Min(MidFrame, FMath::Max(0, RawTrack.RotKeys.Num() - 1));
+		FVector PosMid = RawTrack.PosKeys.Num() > MidIdx ? FVector(RawTrack.PosKeys[MidIdx]) : FVector::ZeroVector;
+		FQuat RotMid = RawTrack.RotKeys.Num() > MidRotIdx ? FQuat(RawTrack.RotKeys[MidRotIdx]) : FQuat::Identity;
+		bool bIdentityMid = PosMid.IsNearlyZero(0.01f) && RotMid.Equals(FQuat::Identity, 0.001f);
+		if (!bIdentityMid) NonIdentityMidFrame++;
+
+		if (bIsKeyBone)
+		{
+			Lines.Add(FString::Printf(TEXT("  %s: PosKeys=%d RotKeys=%d | F0: Pos=(%.2f,%.2f,%.2f) Rot=(%.4f,%.4f,%.4f,%.4f) %s | FMid: Pos=(%.2f,%.2f,%.2f) %s"),
+				*BoneName.ToString(),
+				RawTrack.PosKeys.Num(), RawTrack.RotKeys.Num(),
+				Pos0.X, Pos0.Y, Pos0.Z, Rot0.X, Rot0.Y, Rot0.Z, Rot0.W,
+				bIdentity0 ? TEXT("[ID]") : TEXT("OK"),
+				PosMid.X, PosMid.Y, PosMid.Z,
+				bIdentityMid ? TEXT("[ID]") : TEXT("OK")));
+		}
+	}
+
+	Lines.Add(FString::Printf(TEXT("Non-identity bones at Frame 0: %d/%d"), NonIdentityFrame0, BoneTrackNames.Num()));
+	Lines.Add(FString::Printf(TEXT("Non-identity bones at Frame Mid: %d/%d"), NonIdentityMidFrame, BoneTrackNames.Num()));
+
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Warning, TEXT("%s"), *Result);
+	return Result;
+}
+
+static void DiagnoseOneAnim(const FString& AnimPath, const FString& Label, TArray<FString>& Lines)
+{
+	Lines.Add(FString::Printf(TEXT("\n--- %s: %s ---"), *Label, *AnimPath));
+
+	UAnimSequence* Anim = LoadObject<UAnimSequence>(nullptr, *AnimPath);
+	if (!Anim)
+	{
+		Lines.Add(TEXT("  ERROR: Animation not found"));
+		return;
+	}
+
+	USkeleton* Skel = Anim->GetSkeleton();
+	if (!Skel)
+	{
+		Lines.Add(TEXT("  ERROR: No skeleton"));
+		return;
+	}
+
+	const FReferenceSkeleton& RefSkel = Skel->GetReferenceSkeleton();
+	int32 NumBones = RefSkel.GetNum();
+	int32 NumKeys = Anim->GetNumberOfSampledKeys();
+	double Duration = Anim->GetPlayLength();
+
+	Lines.Add(FString::Printf(TEXT("  Skeleton: %s (%d bones)"), *Skel->GetPathName(), NumBones));
+	Lines.Add(FString::Printf(TEXT("  SampledKeys: %d, Duration: %.3f sec"), NumKeys, Duration));
+
+	// List first 10 skeleton bones
+	Lines.Add(TEXT("  Skeleton bones (first 10):"));
+	for (int32 i = 0; i < FMath::Min(10, NumBones); i++)
+	{
+		int32 ParentIdx = RefSkel.GetParentIndex(i);
+		Lines.Add(FString::Printf(TEXT("    [%d] '%s' parent=%d"),
+			i, *RefSkel.GetBoneName(i).ToString(), ParentIdx));
+	}
+
+	// DataModel info
+	IAnimationDataModel* DM = Anim->GetDataModel();
+	if (!DM)
+	{
+		Lines.Add(TEXT("  ERROR: No DataModel"));
+		return;
+	}
+
+	int32 DMTracks = DM->GetNumBoneTracks();
+	int32 DMFrames = DM->GetNumberOfFrames();
+	FFrameRate DMFR = DM->GetFrameRate();
+	Lines.Add(FString::Printf(TEXT("  DataModel: %d tracks, %d frames, %d/%d fps"),
+		DMTracks, DMFrames, DMFR.Numerator, DMFR.Denominator));
+
+	// List DataModel bone track names and check raw key counts
+	TArray<FName> TrackNames;
+	DM->GetBoneTrackNames(TrackNames);
+	Lines.Add(FString::Printf(TEXT("  DataModel track names (%d):"), TrackNames.Num()));
+
+	int32 TracksWithKeys = 0;
+	int32 TracksEmpty = 0;
+	for (int32 i = 0; i < TrackNames.Num(); i++)
+	{
+		const FBoneAnimationTrack& Track = DM->GetBoneTrackByName(TrackNames[i]);
+		int32 PK = Track.InternalTrackData.PosKeys.Num();
+		int32 RK = Track.InternalTrackData.RotKeys.Num();
+		if (PK > 0 || RK > 0) TracksWithKeys++;
+		else TracksEmpty++;
+
+		// Check if bone exists in skeleton
+		int32 SkelIdx = RefSkel.FindBoneIndex(TrackNames[i]);
+
+		if (i < 10)
+		{
+			FString PosStr = TEXT("(empty)");
+			FString RotStr = TEXT("(empty)");
+			if (PK > 0)
+			{
+				FVector3f P0 = Track.InternalTrackData.PosKeys[0];
+				PosStr = FString::Printf(TEXT("(%.3f,%.3f,%.3f)"), P0.X, P0.Y, P0.Z);
+			}
+			if (RK > 0)
+			{
+				FQuat4f R0 = Track.InternalTrackData.RotKeys[0];
+				RotStr = FString::Printf(TEXT("(%.4f,%.4f,%.4f,%.4f)"), R0.X, R0.Y, R0.Z, R0.W);
+			}
+			Lines.Add(FString::Printf(TEXT("    [%d] '%s' skelIdx=%d | PosKeys=%d RotKeys=%d | F0: %s %s"),
+				i, *TrackNames[i].ToString(), SkelIdx, PK, RK, *PosStr, *RotStr));
+		}
+	}
+	Lines.Add(FString::Printf(TEXT("  Raw keys: %d tracks have keys, %d empty (DDC stripped)"),
+		TracksWithKeys, TracksEmpty));
+
+	// Try compressed evaluation via GetBoneTransform
+	Lines.Add(TEXT("  GetBoneTransform evaluation (compressed):"));
+	int32 NonIdentityCount = 0;
+	for (int32 i = 0; i < FMath::Min(10, NumBones); i++)
+	{
+		FTransform BoneT;
+		Anim->GetBoneTransform(BoneT, FSkeletonPoseBoneIndex(i), 0.0, false);
+		FVector Pos = BoneT.GetLocation();
+		FQuat Rot = BoneT.GetRotation();
+		FVector Scale = BoneT.GetScale3D();
+		bool bIdentity = Pos.IsNearlyZero(0.01) && Rot.Equals(FQuat::Identity, 0.001) && Scale.Equals(FVector::OneVector, 0.01);
+		if (!bIdentity) NonIdentityCount++;
+
+		Lines.Add(FString::Printf(TEXT("    [%d] '%s': Pos=(%.3f,%.3f,%.3f) Rot=(%.4f,%.4f,%.4f,%.4f) Scale=(%.2f,%.2f,%.2f) %s"),
+			i, *RefSkel.GetBoneName(i).ToString(),
+			Pos.X, Pos.Y, Pos.Z,
+			Rot.X, Rot.Y, Rot.Z, Rot.W,
+			Scale.X, Scale.Y, Scale.Z,
+			bIdentity ? TEXT("[ID]") : TEXT("[OK]")));
+	}
+
+	// Also check at time=0.5 for a mid-animation bone
+	if (Duration > 0.5)
+	{
+		Lines.Add(TEXT("  GetBoneTransform at t=0.5:"));
+		for (int32 i = 0; i < FMath::Min(5, NumBones); i++)
+		{
+			FTransform BoneT;
+			Anim->GetBoneTransform(BoneT, FSkeletonPoseBoneIndex(i), 0.5, false);
+			FVector Pos = BoneT.GetLocation();
+			FQuat Rot = BoneT.GetRotation();
+			bool bIdentity = Pos.IsNearlyZero(0.01) && Rot.Equals(FQuat::Identity, 0.001);
+			if (!bIdentity) NonIdentityCount++;
+
+			Lines.Add(FString::Printf(TEXT("    [%d] '%s': Pos=(%.3f,%.3f,%.3f) Rot=(%.4f,%.4f,%.4f,%.4f) %s"),
+				i, *RefSkel.GetBoneName(i).ToString(),
+				Pos.X, Pos.Y, Pos.Z,
+				Rot.X, Rot.Y, Rot.Z, Rot.W,
+				bIdentity ? TEXT("[ID]") : TEXT("[OK]")));
+		}
+	}
+
+	Lines.Add(FString::Printf(TEXT("  Total non-identity evaluations: %d"), NonIdentityCount));
+
+	// DataModel curve evaluation (GetBoneTrackTransform) — reads internal curve storage
+	{
+		int32 CurveNonIdentity = 0;
+		Lines.Add(TEXT("  DataModel GetBoneTrackTransform (curve eval):"));
+		for (int32 i = 0; i < FMath::Min(10, TrackNames.Num()); i++)
+		{
+			FTransform T0 = DM->GetBoneTrackTransform(TrackNames[i], FFrameNumber(0));
+			FVector P = T0.GetLocation();
+			FQuat R = T0.GetRotation();
+			bool bID = P.IsNearlyZero(0.01) && R.Equals(FQuat::Identity, 0.001);
+			if (!bID) CurveNonIdentity++;
+			Lines.Add(FString::Printf(TEXT("    [%d] '%s': Pos=(%.3f,%.3f,%.3f) Rot=(%.4f,%.4f,%.4f,%.4f) %s"),
+				i, *TrackNames[i].ToString(), P.X, P.Y, P.Z, R.X, R.Y, R.Z, R.W,
+				bID ? TEXT("[ID]") : TEXT("[OK]")));
+		}
+		Lines.Add(FString::Printf(TEXT("  CurveEval non-identity: %d/%d"), CurveNonIdentity, FMath::Min(10, TrackNames.Num())));
+	}
+
+	// Check compressed data using non-deprecated API (CompressedData is deprecated in UE5.6+)
+	Lines.Add(FString::Printf(TEXT("  IsCompressedDataValid=%d, IsBoneCompressedDataValid=%d, IsCompressedDataOutOfDate=%d"),
+		Anim->IsCompressedDataValid() ? 1 : 0,
+		Anim->IsBoneCompressedDataValid() ? 1 : 0,
+		Anim->IsCompressedDataOutOfDate() ? 1 : 0));
+}
+
+FString USLFAutomationLibrary::CompareAnimations(const FString& AnimPathA, const FString& AnimPathB)
+{
+	TArray<FString> Lines;
+	Lines.Add(TEXT("=== ANIMATION COMPARISON ==="));
+
+	DiagnoseOneAnim(AnimPathA, TEXT("AnimA"), Lines);
+	DiagnoseOneAnim(AnimPathB, TEXT("AnimB"), Lines);
+
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Warning, TEXT("%s"), *Result);
+	return Result;
+}
+
+FString USLFAutomationLibrary::PlaceActorInLevel(
+	const FString& MapPath,
+	const FString& BlueprintPath,
+	FVector Location,
+	FRotator Rotation)
+{
+	UE_LOG(LogSLFAutomation, Warning, TEXT("=== PlaceActorInLevel (safe - no InitWorld) ==="));
+	UE_LOG(LogSLFAutomation, Warning, TEXT("  Map: %s"), *MapPath);
+	UE_LOG(LogSLFAutomation, Warning, TEXT("  Blueprint: %s"), *BlueprintPath);
+	UE_LOG(LogSLFAutomation, Warning, TEXT("  Location: %s"), *Location.ToString());
+
+	// Load map package WITHOUT InitWorld (avoids running constructors on existing actors)
+	UPackage* MapPackage = LoadPackage(nullptr, *MapPath, LOAD_None);
+	if (!MapPackage)
+	{
+		return FString::Printf(TEXT("ERROR: Could not load map package: %s"), *MapPath);
+	}
+
+	UWorld* EditorWorld = UWorld::FindWorldInPackage(MapPackage);
+	if (!EditorWorld || !EditorWorld->PersistentLevel)
+	{
+		return FString::Printf(TEXT("ERROR: No world/level in package: %s"), *MapPath);
+	}
+
+	// Load Blueprint class
+	FString BlueprintClassPath = BlueprintPath + TEXT(".") + FPackageName::GetShortName(BlueprintPath) + TEXT("_C");
+	UClass* ActorClass = LoadClass<AActor>(nullptr, *BlueprintClassPath);
+	if (!ActorClass)
+	{
+		ActorClass = FindObject<UClass>(nullptr, *BlueprintPath);
+	}
+	if (!ActorClass)
+	{
+		return FString::Printf(TEXT("ERROR: Could not load class: %s"), *BlueprintPath);
+	}
+
+	// Check if actor of this class already exists (avoid duplicates)
+	for (AActor* ExistingActor : EditorWorld->PersistentLevel->Actors)
+	{
+		if (ExistingActor && ExistingActor->GetClass() == ActorClass)
+		{
+			UE_LOG(LogSLFAutomation, Warning, TEXT("  Actor already exists: %s - skipping (use editor to reposition)"),
+				*ExistingActor->GetName());
+			return FString::Printf(TEXT("Already exists: %s (use editor to reposition)"), *ExistingActor->GetName());
+		}
+	}
+
+	// Create actor directly in the persistent level (no InitWorld, no BeginPlay)
+	// This is the safe way: NewObject into the level, then add to actors array
+	AActor* NewActor = NewObject<AActor>(EditorWorld->PersistentLevel, ActorClass,
+		NAME_None, RF_Transactional);
+	if (!NewActor)
+	{
+		return TEXT("ERROR: NewObject returned null");
+	}
+
+	// Set transform before registering
+	NewActor->SetActorLocationAndRotation(Location, Rotation);
+
+	// Add to the persistent level's actor list
+	EditorWorld->PersistentLevel->Actors.Add(NewActor);
+	EditorWorld->PersistentLevel->ActorsForGC.Add(NewActor);
+
+	UE_LOG(LogSLFAutomation, Warning, TEXT("  Created: %s at %s"), *NewActor->GetName(), *Location.ToString());
+
+	// Save ONLY the map (no InitWorld means existing actors are untouched)
+	MapPackage->MarkPackageDirty();
+	FString MapFileName = FPackageName::LongPackageNameToFilename(MapPackage->GetName(), FPackageName::GetMapPackageExtension());
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Standalone;
+	bool bSaved = UPackage::SavePackage(MapPackage, EditorWorld, *MapFileName, SaveArgs);
+
+	return FString::Printf(TEXT("Placed %s at %s (saved=%s)"),
+		*NewActor->GetName(), *Location.ToString(), bSaved ? TEXT("true") : TEXT("false"));
+}
+
 #endif // WITH_EDITOR
+
+// ═══════════════════════════════════════════════════════════════════════
+// Runtime Debug Diagnostics (work in PIE, not editor-only)
+// ═══════════════════════════════════════════════════════════════════════
+
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Components/PrimitiveComponent.h"
+#include "Engine/SkeletalMesh.h"
+#include "Animation/AnimInstance.h"
+#include "Animation/Skeleton.h"
+#include "Misc/FileHelper.h"
+
+FString USLFAutomationLibrary::DumpCharacterState(AActor* Actor)
+{
+	if (!Actor) return TEXT("NULL actor");
+
+	FString Out;
+	Out += FString::Printf(TEXT("=== DUMP: %s ===\n"), *Actor->GetName());
+	Out += FString::Printf(TEXT("Class: %s\n"), *Actor->GetClass()->GetPathName());
+	Out += FString::Printf(TEXT("Location: %s\n"), *Actor->GetActorLocation().ToString());
+	Out += FString::Printf(TEXT("Rotation: %s\n"), *Actor->GetActorRotation().ToString());
+	Out += FString::Printf(TEXT("ActorScale3D: %s\n"), *Actor->GetActorScale3D().ToString());
+	Out += FString::Printf(TEXT("Hidden: %d\n"), Actor->IsHidden());
+	Out += FString::Printf(TEXT("ActorEnableCollision: %d\n"), Actor->GetActorEnableCollision());
+
+	// Class hierarchy
+	Out += TEXT("\n--- CLASS HIERARCHY ---\n");
+	UClass* Cls = Actor->GetClass();
+	int32 Depth = 0;
+	while (Cls)
+	{
+		Out += FString::Printf(TEXT("  %s%s\n"), *FString::ChrN(Depth * 2, ' '), *Cls->GetName());
+		Cls = Cls->GetSuperClass();
+		Depth++;
+	}
+
+	// All components
+	Out += TEXT("\n--- ALL COMPONENTS ---\n");
+	TArray<UActorComponent*> AllComps;
+	Actor->GetComponents(AllComps);
+	for (UActorComponent* Comp : AllComps)
+	{
+		if (!Comp) continue;
+		Out += FString::Printf(TEXT("  [%s] %s (Class: %s, Active: %d, Ticking: %d)\n"),
+			Comp == Actor->GetRootComponent() ? TEXT("ROOT") : TEXT("    "),
+			*Comp->GetName(),
+			*Comp->GetClass()->GetName(),
+			Comp->IsActive(),
+			Comp->IsComponentTickEnabled());
+
+		// Scene component transform
+		if (USceneComponent* SC = Cast<USceneComponent>(Comp))
+		{
+			Out += FString::Printf(TEXT("       RelLoc: %s  RelRot: %s  RelScale: %s\n"),
+				*SC->GetRelativeLocation().ToString(),
+				*SC->GetRelativeRotation().ToString(),
+				*SC->GetRelativeScale3D().ToString());
+			Out += FString::Printf(TEXT("       WorldLoc: %s  WorldScale: %s\n"),
+				*SC->GetComponentLocation().ToString(),
+				*SC->GetComponentScale().ToString());
+			Out += FString::Printf(TEXT("       Visible: %d  Hidden: %d\n"),
+				SC->IsVisible(), SC->bHiddenInGame);
+
+			if (UPrimitiveComponent* PC = Cast<UPrimitiveComponent>(Comp))
+			{
+				Out += FString::Printf(TEXT("       CollisionEnabled: %d  CollisionProfile: %s  CollisionObjectType: %d\n"),
+					(int32)PC->GetCollisionEnabled(),
+					*PC->GetCollisionProfileName().ToString(),
+					(int32)PC->GetCollisionObjectType());
+				Out += FString::Printf(TEXT("       GenerateOverlaps: %d  SimulatePhysics: %d\n"),
+					PC->GetGenerateOverlapEvents(),
+					PC->IsSimulatingPhysics());
+				FBoxSphereBounds Bounds = PC->CalcBounds(PC->GetComponentTransform());
+				Out += FString::Printf(TEXT("       Bounds Origin: %s Extent: %s Radius: %.1f\n"),
+					*Bounds.Origin.ToString(), *Bounds.BoxExtent.ToString(), Bounds.SphereRadius);
+			}
+		}
+	}
+
+	// Capsule specifics
+	ACharacter* Char = Cast<ACharacter>(Actor);
+	if (Char)
+	{
+		Out += TEXT("\n--- CAPSULE ---\n");
+		UCapsuleComponent* Cap = Char->GetCapsuleComponent();
+		if (Cap)
+		{
+			float R, H;
+			Cap->GetScaledCapsuleSize(R, H);
+			float UR, UH;
+			Cap->GetUnscaledCapsuleSize(UR, UH);
+			Out += FString::Printf(TEXT("  Scaled: Radius=%.1f HalfHeight=%.1f\n"), R, H);
+			Out += FString::Printf(TEXT("  Unscaled: Radius=%.1f HalfHeight=%.1f\n"), UR, UH);
+			Out += FString::Printf(TEXT("  CollisionEnabled: %d  Profile: %s\n"),
+				(int32)Cap->GetCollisionEnabled(), *Cap->GetCollisionProfileName().ToString());
+			Out += FString::Printf(TEXT("  WorldLoc: %s\n"), *Cap->GetComponentLocation().ToString());
+		}
+		else
+		{
+			Out += TEXT("  CAPSULE IS NULL!\n");
+		}
+
+		// Movement component
+		Out += TEXT("\n--- CHARACTER MOVEMENT ---\n");
+		UCharacterMovementComponent* MC = Char->GetCharacterMovement();
+		if (MC)
+		{
+			Out += FString::Printf(TEXT("  MovementMode: %d  CustomMode: %d\n"),
+				(int32)MC->MovementMode.GetValue(), MC->CustomMovementMode);
+			Out += FString::Printf(TEXT("  Velocity: %s  Speed: %.1f\n"),
+				*MC->Velocity.ToString(), MC->Velocity.Size());
+			Out += FString::Printf(TEXT("  IsFalling: %d  IsMovingOnGround: %d  IsFlying: %d\n"),
+				MC->IsFalling(), MC->IsMovingOnGround(), MC->IsFlying());
+			Out += FString::Printf(TEXT("  MaxWalkSpeed: %.1f  GravityScale: %.2f  GravityZ: %.1f\n"),
+				MC->MaxWalkSpeed, MC->GravityScale, MC->GetGravityZ());
+			Out += FString::Printf(TEXT("  HasValidData: %d  Active: %d  Ticking: %d\n"),
+				MC->HasValidData(), MC->IsActive(), MC->IsComponentTickEnabled());
+			Out += FString::Printf(TEXT("  UpdatedComponent: %s  UpdatedPrimitive: %s\n"),
+				MC->UpdatedComponent ? *MC->UpdatedComponent->GetName() : TEXT("NULL"),
+				MC->UpdatedPrimitive ? *MC->UpdatedPrimitive->GetName() : TEXT("NULL"));
+			Out += FString::Printf(TEXT("  FloorNormal: %s  FloorDist: %.2f  bOnFloor: %d\n"),
+				*MC->CurrentFloor.HitResult.Normal.ToString(),
+				MC->CurrentFloor.FloorDist,
+				MC->CurrentFloor.bWalkableFloor);
+			Out += FString::Printf(TEXT("  NavAgent Radius: %.1f Height: %.1f\n"),
+				MC->GetNavAgentPropertiesRef().AgentRadius,
+				MC->GetNavAgentPropertiesRef().AgentHeight);
+		}
+		else
+		{
+			Out += TEXT("  MOVEMENT COMPONENT IS NULL!\n");
+		}
+
+		// Mesh
+		Out += TEXT("\n--- SKELETAL MESH ---\n");
+		USkeletalMeshComponent* MeshComp = Char->GetMesh();
+		if (MeshComp)
+		{
+			Out += FString::Printf(TEXT("  SkeletalMesh: %s\n"),
+				MeshComp->GetSkeletalMeshAsset() ? *MeshComp->GetSkeletalMeshAsset()->GetPathName() : TEXT("NULL"));
+			Out += FString::Printf(TEXT("  Skeleton: %s\n"),
+				(MeshComp->GetSkeletalMeshAsset() && MeshComp->GetSkeletalMeshAsset()->GetSkeleton())
+					? *MeshComp->GetSkeletalMeshAsset()->GetSkeleton()->GetPathName() : TEXT("NULL"));
+			Out += FString::Printf(TEXT("  AnimClass: %s\n"),
+				MeshComp->AnimClass ? *MeshComp->AnimClass->GetPathName() : TEXT("NULL"));
+			Out += FString::Printf(TEXT("  AnimInstance: %s\n"),
+				MeshComp->GetAnimInstance() ? *MeshComp->GetAnimInstance()->GetClass()->GetPathName() : TEXT("NULL"));
+			Out += FString::Printf(TEXT("  NumBones: %d  NumMaterials: %d\n"),
+				MeshComp->GetNumBones(), MeshComp->GetNumMaterials());
+			Out += FString::Printf(TEXT("  RelLoc: %s  RelScale: %s\n"),
+				*MeshComp->GetRelativeLocation().ToString(),
+				*MeshComp->GetRelativeScale3D().ToString());
+			Out += FString::Printf(TEXT("  WorldLoc: %s  WorldScale: %s\n"),
+				*MeshComp->GetComponentLocation().ToString(),
+				*MeshComp->GetComponentScale().ToString());
+			Out += FString::Printf(TEXT("  CollisionEnabled: %d  Profile: %s\n"),
+				(int32)MeshComp->GetCollisionEnabled(),
+				*MeshComp->GetCollisionProfileName().ToString());
+			Out += FString::Printf(TEXT("  Visible: %d  HiddenInGame: %d  BoundsScale: %.1f\n"),
+				MeshComp->IsVisible(), MeshComp->bHiddenInGame, MeshComp->BoundsScale);
+			Out += FString::Printf(TEXT("  AttachParent: %s\n"),
+				MeshComp->GetAttachParent() ? *MeshComp->GetAttachParent()->GetName() : TEXT("NULL"));
+
+			// Materials
+			for (int32 i = 0; i < MeshComp->GetNumMaterials(); i++)
+			{
+				UMaterialInterface* Mat = MeshComp->GetMaterial(i);
+				Out += FString::Printf(TEXT("  Material[%d]: %s\n"), i,
+					Mat ? *Mat->GetPathName() : TEXT("NULL"));
+			}
+		}
+		else
+		{
+			Out += TEXT("  MESH COMPONENT IS NULL!\n");
+		}
+	}
+
+	return Out;
+}
+
+FString USLFAutomationLibrary::CompareCharacters(AActor* ActorA, AActor* ActorB, const FString& OutputPath)
+{
+	FString Report;
+	Report += TEXT("╔══════════════════════════════════════════════════════════════╗\n");
+	Report += TEXT("║           CHARACTER COMPARISON DIAGNOSTIC REPORT            ║\n");
+	Report += TEXT("╚══════════════════════════════════════════════════════════════╝\n\n");
+
+	if (ActorA)
+	{
+		Report += DumpCharacterState(ActorA);
+		Report += TEXT("\n\n");
+	}
+	else
+	{
+		Report += TEXT("=== ACTOR A: NULL ===\n\n");
+	}
+
+	if (ActorB)
+	{
+		Report += DumpCharacterState(ActorB);
+		Report += TEXT("\n\n");
+	}
+	else
+	{
+		Report += TEXT("=== ACTOR B: NULL ===\n\n");
+	}
+
+	// Side-by-side diff of key values
+	ACharacter* CharA = Cast<ACharacter>(ActorA);
+	ACharacter* CharB = Cast<ACharacter>(ActorB);
+	if (CharA && CharB)
+	{
+		Report += TEXT("═══ KEY DIFFERENCES ═══\n");
+
+		auto CompareVal = [&](const FString& Label, const FString& ValA, const FString& ValB)
+		{
+			bool Same = ValA == ValB;
+			Report += FString::Printf(TEXT("  %s%-30s  A=%-40s  B=%s\n"),
+				Same ? TEXT("  ") : TEXT(">>"),
+				*Label, *ValA, *ValB);
+		};
+
+		CompareVal(TEXT("Class"), ActorA->GetClass()->GetName(), ActorB->GetClass()->GetName());
+		CompareVal(TEXT("ActorScale3D"), ActorA->GetActorScale3D().ToString(), ActorB->GetActorScale3D().ToString());
+		CompareVal(TEXT("Hidden"), FString::Printf(TEXT("%d"), ActorA->IsHidden()), FString::Printf(TEXT("%d"), ActorB->IsHidden()));
+
+		UCapsuleComponent* CapA = CharA->GetCapsuleComponent();
+		UCapsuleComponent* CapB = CharB->GetCapsuleComponent();
+		if (CapA && CapB)
+		{
+			float RA, HA, RB, HB;
+			CapA->GetScaledCapsuleSize(RA, HA);
+			CapB->GetScaledCapsuleSize(RB, HB);
+			CompareVal(TEXT("Capsule Radius"), FString::Printf(TEXT("%.1f"), RA), FString::Printf(TEXT("%.1f"), RB));
+			CompareVal(TEXT("Capsule HalfHeight"), FString::Printf(TEXT("%.1f"), HA), FString::Printf(TEXT("%.1f"), HB));
+			CompareVal(TEXT("Capsule Collision"), FString::Printf(TEXT("%d"), (int32)CapA->GetCollisionEnabled()),
+				FString::Printf(TEXT("%d"), (int32)CapB->GetCollisionEnabled()));
+			CompareVal(TEXT("Capsule Profile"), CapA->GetCollisionProfileName().ToString(), CapB->GetCollisionProfileName().ToString());
+		}
+
+		UCharacterMovementComponent* MCA = CharA->GetCharacterMovement();
+		UCharacterMovementComponent* MCB = CharB->GetCharacterMovement();
+		if (MCA && MCB)
+		{
+			CompareVal(TEXT("MovementMode"), FString::Printf(TEXT("%d"), (int32)MCA->MovementMode.GetValue()),
+				FString::Printf(TEXT("%d"), (int32)MCB->MovementMode.GetValue()));
+			CompareVal(TEXT("IsFalling"), FString::Printf(TEXT("%d"), MCA->IsFalling()), FString::Printf(TEXT("%d"), MCB->IsFalling()));
+			CompareVal(TEXT("IsMovingOnGround"), FString::Printf(TEXT("%d"), MCA->IsMovingOnGround()), FString::Printf(TEXT("%d"), MCB->IsMovingOnGround()));
+			CompareVal(TEXT("GravityScale"), FString::Printf(TEXT("%.2f"), MCA->GravityScale), FString::Printf(TEXT("%.2f"), MCB->GravityScale));
+			CompareVal(TEXT("MaxWalkSpeed"), FString::Printf(TEXT("%.1f"), MCA->MaxWalkSpeed), FString::Printf(TEXT("%.1f"), MCB->MaxWalkSpeed));
+			CompareVal(TEXT("UpdatedComponent"), MCA->UpdatedComponent ? MCA->UpdatedComponent->GetName() : TEXT("NULL"),
+				MCB->UpdatedComponent ? MCB->UpdatedComponent->GetName() : TEXT("NULL"));
+			CompareVal(TEXT("UpdatedPrimitive"), MCA->UpdatedPrimitive ? MCA->UpdatedPrimitive->GetName() : TEXT("NULL"),
+				MCB->UpdatedPrimitive ? MCB->UpdatedPrimitive->GetName() : TEXT("NULL"));
+			CompareVal(TEXT("FloorWalkable"), FString::Printf(TEXT("%d"), MCA->CurrentFloor.bWalkableFloor),
+				FString::Printf(TEXT("%d"), MCB->CurrentFloor.bWalkableFloor));
+			CompareVal(TEXT("FloorNormal"), MCA->CurrentFloor.HitResult.Normal.ToString(), MCB->CurrentFloor.HitResult.Normal.ToString());
+			CompareVal(TEXT("Active"), FString::Printf(TEXT("%d"), MCA->IsActive()), FString::Printf(TEXT("%d"), MCB->IsActive()));
+			CompareVal(TEXT("Ticking"), FString::Printf(TEXT("%d"), MCA->IsComponentTickEnabled()), FString::Printf(TEXT("%d"), MCB->IsComponentTickEnabled()));
+		}
+
+		USkeletalMeshComponent* MeshA = CharA->GetMesh();
+		USkeletalMeshComponent* MeshB = CharB->GetMesh();
+		if (MeshA && MeshB)
+		{
+			CompareVal(TEXT("Mesh Asset"), MeshA->GetSkeletalMeshAsset() ? MeshA->GetSkeletalMeshAsset()->GetName() : TEXT("NULL"),
+				MeshB->GetSkeletalMeshAsset() ? MeshB->GetSkeletalMeshAsset()->GetName() : TEXT("NULL"));
+			CompareVal(TEXT("Mesh RelScale"), MeshA->GetRelativeScale3D().ToString(), MeshB->GetRelativeScale3D().ToString());
+			CompareVal(TEXT("Mesh RelLoc"), MeshA->GetRelativeLocation().ToString(), MeshB->GetRelativeLocation().ToString());
+			CompareVal(TEXT("Mesh Collision"), FString::Printf(TEXT("%d"), (int32)MeshA->GetCollisionEnabled()),
+				FString::Printf(TEXT("%d"), (int32)MeshB->GetCollisionEnabled()));
+			CompareVal(TEXT("Mesh NumBones"), FString::Printf(TEXT("%d"), MeshA->GetNumBones()),
+				FString::Printf(TEXT("%d"), MeshB->GetNumBones()));
+			CompareVal(TEXT("Mesh Visible"), FString::Printf(TEXT("%d"), MeshA->IsVisible()),
+				FString::Printf(TEXT("%d"), MeshB->IsVisible()));
+			CompareVal(TEXT("AnimInstance"), MeshA->GetAnimInstance() ? MeshA->GetAnimInstance()->GetClass()->GetName() : TEXT("NULL"),
+				MeshB->GetAnimInstance() ? MeshB->GetAnimInstance()->GetClass()->GetName() : TEXT("NULL"));
+		}
+
+		// Component count comparison
+		TArray<UActorComponent*> CompsA, CompsB;
+		ActorA->GetComponents(CompsA);
+		ActorB->GetComponents(CompsB);
+		CompareVal(TEXT("Total Components"), FString::Printf(TEXT("%d"), CompsA.Num()), FString::Printf(TEXT("%d"), CompsB.Num()));
+
+		// List components by class that exist in one but not the other
+		TMap<FString, int32> ClassCountA, ClassCountB;
+		for (auto* C : CompsA) if (C) ClassCountA.FindOrAdd(C->GetClass()->GetName())++;
+		for (auto* C : CompsB) if (C) ClassCountB.FindOrAdd(C->GetClass()->GetName())++;
+
+		Report += TEXT("\n  Component class counts:\n");
+		TSet<FString> AllClasses;
+		for (auto& P : ClassCountA) AllClasses.Add(P.Key);
+		for (auto& P : ClassCountB) AllClasses.Add(P.Key);
+		for (const FString& ClassName : AllClasses)
+		{
+			int32 CA = ClassCountA.FindRef(ClassName);
+			int32 CB = ClassCountB.FindRef(ClassName);
+			Report += FString::Printf(TEXT("    %s%-30s  A=%d  B=%d\n"),
+				CA != CB ? TEXT(">>") : TEXT("  "), *ClassName, CA, CB);
+		}
+	}
+
+	// Write to file
+	if (!OutputPath.IsEmpty())
+	{
+		FFileHelper::SaveStringToFile(Report, *OutputPath);
+		UE_LOG(LogTemp, Warning, TEXT("[CompareCharacters] Report saved to: %s"), *OutputPath);
+	}
+
+	// Also log it
+	TArray<FString> Lines;
+	Report.ParseIntoArrayLines(Lines);
+	for (const FString& Line : Lines)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *Line);
+	}
+
+	return Report;
+}

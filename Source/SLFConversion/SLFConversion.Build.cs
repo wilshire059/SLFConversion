@@ -68,7 +68,8 @@ public class SLFConversion : ModuleRules
 				"UMGEditor",        // For WidgetBlueprint access
 				"Json",             // For JSON serialization
 				"JsonUtilities",    // For JSON helpers
-				"EditorScriptingUtilities"  // For UEditorAssetLibrary
+				"EditorScriptingUtilities",  // For UEditorAssetLibrary
+				"FBX"               // For FFbxImporter access (animation import)
 			});
 		}
 

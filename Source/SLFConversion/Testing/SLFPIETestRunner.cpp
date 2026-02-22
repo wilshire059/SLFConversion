@@ -13,6 +13,7 @@
 #include "Components/AC_SaveLoadManager.h"
 #include "Components/AIInteractionManagerComponent.h"
 #include "Interfaces/BPI_Interactable.h"
+#include "SLFAutomationLibrary.h"
 #include "InstancedStruct.h"
 #include "Blueprint/UserWidget.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
@@ -23,6 +24,7 @@
 #include "Widgets/W_Dialog.h"
 #include "GameFramework/HUD.h"
 #include "EngineUtils.h"
+#include "UnrealClient.h"
 
 // ========== CONSOLE COMMANDS ==========
 
@@ -298,6 +300,143 @@ static FAutoConsoleCommand CCmdDiagnoseSettings(
 	})
 );
 
+// --- Spawn commands for Guard & Sentinel enemies (PIE only) ---
+
+static AActor* SpawnEnemyInPIE(UWorld* World, const TCHAR* BlueprintPath, const TCHAR* FallbackClassName, FVector Offset)
+{
+	ACharacter* PlayerChar = UGameplayStatics::GetPlayerCharacter(World, 0);
+	if (!PlayerChar) return nullptr;
+
+	UClass* EnemyClass = LoadClass<AActor>(nullptr, BlueprintPath);
+	if (!EnemyClass)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  Could not load Blueprint, trying C++ class: %s"), FallbackClassName);
+		EnemyClass = FindObject<UClass>(nullptr, FallbackClassName);
+	}
+	if (!EnemyClass) return nullptr;
+
+	FVector PlayerLoc = PlayerChar->GetActorLocation();
+	FVector Forward = PlayerChar->GetActorForwardVector();
+	FVector Right = PlayerChar->GetActorRightVector();
+	FVector SpawnLoc = PlayerLoc + Forward * Offset.X + Right * Offset.Y;
+	SpawnLoc.Z = PlayerLoc.Z + Offset.Z;
+
+	// Line trace to avoid spawning inside walls — pull back if blocked
+	FHitResult Hit;
+	FCollisionQueryParams TraceParams(SCENE_QUERY_STAT(SpawnEnemyTrace), false, PlayerChar);
+	if (World->LineTraceSingleByChannel(Hit, PlayerLoc, SpawnLoc, ECC_Visibility, TraceParams))
+	{
+		// Hit geometry — spawn just before the hit point, pulled back toward player
+		SpawnLoc = Hit.ImpactPoint - Forward * 50.f;
+		SpawnLoc.Z = PlayerLoc.Z + Offset.Z;
+		UE_LOG(LogTemp, Warning, TEXT("  SpawnEnemy: wall detected at %.0f units, adjusted to (%.0f, %.0f, %.0f)"),
+			Hit.Distance, SpawnLoc.X, SpawnLoc.Y, SpawnLoc.Z);
+	}
+
+	FActorSpawnParameters Params;
+	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+	AActor* Enemy = World->SpawnActor<AActor>(EnemyClass, SpawnLoc, FRotator::ZeroRotator, Params);
+	if (Enemy)
+	{
+		FVector DirToPlayer = (PlayerChar->GetActorLocation() - Enemy->GetActorLocation()).GetSafeNormal();
+		Enemy->SetActorRotation(DirToPlayer.Rotation());
+	}
+	return Enemy;
+}
+
+static FAutoConsoleCommand CCmdSpawnGuard(
+	TEXT("SLF.SpawnGuard"),
+	TEXT("Spawn a Guard enemy in front of the player.\nUsage: SLF.SpawnGuard"),
+	FConsoleCommandDelegate::CreateLambda([]()
+	{
+		UWorld* World = GEngine ? GEngine->GetCurrentPlayWorld() : nullptr;
+		if (!World) { UE_LOG(LogTemp, Error, TEXT("[SLF.SpawnGuard] No play world!")); return; }
+
+		AActor* Guard = SpawnEnemyInPIE(World,
+			TEXT("/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Guard.B_Soulslike_Enemy_Guard_C"),
+			TEXT("/Script/SLFConversion.SLFEnemyGuard"),
+			FVector(600.f, 0.f, 0.f));
+
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.SpawnGuard] %s at %s"),
+			Guard ? *Guard->GetName() : TEXT("FAILED"),
+			Guard ? *Guard->GetActorLocation().ToString() : TEXT("N/A"));
+	})
+);
+
+static FAutoConsoleCommand CCmdSpawnSentinel(
+	TEXT("SLF.SpawnSentinel"),
+	TEXT("Spawn a Sentinel enemy in front of the player.\nUsage: SLF.SpawnSentinel"),
+	FConsoleCommandDelegate::CreateLambda([]()
+	{
+		UWorld* World = GEngine ? GEngine->GetCurrentPlayWorld() : nullptr;
+		if (!World) { UE_LOG(LogTemp, Error, TEXT("[SLF.SpawnSentinel] No play world!")); return; }
+
+		AActor* Sentinel = SpawnEnemyInPIE(World,
+			TEXT("/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Sentinel.B_Soulslike_Enemy_Sentinel_C"),
+			TEXT("/Script/SLFConversion.SLFEnemySentinel"),
+			FVector(600.f, 0.f, 0.f));
+
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.SpawnSentinel] %s at %s"),
+			Sentinel ? *Sentinel->GetName() : TEXT("FAILED"),
+			Sentinel ? *Sentinel->GetActorLocation().ToString() : TEXT("N/A"));
+	})
+);
+
+static FAutoConsoleCommand CCmdSpawnComparison(
+	TEXT("SLF.SpawnComparison"),
+	TEXT("Spawn Guard and Sentinel side by side for visual comparison.\nUsage: SLF.SpawnComparison"),
+	FConsoleCommandDelegate::CreateLambda([]()
+	{
+		UWorld* World = GEngine ? GEngine->GetCurrentPlayWorld() : nullptr;
+		if (!World) { UE_LOG(LogTemp, Error, TEXT("[SLF.SpawnComparison] No play world!")); return; }
+
+		// Guard on the left (-200 Y), Sentinel on the right (+200 Y)
+		AActor* Guard = SpawnEnemyInPIE(World,
+			TEXT("/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Guard.B_Soulslike_Enemy_Guard_C"),
+			TEXT("/Script/SLFConversion.SLFEnemyGuard"),
+			FVector(600.f, -250.f, 0.f));
+
+		AActor* Sentinel = SpawnEnemyInPIE(World,
+			TEXT("/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Sentinel.B_Soulslike_Enemy_Sentinel_C"),
+			TEXT("/Script/SLFConversion.SLFEnemySentinel"),
+			FVector(600.f, 250.f, 0.f));
+
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.SpawnComparison] Guard: %s | Sentinel: %s"),
+			Guard ? *Guard->GetActorLocation().ToString() : TEXT("FAILED"),
+			Sentinel ? *Sentinel->GetActorLocation().ToString() : TEXT("FAILED"));
+	})
+);
+
+static FAutoConsoleCommand CCmdCompareEnemies(
+	TEXT("SLF.CompareEnemies"),
+	TEXT("Find Guard and Sentinel in the world and dump full state comparison.\nUsage: SLF.CompareEnemies"),
+	FConsoleCommandDelegate::CreateLambda([]()
+	{
+		UWorld* World = GEngine ? GEngine->GetCurrentPlayWorld() : nullptr;
+		if (!World) { UE_LOG(LogTemp, Error, TEXT("[SLF.CompareEnemies] No play world!")); return; }
+
+		AActor* Guard = nullptr;
+		AActor* Sentinel = nullptr;
+		for (TActorIterator<AActor> It(World); It; ++It)
+		{
+			FString ClassName = It->GetClass()->GetName();
+			if (ClassName.Contains(TEXT("Guard")) && ClassName.Contains(TEXT("Enemy")))
+				Guard = *It;
+			if (ClassName.Contains(TEXT("Sentinel")))
+				Sentinel = *It;
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.CompareEnemies] Guard=%s  Sentinel=%s"),
+			Guard ? *Guard->GetName() : TEXT("NOT FOUND"),
+			Sentinel ? *Sentinel->GetName() : TEXT("NOT FOUND"));
+
+		FString OutputFile = FPaths::ProjectDir() / TEXT("sentinel_compare.txt");
+		USLFAutomationLibrary::CompareCharacters(Guard, Sentinel, OutputFile);
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.CompareEnemies] Report saved to: %s"), *OutputFile);
+	})
+);
+
 // ========== TEST RUNNER IMPLEMENTATION ==========
 
 void USLFPIETestRunner::Initialize(FSubsystemCollectionBase& Collection)
@@ -313,6 +452,129 @@ void USLFPIETestRunner::Initialize(FSubsystemCollectionBase& Collection)
 	UE_LOG(LogTemp, Log, TEXT("  SLF.SimDodge - Simulate dodge"));
 	UE_LOG(LogTemp, Log, TEXT("  SLF.SimMove <X> <Y> <Dur> - Simulate movement"));
 	UE_LOG(LogTemp, Log, TEXT("  SLF.SimCrouch - Toggle crouch directly"));
+
+	// Auto-spawn Sentinel near the player (if not already present)
+	if (UWorld* World = GetWorld())
+	{
+		FTimerHandle SentinelSpawnTimer;
+		World->GetTimerManager().SetTimer(SentinelSpawnTimer, [this]()
+		{
+			UWorld* World = GetWorld();
+			if (!World) return;
+
+			// Check if a Sentinel already exists
+			for (TActorIterator<AActor> It(World); It; ++It)
+			{
+				if (It->GetClass()->GetName().Contains(TEXT("Sentinel")))
+				{
+					return; // Already spawned
+				}
+			}
+
+			// Spawn near the player using the same helper as SLF.SpawnSentinel
+			AActor* Sentinel = SpawnEnemyInPIE(World,
+				TEXT("/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Sentinel.B_Soulslike_Enemy_Sentinel_C"),
+				TEXT("/Script/SLFConversion.SLFEnemySentinel"),
+				FVector(300.f, 0.f, 100.f)); // 300 forward, 100 above (closer to player, stays on floor)
+
+			UE_LOG(LogTemp, Warning, TEXT("[SLFPIETestRunner] Auto-spawned Sentinel: %s at %s"),
+				Sentinel ? *Sentinel->GetName() : TEXT("FAILED"),
+				Sentinel ? *Sentinel->GetActorLocation().ToString() : TEXT("N/A"));
+
+			// Run comparison diagnostic 1 second after spawn
+			if (Sentinel)
+			{
+				FTimerHandle CompareTimer;
+				World->GetTimerManager().SetTimer(CompareTimer, [World]()
+				{
+					AActor* Guard = nullptr;
+					AActor* Sent = nullptr;
+					for (TActorIterator<AActor> It(World); It; ++It)
+					{
+						FString CN = It->GetClass()->GetName();
+						if (CN.Contains(TEXT("Guard")) && CN.Contains(TEXT("Enemy"))) Guard = *It;
+						if (CN.Contains(TEXT("Sentinel"))) Sent = *It;
+					}
+					FString OutputFile = FPaths::ProjectDir() / TEXT("sentinel_compare.txt");
+					USLFAutomationLibrary::CompareCharacters(Guard, Sent, OutputFile);
+				}, 1.0f, false);
+
+				// Dump live bone transforms 3 seconds after spawn to verify animation is playing
+				FTimerHandle BoneDiagTimer;
+				World->GetTimerManager().SetTimer(BoneDiagTimer, [World]()
+				{
+					for (TActorIterator<AActor> It(World); It; ++It)
+					{
+						if (!It->GetClass()->GetName().Contains(TEXT("Sentinel"))) continue;
+						ACharacter* Char = Cast<ACharacter>(*It);
+						if (!Char) continue;
+						USkeletalMeshComponent* SMC = Char->GetMesh();
+						if (!SMC) continue;
+
+						UE_LOG(LogTemp, Warning, TEXT("[SentinelBoneDiag] === LIVE BONE TRANSFORMS ==="));
+						UE_LOG(LogTemp, Warning, TEXT("[SentinelBoneDiag] Mesh: %s  AnimInstance: %s"),
+							SMC->GetSkeletalMeshAsset() ? *SMC->GetSkeletalMeshAsset()->GetName() : TEXT("null"),
+							SMC->GetAnimInstance() ? *SMC->GetAnimInstance()->GetClass()->GetName() : TEXT("null"));
+
+						// Dump key bone transforms in component space
+						const TArray<FTransform>& CSTransforms = SMC->GetComponentSpaceTransforms();
+						const FReferenceSkeleton& RefSkel = SMC->GetSkeletalMeshAsset()->GetRefSkeleton();
+						int32 NumBones = FMath::Min(CSTransforms.Num(), RefSkel.GetNum());
+
+						const TCHAR* KeyBones[] = {
+							TEXT("root"), TEXT("pelvis"), TEXT("spine_01"), TEXT("head"),
+							TEXT("hand_r"), TEXT("hand_l"), TEXT("foot_l"), TEXT("foot_r"),
+							TEXT("thigh_l"), TEXT("upperarm_r"), TEXT("weapon_r")
+						};
+
+						int32 NonIdentityCount = 0;
+						for (int32 i = 0; i < NumBones; i++)
+						{
+							FTransform T = CSTransforms[i];
+							FVector Pos = T.GetTranslation();
+							FQuat Rot = T.GetRotation();
+							bool bIsIdentity = Pos.IsNearlyZero(0.01f) && Rot.Equals(FQuat::Identity, 0.001f);
+							if (!bIsIdentity) NonIdentityCount++;
+
+							// Check if this is a key bone
+							FName BoneName = RefSkel.GetBoneName(i);
+							bool bIsKey = false;
+							for (const TCHAR* KB : KeyBones)
+							{
+								if (BoneName == FName(KB)) { bIsKey = true; break; }
+							}
+
+							if (bIsKey)
+							{
+								UE_LOG(LogTemp, Warning, TEXT("[SentinelBoneDiag]   %s[%d]: Pos=(%0.2f, %0.2f, %0.2f) Rot=(%0.4f, %0.4f, %0.4f, %0.4f) %s"),
+									*BoneName.ToString(), i, Pos.X, Pos.Y, Pos.Z,
+									Rot.X, Rot.Y, Rot.Z, Rot.W,
+									bIsIdentity ? TEXT("[IDENTITY!]") : TEXT("OK"));
+							}
+						}
+
+						UE_LOG(LogTemp, Warning, TEXT("[SentinelBoneDiag] Non-identity bones: %d/%d"), NonIdentityCount, NumBones);
+
+						// Also check current montage
+						UAnimInstance* AI = SMC->GetAnimInstance();
+						if (AI)
+						{
+							UAnimMontage* CurMontage = AI->GetCurrentActiveMontage();
+							UE_LOG(LogTemp, Warning, TEXT("[SentinelBoneDiag] Current Montage: %s"),
+								CurMontage ? *CurMontage->GetName() : TEXT("none"));
+						}
+						break;
+					}
+
+					// Take a screenshot
+					FString ShotPath = FPaths::ProjectDir() / TEXT("Saved/Screenshots/WindowsEditor/Sentinel_PIE_Test.png");
+					FScreenshotRequest::RequestScreenshot(ShotPath, false, false);
+					UE_LOG(LogTemp, Warning, TEXT("[SentinelBoneDiag] Screenshot requested: %s"), *ShotPath);
+
+				}, 3.0f, false);
+			}
+		}, 2.0f, false);
+	}
 
 	// Check for auto-test command line argument
 	if (FParse::Param(FCommandLine::Get(), TEXT("SLFAutoTest")))

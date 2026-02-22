@@ -8,6 +8,10 @@
 #include "HAL/IConsoleManager.h"
 #include "EditorAssetLibrary.h"
 #include "Misc/FileHelper.h"
+#include "Animation/AnimSequence.h"
+#include "AssetRegistry/AssetRegistryModule.h"
+#include "AssetCompilingManager.h"
+#include "UObject/SavePackage.h"
 
 // Console command to reparent a Blueprint to a C++ class
 // Usage: SLF.Reparent /Game/Path/To/Blueprint /Script/Module.CppClassName
@@ -558,6 +562,227 @@ static FAutoConsoleCommand ListBonesCmd(
 
 		FString Result = USLFAutomationLibrary::ListSkeletonBones(Args[0]);
 		UE_LOG(LogTemp, Warning, TEXT("[SLF.ListBones]\n%s"), *Result);
+	})
+);
+
+// ============================================================================
+// SENTINEL ENEMY COMMANDS
+// ============================================================================
+
+// Console command to bake an animation with forensically distinct transforms
+// Usage: SLF.BakeAnim <SourcePath> <OutputDir> <NewName> [NoiseAmp] [WarpStr] [OffsetX] [OffsetY] [OffsetZ] [FPS] [Seed]
+static FAutoConsoleCommand BakeAnimCmd(
+	TEXT("SLF.BakeAnim"),
+	TEXT("Bake animation with noise/warp/offsets.\nUsage: SLF.BakeAnim <SourcePath> <OutputDir> <NewName> [NoiseAmp] [WarpStr] [OffsetX] [OffsetY] [OffsetZ] [FPS] [Seed]"),
+	FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
+	{
+		if (Args.Num() < 3)
+		{
+			UE_LOG(LogTemp, Error, TEXT("SLF.BakeAnim requires: <SourcePath> <OutputDir> <NewName> [NoiseAmp] [WarpStr] [OffsetX] [OffsetY] [OffsetZ] [FPS] [Seed]"));
+			return;
+		}
+
+		float Noise = Args.Num() > 3 ? FCString::Atof(*Args[3]) : 2.0f;
+		float Warp = Args.Num() > 4 ? FCString::Atof(*Args[4]) : 0.15f;
+		FVector Offset = FVector::ZeroVector;
+		if (Args.Num() > 5) Offset.X = FCString::Atof(*Args[5]);
+		if (Args.Num() > 6) Offset.Y = FCString::Atof(*Args[6]);
+		if (Args.Num() > 7) Offset.Z = FCString::Atof(*Args[7]);
+		float FPS = Args.Num() > 8 ? FCString::Atof(*Args[8]) : 24.0f;
+		int32 Seed = Args.Num() > 9 ? FCString::Atoi(*Args[9]) : 0;
+
+		FString Result = USLFAutomationLibrary::BakeAnimationTransforms(
+			Args[0], Args[1], Args[2], Noise, Warp, Offset, FPS, Seed);
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.BakeAnim]\n%s"), *Result);
+	})
+);
+
+// Console command to diagnose skeleton mismatch
+// Usage: SLF.DiagSkeleton <SkeletonA> <SkeletonB> [AnimOnA] [OutputFile]
+static FAutoConsoleCommand DiagSkeletonCmd(
+	TEXT("SLF.DiagSkeleton"),
+	TEXT("Compare two skeletons' ref poses and optionally dump animation frame 0.\nUsage: SLF.DiagSkeleton <SkelA> <SkelB> [AnimOnA] [OutFile]"),
+	FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
+	{
+		if (Args.Num() < 2)
+		{
+			UE_LOG(LogTemp, Error, TEXT("SLF.DiagSkeleton requires: <SkeletonA> <SkeletonB> [AnimOnA] [OutputFile]"));
+			return;
+		}
+		FString AnimPath = Args.Num() > 2 ? Args[2] : TEXT("");
+		FString OutFile = Args.Num() > 3 ? Args[3] : TEXT("C:/scripts/SLFConversion/skeleton_diagnosis.txt");
+		FString Result = USLFAutomationLibrary::DiagnoseSkeletonMismatch(Args[0], Args[1], AnimPath, OutFile);
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.DiagSkeleton] %s"), *Result);
+	})
+);
+
+// Diagnose animation DataModel bone tracks (works in commandlet, unlike GetBoneTransform)
+static FAutoConsoleCommand DiagAnimDataModelCmd(
+	TEXT("SLF.DiagAnimData"),
+	TEXT("Diagnose animation bone data via DataModel.\nUsage: SLF.DiagAnimData <AnimPath>"),
+	FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
+	{
+		if (Args.Num() < 1)
+		{
+			UE_LOG(LogTemp, Error, TEXT("SLF.DiagAnimData requires: <AnimPath>"));
+			return;
+		}
+		FString Result = USLFAutomationLibrary::DiagnoseAnimDataModel(Args[0]);
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.DiagAnimData] %s"), *Result);
+	})
+);
+
+// Step-by-step animation test to isolate Sentinel A-pose root cause
+// Imports the same anim with different FBX/skeleton combos
+static FAutoConsoleCommand AnimTestStepsCmd(
+	TEXT("SLF.AnimTestSteps"),
+	TEXT("Run 3-step animation isolation test.\nUsage: SLF.AnimTestSteps"),
+	FConsoleCommandDelegate::CreateLambda([]()
+	{
+		UE_LOG(LogTemp, Warning, TEXT("=== SLF.AnimTestSteps: Isolating Sentinel A-pose root cause ==="));
+
+		const FString TestDir = TEXT("/Game/Temp/AnimTest");
+		const FString C3100FBX = TEXT("C:/scripts/elden_ring_tools/output/c3100/c3100/fbx/a000_002002.fbx");
+		const FString SentinelFBX = TEXT("C:/scripts/elden_ring_tools/output/sentinel/final/Sentinel_Attack01.fbx");
+		const FString C3100Skel = TEXT("/Game/EldenRingAnimations/c3100_guard/c3100_mesh_Skeleton.c3100_mesh_Skeleton");
+		const FString SentinelSkel = TEXT("/Game/CustomEnemies/Sentinel/SKM_Sentinel_Skeleton.SKM_Sentinel_Skeleton");
+
+		// Step 0: c3100 FBX + c3100 skeleton (should match working original)
+		UE_LOG(LogTemp, Warning, TEXT("--- Step 0: c3100 FBX + c3100 skeleton (BASELINE) ---"));
+		FString R0 = USLFAutomationLibrary::ImportAnimFBXDirect(C3100FBX, TestDir, TEXT("Step0_c3100fbx_c3100skel"), C3100Skel, 1.0f);
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *R0);
+
+		// Step 1: c3100 FBX + Sentinel skeleton (isolates skeleton change)
+		UE_LOG(LogTemp, Warning, TEXT("--- Step 1: c3100 FBX + Sentinel skeleton (SKELETON CHANGE) ---"));
+		FString R1 = USLFAutomationLibrary::ImportAnimFBXDirect(C3100FBX, TestDir, TEXT("Step1_c3100fbx_sentinelskel"), SentinelSkel, 1.0f);
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *R1);
+
+		// Step 2: Sentinel ARP FBX + Sentinel skeleton (isolates FBX change)
+		UE_LOG(LogTemp, Warning, TEXT("--- Step 2: Sentinel ARP FBX + Sentinel skeleton (FBX CHANGE) ---"));
+		FString R2 = USLFAutomationLibrary::ImportAnimFBXDirect(SentinelFBX, TestDir, TEXT("Step2_sentinelfbx_sentinelskel"), SentinelSkel, 1.0f);
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *R2);
+
+		UE_LOG(LogTemp, Warning, TEXT("=== AnimTestSteps COMPLETE ==="));
+		UE_LOG(LogTemp, Warning, TEXT("Open editor and check /Game/Temp/AnimTest/ — which step shows A-pose?"));
+	})
+);
+
+// Console command to recompress all animations in a directory
+// Usage: SLF.RecompressAnims /Game/CustomEnemies/Sentinel/Animations
+static FAutoConsoleCommand RecompressAnimsCmd(
+	TEXT("SLF.RecompressAnims"),
+	TEXT("Recompress all AnimSequences in a directory.\nUsage: SLF.RecompressAnims <DirectoryPath>"),
+	FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
+	{
+		if (Args.Num() < 1)
+		{
+			UE_LOG(LogTemp, Error, TEXT("SLF.RecompressAnims requires: <DirectoryPath>"));
+			return;
+		}
+		const FString& DirPath = Args[0];
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.RecompressAnims] Scanning: %s"), *DirPath);
+
+		FAssetRegistryModule& ARM = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+		TArray<FAssetData> Assets;
+		ARM.Get().GetAssetsByPath(FName(*DirPath), Assets, true);
+
+		int32 Count = 0;
+		for (const FAssetData& AD : Assets)
+		{
+			if (AD.AssetClassPath.GetAssetName() != TEXT("AnimSequence")) continue;
+			UAnimSequence* Anim = Cast<UAnimSequence>(AD.GetAsset());
+			if (!Anim) continue;
+
+			// Check DataModel curve data
+			IAnimationDataModel* DM = Anim->GetDataModel();
+			int32 DMTracks = DM ? DM->GetNumBoneTracks() : 0;
+
+			// Force compression and wait
+			Anim->CacheDerivedDataForCurrentPlatform();
+			Anim->WaitOnExistingCompression(true);
+			FAssetCompilingManager::Get().FinishAllCompilation();
+
+			// Check using the non-deprecated API
+			bool bValid = Anim->IsCompressedDataValid();
+			bool bBoneValid = Anim->IsBoneCompressedDataValid();
+			bool bOutOfDate = Anim->IsCompressedDataOutOfDate();
+
+			// Save
+			UPackage* Pkg = Anim->GetOutermost();
+			FString FileName = FPackageName::LongPackageNameToFilename(Pkg->GetName(), FPackageName::GetAssetPackageExtension());
+			FSavePackageArgs SaveArgs;
+			SaveArgs.TopLevelFlags = RF_Standalone;
+			bool bSaved = UPackage::SavePackage(Pkg, Anim, *FileName, SaveArgs);
+
+			UE_LOG(LogTemp, Warning, TEXT("  %s: DMTracks=%d, Valid=%d, BoneValid=%d, OutOfDate=%d, Saved=%d"),
+				*Anim->GetName(), DMTracks, bValid ? 1 : 0, bBoneValid ? 1 : 0, bOutOfDate ? 1 : 0, bSaved ? 1 : 0);
+			Count++;
+		}
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.RecompressAnims] Done: %d animations processed"), Count);
+	})
+);
+
+// Console command to compare two animations (deep diagnostic)
+// Usage: SLF.CompareAnims /Game/Path/AnimA /Game/Path/AnimB
+static FAutoConsoleCommand CompareAnimsCmd(
+	TEXT("SLF.CompareAnims"),
+	TEXT("Deep comparison of two animations.\nUsage: SLF.CompareAnims <AnimPathA> <AnimPathB>"),
+	FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
+	{
+		if (Args.Num() < 2)
+		{
+			UE_LOG(LogTemp, Error, TEXT("SLF.CompareAnims requires: <AnimPathA> <AnimPathB>"));
+			return;
+		}
+		FString Result = USLFAutomationLibrary::CompareAnimations(Args[0], Args[1]);
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.CompareAnims]\n%s"), *Result);
+	})
+);
+
+// Console command to run the complete Sentinel enemy setup
+// Usage: SLF.SetupSentinel
+static FAutoConsoleCommand SetupSentinelCmd(
+	TEXT("SLF.SetupSentinel"),
+	TEXT("Complete Sentinel enemy setup: bake anims, montages, blend space, AnimBP, data assets.\nUsage: SLF.SetupSentinel"),
+	FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("=== SLF.SetupSentinel: Launching via commandlet-style flow ==="));
+		UE_LOG(LogTemp, Warning, TEXT("  Use: -run=SetupSentinel for full commandlet execution"));
+		UE_LOG(LogTemp, Warning, TEXT("  This console command does a quick single-anim test bake:"));
+
+		// Quick test: bake one animation to verify the pipeline works
+		FString Result = USLFAutomationLibrary::BakeAnimationTransforms(
+			TEXT("/Game/EldenRingAnimations/c3100_guard/Animations/a000_000020"),
+			TEXT("/Game/CustomEnemies/Sentinel/Animations"),
+			TEXT("Sentinel_Idle_Test"),
+			2.0f, 0.15f, FVector(0, 10, 0), 24.0f, 42
+		);
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *Result);
+		UE_LOG(LogTemp, Warning, TEXT("=== For full setup, run: -run=SetupSentinel ==="));
+	})
+);
+
+// Place Sentinel in demo level
+static FAutoConsoleCommand PlaceSentinelCmd(
+	TEXT("SLF.PlaceSentinel"),
+	TEXT("Place Sentinel enemy in the demo level.\nUsage: SLF.PlaceSentinel [X Y Z]"),
+	FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
+	{
+		FVector Location(3000.0f, 1500.0f, 92.0f); // Default: main floor area
+		if (Args.Num() >= 3)
+		{
+			Location.X = FCString::Atof(*Args[0]);
+			Location.Y = FCString::Atof(*Args[1]);
+			Location.Z = FCString::Atof(*Args[2]);
+		}
+
+		FString Result = USLFAutomationLibrary::PlaceActorInLevel(
+			TEXT("/Game/SoulslikeFramework/Maps/L_Demo_Showcase"),
+			TEXT("/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Sentinel"),
+			Location,
+			FRotator(0.0f, 180.0f, 0.0f)
+		);
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.PlaceSentinel] %s"), *Result);
 	})
 );
 
