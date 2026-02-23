@@ -3,6 +3,9 @@
 
 #include "SLFPIETestRunner.h"
 #include "SLFInputSimulator.h"
+#if WITH_EDITOR
+#include "Editor.h"
+#endif
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
@@ -25,6 +28,7 @@
 #include "GameFramework/HUD.h"
 #include "EngineUtils.h"
 #include "UnrealClient.h"
+#include "Blueprints/SLFEnemySentinel.h"
 
 // ========== CONSOLE COMMANDS ==========
 
@@ -437,6 +441,627 @@ static FAutoConsoleCommand CCmdCompareEnemies(
 	})
 );
 
+// --- Photoshoot: orbit camera around Sentinel and take screenshots ---
+#include "Camera/CameraActor.h"
+#include "Camera/CameraComponent.h"
+#include "Engine/StaticMeshActor.h"
+
+static FAutoConsoleCommand CCmdSentinelPhotoshoot(
+	TEXT("SLF.SentinelPhotoshoot"),
+	TEXT("Spawn Sentinel, disable AI, orbit camera for screenshots.\nUsage: SLF.SentinelPhotoshoot"),
+	FConsoleCommandDelegate::CreateLambda([]()
+	{
+		UWorld* World = GEngine ? GEngine->GetCurrentPlayWorld() : nullptr;
+		if (!World) { UE_LOG(LogTemp, Error, TEXT("[Photoshoot] No play world!")); return; }
+
+		APlayerController* PC = UGameplayStatics::GetPlayerController(World, 0);
+		ACharacter* PlayerChar = PC ? PC->GetCharacter() : nullptr;
+		if (!PlayerChar) { UE_LOG(LogTemp, Error, TEXT("[Photoshoot] No player!")); return; }
+
+		// Spawn Sentinel 400 units in front of player
+		AActor* Sentinel = SpawnEnemyInPIE(World,
+			TEXT("/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Sentinel.B_Soulslike_Enemy_Sentinel_C"),
+			TEXT("/Script/SLFConversion.SLFEnemySentinel"),
+			FVector(400.f, 0.f, 0.f));
+
+		if (!Sentinel)
+		{
+			UE_LOG(LogTemp, Error, TEXT("[Photoshoot] Failed to spawn Sentinel!"));
+			return;
+		}
+
+		// Destroy any previously spawned Sentinels (from earlier tests)
+		TArray<AActor*> ToDestroy;
+		for (TActorIterator<AActor> It(World); It; ++It)
+		{
+			AActor* Actor = *It;
+			if (Actor != Sentinel && Actor->GetClass()->GetName().Contains(TEXT("Sentinel")))
+			{
+				ToDestroy.Add(Actor);
+			}
+		}
+		for (AActor* A : ToDestroy)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[Photoshoot] Destroying old: %s"), *A->GetName());
+			A->Destroy();
+		}
+
+		// Hide ALL visual actors in the scene (walls, props, floors, text billboards)
+		// Keep: Sentinel, player controller, game framework actors, lights, sky
+		for (TActorIterator<AActor> It(World); It; ++It)
+		{
+			AActor* Actor = *It;
+			if (Actor == Sentinel || Actor == PlayerChar) continue;
+			if (Actor->IsA(APlayerController::StaticClass())) continue;
+			FString ClassName = Actor->GetClass()->GetName();
+			// Keep only essential actors
+			if (ClassName.Contains(TEXT("Light")) ||
+				ClassName.Contains(TEXT("Sky")) ||
+				ClassName.Contains(TEXT("Atmosphere")) ||
+				ClassName.Contains(TEXT("Fog")) ||
+				ClassName.Contains(TEXT("PostProcess")) ||
+				ClassName.Contains(TEXT("GameMode")) ||
+				ClassName.Contains(TEXT("GameState")) ||
+				ClassName.Contains(TEXT("PlayerState")) ||
+				ClassName.Contains(TEXT("HUD")) ||
+				ClassName.Contains(TEXT("GameSession")) ||
+				ClassName.Contains(TEXT("GameNetwork")) ||
+				ClassName.Contains(TEXT("WorldSettings")) ||
+				ClassName.Contains(TEXT("NavigationSystem")) ||
+				ClassName.Contains(TEXT("NavMesh")) ||
+				ClassName.Contains(TEXT("PlayerStart")))
+			{
+				continue;
+			}
+			// Hide everything else
+			Actor->SetActorHiddenInGame(true);
+		}
+		UE_LOG(LogTemp, Warning, TEXT("[Photoshoot] Scene cleaned - all non-essential actors hidden"));
+
+		// God mode for player so they don't die
+		GEngine->Exec(World, TEXT("god"));
+
+		// Disable AI aggressively to freeze in idle pose
+		ACharacter* SentinelChar = Cast<ACharacter>(Sentinel);
+		if (SentinelChar)
+		{
+			if (AController* AICtrl = SentinelChar->GetController())
+			{
+				AICtrl->StopMovement();
+				AICtrl->UnPossess();
+			}
+			TArray<UActorComponent*> AllComps;
+			SentinelChar->GetComponents(AllComps);
+			for (UActorComponent* Comp : AllComps)
+			{
+				if (Comp && (Comp->GetName().Contains(TEXT("AIStateMachine")) ||
+				             Comp->GetName().Contains(TEXT("CombatManager")) ||
+				             Comp->GetName().Contains(TEXT("BehaviorTree"))))
+				{
+					Comp->SetComponentTickEnabled(false);
+					Comp->Deactivate();
+					UE_LOG(LogTemp, Warning, TEXT("[Photoshoot] Disabled: %s"), *Comp->GetName());
+				}
+			}
+			if (UCharacterMovementComponent* MC = SentinelChar->GetCharacterMovement())
+			{
+				MC->StopMovementImmediately();
+				MC->DisableMovement();
+			}
+		}
+
+		// Move player underground so they don't appear in shots
+		PlayerChar->SetActorLocation(Sentinel->GetActorLocation() + FVector(0.f, 0.f, -500.f));
+		PlayerChar->SetActorHiddenInGame(true);
+
+		// Disable post-process effects that interfere with clean shots
+		GEngine->Exec(World, TEXT("r.MotionBlurQuality 0"));
+		GEngine->Exec(World, TEXT("r.DepthOfFieldQuality 0"));
+		GEngine->Exec(World, TEXT("ShowFlag.MotionBlur 0"));
+
+		// Spawn camera
+		ACameraActor* PhotoCam = World->SpawnActor<ACameraActor>(
+			ACameraActor::StaticClass(), Sentinel->GetActorLocation() + FVector(200.f, 0.f, 100.f), FRotator::ZeroRotator);
+		if (PhotoCam)
+		{
+			PhotoCam->GetCameraComponent()->FieldOfView = 60.f;
+			PhotoCam->GetCameraComponent()->PostProcessSettings.bOverride_MotionBlurAmount = true;
+			PhotoCam->GetCameraComponent()->PostProcessSettings.MotionBlurAmount = 0.0f;
+			PhotoCam->GetCameraComponent()->PostProcessSettings.bOverride_MotionBlurMax = true;
+			PhotoCam->GetCameraComponent()->PostProcessSettings.MotionBlurMax = 0.0f;
+			PhotoCam->GetCameraComponent()->PostProcessSettings.bOverride_DepthOfFieldFstop = true;
+			PhotoCam->GetCameraComponent()->PostProcessSettings.DepthOfFieldFstop = 0.0f;
+			PC->SetViewTargetWithBlend(PhotoCam, 0.0f);
+		}
+
+		FVector SentinelLoc = Sentinel->GetActorLocation();
+
+		// Log mesh component info for diagnostics
+		if (SentinelChar)
+		{
+			if (USkeletalMeshComponent* MeshComp = SentinelChar->GetMesh())
+			{
+				FBoxSphereBounds Bounds = MeshComp->CalcBounds(MeshComp->GetComponentTransform());
+				UE_LOG(LogTemp, Warning, TEXT("[Photoshoot] Mesh bounds: Origin=(%s) Extent=(%s) Radius=%.0f"),
+					*Bounds.Origin.ToString(), *Bounds.BoxExtent.ToString(), Bounds.SphereRadius);
+				UE_LOG(LogTemp, Warning, TEXT("[Photoshoot] Mesh: %s, AnimBP: %s"),
+					MeshComp->GetSkeletalMeshAsset() ? *MeshComp->GetSkeletalMeshAsset()->GetName() : TEXT("NULL"),
+					MeshComp->GetAnimInstance() ? *MeshComp->GetAnimInstance()->GetClass()->GetName() : TEXT("NULL"));
+				// Log active montage
+				if (UAnimInstance* AnimInst = MeshComp->GetAnimInstance())
+				{
+					UAnimMontage* ActiveMontage = AnimInst->GetCurrentActiveMontage();
+					UE_LOG(LogTemp, Warning, TEXT("[Photoshoot] Active montage: %s"),
+						ActiveMontage ? *ActiveMontage->GetName() : TEXT("NONE"));
+				}
+			}
+		}
+
+		// Target center at roughly chest height of Sentinel
+		FVector TargetCenter = SentinelLoc + FVector(0.f, 0.f, 120.f);
+
+		FVector SentinelFwd = Sentinel->GetActorForwardVector();
+		UE_LOG(LogTemp, Warning, TEXT("[Photoshoot] Sentinel at %s, Fwd=%s, Target=%s"),
+			*SentinelLoc.ToString(), *SentinelFwd.ToString(), *TargetCenter.ToString());
+
+		// Delete old screenshots
+		FString ShotDir = FPaths::ProjectDir() / TEXT("Saved/Screenshots/Photoshoot");
+		IFileManager::Get().MakeDirectory(*ShotDir, true);
+
+		// Define orbits using forward-relative angles
+		// Character is ~380 units tall, need ~500+ units for full body with 60 FOV
+		struct FShotAngle { float Az; float El; float Dist; FString Name; };
+		TArray<FShotAngle> Angles = {
+			// Full body from 8 angles, 500 units out
+			{   0.f, 10.f, 500.f, TEXT("front") },
+			{  45.f, 10.f, 500.f, TEXT("front_3q_right") },
+			{  90.f, 10.f, 500.f, TEXT("right_side") },
+			{ 135.f, 10.f, 500.f, TEXT("back_right") },
+			{ 180.f, 10.f, 500.f, TEXT("back") },
+			{ 225.f, 10.f, 500.f, TEXT("back_left") },
+			{ 270.f, 10.f, 500.f, TEXT("left_side") },
+			{ 315.f, 10.f, 500.f, TEXT("front_3q_left") },
+			// Above
+			{   0.f, 45.f, 500.f, TEXT("above_front") },
+			{ 180.f, 45.f, 500.f, TEXT("above_back") },
+			// Upper body closeups
+			{   0.f, 10.f, 250.f, TEXT("closeup_front") },
+			{  90.f, 10.f, 250.f, TEXT("closeup_right") },
+			{ 180.f, 10.f, 250.f, TEXT("closeup_back") },
+			{ 270.f, 10.f, 250.f, TEXT("closeup_left") },
+		};
+
+		struct FPhotoshootState
+		{
+			int32 CurrentAngle = 0;
+			bool bMoved = false; // Two-phase: move then screenshot
+			TArray<FShotAngle> Angles;
+			FVector TargetCenter;
+			FVector SentinelFwd; // Sentinel's facing direction for relative orbits
+			FString ShotDir;
+			TWeakObjectPtr<APlayerController> PC;
+			TWeakObjectPtr<ACameraActor> Cam;
+			FTimerHandle TimerHandle;
+		};
+		TSharedPtr<FPhotoshootState> State = MakeShared<FPhotoshootState>();
+		State->Angles = Angles;
+		State->TargetCenter = TargetCenter;
+		State->SentinelFwd = SentinelFwd;
+		State->ShotDir = ShotDir;
+		State->PC = PC;
+		State->Cam = PhotoCam;
+
+		// Two-phase timer: phase 1 = move camera, phase 2 = take screenshot
+		World->GetTimerManager().SetTimer(State->TimerHandle, [State, World]()
+		{
+			if (State->CurrentAngle >= State->Angles.Num())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[Photoshoot] COMPLETE! %d screenshots in Saved/Screenshots/Photoshoot/"),
+					State->Angles.Num());
+				// Re-enable motion blur and restore camera
+				GEngine->Exec(World, TEXT("r.MotionBlurQuality 4"));
+				GEngine->Exec(World, TEXT("r.DepthOfFieldQuality 2"));
+				if (APlayerController* LocalPC = State->PC.Get())
+				{
+					if (APawn* P = LocalPC->GetPawn())
+						LocalPC->SetViewTargetWithBlend(P, 0.5f);
+				}
+				if (ACameraActor* C = State->Cam.Get())
+					C->Destroy();
+				World->GetTimerManager().ClearTimer(State->TimerHandle);
+				return;
+			}
+
+			ACameraActor* Cam = State->Cam.Get();
+			if (!Cam) return;
+
+			if (!State->bMoved)
+			{
+				// Phase 1: Move camera to orbital position
+				// Az=0 = camera in front of Sentinel (opposite to forward vector)
+				// Az=90 = camera to Sentinel's right, etc.
+				const FShotAngle& Shot = State->Angles[State->CurrentAngle];
+				float AzRad = FMath::DegreesToRadians(Shot.Az);
+				float ElRad = FMath::DegreesToRadians(Shot.El);
+
+				float HorizDist = Shot.Dist * FMath::Cos(ElRad);
+				float VertDist = Shot.Dist * FMath::Sin(ElRad);
+
+				// Build orbit relative to Sentinel's facing direction
+				// "Front" camera = opposite of Sentinel's forward (so it sees the face)
+				FVector Fwd2D = State->SentinelFwd;
+				Fwd2D.Z = 0.f;
+				Fwd2D.Normalize();
+				FVector Right2D = FVector::CrossProduct(FVector::UpVector, Fwd2D).GetSafeNormal();
+
+				// Camera offset: rotate in the horizontal plane
+				// Az=0 → camera at -Fwd (in front, looking at face)
+				// Az=90 → camera at +Right (Sentinel's right side)
+				FVector HorizDir = -Fwd2D * FMath::Cos(AzRad) + Right2D * FMath::Sin(AzRad);
+				FVector CamPos = State->TargetCenter + HorizDir * HorizDist + FVector(0.f, 0.f, VertDist);
+
+				FVector Dir = (State->TargetCenter - CamPos).GetSafeNormal();
+				Cam->SetActorLocation(CamPos);
+				Cam->SetActorRotation(Dir.Rotation());
+
+				UE_LOG(LogTemp, Warning, TEXT("[Photoshoot] Cam[%d] %s: pos=%s looking at %s"),
+					State->CurrentAngle, *Shot.Name, *CamPos.ToString(), *State->TargetCenter.ToString());
+
+				State->bMoved = true;
+			}
+			else
+			{
+				// Phase 2: Take screenshot (motion blur has cleared)
+				const FShotAngle& Shot = State->Angles[State->CurrentAngle];
+				FString ShotPath = State->ShotDir / FString::Printf(TEXT("Sentinel_%02d_%s.png"),
+					State->CurrentAngle, *Shot.Name);
+				FScreenshotRequest::RequestScreenshot(ShotPath, false, false);
+
+				UE_LOG(LogTemp, Warning, TEXT("[Photoshoot] [%d/%d] %s"),
+					State->CurrentAngle + 1, State->Angles.Num(), *Shot.Name);
+
+				State->CurrentAngle++;
+				State->bMoved = false;
+			}
+		}, 0.3f, true, 2.0f); // Every 0.3s (move+shot = 0.6s per angle), start after 2s
+	})
+);
+
+// --- Animation test: play different montages and screenshot each ---
+#include "Engine/PointLight.h"
+#include "Components/PointLightComponent.h"
+
+// Auto-launch PIE then run SLF.SentinelAnimTest after world is ready.
+// Use this from -ExecCmds when the editor isn't in PIE yet.
+static FAutoConsoleCommand CCmdAutoAnimTest(
+	TEXT("SLF.AutoAnimTest"),
+	TEXT("Launch PIE, wait for world, then run SLF.SentinelAnimTest.\nUsage: SLF.AutoAnimTest"),
+	FConsoleCommandDelegate::CreateLambda([]()
+	{
+#if WITH_EDITOR
+		// Start PIE if not already running
+		if (GEditor && !GEditor->IsPlaySessionInProgress())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[AutoAnimTest] Starting PIE..."));
+			USLFInputSimulatorLibrary::StartPIE();
+		}
+
+		// Poll until play world is available, then run the anim test
+		struct FPollState { int32 Polls = 0; FTimerHandle Handle; };
+		TSharedPtr<FPollState> Poll = MakeShared<FPollState>();
+
+		if (GEditor)
+		{
+			GEditor->GetTimerManager()->SetTimer(Poll->Handle, [Poll]()
+			{
+				Poll->Polls++;
+				UWorld* PlayWorld = GEngine ? GEngine->GetCurrentPlayWorld() : nullptr;
+				if (PlayWorld)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("[AutoAnimTest] PIE world ready after %d polls. Running SentinelAnimTest."), Poll->Polls);
+					GEngine->Exec(PlayWorld, TEXT("SLF.SentinelAnimTest"));
+					if (GEditor) GEditor->GetTimerManager()->ClearTimer(Poll->Handle);
+				}
+				else if (Poll->Polls > 100) // ~30s timeout
+				{
+					UE_LOG(LogTemp, Error, TEXT("[AutoAnimTest] Timed out waiting for PIE world!"));
+					if (GEditor) GEditor->GetTimerManager()->ClearTimer(Poll->Handle);
+				}
+			}, 0.3f, true, 1.0f);
+		}
+#else
+		UE_LOG(LogTemp, Error, TEXT("[AutoAnimTest] Only available in editor builds"));
+#endif
+	})
+);
+
+static FAutoConsoleCommand CCmdSentinelAnimTest(
+	TEXT("SLF.SentinelAnimTest"),
+	TEXT("Cycle through Sentinel animations and screenshot each.\nUsage: SLF.SentinelAnimTest"),
+	FConsoleCommandDelegate::CreateLambda([]()
+	{
+		UWorld* World = GEngine ? GEngine->GetCurrentPlayWorld() : nullptr;
+		if (!World) { UE_LOG(LogTemp, Error, TEXT("[AnimTest] No play world!")); return; }
+
+		APlayerController* PC = UGameplayStatics::GetPlayerController(World, 0);
+
+		// Use player location as reference, spawn Sentinel nearby on the main floor
+		ACharacter* PlayerChar = PC ? PC->GetCharacter() : nullptr;
+		FVector SpawnLoc(600.f, 0.f, 92.f); // Default: main floor area
+		if (PlayerChar)
+		{
+			SpawnLoc = PlayerChar->GetActorLocation() + PlayerChar->GetActorForwardVector() * 400.f;
+			SpawnLoc.Z = PlayerChar->GetActorLocation().Z; // Same floor level
+		}
+
+		// Destroy any existing Sentinels from prior tests
+		for (TActorIterator<AActor> It(World); It; ++It)
+		{
+			if (It->GetClass()->GetName().Contains(TEXT("Sentinel")))
+			{
+				(*It)->Destroy();
+			}
+		}
+
+		// Spawn Sentinel directly
+		UClass* SentinelClass = LoadClass<AActor>(nullptr,
+			TEXT("/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Sentinel.B_Soulslike_Enemy_Sentinel_C"));
+		if (!SentinelClass)
+			SentinelClass = FindObject<UClass>(nullptr, TEXT("/Script/SLFConversion.SLFEnemySentinel"));
+		if (!SentinelClass)
+		{
+			UE_LOG(LogTemp, Error, TEXT("[AnimTest] Cannot find Sentinel class!"));
+			return;
+		}
+
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+		AActor* Sentinel = World->SpawnActor<AActor>(SentinelClass, SpawnLoc, FRotator::ZeroRotator, SpawnParams);
+		if (!Sentinel)
+		{
+			UE_LOG(LogTemp, Error, TEXT("[AnimTest] Failed to spawn Sentinel!"));
+			return;
+		}
+
+		ACharacter* SentinelChar = Cast<ACharacter>(Sentinel);
+		UE_LOG(LogTemp, Warning, TEXT("[AnimTest] Sentinel spawned at %s"), *SpawnLoc.ToString());
+
+		// Spawn a runtime floor under Sentinel so it doesn't fall when we hide level geometry
+		{
+			UStaticMesh* CubeMesh = LoadObject<UStaticMesh>(nullptr, TEXT("/Engine/BasicShapes/Cube.Cube"));
+			if (CubeMesh)
+			{
+				FVector FloorLoc = SpawnLoc - FVector(0.f, 0.f, 90.f); // Just below capsule feet
+				AStaticMeshActor* Floor = World->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass(), FloorLoc, FRotator::ZeroRotator);
+				if (Floor)
+				{
+					Floor->GetStaticMeshComponent()->SetStaticMesh(CubeMesh);
+					Floor->SetActorScale3D(FVector(30.f, 30.f, 0.1f)); // Wide flat platform
+					Floor->GetStaticMeshComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+					Floor->GetStaticMeshComponent()->SetCollisionResponseToAllChannels(ECR_Block);
+					Floor->SetActorHiddenInGame(true); // Invisible but solid
+					Floor->Tags.Add(TEXT("AnimTestFloor"));
+					UE_LOG(LogTemp, Warning, TEXT("[AnimTest] Runtime floor spawned at %s"), *FloorLoc.ToString());
+				}
+			}
+		}
+
+		// God mode and hide player
+		GEngine->Exec(World, TEXT("god"));
+		if (PlayerChar)
+		{
+			PlayerChar->SetActorHiddenInGame(true);
+			PlayerChar->SetActorLocation(SpawnLoc + FVector(0.f, 0.f, -500.f));
+		}
+
+		// Disable AI on Sentinel
+		if (SentinelChar)
+		{
+			if (AController* AICtrl = SentinelChar->GetController())
+			{
+				AICtrl->StopMovement();
+				AICtrl->UnPossess();
+			}
+			TArray<UActorComponent*> AllComps;
+			SentinelChar->GetComponents(AllComps);
+			for (UActorComponent* Comp : AllComps)
+			{
+				if (Comp && (Comp->GetName().Contains(TEXT("AIStateMachine")) ||
+				             Comp->GetName().Contains(TEXT("CombatManager"))))
+				{
+					Comp->SetComponentTickEnabled(false);
+					Comp->Deactivate();
+				}
+			}
+			if (UCharacterMovementComponent* MC = SentinelChar->GetCharacterMovement())
+			{
+				MC->StopMovementImmediately();
+				MC->DisableMovement();
+			}
+		}
+
+		// Hide non-essential actors (same whitelist as Photoshoot which works)
+		for (TActorIterator<AActor> It(World); It; ++It)
+		{
+			AActor* A = *It;
+			if (A == Sentinel) continue;
+			if (A->ActorHasTag(TEXT("AnimTestFloor"))) continue; // Keep our runtime floor
+			if (A->IsA(APlayerController::StaticClass())) continue;
+			FString CN = A->GetClass()->GetName();
+			if (CN.Contains(TEXT("Light")) || CN.Contains(TEXT("Sky")) ||
+				CN.Contains(TEXT("Atmosphere")) || CN.Contains(TEXT("Fog")) ||
+				CN.Contains(TEXT("PostProcess")) || CN.Contains(TEXT("GameMode")) ||
+				CN.Contains(TEXT("GameState")) || CN.Contains(TEXT("PlayerState")) ||
+				CN.Contains(TEXT("HUD")) || CN.Contains(TEXT("WorldSettings")) ||
+				CN.Contains(TEXT("GameSession")) || CN.Contains(TEXT("GameNetwork")) ||
+				CN.Contains(TEXT("NavigationSystem")) || CN.Contains(TEXT("NavMesh")) ||
+				CN.Contains(TEXT("PlayerStart")) || CN.Contains(TEXT("Camera")))
+			{
+				continue;
+			}
+			A->SetActorHiddenInGame(true);
+		}
+		UE_LOG(LogTemp, Warning, TEXT("[AnimTest] Scene cleaned - non-essential actors hidden, lights/sky preserved"));
+
+		// Spawn 3 point lights around Sentinel for good visibility
+		auto SpawnLight = [&](FVector Offset, float Intensity)
+		{
+			FVector LightLoc = SpawnLoc + Offset;
+			APointLight* Light = World->SpawnActor<APointLight>(APointLight::StaticClass(), LightLoc, FRotator::ZeroRotator);
+			if (Light)
+			{
+				Light->PointLightComponent->SetIntensity(Intensity);
+				Light->PointLightComponent->SetAttenuationRadius(2000.f);
+				Light->PointLightComponent->SetLightColor(FLinearColor(1.0f, 0.95f, 0.9f)); // Warm white
+			}
+		};
+		SpawnLight(FVector(300.f, 200.f, 400.f), 50000.f);   // Key light (front-right above)
+		SpawnLight(FVector(-200.f, -300.f, 300.f), 30000.f);  // Fill light (back-left)
+		SpawnLight(FVector(0.f, 0.f, 500.f), 20000.f);        // Top light
+
+		// Set up camera - front 3/4 view, 500 units from Sentinel
+		FVector TargetCenter = SpawnLoc + FVector(0.f, 0.f, 120.f); // Chest height
+		FVector SentinelFwd = Sentinel->GetActorForwardVector();
+		FVector Fwd2D = SentinelFwd; Fwd2D.Z = 0.f; Fwd2D.Normalize();
+		FVector Right2D = FVector::CrossProduct(FVector::UpVector, Fwd2D).GetSafeNormal();
+		// Camera in front-right at 30 degrees, 500 units out
+		float AzRad = FMath::DegreesToRadians(30.f);
+		FVector CamOffset = (-Fwd2D * FMath::Cos(AzRad) + Right2D * FMath::Sin(AzRad)) * 500.f;
+		FVector CamPos = TargetCenter + CamOffset + FVector(0.f, 0.f, 50.f);
+
+		ACameraActor* AnimCam = World->SpawnActor<ACameraActor>(
+			ACameraActor::StaticClass(), CamPos, FRotator::ZeroRotator);
+		if (AnimCam)
+		{
+			AnimCam->GetCameraComponent()->FieldOfView = 60.f;
+			AnimCam->GetCameraComponent()->PostProcessSettings.bOverride_MotionBlurAmount = true;
+			AnimCam->GetCameraComponent()->PostProcessSettings.MotionBlurAmount = 0.0f;
+			FVector Dir = (TargetCenter - CamPos).GetSafeNormal();
+			AnimCam->SetActorRotation(Dir.Rotation());
+			if (PC) PC->SetViewTargetWithBlend(AnimCam, 0.0f);
+		}
+
+		GEngine->Exec(World, TEXT("r.MotionBlurQuality 0"));
+		GEngine->Exec(World, TEXT("r.DepthOfFieldQuality 0"));
+
+		UE_LOG(LogTemp, Warning, TEXT("[AnimTest] Camera at %s looking at %s"), *CamPos.ToString(), *TargetCenter.ToString());
+
+		// Define animations to test
+		FString SentinelDir = TEXT("/Game/CustomEnemies/Sentinel/");
+		struct FAnimShot { FString MontageName; FString DisplayName; float PlayTime; };
+		TArray<FAnimShot> AnimShots = {
+			{ TEXT("AM_Sentinel_Idle"), TEXT("idle"), 1.0f },
+			{ TEXT("AM_Sentinel_Walk"), TEXT("walk"), 0.8f },
+			{ TEXT("AM_Sentinel_Run"), TEXT("run"), 0.6f },
+			{ TEXT("AM_Sentinel_Attack01"), TEXT("attack1"), 1.0f },
+			{ TEXT("AM_Sentinel_Attack02"), TEXT("attack2"), 1.0f },
+			{ TEXT("AM_Sentinel_Attack03_Fast"), TEXT("attack3_fast"), 0.8f },
+			{ TEXT("AM_Sentinel_HeavyAttack"), TEXT("heavy_attack"), 1.2f },
+			{ TEXT("AM_Sentinel_Dodge_Fwd"), TEXT("dodge_fwd"), 0.6f },
+			{ TEXT("AM_Sentinel_HitReact"), TEXT("hitreact"), 0.8f },
+			{ TEXT("AM_Sentinel_Death_Front"), TEXT("death_front"), 1.5f },
+		};
+
+		FString ShotDir = FPaths::ProjectDir() / TEXT("Saved/Screenshots/AnimTest");
+		IFileManager::Get().MakeDirectory(*ShotDir, true);
+
+		struct FAnimTestState
+		{
+			int32 CurrentAnim = 0;
+			int32 Phase = 0; // 0=play, 1=wait, 2=screenshot
+			bool bSetupDone = false;
+			TArray<FAnimShot> AnimShots;
+			FString SentinelDir;
+			FString ShotDir;
+			TWeakObjectPtr<ACharacter> SentinelChar;
+			TWeakObjectPtr<ACameraActor> Cam;
+			FTimerHandle TimerHandle;
+			float WaitRemaining = 0.f;
+		};
+		TSharedPtr<FAnimTestState> State = MakeShared<FAnimTestState>();
+		State->AnimShots = AnimShots;
+		State->SentinelDir = SentinelDir;
+		State->ShotDir = ShotDir;
+		State->SentinelChar = SentinelChar;
+		State->Cam = AnimCam;
+
+		World->GetTimerManager().SetTimer(State->TimerHandle, [State, World]()
+		{
+			ACharacter* SC = State->SentinelChar.Get();
+			if (!SC) return;
+
+			// Setup phase: wait for AnimBP to apply, then set external montage control
+			if (!State->bSetupDone)
+			{
+				UAnimInstance* AI = SC->GetMesh() ? SC->GetMesh()->GetAnimInstance() : nullptr;
+				if (!AI)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("[AnimTest] Waiting for AnimBP..."));
+					return;
+				}
+				// Sentinel locomotion montage control removed from header
+				AI->Montage_Stop(0.1f);
+				State->bSetupDone = true;
+				UE_LOG(LogTemp, Warning, TEXT("[AnimTest] AnimBP ready: %s. External montage control ON."),
+					*AI->GetClass()->GetName());
+				return;
+			}
+
+			if (State->CurrentAnim >= State->AnimShots.Num())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[AnimTest] COMPLETE! %d animations tested in %s"),
+					State->AnimShots.Num(), *State->ShotDir);
+				if (ACameraActor* C = State->Cam.Get()) C->Destroy();
+				World->GetTimerManager().ClearTimer(State->TimerHandle);
+				return;
+			}
+
+			UAnimInstance* AI = SC->GetMesh() ? SC->GetMesh()->GetAnimInstance() : nullptr;
+			if (!AI) return;
+
+			const FAnimShot& Shot = State->AnimShots[State->CurrentAnim];
+
+			if (State->Phase == 0)
+			{
+				AI->Montage_Stop(0.05f);
+				FString MontPath = State->SentinelDir + Shot.MontageName;
+				UAnimMontage* Mont = LoadObject<UAnimMontage>(nullptr, *MontPath);
+				if (Mont)
+				{
+					float PlayLen = AI->Montage_Play(Mont, 1.0f);
+					UE_LOG(LogTemp, Warning, TEXT("[AnimTest] [%d/%d] Playing: %s (len=%.2f, result=%.2f)"),
+						State->CurrentAnim + 1, State->AnimShots.Num(),
+						*Shot.MontageName, Mont->GetPlayLength(), PlayLen);
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("[AnimTest] MISSING: %s"), *MontPath);
+				}
+				State->Phase = 1;
+				State->WaitRemaining = Shot.PlayTime;
+			}
+			else if (State->Phase == 1)
+			{
+				State->WaitRemaining -= 0.3f;
+				if (State->WaitRemaining <= 0.f)
+				{
+					State->Phase = 2;
+				}
+			}
+			else if (State->Phase == 2)
+			{
+				FString ShotPath = State->ShotDir / FString::Printf(TEXT("Anim_%02d_%s.png"),
+					State->CurrentAnim, *Shot.DisplayName);
+				FScreenshotRequest::RequestScreenshot(ShotPath, false, false);
+				UE_LOG(LogTemp, Warning, TEXT("[AnimTest] Screenshot [%d]: %s"), State->CurrentAnim, *Shot.DisplayName);
+
+				State->CurrentAnim++;
+				State->Phase = 0;
+			}
+		}, 0.3f, true, 3.0f);
+	})
+);
+
 // ========== TEST RUNNER IMPLEMENTATION ==========
 
 void USLFPIETestRunner::Initialize(FSubsystemCollectionBase& Collection)
@@ -452,129 +1077,6 @@ void USLFPIETestRunner::Initialize(FSubsystemCollectionBase& Collection)
 	UE_LOG(LogTemp, Log, TEXT("  SLF.SimDodge - Simulate dodge"));
 	UE_LOG(LogTemp, Log, TEXT("  SLF.SimMove <X> <Y> <Dur> - Simulate movement"));
 	UE_LOG(LogTemp, Log, TEXT("  SLF.SimCrouch - Toggle crouch directly"));
-
-	// Auto-spawn Sentinel near the player (if not already present)
-	if (UWorld* World = GetWorld())
-	{
-		FTimerHandle SentinelSpawnTimer;
-		World->GetTimerManager().SetTimer(SentinelSpawnTimer, [this]()
-		{
-			UWorld* World = GetWorld();
-			if (!World) return;
-
-			// Check if a Sentinel already exists
-			for (TActorIterator<AActor> It(World); It; ++It)
-			{
-				if (It->GetClass()->GetName().Contains(TEXT("Sentinel")))
-				{
-					return; // Already spawned
-				}
-			}
-
-			// Spawn near the player using the same helper as SLF.SpawnSentinel
-			AActor* Sentinel = SpawnEnemyInPIE(World,
-				TEXT("/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Sentinel.B_Soulslike_Enemy_Sentinel_C"),
-				TEXT("/Script/SLFConversion.SLFEnemySentinel"),
-				FVector(300.f, 0.f, 100.f)); // 300 forward, 100 above (closer to player, stays on floor)
-
-			UE_LOG(LogTemp, Warning, TEXT("[SLFPIETestRunner] Auto-spawned Sentinel: %s at %s"),
-				Sentinel ? *Sentinel->GetName() : TEXT("FAILED"),
-				Sentinel ? *Sentinel->GetActorLocation().ToString() : TEXT("N/A"));
-
-			// Run comparison diagnostic 1 second after spawn
-			if (Sentinel)
-			{
-				FTimerHandle CompareTimer;
-				World->GetTimerManager().SetTimer(CompareTimer, [World]()
-				{
-					AActor* Guard = nullptr;
-					AActor* Sent = nullptr;
-					for (TActorIterator<AActor> It(World); It; ++It)
-					{
-						FString CN = It->GetClass()->GetName();
-						if (CN.Contains(TEXT("Guard")) && CN.Contains(TEXT("Enemy"))) Guard = *It;
-						if (CN.Contains(TEXT("Sentinel"))) Sent = *It;
-					}
-					FString OutputFile = FPaths::ProjectDir() / TEXT("sentinel_compare.txt");
-					USLFAutomationLibrary::CompareCharacters(Guard, Sent, OutputFile);
-				}, 1.0f, false);
-
-				// Dump live bone transforms 3 seconds after spawn to verify animation is playing
-				FTimerHandle BoneDiagTimer;
-				World->GetTimerManager().SetTimer(BoneDiagTimer, [World]()
-				{
-					for (TActorIterator<AActor> It(World); It; ++It)
-					{
-						if (!It->GetClass()->GetName().Contains(TEXT("Sentinel"))) continue;
-						ACharacter* Char = Cast<ACharacter>(*It);
-						if (!Char) continue;
-						USkeletalMeshComponent* SMC = Char->GetMesh();
-						if (!SMC) continue;
-
-						UE_LOG(LogTemp, Warning, TEXT("[SentinelBoneDiag] === LIVE BONE TRANSFORMS ==="));
-						UE_LOG(LogTemp, Warning, TEXT("[SentinelBoneDiag] Mesh: %s  AnimInstance: %s"),
-							SMC->GetSkeletalMeshAsset() ? *SMC->GetSkeletalMeshAsset()->GetName() : TEXT("null"),
-							SMC->GetAnimInstance() ? *SMC->GetAnimInstance()->GetClass()->GetName() : TEXT("null"));
-
-						// Dump key bone transforms in component space
-						const TArray<FTransform>& CSTransforms = SMC->GetComponentSpaceTransforms();
-						const FReferenceSkeleton& RefSkel = SMC->GetSkeletalMeshAsset()->GetRefSkeleton();
-						int32 NumBones = FMath::Min(CSTransforms.Num(), RefSkel.GetNum());
-
-						const TCHAR* KeyBones[] = {
-							TEXT("root"), TEXT("pelvis"), TEXT("spine_01"), TEXT("head"),
-							TEXT("hand_r"), TEXT("hand_l"), TEXT("foot_l"), TEXT("foot_r"),
-							TEXT("thigh_l"), TEXT("upperarm_r"), TEXT("weapon_r")
-						};
-
-						int32 NonIdentityCount = 0;
-						for (int32 i = 0; i < NumBones; i++)
-						{
-							FTransform T = CSTransforms[i];
-							FVector Pos = T.GetTranslation();
-							FQuat Rot = T.GetRotation();
-							bool bIsIdentity = Pos.IsNearlyZero(0.01f) && Rot.Equals(FQuat::Identity, 0.001f);
-							if (!bIsIdentity) NonIdentityCount++;
-
-							// Check if this is a key bone
-							FName BoneName = RefSkel.GetBoneName(i);
-							bool bIsKey = false;
-							for (const TCHAR* KB : KeyBones)
-							{
-								if (BoneName == FName(KB)) { bIsKey = true; break; }
-							}
-
-							if (bIsKey)
-							{
-								UE_LOG(LogTemp, Warning, TEXT("[SentinelBoneDiag]   %s[%d]: Pos=(%0.2f, %0.2f, %0.2f) Rot=(%0.4f, %0.4f, %0.4f, %0.4f) %s"),
-									*BoneName.ToString(), i, Pos.X, Pos.Y, Pos.Z,
-									Rot.X, Rot.Y, Rot.Z, Rot.W,
-									bIsIdentity ? TEXT("[IDENTITY!]") : TEXT("OK"));
-							}
-						}
-
-						UE_LOG(LogTemp, Warning, TEXT("[SentinelBoneDiag] Non-identity bones: %d/%d"), NonIdentityCount, NumBones);
-
-						// Also check current montage
-						UAnimInstance* AI = SMC->GetAnimInstance();
-						if (AI)
-						{
-							UAnimMontage* CurMontage = AI->GetCurrentActiveMontage();
-							UE_LOG(LogTemp, Warning, TEXT("[SentinelBoneDiag] Current Montage: %s"),
-								CurMontage ? *CurMontage->GetName() : TEXT("none"));
-						}
-						break;
-					}
-
-					// Take a screenshot
-					FString ShotPath = FPaths::ProjectDir() / TEXT("Saved/Screenshots/WindowsEditor/Sentinel_PIE_Test.png");
-					FScreenshotRequest::RequestScreenshot(ShotPath, false, false);
-					UE_LOG(LogTemp, Warning, TEXT("[SentinelBoneDiag] Screenshot requested: %s"), *ShotPath);
-
-				}, 3.0f, false);
-			}
-		}, 2.0f, false);
-	}
 
 	// Check for auto-test command line argument
 	if (FParse::Param(FCommandLine::Get(), TEXT("SLFAutoTest")))
@@ -592,6 +1094,30 @@ void USLFPIETestRunner::Initialize(FSubsystemCollectionBase& Collection)
 				RunAllTests();
 			}, AutoTestDelay, false);
 		}
+	}
+
+	// Auto-spawn Sentinel after PIE is fully loaded (deferred to avoid Saved/ corruption)
+	if (UWorld* World = GetWorld())
+	{
+		FTimerHandle SpawnTimer;
+		World->GetTimerManager().SetTimer(SpawnTimer, [this]()
+		{
+			UWorld* W = GetWorld();
+			if (!W) return;
+
+			ACharacter* PlayerChar = UGameplayStatics::GetPlayerCharacter(W, 0);
+			if (!PlayerChar) return;
+
+			// Spawn Sentinel 600 units in front of the player
+			AActor* Sentinel = SpawnEnemyInPIE(W,
+				TEXT("/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Sentinel.B_Soulslike_Enemy_Sentinel_C"),
+				TEXT("/Script/SLFConversion.SLFEnemySentinel"),
+				FVector(600.f, 0.f, 0.f));
+
+			UE_LOG(LogTemp, Warning, TEXT("[SLFPIETestRunner] Auto-spawned Sentinel: %s at %s"),
+				Sentinel ? *Sentinel->GetName() : TEXT("FAILED"),
+				Sentinel ? *Sentinel->GetActorLocation().ToString() : TEXT("N/A"));
+		}, 3.0f, false); // 3 second delay — world fully loaded by then
 	}
 }
 

@@ -1,6 +1,6 @@
 // SLFEnemySentinel.h
 // C++ base class for B_Soulslike_Enemy_Sentinel
-// Forensically distinct clone of the Guard enemy using Manny mesh and baked animations
+// Forensically distinct custom enemy using Ironbound Warlord mesh and ARP-retargeted animations
 
 #pragma once
 

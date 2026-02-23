@@ -240,24 +240,103 @@ static FAutoConsoleCommand ApplyStatusEffectsCmd(
 // ============================================================================
 
 // Console command to import a skeletal mesh from FBX
-// Usage: SLF.ImportMesh <FBXPath> <DestPath> <AssetName> [SkeletonPath] [Scale]
+// Usage: SLF.ImportMesh <FBXPath> <DestPath> <AssetName> [SkeletonPath] [Scale] [-materials] [-textures]
 static FAutoConsoleCommand ImportMeshCmd(
 	TEXT("SLF.ImportMesh"),
-	TEXT("Import skeletal mesh from FBX.\nUsage: SLF.ImportMesh <FBXPath> <DestPath> <AssetName> [SkeletonPath] [Scale]"),
+	TEXT("Import skeletal mesh from FBX.\nUsage: SLF.ImportMesh <FBXPath> <DestPath> <AssetName> [SkeletonPath] [Scale] [-materials] [-textures]"),
 	FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
 	{
 		if (Args.Num() < 3)
 		{
-			UE_LOG(LogTemp, Error, TEXT("SLF.ImportMesh requires: <FBXPath> <DestPath> <AssetName> [SkeletonPath] [Scale]"));
+			UE_LOG(LogTemp, Error, TEXT("SLF.ImportMesh requires: <FBXPath> <DestPath> <AssetName> [SkeletonPath] [Scale] [-materials] [-textures]"));
 			return;
 		}
 
-		FString SkeletonPath = Args.Num() > 3 ? Args[3] : TEXT("_");
-		float Scale = Args.Num() > 4 ? FCString::Atof(*Args[4]) : 1.0f;
+		// Parse flags from args
+		bool bImportMaterials = false;
+		bool bImportTextures = false;
+		TArray<FString> PositionalArgs;
+		for (const FString& Arg : Args)
+		{
+			if (Arg == TEXT("-materials")) bImportMaterials = true;
+			else if (Arg == TEXT("-textures")) bImportTextures = true;
+			else PositionalArgs.Add(Arg);
+		}
+
+		FString SkeletonPath = PositionalArgs.Num() > 3 ? PositionalArgs[3] : TEXT("_");
+		float Scale = PositionalArgs.Num() > 4 ? FCString::Atof(*PositionalArgs[4]) : 1.0f;
 
 		FString Result = USLFAutomationLibrary::ImportSkeletalMeshFromFBX(
-			Args[0], Args[1], Args[2], SkeletonPath, Scale);
+			PositionalArgs[0], PositionalArgs[1], PositionalArgs[2], SkeletonPath, Scale,
+			bImportMaterials, bImportTextures);
 		UE_LOG(LogTemp, Warning, TEXT("[SLF.ImportMesh]\n%s"), *Result);
+	})
+);
+
+// Console command to persistently reassign a skeletal mesh's skeleton and save to disk.
+// This fixes AnimBP initialization failures caused by runtime SetSkeleton() not rebuilding bone mapping.
+// Usage: SLF.SetMeshSkeleton <MeshPath> <SkeletonPath>
+static FAutoConsoleCommand SetMeshSkeletonCmd(
+	TEXT("SLF.SetMeshSkeleton"),
+	TEXT("Reassign a skeletal mesh's skeleton and save both to disk.\nUsage: SLF.SetMeshSkeleton <MeshPath> <SkeletonPath>"),
+	FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
+	{
+		if (Args.Num() < 2)
+		{
+			UE_LOG(LogTemp, Error, TEXT("SLF.SetMeshSkeleton requires: <MeshPath> <SkeletonPath>"));
+			return;
+		}
+
+		USkeletalMesh* Mesh = LoadObject<USkeletalMesh>(nullptr, *Args[0]);
+		if (!Mesh)
+		{
+			UE_LOG(LogTemp, Error, TEXT("[SLF.SetMeshSkeleton] Failed to load mesh: %s"), *Args[0]);
+			return;
+		}
+
+		USkeleton* NewSkeleton = LoadObject<USkeleton>(nullptr, *Args[1]);
+		if (!NewSkeleton)
+		{
+			UE_LOG(LogTemp, Error, TEXT("[SLF.SetMeshSkeleton] Failed to load skeleton: %s"), *Args[1]);
+			return;
+		}
+
+		USkeleton* OldSkeleton = Mesh->GetSkeleton();
+		int32 MeshBones = Mesh->GetRefSkeleton().GetNum();
+		int32 SkelBones = NewSkeleton->GetReferenceSkeleton().GetNum();
+
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.SetMeshSkeleton] Mesh: %s (%d bones in RefSkeleton)"), *Mesh->GetName(), MeshBones);
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.SetMeshSkeleton] Old skeleton: %s (%d bones)"),
+			OldSkeleton ? *OldSkeleton->GetName() : TEXT("NULL"),
+			OldSkeleton ? OldSkeleton->GetReferenceSkeleton().GetNum() : 0);
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.SetMeshSkeleton] New skeleton: %s (%d bones)"), *NewSkeleton->GetName(), SkelBones);
+
+		// SetSkeleton assigns the pointer but does NOT merge bones.
+		// MergeAllBonesToBoneTree explicitly adds mesh bones the skeleton doesn't have.
+		Mesh->SetSkeleton(NewSkeleton);
+
+		// Explicitly merge mesh bones into the skeleton's bone tree
+		bool bMergeResult = NewSkeleton->MergeAllBonesToBoneTree(Mesh);
+		int32 NewSkelBones = NewSkeleton->GetReferenceSkeleton().GetNum();
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.SetMeshSkeleton] After MergeAllBonesToBoneTree(%s): skeleton now has %d bones"),
+			bMergeResult ? TEXT("SUCCESS") : TEXT("FAILED"), NewSkelBones);
+
+		// Save the mesh package
+		UPackage* MeshPkg = Mesh->GetOutermost();
+		MeshPkg->MarkPackageDirty();
+		FString MeshFilename = FPackageName::LongPackageNameToFilename(MeshPkg->GetName(), FPackageName::GetAssetPackageExtension());
+		FSavePackageArgs SaveArgs;
+		SaveArgs.TopLevelFlags = RF_Standalone;
+		bool bMeshSaved = UPackage::SavePackage(MeshPkg, Mesh, *MeshFilename, SaveArgs);
+
+		// Save the skeleton package (it may have new bones added by MergeAllBonesToBoneTree)
+		UPackage* SkelPkg = NewSkeleton->GetOutermost();
+		SkelPkg->MarkPackageDirty();
+		FString SkelFilename = FPackageName::LongPackageNameToFilename(SkelPkg->GetName(), FPackageName::GetAssetPackageExtension());
+		bool bSkelSaved = UPackage::SavePackage(SkelPkg, NewSkeleton, *SkelFilename, SaveArgs);
+
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.SetMeshSkeleton] Mesh saved: %s, Skeleton saved: %s"),
+			bMeshSaved ? TEXT("YES") : TEXT("NO"), bSkelSaved ? TEXT("YES") : TEXT("NO"));
 	})
 );
 
