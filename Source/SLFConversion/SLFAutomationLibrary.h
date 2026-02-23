@@ -602,7 +602,9 @@ public:
 		const FString& DestinationPath,
 		const FString& AssetName,
 		const FString& SkeletonPath = TEXT("_"),
-		float ImportScale = 1.0f
+		float ImportScale = 1.0f,
+		bool bImportMaterials = false,
+		bool bImportTextures = false
 	);
 
 	/**
@@ -799,6 +801,17 @@ public:
 	static FString DisableControlRigInAnimBP(const FString& AnimBPPath);
 
 	/**
+	 * Add ModifyBone scale nodes to an AnimBP for per-bone scale overrides.
+	 * Inserts nodes in series before the output pose in the main AnimGraph.
+	 * Scale (0.8, 0.8, 0.8) makes the bone 20% shorter; children move closer.
+	 * @param AnimBPPath - UE path to AnimBP (e.g. /Game/.../ABP_Sentinel)
+	 * @param BoneScales - Map of bone name -> uniform scale factor
+	 * @return Result string with details of added nodes
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Animation")
+	static FString AddBoneScaleOverrides(const FString& AnimBPPath, const TMap<FName, float>& BoneScales);
+
+	/**
 	 * Detailed AnimBP diagnostic: skeleton, all nodes, blend space samples, Control Rig, IK, graph chain
 	 * @param AnimBPPath - UE path to AnimBP
 	 * @return Detailed diagnostic string
@@ -925,6 +938,31 @@ public:
 		const FString& BlueprintPath,
 		FVector Location,
 		FRotator Rotation = FRotator::ZeroRotator
+	);
+
+	/**
+	 * Retarget animations from a source skeleton to a target skeleton using UE5's IK Retargeter.
+	 * Creates IK Rig assets for both skeletons, an IK Retargeter with FK chain mappings,
+	 * and uses DuplicateAndRetarget to batch-produce retargeted animations.
+	 * Handles proportion differences via GloballyScaled FK translation mode.
+	 *
+	 * @param SourceMeshPath - UE path to source skeletal mesh (e.g., c3100 guard mesh)
+	 * @param TargetMeshPath - UE path to target skeletal mesh (e.g., Sentinel mesh)
+	 * @param SourceAnimPaths - Array of UE paths to source animations to retarget
+	 * @param OutputDir - UE content directory for output animations
+	 * @param SourceRootBone - Root/pelvis bone name on source skeleton
+	 * @param TargetRootBone - Root/pelvis bone name on target skeleton
+	 * @param WorkingDir - UE content directory for temp IK Rig/Retargeter assets
+	 * @return Result string with retargeted asset paths
+	 */
+	static FString RetargetAnimationsViaIKRig(
+		const FString& SourceMeshPath,
+		const FString& TargetMeshPath,
+		const TArray<FString>& SourceAnimPaths,
+		const FString& OutputDir,
+		const FName& SourceRootBone,
+		const FName& TargetRootBone,
+		const FString& WorkingDir = TEXT("/Game/Temp/IKRetarget")
 	);
 
 #endif // WITH_EDITOR

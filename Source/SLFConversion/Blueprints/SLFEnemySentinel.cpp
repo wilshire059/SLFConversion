@@ -55,13 +55,8 @@ void ASLFEnemySentinel::ApplySentinelConfig()
 	USkeletalMeshComponent* MeshComp = GetMesh();
 	if (!MeshComp) return;
 
-	// Load Sentinel mesh — use Manny reskin (known working with ABP_Sentinel skeleton).
-	// Ironbound Warlord mesh requires matching bone count; when ready, add as first choice.
+	// Load Sentinel mesh — SKM_Sentinel IS the Ironbound Warlord (properly rigged, 55 ARP bones).
 	USkeletalMesh* SentinelMesh = LoadObject<USkeletalMesh>(nullptr, *(SentinelDir + TEXT("SKM_Sentinel")));
-	if (!SentinelMesh)
-	{
-		SentinelMesh = LoadObject<USkeletalMesh>(nullptr, *(SentinelDir + TEXT("SKM_Sentinel_Ironbound")));
-	}
 	if (!SentinelMesh)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[EnemySentinel] No Sentinel mesh found, keeping default"));

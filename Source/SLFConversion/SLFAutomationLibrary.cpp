@@ -32,6 +32,8 @@
 // AnimBP node support
 #include "AnimGraphNode_Base.h"
 #include "AnimGraphNode_LinkedAnimLayer.h"
+#include "AnimGraphNode_ModifyBone.h"
+#include "BoneControllers/AnimNode_ModifyBone.h"
 #include "Animation/AnimNode_LinkedAnimLayer.h"
 // AnimBP State Machine support for variable reference replacement
 #include "AnimStateTransitionNode.h"
@@ -10264,7 +10266,9 @@ FString USLFAutomationLibrary::ImportSkeletalMeshFromFBX(
 	const FString& DestinationPath,
 	const FString& AssetName,
 	const FString& SkeletonPath,
-	float ImportScale)
+	float ImportScale,
+	bool bImportMaterials,
+	bool bImportTextures)
 {
 	TArray<FString> Lines;
 	Lines.Add(TEXT("=== ImportSkeletalMeshFromFBX ==="));
@@ -10296,8 +10300,8 @@ FString USLFAutomationLibrary::ImportSkeletalMeshFromFBX(
 	UFbxImportUI* ImportUI = FbxFactory->ImportUI;
 	ImportUI->bImportMesh = true;
 	ImportUI->bImportAnimations = false;
-	ImportUI->bImportMaterials = false;
-	ImportUI->bImportTextures = false;
+	ImportUI->bImportMaterials = bImportMaterials;
+	ImportUI->bImportTextures = bImportTextures;
 	ImportUI->bCreatePhysicsAsset = false;
 	ImportUI->MeshTypeToImport = FBXIT_SkeletalMesh;
 	ImportUI->bIsObjImport = false;
@@ -10379,11 +10383,21 @@ FString USLFAutomationLibrary::ImportSkeletalMeshFromFBX(
 	{
 		UPackage* SkelPackage = Skeleton->GetOutermost();
 
-		// Rename skeleton to match our naming convention: {AssetName}_Skeleton
+		// Check if the desired skeleton already exists (e.g. reimporting mesh onto existing skeleton)
 		FString DesiredSkelName = AssetName + TEXT("_Skeleton");
 		FString DesiredSkelPkgName = DestinationPath / DesiredSkelName;
-		if (Skeleton->GetName() != DesiredSkelName)
+		USkeleton* ExistingSkel = LoadObject<USkeleton>(nullptr, *(DesiredSkelPkgName + TEXT(".") + DesiredSkelName));
+		if (ExistingSkel && ExistingSkel != Skeleton)
 		{
+			// Existing skeleton found - reassign imported mesh to use it instead of auto-created one
+			Lines.Add(FString::Printf(TEXT("Using existing skeleton: %s (not renaming auto-created %s)"), *ExistingSkel->GetPathName(), *Skeleton->GetName()));
+			ImportedMesh->SetSkeleton(ExistingSkel);
+			Skeleton = ExistingSkel;
+			SkelPackage = Skeleton->GetOutermost();
+		}
+		else if (Skeleton->GetName() != DesiredSkelName)
+		{
+			// No existing skeleton - rename auto-created one
 			UPackage* NewSkelPkg = CreatePackage(*DesiredSkelPkgName);
 			Lines.Add(FString::Printf(TEXT("Renaming skeleton from %s to %s"), *Skeleton->GetName(), *DesiredSkelName));
 			Skeleton->Rename(*DesiredSkelName, NewSkelPkg, REN_DontCreateRedirectors | REN_NonTransactional);
@@ -10885,180 +10899,292 @@ FString USLFAutomationLibrary::ImportAnimFBXDirect(
 	int32 TracksWithCurves = 0;
 	int32 TracksWithMotion = 0;
 
+	// ═══════════════════════════════════════════════════════════════════════
+	// COMPONENT-SPACE RETARGET
+	// The animation FBX and mesh FBX may have different rest poses (e.g., arms
+	// extended vs lowered). The old local-space rebase fails because parent rest
+	// pose mismatches accumulate through the bone chain, causing distortion.
+	// Fix: retarget in component space using:
+	//   TgtAnimCS = SrcAnimCS * SrcRefCS^-1 * TgtRefCS
+	// Then convert back to local:
+	//   TgtLocal[b] = TgtAnimCS[b] * TgtAnimCS[parent]^-1
+	// At F0: TgtAnimCS = SrcRefCS * SrcRefCS^-1 * TgtRefCS = TgtRefCS ✓
+	// At Fi: Motion delta is correctly transferred regardless of rest pose diffs.
+	// ═══════════════════════════════════════════════════════════════════════
 
+	// Phase 1: Identify which bones have FBX nodes
+	TArray<FbxNode*> BoneNodes;
+	TArray<bool> BoneHasFBX;
+	BoneNodes.SetNum(NumBones);
+	BoneHasFBX.SetNum(NumBones);
 	for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
 	{
 		FName BoneName = RefSkel.GetBoneName(BoneIdx);
-
-		// Find matching FBX node
 		FbxNode** FoundNode = FbxNodeMap.Find(BoneName);
-		if (!FoundNode || !(*FoundNode))
+		if (FoundNode && *FoundNode)
 		{
+			BoneNodes[BoneIdx] = *FoundNode;
+			BoneHasFBX[BoneIdx] = true;
+		}
+		else
+		{
+			BoneNodes[BoneIdx] = nullptr;
+			BoneHasFBX[BoneIdx] = false;
 			TracksSkipped++;
+		}
+	}
+	Lines.Add(FString::Printf(TEXT("  FBX bone match: %d matched, %d skipped"),
+		NumBones - TracksSkipped, TracksSkipped));
+
+	// Phase 2: Get FBX rest pose (static transform, no animation)
+	TArray<FTransform> FbxRestLocal;
+	FbxRestLocal.SetNum(NumBones);
+	{
+		// Temporarily clear animation stack to evaluate rest pose
+		Scene->SetCurrentAnimationStack(nullptr);
+		for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+		{
+			if (BoneHasFBX[BoneIdx])
+			{
+				FbxAMatrix RestMatrix = BoneNodes[BoneIdx]->EvaluateLocalTransform(FbxTime(0));
+				FbxVector4 T = RestMatrix.GetT();
+				FbxQuaternion Q = RestMatrix.GetQ();
+
+				// Same coordinate conversion as animation data
+				FVector Pos(T[0] * ImportScale, -T[1] * ImportScale, T[2] * ImportScale);
+				FQuat Rot(Q[0], -Q[1], Q[2], -Q[3]);
+				Rot.Normalize();
+				FbxRestLocal[BoneIdx] = FTransform(Rot, Pos, FVector::OneVector);
+			}
+			else
+			{
+				// No FBX node — use bind pose (identity delta when retargeted)
+				FbxRestLocal[BoneIdx] = (BoneIdx < RefSkel.GetRefBonePose().Num())
+					? RefSkel.GetRefBonePose()[BoneIdx]
+					: FTransform::Identity;
+			}
+		}
+		// Restore animation stack
+		Scene->SetCurrentAnimationStack(AnimStack);
+	}
+
+	// Phase 3: Compute component-space rest poses for both FBX and skeleton bind
+	TArray<FTransform> FbxRestCS, BindCS;
+	FbxRestCS.SetNum(NumBones);
+	BindCS.SetNum(NumBones);
+	for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+	{
+		int32 ParentIdx = RefSkel.GetParentIndex(BoneIdx);
+		FTransform BindLocal = (BoneIdx < RefSkel.GetRefBonePose().Num())
+			? RefSkel.GetRefBonePose()[BoneIdx]
+			: FTransform::Identity;
+
+		if (ParentIdx == INDEX_NONE)
+		{
+			FbxRestCS[BoneIdx] = FbxRestLocal[BoneIdx];
+			BindCS[BoneIdx] = BindLocal;
+		}
+		else
+		{
+			// UE5 convention: CS[child] = Local[child] * CS[parent]
+			FTransform::Multiply(&FbxRestCS[BoneIdx], &FbxRestLocal[BoneIdx], &FbxRestCS[ParentIdx]);
+			FTransform::Multiply(&BindCS[BoneIdx], &BindLocal, &BindCS[ParentIdx]);
+		}
+	}
+
+	// Log rest pose comparison for key bones
+	{
+		const TCHAR* DiagBones[] = {TEXT("Pelvis"), TEXT("Spine2"), TEXT("Head"), TEXT("L_UpperArm"), TEXT("L_Forearm"), TEXT("R_UpperArm")};
+		for (const TCHAR* DB : DiagBones)
+		{
+			int32 Idx = RefSkel.FindBoneIndex(FName(DB));
+			if (Idx != INDEX_NONE)
+			{
+				FVector FP = FbxRestCS[Idx].GetLocation();
+				FVector BP = BindCS[Idx].GetLocation();
+				float Dist = (FP - BP).Size();
+				Lines.Add(FString::Printf(TEXT("  [CS-REST] %s: FBX=(%.3f,%.3f,%.3f) Bind=(%.3f,%.3f,%.3f) diff=%.4f"),
+					DB, FP.X, FP.Y, FP.Z, BP.X, BP.Y, BP.Z, Dist));
+			}
+		}
+	}
+
+	// Pre-compute inverse FBX rest CS for retarget
+	TArray<FTransform> FbxRestCSInv;
+	FbxRestCSInv.SetNum(NumBones);
+	for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+	{
+		FbxRestCSInv[BoneIdx] = FbxRestCS[BoneIdx].Inverse();
+	}
+
+	// Phase 4: Sample all bones' animation data from FBX
+	// We need all bones at each frame for CS retarget, so sample into 2D arrays.
+	TArray<TArray<FVector3f>> AllPosKeys;
+	TArray<TArray<FQuat4f>> AllRotKeys;
+	AllPosKeys.SetNum(NumBones);
+	AllRotKeys.SetNum(NumBones);
+	for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+	{
+		AllPosKeys[BoneIdx].SetNum(NumFrames);
+		AllRotKeys[BoneIdx].SetNum(NumFrames);
+	}
+
+	for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+	{
+		if (!BoneHasFBX[BoneIdx])
+		{
+			// No FBX data — fill with bind pose (will be identity after retarget)
+			FTransform BindLocal = (BoneIdx < RefSkel.GetRefBonePose().Num())
+				? RefSkel.GetRefBonePose()[BoneIdx]
+				: FTransform::Identity;
+			for (int32 Frame = 0; Frame < NumFrames; Frame++)
+			{
+				AllPosKeys[BoneIdx][Frame] = FVector3f(BindLocal.GetLocation());
+				AllRotKeys[BoneIdx][Frame] = FQuat4f(BindLocal.GetRotation());
+			}
 			continue;
 		}
 
-		FbxNode* BoneNode = *FoundNode;
+		FbxNode* BoneNode = BoneNodes[BoneIdx];
 
-		// Check if this node has any animation curves
+		// Check for animation curves
 		bool bHasTranslationCurve = false;
 		bool bHasRotationCurve = false;
-		int32 NumTranslationKeys = 0;
-		int32 NumRotationKeys = 0;
 		if (AnimLayer)
 		{
-			FbxAnimCurve* TxCurve = BoneNode->LclTranslation.GetCurve(AnimLayer, FBXSDK_CURVENODE_COMPONENT_X);
-			FbxAnimCurve* RxCurve = BoneNode->LclRotation.GetCurve(AnimLayer, FBXSDK_CURVENODE_COMPONENT_X);
-			bHasTranslationCurve = (TxCurve != nullptr);
-			bHasRotationCurve = (RxCurve != nullptr);
-			if (TxCurve) NumTranslationKeys = TxCurve->KeyGetCount();
-			if (RxCurve) NumRotationKeys = RxCurve->KeyGetCount();
+			bHasTranslationCurve = (BoneNode->LclTranslation.GetCurve(AnimLayer, FBXSDK_CURVENODE_COMPONENT_X) != nullptr);
+			bHasRotationCurve = (BoneNode->LclRotation.GetCurve(AnimLayer, FBXSDK_CURVENODE_COMPONENT_X) != nullptr);
 		}
 		if (bHasTranslationCurve || bHasRotationCurve) TracksWithCurves++;
 
-		// Sample bone local transforms at each frame
-		TArray<FVector3f> PosKeys;
-		TArray<FQuat4f> RotKeys;
-		TArray<FVector3f> ScaleKeys;
-		PosKeys.SetNum(NumFrames);
-		RotKeys.SetNum(NumFrames);
-		ScaleKeys.SetNum(NumFrames);
-
-		float MaxPosDelta = 0.0f;
-		float MaxRotDelta = 0.0f;
 		float MaxScaleDeviation = 0.0f;
 
 		for (int32 Frame = 0; Frame < NumFrames; Frame++)
 		{
 			FbxTime FrameTime = Start + FbxTime::GetOneFrameValue(TimeMode) * Frame;
-
-			// Get local transform at this frame
 			FbxAMatrix LocalMatrix = BoneNode->EvaluateLocalTransform(FrameTime);
 
 			FbxVector4 T = LocalMatrix.GetT();
 			FbxQuaternion Q = LocalMatrix.GetQ();
 			FbxVector4 S = LocalMatrix.GetS();
 
-			// Apply FFbxDataConverter conversion (matching UE5's mesh importer exactly):
-			// ConvertPos: negate Y — converts RH to LH coordinate system
-			// ConvertRotToQuat: negate Y and W — converts RH to LH quaternion
-			// ConvertScale: pass through as-is
-			PosKeys[Frame] = FVector3f(
+			// FFbxDataConverter conversion: negate Y (pos), negate Y,W (quat)
+			AllPosKeys[BoneIdx][Frame] = FVector3f(
 				(float)(T[0] * ImportScale),
 				(float)(-T[1] * ImportScale),
 				(float)(T[2] * ImportScale));
 
-			RotKeys[Frame] = FQuat4f(
+			AllRotKeys[BoneIdx][Frame] = FQuat4f(
 				(float)(Q[0]),
 				(float)(-Q[1]),
 				(float)(Q[2]),
 				(float)(-Q[3]));
-			RotKeys[Frame].Normalize();
+			AllRotKeys[BoneIdx][Frame].Normalize();
 
-			// Track raw scale deviation from (1,1,1) before clamping
-			{
-				float SDev = FMath::Max3(
-					FMath::Abs((float)S[0] - 1.0f),
-					FMath::Abs((float)S[1] - 1.0f),
-					FMath::Abs((float)S[2] - 1.0f));
-				MaxScaleDeviation = FMath::Max(MaxScaleDeviation, SDev);
-			}
-
-			// Force scale to (1,1,1) — ARP stretch bones (arm_stretch, leg_stretch, etc.)
-			// inject non-uniform scale from IK solving. Character animations should never
-			// use bone scale; the stretch is an ARP baking artifact that causes limb distortion.
-			ScaleKeys[Frame] = FVector3f(1.0f, 1.0f, 1.0f);
-
-			// Track deviation from frame 0 to detect actual motion
-			if (Frame > 0)
-			{
-				float PosDelta = (PosKeys[Frame] - PosKeys[0]).Size();
-				float RotDelta = FQuat4f::ErrorAutoNormalize(RotKeys[Frame], RotKeys[0]);
-				MaxPosDelta = FMath::Max(MaxPosDelta, PosDelta);
-				MaxRotDelta = FMath::Max(MaxRotDelta, RotDelta);
-			}
-
-			// Diagnostic: print raw FBX values for key bones at frame 0 and mid-frame
-			if (BoneIdx < 5 && (Frame == 0 || Frame == NumFrames / 2))
-			{
-				Lines.Add(FString::Printf(
-					TEXT("  [DIAG] Bone=%s F=%d | FBX: T=(%.4f,%.4f,%.4f) Q=(%.4f,%.4f,%.4f,%.4f) | UE5: T=(%.4f,%.4f,%.4f) Q=(%.4f,%.4f,%.4f,%.4f) | HasCurve: T=%d(%d keys) R=%d(%d keys)"),
-					*BoneName.ToString(), Frame,
-					T[0], T[1], T[2], Q[0], Q[1], Q[2], Q[3],
-					PosKeys[Frame].X, PosKeys[Frame].Y, PosKeys[Frame].Z,
-					RotKeys[Frame].X, RotKeys[Frame].Y, RotKeys[Frame].Z, RotKeys[Frame].W,
-					bHasTranslationCurve ? 1 : 0, NumTranslationKeys,
-					bHasRotationCurve ? 1 : 0, NumRotationKeys));
-			}
+			// Track scale deviation
+			float SDev = FMath::Max3(
+				FMath::Abs((float)S[0] - 1.0f),
+				FMath::Abs((float)S[1] - 1.0f),
+				FMath::Abs((float)S[2] - 1.0f));
+			MaxScaleDeviation = FMath::Max(MaxScaleDeviation, SDev);
 		}
 
-		if (MaxPosDelta > 0.001f || MaxRotDelta > 0.001f) TracksWithMotion++;
-
-		// Log bones with significant scale deviation (confirms ARP stretch hypothesis)
 		if (MaxScaleDeviation > 0.01f)
 		{
-			Lines.Add(FString::Printf(TEXT("  [SCALE] Bone=%s MaxScaleDev=%.4f (clamped to 1,1,1)"),
-				*BoneName.ToString(), MaxScaleDeviation));
+			Lines.Add(FString::Printf(TEXT("  [SCALE] Bone=%s MaxScaleDev=%.4f (will be clamped to 1,1,1)"),
+				*RefSkel.GetBoneName(BoneIdx).ToString(), MaxScaleDeviation));
 		}
+	}
 
-		// Rebase animation data to match skeleton bind pose.
-		// The mesh FBX and animation FBXes may have different rest poses (e.g., the "rig"
-		// root bone has 180° Z in the mesh but identity in the animation). This causes
-		// facing direction issues and limb distortion during animation.
-		// Fix: compute the delta between animation F0 and bind pose, then apply it to ALL frames.
-		// At F0: Corrected = AnimF0 * Rebase = AnimF0 * AnimF0^-1 * BindPose = BindPose ✓
-		// At F[i]: Corrected = AnimF[i] * Rebase = (AnimDelta * AnimF0) * AnimF0^-1 * BindPose
-		//        = AnimDelta * BindPose (animation delta preserved, applied in bind pose space) ✓
-		if (BoneIdx < RefSkel.GetRefBonePose().Num())
+	// Phase 5: Component-space retarget per frame
+	// For each frame: build CS chain from raw FBX locals, apply retarget formula,
+	// convert back to local, write to output arrays.
+	for (int32 Frame = 0; Frame < NumFrames; Frame++)
+	{
+		// Build source animation CS for this frame
+		TArray<FTransform> SrcAnimCS;
+		SrcAnimCS.SetNum(NumBones);
+		for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
 		{
-			FTransform BindLocal = RefSkel.GetRefBonePose()[BoneIdx];
+			FTransform AnimLocal(
+				FQuat((double)AllRotKeys[BoneIdx][Frame].X, (double)AllRotKeys[BoneIdx][Frame].Y,
+				      (double)AllRotKeys[BoneIdx][Frame].Z, (double)AllRotKeys[BoneIdx][Frame].W),
+				FVector((double)AllPosKeys[BoneIdx][Frame].X, (double)AllPosKeys[BoneIdx][Frame].Y,
+				        (double)AllPosKeys[BoneIdx][Frame].Z),
+				FVector::OneVector);
 
-			// Build animation frame 0 transform
-			FTransform AnimF0(
-				FQuat((double)RotKeys[0].X, (double)RotKeys[0].Y, (double)RotKeys[0].Z, (double)RotKeys[0].W),
-				FVector((double)PosKeys[0].X, (double)PosKeys[0].Y, (double)PosKeys[0].Z),
-				FVector(1.0, 1.0, 1.0));
-
-			// Check if rebase is needed (significant mismatch between F0 and bind pose)
-			float PosDiff = (AnimF0.GetLocation() - BindLocal.GetLocation()).Size();
-			float RotDiff = FQuat::ErrorAutoNormalize(AnimF0.GetRotation(), BindLocal.GetRotation());
-
-			if (PosDiff > 0.001f || RotDiff > 0.001f)
+			int32 ParentIdx = RefSkel.GetParentIndex(BoneIdx);
+			if (ParentIdx == INDEX_NONE)
 			{
-				// Compute rebase: Rebase = AnimF0^-1 * BindLocal
-				FTransform AnimF0Inv = AnimF0.Inverse();
-				FTransform Rebase;
-				FTransform::Multiply(&Rebase, &AnimF0Inv, &BindLocal);
-
-				if (BoneIdx < 5 || RotDiff > 0.1f)
-				{
-					Lines.Add(FString::Printf(
-						TEXT("  [REBASE] Bone[%d]=%s PosDiff=%.4f RotDiff=%.4f"),
-						BoneIdx, *BoneName.ToString(), PosDiff, RotDiff));
-				}
-
-				for (int32 Frame = 0; Frame < NumFrames; Frame++)
-				{
-					FTransform AnimFrame(
-						FQuat((double)RotKeys[Frame].X, (double)RotKeys[Frame].Y, (double)RotKeys[Frame].Z, (double)RotKeys[Frame].W),
-						FVector((double)PosKeys[Frame].X, (double)PosKeys[Frame].Y, (double)PosKeys[Frame].Z),
-						FVector(1.0, 1.0, 1.0));
-
-					// Corrected = AnimFrame * Rebase
-					// FTransform A * B means "apply A first, then B"
-					FTransform Corrected;
-					FTransform::Multiply(&Corrected, &AnimFrame, &Rebase);
-
-					PosKeys[Frame] = FVector3f(Corrected.GetLocation());
-					RotKeys[Frame] = FQuat4f(Corrected.GetRotation());
-					RotKeys[Frame].Normalize();
-				}
+				SrcAnimCS[BoneIdx] = AnimLocal;
+			}
+			else
+			{
+				FTransform::Multiply(&SrcAnimCS[BoneIdx], &AnimLocal, &SrcAnimCS[ParentIdx]);
 			}
 		}
 
-		// Add bone track
+		// Apply CS retarget: TgtAnimCS = SrcAnimCS * SrcRefCSInv * BindCS
+		// UE5 FTransform multiply: A * B means "apply A first, then B"
+		TArray<FTransform> TgtAnimCS;
+		TgtAnimCS.SetNum(NumBones);
+		for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+		{
+			FTransform Temp;
+			FTransform::Multiply(&Temp, &SrcAnimCS[BoneIdx], &FbxRestCSInv[BoneIdx]);
+			FTransform::Multiply(&TgtAnimCS[BoneIdx], &Temp, &BindCS[BoneIdx]);
+		}
+
+		// Convert CS back to local: TgtLocal = TgtAnimCS * TgtAnimCS_parent^-1
+		for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+		{
+			int32 ParentIdx = RefSkel.GetParentIndex(BoneIdx);
+			FTransform TgtLocal;
+			if (ParentIdx == INDEX_NONE)
+			{
+				TgtLocal = TgtAnimCS[BoneIdx];
+			}
+			else
+			{
+				FTransform ParentInv = TgtAnimCS[ParentIdx].Inverse();
+				FTransform::Multiply(&TgtLocal, &TgtAnimCS[BoneIdx], &ParentInv);
+			}
+
+			AllPosKeys[BoneIdx][Frame] = FVector3f(TgtLocal.GetLocation());
+			AllRotKeys[BoneIdx][Frame] = FQuat4f(TgtLocal.GetRotation());
+			AllRotKeys[BoneIdx][Frame].Normalize();
+		}
+	}
+
+	// Phase 6: Write bone tracks to DataModel
+	for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+	{
+		if (!BoneHasFBX[BoneIdx]) continue;
+
+		FName BoneName = RefSkel.GetBoneName(BoneIdx);
+
+		// Detect motion (deviation from frame 0)
+		float MaxPosDelta = 0.0f;
+		float MaxRotDelta = 0.0f;
+		for (int32 Frame = 1; Frame < NumFrames; Frame++)
+		{
+			float PosDelta = (AllPosKeys[BoneIdx][Frame] - AllPosKeys[BoneIdx][0]).Size();
+			float RotDelta = FQuat4f::ErrorAutoNormalize(AllRotKeys[BoneIdx][Frame], AllRotKeys[BoneIdx][0]);
+			MaxPosDelta = FMath::Max(MaxPosDelta, PosDelta);
+			MaxRotDelta = FMath::Max(MaxRotDelta, RotDelta);
+		}
+		if (MaxPosDelta > 0.001f || MaxRotDelta > 0.001f) TracksWithMotion++;
+
+		// Scale forced to (1,1,1) — ARP stretch artifacts
+		TArray<FVector3f> ScaleKeys;
+		ScaleKeys.SetNum(NumFrames);
+		for (int32 Frame = 0; Frame < NumFrames; Frame++)
+		{
+			ScaleKeys[Frame] = FVector3f(1.0f, 1.0f, 1.0f);
+		}
+
 		Controller.AddBoneCurve(BoneName, false);
-		Controller.SetBoneTrackKeys(BoneName, PosKeys, RotKeys, ScaleKeys, false);
+		Controller.SetBoneTrackKeys(BoneName, AllPosKeys[BoneIdx], AllRotKeys[BoneIdx], ScaleKeys, false);
 		TracksAdded++;
 	}
 
@@ -11931,6 +12057,230 @@ FString USLFAutomationLibrary::ReplaceAnimReferencesInAnimBP(
 	SaveArgs.TopLevelFlags = RF_Standalone;
 	bool bSaved = UPackage::SavePackage(Pkg, AnimBP, *FileName, SaveArgs);
 	Lines.Add(FString::Printf(TEXT("Save: %s"), bSaved ? TEXT("SUCCESS") : TEXT("FAILED")));
+
+	FString Result = FString::Join(Lines, TEXT("\n"));
+	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
+	return Result;
+}
+
+FString USLFAutomationLibrary::AddBoneScaleOverrides(const FString& AnimBPPath, const TMap<FName, float>& BoneScales)
+{
+	TArray<FString> Lines;
+	Lines.Add(FString::Printf(TEXT("=== AddBoneScaleOverrides: %s ==="), *AnimBPPath));
+
+	if (BoneScales.Num() == 0)
+	{
+		Lines.Add(TEXT("ERROR: No bone scales provided"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	UAnimBlueprint* AnimBP = LoadObject<UAnimBlueprint>(nullptr, *AnimBPPath);
+	if (!AnimBP)
+	{
+		Lines.Add(TEXT("ERROR: Could not load AnimBP"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// Get the main AnimGraph
+	TArray<UEdGraph*> AnimGraphs;
+	for (TObjectIterator<UEdGraph> It; It; ++It)
+	{
+		UEdGraph* Graph = *It;
+		if (Graph && Graph->GetOutermost() == AnimBP->GetOutermost())
+		{
+			// The main AnimGraph typically has the output pose result node
+			for (UEdGraphNode* Node : Graph->Nodes)
+			{
+				if (Node && Node->GetClass()->GetName().Contains(TEXT("AnimGraphNode_Root")))
+				{
+					AnimGraphs.Add(Graph);
+					break;
+				}
+			}
+		}
+	}
+
+	if (AnimGraphs.Num() == 0)
+	{
+		Lines.Add(TEXT("ERROR: No AnimGraph with Root node found"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	UEdGraph* MainGraph = AnimGraphs[0];
+	Lines.Add(FString::Printf(TEXT("Found main AnimGraph: %s (%d nodes)"), *MainGraph->GetName(), MainGraph->Nodes.Num()));
+
+	// Lambda to check if a pin is a pose link
+	auto IsPosePin = [](UEdGraphPin* Pin) -> bool
+	{
+		if (!Pin || Pin->PinType.PinCategory != UEdGraphSchema_K2::PC_Struct)
+			return false;
+		UScriptStruct* PinStruct = Cast<UScriptStruct>(Pin->PinType.PinSubCategoryObject.Get());
+		if (!PinStruct) return false;
+		FString StructName = PinStruct->GetName();
+		return StructName.Contains(TEXT("PoseLink")) || StructName.Contains(TEXT("ComponentSpacePoseLink"));
+	};
+
+	// Find the Root (output) node and its input pose connection
+	UEdGraphNode* RootNode = nullptr;
+	UEdGraphPin* RootInputPin = nullptr;
+	for (UEdGraphNode* Node : MainGraph->Nodes)
+	{
+		if (Node && Node->GetClass()->GetName().Contains(TEXT("AnimGraphNode_Root")))
+		{
+			RootNode = Node;
+			for (UEdGraphPin* Pin : Node->Pins)
+			{
+				if (Pin->Direction == EGPD_Input && IsPosePin(Pin))
+				{
+					RootInputPin = Pin;
+					break;
+				}
+			}
+			break;
+		}
+	}
+
+	if (!RootNode || !RootInputPin)
+	{
+		Lines.Add(TEXT("ERROR: Could not find Root node or its input pose pin"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// Find what's currently feeding into the Root
+	UEdGraphPin* UpstreamOutputPin = nullptr;
+	if (RootInputPin->LinkedTo.Num() > 0)
+	{
+		UpstreamOutputPin = RootInputPin->LinkedTo[0];
+		Lines.Add(FString::Printf(TEXT("Current chain end: %s -> Root"),
+			*UpstreamOutputPin->GetOwningNode()->GetNodeTitle(ENodeTitleType::ListView).ToString()));
+	}
+	else
+	{
+		Lines.Add(TEXT("ERROR: Root input pin has no connection"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// First, remove any existing ModifyBone nodes we previously added (clean re-application)
+	TArray<UEdGraphNode*> ExistingModifyBones;
+	for (UEdGraphNode* Node : MainGraph->Nodes)
+	{
+		if (Node && Node->IsA<UAnimGraphNode_ModifyBone>())
+		{
+			ExistingModifyBones.Add(Node);
+		}
+	}
+	for (UEdGraphNode* OldNode : ExistingModifyBones)
+	{
+		// Find pose pins
+		UEdGraphPin* OldInput = nullptr;
+		UEdGraphPin* OldOutput = nullptr;
+		for (UEdGraphPin* Pin : OldNode->Pins)
+		{
+			if (Pin->Direction == EGPD_Input && IsPosePin(Pin)) OldInput = Pin;
+			if (Pin->Direction == EGPD_Output && IsPosePin(Pin)) OldOutput = Pin;
+		}
+
+		// Rewire around it
+		if (OldInput && OldOutput && OldInput->LinkedTo.Num() > 0 && OldOutput->LinkedTo.Num() > 0)
+		{
+			UEdGraphPin* Up = OldInput->LinkedTo[0];
+			UEdGraphPin* Down = OldOutput->LinkedTo[0];
+			OldInput->BreakAllPinLinks();
+			OldOutput->BreakAllPinLinks();
+			Up->MakeLinkTo(Down);
+		}
+		else
+		{
+			OldNode->BreakAllNodeLinks();
+		}
+		MainGraph->RemoveNode(OldNode);
+		Lines.Add(FString::Printf(TEXT("Removed existing ModifyBone node: %s"),
+			*OldNode->GetNodeTitle(ENodeTitleType::ListView).ToString()));
+	}
+
+	// Re-find upstream after cleanup (it might have changed)
+	UpstreamOutputPin = nullptr;
+	if (RootInputPin->LinkedTo.Num() > 0)
+	{
+		UpstreamOutputPin = RootInputPin->LinkedTo[0];
+	}
+	if (!UpstreamOutputPin)
+	{
+		Lines.Add(TEXT("ERROR: Lost upstream connection after cleanup"));
+		return FString::Join(Lines, TEXT("\n"));
+	}
+
+	// Insert ModifyBone nodes in series: Upstream -> MB1 -> MB2 -> ... -> Root
+	// Break the current Upstream -> Root connection
+	UEdGraphPin* CurrentUpstream = UpstreamOutputPin;
+	RootInputPin->BreakAllPinLinks();
+
+	int32 NodeY = RootNode->NodePosY - 200;
+	int32 AddedCount = 0;
+
+	for (const auto& Pair : BoneScales)
+	{
+		FName BoneName = Pair.Key;
+		float ScaleFactor = Pair.Value;
+
+		// Create ModifyBone node
+		FGraphNodeCreator<UAnimGraphNode_ModifyBone> NodeCreator(*MainGraph);
+		UAnimGraphNode_ModifyBone* MBNode = NodeCreator.CreateNode();
+
+		// Configure the underlying FAnimNode_ModifyBone BEFORE Finalize
+		FAnimNode_ModifyBone& NodeData = MBNode->Node;
+		NodeData.BoneToModify.BoneName = BoneName;
+		NodeData.TranslationMode = BMM_Ignore;
+		NodeData.RotationMode = BMM_Ignore;
+		NodeData.ScaleMode = BMM_Replace;
+		NodeData.Scale = FVector(ScaleFactor, ScaleFactor, ScaleFactor);
+		NodeData.ScaleSpace = EBoneControlSpace::BCS_BoneSpace;
+
+		MBNode->NodePosX = RootNode->NodePosX - 300;
+		MBNode->NodePosY = NodeY;
+		NodeY -= 150;
+
+		NodeCreator.Finalize();
+
+		// Find pose pins on the new node
+		UEdGraphPin* MBInputPin = nullptr;
+		UEdGraphPin* MBOutputPin = nullptr;
+		for (UEdGraphPin* Pin : MBNode->Pins)
+		{
+			if (Pin->Direction == EGPD_Input && IsPosePin(Pin)) MBInputPin = Pin;
+			if (Pin->Direction == EGPD_Output && IsPosePin(Pin)) MBOutputPin = Pin;
+		}
+
+		if (!MBInputPin || !MBOutputPin)
+		{
+			Lines.Add(FString::Printf(TEXT("WARNING: ModifyBone for %s has no pose pins, skipping"), *BoneName.ToString()));
+			MainGraph->RemoveNode(MBNode);
+			continue;
+		}
+
+		// Wire: CurrentUpstream -> MBNode -> (next node or Root)
+		CurrentUpstream->MakeLinkTo(MBInputPin);
+		CurrentUpstream = MBOutputPin;
+
+		Lines.Add(FString::Printf(TEXT("Added ModifyBone: %s scale=(%.2f, %.2f, %.2f)"),
+			*BoneName.ToString(), ScaleFactor, ScaleFactor, ScaleFactor));
+		AddedCount++;
+	}
+
+	// Connect last ModifyBone output to Root input
+	CurrentUpstream->MakeLinkTo(RootInputPin);
+
+	Lines.Add(FString::Printf(TEXT("Inserted %d ModifyBone nodes before Root"), AddedCount));
+
+	// Compile and save
+	FKismetEditorUtilities::CompileBlueprint(AnimBP);
+	UPackage* Pkg = AnimBP->GetOutermost();
+	Pkg->MarkPackageDirty();
+	FString FileName = FPackageName::LongPackageNameToFilename(Pkg->GetName(), FPackageName::GetAssetPackageExtension());
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Standalone;
+	bool bSaved = UPackage::SavePackage(Pkg, AnimBP, *FileName, SaveArgs);
+	Lines.Add(FString::Printf(TEXT("Compile + Save: %s"), bSaved ? TEXT("SUCCESS") : TEXT("FAILED")));
 
 	FString Result = FString::Join(Lines, TEXT("\n"));
 	UE_LOG(LogSLFAutomation, Log, TEXT("%s"), *Result);
@@ -13796,45 +14146,42 @@ FString USLFAutomationLibrary::DiagnoseAnimDataModel(const FString& AnimPath)
 		TEXT("thigh_l"), TEXT("upperarm_r"), TEXT("weapon_r")
 	};
 
-	// Use modern API: GetBoneTrackNames + FindBoneTrackByName (GetBoneAnimationTracks is deprecated/broken in UE5.7)
+	// Read from CURVES via GetBoneTrackTransform (not InternalTrackData which is empty
+	// after DDC compression in UE5.7 — see memory note 11b)
 	TArray<FName> BoneTrackNames;
 	DataModel->GetBoneTrackNames(BoneTrackNames);
 	Lines.Add(FString::Printf(TEXT("BoneTrackNames.Num(): %d"), BoneTrackNames.Num()));
 
 	for (const FName& BoneName : BoneTrackNames)
 	{
-		const FBoneAnimationTrack& Track = DataModel->GetBoneTrackByName(BoneName);
-		const FRawAnimSequenceTrack& RawTrack = Track.InternalTrackData;
-
 		bool bIsKeyBone = false;
 		for (const TCHAR* KB : KeyBones)
 		{
 			if (BoneName == FName(KB)) { bIsKeyBone = true; break; }
 		}
 
-		// Check frame 0
-		FVector Pos0 = RawTrack.PosKeys.Num() > 0 ? FVector(RawTrack.PosKeys[0]) : FVector::ZeroVector;
-		FQuat Rot0 = RawTrack.RotKeys.Num() > 0 ? FQuat(RawTrack.RotKeys[0]) : FQuat::Identity;
+		// Check frame 0 via curve eval
+		FTransform T0 = DataModel->GetBoneTrackTransform(BoneName, FFrameNumber(0));
+		FVector Pos0 = T0.GetLocation();
+		FQuat Rot0 = T0.GetRotation();
 		bool bIdentity0 = Pos0.IsNearlyZero(0.01f) && Rot0.Equals(FQuat::Identity, 0.001f);
 		if (!bIdentity0) NonIdentityFrame0++;
 
-		// Check mid frame
-		int32 MidIdx = FMath::Min(MidFrame, FMath::Max(0, RawTrack.PosKeys.Num() - 1));
-		int32 MidRotIdx = FMath::Min(MidFrame, FMath::Max(0, RawTrack.RotKeys.Num() - 1));
-		FVector PosMid = RawTrack.PosKeys.Num() > MidIdx ? FVector(RawTrack.PosKeys[MidIdx]) : FVector::ZeroVector;
-		FQuat RotMid = RawTrack.RotKeys.Num() > MidRotIdx ? FQuat(RawTrack.RotKeys[MidRotIdx]) : FQuat::Identity;
+		// Check mid frame via curve eval
+		FTransform TMid = DataModel->GetBoneTrackTransform(BoneName, FFrameNumber(MidFrame));
+		FVector PosMid = TMid.GetLocation();
+		FQuat RotMid = TMid.GetRotation();
 		bool bIdentityMid = PosMid.IsNearlyZero(0.01f) && RotMid.Equals(FQuat::Identity, 0.001f);
 		if (!bIdentityMid) NonIdentityMidFrame++;
 
 		if (bIsKeyBone)
 		{
-			Lines.Add(FString::Printf(TEXT("  %s: PosKeys=%d RotKeys=%d | F0: Pos=(%.2f,%.2f,%.2f) Rot=(%.4f,%.4f,%.4f,%.4f) %s | FMid: Pos=(%.2f,%.2f,%.2f) %s"),
+			Lines.Add(FString::Printf(TEXT("  %s: F0: Pos=(%.2f,%.2f,%.2f) Rot=(%.4f,%.4f,%.4f,%.4f) %s | FMid: Pos=(%.2f,%.2f,%.2f) %s"),
 				*BoneName.ToString(),
-				RawTrack.PosKeys.Num(), RawTrack.RotKeys.Num(),
 				Pos0.X, Pos0.Y, Pos0.Z, Rot0.X, Rot0.Y, Rot0.Z, Rot0.W,
-				bIdentity0 ? TEXT("[ID]") : TEXT("OK"),
+				bIdentity0 ? TEXT("[ID]") : TEXT("[OK]"),
 				PosMid.X, PosMid.Y, PosMid.Z,
-				bIdentityMid ? TEXT("[ID]") : TEXT("OK")));
+				bIdentityMid ? TEXT("[ID]") : TEXT("[OK]")));
 		}
 	}
 
@@ -13895,44 +14242,37 @@ static void DiagnoseOneAnim(const FString& AnimPath, const FString& Label, TArra
 	Lines.Add(FString::Printf(TEXT("  DataModel: %d tracks, %d frames, %d/%d fps"),
 		DMTracks, DMFrames, DMFR.Numerator, DMFR.Denominator));
 
-	// List DataModel bone track names and check raw key counts
+	// List DataModel bone track names and read from CURVES (not InternalTrackData which is
+	// empty after DDC compression in UE5.7 — see memory note 11b)
 	TArray<FName> TrackNames;
 	DM->GetBoneTrackNames(TrackNames);
 	Lines.Add(FString::Printf(TEXT("  DataModel track names (%d):"), TrackNames.Num()));
 
-	int32 TracksWithKeys = 0;
-	int32 TracksEmpty = 0;
+	int32 TracksWithMotion = 0;
+	int32 TracksIdentity = 0;
 	for (int32 i = 0; i < TrackNames.Num(); i++)
 	{
-		const FBoneAnimationTrack& Track = DM->GetBoneTrackByName(TrackNames[i]);
-		int32 PK = Track.InternalTrackData.PosKeys.Num();
-		int32 RK = Track.InternalTrackData.RotKeys.Num();
-		if (PK > 0 || RK > 0) TracksWithKeys++;
-		else TracksEmpty++;
-
 		// Check if bone exists in skeleton
 		int32 SkelIdx = RefSkel.FindBoneIndex(TrackNames[i]);
 
+		// Read from curves via GetBoneTrackTransform (always has data after DDC)
+		FTransform T0 = DM->GetBoneTrackTransform(TrackNames[i], FFrameNumber(0));
+		FVector P0 = T0.GetLocation();
+		FQuat R0 = T0.GetRotation();
+		bool bID = P0.IsNearlyZero(0.01) && R0.Equals(FQuat::Identity, 0.001);
+		if (!bID) TracksWithMotion++;
+		else TracksIdentity++;
+
 		if (i < 10)
 		{
-			FString PosStr = TEXT("(empty)");
-			FString RotStr = TEXT("(empty)");
-			if (PK > 0)
-			{
-				FVector3f P0 = Track.InternalTrackData.PosKeys[0];
-				PosStr = FString::Printf(TEXT("(%.3f,%.3f,%.3f)"), P0.X, P0.Y, P0.Z);
-			}
-			if (RK > 0)
-			{
-				FQuat4f R0 = Track.InternalTrackData.RotKeys[0];
-				RotStr = FString::Printf(TEXT("(%.4f,%.4f,%.4f,%.4f)"), R0.X, R0.Y, R0.Z, R0.W);
-			}
-			Lines.Add(FString::Printf(TEXT("    [%d] '%s' skelIdx=%d | PosKeys=%d RotKeys=%d | F0: %s %s"),
-				i, *TrackNames[i].ToString(), SkelIdx, PK, RK, *PosStr, *RotStr));
+			Lines.Add(FString::Printf(TEXT("    [%d] '%s' skelIdx=%d | Pos=(%.3f,%.3f,%.3f) Rot=(%.4f,%.4f,%.4f,%.4f) %s"),
+				i, *TrackNames[i].ToString(), SkelIdx,
+				P0.X, P0.Y, P0.Z, R0.X, R0.Y, R0.Z, R0.W,
+				bID ? TEXT("[ID]") : TEXT("[OK]")));
 		}
 	}
-	Lines.Add(FString::Printf(TEXT("  Raw keys: %d tracks have keys, %d empty (DDC stripped)"),
-		TracksWithKeys, TracksEmpty));
+	Lines.Add(FString::Printf(TEXT("  Curve data: %d tracks with motion, %d identity"),
+		TracksWithMotion, TracksIdentity));
 
 	// Try compressed evaluation via GetBoneTransform
 	Lines.Add(TEXT("  GetBoneTransform evaluation (compressed):"));
@@ -14090,6 +14430,491 @@ FString USLFAutomationLibrary::PlaceActorInLevel(
 
 	return FString::Printf(TEXT("Placed %s at %s (saved=%s)"),
 		*NewActor->GetName(), *Location.ToString(), bSaved ? TEXT("true") : TEXT("false"));
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// IK Retargeter: Cross-skeleton animation retarget via UE5 IK Rig system
+// ═══════════════════════════════════════════════════════════════════════
+
+#include "Rig/IKRigDefinition.h"
+#include "RigEditor/IKRigController.h"
+#include "Retargeter/IKRetargeter.h"
+#include "Retargeter/IKRetargetProcessor.h"
+#include "Retargeter/IKRetargetProfile.h"
+#include "RetargetEditor/IKRetargeterController.h"
+
+FString USLFAutomationLibrary::RetargetAnimationsViaIKRig(
+	const FString& SourceMeshPath,
+	const FString& TargetMeshPath,
+	const TArray<FString>& SourceAnimPaths,
+	const FString& OutputDir,
+	const FName& SourceRootBone,
+	const FName& TargetRootBone,
+	const FString& WorkingDir)
+{
+	TArray<FString> R;
+	R.Add(TEXT("=== RetargetAnimationsDirect (CS Rotation Delta) ==="));
+
+	// ─── Load meshes and skeletons ───
+	USkeletalMesh* SourceMesh = LoadObject<USkeletalMesh>(nullptr, *SourceMeshPath);
+	USkeletalMesh* TargetMesh = LoadObject<USkeletalMesh>(nullptr, *TargetMeshPath);
+	if (!SourceMesh) return FString::Printf(TEXT("ERROR: Failed to load source mesh: %s"), *SourceMeshPath);
+	if (!TargetMesh) return FString::Printf(TEXT("ERROR: Failed to load target mesh: %s"), *TargetMeshPath);
+
+	const FReferenceSkeleton& SrcRef = SourceMesh->GetRefSkeleton();
+	const FReferenceSkeleton& TgtRef = TargetMesh->GetRefSkeleton();
+	const int32 NumSrcBones = SrcRef.GetRawBoneNum();
+	const int32 NumTgtBones = TgtRef.GetRawBoneNum();
+	R.Add(FString::Printf(TEXT("Source: %s (%d bones)"), *SourceMesh->GetName(), NumSrcBones));
+	R.Add(FString::Printf(TEXT("Target: %s (%d bones)"), *TargetMesh->GetName(), NumTgtBones));
+
+	USkeleton* TgtSkel = TargetMesh->GetSkeleton();
+	if (!TgtSkel) return TEXT("ERROR: Target mesh has no skeleton");
+
+	// ─── Build name→index lookup maps ───
+	TMap<FName, int32> SrcBoneIndex, TgtBoneIndex;
+	for (int32 i = 0; i < NumSrcBones; i++) SrcBoneIndex.Add(SrcRef.GetBoneName(i), i);
+	for (int32 i = 0; i < NumTgtBones; i++) TgtBoneIndex.Add(TgtRef.GetBoneName(i), i);
+
+	// ─── Build ref poses (local and component-space) ───
+	TArray<FTransform> SrcRefLocal, SrcRefCS, TgtRefLocal, TgtRefCS;
+	SrcRefLocal.SetNum(NumSrcBones);
+	SrcRefCS.SetNum(NumSrcBones);
+	TgtRefLocal.SetNum(NumTgtBones);
+	TgtRefCS.SetNum(NumTgtBones);
+
+	for (int32 i = 0; i < NumSrcBones; i++)
+	{
+		SrcRefLocal[i] = SrcRef.GetRefBonePose()[i];
+		int32 ParentIdx = SrcRef.GetParentIndex(i);
+		SrcRefCS[i] = (ParentIdx == INDEX_NONE) ? SrcRefLocal[i] : SrcRefLocal[i] * SrcRefCS[ParentIdx];
+	}
+	for (int32 i = 0; i < NumTgtBones; i++)
+	{
+		TgtRefLocal[i] = TgtRef.GetRefBonePose()[i];
+		int32 ParentIdx = TgtRef.GetParentIndex(i);
+		TgtRefCS[i] = (ParentIdx == INDEX_NONE) ? TgtRefLocal[i] : TgtRefLocal[i] * TgtRefCS[ParentIdx];
+	}
+
+	// Log ref CS for key bones
+	R.Add(TEXT("--- Source ref CS (key bones) ---"));
+	for (const TCHAR* BN : { TEXT("Root"), TEXT("Pelvis"), TEXT("Spine"), TEXT("Spine2"), TEXT("Head"), TEXT("L_Thigh"), TEXT("L_Hand") })
+	{
+		int32* Idx = SrcBoneIndex.Find(FName(BN));
+		if (Idx) R.Add(FString::Printf(TEXT("  %s[%d] pos=(%.1f,%.1f,%.1f) scale=(%.2f,%.2f,%.2f)"),
+			BN, *Idx,
+			SrcRefCS[*Idx].GetTranslation().X, SrcRefCS[*Idx].GetTranslation().Y, SrcRefCS[*Idx].GetTranslation().Z,
+			SrcRefCS[*Idx].GetScale3D().X, SrcRefCS[*Idx].GetScale3D().Y, SrcRefCS[*Idx].GetScale3D().Z));
+	}
+	R.Add(TEXT("--- Target ref CS (key bones) ---"));
+	for (const TCHAR* BN : { TEXT("c_root_x"), TEXT("Hips"), TEXT("c_spine_01_x"), TEXT("SpineUpper"), TEXT("c_head_x"), TEXT("c_thigh_fk_l"), TEXT("Hand_L") })
+	{
+		int32* Idx = TgtBoneIndex.Find(FName(BN));
+		if (Idx) R.Add(FString::Printf(TEXT("  %s[%d] pos=(%.1f,%.1f,%.1f) scale=(%.2f,%.2f,%.2f)"),
+			BN, *Idx,
+			TgtRefCS[*Idx].GetTranslation().X, TgtRefCS[*Idx].GetTranslation().Y, TgtRefCS[*Idx].GetTranslation().Z,
+			TgtRefCS[*Idx].GetScale3D().X, TgtRefCS[*Idx].GetScale3D().Y, TgtRefCS[*Idx].GetScale3D().Z));
+	}
+
+	// ─── Bone Mapping: c3100 → Sentinel ───
+	// Maps source bone rotation delta (in component-space) to target bone.
+	// bTransferPos: also transfer position delta (for root/pelvis gameplay movement)
+	struct FBoneMapping { FName SrcBone; FName TgtBone; bool bTransferPos; };
+	const FBoneMapping Mappings[] = {
+		// Root / Core
+		{ FName("Root"),       FName("c_root_x"),       true  },
+		{ FName("Pelvis"),     FName("Hips"),            true  },
+		// Spine (3 c3100 bones → 3 Sentinel control bones)
+		{ FName("Spine"),      FName("c_spine_01_x"),    false },
+		{ FName("Spine1"),     FName("c_spine_02_x"),    false },
+		{ FName("Spine2"),     FName("SpineUpper"),      false },
+		// Neck/Head
+		{ FName("Neck"),       FName("c_neck_x"),        false },
+		{ FName("Head"),       FName("c_head_x"),        true  }, // head in separate tree, needs pos transfer
+		// Left Leg
+		{ FName("L_Thigh"),    FName("c_thigh_fk_l"),    false },
+		{ FName("L_Calf"),     FName("leg_fk_l"),        false },
+		{ FName("L_Foot"),     FName("Foot_L"),          false },
+		{ FName("L_Toe0"),     FName("Toe_L"),           false },
+		// Right Leg
+		{ FName("R_Thigh"),    FName("c_thigh_fk_r"),    false },
+		{ FName("R_Calf"),     FName("leg_fk_r"),        false },
+		{ FName("R_Foot"),     FName("Foot_R"),          false },
+		{ FName("R_Toe0"),     FName("Toe_R"),           false },
+		// Left Arm
+		{ FName("L_Clavicle"), FName("c_shoulder_l"),    false },
+		{ FName("L_UpperArm"), FName("arm_l"),           false },
+		{ FName("L_Forearm"),  FName("forearm_l"),       false },
+		{ FName("L_Hand"),     FName("Hand_L"),          false },
+		// Right Arm
+		{ FName("R_Clavicle"), FName("c_shoulder_r"),    false },
+		{ FName("R_UpperArm"), FName("arm_r"),           false },
+		{ FName("R_Forearm"),  FName("forearm_r"),       false },
+		{ FName("R_Hand"),     FName("Hand_R"),          false },
+	};
+
+	// Build per-target-bone mapping arrays
+	TArray<int32> TgtToSrc;      // TgtBoneIdx → SrcBoneIdx (INDEX_NONE if unmapped)
+	TArray<bool>  TgtTransferPos;
+	TgtToSrc.Init(INDEX_NONE, NumTgtBones);
+	TgtTransferPos.Init(false, NumTgtBones);
+
+	int32 MappedCount = 0;
+	for (const auto& M : Mappings)
+	{
+		int32* SrcIdx = SrcBoneIndex.Find(M.SrcBone);
+		int32* TgtIdx = TgtBoneIndex.Find(M.TgtBone);
+		if (SrcIdx && TgtIdx)
+		{
+			TgtToSrc[*TgtIdx] = *SrcIdx;
+			TgtTransferPos[*TgtIdx] = M.bTransferPos;
+			MappedCount++;
+			R.Add(FString::Printf(TEXT("  Map: %s[%d] -> %s[%d]%s"),
+				*M.SrcBone.ToString(), *SrcIdx, *M.TgtBone.ToString(), *TgtIdx,
+				M.bTransferPos ? TEXT(" (+pos)") : TEXT("")));
+		}
+		else
+		{
+			R.Add(FString::Printf(TEXT("  WARN: Missing bone - src:%s(%s) tgt:%s(%s)"),
+				*M.SrcBone.ToString(), SrcIdx ? TEXT("found") : TEXT("MISSING"),
+				*M.TgtBone.ToString(), TgtIdx ? TEXT("found") : TEXT("MISSING")));
+		}
+	}
+	R.Add(FString::Printf(TEXT("  Mapped %d/%d bone pairs"), MappedCount, (int32)UE_ARRAY_COUNT(Mappings)));
+
+	// ─── Deform helper copy constraints ───
+	// These bones are parented to c_traj but should mirror FK chain bones.
+	// Copy constraint target must have HIGHER index than copy-from bone (processing order).
+	struct FCopyPair { FName CopyTo; FName CopyFrom; };
+	const FCopyPair CopyConstraints[] = {
+		{ FName("Thigh_L"),    FName("c_thigh_fk_l") },
+		{ FName("Thigh_R"),    FName("c_thigh_fk_r") },
+		{ FName("Calf_L"),     FName("leg_fk_l") },
+		{ FName("Calf_R"),     FName("leg_fk_r") },
+		{ FName("UpperArm_L"), FName("arm_l") },
+		{ FName("UpperArm_R"), FName("arm_r") },
+		{ FName("LowerArm_L"), FName("forearm_l") },
+		{ FName("LowerArm_R"), FName("forearm_r") },
+	};
+
+	// Resolved copy constraints: CopyFromCS[tgtIdx] = index of target bone to copy CS from
+	TArray<int32> CopyFromCS;
+	CopyFromCS.Init(INDEX_NONE, NumTgtBones);
+	for (const auto& CC : CopyConstraints)
+	{
+		int32* ToIdx = TgtBoneIndex.Find(CC.CopyTo);
+		int32* FromIdx = TgtBoneIndex.Find(CC.CopyFrom);
+		if (ToIdx && FromIdx)
+		{
+			CopyFromCS[*ToIdx] = *FromIdx;
+			R.Add(FString::Printf(TEXT("  Copy: %s[%d] <- %s[%d]"),
+				*CC.CopyTo.ToString(), *ToIdx, *CC.CopyFrom.ToString(), *FromIdx));
+		}
+	}
+
+	// ─── Height ratio for position scaling ───
+	int32 SrcPelvisIdx = SrcBoneIndex.Contains(FName("Pelvis")) ? SrcBoneIndex[FName("Pelvis")] : INDEX_NONE;
+	int32 TgtHipsIdx = TgtBoneIndex.Contains(FName("Hips")) ? TgtBoneIndex[FName("Hips")] : INDEX_NONE;
+	double HeightRatio = 1.0;
+	if (SrcPelvisIdx != INDEX_NONE && TgtHipsIdx != INDEX_NONE)
+	{
+		double SrcZ = FMath::Abs(SrcRefCS[SrcPelvisIdx].GetTranslation().Z);
+		double TgtZ = FMath::Abs(TgtRefCS[TgtHipsIdx].GetTranslation().Z);
+		if (SrcZ > 1.0) HeightRatio = TgtZ / SrcZ;
+	}
+	R.Add(FString::Printf(TEXT("  HeightRatio=%.6f (SrcPelvisZ=%.1f, TgtHipsZ=%.1f)"),
+		HeightRatio,
+		SrcPelvisIdx != INDEX_NONE ? SrcRefCS[SrcPelvisIdx].GetTranslation().Z : 0.0,
+		TgtHipsIdx != INDEX_NONE ? TgtRefCS[TgtHipsIdx].GetTranslation().Z : 0.0));
+
+	// ─── Helpers ───
+	auto SaveAsset = [](UObject* Asset, UPackage* Pkg) -> bool
+	{
+		FAssetRegistryModule::AssetCreated(Asset);
+		Pkg->MarkPackageDirty();
+		FString Fn = FPackageName::LongPackageNameToFilename(Pkg->GetName(), FPackageName::GetAssetPackageExtension());
+		FSavePackageArgs SA;
+		SA.TopLevelFlags = RF_Standalone;
+		return UPackage::SavePackage(Pkg, Asset, *Fn, SA);
+	};
+
+	auto PrepPkg = [](const FString& PkgName, const FString& ObjName) -> UPackage*
+	{
+		UPackage* Existing = FindPackage(nullptr, *PkgName);
+		if (Existing)
+		{
+			Existing->FullyLoad();
+			UObject* Obj = StaticFindObjectFast(nullptr, Existing, FName(*ObjName));
+			if (Obj)
+			{
+				Obj->Rename(nullptr, GetTransientPackage(), REN_DontCreateRedirectors | REN_NonTransactional);
+			}
+		}
+		UPackage* Pkg = CreatePackage(*PkgName);
+		Pkg->FullyLoad();
+		return Pkg;
+	};
+
+	// ─── Per-animation retarget ───
+	int32 SuccessCount = 0;
+	for (const FString& AnimPath : SourceAnimPaths)
+	{
+		UAnimSequence* SrcAnim = LoadObject<UAnimSequence>(nullptr, *AnimPath);
+		if (!SrcAnim)
+		{
+			R.Add(FString::Printf(TEXT("  MISSING: %s"), *AnimPath));
+			continue;
+		}
+
+		const FString SrcName = SrcAnim->GetName();
+		const double PlayLen = SrcAnim->GetPlayLength();
+		const int32 NumKeys = SrcAnim->GetNumberOfSampledKeys();
+		const FFrameRate SrcFrameRate = SrcAnim->GetSamplingFrameRate();
+		const double FrameDuration = NumKeys > 1 ? PlayLen / (NumKeys - 1) : PlayLen;
+
+		R.Add(FString::Printf(TEXT("  Retargeting: %s (%.3fs, %d keys, %d/%d fps)"),
+			*SrcName, PlayLen, NumKeys, SrcFrameRate.Numerator, SrcFrameRate.Denominator));
+
+		// Create output animation
+		FString OutPkgName = OutputDir / SrcName;
+		UPackage* OutPkg = PrepPkg(OutPkgName, SrcName);
+		UAnimSequence* OutAnim = NewObject<UAnimSequence>(OutPkg, *SrcName, RF_Public | RF_Standalone);
+		OutAnim->SetSkeleton(TgtSkel);
+
+		IAnimationDataController& Controller = OutAnim->GetController();
+		Controller.OpenBracket(NSLOCTEXT("Retarget", "Direct", "Direct CS Retarget"));
+		Controller.InitializeModel();
+		Controller.SetFrameRate(SrcFrameRate);
+		Controller.SetNumberOfFrames(FFrameNumber(NumKeys > 0 ? NumKeys - 1 : 0));
+
+		for (int32 i = 0; i < NumTgtBones; i++)
+			Controller.AddBoneCurve(TgtRef.GetBoneName(i));
+
+		// Accumulate per-bone keys
+		TArray<TArray<FVector>> AllPosKeys;
+		TArray<TArray<FQuat>>   AllRotKeys;
+		TArray<TArray<FVector>> AllScaleKeys;
+		AllPosKeys.SetNum(NumTgtBones);
+		AllRotKeys.SetNum(NumTgtBones);
+		AllScaleKeys.SetNum(NumTgtBones);
+		for (int32 b = 0; b < NumTgtBones; b++)
+		{
+			AllPosKeys[b].Reserve(NumKeys);
+			AllRotKeys[b].Reserve(NumKeys);
+			AllScaleKeys[b].Reserve(NumKeys);
+		}
+
+		for (int32 KeyIdx = 0; KeyIdx < NumKeys; KeyIdx++)
+		{
+			double Time = FMath::Min(KeyIdx * FrameDuration, PlayLen);
+
+			// Extract source animation local pose
+			TArray<FTransform> SrcAnimLocal;
+			SrcAnimLocal.SetNum(NumSrcBones);
+			for (int32 i = 0; i < NumSrcBones; i++)
+			{
+				SrcAnim->GetBoneTransform(SrcAnimLocal[i], FSkeletonPoseBoneIndex(i), Time, false);
+			}
+
+			// Build source animation component-space
+			TArray<FTransform> SrcAnimCS;
+			SrcAnimCS.SetNum(NumSrcBones);
+			for (int32 i = 0; i < NumSrcBones; i++)
+			{
+				int32 ParentIdx = SrcRef.GetParentIndex(i);
+				SrcAnimCS[i] = (ParentIdx == INDEX_NONE) ? SrcAnimLocal[i] : SrcAnimLocal[i] * SrcAnimCS[ParentIdx];
+			}
+
+			// Compute target LOCAL transforms directly.
+			// For mapped bones: keep ref local position/scale, compute rotation from CS delta.
+			// For copy constraint bones: copy CS rotation from FK bone, derive local rotation.
+			// For unmapped bones: keep ref local transform unchanged.
+			// We also maintain TgtAnimCS for parent lookups and copy constraints.
+			TArray<FTransform> TgtAnimCS;
+			TgtAnimCS.SetNum(NumTgtBones);
+
+			for (int32 i = 0; i < NumTgtBones; i++)
+			{
+				int32 ParentIdx = TgtRef.GetParentIndex(i);
+				FTransform ParentCS = (ParentIdx == INDEX_NONE) ? FTransform::Identity : TgtAnimCS[ParentIdx];
+				FTransform TgtLocal;
+
+				if (CopyFromCS[i] != INDEX_NONE)
+				{
+					// COPY CONSTRAINT: deform helper copies CS rotation from FK chain bone.
+					// Keep ref local position/scale, derive local rotation from FK bone's CS rotation.
+					FQuat FKBoneCSRot = TgtAnimCS[CopyFromCS[i]].GetRotation();
+					FQuat LocalRot = ParentCS.GetRotation().Inverse() * FKBoneCSRot;
+					TgtLocal = FTransform(LocalRot, TgtRefLocal[i].GetTranslation(), TgtRefLocal[i].GetScale3D());
+				}
+				else if (TgtToSrc[i] != INDEX_NONE)
+				{
+					// MAPPED: apply CS rotation delta from source animation.
+					// The delta is computed in component-space, then converted to local
+					// relative to the parent's animated CS rotation.
+					int32 SrcIdx = TgtToSrc[i];
+					FQuat SrcRefRot = SrcRefCS[SrcIdx].GetRotation();
+					FQuat SrcAnimRot = SrcAnimCS[SrcIdx].GetRotation();
+					FQuat CSDeltaRot = SrcRefRot.Inverse() * SrcAnimRot;
+
+					// Target animated CS rotation = target ref CS rotation * delta
+					FQuat TgtCSRot = TgtRefCS[i].GetRotation() * CSDeltaRot;
+
+					// Convert CS rotation to local rotation (relative to parent's animated CS)
+					FQuat LocalRot = ParentCS.GetRotation().Inverse() * TgtCSRot;
+
+					// Keep ref local position and scale (preserves target proportions)
+					TgtLocal = FTransform(LocalRot, TgtRefLocal[i].GetTranslation(), TgtRefLocal[i].GetScale3D());
+				}
+				else
+				{
+					// UNMAPPED: keep ref local transform unchanged
+					TgtLocal = TgtRefLocal[i];
+				}
+
+				// Chain local to CS for child bones to use
+				TgtAnimCS[i] = TgtLocal * ParentCS;
+
+				AllPosKeys[i].Add(TgtLocal.GetTranslation());
+				AllRotKeys[i].Add(TgtLocal.GetRotation());
+				AllScaleKeys[i].Add(TgtLocal.GetScale3D());
+			}
+
+			// Log frame 0 of first animation for debugging
+			if (KeyIdx == 0 && SuccessCount == 0)
+			{
+				R.Add(TEXT("  --- Frame 0 debug (first 10 mapped bones) ---"));
+				int32 Logged = 0;
+				for (int32 i = 0; i < NumTgtBones && Logged < 10; i++)
+				{
+					if (TgtToSrc[i] != INDEX_NONE)
+					{
+						int32 si = TgtToSrc[i];
+						FQuat DR = SrcRefCS[si].GetRotation().Inverse() * SrcAnimCS[si].GetRotation();
+						R.Add(FString::Printf(TEXT("    %s: delta=(%.4f,%.4f,%.4f,%.4f) localPos=(%.4f,%.4f,%.4f) csPos=(%.2f,%.2f,%.2f)"),
+							*TgtRef.GetBoneName(i).ToString(),
+							DR.X, DR.Y, DR.Z, DR.W,
+							AllPosKeys[i].Last().X, AllPosKeys[i].Last().Y, AllPosKeys[i].Last().Z,
+							TgtAnimCS[i].GetTranslation().X, TgtAnimCS[i].GetTranslation().Y, TgtAnimCS[i].GetTranslation().Z));
+						Logged++;
+					}
+				}
+			}
+		}
+
+		// Dump JSON for Blender validation (sample 5 frames per animation)
+		{
+			static TSharedPtr<FJsonObject> JsonRoot;
+			static TSharedPtr<FJsonObject> JsonAnims;
+			if (SuccessCount == 0)
+			{
+				JsonRoot = MakeShared<FJsonObject>();
+				JsonAnims = MakeShared<FJsonObject>();
+				JsonRoot->SetObjectField(TEXT("animations"), JsonAnims);
+
+				// Write ref pose
+				TSharedPtr<FJsonObject> RefPoseObj = MakeShared<FJsonObject>();
+				TArray<TSharedPtr<FJsonValue>> RefBones;
+				for (int32 b = 0; b < NumTgtBones; b++)
+				{
+					TSharedPtr<FJsonObject> BoneObj = MakeShared<FJsonObject>();
+					BoneObj->SetStringField(TEXT("name"), TgtRef.GetBoneName(b).ToString());
+					BoneObj->SetNumberField(TEXT("parent"), TgtRef.GetParentIndex(b));
+					FVector Pos = TgtRefLocal[b].GetTranslation();
+					FQuat Rot = TgtRefLocal[b].GetRotation();
+					FVector Scl = TgtRefLocal[b].GetScale3D();
+					TArray<TSharedPtr<FJsonValue>> PV, RV, SV;
+					PV.Add(MakeShared<FJsonValueNumber>(Pos.X));
+					PV.Add(MakeShared<FJsonValueNumber>(Pos.Y));
+					PV.Add(MakeShared<FJsonValueNumber>(Pos.Z));
+					RV.Add(MakeShared<FJsonValueNumber>(Rot.X));
+					RV.Add(MakeShared<FJsonValueNumber>(Rot.Y));
+					RV.Add(MakeShared<FJsonValueNumber>(Rot.Z));
+					RV.Add(MakeShared<FJsonValueNumber>(Rot.W));
+					SV.Add(MakeShared<FJsonValueNumber>(Scl.X));
+					SV.Add(MakeShared<FJsonValueNumber>(Scl.Y));
+					SV.Add(MakeShared<FJsonValueNumber>(Scl.Z));
+					BoneObj->SetArrayField(TEXT("pos"), PV);
+					BoneObj->SetArrayField(TEXT("rot"), RV);
+					BoneObj->SetArrayField(TEXT("scale"), SV);
+					RefBones.Add(MakeShared<FJsonValueObject>(BoneObj));
+				}
+				JsonRoot->SetArrayField(TEXT("ref_pose"), RefBones);
+			}
+
+			// Add this animation (5 sampled frames)
+			TSharedPtr<FJsonObject> AnimObj = MakeShared<FJsonObject>();
+			TArray<TSharedPtr<FJsonValue>> FrameArray;
+			int32 SampleIndices[] = { 0, NumKeys / 4, NumKeys / 2, 3 * NumKeys / 4, NumKeys - 1 };
+			for (int32 si = 0; si < 5; si++)
+			{
+				int32 KeyIdx = FMath::Clamp(SampleIndices[si], 0, NumKeys - 1);
+				TSharedPtr<FJsonObject> FrameObj = MakeShared<FJsonObject>();
+				FrameObj->SetNumberField(TEXT("frame"), KeyIdx);
+				FrameObj->SetNumberField(TEXT("time"), KeyIdx * FrameDuration);
+				TArray<TSharedPtr<FJsonValue>> BoneLocals;
+				for (int32 b = 0; b < NumTgtBones; b++)
+				{
+					TArray<TSharedPtr<FJsonValue>> BV;
+					BV.Add(MakeShared<FJsonValueNumber>(AllPosKeys[b][KeyIdx].X));
+					BV.Add(MakeShared<FJsonValueNumber>(AllPosKeys[b][KeyIdx].Y));
+					BV.Add(MakeShared<FJsonValueNumber>(AllPosKeys[b][KeyIdx].Z));
+					BV.Add(MakeShared<FJsonValueNumber>(AllRotKeys[b][KeyIdx].X));
+					BV.Add(MakeShared<FJsonValueNumber>(AllRotKeys[b][KeyIdx].Y));
+					BV.Add(MakeShared<FJsonValueNumber>(AllRotKeys[b][KeyIdx].Z));
+					BV.Add(MakeShared<FJsonValueNumber>(AllRotKeys[b][KeyIdx].W));
+					BoneLocals.Add(MakeShared<FJsonValueArray>(BV));
+				}
+				FrameObj->SetArrayField(TEXT("local"), BoneLocals);
+				FrameArray.Add(MakeShared<FJsonValueObject>(FrameObj));
+			}
+			AnimObj->SetArrayField(TEXT("frames"), FrameArray);
+			// Map the source anim name to Sentinel name for readability
+			FString SentinelName = SrcName;
+			for (int32 mi = 0; mi < SourceAnimPaths.Num(); mi++)
+			{
+				if (SourceAnimPaths[mi].Contains(SrcName))
+				{
+					// The commandlet renames later, but we use the source name for now
+					break;
+				}
+			}
+			JsonAnims->SetObjectField(SrcName, AnimObj);
+
+			// Write JSON after last animation
+			if (SuccessCount + 1 >= SourceAnimPaths.Num() || !SourceAnimPaths.IsValidIndex(SuccessCount + 1))
+			{
+				// Save skipped - will save after all anims processed
+			}
+
+			// Always save after each animation (overwrite) so partial results are available
+			FString JsonPath = TEXT("C:/scripts/elden_ring_tools/output/sentinel/ue5_retarget_dump.json");
+			FString JsonStr;
+			TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&JsonStr);
+			FJsonSerializer::Serialize(JsonRoot.ToSharedRef(), Writer);
+			FFileHelper::SaveStringToFile(JsonStr, *JsonPath);
+		}
+
+		// Write all keys to DataModel
+		for (int32 b = 0; b < NumTgtBones; b++)
+			Controller.SetBoneTrackKeys(TgtRef.GetBoneName(b), AllPosKeys[b], AllRotKeys[b], AllScaleKeys[b]);
+
+		Controller.NotifyPopulated();
+		Controller.CloseBracket();
+
+		// Compress and save
+		OutAnim->CacheDerivedDataForCurrentPlatform();
+		OutAnim->WaitOnExistingCompression(true);
+		FAssetCompilingManager::Get().FinishAllCompilation();
+
+		SaveAsset(OutAnim, OutPkg);
+		SuccessCount++;
+		R.Add(FString::Printf(TEXT("    -> Saved: %s (%d bones, %d keys)"), *OutPkgName, NumTgtBones, NumKeys));
+	}
+
+	R.Add(FString::Printf(TEXT("  Retargeted %d/%d animations"), SuccessCount, SourceAnimPaths.Num()));
+	R.Add(TEXT("=== RetargetAnimationsDirect COMPLETE ==="));
+	return FString::Join(R, TEXT("\n"));
 }
 
 #endif // WITH_EDITOR

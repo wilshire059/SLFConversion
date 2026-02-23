@@ -12,6 +12,9 @@
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "AssetCompilingManager.h"
 #include "UObject/SavePackage.h"
+#include "Factories/FbxFactory.h"
+#include "Factories/FbxImportUI.h"
+#include "Factories/FbxSkeletalMeshImportData.h"
 
 // Console command to reparent a Blueprint to a C++ class
 // Usage: SLF.Reparent /Game/Path/To/Blueprint /Script/Module.CppClassName
@@ -337,6 +340,484 @@ static FAutoConsoleCommand SetMeshSkeletonCmd(
 
 		UE_LOG(LogTemp, Warning, TEXT("[SLF.SetMeshSkeleton] Mesh saved: %s, Skeleton saved: %s"),
 			bMeshSaved ? TEXT("YES") : TEXT("NO"), bSkelSaved ? TEXT("YES") : TEXT("NO"));
+	})
+);
+
+// Console command to dump complete skeleton data (hierarchy + transforms) as JSON.
+// Used to recreate the exact UE5 skeleton in Blender for mesh rigging.
+// Usage: SLF.DumpSkeleton <SkeletonPath> <OutputJsonPath>
+static FAutoConsoleCommand DumpSkeletonCmd(
+	TEXT("SLF.DumpSkeleton"),
+	TEXT("Dump skeleton bone hierarchy and transforms as JSON.\nUsage: SLF.DumpSkeleton <SkeletonPath> <OutputJsonPath>"),
+	FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
+	{
+		if (Args.Num() < 2)
+		{
+			UE_LOG(LogTemp, Error, TEXT("SLF.DumpSkeleton requires: <SkeletonPath> <OutputJsonPath>"));
+			return;
+		}
+
+		USkeleton* Skeleton = LoadObject<USkeleton>(nullptr, *Args[0]);
+		if (!Skeleton)
+		{
+			UE_LOG(LogTemp, Error, TEXT("[DumpSkeleton] Failed to load: %s"), *Args[0]);
+			return;
+		}
+
+		const FReferenceSkeleton& RefSkel = Skeleton->GetReferenceSkeleton();
+		int32 NumBones = RefSkel.GetNum();
+		UE_LOG(LogTemp, Warning, TEXT("[DumpSkeleton] Skeleton: %s (%d bones)"), *Skeleton->GetName(), NumBones);
+
+		// Build JSON manually
+		FString Json = TEXT("{\n  \"skeleton_name\": \"") + Skeleton->GetName() + TEXT("\",\n");
+		Json += FString::Printf(TEXT("  \"bone_count\": %d,\n"), NumBones);
+		Json += TEXT("  \"bones\": [\n");
+
+		for (int32 i = 0; i < NumBones; i++)
+		{
+			FName BoneName = RefSkel.GetBoneName(i);
+			int32 ParentIdx = RefSkel.GetParentIndex(i);
+			FName ParentName = (ParentIdx >= 0) ? RefSkel.GetBoneName(ParentIdx) : FName(TEXT(""));
+
+			// Get reference pose transform (bone-local)
+			const FTransform& RefPose = RefSkel.GetRefBonePose()[i];
+			FVector Pos = RefPose.GetTranslation();
+			FQuat Rot = RefPose.GetRotation();
+			FVector Scale = RefPose.GetScale3D();
+
+			Json += TEXT("    {\n");
+			Json += FString::Printf(TEXT("      \"index\": %d,\n"), i);
+			Json += FString::Printf(TEXT("      \"name\": \"%s\",\n"), *BoneName.ToString());
+			Json += FString::Printf(TEXT("      \"parent_index\": %d,\n"), ParentIdx);
+			Json += FString::Printf(TEXT("      \"parent_name\": \"%s\",\n"), *ParentName.ToString());
+			Json += FString::Printf(TEXT("      \"position\": [%.8f, %.8f, %.8f],\n"), Pos.X, Pos.Y, Pos.Z);
+			Json += FString::Printf(TEXT("      \"rotation\": [%.8f, %.8f, %.8f, %.8f],\n"), Rot.X, Rot.Y, Rot.Z, Rot.W);
+			Json += FString::Printf(TEXT("      \"scale\": [%.8f, %.8f, %.8f]\n"), Scale.X, Scale.Y, Scale.Z);
+			Json += (i < NumBones - 1) ? TEXT("    },\n") : TEXT("    }\n");
+		}
+
+		Json += TEXT("  ]\n}\n");
+
+		FString OutputPath = Args[1];
+		if (FFileHelper::SaveStringToFile(Json, *OutputPath))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[DumpSkeleton] Saved to: %s"), *OutputPath);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("[DumpSkeleton] Failed to save: %s"), *OutputPath);
+		}
+	})
+);
+
+// Console command to dump mesh RefSkeleton bone names (may differ from skeleton's bones)
+// Usage: SLF.DumpMeshBones <MeshPath> <OutputPath>
+static FAutoConsoleCommand DumpMeshBonesCmd(
+	TEXT("SLF.DumpMeshBones"),
+	TEXT("Dump skeletal mesh RefSkeleton bone names.\nUsage: SLF.DumpMeshBones <MeshPath> <OutputPath>"),
+	FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
+	{
+		if (Args.Num() < 2)
+		{
+			UE_LOG(LogTemp, Error, TEXT("SLF.DumpMeshBones requires: <MeshPath> <OutputPath>"));
+			return;
+		}
+
+		USkeletalMesh* Mesh = LoadObject<USkeletalMesh>(nullptr, *Args[0]);
+		if (!Mesh)
+		{
+			UE_LOG(LogTemp, Error, TEXT("[DumpMeshBones] Failed to load: %s"), *Args[0]);
+			return;
+		}
+
+		const FReferenceSkeleton& RefSkel = Mesh->GetRefSkeleton();
+		int32 NumBones = RefSkel.GetNum();
+
+		FString Output;
+		Output += FString::Printf(TEXT("Mesh: %s\n"), *Mesh->GetName());
+		Output += FString::Printf(TEXT("RefSkeleton bones: %d\n"), NumBones);
+
+		USkeleton* Skel = Mesh->GetSkeleton();
+		if (Skel)
+		{
+			Output += FString::Printf(TEXT("Skeleton: %s (%d bones)\n"),
+				*Skel->GetName(), Skel->GetReferenceSkeleton().GetNum());
+		}
+
+		Output += TEXT("\nMesh RefSkeleton bone list:\n");
+		for (int32 i = 0; i < NumBones; i++)
+		{
+			FName BoneName = RefSkel.GetBoneName(i);
+			int32 ParentIdx = RefSkel.GetParentIndex(i);
+			Output += FString::Printf(TEXT("  [%d] %s (parent=%d)\n"), i, *BoneName.ToString(), ParentIdx);
+		}
+
+		FFileHelper::SaveStringToFile(Output, *Args[1]);
+		UE_LOG(LogTemp, Warning, TEXT("[DumpMeshBones] %s: %d bones -> %s"), *Mesh->GetName(), NumBones, *Args[1]);
+	})
+);
+
+// Add per-bone scale overrides to an AnimBP via ModifyBone nodes.
+// Usage: SLF.BoneScale <AnimBPPath> <bone1:scale1> <bone2:scale2> ...
+// Example: SLF.BoneScale /Game/.../ABP_Sentinel arm_l:0.8 arm_r:0.8 forearm_l:0.85 forearm_r:0.85
+static FAutoConsoleCommand BoneScaleCmd(
+	TEXT("SLF.BoneScale"),
+	TEXT("Add per-bone scale overrides to AnimBP.\n"
+		 "Usage: SLF.BoneScale <AnimBPPath> <bone1:scale1> <bone2:scale2> ...\n"
+		 "Example: SLF.BoneScale /Game/.../ABP_Sentinel arm_l:0.8 arm_r:0.8"),
+	FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
+	{
+		if (Args.Num() < 2)
+		{
+			UE_LOG(LogTemp, Error, TEXT("SLF.BoneScale requires: <AnimBPPath> <bone1:scale1> [bone2:scale2] ..."));
+			return;
+		}
+
+		const FString& AnimBPPath = Args[0];
+		TMap<FName, float> BoneScales;
+		for (int32 i = 1; i < Args.Num(); i++)
+		{
+			FString Left, Right;
+			if (Args[i].Split(TEXT(":"), &Left, &Right))
+			{
+				float Scale = FCString::Atof(*Right);
+				if (Scale > 0.01f && Scale < 10.0f)
+				{
+					BoneScales.Add(FName(*Left), Scale);
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("[BoneScale] Invalid scale for %s: %s (must be 0.01-10.0)"), *Left, *Right);
+				}
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[BoneScale] Invalid format: %s (expected bone:scale)"), *Args[i]);
+			}
+		}
+
+		if (BoneScales.Num() > 0)
+		{
+			FString Result = USLFAutomationLibrary::AddBoneScaleOverrides(AnimBPPath, BoneScales);
+			UE_LOG(LogTemp, Warning, TEXT("[SLF.BoneScale]\n%s"), *Result);
+		}
+	})
+);
+
+// Minimal mesh import: import FBX, assign existing skeleton, save mesh ONLY.
+// Does NOT pre-create packages, does NOT rename, does NOT save skeleton.
+// Returns the actual mesh path in the log for updating C++ references.
+// Usage: SLF.ImportMesh2 <FBXPath> <DestDir> <SkeletonPath> [Scale]
+static FAutoConsoleCommand ImportMesh2Cmd(
+	TEXT("SLF.ImportMesh2"),
+	TEXT("Minimal mesh import: FBX -> existing skeleton, saves mesh only.\n"
+		 "Usage: SLF.ImportMesh2 <FBXPath> <DestDir> <SkeletonPath> [Scale]"),
+	FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
+	{
+		if (Args.Num() < 3)
+		{
+			UE_LOG(LogTemp, Error, TEXT("SLF.ImportMesh2 requires: <FBXPath> <DestDir> <SkeletonPath> [Scale]"));
+			return;
+		}
+
+		const FString& FBXPath = Args[0];
+		const FString& DestDir = Args[1];
+		const FString& SkeletonPath = Args[2];
+		float ImportScale = Args.Num() > 3 ? FCString::Atof(*Args[3]) : 1.0f;
+
+		UE_LOG(LogTemp, Warning, TEXT("[ImportMesh2] FBX: %s"), *FBXPath);
+		UE_LOG(LogTemp, Warning, TEXT("[ImportMesh2] DestDir: %s"), *DestDir);
+		UE_LOG(LogTemp, Warning, TEXT("[ImportMesh2] Skeleton: %s"), *SkeletonPath);
+		UE_LOG(LogTemp, Warning, TEXT("[ImportMesh2] Scale: %.1f"), ImportScale);
+
+		if (!FPaths::FileExists(FBXPath))
+		{
+			UE_LOG(LogTemp, Error, TEXT("[ImportMesh2] FBX not found: %s"), *FBXPath);
+			return;
+		}
+
+		// Load existing skeleton
+		USkeleton* ExistingSkeleton = LoadObject<USkeleton>(nullptr, *SkeletonPath);
+		if (!ExistingSkeleton)
+		{
+			UE_LOG(LogTemp, Error, TEXT("[ImportMesh2] Skeleton not found: %s"), *SkeletonPath);
+			return;
+		}
+		UE_LOG(LogTemp, Warning, TEXT("[ImportMesh2] Skeleton loaded: %d bones"),
+			ExistingSkeleton->GetReferenceSkeleton().GetNum());
+
+		// Create a package in the dest dir — but DON'T name it what we want the mesh to be.
+		// The FBX importer will create its own named objects inside this package.
+		FString PkgName = DestDir / TEXT("SKM_Sentinel_Ironbound");
+		UPackage* Package = CreatePackage(*PkgName);
+
+		// Configure FBX import
+		UFbxFactory* FbxFactory = NewObject<UFbxFactory>();
+		FbxFactory->AddToRoot();
+		FbxFactory->SetDetectImportTypeOnImport(false);
+
+		UFbxImportUI* ImportUI = FbxFactory->ImportUI;
+		ImportUI->bImportMesh = true;
+		ImportUI->bImportAnimations = false;
+		ImportUI->bImportMaterials = true;
+		ImportUI->bImportTextures = true;
+		ImportUI->bCreatePhysicsAsset = false;
+		ImportUI->MeshTypeToImport = FBXIT_SkeletalMesh;
+		ImportUI->bIsObjImport = false;
+		ImportUI->bOverrideFullName = true;
+		// Set existing skeleton — importer maps FBX bones by name, skips extras
+		ImportUI->Skeleton = ExistingSkeleton;
+
+		ImportUI->SkeletalMeshImportData->bImportMeshesInBoneHierarchy = true;
+		ImportUI->SkeletalMeshImportData->bConvertScene = false;
+		ImportUI->SkeletalMeshImportData->ImportUniformScale = ImportScale;
+
+		UE_LOG(LogTemp, Warning, TEXT("[ImportMesh2] Importing..."));
+
+		bool bCancelled = false;
+		UObject* Imported = FbxFactory->ImportObject(
+			USkeletalMesh::StaticClass(),
+			Package,
+			FName(TEXT("SKM_Sentinel_Ironbound")),
+			RF_Public | RF_Standalone,
+			FBXPath,
+			nullptr,
+			bCancelled
+		);
+		FbxFactory->RemoveFromRoot();
+
+		if (!Imported)
+		{
+			UE_LOG(LogTemp, Error, TEXT("[ImportMesh2] Import FAILED"));
+			return;
+		}
+
+		USkeletalMesh* Mesh = Cast<USkeletalMesh>(Imported);
+		if (!Mesh)
+		{
+			UE_LOG(LogTemp, Error, TEXT("[ImportMesh2] Imported object is not a SkeletalMesh: %s"), *Imported->GetClass()->GetName());
+			return;
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("[ImportMesh2] Imported: %s (%d bones)"),
+			*Mesh->GetPathName(), Mesh->GetRefSkeleton().GetNum());
+
+		// Check what skeleton the importer used
+		USkeleton* MeshSkel = Mesh->GetSkeleton();
+		if (MeshSkel == ExistingSkeleton)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[ImportMesh2] Mesh is using existing skeleton (PERFECT)"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[ImportMesh2] Mesh has different skeleton: %s"),
+				MeshSkel ? *MeshSkel->GetPathName() : TEXT("NULL"));
+			UE_LOG(LogTemp, Warning, TEXT("[ImportMesh2] Reassigning to existing skeleton..."));
+			Mesh->SetSkeleton(ExistingSkeleton);
+		}
+
+		// Save the mesh
+		UPackage* MeshPkg = Mesh->GetOutermost();
+		FAssetRegistryModule::AssetCreated(Mesh);
+		MeshPkg->MarkPackageDirty();
+		FString Filename = FPackageName::LongPackageNameToFilename(MeshPkg->GetName(), FPackageName::GetAssetPackageExtension());
+		FSavePackageArgs SaveArgs;
+		SaveArgs.TopLevelFlags = RF_Standalone;
+		bool bSaved = UPackage::SavePackage(MeshPkg, Mesh, *Filename, SaveArgs);
+
+		UE_LOG(LogTemp, Warning, TEXT("[ImportMesh2] === RESULT ==="));
+		UE_LOG(LogTemp, Warning, TEXT("[ImportMesh2] Mesh path: %s"), *Mesh->GetPathName());
+		UE_LOG(LogTemp, Warning, TEXT("[ImportMesh2] Mesh bones: %d"), Mesh->GetRefSkeleton().GetNum());
+		UE_LOG(LogTemp, Warning, TEXT("[ImportMesh2] Skeleton: %s"), *Mesh->GetSkeleton()->GetPathName());
+		UE_LOG(LogTemp, Warning, TEXT("[ImportMesh2] Saved: %s"), bSaved ? TEXT("YES") : TEXT("NO"));
+		UE_LOG(LogTemp, Warning, TEXT("[ImportMesh2] File: %s"), *Filename);
+
+		// Print bone mapping
+		const FReferenceSkeleton& RefSkel = Mesh->GetRefSkeleton();
+		for (int32 i = 0; i < FMath::Min(RefSkel.GetNum(), 10); i++)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[ImportMesh2]   Bone[%d] = %s"), i, *RefSkel.GetBoneName(i).ToString());
+		}
+		if (RefSkel.GetNum() > 10)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[ImportMesh2]   ... (%d more)"), RefSkel.GetNum() - 10);
+		}
+	})
+);
+
+// Console command to reimport a skeletal mesh FBX onto an existing skeleton.
+// Unlike SLF.ImportMesh, this properly handles the case where the skeleton already exists:
+// 1. Imports FBX without skeleton matching (avoids rename crash)
+// 2. Reassigns mesh to existing skeleton
+// 3. MergeAllBonesToBoneTree (adds mesh bones skeleton doesn't have)
+// 4. Saves BOTH skeleton (with merged bones) and mesh packages
+// Usage: SLF.ReimportMesh <FBXPath> <DestPath> <AssetName> <SkeletonPath> [Scale]
+static FAutoConsoleCommand ReimportMeshCmd(
+	TEXT("SLF.ReimportMesh"),
+	TEXT("Reimport a skeletal mesh FBX onto an existing skeleton with bone merging.\n"
+		 "Usage: SLF.ReimportMesh <FBXPath> <DestPath> <AssetName> <SkeletonPath> [Scale]\n"
+		 "Example: SLF.ReimportMesh C:/path/mesh.fbx /Game/Dir MeshName /Game/Dir/Skel.Skel 1.0"),
+	FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
+	{
+		if (Args.Num() < 4)
+		{
+			UE_LOG(LogTemp, Error, TEXT("SLF.ReimportMesh requires: <FBXPath> <DestPath> <AssetName> <SkeletonPath> [Scale]"));
+			return;
+		}
+
+		const FString& FBXPath = Args[0];
+		const FString& DestPath = Args[1];
+		const FString& AssetName = Args[2];
+		const FString& SkeletonPath = Args[3];
+		float ImportScale = Args.Num() > 4 ? FCString::Atof(*Args[4]) : 1.0f;
+
+		UE_LOG(LogTemp, Warning, TEXT("[ReimportMesh] === Starting ==="));
+		UE_LOG(LogTemp, Warning, TEXT("[ReimportMesh] FBX: %s"), *FBXPath);
+		UE_LOG(LogTemp, Warning, TEXT("[ReimportMesh] Dest: %s/%s"), *DestPath, *AssetName);
+		UE_LOG(LogTemp, Warning, TEXT("[ReimportMesh] Skeleton: %s"), *SkeletonPath);
+		UE_LOG(LogTemp, Warning, TEXT("[ReimportMesh] Scale: %.1f"), ImportScale);
+
+		// Verify FBX exists
+		if (!FPaths::FileExists(FBXPath))
+		{
+			UE_LOG(LogTemp, Error, TEXT("[ReimportMesh] FBX not found: %s"), *FBXPath);
+			return;
+		}
+
+		// Load existing skeleton FIRST
+		USkeleton* ExistingSkeleton = LoadObject<USkeleton>(nullptr, *SkeletonPath);
+		if (!ExistingSkeleton)
+		{
+			UE_LOG(LogTemp, Error, TEXT("[ReimportMesh] Skeleton not found: %s"), *SkeletonPath);
+			return;
+		}
+		int32 SkelBonesBefore = ExistingSkeleton->GetReferenceSkeleton().GetNum();
+		UE_LOG(LogTemp, Warning, TEXT("[ReimportMesh] Existing skeleton: %d bones"), SkelBonesBefore);
+
+		// Create package for the mesh
+		FString PackagePath = DestPath / AssetName;
+		UPackage* Package = CreatePackage(*PackagePath);
+		if (!Package)
+		{
+			UE_LOG(LogTemp, Error, TEXT("[ReimportMesh] Failed to create package: %s"), *PackagePath);
+			return;
+		}
+
+		// Import FBX WITHOUT skeleton reference — let it create an auto-skeleton
+		// This avoids the "renaming on top of existing" crash
+		UFbxFactory* FbxFactory = NewObject<UFbxFactory>();
+		FbxFactory->AddToRoot();
+
+		UFbxImportUI* ImportUI = FbxFactory->ImportUI;
+		ImportUI->bImportMesh = true;
+		ImportUI->bImportAnimations = false;
+		ImportUI->bImportMaterials = true;
+		ImportUI->bImportTextures = true;
+		ImportUI->bCreatePhysicsAsset = false;
+		ImportUI->MeshTypeToImport = FBXIT_SkeletalMesh;
+		ImportUI->bIsObjImport = false;
+		ImportUI->bOverrideFullName = true;
+		// CRITICAL: Do NOT set ImportUI->Skeleton — let factory create its own
+		ImportUI->Skeleton = nullptr;
+
+		ImportUI->SkeletalMeshImportData->bImportMeshesInBoneHierarchy = true;
+		ImportUI->SkeletalMeshImportData->bConvertScene = false;  // meter-scale FBX; use ImportUniformScale instead
+		ImportUI->SkeletalMeshImportData->ImportUniformScale = ImportScale;
+
+		UE_LOG(LogTemp, Warning, TEXT("[ReimportMesh] Importing FBX (no skeleton matching)..."));
+
+		bool bCancelled = false;
+		UObject* ImportedObject = FbxFactory->ImportObject(
+			USkeletalMesh::StaticClass(),
+			Package,
+			FName(*AssetName),
+			RF_Public | RF_Standalone,
+			FBXPath,
+			nullptr,
+			bCancelled
+		);
+		FbxFactory->RemoveFromRoot();
+
+		if (!ImportedObject)
+		{
+			UE_LOG(LogTemp, Error, TEXT("[ReimportMesh] FBX import failed"));
+			return;
+		}
+
+		USkeletalMesh* ImportedMesh = Cast<USkeletalMesh>(ImportedObject);
+		if (!ImportedMesh)
+		{
+			UE_LOG(LogTemp, Error, TEXT("[ReimportMesh] Imported object is not a SkeletalMesh"));
+			return;
+		}
+
+		// Get the auto-created skeleton so we can clean it up later
+		USkeleton* AutoSkeleton = ImportedMesh->GetSkeleton();
+		FString AutoSkelName = AutoSkeleton ? AutoSkeleton->GetPathName() : TEXT("NULL");
+		int32 MeshBones = ImportedMesh->GetRefSkeleton().GetNum();
+		UE_LOG(LogTemp, Warning, TEXT("[ReimportMesh] Imported mesh: %s (%d bones)"), *ImportedMesh->GetName(), MeshBones);
+		UE_LOG(LogTemp, Warning, TEXT("[ReimportMesh] Auto-created skeleton: %s"), *AutoSkelName);
+
+		// If mesh ended up in wrong package, rename it
+		UPackage* MeshPackage = ImportedMesh->GetOutermost();
+		if (MeshPackage != Package)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[ReimportMesh] Renaming mesh to target package"));
+			ImportedMesh->Rename(*AssetName, Package, REN_DontCreateRedirectors | REN_NonTransactional);
+			MeshPackage = Package;
+		}
+
+		// === KEY STEP: Reassign to existing skeleton + merge bones ===
+		UE_LOG(LogTemp, Warning, TEXT("[ReimportMesh] Reassigning mesh to existing skeleton..."));
+		ImportedMesh->SetSkeleton(ExistingSkeleton);
+
+		UE_LOG(LogTemp, Warning, TEXT("[ReimportMesh] Running MergeAllBonesToBoneTree..."));
+		bool bMergeResult = ExistingSkeleton->MergeAllBonesToBoneTree(ImportedMesh);
+		int32 SkelBonesAfter = ExistingSkeleton->GetReferenceSkeleton().GetNum();
+		UE_LOG(LogTemp, Warning, TEXT("[ReimportMesh] MergeAllBonesToBoneTree: %s (%d -> %d bones)"),
+			bMergeResult ? TEXT("SUCCESS") : TEXT("FAILED"), SkelBonesBefore, SkelBonesAfter);
+
+		// SAFETY: Only save skeleton if bone count actually changed
+		// Saving an unchanged skeleton can introduce metadata differences that break AnimBP
+		FSavePackageArgs SaveArgs;
+		SaveArgs.TopLevelFlags = RF_Standalone;
+		bool bSkelSaved = false;
+		if (SkelBonesAfter != SkelBonesBefore)
+		{
+			UPackage* SkelPkg = ExistingSkeleton->GetOutermost();
+			SkelPkg->MarkPackageDirty();
+			FString SkelFilename = FPackageName::LongPackageNameToFilename(SkelPkg->GetName(), FPackageName::GetAssetPackageExtension());
+			bSkelSaved = UPackage::SavePackage(SkelPkg, ExistingSkeleton, *SkelFilename, SaveArgs);
+			UE_LOG(LogTemp, Warning, TEXT("[ReimportMesh] Skeleton CHANGED and saved: %s (%d -> %d bones)"),
+				bSkelSaved ? TEXT("YES") : TEXT("NO"), SkelBonesBefore, SkelBonesAfter);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[ReimportMesh] Skeleton UNCHANGED (%d bones) — NOT saving (preserves AnimBP compatibility)"), SkelBonesAfter);
+		}
+
+		// Save mesh package (pointing to existing skeleton)
+		FAssetRegistryModule::AssetCreated(ImportedMesh);
+		MeshPackage->MarkPackageDirty();
+		FString MeshFilename = FPackageName::LongPackageNameToFilename(MeshPackage->GetName(), FPackageName::GetAssetPackageExtension());
+		bool bMeshSaved = UPackage::SavePackage(MeshPackage, ImportedMesh, *MeshFilename, SaveArgs);
+		UE_LOG(LogTemp, Warning, TEXT("[ReimportMesh] Mesh saved: %s"), bMeshSaved ? TEXT("YES") : TEXT("NO"));
+
+		// Clean up auto-created skeleton (delete from disk if different from existing)
+		if (AutoSkeleton && AutoSkeleton != ExistingSkeleton)
+		{
+			UPackage* AutoSkelPkg = AutoSkeleton->GetOutermost();
+			FString AutoSkelFilename = FPackageName::LongPackageNameToFilename(AutoSkelPkg->GetName(), FPackageName::GetAssetPackageExtension());
+			if (FPaths::FileExists(AutoSkelFilename))
+			{
+				IFileManager::Get().Delete(*AutoSkelFilename);
+				UE_LOG(LogTemp, Warning, TEXT("[ReimportMesh] Deleted auto-created skeleton: %s"), *AutoSkelFilename);
+			}
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("[ReimportMesh] === COMPLETE ==="));
+		UE_LOG(LogTemp, Warning, TEXT("[ReimportMesh] Mesh: %s/%s (%d bones)"), *DestPath, *AssetName, MeshBones);
+		UE_LOG(LogTemp, Warning, TEXT("[ReimportMesh] Skeleton: %s (%d bones, was %d)"), *SkeletonPath, SkelBonesAfter, SkelBonesBefore);
 	})
 );
 
