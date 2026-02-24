@@ -11,7 +11,7 @@ Create a fully functional Soulslike enemy from:
 1. An **AI-generated mesh** (Meshy AI zip file with FBX + textures)
 2. **Elden Ring character animations** (extracted via Soulstruct)
 
-The enemy uses forensically distinct animations (8 transform layers), a legally clean mesh, and standard UE5 bone naming. No FromSoft assets ship in the final game.
+The enemy uses forensically distinct animations (13 transform layers), a legally clean mesh, and standard UE5 bone naming. No FromSoft assets ship in the final game.
 
 ---
 
@@ -186,7 +186,7 @@ These IDs are for c3100 (Crucible Knight). Other characters use different IDs �
 
 ### 3a. Create Retarget Script
 
-Copy `retarget_sentinel_arp.py` as template, update these values:
+Copy `mesh_animation_pipeline.py` as template, update these values:
 
 ```python
 # === CHANGE THESE FOR EACH ENEMY ===
@@ -235,77 +235,88 @@ For each animation FBX:
 6. Export FBX (target armature + mesh + baked action)
 7. Cleanup imported objects, GC
 
-### 3d. Forensic Transform Stack (8 layers, applied in order)
+### 3d. Forensic Transform Stack (13 layers, applied in order)
 
-Each transform is designed to change exported data while remaining visually imperceptible:
+All transforms are in `mesh_animation_pipeline.py` `phase3_forensic_transforms()`. Each changes exported data while remaining visually imperceptible:
 
 | # | Transform | Function | Effect |
 |---|-----------|----------|--------|
-| 1 | BEZIER interpolation | `apply_bezier_interpolation()` | LINEAR→BEZIER with AUTO_CLAMPED handles. Changes all inter-frame samples when FBX re-bakes. |
-| 2 | Time warp | `apply_time_warp(warp_amp=0.08)` | Sine-based: `t' = t + 0.08*sin(2*pi*t)`. Shifts timing ±8% at quarter marks, zero at start/end. |
-| 3 | Per-bone micro-noise | `apply_micro_noise(seed=42+i, rot_amp_deg=0.3, loc_amp=0.002)` | Catmull-Rom smooth noise every ~8 frames. Weighted per bone region (see BONE_NOISE_WEIGHT). Start/end forced to zero. |
-| 4 | Root position offset | `apply_root_offset(offset=(0.0, 0.005, 0.003))` | Constant XYZ offset on Hips. Creates location fcurves if they don't exist (ARP only produces rotation). |
-| 5 | Posture offset | `apply_posture_offset()` | Constant euler rotation on 8 ARP-named bones (spine, neck, head, shoulders, arms). All <1 degree. |
-| 6 | Value quantization | `apply_value_quantization(rot_places=4, loc_places=4)` | Round rotation/position values to 4 decimal places. |
-| 7 | Per-animation speed scale | `apply_speed_scale(scale=1.0 + 0.03*sin(i*2.399))` | Unique 0.97-1.03x speed per animation. Irrational step avoids repeats. Idle (i=0) gets 1.0 (sin(0)=0). |
-| 8 | 24fps resample | FBX export `bake_anim_step=1.0` at 24fps | Different frame count + interpolation vs 30fps source. |
+| 1 | Static rotation offset | `apply_static_offset()` | 2-5 deg constant bias on 10 bones (spine, neck, head, shoulders, pelvis) |
+| 8b | Per-bone phase shift | `apply_phase_shift()` | Shift each bone's keyframes by 0-2 frames. Deterministic per bone name hash. Root/pelvis/IK excluded. |
+| 2 | Per-bone smooth noise | `apply_noise()` | Up to 2.5 deg Catmull-Rom sine noise, bone-weighted (see BONE_NOISE_WEIGHTS) |
+| 2b | Low-pass Butterworth filter | `apply_lowpass_filter()` | 2nd-order 8Hz cutoff on all rotation channels. Destroys high-frequency source fingerprint. scipy or moving-average fallback. |
+| 3 | Time warp | `apply_timewarp()` | 15% non-linear sine distortion: `t' = t + 0.15*sin(2*pi*t)/(2*pi)` |
+| 3b | Direction/anim swap | `OUTPUT_SWAP_PAIRS` | Swap source FBX for output: Dodge_Left↔Right, HitReact↔HitReact_Light |
+| 4 | Per-animation speed | `apply_speed_variation()` | 0.88x-1.12x per animation, SLERP resampled |
+| 5 | 24fps resample | `apply_resample()` | 30fps→24fps with SLERP quaternion interpolation |
+| 5b | Keyframe decimation | `apply_keyframe_decimation()` | Remove keyframes where SLERP error < 0.15 deg. Typically 30-50% reduction on slow bones. |
+| 6 | Bone pruning | `prune_bones()` | 91→68 bones (23 cosmetic bones removed) |
+| 7 | Rest pose perturbation | `perturb_rest_pose()` | 12 bones rotated 1-3 deg in edit mode |
+| 7b | Bone length scaling | `perturb_rest_pose()` | 12 bones: torso +3%, neck -4%, arms ±2-3%, legs ±2% |
+| 8 | Full bone rename | `apply_bone_rename()` | FLVER→UE5 Mannequin names (68 bones) |
 
-#### Bone Noise Weights
+#### Bone Noise Weights (FLVER bone names)
 ```python
-BONE_NOISE_WEIGHT = {
-    "Hips": 0.15,
-    "SpineLower": 0.8, "SpineUpper": 0.8,
-    "Neck": 0.6, "Head": 0.5,
-    "Clavicle_L": 0.3, "Clavicle_R": 0.3,
-    "UpperArm_L": 0.7, "UpperArm_R": 0.7,
-    "LowerArm_L": 0.8, "LowerArm_R": 0.8,
-    "Hand_L": 0.9, "Hand_R": 0.9,
-    "Thigh_L": 0.4, "Thigh_R": 0.4,
-    "Calf_L": 0.4, "Calf_R": 0.4,
-    "Foot_L": 0.2, "Foot_R": 0.2,
-    "Toe_L": 0.1, "Toe_R": 0.1,
-    # Twist bones: 0.3 each
+BONE_NOISE_WEIGHTS = {
+    'Master': 0.0, 'Root': 0.0,
+    'L_Foot_Target': 0.0, 'R_Foot_Target': 0.0,
+    'Pelvis': 0.15,
+    'Spine': 1.0, 'Spine1': 0.9, 'Spine2': 0.8,
+    'Neck': 0.7, 'Head': 0.6,
+    'L_UpperArm': 0.7, 'R_UpperArm': 0.7,
+    'L_Forearm': 0.8, 'R_Forearm': 0.8,
+    'L_UpperLeg': 0.4, 'R_UpperLeg': 0.4,
+    'L_LowerLeg': 0.5, 'R_LowerLeg': 0.5,
+    'L_Foot': 0.2, 'R_Foot': 0.2,
+    # Finger/twist bones: 0.1-0.3
 }
 ```
 
-#### Posture Offsets (ARP internal bone names)
+#### Bone Length Scaling
 ```python
-POSTURE = {
-    "c_spine_01.x":  (0.0,  0.4,  0.3),   # slight twist
-    "c_spine_02.x":  (0.0, -0.3,  0.5),   # counter-twist
-    "c_neck.x":      (0.3,  0.0, -0.2),   # slight tilt
-    "c_head.x":      (-0.2, 0.0,  0.3),   # minor head angle
-    "c_shoulder.l":  (0.0,  0.0,  0.6),   # shoulder angle
-    "c_shoulder.r":  (0.0,  0.0, -0.6),   # mirror shoulder
-    "c_arm_fk.l":   (0.5,  0.0,  0.0),   # arm rotation
-    "c_arm_fk.r":   (-0.5, 0.0,  0.0),   # mirror arm
+BONE_LENGTH_SCALE = {
+    'Spine': 1.03, 'Spine1': 1.03, 'Spine2': 1.03,
+    'Neck': 0.96,
+    'L_UpperArm': 0.97, 'R_UpperArm': 0.97,
+    'L_Forearm': 1.02, 'R_Forearm': 1.02,
+    'L_Thigh': 1.02, 'R_Thigh': 1.02,
+    'L_Calf': 0.98, 'R_Calf': 0.98,
 }
 ```
 
-**CRITICAL**: Posture offsets use **ARP internal names** (e.g., `c_spine_01.x`), NOT our custom names (e.g., `SpineLower`). ARP retargeted actions store fcurves with ARP bone names.
+#### Static Rotation Offsets (degrees)
+```python
+BONE_OFFSETS_DEG = {
+    'Spine': (0.0, 5.0, 2.0), 'Spine1': (0.0, 3.0, 1.0),
+    'Spine2': (2.0, 2.0, 0.0), 'Neck': (0.0, -3.0, 0.0),
+    'Head': (-2.0, -2.0, 0.0),
+    'L_Clavicle': (0.0, 0.0, 3.0), 'R_Clavicle': (0.0, 0.0, -3.0),
+    'L_UpperArm': (0.0, 0.0, 4.0), 'R_UpperArm': (0.0, 0.0, -4.0),
+    'Pelvis': (0.0, 2.0, 1.0),
+}
+```
 
-### 3e. Run Retarget
+**NOTE**: All bone names use FLVER convention (pre-rename). The rename to UE5 Mannequin names happens as transform #8.
+
+### 3e. Run Pipeline (Phases 1-3)
 
 ```bash
+# All phases (mesh prep + ARP retarget + forensic transforms):
 "C:/Program Files/Blender Foundation/Blender 5.0/blender.exe" --background \
-  --python C:/scripts/elden_ring_tools/retarget_<enemy_name>_arp.py
+  --python C:/scripts/elden_ring_tools/mesh_animation_pipeline.py -- --all
+
+# Phase 3 only (re-apply forensic transforms to existing retargets):
+"C:/Program Files/Blender Foundation/Blender 5.0/blender.exe" --background \
+  --python C:/scripts/elden_ring_tools/mesh_animation_pipeline.py -- --phase 3
 ```
 
 Expected output per animation:
 ```
-  [1/20] a000_000020 -> <Enemy>_Idle
-    Source: 104 bones, 'Armature|a000_000020' (85 frames)
-    Bone map: 22 mapped, 0 unmapped, root=True
-    Retargeted: 'retargeted_action' (85 frames)
-    Stripped translation from 3 FCurves
-    Bezier interp: 234 fcurves converted
-    Time warp: 234 fcurves, amp=0.08
-    Micro noise: 156 fcurves, rot=0.3deg, loc=0.002
-    Root offset: 2 fcurves, offset=(0.0, 0.005, 0.003)
-    Posture offset: 8 bones adjusted
-    Quantization: 158 fcurves, rot=4dp, loc=4dp
-    Speed scale: 236 fcurves, factor=1.0000
-    Exported: <Enemy>_Idle.fbx
+  [1/20] Sentinel_Idle
+    1.Offset:10 8b.PhaseShift:59 2.Noise:82 2b.LowPass:91 3.Warp:276
+    4.Speed:0.93x(113->121) 5.Resample:121->97 5b.Decimate:8827->294
+    6.Prune:23(->68) 7.RestPose:12+12lengths 8.Rename:68
+    -> .../phase3/final/Sentinel_Idle.fbx
 ```
 
 Final output:
@@ -356,10 +367,11 @@ public:
 
 **9-Step Pipeline** (in `Main()`):
 
-| Step | Action | C++ Function |
-|------|--------|-------------|
-| 0 | Import mesh FBX (if not exists) | `ImportSkeletalMeshFromFBX()` |
-| 1 | Batch import animation FBXs | `BatchImportAnimsFBXDirect()` |
+| Step | Action | Method |
+|------|--------|--------|
+| 0 | Import mesh FBX | `UAssetImportTask` + `UFbxFactory` (CRITICAL: same pipeline as animations — see MEMORY #26) |
+| 0b | Sync skeleton ref pose | `UpdateReferencePoseFromMesh()` + translation retargeting (root=Animation, pelvis=AnimationScaled, all others=Skeleton) |
+| 1 | Import animation FBXs | `UAssetImportTask` per animation (bImportMesh=false, SetDetectImportTypeOnImport(false)) |
 | 2 | Add sockets to skeleton | `AddSocketToSkeleton()` |
 | 3 | Create 17 montages | `CreateMontageFromSequence()` |
 | 4 | Create 2D blend space | `CreateBlendSpace2DFromSequences()` |
@@ -368,6 +380,10 @@ public:
 | 6c | Add weapon trace notifies | `AddWeaponTraceToMontage()` |
 | 7 | Validation + diagnostics | `DiagnoseAnimBPDetailed()`, montage length check |
 | 8 | Create Blueprint | `FKismetEditorUtilities::CreateBlueprint()` |
+
+**CRITICAL**: Steps 0 and 1 MUST use `UAssetImportTask` (native UE5 FBX importer), NOT custom C++ functions like `ImportSkeletalMeshFromFBX` or `ImportAnimFBXDirect`. Different import code paths handle FBX PreRotation differently, causing bind pose mismatch → vertex stretching. Using the same `UAssetImportTask` pipeline for both mesh and animation ensures matching bind poses.
+
+**CRITICAL**: Initialize `FSlateApplication::Create()` before import tasks. Do NOT use `-AllowCommandletRendering` (triggers 30+ min shader compilation). Slate creation alone is sufficient for `UAssetImportTask` to work in commandlet mode.
 
 ### 4b. Socket Configuration
 
@@ -412,21 +428,20 @@ static FAutoConsoleCommand CmdSetup<Enemy>(
 
 ### 4e. Nuclear Clean + Run
 
-**CRITICAL**: Delete ALL existing .uasset files before running commandlet (Bug #21 — "partially loaded" package crash).
+**CRITICAL**: Delete ALL existing .uasset files (including mesh AND skeleton) before running commandlet (Bug #21 — "partially loaded" package crash). The commandlet recreates everything.
 
 ```bash
 # 1. Close UE5 Editor (releases file locks)
 
-# 2. Nuclear clean
+# 2. Nuclear clean — delete ALL assets including mesh and skeleton
 rm -rf "C:/scripts/SLFConversion/Content/CustomEnemies/<EnemyName>/Animations/"
-find "C:/scripts/SLFConversion/Content/CustomEnemies/<EnemyName>/" -maxdepth 1 \
-  -name "*.uasset" ! -name "SKM_*" -delete
+rm -f "C:/scripts/SLFConversion/Content/CustomEnemies/<EnemyName>/"*.uasset
 find "C:/scripts/SLFConversion/Saved/" -name "*<EnemyName>*" -delete
 
 # 3. Run commandlet (NO -NullRHI — DDC compression needs real RHI)
 "C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" \
   "C:/scripts/SLFConversion/SLFConversion.uproject" \
-  -run=Setup<EnemyName> \
+  -run=Setup<EnemyName> -forensic \
   -unattended -nosplash -stdout -UTF8Output -FullStdOutLogOutput -NoSound
 ```
 
@@ -620,7 +635,7 @@ if hasattr(action, 'is_action_layered') and action.is_action_layered:
 | File | Purpose |
 |------|---------|
 | `C:/scripts/elden_ring_tools/extract_animations.py` | Phase 2: HKX → FBX extraction |
-| `C:/scripts/elden_ring_tools/retarget_sentinel_arp.py` | Phase 3: ARP retarget + forensic transforms (TEMPLATE) |
+| `C:/scripts/elden_ring_tools/mesh_animation_pipeline.py` | Phases 1-5: Mesh prep, ARP retarget, 13 forensic transforms, renders, validation (TEMPLATE) |
 | `Source/SLFConversion/SetupSentinelCommandlet.cpp` | Phase 4: UE5 asset creation (TEMPLATE) |
 | `Source/SLFConversion/Blueprints/SLFEnemySentinel.cpp` | Phase 5: Runtime enemy class (TEMPLATE) |
 | `Source/SLFConversion/SLFAutomationLibrary.cpp` | C++ automation functions |
@@ -628,8 +643,8 @@ if hasattr(action, 'is_action_layered') and action.is_action_layered:
 ### Key C++ Functions (SLFAutomationLibrary)
 | Function | Purpose |
 |----------|---------|
-| `ImportSkeletalMeshFromFBX()` | Import FBX mesh + auto-create skeleton |
-| `BatchImportAnimsFBXDirect()` | Batch import animation FBXs (bypasses UE5.7 ControlRig) |
+| `UAssetImportTask` + `UFbxFactory` | Import mesh AND animation FBXs (native UE5 pipeline — preferred over custom functions) |
+| `UpdateReferencePoseFromMesh()` | Sync skeleton ref pose with mesh bind pose (CRITICAL after mesh import) |
 | `AddSocketToSkeleton()` | Add named socket to bone |
 | `CreateMontageFromSequence()` | Create montage from anim sequence |
 | `CreateBlendSpace2DFromSequences()` | Create 2D blend space (direction + speed) |
@@ -685,7 +700,7 @@ C:/scripts/elden_ring_tools/output/<enemy_name>/final/
 - Specific heavy attack wind-ups — artistic expression in original
 
 ### Mitigations applied
-- 8-layer forensic transform stack changes every exported data sample
+- 13-layer forensic transform stack changes every exported data sample
 - Different skeleton topology (ARP vs FLVER)
 - Different mesh proportions warp retargeted motion
 - 24fps vs 30fps source
