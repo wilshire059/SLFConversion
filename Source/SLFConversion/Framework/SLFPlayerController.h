@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "InputActionValue.h"
 #include "GameplayTagContainer.h"
+#include "SLFGameTypes.h"
 #include "Interfaces/BPI_Controller.h"
 #include "SLFPlayerController.generated.h"
 
@@ -206,4 +207,25 @@ protected:
 	virtual void AdjustCurrency_Implementation(int32 Delta) override;
 	virtual void LootItemToInventory_Implementation(AActor* Item) override;
 	virtual void BlendViewTarget_Implementation(AActor* TargetActor, double BlendTime, double BlendExp, bool bLockOutgoing) override;
+
+	// ═══════════════════════════════════════════════════════════════════
+	// FAST TRAVEL
+	// ═══════════════════════════════════════════════════════════════════
+public:
+	/** Execute fast travel: fade out → teleport → reset enemies → fade in */
+	UFUNCTION(BlueprintCallable, Category = "FastTravel")
+	void ExecuteFastTravel(const FSLFRestPointSaveInfo& Destination);
+
+private:
+	void OnFastTravelFadeOutComplete();
+	void OnFastTravelSnapToGround();
+	void OnFastTravelCheckLanded();
+	void OnFastTravelFadeInStart();
+
+	FSLFRestPointSaveInfo PendingFastTravelDest;
+	FTimerHandle FastTravelFadeOutHandle;
+	FTimerHandle FastTravelFadeInHandle;
+	FTimerHandle FastTravelInputHandle;
+	FTimerHandle FastTravelLandCheckHandle;
+	int32 FastTravelGroundCheckCount = 0;
 };

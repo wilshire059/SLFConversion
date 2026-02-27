@@ -1239,15 +1239,27 @@ void USLFAIStateMachineComponent::MoveToTarget()
 
 void USLFAIStateMachineComponent::MoveToLocation(const FVector& Location)
 {
-	if (!CachedAIController.IsValid())
+	if (!CachedPawn.IsValid()) return;
+
+	// Try NavMesh-based movement first, then fall back to direct AddMovementInput.
+	// Dynamically spawned enemies may not have NavMesh at their spawn location.
+	if (CachedAIController.IsValid())
 	{
-		return;
+		const float AcceptanceRadius = 50.0f;
+		// bUsePathfinding=true requires NavMesh. Try it, and if there's no NavMesh
+		// the AI controller internally falls back. But if no nav data exists at all,
+		// MoveToLocation silently does nothing. So we also do AddMovementInput as insurance.
+		CachedAIController->MoveToLocation(Location, AcceptanceRadius);
 	}
 
-	// Use a smaller acceptance radius to ensure AI gets close enough to attack
-	// 50 units should be close enough for melee without colliding with player
-	const float AcceptanceRadius = 50.0f;
-	CachedAIController->MoveToLocation(Location, AcceptanceRadius);
+	// Always also apply direct movement input as a fallback.
+	// If NavMesh pathing is working, the path follower will override this.
+	// If NavMesh is absent, this ensures the character still walks toward the target.
+	FVector Dir = (Location - CachedPawn->GetActorLocation()).GetSafeNormal();
+	if (ACharacter* Char = Cast<ACharacter>(CachedPawn.Get()))
+	{
+		Char->AddMovementInput(Dir, 1.0f);
+	}
 }
 
 void USLFAIStateMachineComponent::StopMovement()

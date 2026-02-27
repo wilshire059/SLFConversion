@@ -19,6 +19,7 @@ UW_GameMenu::UW_GameMenu(const FObjectInitializer& ObjectInitializer)
 	, NavigationIndex(0)
 	, ButtonContainer(nullptr)
 	, FadeBorders(nullptr)
+	, DynamicMapButton(nullptr)
 {
 }
 
@@ -49,6 +50,53 @@ void UW_GameMenu::NativeConstruct()
 
 	// Bind visibility changed event
 	OnVisibilityChanged.AddDynamic(this, &UW_GameMenu::EventOnVisibilityChanged);
+
+	// Create a proper W_GameMenu_Button for "Map" using the Blueprint class
+	// This ensures it looks identical to the other menu buttons
+	{
+		UPanelWidget* ButtonParent = ButtonContainer;
+		if (!ButtonParent && MenuButtons.Num() > 0 && MenuButtons[0])
+		{
+			ButtonParent = MenuButtons[0]->GetParent();
+		}
+
+		if (ButtonParent)
+		{
+			// Load the W_GameMenu_Button Blueprint class
+			UClass* ButtonBPClass = LoadClass<UW_GameMenu_Button>(nullptr,
+				TEXT("/Game/SoulslikeFramework/Widgets/HUD/W_GameMenu_Button.W_GameMenu_Button_C"));
+
+			if (ButtonBPClass)
+			{
+				APlayerController* PC = GetOwningPlayer();
+				if (PC)
+				{
+					DynamicMapButton = CreateWidget<UW_GameMenu_Button>(PC, ButtonBPClass);
+					if (DynamicMapButton)
+					{
+						// Configure before adding to tree
+						DynamicMapButton->ButtonText = FText::FromString(TEXT("Map"));
+						DynamicMapButton->TargetWidgetTag = FGameplayTag::RequestGameplayTag(
+							FName("SoulslikeFramework.Backend.Widgets.WorldMap"));
+
+						ButtonParent->AddChild(DynamicMapButton);
+
+						// Add to MenuButtons array and bind events (same as existing buttons)
+						MenuButtons.Add(DynamicMapButton);
+						DynamicMapButton->OnGameMenuButtonPressed.AddDynamic(this, &UW_GameMenu::EventOnMenuButtonPressed);
+						DynamicMapButton->OnGameMenuButtonSelected.AddDynamic(this, &UW_GameMenu::EventOnMenuButtonSelected);
+
+						UE_LOG(LogTemp, Log, TEXT("[W_GameMenu] Map button created (Blueprint class) in: %s"),
+							*ButtonParent->GetName());
+					}
+				}
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[W_GameMenu] Could not load W_GameMenu_Button Blueprint class"));
+			}
+		}
+	}
 
 	// Select first button if available
 	if (MenuButtons.Num() > 0)
@@ -159,7 +207,6 @@ void UW_GameMenu::UnbindButtonEvents()
 
 void UW_GameMenu::SelectCurrentButton()
 {
-	// Deselect all buttons first, then select current
 	for (int32 i = 0; i < MenuButtons.Num(); i++)
 	{
 		if (IsValid(MenuButtons[i]))
@@ -204,81 +251,33 @@ void UW_GameMenu::ApplyInputMappingContexts(bool bAdd)
 
 void UW_GameMenu::EventNavigateDown_Implementation()
 {
-	UE_LOG(LogTemp, Log, TEXT("[W_GameMenu] EventNavigateDown"));
-
-	// Check if we can navigate
-	if (!CanNavigate())
-	{
-		UE_LOG(LogTemp, Log, TEXT("[W_GameMenu] Cannot navigate - CanNavigate returned false"));
-		return;
-	}
-
-	if (MenuButtons.Num() == 0)
+	if (!CanNavigate() || MenuButtons.Num() == 0)
 	{
 		return;
 	}
 
-	// Calculate new index: NavigationIndex + 1, clamped to array bounds
-	// If exceeds bounds, wrap to 0
-	int32 NewIndex = NavigationIndex + 1;
-	int32 MaxIndex = MenuButtons.Num() - 1;
-
-	// Clamp to 0..MaxIndex, but wrap if we go past
-	if (NewIndex > MaxIndex)
-	{
-		NewIndex = 0; // Wrap around to first
-	}
-
-	NavigationIndex = NewIndex;
+	NavigationIndex = (NavigationIndex + 1) % MenuButtons.Num();
 	SelectCurrentButton();
-
-	UE_LOG(LogTemp, Log, TEXT("[W_GameMenu] Navigated down to index %d"), NavigationIndex);
 }
 
 void UW_GameMenu::EventNavigateUp_Implementation()
 {
-	UE_LOG(LogTemp, Log, TEXT("[W_GameMenu] EventNavigateUp"));
-
-	// Check if we can navigate
-	if (!CanNavigate())
-	{
-		UE_LOG(LogTemp, Log, TEXT("[W_GameMenu] Cannot navigate - CanNavigate returned false"));
-		return;
-	}
-
-	if (MenuButtons.Num() == 0)
+	if (!CanNavigate() || MenuButtons.Num() == 0)
 	{
 		return;
 	}
 
-	// Calculate new index: NavigationIndex - 1, clamped to array bounds
-	// If goes below 0, wrap to last
-	int32 NewIndex = NavigationIndex - 1;
-	int32 MaxIndex = MenuButtons.Num() - 1;
-
-	// Wrap around if negative
-	if (NewIndex < 0)
-	{
-		NewIndex = MaxIndex; // Wrap around to last
-	}
-
-	NavigationIndex = NewIndex;
+	NavigationIndex = (NavigationIndex - 1 + MenuButtons.Num()) % MenuButtons.Num();
 	SelectCurrentButton();
-
-	UE_LOG(LogTemp, Log, TEXT("[W_GameMenu] Navigated up to index %d"), NavigationIndex);
 }
 
 void UW_GameMenu::EventNavigateOk_Implementation()
 {
-	UE_LOG(LogTemp, Log, TEXT("[W_GameMenu] EventNavigateOk"));
-
-	// Check if we can navigate
 	if (!CanNavigate())
 	{
 		return;
 	}
 
-	// Get current button and trigger its pressed event
 	if (MenuButtons.IsValidIndex(NavigationIndex))
 	{
 		if (UW_GameMenu_Button* CurrentButton = MenuButtons[NavigationIndex])
@@ -286,7 +285,6 @@ void UW_GameMenu::EventNavigateOk_Implementation()
 			if (IsValid(CurrentButton))
 			{
 				CurrentButton->EventOnGameMenuButtonPressed();
-				UE_LOG(LogTemp, Log, TEXT("[W_GameMenu] Triggered button at index %d"), NavigationIndex);
 			}
 		}
 	}
@@ -415,8 +413,4 @@ void UW_GameMenu::EventOnVisibilityChanged_Implementation(ESlateVisibility InVis
 void UW_GameMenu::OnInputDeviceChanged_Implementation()
 {
 	UE_LOG(LogTemp, Log, TEXT("[W_GameMenu] OnInputDeviceChanged"));
-
-	// Update visual elements based on current input device
-	// This would typically update button icons for gamepad vs keyboard
-	// The actual implementation depends on how input icons are displayed
 }

@@ -1085,6 +1085,30 @@ struct SLFCONVERSION_API FSLFSaveData
 	FSLFSaveData() {}
 };
 
+// Rest point discovery info for fast travel
+USTRUCT(BlueprintType)
+struct SLFCONVERSION_API FSLFRestPointSaveInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|FastTravel")
+	FGuid RestPointId;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|FastTravel")
+	FText LocationName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|FastTravel")
+	FVector WorldLocation = FVector::ZeroVector;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|FastTravel")
+	FVector SpawnLocation = FVector::ZeroVector;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|FastTravel")
+	FRotator SpawnRotation = FRotator::ZeroRotator;
+
+	FSLFRestPointSaveInfo() {}
+};
+
 // Replaces: /Game/SoulslikeFramework/Structures/Save/FSaveGameInfo
 USTRUCT(BlueprintType)
 struct SLFCONVERSION_API FSLFSaveGameInfo
@@ -1133,6 +1157,22 @@ struct SLFCONVERSION_API FSLFSaveGameInfo
 	/** Active overlay state (weapon hold animation) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save")
 	ESLFOverlayState ActiveOverlayState = ESLFOverlayState::Unarmed;
+
+	/** Current level/map name the player is in */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Level")
+	FString CurrentLevelName;
+
+	/** Whether the player is inside a dungeon */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Level")
+	bool bIsInDungeon = false;
+
+	/** Display name of the current dungeon */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|Level")
+	FString CurrentDungeonName;
+
+	/** Discovered rest points for fast travel */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|FastTravel")
+	TArray<FSLFRestPointSaveInfo> DiscoveredRestPoints;
 
 	FSLFSaveGameInfo() {}
 };
@@ -1676,3 +1716,229 @@ using FSpawnedActorSaveInfo = FSLFSpawnedActorSaveInfo;
 using FNpcSaveInfo = FSLFNpcSaveInfo;
 using FVendorSaveInfo = FSLFNpcVendorSaveInfo;
 using FProgressData = FSLFProgressWrapper;
+
+//////////////////////////////////////////////////////////////////////////
+// SECTION: Zone & World Design Types
+//////////////////////////////////////////////////////////////////////////
+
+/** Configuration for a game zone */
+USTRUCT(BlueprintType)
+struct SLFCONVERSION_API FSLFZoneConfig
+{
+	GENERATED_BODY()
+
+	/** Zone identification tag (e.g., Zone.Ashfields) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zone")
+	FGameplayTag ZoneTag;
+
+	/** Display name shown to player */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zone")
+	FText DisplayName;
+
+	/** Zone difficulty rating */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zone")
+	ESLFZoneDifficulty Difficulty = ESLFZoneDifficulty::Easy;
+
+	/** Controlling faction */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zone")
+	ESLFFaction Faction = ESLFFaction::None;
+
+	/** Suggested player level range (min) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zone")
+	int32 SuggestedLevelMin = 1;
+
+	/** Suggested player level range (max) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zone")
+	int32 SuggestedLevelMax = 15;
+
+	/** Currency drop multiplier for enemies in this zone */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zone")
+	float CurrencyMultiplier = 1.0f;
+
+	/** Level name for streaming (e.g., "/Game/Maps/L_Ashfields") */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zone")
+	FString LevelName;
+
+	/** Boss progress tag — set to Completed when boss is defeated */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zone")
+	FGameplayTag BossProgressTag;
+
+	FSLFZoneConfig() {}
+};
+
+/** Entry in an enemy spawn table for a zone */
+USTRUCT(BlueprintType)
+struct SLFCONVERSION_API FSLFEnemySpawnEntry
+{
+	GENERATED_BODY()
+
+	/** Enemy class to spawn */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	TSubclassOf<ACharacter> EnemyClass;
+
+	/** Enemy rank */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	ESLFEnemyRank Rank = ESLFEnemyRank::Regular;
+
+	/** Relative spawn weight (higher = more common) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	float SpawnWeight = 1.0f;
+
+	/** Stat scaling multiplier (applied to base stats) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	float StatScale = 1.0f;
+
+	/** Currency value on kill */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	int32 CurrencyReward = 100;
+
+	FSLFEnemySpawnEntry() {}
+};
+
+/** Boss encounter configuration */
+USTRUCT(BlueprintType)
+struct SLFCONVERSION_API FSLFBossConfig
+{
+	GENERATED_BODY()
+
+	/** Boss enemy class */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss")
+	TSubclassOf<ACharacter> BossClass;
+
+	/** Boss display name */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss")
+	FText BossName;
+
+	/** Progress tag set to Completed on defeat */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss")
+	FGameplayTag DefeatProgressTag;
+
+	/** Item(s) dropped on defeat */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss")
+	TArray<TSubclassOf<AActor>> BossDrops;
+
+	/** Currency reward on defeat */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss")
+	int32 CurrencyReward = 5000;
+
+	/** Number of phases (1-3) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss", meta = (ClampMin = "1", ClampMax = "3"))
+	int32 NumPhases = 1;
+
+	/** Health percentage thresholds for phase transitions (e.g., 0.5 = phase 2 at 50% HP) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss")
+	TArray<float> PhaseThresholds;
+
+	FSLFBossConfig() {}
+};
+
+/** Weapon stat scaling configuration */
+USTRUCT(BlueprintType)
+struct SLFCONVERSION_API FSLFWeaponScaling
+{
+	GENERATED_BODY()
+
+	/** STR scaling grade */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	ESLFStatScaling StrengthScaling = ESLFStatScaling::E;
+
+	/** DEX scaling grade */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	ESLFStatScaling DexterityScaling = ESLFStatScaling::E;
+
+	/** INT scaling grade */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	ESLFStatScaling IntelligenceScaling = ESLFStatScaling::E;
+
+	/** FTH scaling grade */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	ESLFStatScaling FaithScaling = ESLFStatScaling::E;
+
+	/** ARC scaling grade */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	ESLFStatScaling ArcaneScaling = ESLFStatScaling::E;
+
+	FSLFWeaponScaling() {}
+};
+
+/** Extended weapon definition for the game design weapon roster */
+USTRUCT(BlueprintType)
+struct SLFCONVERSION_API FSLFWeaponDefinition
+{
+	GENERATED_BODY()
+
+	/** Weapon name */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	FText WeaponName;
+
+	/** Weapon sub-category */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	ESLFItemSubCategory SubCategory = ESLFItemSubCategory::Sword;
+
+	/** Base physical damage */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	float BaseDamage = 100.0f;
+
+	/** Attack power type */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	ESLFAttackPower AttackPower = ESLFAttackPower::Physical;
+
+	/** Stat scaling */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	FSLFWeaponScaling Scaling;
+
+	/** Weight (affects stamina cost and stagger) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	float Weight = 3.0f;
+
+	/** Weapon lore/description */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (MultiLine = "true"))
+	FText Description;
+
+	/** Zone where this weapon is found (empty = starting/shop) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	FGameplayTag FoundInZone;
+
+	/** Whether this is a boss weapon (created from boss soul) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	bool bIsBossWeapon = false;
+
+	FSLFWeaponDefinition() {}
+};
+
+/** NPC configuration for dialog and questing */
+USTRUCT(BlueprintType)
+struct SLFCONVERSION_API FSLFNPCConfig
+{
+	GENERATED_BODY()
+
+	/** NPC display name */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NPC")
+	FText NPCName;
+
+	/** NPC faction allegiance */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NPC")
+	ESLFFaction Faction = ESLFFaction::Neutral;
+
+	/** Whether this NPC is a merchant */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NPC")
+	bool bIsMerchant = false;
+
+	/** Whether this NPC moves between zones */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NPC")
+	bool bIsWanderer = false;
+
+	/** Dialog data table reference */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NPC")
+	TSoftObjectPtr<UDataTable> DialogTable;
+
+	/** Vendor data (if merchant) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NPC")
+	TSoftObjectPtr<UDataAsset> VendorData;
+
+	/** Zones this NPC can appear in (for wanderers) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NPC")
+	TArray<FGameplayTag> WanderZones;
+
+	FSLFNPCConfig() {}
+};

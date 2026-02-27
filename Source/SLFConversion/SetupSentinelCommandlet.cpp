@@ -18,6 +18,13 @@
 #include "FileHelpers.h"
 #include "Rendering/SkeletalMeshRenderData.h"
 #include "Animation/AnimationAsset.h"
+#include "AssetImportTask.h"
+#include "Factories/FbxFactory.h"
+#include "Factories/FbxImportUI.h"
+#include "Factories/FbxAnimSequenceImportData.h"
+#include "Factories/FbxSkeletalMeshImportData.h"
+#include "AssetToolsModule.h"
+#include "IAssetTools.h"
 
 USetupSentinelCommandlet::USetupSentinelCommandlet()
 {
@@ -327,6 +334,117 @@ int32 USetupSentinelCommandlet::Main(const FString& Params)
 		return 0;
 	}
 
+	// -dumpjson mode: export retargeted animation bone transforms to JSON for Blender validation
+	if (Params.Contains(TEXT("-dumpjson")))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("=== DUMP ANIMATION JSON ==="));
+
+		const FString AnimDir = TEXT("/Game/CustomEnemies/Sentinel/Animations");
+		const FString SentinelMeshPath = TEXT("/Game/CustomEnemies/Sentinel/SKM_Sentinel.SKM_Sentinel");
+		const FString OutputPath = TEXT("C:/scripts/elden_ring_tools/output/sentinel/ue5_retarget_dump.json");
+
+		USkeletalMesh* SentinelMesh = LoadObject<USkeletalMesh>(nullptr, *SentinelMeshPath);
+		if (!SentinelMesh)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Failed to load Sentinel mesh"));
+			return 1;
+		}
+
+		const FReferenceSkeleton& RefSkel = SentinelMesh->GetRefSkeleton();
+		const int32 NumBones = RefSkel.GetRawBoneNum();
+
+		// Build JSON string manually
+		FString Json = TEXT("{\n");
+
+		// Dump ref pose
+		Json += TEXT("  \"ref_pose\": {\n");
+		Json += FString::Printf(TEXT("    \"num_bones\": %d,\n"), NumBones);
+		Json += TEXT("    \"bones\": [\n");
+		for (int32 i = 0; i < NumBones; i++)
+		{
+			const FTransform& T = RefSkel.GetRefBonePose()[i];
+			FVector Pos = T.GetTranslation();
+			FQuat Rot = T.GetRotation();
+			FVector Scl = T.GetScale3D();
+			Json += FString::Printf(TEXT("      {\"name\": \"%s\", \"parent\": %d, \"pos\": [%.6f, %.6f, %.6f], \"rot\": [%.6f, %.6f, %.6f, %.6f], \"scale\": [%.6f, %.6f, %.6f]}%s\n"),
+				*RefSkel.GetBoneName(i).ToString(), RefSkel.GetParentIndex(i),
+				Pos.X, Pos.Y, Pos.Z, Rot.X, Rot.Y, Rot.Z, Rot.W,
+				Scl.X, Scl.Y, Scl.Z, i < NumBones - 1 ? TEXT(",") : TEXT(""));
+		}
+		Json += TEXT("    ]\n  },\n");
+
+		// Dump animations (selected set)
+		const FString AnimNames[] = {
+			TEXT("Sentinel_Idle"), TEXT("Sentinel_Attack01"), TEXT("Sentinel_Walk"),
+			TEXT("Sentinel_Run"), TEXT("Sentinel_HitReact")
+		};
+
+		Json += TEXT("  \"animations\": {\n");
+		int32 AnimIdx = 0;
+		for (const FString& AnimName : AnimNames)
+		{
+			FString AnimPath = AnimDir / AnimName + TEXT(".") + AnimName;
+			UAnimSequence* Anim = LoadObject<UAnimSequence>(nullptr, *AnimPath);
+			if (!Anim)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("  Skipping missing: %s"), *AnimPath);
+				continue;
+			}
+
+			int32 NumKeys = Anim->GetNumberOfSampledKeys();
+			double PlayLen = Anim->GetPlayLength();
+			UE_LOG(LogTemp, Warning, TEXT("  Dumping %s: %d keys, %.3fs"), *AnimName, NumKeys, PlayLen);
+
+			Json += FString::Printf(TEXT("    \"%s\": {\n"), *AnimName);
+			Json += FString::Printf(TEXT("      \"num_keys\": %d, \"length\": %.6f,\n"), NumKeys, PlayLen);
+			Json += TEXT("      \"frames\": [\n");
+
+			// Sample up to 8 frames: 0, 25%, 50%, 75%, 100% + extras
+			TArray<int32> SampleFrames;
+			SampleFrames.Add(0);
+			if (NumKeys > 4)
+			{
+				SampleFrames.Add(NumKeys / 4);
+				SampleFrames.Add(NumKeys / 2);
+				SampleFrames.Add(3 * NumKeys / 4);
+			}
+			SampleFrames.Add(NumKeys - 1);
+
+			for (int32 fi = 0; fi < SampleFrames.Num(); fi++)
+			{
+				int32 KeyIdx = SampleFrames[fi];
+				double Time = NumKeys > 1 ? PlayLen * KeyIdx / (NumKeys - 1) : 0.0;
+
+				Json += TEXT("        {\n");
+				Json += FString::Printf(TEXT("          \"frame\": %d, \"time\": %.6f,\n"), KeyIdx, Time);
+				Json += TEXT("          \"local\": [\n");
+
+				for (int32 b = 0; b < NumBones; b++)
+				{
+					FTransform BoneT;
+					Anim->GetBoneTransform(BoneT, FSkeletonPoseBoneIndex(b), Time, false);
+					FVector P = BoneT.GetTranslation();
+					FQuat R = BoneT.GetRotation();
+					Json += FString::Printf(TEXT("            [%.6f, %.6f, %.6f, %.6f, %.6f, %.6f, %.6f]%s\n"),
+						P.X, P.Y, P.Z, R.X, R.Y, R.Z, R.W,
+						b < NumBones - 1 ? TEXT(",") : TEXT(""));
+				}
+				Json += TEXT("          ]\n");
+				Json += FString::Printf(TEXT("        }%s\n"), fi < SampleFrames.Num() - 1 ? TEXT(",") : TEXT(""));
+			}
+
+			Json += TEXT("      ]\n");
+			AnimIdx++;
+			Json += FString::Printf(TEXT("    }%s\n"), AnimIdx < UE_ARRAY_COUNT(AnimNames) ? TEXT(",") : TEXT(""));
+		}
+
+		Json += TEXT("  }\n}\n");
+
+		FFileHelper::SaveStringToFile(Json, *OutputPath);
+		UE_LOG(LogTemp, Warning, TEXT("=== JSON dump saved to %s ==="), *OutputPath);
+		return 0;
+	}
+
 	// -test mode: isolation test to find Sentinel A-pose root cause
 	if (Params.Contains(TEXT("-test")))
 	{
@@ -449,6 +567,9 @@ int32 USetupSentinelCommandlet::Main(const FString& Params)
 		return 0;
 	}
 
+	// Parse -forensic flag: use Phase 3 forensically distinct FBXes (Mannequin skeleton)
+	bool bForensic = Params.Contains(TEXT("-forensic")) || Params.Contains(TEXT("forensic"));
+
 	// Source c3100 paths (used for forensic comparison in validation step)
 	const FString SourceAnimDir = TEXT("/Game/EldenRingAnimations/c3100_guard/Animations");
 
@@ -457,21 +578,89 @@ int32 USetupSentinelCommandlet::Main(const FString& Params)
 	const FString SentinelAnimDir = SentinelDir / TEXT("Animations");
 	FString Result;
 
-	UE_LOG(LogTemp, Warning, TEXT("=== SetupSentinel Commandlet: Starting ==="));
+	UE_LOG(LogTemp, Warning, TEXT("=== SetupSentinel Commandlet: Starting %s==="),
+		bForensic ? TEXT("(FORENSIC MODE) ") : TEXT(""));
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// Step 0: Import Sentinel Mesh from ARP-baked FBX
 	// ═══════════════════════════════════════════════════════════════════════
 	UE_LOG(LogTemp, Warning, TEXT("--- Step 0: Import Sentinel Mesh ---"));
 	{
-		USkeletalMesh* ExistingMesh = LoadObject<USkeletalMesh>(nullptr, *(SentinelDir / TEXT("SKM_Sentinel")));
-		if (ExistingMesh)
+		bool bSkipMesh = Params.Contains(TEXT("-skipmesh")) || Params.Contains(TEXT("skipmesh"));
+		if (bSkipMesh)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("  SKM_Sentinel already exists, skipping import"));
+			UE_LOG(LogTemp, Warning, TEXT("  SKIPPING mesh import (-skipmesh flag). Using existing mesh+skeleton."));
+		}
+		else if (bForensic)
+		{
+			// Forensic: import mesh via UAssetImportTask (same pipeline as animations)
+			// This ensures mesh bind pose and animation bind pose use identical FBX import code paths
+			FString FBXPath = TEXT("C:/scripts/elden_ring_tools/output/sentinel_pipeline/phase3/final/SKM_Sentinel.fbx");
+			if (!FPaths::FileExists(FBXPath))
+			{
+				UE_LOG(LogTemp, Error, TEXT("  No Sentinel FBX found at %s"), *FBXPath);
+				return 1;
+			}
+
+			// Initialize Slate early (needed for UAssetImportTask)
+			if (!FSlateApplication::IsInitialized())
+			{
+				FSlateApplication::Create();
+			}
+
+			UAssetImportTask* MeshTask = NewObject<UAssetImportTask>();
+			MeshTask->AddToRoot();
+			MeshTask->Filename = FBXPath;
+			MeshTask->DestinationPath = SentinelDir;
+			MeshTask->DestinationName = TEXT("SKM_Sentinel");
+			MeshTask->bAutomated = true;
+			MeshTask->bReplaceExisting = true;
+			MeshTask->bSave = true;
+
+			UFbxFactory* MeshFactory = NewObject<UFbxFactory>();
+			MeshFactory->SetDetectImportTypeOnImport(false);
+
+			UFbxImportUI* MeshUI = MeshFactory->ImportUI;
+			MeshUI->bImportMesh = true;
+			MeshUI->bImportAnimations = false;
+			MeshUI->bImportMaterials = false;
+			MeshUI->bImportTextures = false;
+			MeshUI->MeshTypeToImport = FBXIT_SkeletalMesh;
+			MeshUI->bAutomatedImportShouldDetectType = false;
+			MeshUI->bOverrideFullName = true;
+			MeshUI->bCreatePhysicsAsset = false;
+			MeshUI->SkeletalMeshImportData->bUseT0AsRefPose = true;
+
+			MeshTask->Factory = MeshFactory;
+			MeshTask->Options = MeshUI;
+
+			FAssetToolsModule& ATModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
+			ATModule.Get().ImportAssetTasks({MeshTask});
+
+			TArray<UObject*> MeshResults = MeshTask->GetObjects();
+			bool bMeshOk = false;
+			for (UObject* Obj : MeshResults)
+			{
+				if (USkeletalMesh* SM = Cast<USkeletalMesh>(Obj))
+				{
+					UE_LOG(LogTemp, Warning, TEXT("  Mesh imported: %s (%d bones)"),
+						*SM->GetName(), SM->GetRefSkeleton().GetRawBoneNum());
+					bMeshOk = true;
+					break;
+				}
+			}
+			if (!bMeshOk)
+			{
+				UE_LOG(LogTemp, Error, TEXT("  Mesh import FAILED (returned %d objects)"), MeshResults.Num());
+				for (UObject* Obj : MeshResults)
+				{
+					UE_LOG(LogTemp, Error, TEXT("    Got: %s (%s)"), *Obj->GetName(), *Obj->GetClass()->GetName());
+				}
+			}
+			MeshTask->RemoveFromRoot();
 		}
 		else
 		{
-			// Mesh FBX from rig_ai_mesh_final.py (AI mesh rigged to forensic 68-bone skeleton)
 			FString FBXPath = TEXT("C:/scripts/elden_ring_tools/output/sentinel/final/SKM_Sentinel.fbx");
 			if (FPaths::FileExists(FBXPath))
 			{
@@ -481,7 +670,7 @@ int32 USetupSentinelCommandlet::Main(const FString& Params)
 			}
 			else
 			{
-				UE_LOG(LogTemp, Error, TEXT("  No Sentinel FBX found. Run bake_sentinel_animations.py first."));
+				UE_LOG(LogTemp, Error, TEXT("  No Sentinel FBX found."));
 				return 1;
 			}
 		}
@@ -515,14 +704,10 @@ int32 USetupSentinelCommandlet::Main(const FString& Params)
 		}
 	}
 
-	// Use the Sentinel's OWN skeleton (created during FBX mesh import).
-	// The ARP-retargeted animations were exported from Blender against the Sentinel's
-	// armature which has FLVER bone NAMES but Manny bone ORIENTATIONS. The mesh bind
-	// pose is also in Manny orientation space. Using the mesh's own skeleton keeps
-	// mesh, skeleton, and animation data all in the same coordinate space.
-	// Previously we overrode with c3100_mesh_Skeleton (FLVER orientations), which
-	// caused animation preview to look flat/squished because:
-	//   AnimBone(Manny space) * InvBind(FLVER space) = wrong deformation delta
+	// NOTE: const_cast ref pose x100 fix was here but didn't persist through
+	// UE5 serialization. Skeleton stays meter-scale. Animations compensate
+	// with Scale=(100,100,100) at runtime. This causes stretching but works.
+
 	const FString SentinelSkeletonAssetPath = SentinelDir / TEXT("SKM_Sentinel_Skeleton");
 	FString SentinelSkeletonPath = SentinelSkeletonAssetPath + TEXT(".SKM_Sentinel_Skeleton");
 	USkeleton* SentinelSkeleton = LoadObject<USkeleton>(nullptr, *SentinelSkeletonPath);
@@ -535,48 +720,108 @@ int32 USetupSentinelCommandlet::Main(const FString& Params)
 	UE_LOG(LogTemp, Warning, TEXT("  Using Sentinel skeleton: %s (%d bones)"),
 		*SentinelSkeletonPath, SentinelSkeleton->GetReferenceSkeleton().GetNum());
 
-	// Set Sentinel mesh as preview mesh on the skeleton (so Animation Editor shows it)
+	// Sync skeleton ref pose from mesh bind pose + set preview mesh + translation retargeting
 	{
 		USkeletalMesh* SentinelMesh = LoadObject<USkeletalMesh>(nullptr, *(SentinelDir / TEXT("SKM_Sentinel")));
 		if (SentinelMesh)
 		{
+			// CRITICAL: Sync skeleton's ReferenceSkeleton from the mesh's RefSkeleton.
+			// The mesh's bind pose (RefSkeleton) and skeleton's ref pose can diverge when
+			// mesh and animations are imported through different code paths. This ensures
+			// the animation evaluator uses the same bone orientations as the mesh skinning.
+			UE_LOG(LogTemp, Warning, TEXT("  Syncing skeleton ref pose from mesh bind pose..."));
+			{
+				// Compare BEFORE sync
+				const FReferenceSkeleton& MeshRef = SentinelMesh->GetRefSkeleton();
+				const FReferenceSkeleton& SkelRef = SentinelSkeleton->GetReferenceSkeleton();
+				int32 MismatchCount = 0;
+				for (int32 i = 0; i < FMath::Min(MeshRef.GetRawBoneNum(), SkelRef.GetRawBoneNum()); i++)
+				{
+					FName BoneName = MeshRef.GetBoneName(i);
+					int32 SkelIdx = SkelRef.FindRawBoneIndex(BoneName);
+					if (SkelIdx != INDEX_NONE)
+					{
+						const FTransform& MP = MeshRef.GetRefBonePose()[i];
+						const FTransform& SP = SkelRef.GetRefBonePose()[SkelIdx];
+						float PosDiff = (MP.GetTranslation() - SP.GetTranslation()).Size();
+						float RotDiff = FMath::RadiansToDegrees(MP.GetRotation().AngularDistance(SP.GetRotation()));
+						if (PosDiff > 0.001f || RotDiff > 0.1f)
+						{
+							MismatchCount++;
+							if (MismatchCount <= 5)
+							{
+								UE_LOG(LogTemp, Warning, TEXT("    MISMATCH [%d] %s: posDiff=%.4f rotDiff=%.2fdeg"),
+									i, *BoneName.ToString(), PosDiff, RotDiff);
+							}
+						}
+					}
+				}
+				UE_LOG(LogTemp, Warning, TEXT("  Bind pose mismatches: %d/%d bones"),
+					MismatchCount, MeshRef.GetRawBoneNum());
+			}
+
+			// Sync skeleton ref pose from mesh
+			SentinelSkeleton->UpdateReferencePoseFromMesh(SentinelMesh);
+			UE_LOG(LogTemp, Warning, TEXT("  UpdateReferencePoseFromMesh completed"));
+
+			// Set translation retargeting: Skeleton for all non-root bones
+			// This forces UE5 to use the mesh's bone lengths instead of animation bone lengths
+			{
+				const FReferenceSkeleton& SkelRef = SentinelSkeleton->GetReferenceSkeleton();
+				int32 NumBones = SkelRef.GetRawBoneNum();
+				for (int32 i = 0; i < NumBones; i++)
+				{
+					FName BoneName = SkelRef.GetBoneName(i);
+					int32 ParentIdx = SkelRef.GetParentIndex(i);
+					if (ParentIdx == INDEX_NONE)
+					{
+						// Root bone: Animation (keep animation root motion)
+						SentinelSkeleton->SetBoneTranslationRetargetingMode(i, EBoneTranslationRetargetingMode::Animation);
+					}
+					else if (BoneName == FName(TEXT("pelvis")) || BoneName == FName(TEXT("root")) || BoneName == FName(TEXT("root_motion")))
+					{
+						// Pelvis/root: AnimationScaled (preserves height/proportions)
+						SentinelSkeleton->SetBoneTranslationRetargetingMode(i, EBoneTranslationRetargetingMode::AnimationScaled);
+					}
+					else
+					{
+						// All other bones: Skeleton (use mesh bone lengths, animation rotations only)
+						SentinelSkeleton->SetBoneTranslationRetargetingMode(i, EBoneTranslationRetargetingMode::Skeleton);
+					}
+				}
+				UE_LOG(LogTemp, Warning, TEXT("  Set translation retargeting: root=Animation, pelvis=AnimScaled, others=Skeleton"));
+			}
+
+			// Set preview mesh
 			SentinelSkeleton->SetPreviewMesh(SentinelMesh, true);
+
+			// Save skeleton
 			UPackage* SkelPkg = SentinelSkeleton->GetOutermost();
 			SkelPkg->MarkPackageDirty();
 			FString SkelFile = FPackageName::LongPackageNameToFilename(SkelPkg->GetName(), FPackageName::GetAssetPackageExtension());
 			FSavePackageArgs SkelSaveArgs;
 			SkelSaveArgs.TopLevelFlags = RF_Standalone;
 			UPackage::SavePackage(SkelPkg, SentinelSkeleton, *SkelFile, SkelSaveArgs);
-			UE_LOG(LogTemp, Warning, TEXT("  Set Sentinel skeleton PreviewMesh to SKM_Sentinel"));
+			UE_LOG(LogTemp, Warning, TEXT("  Skeleton saved (ref pose synced, retargeting set, preview mesh set)"));
 		}
 	}
 
-	// Mesh imported from FBX (Blender pipeline). Animations baked from c3100 source
-	// via BakeAnimWithBoneMapping (C++ forensic pipeline). No FBX animation import needed.
+	// -meshonly flag: stop after mesh import + skeleton setup
+	bool bMeshOnly = Params.Contains(TEXT("-meshonly")) || Params.Contains(TEXT("meshonly"));
+	if (bMeshOnly)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("=== -meshonly flag: Stopping after mesh import. ==="));
+		return 0;
+	}
+
+	// -skipanims flag: skip animation import/retarget, jump to montage/ability/trace/bonescale steps
+	bool bSkipAnims = Params.Contains(TEXT("-skipanims")) || Params.Contains(TEXT("skipanims"));
 
 	// ═══════════════════════════════════════════════════════════════════════
-	// Step 1: Import ARP-retargeted animation FBXs from Blender
+	// Step 1: Import/Retarget animations
 	// ═══════════════════════════════════════════════════════════════════════
-	// The C++ cross-skeleton retarget (BakeAnimWithBoneMapping) produces identity
-	// transforms due to DDC/compression issues. Instead, use the proven pipeline:
-	// ARP retarget in Blender → FBX export → UE5 BatchImportAnimationsFromFBX.
-	// Then apply forensic transforms as a post-step.
-	UE_LOG(LogTemp, Warning, TEXT("--- Step 1: Importing ARP-retargeted animation FBXs ---"));
 
-	// FBX directory from bake_sentinel_animations.py (ARP retarget output)
-	// Use BatchImportAnimsFBXDirect to bypass UE5.7 ControlRig pipeline
-	// which doesn't populate DataModel bone tracks in commandlet mode.
-	FString FBXDir = TEXT("C:/scripts/elden_ring_tools/output/sentinel/final");
-	Result = USLFAutomationLibrary::BatchImportAnimsFBXDirect(
-		FBXDir, SentinelAnimDir, SentinelSkeletonPath, 1.0f, /*bPoseSpaceDeltas=*/false);
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *Result);
-
-	// GC after bulk import
-	CollectGarbage(GARBAGE_COLLECTION_KEEPFLAGS);
-
-	// Step 1b: Rename imported animations to Sentinel convention
-	// BatchImportAnimationsFromFBX names them from FBX filename (e.g., "Sentinel_Idle")
-	// which is already our desired naming. Just verify they loaded.
+	// Expected animation names (shared by both paths)
 	const TCHAR* ExpectedAnims[] = {
 		TEXT("Sentinel_Idle"), TEXT("Sentinel_Walk"), TEXT("Sentinel_Run"),
 		TEXT("Sentinel_Attack01"), TEXT("Sentinel_Attack02"), TEXT("Sentinel_Attack03_Fast"),
@@ -589,6 +834,233 @@ int32 USetupSentinelCommandlet::Main(const FString& Params)
 		TEXT("Sentinel_PoiseBreak_Start"), TEXT("Sentinel_PoiseBreak_Loop"),
 	};
 
+	if (bSkipAnims)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("--- Step 1: SKIPPED (-skipanims flag) ---"));
+	}
+	else if (bForensic)
+	{
+		// ─── Forensic mode: UAssetImportTask (native UE5 FBX pipeline) ───
+		// Uses UE5's native FBX import which handles PreRotation/bone orientation correctly.
+		// Uses original Phase 3 FBXes (mesh+animation) — these are the SAME files that produced
+		// the mesh import, guaranteeing matching bind poses. bImportMesh=false skips mesh re-import.
+		UE_LOG(LogTemp, Warning, TEXT("--- Step 1: UAssetImportTask (native UE5 FBX pipeline) ---"));
+
+		// Use original Phase 3 FBXes (with mesh) to guarantee matching bind pose
+		const FString ForensicDir = TEXT("C:/scripts/elden_ring_tools/output/sentinel_pipeline/phase3/final");
+		const FString DestPath = TEXT("/Game/CustomEnemies/Sentinel/Animations");
+
+		// Load the skeleton
+		USkeleton* SentinelSkel = LoadObject<USkeleton>(nullptr, *SentinelSkeletonPath);
+		if (!SentinelSkel)
+		{
+			UE_LOG(LogTemp, Error, TEXT("  Cannot load skeleton: %s"), *SentinelSkeletonPath);
+			return 1;
+		}
+		UE_LOG(LogTemp, Warning, TEXT("  Skeleton: %s (%d bones)"),
+			*SentinelSkel->GetName(), SentinelSkel->GetReferenceSkeleton().GetNum());
+
+		// Initialize Slate if not already (commandlet mode)
+		if (!FSlateApplication::IsInitialized())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("  Initializing Slate for commandlet mode..."));
+			FSlateApplication::Create();
+		}
+
+		FAssetToolsModule& AssetToolsModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
+
+		int32 AnimSuccess = 0;
+		int32 AnimFail = 0;
+
+		for (const TCHAR* AnimName : ExpectedAnims)
+		{
+			FString FBXFile = ForensicDir / FString(AnimName) + TEXT(".fbx");
+			if (!FPaths::FileExists(FBXFile))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("  SKIP %s: not found"), AnimName);
+				AnimFail++;
+				continue;
+			}
+
+			// Create UAssetImportTask
+			UAssetImportTask* ImportTask = NewObject<UAssetImportTask>();
+			ImportTask->AddToRoot();
+			ImportTask->Filename = FBXFile;
+			ImportTask->DestinationPath = DestPath;
+			ImportTask->DestinationName = FString(AnimName);
+			ImportTask->bAutomated = true;
+			ImportTask->bReplaceExisting = true;
+			ImportTask->bSave = true;
+
+			// Configure FBX factory explicitly
+			UFbxFactory* FbxFactory = NewObject<UFbxFactory>();
+			FbxFactory->SetDetectImportTypeOnImport(false);
+
+			UFbxImportUI* FbxUI = FbxFactory->ImportUI;
+			FbxUI->bImportMesh = false;
+			FbxUI->bImportMaterials = false;
+			FbxUI->bImportTextures = false;
+			FbxUI->bImportAnimations = true;
+			FbxUI->MeshTypeToImport = FBXIT_Animation;
+			FbxUI->Skeleton = SentinelSkel;
+			FbxUI->bAutomatedImportShouldDetectType = false;
+			FbxUI->bOverrideFullName = true;
+			FbxUI->bCreatePhysicsAsset = false;
+
+			// Animation settings
+			FbxUI->AnimSequenceImportData->bImportMeshesInBoneHierarchy = false;
+			FbxUI->AnimSequenceImportData->AnimationLength = FBXALIT_ExportedTime;
+			FbxUI->AnimSequenceImportData->bUseDefaultSampleRate = true;
+			FbxUI->AnimSequenceImportData->bRemoveRedundantKeys = false;
+			FbxUI->AnimSequenceImportData->bSnapToClosestFrameBoundary = true;
+
+			ImportTask->Factory = FbxFactory;
+			ImportTask->Options = FbxUI;
+
+			// Execute
+			AssetToolsModule.Get().ImportAssetTasks({ImportTask});
+
+			// Check result
+			TArray<UObject*> ImportedObjects = ImportTask->GetObjects();
+			bool bFound = false;
+			for (UObject* Obj : ImportedObjects)
+			{
+				if (UAnimSequence* AnimSeq = Cast<UAnimSequence>(Obj))
+				{
+					AnimSeq->bForceRootLock = true;
+					AnimSeq->RootMotionRootLock = ERootMotionRootLock::AnimFirstFrame;
+
+					int32 NumBoneTracks = AnimSeq->GetDataModel() ? AnimSeq->GetDataModel()->GetNumBoneTracks() : 0;
+					float Duration = AnimSeq->GetPlayLength();
+					UE_LOG(LogTemp, Warning, TEXT("  %s: OK — %d boneTracks, %.2fs"),
+						AnimName, NumBoneTracks, Duration);
+					AnimSuccess++;
+					bFound = true;
+					break;
+				}
+				else if (Obj)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("  %s: imported as %s (not AnimSequence)"),
+						AnimName, *Obj->GetClass()->GetName());
+				}
+			}
+
+			if (!bFound)
+			{
+				if (ImportedObjects.Num() == 0)
+					UE_LOG(LogTemp, Error, TEXT("  %s: returned 0 objects"), AnimName);
+				AnimFail++;
+			}
+
+			ImportTask->RemoveFromRoot();
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("  Animation import: %d succeeded, %d failed"),
+			AnimSuccess, AnimFail);
+		CollectGarbage(GARBAGE_COLLECTION_KEEPFLAGS);
+	}
+	else
+	{
+		// ─── Original mode: IK Retarget from c3100 guard animations ───
+		UE_LOG(LogTemp, Warning, TEXT("--- Step 1: IK Retarget c3100 → Sentinel ---"));
+
+		struct FAnimMapping { const TCHAR* SourceAnim; const TCHAR* SentinelName; };
+		const FAnimMapping AnimMappings[] = {
+			{ TEXT("a000_000020"), TEXT("Sentinel_Idle") },
+			{ TEXT("a000_002000"), TEXT("Sentinel_Walk") },
+			{ TEXT("a000_002100"), TEXT("Sentinel_Run") },
+			{ TEXT("a000_003000"), TEXT("Sentinel_Attack01") },
+			{ TEXT("a000_003001"), TEXT("Sentinel_Attack02") },
+			{ TEXT("a000_003017"), TEXT("Sentinel_Attack03_Fast") },
+			{ TEXT("a000_004100"), TEXT("Sentinel_HeavyAttack") },
+			{ TEXT("a000_010000"), TEXT("Sentinel_HitReact") },
+			{ TEXT("a000_010001"), TEXT("Sentinel_HitReact_Light") },
+			{ TEXT("a000_008030"), TEXT("Sentinel_GuardHit") },
+			{ TEXT("a000_011010"), TEXT("Sentinel_Death_Front") },
+			{ TEXT("a000_011060"), TEXT("Sentinel_Death_Back") },
+			{ TEXT("a000_011070"), TEXT("Sentinel_Death_Left") },
+			{ TEXT("a000_005000"), TEXT("Sentinel_Dodge_Fwd") },
+			{ TEXT("a000_005001"), TEXT("Sentinel_Dodge_Bwd") },
+			{ TEXT("a000_005002"), TEXT("Sentinel_Dodge_Left") },
+			{ TEXT("a000_005003"), TEXT("Sentinel_Dodge_Right") },
+			{ TEXT("a000_007000"), TEXT("Sentinel_Guard") },
+			{ TEXT("a000_009210"), TEXT("Sentinel_PoiseBreak_Start") },
+			{ TEXT("a000_009200"), TEXT("Sentinel_PoiseBreak_Loop") },
+		};
+
+		TArray<FString> SourceAnimPaths;
+		for (const auto& M : AnimMappings)
+		{
+			SourceAnimPaths.Add(SourceAnimDir / M.SourceAnim);
+		}
+
+		const FString C3100MeshPath = TEXT("/Game/EldenRingAnimations/c3100_guard/c3100_mesh");
+		const FString SentinelMeshPath = SentinelDir / TEXT("SKM_Sentinel");
+
+		Result = USLFAutomationLibrary::RetargetAnimationsViaIKRig(
+			C3100MeshPath,
+			SentinelMeshPath,
+			SourceAnimPaths,
+			SentinelAnimDir,
+			FName(TEXT("Pelvis")),
+			FName(TEXT("Hips")),
+			TEXT("/Game/Temp/IKRetarget_Sentinel")
+		);
+		{
+			TArray<FString> ResultLines;
+			Result.ParseIntoArrayLines(ResultLines);
+			for (const FString& Line : ResultLines)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[IKRetarget] %s"), *Line);
+			}
+		}
+
+		CollectGarbage(GARBAGE_COLLECTION_KEEPFLAGS);
+
+		// Step 1b: Rename retargeted animations from c3100 names to Sentinel names
+		UE_LOG(LogTemp, Warning, TEXT("--- Step 1b: Renaming retargeted animations ---"));
+		for (const auto& M : AnimMappings)
+		{
+			FString SrcName = FString(M.SourceAnim);
+			FString DstName = FString(M.SentinelName);
+			FString SrcPath = SentinelAnimDir / SrcName;
+			FString DstPath = SentinelAnimDir / DstName;
+
+			UAnimSequence* ExistingDst = LoadObject<UAnimSequence>(nullptr, *DstPath);
+			if (ExistingDst)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("  %s already exists"), *DstName);
+				continue;
+			}
+
+			UAnimSequence* SrcAnim = LoadObject<UAnimSequence>(nullptr, *SrcPath);
+			if (!SrcAnim)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("  %s not found (retarget may have used different name)"), *SrcName);
+				continue;
+			}
+
+			UPackage* NewPkg = CreatePackage(*DstPath);
+			NewPkg->FullyLoad();
+			bool bRenamed = SrcAnim->Rename(*DstName, NewPkg, REN_DontCreateRedirectors | REN_NonTransactional);
+			if (bRenamed)
+			{
+				FAssetRegistryModule::AssetCreated(SrcAnim);
+				NewPkg->MarkPackageDirty();
+				FString Fn = FPackageName::LongPackageNameToFilename(NewPkg->GetName(), FPackageName::GetAssetPackageExtension());
+				FSavePackageArgs SA;
+				SA.TopLevelFlags = RF_Standalone;
+				UPackage::SavePackage(NewPkg, SrcAnim, *Fn, SA);
+				UE_LOG(LogTemp, Warning, TEXT("  Renamed: %s → %s"), *SrcName, *DstName);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("  FAILED to rename: %s → %s"), *SrcName, *DstName);
+			}
+		}
+	}
+
+	// Step 1c: Verify expected animations exist
 	int32 AnimFoundCount = 0;
 	for (const TCHAR* AnimName : ExpectedAnims)
 	{
@@ -603,12 +1075,6 @@ int32 USetupSentinelCommandlet::Main(const FString& Params)
 		}
 	}
 	UE_LOG(LogTemp, Warning, TEXT("  Found %d/%d expected animations"), AnimFoundCount, (int32)UE_ARRAY_COUNT(ExpectedAnims));
-
-	// Step 1c: Forensic transforms DISABLED
-	// ApplyForensicTransforms reads identity data via GetBoneTransform() in commandlet mode,
-	// destroying valid FBX-imported animations. Forensic distinction will be applied later
-	// using DataModel Controller API (reads track keys directly instead of GetBoneTransform).
-	// For now, ARP retarget provides sufficient distinction (different skeleton, different timing).
 	UE_LOG(LogTemp, Warning, TEXT("--- Step 1c: Forensic transforms SKIPPED (GetBoneTransform returns identity in commandlet) ---"));
 
 	// ═══════════════════════════════════════════════════════════════════════
@@ -616,9 +1082,20 @@ int32 USetupSentinelCommandlet::Main(const FString& Params)
 	// ═══════════════════════════════════════════════════════════════════════
 	UE_LOG(LogTemp, Warning, TEXT("--- Step 2: Adding sockets ---"));
 
-	// Custom bone names (forensically distinct from FromSoft convention)
+	// Socket bone names differ between ARP skeleton (PascalCase) and Mannequin (snake_case).
+	// For mesh-baked weapons: weapon_start on hand bone, weapon_end on weapon bone.
+	// The weapon_r bone tracks the actual weapon position in the mesh, so the trace
+	// naturally follows the weapon during animations — no axis guessing needed.
 	struct FSocketInfo { const TCHAR* Name; const TCHAR* Bone; FVector Offset; };
-	const FSocketInfo Sockets[] = {
+	const FSocketInfo ForensicSockets[] = {
+		{ TEXT("weapon_start"), TEXT("hand_r"),   FVector::ZeroVector },
+		{ TEXT("weapon_end"),   TEXT("weapon_r"), FVector::ZeroVector },
+		{ TEXT("hand_r"),       TEXT("hand_r"),   FVector::ZeroVector },
+		{ TEXT("hand_l"),       TEXT("hand_l"),   FVector::ZeroVector },
+		{ TEXT("foot_l"),       TEXT("foot_l"),   FVector::ZeroVector },
+		{ TEXT("foot_r"),       TEXT("foot_r"),   FVector::ZeroVector },
+	};
+	const FSocketInfo ARPSockets[] = {
 		{ TEXT("weapon_start"), TEXT("Hand_R"), FVector(0, 0, 50) },
 		{ TEXT("weapon_end"),   TEXT("Hand_R"), FVector(0, 0, -50) },
 		{ TEXT("hand_r"),       TEXT("Hand_R"),  FVector::ZeroVector },
@@ -626,9 +1103,11 @@ int32 USetupSentinelCommandlet::Main(const FString& Params)
 		{ TEXT("foot_l"),       TEXT("Foot_L"),  FVector::ZeroVector },
 		{ TEXT("foot_r"),       TEXT("Foot_R"),  FVector::ZeroVector },
 	};
-	for (const auto& S : Sockets)
+	const FSocketInfo* Sockets = bForensic ? ForensicSockets : ARPSockets;
+	const int32 NumSockets = UE_ARRAY_COUNT(ForensicSockets); // Both arrays are same size
+	for (int32 i = 0; i < NumSockets; i++)
 	{
-		Result = USLFAutomationLibrary::AddSocketToSkeleton(SentinelSkeletonPath, S.Name, S.Bone, S.Offset);
+		Result = USLFAutomationLibrary::AddSocketToSkeleton(SentinelSkeletonPath, Sockets[i].Name, Sockets[i].Bone, Sockets[i].Offset);
 		UE_LOG(LogTemp, Warning, TEXT("  %s"), *Result);
 	}
 
@@ -884,22 +1363,27 @@ int32 USetupSentinelCommandlet::Main(const FString& Params)
 	// ═══════════════════════════════════════════════════════════════════════
 	UE_LOG(LogTemp, Warning, TEXT("--- Step 6c: Adding weapon trace notifies ---"));
 	{
-		// Timings adjusted from c3100 TAE data, accounting for 24fps time warp.
-		// Time warp changes timing non-linearly so we keep the same approximate windows
-		// but they're now at 24fps with sine easing applied.
+		// Directional reach mode: trace from weapon_start along socket axis for
+		// WeaponReach cm. This extends the hitbox from the grip to the blade tip.
+		// weapon_r bone is at the hilt, NOT the blade tip, so two-socket mode only
+		// covered ~20-30cm near the hand. Debug draw ON for visual tuning.
 		struct FWeaponTraceConfig
 		{
 			const TCHAR* MontageName;
 			float StartTime;
 			float EndTime;
 			float TraceRadius;
+			float WeaponReach;   // Reach in cm from socket along axis (0 = two-socket mode)
+			float Damage;        // Per-attack damage (-1 = default 50)
+			float PoiseDamage;   // Per-attack poise damage (-1 = default 25)
 		};
 
 		const FWeaponTraceConfig TraceConfigs[] = {
-			{ TEXT("AM_Sentinel_Attack01"),      1.167f, 1.517f, 40.0f },
-			{ TEXT("AM_Sentinel_Attack02"),      0.700f, 1.083f, 40.0f },
-			{ TEXT("AM_Sentinel_Attack03_Fast"), 0.700f, 1.083f, 40.0f },
-			{ TEXT("AM_Sentinel_HeavyAttack"),   2.200f, 2.750f, 80.0f },
+			//                                     Start   End    Radius  Reach   Dmg    Poise
+			{ TEXT("AM_Sentinel_Attack01"),         1.167f, 1.517f, 60.0f, 200.0f, 60.0f, 30.0f },
+			{ TEXT("AM_Sentinel_Attack02"),         0.700f, 1.083f, 60.0f, 200.0f, 60.0f, 30.0f },
+			{ TEXT("AM_Sentinel_Attack03_Fast"),    0.700f, 1.083f, 50.0f, 180.0f, 45.0f, 20.0f },
+			{ TEXT("AM_Sentinel_HeavyAttack"),      2.200f, 2.750f, 90.0f, 250.0f, 100.0f, 60.0f },
 		};
 
 		for (const auto& Cfg : TraceConfigs)
@@ -908,11 +1392,29 @@ int32 USetupSentinelCommandlet::Main(const FString& Params)
 				SentinelDir / Cfg.MontageName,
 				Cfg.StartTime,
 				Cfg.EndTime,
-				Cfg.TraceRadius
+				Cfg.TraceRadius,
+				FName("weapon_start"),	// Socket on hand_r bone (grip origin)
+				FName("weapon_end"),	// Ignored in directional reach mode
+				Cfg.WeaponReach,		// Reach from grip along weapon direction
+				EAxis::X,				// Fallback axis (unused when DirectionBone set)
+				false,					// Don't negate (direction is elbow->hand->blade)
+				Cfg.Damage,				// Per-attack damage
+				Cfg.PoiseDamage,		// Per-attack poise damage
+				true,					// Debug draw ON for tuning
+				FName("lowerarm_r")		// Direction: elbow -> hand -> blade tip
 			);
 			UE_LOG(LogTemp, Warning, TEXT("  %s"), *Result);
 		}
 	}
+
+	// ═══════════════════════════════════════════════════════════════════════
+	// Step 6d: Bone scale overrides (DISABLED — global-space anim import should fix stretching)
+	// ═══════════════════════════════════════════════════════════════════════
+	// Previously needed because ImportAnimFBXDirect converted LOCAL transforms individually
+	// then chained them (Y-axis reflection doesn't distribute over quaternion multiplication).
+	// Now uses GLOBAL transform import which matches UE5's mesh import exactly.
+	// Re-enable with AddBoneScaleOverrides() if arm proportions still need tuning.
+	UE_LOG(LogTemp, Warning, TEXT("--- Step 6d: Bone scale overrides SKIPPED (global-space import should fix stretching) ---"));
 
 	// ═══════════════════════════════════════════════════════════════════════
 	// Step 7: Validation

@@ -244,16 +244,20 @@ All montages use `DefaultSlot` and have a single `Default` composite section.
 
 **What:** Adds `USLFAnimNotifyStateWeaponTrace` notify states to attack montages at times derived from Elden Ring TAE data.
 
+**Trace mode: Bone-to-bone directional reach.** Socket local axes are unreliable on retargeted skeletons — use `DirectionBoneName` instead. Direction is computed at runtime as `(StartSocket - DirectionBone).Normalized`, extending from the grip bone through and past the hand toward the blade tip. For hand weapons, use `lowerarm_r` (elbow → hand → blade).
+
 **Hitbox timings (widened for UE5 variable framerate):**
 
-| Montage | TAE Original | UE5 Widened | Radius | Notes |
-|---------|-------------|-------------|--------|-------|
-| Attack01 | 1.267-1.367s | 1.167-1.517s | 40 | Standard swing |
-| Attack02 | 0.800-0.933s | 0.700-1.083s | 40 | Fast combo hit |
-| Attack03_Fast | 0.800-0.933s | 0.700-1.083s | 40 | Fast attack |
-| HeavyAttack | ~2.3-2.6s | 2.200-2.750s | 80 | AoE slam, larger radius |
+| Montage | TAE Original | UE5 Widened | Radius | Reach | Notes |
+|---------|-------------|-------------|--------|-------|-------|
+| Attack01 | 1.267-1.367s | 1.167-1.517s | 60 | 200cm | Standard swing |
+| Attack02 | 0.800-0.933s | 0.700-1.083s | 60 | 200cm | Fast combo hit |
+| Attack03_Fast | 0.800-0.933s | 0.700-1.083s | 50 | 180cm | Fast attack |
+| HeavyAttack | ~2.3-2.6s | 2.200-2.750s | 90 | 250cm | AoE slam, larger radius+reach |
 
 **Why widen:** Elden Ring runs at locked 30fps with 3-4 frame hitbox windows (100-133ms). UE5 variable framerate means NotifyTick may only fire 1-2 times in that window. Widening to 350-550ms ensures reliable hit detection. Also compensates for knockback pushing the player slightly back after the first hit in combos.
+
+**Why bone-to-bone direction:** Socket axes (`GetUnitAxis(EAxis::X)`) on ARP-retargeted skeletons point unpredictable directions. The hand bone's X axis may point along fingers, not along the weapon blade. Using `lowerarm_r` → `hand_r` vector gives reliable forearm direction that extends naturally into the weapon.
 
 **Idempotent:** `AddWeaponTraceToMontage()` removes existing weapon trace notifies before adding new ones, so rerunning the commandlet doesn't stack duplicates.
 
@@ -462,11 +466,12 @@ This prevents missed hits in combos where knockback pushes the target slightly b
 AI State Machine selects ability → CombatManager plays attack montage
     → ANS_WeaponTrace.NotifyBegin() clears HitActors
     → ANS_WeaponTrace.NotifyTick() each frame:
-        1. Get socket positions (weapon_start, weapon_end)
+        1. Compute trace: direction from DirectionBone (lowerarm_r) through
+           StartSocket (weapon_start on hand_r), extend by WeaponReach cm
         2. SphereTraceMultiForObjects (Pawn, WorldDynamic, Destructible)
         3. For each hit actor (skip duplicates):
            a. Find target's UAC_CombatManager (player) or UAICombatManagerComponent (AI)
-           b. Call HandleIncomingWeaponDamage(Owner, Damage=50, PoiseDamage=25, HitResult)
+           b. Call HandleIncomingWeaponDamage(Owner, Damage, PoiseDamage, HitResult)
            c. Apply status effects from DefaultAttackStatusEffects (e.g., Bleed)
     → ANS_WeaponTrace.NotifyEnd() clears HitActors
 ```
@@ -477,9 +482,11 @@ AI State Machine selects ability → CombatManager plays attack montage
 - **Status effects:** Configured on `AICombatManagerComponent::DefaultAttackStatusEffects`
 
 ### Socket Requirements for Weapon Traces
-- `weapon_start` and `weapon_end` sockets on the skeleton
-- If missing, falls back to: `hand_r` → `weapon_r` → `RightHand` → character forward 150 units
+- `weapon_start` socket on skeleton (on `hand_r` bone for grip weapons)
+- `DirectionBoneName` set to `lowerarm_r` for bone-to-bone direction (elbow → hand → blade)
+- If socket missing, falls back to: `hand_r` → `weapon_r` → `RightHand` → character forward 150 units
 - Sockets added to skeleton in Step 1 of the commandlet
+- **Do NOT rely on socket local axes** for weapon direction — use bone-to-bone mode instead
 
 ### How Player Damages Guard
 Player's weapon traces use `UAC_EquipmentManager` for damage values and hit against the guard's `UAICombatManagerComponent::HandleIncomingWeaponDamage_AI()`. The poise system determines whether the guard staggers or absorbs the hit.
@@ -501,7 +508,8 @@ For a new enemy (e.g., c2120 Malenia), copy and adapt:
 7. **[ ] Update animation IDs** - change a000_003000 etc. to c2120's attack animation IDs
 8. **[ ] Extract TAE hitbox timings** for the new character's attacks
 9. **[ ] Update weapon trace timings** in Step 6c with new TAE data (widen for UE5)
-10. **[ ] Update socket bones** - check which bone has the weapon (may not be R_Sword)
+10. **[ ] Set DirectionBoneName** for weapon traces (use parent bone of weapon hand, e.g., `lowerarm_r`)
+11. **[ ] Update socket bones** - check which bone has the weapon (may not be R_Sword)
 11. **[ ] Create C++ enemy class** - copy `SLFEnemyGuard.h/cpp`, adapt paths
 12. **[ ] Register commandlet** in Build.cs if needed
 13. **[ ] Run commandlet** - `UnrealEditor-Cmd.exe -run=SetupC2120`

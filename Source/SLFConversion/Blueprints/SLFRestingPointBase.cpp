@@ -16,7 +16,9 @@
 #include "SLFRestingPointBase.h"
 #include "Interfaces/SLFPlayerInterface.h"
 #include "Interfaces/SLFControllerInterface.h"
+#include "Interfaces/SLFRestingPointInterface.h"
 #include "Interfaces/BPI_Player.h"
+#include "Components/SaveLoadManagerComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
@@ -366,11 +368,36 @@ void ASLFRestingPointBase::DiscoverPoint(AActor* DiscoveringActor)
 	// Update interaction text now that it's activated
 	InteractionText = FText::FromString(TEXT("Rest"));
 
-	// 5. Trigger save via BPI_Controller::SerializeAllDataForSaving
-	// Blueprint: NewEnumerator1 = SaveInstantly (value 1)
+	// 4b. Register for fast travel
 	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
 	if (IsValid(PC))
 	{
+		if (USaveLoadManagerComponent* SaveMgr = PC->FindComponentByClass<USaveLoadManagerComponent>())
+		{
+			FSLFRestPointSaveInfo RestInfo;
+			RestInfo.RestPointId = ID; // FGuid from ASLFInteractableBase
+			RestInfo.LocationName = LocationName;
+			RestInfo.WorldLocation = GetActorLocation();
+			// Get spawn position from interface
+			if (GetClass()->ImplementsInterface(USLFRestingPointInterface::StaticClass()))
+			{
+				bool bSuccess = false;
+				ISLFRestingPointInterface::Execute_GetRestingPointSpawnPosition(this, bSuccess, RestInfo.SpawnLocation, RestInfo.SpawnRotation);
+				if (!bSuccess)
+				{
+					RestInfo.SpawnLocation = GetActorLocation();
+					RestInfo.SpawnRotation = GetActorRotation();
+				}
+			}
+			else
+			{
+				RestInfo.SpawnLocation = GetActorLocation();
+				RestInfo.SpawnRotation = GetActorRotation();
+			}
+			SaveMgr->RegisterDiscoveredRestPoint(RestInfo);
+		}
+
+		// 5. Trigger save via BPI_Controller::SerializeAllDataForSaving
 		if (PC->GetClass()->ImplementsInterface(USLFControllerInterface::StaticClass()))
 		{
 			ISLFControllerInterface::Execute_SerializeAllDataForSaving(PC, ESLFSaveBehavior::SaveInstantly);

@@ -159,6 +159,20 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Runtime")
 	USaveGame* SGO_Slots;
 
+	// --- Level Tracking (for dungeon transitions) ---
+
+	/** Current level/map the player is in */
+	UPROPERTY(BlueprintReadWrite, SaveGame, Category = "Runtime|Level")
+	FString CurrentLevelName;
+
+	/** Whether the player is currently inside a dungeon */
+	UPROPERTY(BlueprintReadWrite, SaveGame, Category = "Runtime|Level")
+	bool bIsInDungeon = false;
+
+	/** Name of the current dungeon (for display and re-streaming on load) */
+	UPROPERTY(BlueprintReadWrite, SaveGame, Category = "Runtime|Level")
+	FString CurrentDungeonName;
+
 	// ═══════════════════════════════════════════════════════════════════
 	// EVENT DISPATCHERS: 2/2 migrated
 	// ═══════════════════════════════════════════════════════════════════
@@ -315,4 +329,24 @@ public:
 
 	/** Destroy collected pickups from the level based on saved names */
 	void DestroyCollectedPickups();
+
+	// ═══════════════════════════════════════════════════════════════════
+	// FAST TRAVEL / REST POINT REGISTRY
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** Register a discovered rest point for fast travel. Deduplicates by GUID. */
+	UFUNCTION(BlueprintCallable, Category = "Save Load|FastTravel")
+	void RegisterDiscoveredRestPoint(const FSLFRestPointSaveInfo& RestPointInfo);
+
+	/** Get all discovered rest points */
+	UFUNCTION(BlueprintPure, Category = "Save Load|FastTravel")
+	const TArray<FSLFRestPointSaveInfo>& GetDiscoveredRestPoints() const;
+
+	/** Check if a rest point has been discovered */
+	UFUNCTION(BlueprintPure, Category = "Save Load|FastTravel")
+	bool IsRestPointDiscovered(const FGuid& RestPointId) const;
+
+	/** DEBUG: Scan level for all rest point actors and register them as discovered */
+	UFUNCTION(BlueprintCallable, Category = "Save Load|FastTravel")
+	void DiscoverAllRestPointsInLevel();
 };

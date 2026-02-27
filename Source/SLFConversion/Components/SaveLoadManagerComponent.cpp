@@ -23,6 +23,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
 #include "EngineUtils.h" // TActorIterator
+#include "Blueprints/SLFRestingPointBase.h"
+#include "Blueprints/B_RestingPoint.h"
+#include "Interfaces/SLFRestingPointInterface.h"
 
 USaveLoadManagerComponent::USaveLoadManagerComponent()
 {
@@ -45,6 +48,11 @@ USaveLoadManagerComponent::USaveLoadManagerComponent()
 	PawnEquipmentManager = nullptr;
 	SGO_Character = nullptr;
 	SGO_Slots = nullptr;
+
+	// Level tracking
+	CurrentLevelName = TEXT("");
+	bIsInDungeon = false;
+	CurrentDungeonName = TEXT("");
 }
 
 void USaveLoadManagerComponent::BeginPlay()
@@ -54,6 +62,11 @@ void USaveLoadManagerComponent::BeginPlay()
 	UE_LOG(LogTemp, Log, TEXT("[SaveLoadManager] BeginPlay on %s"), *GetOwner()->GetName());
 
 	Initialize();
+
+	// DEBUG: Auto-discover all rest points after a short delay so all actors are spawned
+	FTimerHandle TempHandle;
+	GetWorld()->GetTimerManager().SetTimer(TempHandle, this,
+		&USaveLoadManagerComponent::DiscoverAllRestPointsInLevel, 2.0f, false);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -221,6 +234,13 @@ void USaveLoadManagerComponent::SerializeAllData_Implementation()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[SaveLoadManager] No inventory manager found - no items will be saved!"));
 	}
+
+	// Serialize level tracking state
+	SaveData.CurrentLevelName = CurrentLevelName;
+	SaveData.bIsInDungeon = bIsInDungeon;
+	SaveData.CurrentDungeonName = CurrentDungeonName;
+	UE_LOG(LogTemp, Log, TEXT("[SaveLoadManager] Serialized level state: Level=%s InDungeon=%d Dungeon=%s"),
+		*CurrentLevelName, bIsInDungeon ? 1 : 0, *CurrentDungeonName);
 
 	// Store currency as a special entry (null item = currency marker)
 	FSLFInventoryItemsSaveInfo CurrencyInfo;
@@ -615,17 +635,62 @@ void USaveLoadManagerComponent::ApplyLoadedData_Implementation()
 		}
 	}
 
-	// Apply spawn transform to the pawn
-	if (SaveData.SpawnTransform.GetLocation() != FVector::ZeroVector)
+	// Restore level tracking state
+	CurrentLevelName = SaveData.CurrentLevelName;
+	bIsInDungeon = SaveData.bIsInDungeon;
+	CurrentDungeonName = SaveData.CurrentDungeonName;
+	UE_LOG(LogTemp, Log, TEXT("[SaveLoadManager] Restored level state: Level=%s InDungeon=%d Dungeon=%s"),
+		*CurrentLevelName, bIsInDungeon ? 1 : 0, *CurrentDungeonName);
+
+	// If player was in a dungeon, stream it back in
+	if (bIsInDungeon && !CurrentDungeonName.IsEmpty())
 	{
-		if (AActor* Owner = GetOwner())
+		// Find level stream manager and trigger dungeon reload
+		for (TActorIterator<AActor> It(GetWorld()); It; ++It)
 		{
-			if (APlayerController* PC = Cast<APlayerController>(Owner))
+			AActor* Actor = *It;
+			if (Actor && Actor->Tags.Contains(FName(TEXT("DungeonEntrance"))))
 			{
-				if (APawn* Pawn = PC->GetPawn())
+				FStrProperty* LevelNameProp = FindFProperty<FStrProperty>(Actor->GetClass(), TEXT("DungeonLevelName"));
+				if (LevelNameProp)
 				{
-					Pawn->SetActorTransform(SaveData.SpawnTransform);
-					UE_LOG(LogTemp, Log, TEXT("[SaveLoadManager] Restored spawn: %s"), *SaveData.SpawnTransform.GetLocation().ToString());
+					FString ActorDungeonName = LevelNameProp->GetPropertyValue_InContainer(Actor);
+					if (ActorDungeonName == CurrentLevelName)
+					{
+						UE_LOG(LogTemp, Warning, TEXT("[SaveLoadManager] Re-streaming dungeon: %s"), *CurrentLevelName);
+						UFunction* EnterFunc = Actor->GetClass()->FindFunctionByName(TEXT("EnterDungeon"));
+						if (EnterFunc)
+						{
+							Actor->ProcessEvent(EnterFunc, nullptr);
+						}
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	// Apply spawn transform to the pawn (with safety check)
+	FVector SavedLoc = SaveData.SpawnTransform.GetLocation();
+	if (SavedLoc != FVector::ZeroVector)
+	{
+		// Safety: reject saved positions that are underground or absurdly far below terrain
+		// A Z of -10000 or lower almost certainly means a fall-through state
+		if (SavedLoc.Z < -10000.0)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[SaveLoadManager] REJECTED bad saved position: %s (Z too low, likely fall-through)"), *SavedLoc.ToString());
+		}
+		else
+		{
+			if (AActor* Owner = GetOwner())
+			{
+				if (APlayerController* PC = Cast<APlayerController>(Owner))
+				{
+					if (APawn* Pawn = PC->GetPawn())
+					{
+						Pawn->SetActorTransform(SaveData.SpawnTransform);
+						UE_LOG(LogTemp, Log, TEXT("[SaveLoadManager] Restored spawn: %s"), *SavedLoc.ToString());
+					}
 				}
 			}
 		}
@@ -1041,4 +1106,105 @@ void USaveLoadManagerComponent::DestroyCollectedPickups()
 
 	UE_LOG(LogTemp, Log, TEXT("[SaveLoadManager] Destroyed %d collected pickups out of %d tracked"),
 		DestroyedCount, SaveData.CollectedPickups.Num());
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// FAST TRAVEL / REST POINT REGISTRY
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void USaveLoadManagerComponent::RegisterDiscoveredRestPoint(const FSLFRestPointSaveInfo& RestPointInfo)
+{
+	// Deduplicate by GUID — update existing entry if found
+	for (int32 i = 0; i < SaveData.DiscoveredRestPoints.Num(); i++)
+	{
+		if (SaveData.DiscoveredRestPoints[i].RestPointId == RestPointInfo.RestPointId)
+		{
+			SaveData.DiscoveredRestPoints[i] = RestPointInfo;
+			UE_LOG(LogTemp, Log, TEXT("[SaveLoadManager] Updated rest point: %s at Z=%.1f"),
+				*RestPointInfo.LocationName.ToString(), RestPointInfo.SpawnLocation.Z);
+			return;
+		}
+	}
+
+	SaveData.DiscoveredRestPoints.Add(RestPointInfo);
+	bAutoSaveNeeded = true;
+
+	UE_LOG(LogTemp, Log, TEXT("[SaveLoadManager] Registered fast travel point: %s (total: %d)"),
+		*RestPointInfo.LocationName.ToString(), SaveData.DiscoveredRestPoints.Num());
+}
+
+const TArray<FSLFRestPointSaveInfo>& USaveLoadManagerComponent::GetDiscoveredRestPoints() const
+{
+	return SaveData.DiscoveredRestPoints;
+}
+
+bool USaveLoadManagerComponent::IsRestPointDiscovered(const FGuid& RestPointId) const
+{
+	for (const FSLFRestPointSaveInfo& Info : SaveData.DiscoveredRestPoints)
+	{
+		if (Info.RestPointId == RestPointId)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+void USaveLoadManagerComponent::DiscoverAllRestPointsInLevel()
+{
+	// DEBUG: Hardcode rest points at the player's current Z height.
+	// When real B_RestingPoint actors are placed, they'll register with correct transforms
+	// and this function can be removed.
+	float PlayerZ = 0.0f;
+	if (AActor* Owner = GetOwner())
+	{
+		if (APlayerController* PC = Cast<APlayerController>(Owner))
+		{
+			if (APawn* Pawn = PC->GetPawn())
+			{
+				PlayerZ = Pawn->GetActorLocation().Z;
+			}
+		}
+	}
+
+	FVector PlayerLoc = FVector::ZeroVector;
+	if (AActor* Owner = GetOwner())
+	{
+		if (APlayerController* PC = Cast<APlayerController>(Owner))
+		{
+			if (APawn* Pawn = PC->GetPawn())
+			{
+				PlayerLoc = Pawn->GetActorLocation();
+			}
+		}
+	}
+	PlayerZ = PlayerLoc.Z;
+
+	UE_LOG(LogTemp, Warning, TEXT("[SaveLoadManager] DEBUG: Player at %s, placing rest points nearby"), *PlayerLoc.ToString());
+
+	// Place debug rest points near player spawn so Z is correct for this terrain area.
+	// When real B_RestingPoint actors are placed in-editor, they'll have exact positions.
+	struct DebugRestPoint { uint32 IdSeed; const TCHAR* Name; double OffX; double OffY; };
+	static const DebugRestPoint DebugPoints[] = {
+		{ 1, TEXT("Spawn Bonfire"),      0,      0 },
+		{ 2, TEXT("Roadside Camp"),      2000,   500 },
+		{ 3, TEXT("Crossroads Rest"),   -1500,   2000 },
+		{ 4, TEXT("Eastern Overlook"),   3000,  -1000 },
+		{ 5, TEXT("Northern Shrine"),   -2000,  -2500 },
+	};
+
+	int32 Count = 0;
+	for (const DebugRestPoint& DP : DebugPoints)
+	{
+		FSLFRestPointSaveInfo Info;
+		Info.RestPointId = FGuid(0xFA577140, DP.IdSeed, 0, 0);
+		Info.LocationName = FText::FromString(DP.Name);
+		Info.WorldLocation = FVector(PlayerLoc.X + DP.OffX, PlayerLoc.Y + DP.OffY, PlayerZ);
+		Info.SpawnLocation = FVector(PlayerLoc.X + DP.OffX, PlayerLoc.Y + DP.OffY, PlayerZ);
+		Info.SpawnRotation = FRotator::ZeroRotator;
+		RegisterDiscoveredRestPoint(Info);
+		Count++;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[SaveLoadManager] DEBUG: Registered %d hardcoded rest points for testing"), Count);
 }

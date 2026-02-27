@@ -26,9 +26,7 @@ protected:
 private:
 	void ApplySentinelConfig();
 	void ConfigureAbilities();
-	void ApplyMontageLocomotionFallback();
 	void FixMontageDurations();
-	void TickDirectMovement(float DeltaTime);
 
 	UPROPERTY()
 	TSubclassOf<UAnimInstance> SentinelAnimBPClass;
@@ -47,14 +45,11 @@ private:
 	UPROPERTY()
 	UAnimMontage* RunMontage = nullptr;
 
-	// Track which locomotion montontage is currently playing
+	// Track active locomotion montage for seamless loop
 	UAnimMontage* ActiveLocomotionMontage = nullptr;
 
 	bool bAnimBPApplied = false;
 	bool bMontageLocomotionActive = false;
 	bool bMontageDurationsFixed = false;
-	bool bDiagDone = false;
-	bool bNavMeshMovementWorking = false;
 	int32 TicksAfterBeginPlay = 0;
-	int32 MoveDiagCount = 0;
 };

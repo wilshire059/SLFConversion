@@ -10,10 +10,16 @@
 #include "Widgets/W_LoadGame.h"
 #include "Widgets/W_Settings.h"
 #include "Widgets/W_Credits.h"
+#include "Widgets/W_WorldMap.h"
 #include "Interfaces/SLFMainMenuInterface.h"
 #include "Interfaces/BPI_GameInstance.h"
 #include "SLFPrimaryDataAssets.h"
 #include "Components/PanelWidget.h"
+#include "Components/Button.h"
+#include "Components/TextBlock.h"
+#include "Components/VerticalBoxSlot.h"
+#include "Components/Overlay.h"
+#include "Components/OverlaySlot.h"
 #include "Blueprint/WidgetTree.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -31,7 +37,10 @@ UW_MainMenu::UW_MainMenu(const FObjectInitializer& ObjectInitializer)
 	, BtnLoadGame(nullptr)
 	, BtnSettings(nullptr)
 	, BtnCredits(nullptr)
+	, BtnMap(nullptr)
 	, BtnQuitGame(nullptr)
+	, WorldMapOverlay(nullptr)
+	, DynamicMapButton(nullptr)
 	, W_CharacterSelection(nullptr)
 	, W_LoadGame(nullptr)
 	, W_Settings(nullptr)
@@ -153,6 +162,87 @@ void UW_MainMenu::NativeConstruct()
 		UE_LOG(LogTemp, Warning, TEXT("[W_MainMenu] W_Credits NOT found (BindWidgetOptional)"));
 	}
 
+	// Create WorldMap overlay dynamically (pure C++ widget, no Blueprint needed)
+	if (APlayerController* PC = GetOwningPlayer())
+	{
+		WorldMapOverlay = CreateWidget<UW_WorldMap>(PC);
+		if (WorldMapOverlay)
+		{
+			WorldMapOverlay->SetVisibility(ESlateVisibility::Collapsed);
+			WorldMapOverlay->OnMapClosed.AddDynamic(this, &UW_MainMenu::OnWorldMapClosed);
+
+			// Add to the root overlay if one exists, otherwise add to viewport separately
+			UWidget* Root = GetRootWidget();
+			UOverlay* RootOverlay = Cast<UOverlay>(Root);
+			if (RootOverlay)
+			{
+				UOverlaySlot* MapSlot = RootOverlay->AddChildToOverlay(WorldMapOverlay);
+				if (MapSlot)
+				{
+					MapSlot->SetHorizontalAlignment(HAlign_Fill);
+					MapSlot->SetVerticalAlignment(VAlign_Fill);
+				}
+			}
+			else if (UPanelWidget* RootPanel = Cast<UPanelWidget>(Root))
+			{
+				RootPanel->AddChild(WorldMapOverlay);
+			}
+
+			UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] WorldMap overlay created and added"));
+		}
+	}
+
+	// Create dynamic Map button if BtnMap wasn't bound from Blueprint
+	if (!BtnMap && ButtonsBox && WidgetTree)
+	{
+		DynamicMapButton = WidgetTree->ConstructWidget<UButton>(UButton::StaticClass(), TEXT("DynamicMapButton"));
+		if (DynamicMapButton)
+		{
+			// Style: dark semi-transparent background
+			FButtonStyle Style = DynamicMapButton->GetStyle();
+			FLinearColor DarkBg(0.02f, 0.02f, 0.05f, 0.8f);
+			Style.Normal.TintColor = FSlateColor(DarkBg);
+			Style.Hovered.TintColor = FSlateColor(FLinearColor(0.1f, 0.1f, 0.15f, 0.9f));
+			Style.Pressed.TintColor = FSlateColor(FLinearColor(0.15f, 0.15f, 0.2f, 1.0f));
+			DynamicMapButton->SetStyle(Style);
+
+			// Create text label
+			UTextBlock* MapLabel = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass(), TEXT("MapLabel"));
+			if (MapLabel)
+			{
+				MapLabel->SetText(FText::FromString(TEXT("Map")));
+				MapLabel->SetColorAndOpacity(FSlateColor(FLinearColor::White));
+				FSlateFontInfo Font = MapLabel->GetFont();
+				Font.Size = 24;
+				MapLabel->SetFont(Font);
+				MapLabel->SetJustification(ETextJustify::Center);
+				DynamicMapButton->AddChild(MapLabel);
+			}
+
+			// Insert before the last button (QuitGame) in ButtonsBox
+			int32 InsertIndex = ButtonsBox->GetChildrenCount();
+			if (BtnQuitGame)
+			{
+				InsertIndex = ButtonsBox->GetChildIndex(BtnQuitGame);
+				if (InsertIndex == INDEX_NONE)
+				{
+					InsertIndex = ButtonsBox->GetChildrenCount();
+				}
+			}
+			ButtonsBox->InsertChildAt(InsertIndex, DynamicMapButton);
+
+			// Set padding to match other buttons
+			if (UVerticalBoxSlot* VBSlot = Cast<UVerticalBoxSlot>(DynamicMapButton->Slot))
+			{
+				VBSlot->SetPadding(FMargin(0.0f, 4.0f, 0.0f, 4.0f));
+				VBSlot->SetHorizontalAlignment(HAlign_Fill);
+			}
+
+			DynamicMapButton->OnClicked.AddDynamic(this, &UW_MainMenu::OnDynamicMapButtonClicked);
+			UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Dynamic Map button created at index %d"), InsertIndex);
+		}
+	}
+
 	// Play fade-in animation
 	if (Fade)
 	{
@@ -184,6 +274,14 @@ void UW_MainMenu::NativeDestruct()
 	if (W_Credits)
 	{
 		W_Credits->OnCreditsClosed.RemoveAll(this);
+	}
+	if (WorldMapOverlay)
+	{
+		WorldMapOverlay->OnMapClosed.RemoveAll(this);
+	}
+	if (DynamicMapButton)
+	{
+		DynamicMapButton->OnClicked.RemoveAll(this);
 	}
 
 	Super::NativeDestruct();
@@ -297,6 +395,17 @@ void UW_MainMenu::InitializeButtons()
 		UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Added button: BtnCredits"));
 	}
 
+	if (BtnMap)
+	{
+		Buttons.Add(BtnMap);
+		UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Added button: BtnMap"));
+	}
+	else if (DynamicMapButton)
+	{
+		Buttons.Add(DynamicMapButton);
+		UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Added button: DynamicMapButton"));
+	}
+
 	if (BtnQuitGame)
 	{
 		Buttons.Add(BtnQuitGame);
@@ -331,6 +440,10 @@ void UW_MainMenu::BindButtonEvents()
 	{
 		BtnCredits->OnButtonClicked.AddDynamic(this, &UW_MainMenu::OnCreditsClicked);
 	}
+	if (BtnMap)
+	{
+		BtnMap->OnButtonClicked.AddDynamic(this, &UW_MainMenu::OnMapClicked);
+	}
 	if (BtnQuitGame)
 	{
 		BtnQuitGame->OnButtonClicked.AddDynamic(this, &UW_MainMenu::OnQuitGameClicked);
@@ -344,6 +457,7 @@ void UW_MainMenu::UnbindButtonEvents()
 	if (BtnLoadGame) BtnLoadGame->OnButtonClicked.RemoveAll(this);
 	if (BtnSettings) BtnSettings->OnButtonClicked.RemoveAll(this);
 	if (BtnCredits) BtnCredits->OnButtonClicked.RemoveAll(this);
+	if (BtnMap) BtnMap->OnButtonClicked.RemoveAll(this);
 	if (BtnQuitGame) BtnQuitGame->OnButtonClicked.RemoveAll(this);
 }
 
@@ -613,6 +727,7 @@ void UW_MainMenu::EventNavigateOk_Implementation()
 		{
 			W_Settings->EventNavigateOk();
 		}
+		// WorldMap has no confirm action - do nothing
 		return;
 	}
 
@@ -655,6 +770,10 @@ void UW_MainMenu::EventNavigateCancel_Implementation()
 		else if (W_Credits && ActiveOverlay == W_Credits)
 		{
 			W_Credits->EventNavigateCancel();
+		}
+		else if (WorldMapOverlay && ActiveOverlay == WorldMapOverlay)
+		{
+			WorldMapOverlay->EventNavigateCancel();
 		}
 		return;
 	}
@@ -825,6 +944,31 @@ void UW_MainMenu::OnSettingsClosed()
 void UW_MainMenu::OnCreditsClosed()
 {
 	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Credits closed - returning to main menu"));
+	ReturnFromOverlay();
+}
+
+void UW_MainMenu::OnMapClicked()
+{
+	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] Map button clicked - showing world map"));
+	if (WorldMapOverlay)
+	{
+		ShowOverlay(WorldMapOverlay);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_MainMenu] WorldMapOverlay not available"));
+		OnMenuButtonClicked.Broadcast(FName(TEXT("Map")));
+	}
+}
+
+void UW_MainMenu::OnDynamicMapButtonClicked()
+{
+	OnMapClicked();
+}
+
+void UW_MainMenu::OnWorldMapClosed()
+{
+	UE_LOG(LogTemp, Log, TEXT("[W_MainMenu] World map closed - returning to main menu"));
 	ReturnFromOverlay();
 }
 

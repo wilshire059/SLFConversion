@@ -30,6 +30,7 @@
 #include "Components/AC_ProgressManager.h"
 #include "Components/ProgressManagerComponent.h"
 #include "Components/AC_CombatManager.h"
+#include "Components/SaveLoadManagerComponent.h"
 #include "Components/RadarManagerComponent.h"
 #include "Widgets/W_Radar.h"
 #include "GameplayTagContainer.h"
@@ -1291,4 +1292,236 @@ void ASLFPlayerController::LootItemToInventory_Implementation(AActor* Item)
 void ASLFPlayerController::BlendViewTarget_Implementation(AActor* TargetActor, double BlendTime, double BlendExp, bool bLockOutgoing)
 {
 	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] BlendViewTarget - Target: %s"), TargetActor ? *TargetActor->GetName() : TEXT("null"));
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// FAST TRAVEL
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void ASLFPlayerController::ExecuteFastTravel(const FSLFRestPointSaveInfo& Destination)
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] ExecuteFastTravel to %s at %s"),
+		*Destination.LocationName.ToString(), *Destination.SpawnLocation.ToString());
+
+	PendingFastTravelDest = Destination;
+
+	// 1. Disable input
+	SetIgnoreMoveInput(true);
+	SetIgnoreLookInput(true);
+
+	// 2. Fade to black
+	if (APlayerCameraManager* CameraMgr = PlayerCameraManager)
+	{
+		CameraMgr->StartCameraFade(0.0f, 1.0f, 1.0f, FLinearColor::Black, false, true);
+	}
+
+	// 3. After fade completes, teleport
+	GetWorldTimerManager().SetTimer(
+		FastTravelFadeOutHandle,
+		this,
+		&ASLFPlayerController::OnFastTravelFadeOutComplete,
+		1.0f,
+		false
+	);
+}
+
+void ASLFPlayerController::OnFastTravelFadeOutComplete()
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] FastTravel - Fade out complete, teleporting"));
+
+	APawn* ControlledPawn = GetPawn();
+	if (!ControlledPawn)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[SLFPlayerController] FastTravel - No pawn!"));
+		SetIgnoreMoveInput(false);
+		SetIgnoreLookInput(false);
+		return;
+	}
+
+	// Teleport directly to destination spawn location.
+	// When rest points are placed in-editor, SpawnLocation Z is correct (actor is on ground).
+	// No hover/ground-trace needed — just go there.
+	FVector TeleportPos = PendingFastTravelDest.SpawnLocation;
+	ControlledPawn->SetActorRotation(PendingFastTravelDest.SpawnRotation);
+
+	if (UCharacterMovementComponent* MovementComp = ControlledPawn->FindComponentByClass<UCharacterMovementComponent>())
+	{
+		MovementComp->StopMovementImmediately();
+		MovementComp->Velocity = FVector::ZeroVector;
+		MovementComp->DisableMovement();
+	}
+
+	ControlledPawn->SetActorLocation(TeleportPos, false, nullptr, ETeleportType::TeleportPhysics);
+
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] FastTravel - Teleported to %s"),
+		*TeleportPos.ToString());
+
+	// Reset all enemies (Souls-like: resting/traveling resets enemies)
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		int32 EnemiesReset = 0;
+
+		auto ResetEnemy = [&](ACharacter* EnemyChar)
+		{
+			if (!IsValid(EnemyChar)) return;
+
+			if (UAICombatManagerComponent* AICombatMgr = EnemyChar->FindComponentByClass<UAICombatManagerComponent>())
+			{
+				AICombatMgr->bIsDead = false;
+				AICombatMgr->bPoiseBroken = false;
+				AICombatMgr->bHyperArmor = false;
+				AICombatMgr->bInvincible = false;
+				AICombatMgr->bHealthbarActive = false;
+				AICombatMgr->DisableHealthbar();
+
+				FTransform OriginalSpawn = AICombatMgr->SpawnTransform;
+				if (!OriginalSpawn.GetLocation().IsNearlyZero())
+				{
+					EnemyChar->SetActorTransform(OriginalSpawn);
+				}
+				AICombatMgr->bHasBeenRespawned = true;
+			}
+
+			if (UStatManagerComponent* EnemyStatMgr = EnemyChar->FindComponentByClass<UStatManagerComponent>())
+			{
+				FGameplayTag HPTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.HP"), false);
+				if (HPTag.IsValid()) EnemyStatMgr->ResetStat(HPTag);
+				FGameplayTag PoiseTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Poise"), false);
+				if (PoiseTag.IsValid()) EnemyStatMgr->ResetStat(PoiseTag);
+			}
+
+			if (USLFAIStateMachineComponent* AIStateMachine = EnemyChar->FindComponentByClass<USLFAIStateMachineComponent>())
+			{
+				AIStateMachine->ResetFromDeath();
+			}
+
+			if (AAIController* AIController = Cast<AAIController>(EnemyChar->GetController()))
+			{
+				if (UBrainComponent* BrainComp = AIController->GetBrainComponent())
+				{
+					BrainComp->RestartLogic();
+				}
+				if (UAIPerceptionComponent* PerceptionComp = AIController->GetAIPerceptionComponent())
+				{
+					PerceptionComp->RequestStimuliListenerUpdate();
+				}
+			}
+
+			EnemyChar->SetActorHiddenInGame(false);
+			EnemyChar->SetActorEnableCollision(true);
+			EnemyChar->SetActorTickEnabled(true);
+
+			if (USkeletalMeshComponent* EnemyMesh = EnemyChar->GetMesh())
+			{
+				EnemyMesh->SetSimulatePhysics(false);
+				EnemyMesh->SetAllBodiesSimulatePhysics(false);
+				EnemyMesh->ResetAllBodiesSimulatePhysics();
+				EnemyMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+				EnemyMesh->SetVisibility(true, true);
+				EnemyMesh->SetHiddenInGame(false, true);
+			}
+
+			if (UCapsuleComponent* Capsule = EnemyChar->GetCapsuleComponent())
+			{
+				Capsule->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+			}
+
+			EnemiesReset++;
+		};
+
+		for (TActorIterator<ASLFSoulslikeEnemy> It(World); It; ++It) { ResetEnemy(*It); }
+		for (TActorIterator<AB_Soulslike_Enemy> It(World); It; ++It) { ResetEnemy(*It); }
+
+		UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] FastTravel - Reset %d enemies"), EnemiesReset);
+	}
+
+	// Save checkpoint
+	if (USaveLoadManagerComponent* SaveMgr = FindComponentByClass<USaveLoadManagerComponent>())
+	{
+		SaveMgr->SaveToCheckpoint();
+	}
+
+	// Wait for collision to stream in at new location, then snap to ground
+	GetWorldTimerManager().SetTimer(
+		FastTravelFadeInHandle,
+		this,
+		&ASLFPlayerController::OnFastTravelSnapToGround,
+		1.5f,  // Give World Partition / Nanite time to load collision
+		false
+	);
+}
+
+void ASLFPlayerController::OnFastTravelSnapToGround()
+{
+	APawn* ControlledPawn = GetPawn();
+	if (!ControlledPawn)
+	{
+		OnFastTravelFadeInStart();
+		return;
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] FastTravel - Re-enabling movement at Z=%.1f"),
+		ControlledPawn->GetActorLocation().Z);
+
+	// Re-enable movement at destination. When rest points are real actors placed
+	// in the editor, SpawnLocation Z is already correct (on ground).
+	if (UCharacterMovementComponent* MovementComp = ControlledPawn->FindComponentByClass<UCharacterMovementComponent>())
+	{
+		MovementComp->Velocity = FVector::ZeroVector;
+		MovementComp->SetMovementMode(MOVE_Walking);
+	}
+
+	// Fade in
+	GetWorldTimerManager().SetTimer(
+		FastTravelFadeInHandle,
+		this,
+		&ASLFPlayerController::OnFastTravelFadeInStart,
+		0.3f,
+		false
+	);
+}
+
+void ASLFPlayerController::OnFastTravelCheckLanded()
+{
+	// Kept for header compatibility but no longer used
+}
+
+void ASLFPlayerController::OnFastTravelFadeInStart()
+{
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] FastTravel - Starting fade in"));
+
+	// Fade in
+	float FadeInDuration = 1.0f;
+	if (APlayerCameraManager* CameraMgr = PlayerCameraManager)
+	{
+		CameraMgr->StartCameraFade(1.0f, 0.0f, FadeInDuration, FLinearColor::Black, false, false);
+	}
+
+	// Re-enable input after fade
+	GetWorldTimerManager().SetTimer(
+		FastTravelInputHandle,
+		[this]()
+		{
+			SetIgnoreMoveInput(false);
+			SetIgnoreLookInput(false);
+			UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] FastTravel - Input re-enabled"));
+		},
+		0.5f,
+		false
+	);
+
+	// Show location name on HUD
+	if (HUDWidgetRef)
+	{
+		HUDWidgetRef->EventBigScreenMessage(
+			PendingFastTravelDest.LocationName,
+			nullptr,
+			false,
+			1.0f
+		);
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] FastTravel complete to %s"),
+		*PendingFastTravelDest.LocationName.ToString());
 }

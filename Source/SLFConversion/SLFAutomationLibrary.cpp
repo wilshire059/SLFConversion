@@ -33,6 +33,8 @@
 #include "AnimGraphNode_Base.h"
 #include "AnimGraphNode_LinkedAnimLayer.h"
 #include "AnimGraphNode_ModifyBone.h"
+#include "AnimGraphNode_LocalToComponentSpace.h"
+#include "AnimGraphNode_ComponentToLocalSpace.h"
 #include "BoneControllers/AnimNode_ModifyBone.h"
 #include "Animation/AnimNode_LinkedAnimLayer.h"
 // AnimBP State Machine support for variable reference replacement
@@ -82,6 +84,11 @@
 #include "Factories/FbxSkeletalMeshImportData.h"
 #include "Factories/FbxAnimSequenceImportData.h"
 #include "FbxImporter.h"
+// Texture + Material creation
+#include "Factories/TextureFactory.h"
+#include "Materials/Material.h"
+#include "Materials/MaterialExpressionTextureSample.h"
+#include "Engine/Texture2D.h"
 // Animation pipeline
 #include "Animation/Skeleton.h"
 #include "Animation/AnimSequence.h"
@@ -10789,8 +10796,19 @@ FString USLFAutomationLibrary::ImportAnimFBXDirect(
 		FbxAxisSystem UE5TargetSystem(FbxAxisSystem::eMayaZUp);
 		if (SceneAxisSystem != UE5TargetSystem)
 		{
-			Lines.Add(TEXT("  Converting FBX axis system to MayaZUp (root only, matching UE5)"));
+			int32 UpSign, FrontSign;
+			FbxAxisSystem::EUpVector UpVec = SceneAxisSystem.GetUpVector(UpSign);
+			FbxAxisSystem::EFrontVector FrontVec = SceneAxisSystem.GetFrontVector(FrontSign);
+			FbxAxisSystem::ECoordSystem CoordSys = SceneAxisSystem.GetCoorSystem();
+			Lines.Add(FString::Printf(TEXT("  ConvertScene: Up=%d(%s) Front=%d(%s) Coord=%s -> MayaZUp"),
+				(int32)UpVec, UpSign > 0 ? TEXT("+") : TEXT("-"),
+				(int32)FrontVec, FrontSign > 0 ? TEXT("+") : TEXT("-"),
+				CoordSys == FbxAxisSystem::eLeftHanded ? TEXT("LH") : TEXT("RH")));
 			UE5TargetSystem.ConvertScene(Scene);
+		}
+		else
+		{
+			Lines.Add(TEXT("  ConvertScene: SKIPPED (already MayaZUp)"));
 		}
 	}
 
@@ -11017,8 +11035,20 @@ FString USLFAutomationLibrary::ImportAnimFBXDirect(
 		FbxRestCSInv[BoneIdx] = FbxRestCS[BoneIdx].Inverse();
 	}
 
-	// Phase 4: Sample all bones' animation data from FBX
-	// We need all bones at each frame for CS retarget, so sample into 2D arrays.
+	// Phase 4 & 5: Sample animation data from FBX and optionally retarget.
+	//
+	// Two modes:
+	// A) Global-space import (bPoseSpaceDeltas=false, DEFAULT):
+	//    Read GLOBAL transforms per bone per frame, convert to UE5 space, derive locals.
+	//    No retarget needed — matches UE5's mesh import exactly (both convert globals).
+	//    Use this when animation FBX and mesh FBX come from the same pipeline.
+	//
+	// B) CS retarget import (bPoseSpaceDeltas=true):
+	//    Read LOCAL transforms, convert individually, chain, retarget between FBX rest
+	//    and UE5 bind pose. Use when animation source differs from mesh (e.g., c3100 → Sentinel).
+	//    NOTE: Converting locals individually then chaining introduces error because the
+	//    Y-axis reflection doesn't distribute over quaternion multiplication.
+
 	TArray<TArray<FVector3f>> AllPosKeys;
 	TArray<TArray<FQuat4f>> AllRotKeys;
 	AllPosKeys.SetNum(NumBones);
@@ -11029,130 +11059,288 @@ FString USLFAutomationLibrary::ImportAnimFBXDirect(
 		AllRotKeys[BoneIdx].SetNum(NumFrames);
 	}
 
-	for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+	if (!bPoseSpaceDeltas)
 	{
-		if (!BoneHasFBX[BoneIdx])
+		// ═══ Mode A: CS-delta import (correct for same-pipeline FBXes) ═══
+		// EvaluateGlobalTransform includes PreRotation that differs from UE5's mesh
+		// bind pose extraction. Fix: compute per-frame DELTA from Frame 0 in FBX space
+		// (PreRotation cancels in the delta), then apply to UE5 bind CS (from RefPose).
+		Lines.Add(TEXT("  Using CS-DELTA import — delta from FBX frame 0 applied to UE5 bind CS"));
+
+		// Pre-compute UE5 bind component-space from RefPose
+		// CS[bone] = Local[bone] * CS[parent] (UE5 convention)
+		TArray<FTransform> UE_BindCS;
+		UE_BindCS.SetNum(NumBones);
+		for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
 		{
-			// No FBX data — fill with bind pose (will be identity after retarget)
-			FTransform BindLocal = (BoneIdx < RefSkel.GetRefBonePose().Num())
+			FTransform LocalRef = (BoneIdx < RefSkel.GetRefBonePose().Num())
 				? RefSkel.GetRefBonePose()[BoneIdx]
 				: FTransform::Identity;
-			for (int32 Frame = 0; Frame < NumFrames; Frame++)
+			int32 ParentIdx = RefSkel.GetParentIndex(BoneIdx);
+			if (ParentIdx == INDEX_NONE)
 			{
-				AllPosKeys[BoneIdx][Frame] = FVector3f(BindLocal.GetLocation());
-				AllRotKeys[BoneIdx][Frame] = FQuat4f(BindLocal.GetRotation());
+				UE_BindCS[BoneIdx] = LocalRef;
 			}
-			continue;
+			else
+			{
+				FTransform::Multiply(&UE_BindCS[BoneIdx], &LocalRef, &UE_BindCS[ParentIdx]);
+			}
 		}
 
-		FbxNode* BoneNode = BoneNodes[BoneIdx];
-
-		// Check for animation curves
-		bool bHasTranslationCurve = false;
-		bool bHasRotationCurve = false;
-		if (AnimLayer)
+		// Read Frame 0 FBX globals (reference for delta computation)
+		TArray<FTransform> Frame0Global;
+		Frame0Global.SetNum(NumBones);
 		{
-			bHasTranslationCurve = (BoneNode->LclTranslation.GetCurve(AnimLayer, FBXSDK_CURVENODE_COMPONENT_X) != nullptr);
-			bHasRotationCurve = (BoneNode->LclRotation.GetCurve(AnimLayer, FBXSDK_CURVENODE_COMPONENT_X) != nullptr);
+			FbxTime F0Time = Start;
+			for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+			{
+				if (BoneHasFBX[BoneIdx])
+				{
+					FbxAMatrix GM = BoneNodes[BoneIdx]->EvaluateGlobalTransform(F0Time);
+					FbxVector4 T = GM.GetT();
+					FbxQuaternion Q = GM.GetQ();
+					FVector Pos((double)T[0] * ImportScale, -(double)T[1] * ImportScale, (double)T[2] * ImportScale);
+					FQuat Rot((double)Q[0], -(double)Q[1], (double)Q[2], -(double)Q[3]);
+					Rot.Normalize();
+					Frame0Global[BoneIdx] = FTransform(Rot, Pos, FVector::OneVector);
+				}
+				else
+				{
+					Frame0Global[BoneIdx] = UE_BindCS[BoneIdx];
+				}
+			}
 		}
-		if (bHasTranslationCurve || bHasRotationCurve) TracksWithCurves++;
-
-		float MaxScaleDeviation = 0.0f;
 
 		for (int32 Frame = 0; Frame < NumFrames; Frame++)
 		{
 			FbxTime FrameTime = Start + FbxTime::GetOneFrameValue(TimeMode) * Frame;
-			FbxAMatrix LocalMatrix = BoneNode->EvaluateLocalTransform(FrameTime);
 
-			FbxVector4 T = LocalMatrix.GetT();
-			FbxQuaternion Q = LocalMatrix.GetQ();
-			FbxVector4 S = LocalMatrix.GetS();
+			// Step 1: Read GLOBAL transforms and convert to UE5 space
+			TArray<FTransform> ConvertedGlobal;
+			ConvertedGlobal.SetNum(NumBones);
+			for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+			{
+				if (BoneHasFBX[BoneIdx])
+				{
+					FbxAMatrix GlobalMatrix = BoneNodes[BoneIdx]->EvaluateGlobalTransform(FrameTime);
+					FbxVector4 T = GlobalMatrix.GetT();
+					FbxQuaternion Q = GlobalMatrix.GetQ();
+					FVector Pos((double)T[0] * ImportScale, -(double)T[1] * ImportScale, (double)T[2] * ImportScale);
+					FQuat Rot((double)Q[0], -(double)Q[1], (double)Q[2], -(double)Q[3]);
+					Rot.Normalize();
+					ConvertedGlobal[BoneIdx] = FTransform(Rot, Pos, FVector::OneVector);
+				}
+				else
+				{
+					ConvertedGlobal[BoneIdx] = UE_BindCS[BoneIdx];
+				}
+			}
 
-			// FFbxDataConverter conversion: negate Y (pos), negate Y,W (quat)
-			AllPosKeys[BoneIdx][Frame] = FVector3f(
-				(float)(T[0] * ImportScale),
-				(float)(-T[1] * ImportScale),
-				(float)(T[2] * ImportScale));
+			// Step 2: Compute CS delta from Frame 0, apply to UE bind CS, derive locals
+			// Delta = FBX_Global(t) * FBX_Global(0)^-1  (PreRotation cancels)
+			// UE_CS(t) = Delta * UE_BindCS
+			// UE_Local(t) = UE_CS(t) * UE_CS_parent(t)^-1
+			TArray<FTransform> UE_AnimCS;
+			UE_AnimCS.SetNum(NumBones);
+			for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+			{
+				FTransform Delta;
+				FTransform F0Inv = Frame0Global[BoneIdx].Inverse();
+				FTransform::Multiply(&Delta, &ConvertedGlobal[BoneIdx], &F0Inv);
+				FTransform::Multiply(&UE_AnimCS[BoneIdx], &Delta, &UE_BindCS[BoneIdx]);
+			}
 
-			AllRotKeys[BoneIdx][Frame] = FQuat4f(
-				(float)(Q[0]),
-				(float)(-Q[1]),
-				(float)(Q[2]),
-				(float)(-Q[3]));
-			AllRotKeys[BoneIdx][Frame].Normalize();
+			for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+			{
+				int32 ParentIdx = RefSkel.GetParentIndex(BoneIdx);
+				FTransform Local;
+				if (ParentIdx == INDEX_NONE)
+				{
+					Local = UE_AnimCS[BoneIdx];
+				}
+				else
+				{
+					FTransform ParentInv = UE_AnimCS[ParentIdx].Inverse();
+					FTransform::Multiply(&Local, &UE_AnimCS[BoneIdx], &ParentInv);
+				}
+				AllPosKeys[BoneIdx][Frame] = FVector3f(Local.GetLocation());
+				AllRotKeys[BoneIdx][Frame] = FQuat4f(Local.GetRotation());
+				AllRotKeys[BoneIdx][Frame].Normalize();
+			}
 
-			// Track scale deviation
-			float SDev = FMath::Max3(
-				FMath::Abs((float)S[0] - 1.0f),
-				FMath::Abs((float)S[1] - 1.0f),
-				FMath::Abs((float)S[2] - 1.0f));
-			MaxScaleDeviation = FMath::Max(MaxScaleDeviation, SDev);
+			// Track curve presence (first frame only)
+			if (Frame == 0 && AnimLayer)
+			{
+				for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+				{
+					if (!BoneHasFBX[BoneIdx]) continue;
+					FbxNode* BoneNode = BoneNodes[BoneIdx];
+					bool bHasTC = (BoneNode->LclTranslation.GetCurve(AnimLayer, FBXSDK_CURVENODE_COMPONENT_X) != nullptr);
+					bool bHasRC = (BoneNode->LclRotation.GetCurve(AnimLayer, FBXSDK_CURVENODE_COMPONENT_X) != nullptr);
+					if (bHasTC || bHasRC) TracksWithCurves++;
+				}
+			}
 		}
 
-		if (MaxScaleDeviation > 0.01f)
+		// Log frame 0 vs bind pose comparison for BOTH position AND rotation
 		{
-			Lines.Add(FString::Printf(TEXT("  [SCALE] Bone=%s MaxScaleDev=%.4f (will be clamped to 1,1,1)"),
-				*RefSkel.GetBoneName(BoneIdx).ToString(), MaxScaleDeviation));
+			float MaxF0PosDiff = 0.0f;
+			float MaxF0RotDeg = 0.0f;
+			FName WorstRotBone = NAME_None;
+			for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+			{
+				if (!BoneHasFBX[BoneIdx]) continue;
+				FTransform BindLocal = (BoneIdx < RefSkel.GetRefBonePose().Num())
+					? RefSkel.GetRefBonePose()[BoneIdx]
+					: FTransform::Identity;
+				float PosDiff = (FVector(AllPosKeys[BoneIdx][0]) - BindLocal.GetLocation()).Size();
+				MaxF0PosDiff = FMath::Max(MaxF0PosDiff, PosDiff);
+
+				FQuat AnimRot(AllRotKeys[BoneIdx][0]);
+				FQuat BindRot = BindLocal.GetRotation();
+				float RotDiffDeg = FMath::RadiansToDegrees(AnimRot.AngularDistance(BindRot));
+				if (RotDiffDeg > MaxF0RotDeg)
+				{
+					MaxF0RotDeg = RotDiffDeg;
+					WorstRotBone = RefSkel.GetBoneName(BoneIdx);
+				}
+			}
+			Lines.Add(FString::Printf(TEXT("  Frame 0 vs BindPose: maxPosDiff=%.6f maxRotDiff=%.2fdeg (worst: %s)"),
+				MaxF0PosDiff, MaxF0RotDeg, *WorstRotBone.ToString()));
+
+			// Log per-bone rotation diff for arm chain
+			const TCHAR* ArmBones[] = {TEXT("clavicle_r"), TEXT("upperarm_r"), TEXT("lowerarm_r"), TEXT("hand_r")};
+			for (const TCHAR* AB : ArmBones)
+			{
+				int32 Idx = RefSkel.FindBoneIndex(FName(AB));
+				if (Idx == INDEX_NONE || !BoneHasFBX[Idx]) continue;
+				FTransform BindLocal = RefSkel.GetRefBonePose()[Idx];
+				FQuat AnimRot(AllRotKeys[Idx][0]);
+				FQuat BindRot = BindLocal.GetRotation();
+				float RotDiffDeg = FMath::RadiansToDegrees(AnimRot.AngularDistance(BindRot));
+				Lines.Add(FString::Printf(TEXT("    F0 %s: animRot=%s bindRot=%s diff=%.2fdeg"),
+					AB,
+					*AnimRot.Rotator().ToString(),
+					*BindRot.Rotator().ToString(),
+					RotDiffDeg));
+			}
+
+			// Also log mid-frame rotation to confirm animation has actual motion
+			int32 MidFrame = NumFrames / 2;
+			if (MidFrame > 0 && MidFrame < NumFrames)
+			{
+				int32 UpperArmIdx = RefSkel.FindBoneIndex(FName("upperarm_r"));
+				if (UpperArmIdx != INDEX_NONE && BoneHasFBX[UpperArmIdx])
+				{
+					FQuat F0Rot(AllRotKeys[UpperArmIdx][0]);
+					FQuat MidRot(AllRotKeys[UpperArmIdx][MidFrame]);
+					float MidDiff = FMath::RadiansToDegrees(F0Rot.AngularDistance(MidRot));
+					Lines.Add(FString::Printf(TEXT("    upperarm_r F0 vs F%d: %.2fdeg (should be >0 if animating)"),
+						MidFrame, MidDiff));
+				}
+			}
 		}
+
+		// CS-delta approach inherently produces Frame 0 = RefPose (delta = identity at t=0)
 	}
-
-	// Phase 5: Component-space retarget per frame
-	// For each frame: build CS chain from raw FBX locals, apply retarget formula,
-	// convert back to local, write to output arrays.
-	for (int32 Frame = 0; Frame < NumFrames; Frame++)
+	else
 	{
-		// Build source animation CS for this frame
-		TArray<FTransform> SrcAnimCS;
-		SrcAnimCS.SetNum(NumBones);
+		// ═══ Mode B: LOCAL-space import with CS retarget (legacy path) ═══
+		Lines.Add(TEXT("  Using LOCAL-SPACE import with CS retarget — different animation/mesh skeletons"));
+
 		for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
 		{
-			FTransform AnimLocal(
-				FQuat((double)AllRotKeys[BoneIdx][Frame].X, (double)AllRotKeys[BoneIdx][Frame].Y,
-				      (double)AllRotKeys[BoneIdx][Frame].Z, (double)AllRotKeys[BoneIdx][Frame].W),
-				FVector((double)AllPosKeys[BoneIdx][Frame].X, (double)AllPosKeys[BoneIdx][Frame].Y,
-				        (double)AllPosKeys[BoneIdx][Frame].Z),
-				FVector::OneVector);
-
-			int32 ParentIdx = RefSkel.GetParentIndex(BoneIdx);
-			if (ParentIdx == INDEX_NONE)
+			if (!BoneHasFBX[BoneIdx])
 			{
-				SrcAnimCS[BoneIdx] = AnimLocal;
+				FTransform BindLocal = (BoneIdx < RefSkel.GetRefBonePose().Num())
+					? RefSkel.GetRefBonePose()[BoneIdx]
+					: FTransform::Identity;
+				for (int32 Frame = 0; Frame < NumFrames; Frame++)
+				{
+					AllPosKeys[BoneIdx][Frame] = FVector3f(BindLocal.GetLocation());
+					AllRotKeys[BoneIdx][Frame] = FQuat4f(BindLocal.GetRotation());
+				}
+				continue;
 			}
-			else
+
+			FbxNode* BoneNode = BoneNodes[BoneIdx];
+
+			bool bHasTranslationCurve = false;
+			bool bHasRotationCurve = false;
+			if (AnimLayer)
 			{
-				FTransform::Multiply(&SrcAnimCS[BoneIdx], &AnimLocal, &SrcAnimCS[ParentIdx]);
+				bHasTranslationCurve = (BoneNode->LclTranslation.GetCurve(AnimLayer, FBXSDK_CURVENODE_COMPONENT_X) != nullptr);
+				bHasRotationCurve = (BoneNode->LclRotation.GetCurve(AnimLayer, FBXSDK_CURVENODE_COMPONENT_X) != nullptr);
+			}
+			if (bHasTranslationCurve || bHasRotationCurve) TracksWithCurves++;
+
+			for (int32 Frame = 0; Frame < NumFrames; Frame++)
+			{
+				FbxTime FrameTime = Start + FbxTime::GetOneFrameValue(TimeMode) * Frame;
+				FbxAMatrix LocalMatrix = BoneNode->EvaluateLocalTransform(FrameTime);
+
+				FbxVector4 T = LocalMatrix.GetT();
+				FbxQuaternion Q = LocalMatrix.GetQ();
+
+				AllPosKeys[BoneIdx][Frame] = FVector3f(
+					(float)(T[0] * ImportScale),
+					(float)(-T[1] * ImportScale),
+					(float)(T[2] * ImportScale));
+
+				AllRotKeys[BoneIdx][Frame] = FQuat4f(
+					(float)(Q[0]),
+					(float)(-Q[1]),
+					(float)(Q[2]),
+					(float)(-Q[3]));
+				AllRotKeys[BoneIdx][Frame].Normalize();
 			}
 		}
 
-		// Apply CS retarget: TgtAnimCS = SrcAnimCS * SrcRefCSInv * BindCS
-		// UE5 FTransform multiply: A * B means "apply A first, then B"
-		TArray<FTransform> TgtAnimCS;
-		TgtAnimCS.SetNum(NumBones);
-		for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+		// CS retarget per frame
+		for (int32 Frame = 0; Frame < NumFrames; Frame++)
 		{
-			FTransform Temp;
-			FTransform::Multiply(&Temp, &SrcAnimCS[BoneIdx], &FbxRestCSInv[BoneIdx]);
-			FTransform::Multiply(&TgtAnimCS[BoneIdx], &Temp, &BindCS[BoneIdx]);
-		}
+			TArray<FTransform> SrcAnimCS;
+			SrcAnimCS.SetNum(NumBones);
+			for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+			{
+				FTransform AnimLocal(
+					FQuat((double)AllRotKeys[BoneIdx][Frame].X, (double)AllRotKeys[BoneIdx][Frame].Y,
+					      (double)AllRotKeys[BoneIdx][Frame].Z, (double)AllRotKeys[BoneIdx][Frame].W),
+					FVector((double)AllPosKeys[BoneIdx][Frame].X, (double)AllPosKeys[BoneIdx][Frame].Y,
+					        (double)AllPosKeys[BoneIdx][Frame].Z),
+					FVector::OneVector);
 
-		// Convert CS back to local: TgtLocal = TgtAnimCS * TgtAnimCS_parent^-1
-		for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
-		{
-			int32 ParentIdx = RefSkel.GetParentIndex(BoneIdx);
-			FTransform TgtLocal;
-			if (ParentIdx == INDEX_NONE)
-			{
-				TgtLocal = TgtAnimCS[BoneIdx];
-			}
-			else
-			{
-				FTransform ParentInv = TgtAnimCS[ParentIdx].Inverse();
-				FTransform::Multiply(&TgtLocal, &TgtAnimCS[BoneIdx], &ParentInv);
+				int32 ParentIdx = RefSkel.GetParentIndex(BoneIdx);
+				if (ParentIdx == INDEX_NONE)
+					SrcAnimCS[BoneIdx] = AnimLocal;
+				else
+					FTransform::Multiply(&SrcAnimCS[BoneIdx], &AnimLocal, &SrcAnimCS[ParentIdx]);
 			}
 
-			AllPosKeys[BoneIdx][Frame] = FVector3f(TgtLocal.GetLocation());
-			AllRotKeys[BoneIdx][Frame] = FQuat4f(TgtLocal.GetRotation());
-			AllRotKeys[BoneIdx][Frame].Normalize();
+			TArray<FTransform> TgtAnimCS;
+			TgtAnimCS.SetNum(NumBones);
+			for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+			{
+				FTransform Temp;
+				FTransform::Multiply(&Temp, &SrcAnimCS[BoneIdx], &FbxRestCSInv[BoneIdx]);
+				FTransform::Multiply(&TgtAnimCS[BoneIdx], &Temp, &BindCS[BoneIdx]);
+			}
+
+			for (int32 BoneIdx = 0; BoneIdx < NumBones; BoneIdx++)
+			{
+				int32 ParentIdx = RefSkel.GetParentIndex(BoneIdx);
+				FTransform TgtLocal;
+				if (ParentIdx == INDEX_NONE)
+					TgtLocal = TgtAnimCS[BoneIdx];
+				else
+				{
+					FTransform ParentInv = TgtAnimCS[ParentIdx].Inverse();
+					FTransform::Multiply(&TgtLocal, &TgtAnimCS[BoneIdx], &ParentInv);
+				}
+				AllPosKeys[BoneIdx][Frame] = FVector3f(TgtLocal.GetLocation());
+				AllRotKeys[BoneIdx][Frame] = FQuat4f(TgtLocal.GetRotation());
+				AllRotKeys[BoneIdx][Frame].Normalize();
+			}
 		}
 	}
 
@@ -11473,7 +11661,14 @@ FString USLFAutomationLibrary::AddWeaponTraceToMontage(
 	float EndTime,
 	float InTraceRadius,
 	const FName& InStartSocket,
-	const FName& InEndSocket)
+	const FName& InEndSocket,
+	float InWeaponReach,
+	EAxis::Type InDirectionAxis,
+	bool bInNegateDirection,
+	float InOverrideDamage,
+	float InOverridePoiseDamage,
+	bool bInDrawDebug,
+	const FName& InDirectionBone)
 {
 	UAnimMontage* Montage = LoadObject<UAnimMontage>(nullptr, *MontagePath);
 	if (!Montage)
@@ -11491,6 +11686,13 @@ FString USLFAutomationLibrary::AddWeaponTraceToMontage(
 	WeaponTrace->StartSocketName = InStartSocket;
 	WeaponTrace->EndSocketName = InEndSocket;
 	WeaponTrace->TraceRadius = InTraceRadius;
+	WeaponTrace->WeaponReach = InWeaponReach;
+	WeaponTrace->DirectionBoneName = InDirectionBone;
+	WeaponTrace->WeaponDirectionAxis = InDirectionAxis;
+	WeaponTrace->bNegateDirection = bInNegateDirection;
+	WeaponTrace->OverrideDamage = InOverrideDamage;
+	WeaponTrace->OverridePoiseDamage = InOverridePoiseDamage;
+	WeaponTrace->bDrawDebugTrace = bInDrawDebug;
 
 	// Create the notify event
 	FAnimNotifyEvent NewEvent;
@@ -11520,8 +11722,11 @@ FString USLFAutomationLibrary::AddWeaponTraceToMontage(
 	SaveArgs.TopLevelFlags = RF_Standalone;
 	UPackage::SavePackage(Package, Montage, *FileName, SaveArgs);
 
-	return FString::Printf(TEXT("OK: Added WeaponTrace to %s (%.3f-%.3fs, radius=%.0f)"),
-		*FPaths::GetBaseFilename(MontagePath), StartTime, EndTime, InTraceRadius);
+	FString ModeStr = (InWeaponReach > 0.0f)
+		? FString::Printf(TEXT("Reach=%.0fcm Axis=%d"), InWeaponReach, (int32)InDirectionAxis)
+		: TEXT("TwoSocket");
+	return FString::Printf(TEXT("OK: Added WeaponTrace to %s (%.3f-%.3fs, radius=%.0f, %s)"),
+		*FPaths::GetBaseFilename(MontagePath), StartTime, EndTime, InTraceRadius, *ModeStr);
 }
 
 FString USLFAutomationLibrary::CreateMontageFromSequence(
@@ -12160,18 +12365,20 @@ FString USLFAutomationLibrary::AddBoneScaleOverrides(const FString& AnimBPPath, 
 		return FString::Join(Lines, TEXT("\n"));
 	}
 
-	// First, remove any existing ModifyBone nodes we previously added (clean re-application)
-	TArray<UEdGraphNode*> ExistingModifyBones;
+	// First, remove any existing ModifyBone and converter nodes we previously added (clean re-application)
+	TArray<UEdGraphNode*> NodesToRemove;
 	for (UEdGraphNode* Node : MainGraph->Nodes)
 	{
-		if (Node && Node->IsA<UAnimGraphNode_ModifyBone>())
+		if (Node && (Node->IsA<UAnimGraphNode_ModifyBone>() ||
+			Node->IsA<UAnimGraphNode_LocalToComponentSpace>() ||
+			Node->IsA<UAnimGraphNode_ComponentToLocalSpace>()))
 		{
-			ExistingModifyBones.Add(Node);
+			NodesToRemove.Add(Node);
 		}
 	}
-	for (UEdGraphNode* OldNode : ExistingModifyBones)
+	for (UEdGraphNode* OldNode : NodesToRemove)
 	{
-		// Find pose pins
+		// Find pose pins (check both Local and CS)
 		UEdGraphPin* OldInput = nullptr;
 		UEdGraphPin* OldOutput = nullptr;
 		for (UEdGraphPin* Pin : OldNode->Pins)
@@ -12194,7 +12401,7 @@ FString USLFAutomationLibrary::AddBoneScaleOverrides(const FString& AnimBPPath, 
 			OldNode->BreakAllNodeLinks();
 		}
 		MainGraph->RemoveNode(OldNode);
-		Lines.Add(FString::Printf(TEXT("Removed existing ModifyBone node: %s"),
+		Lines.Add(FString::Printf(TEXT("Removed existing node: %s"),
 			*OldNode->GetNodeTitle(ENodeTitleType::ListView).ToString()));
 	}
 
@@ -12210,14 +12417,58 @@ FString USLFAutomationLibrary::AddBoneScaleOverrides(const FString& AnimBPPath, 
 		return FString::Join(Lines, TEXT("\n"));
 	}
 
-	// Insert ModifyBone nodes in series: Upstream -> MB1 -> MB2 -> ... -> Root
+	// Insert ModifyBone nodes in series with explicit space converters:
+	// Upstream(Local) -> ConvertToCS -> MB1(CS) -> MB2(CS) -> ... -> ConvertToLocal -> Root(Local)
+	// ModifyBone nodes use ComponentSpace internally, so we need converters at boundaries.
+
 	// Break the current Upstream -> Root connection
 	UEdGraphPin* CurrentUpstream = UpstreamOutputPin;
 	RootInputPin->BreakAllPinLinks();
 
 	int32 NodeY = RootNode->NodePosY - 200;
+	int32 NodeX = RootNode->NodePosX - 300;
 	int32 AddedCount = 0;
 
+	// Lambda to find a specific pin type (Local or CS)
+	auto FindPosePinByType = [](UEdGraphNode* Node, EEdGraphPinDirection Dir, bool bComponentSpace) -> UEdGraphPin*
+	{
+		for (UEdGraphPin* Pin : Node->Pins)
+		{
+			if (Pin->Direction != Dir) continue;
+			if (Pin->PinType.PinCategory != UEdGraphSchema_K2::PC_Struct) continue;
+			UScriptStruct* PinStruct = Cast<UScriptStruct>(Pin->PinType.PinSubCategoryObject.Get());
+			if (!PinStruct) continue;
+			bool bIsCS = PinStruct->GetName().Contains(TEXT("ComponentSpacePoseLink"));
+			if (bComponentSpace == bIsCS) return Pin;
+		}
+		return nullptr;
+	};
+
+	// Step 1: Insert Local-to-ComponentSpace converter
+	{
+		FGraphNodeCreator<UAnimGraphNode_LocalToComponentSpace> Creator(*MainGraph);
+		UAnimGraphNode_LocalToComponentSpace* L2CS = Creator.CreateNode();
+		L2CS->NodePosX = NodeX;
+		L2CS->NodePosY = NodeY;
+		NodeY -= 150;
+		Creator.Finalize();
+
+		UEdGraphPin* L2CS_In = FindPosePinByType(L2CS, EGPD_Input, false);  // Local input
+		UEdGraphPin* L2CS_Out = FindPosePinByType(L2CS, EGPD_Output, true); // CS output
+
+		if (L2CS_In && L2CS_Out)
+		{
+			CurrentUpstream->MakeLinkTo(L2CS_In);
+			CurrentUpstream = L2CS_Out;
+			Lines.Add(TEXT("Inserted ConvertLocalToComponentSpace"));
+		}
+		else
+		{
+			Lines.Add(TEXT("WARNING: ConvertLocalToCS pins not found, trying direct connection"));
+		}
+	}
+
+	// Step 2: Insert ModifyBone nodes (all in ComponentSpace)
 	for (const auto& Pair : BoneScales)
 	{
 		FName BoneName = Pair.Key;
@@ -12236,29 +12487,24 @@ FString USLFAutomationLibrary::AddBoneScaleOverrides(const FString& AnimBPPath, 
 		NodeData.Scale = FVector(ScaleFactor, ScaleFactor, ScaleFactor);
 		NodeData.ScaleSpace = EBoneControlSpace::BCS_BoneSpace;
 
-		MBNode->NodePosX = RootNode->NodePosX - 300;
+		MBNode->NodePosX = NodeX;
 		MBNode->NodePosY = NodeY;
 		NodeY -= 150;
 
 		NodeCreator.Finalize();
 
-		// Find pose pins on the new node
-		UEdGraphPin* MBInputPin = nullptr;
-		UEdGraphPin* MBOutputPin = nullptr;
-		for (UEdGraphPin* Pin : MBNode->Pins)
-		{
-			if (Pin->Direction == EGPD_Input && IsPosePin(Pin)) MBInputPin = Pin;
-			if (Pin->Direction == EGPD_Output && IsPosePin(Pin)) MBOutputPin = Pin;
-		}
+		// ModifyBone input is CS, output is CS (from SkeletalControlBase)
+		UEdGraphPin* MBInputPin = FindPosePinByType(MBNode, EGPD_Input, true);   // CS input
+		UEdGraphPin* MBOutputPin = FindPosePinByType(MBNode, EGPD_Output, true);  // CS output
 
 		if (!MBInputPin || !MBOutputPin)
 		{
-			Lines.Add(FString::Printf(TEXT("WARNING: ModifyBone for %s has no pose pins, skipping"), *BoneName.ToString()));
+			Lines.Add(FString::Printf(TEXT("WARNING: ModifyBone for %s has no CS pose pins, skipping"), *BoneName.ToString()));
 			MainGraph->RemoveNode(MBNode);
 			continue;
 		}
 
-		// Wire: CurrentUpstream -> MBNode -> (next node or Root)
+		// Wire: CurrentUpstream(CS) -> MBNode(CS) -> next
 		CurrentUpstream->MakeLinkTo(MBInputPin);
 		CurrentUpstream = MBOutputPin;
 
@@ -12267,7 +12513,30 @@ FString USLFAutomationLibrary::AddBoneScaleOverrides(const FString& AnimBPPath, 
 		AddedCount++;
 	}
 
-	// Connect last ModifyBone output to Root input
+	// Step 3: Insert ComponentSpace-to-Local converter
+	{
+		FGraphNodeCreator<UAnimGraphNode_ComponentToLocalSpace> Creator(*MainGraph);
+		UAnimGraphNode_ComponentToLocalSpace* CS2L = Creator.CreateNode();
+		CS2L->NodePosX = NodeX;
+		CS2L->NodePosY = NodeY;
+		Creator.Finalize();
+
+		UEdGraphPin* CS2L_In = FindPosePinByType(CS2L, EGPD_Input, true);   // CS input
+		UEdGraphPin* CS2L_Out = FindPosePinByType(CS2L, EGPD_Output, false); // Local output
+
+		if (CS2L_In && CS2L_Out)
+		{
+			CurrentUpstream->MakeLinkTo(CS2L_In);
+			CurrentUpstream = CS2L_Out;
+			Lines.Add(TEXT("Inserted ConvertComponentSpaceToLocal"));
+		}
+		else
+		{
+			Lines.Add(TEXT("WARNING: ConvertCSToLocal pins not found, trying direct connection"));
+		}
+	}
+
+	// Connect final converter output (Local) to Root input (Local)
 	CurrentUpstream->MakeLinkTo(RootInputPin);
 
 	Lines.Add(FString::Printf(TEXT("Inserted %d ModifyBone nodes before Root"), AddedCount));
@@ -15241,3 +15510,725 @@ FString USLFAutomationLibrary::CompareCharacters(AActor* ActorA, AActor* ActorB,
 
 	return Report;
 }
+
+#if WITH_EDITOR
+
+// ============================================================================
+// WALK ANIMATION COMPARISON
+// ============================================================================
+
+/**
+ * Helper: Analyze a single animation's per-bone range of motion across all frames.
+ * Returns a report of which bones move and which are static.
+ */
+static void AnalyzeAnimRangeOfMotion(
+	UAnimSequence* Anim,
+	const TArray<FName>& FocusBones,
+	const FString& AnimLabel,
+	TArray<FString>& OutLines)
+{
+	if (!Anim)
+	{
+		OutLines.Add(FString::Printf(TEXT("[%s] ERROR: Animation is null"), *AnimLabel));
+		return;
+	}
+
+	USkeleton* Skel = Anim->GetSkeleton();
+	if (!Skel)
+	{
+		OutLines.Add(FString::Printf(TEXT("[%s] ERROR: No skeleton"), *AnimLabel));
+		return;
+	}
+
+	IAnimationDataModel* DM = Anim->GetDataModel();
+	if (!DM)
+	{
+		OutLines.Add(FString::Printf(TEXT("[%s] ERROR: No DataModel"), *AnimLabel));
+		return;
+	}
+
+	const FReferenceSkeleton& RefSkel = Skel->GetReferenceSkeleton();
+	int32 NumFrames = DM->GetNumberOfFrames();
+	double Duration = Anim->GetPlayLength();
+	FFrameRate FR = DM->GetFrameRate();
+
+	OutLines.Add(FString::Printf(TEXT("\n========== %s =========="), *AnimLabel));
+	OutLines.Add(FString::Printf(TEXT("  Animation: %s"), *Anim->GetPathName()));
+	OutLines.Add(FString::Printf(TEXT("  Skeleton: %s (%d bones)"), *Skel->GetName(), RefSkel.GetNum()));
+	OutLines.Add(FString::Printf(TEXT("  Frames: %d, Duration: %.3f sec, FPS: %d/%d"),
+		NumFrames, Duration, FR.Numerator, FR.Denominator));
+
+	TArray<FName> TrackNames;
+	DM->GetBoneTrackNames(TrackNames);
+	OutLines.Add(FString::Printf(TEXT("  DataModel tracks: %d"), TrackNames.Num()));
+
+	// For each focus bone, compute min/max translation and rotation across all frames
+	OutLines.Add(TEXT("\n  --- FOCUS BONES: Per-bone range of motion ---"));
+	OutLines.Add(FString::Printf(TEXT("  %-25s | %8s | %12s | %12s | %12s | %12s | %12s | %12s | %s"),
+		TEXT("Bone"), TEXT("Status"),
+		TEXT("PosX Range"), TEXT("PosY Range"), TEXT("PosZ Range"),
+		TEXT("RotX Range"), TEXT("RotY Range"), TEXT("RotZ Range"),
+		TEXT("MaxRotDeg")));
+	OutLines.Add(TEXT("  ") + FString::ChrN(160, TEXT('-')));
+
+	for (const FName& BoneName : FocusBones)
+	{
+		// Check if this bone has a track in the DataModel
+		bool bHasTrack = TrackNames.Contains(BoneName);
+		if (!bHasTrack)
+		{
+			OutLines.Add(FString::Printf(TEXT("  %-25s | %8s | (no DataModel track found)"),
+				*BoneName.ToString(), TEXT("NO TRACK")));
+			continue;
+		}
+
+		// Gather transforms across all frames
+		FVector MinPos(FLT_MAX, FLT_MAX, FLT_MAX);
+		FVector MaxPos(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+
+		// For rotation, track Euler angles
+		FVector MinRot(FLT_MAX, FLT_MAX, FLT_MAX);
+		FVector MaxRot(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+
+		// Also track angular distance from frame 0 rotation
+		FQuat Frame0Rot = FQuat::Identity;
+		double MaxAngularDistDeg = 0.0;
+
+		for (int32 f = 0; f < NumFrames; f++)
+		{
+			FTransform T = DM->GetBoneTrackTransform(BoneName, FFrameNumber(f));
+			FVector Pos = T.GetTranslation();
+			FQuat Rot = T.GetRotation();
+			FRotator Euler = Rot.Rotator();
+
+			MinPos.X = FMath::Min(MinPos.X, Pos.X);
+			MinPos.Y = FMath::Min(MinPos.Y, Pos.Y);
+			MinPos.Z = FMath::Min(MinPos.Z, Pos.Z);
+			MaxPos.X = FMath::Max(MaxPos.X, Pos.X);
+			MaxPos.Y = FMath::Max(MaxPos.Y, Pos.Y);
+			MaxPos.Z = FMath::Max(MaxPos.Z, Pos.Z);
+
+			MinRot.X = FMath::Min(MinRot.X, (double)Euler.Roll);
+			MinRot.Y = FMath::Min(MinRot.Y, (double)Euler.Pitch);
+			MinRot.Z = FMath::Min(MinRot.Z, (double)Euler.Yaw);
+			MaxRot.X = FMath::Max(MaxRot.X, (double)Euler.Roll);
+			MaxRot.Y = FMath::Max(MaxRot.Y, (double)Euler.Pitch);
+			MaxRot.Z = FMath::Max(MaxRot.Z, (double)Euler.Yaw);
+
+			if (f == 0)
+			{
+				Frame0Rot = Rot;
+			}
+			else
+			{
+				double AngDist = FMath::RadiansToDegrees(Frame0Rot.AngularDistance(Rot));
+				MaxAngularDistDeg = FMath::Max(MaxAngularDistDeg, AngDist);
+			}
+		}
+
+		FVector PosRange = MaxPos - MinPos;
+		FVector RotRange = MaxRot - MinRot;
+
+		// Determine if bone has significant rotation (> 1 degree range on any Euler axis)
+		bool bSignificantRotation = (RotRange.X > 1.0 || RotRange.Y > 1.0 || RotRange.Z > 1.0);
+		bool bSignificantTranslation = (PosRange.X > 0.1 || PosRange.Y > 0.1 || PosRange.Z > 0.1);
+
+		const TCHAR* Status;
+		if (bSignificantRotation && bSignificantTranslation)
+			Status = TEXT("MOVES");
+		else if (bSignificantRotation)
+			Status = TEXT("ROTATES");
+		else if (bSignificantTranslation)
+			Status = TEXT("TRANS");
+		else
+			Status = TEXT("STATIC");
+
+		OutLines.Add(FString::Printf(
+			TEXT("  %-25s | %8s | %5.2f-%5.2f | %5.2f-%5.2f | %5.2f-%5.2f | %5.1f-%5.1f | %5.1f-%5.1f | %5.1f-%5.1f | %.1f deg"),
+			*BoneName.ToString(), Status,
+			MinPos.X, MaxPos.X, MinPos.Y, MaxPos.Y, MinPos.Z, MaxPos.Z,
+			MinRot.X, MaxRot.X, MinRot.Y, MaxRot.Y, MinRot.Z, MaxRot.Z,
+			MaxAngularDistDeg));
+	}
+
+	// Also report ALL bones with significant motion (not just focus)
+	OutLines.Add(TEXT("\n  --- ALL BONES WITH SIGNIFICANT MOTION (rotation range > 1 deg) ---"));
+	int32 MovingCount = 0;
+	int32 StaticCount = 0;
+	for (const FName& TN : TrackNames)
+	{
+		FVector MinRot(FLT_MAX, FLT_MAX, FLT_MAX);
+		FVector MaxRot(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+
+		for (int32 f = 0; f < NumFrames; f++)
+		{
+			FTransform T = DM->GetBoneTrackTransform(TN, FFrameNumber(f));
+			FRotator Euler = T.GetRotation().Rotator();
+			MinRot.X = FMath::Min(MinRot.X, (double)Euler.Roll);
+			MinRot.Y = FMath::Min(MinRot.Y, (double)Euler.Pitch);
+			MinRot.Z = FMath::Min(MinRot.Z, (double)Euler.Yaw);
+			MaxRot.X = FMath::Max(MaxRot.X, (double)Euler.Roll);
+			MaxRot.Y = FMath::Max(MaxRot.Y, (double)Euler.Pitch);
+			MaxRot.Z = FMath::Max(MaxRot.Z, (double)Euler.Yaw);
+		}
+
+		FVector RotRange = MaxRot - MinRot;
+		bool bSignificant = (RotRange.X > 1.0 || RotRange.Y > 1.0 || RotRange.Z > 1.0);
+		if (bSignificant)
+		{
+			float MaxRange = FMath::Max3(RotRange.X, RotRange.Y, RotRange.Z);
+			OutLines.Add(FString::Printf(TEXT("    MOVES: %-25s  MaxRotRange=%.1f deg (R=%.1f P=%.1f Y=%.1f)"),
+				*TN.ToString(), MaxRange, RotRange.X, RotRange.Y, RotRange.Z));
+			MovingCount++;
+		}
+		else
+		{
+			StaticCount++;
+		}
+	}
+	OutLines.Add(FString::Printf(TEXT("  Summary: %d bones MOVING, %d bones STATIC (out of %d tracks)"),
+		MovingCount, StaticCount, TrackNames.Num()));
+}
+
+FString USLFAutomationLibrary::CompareWalkAnimations()
+{
+	TArray<FString> Lines;
+	Lines.Add(TEXT("=== WALK ANIMATION COMPARISON: c3100 Guard vs Sentinel ==="));
+	Lines.Add(FString::Printf(TEXT("Generated: %s"), *FDateTime::Now().ToString()));
+
+	// Load c3100 walk animation
+	const FString C3100WalkPath = TEXT("/Game/EldenRingAnimations/c3100_guard/Animations/a000_002000");
+	UAnimSequence* C3100Walk = LoadObject<UAnimSequence>(nullptr, *C3100WalkPath);
+
+	// Load Sentinel walk animation
+	const FString SentinelWalkPath = TEXT("/Game/CustomEnemies/Sentinel/Animations/Sentinel_Walk");
+	UAnimSequence* SentinelWalk = LoadObject<UAnimSequence>(nullptr, *SentinelWalkPath);
+
+	// c3100 leg focus bones
+	TArray<FName> C3100LegBones;
+	C3100LegBones.Add(FName(TEXT("Pelvis")));
+	C3100LegBones.Add(FName(TEXT("L_Thigh")));
+	C3100LegBones.Add(FName(TEXT("R_Thigh")));
+	C3100LegBones.Add(FName(TEXT("L_Calf")));
+	C3100LegBones.Add(FName(TEXT("R_Calf")));
+	C3100LegBones.Add(FName(TEXT("L_Foot")));
+	C3100LegBones.Add(FName(TEXT("R_Foot")));
+
+	// Sentinel ARP leg focus bones
+	TArray<FName> SentinelLegBones;
+	SentinelLegBones.Add(FName(TEXT("Hips")));
+	SentinelLegBones.Add(FName(TEXT("c_thigh_fk_l")));
+	SentinelLegBones.Add(FName(TEXT("c_thigh_fk_r")));
+	SentinelLegBones.Add(FName(TEXT("c_leg_fk_l")));
+	SentinelLegBones.Add(FName(TEXT("c_leg_fk_r")));
+	SentinelLegBones.Add(FName(TEXT("Foot_L")));
+	SentinelLegBones.Add(FName(TEXT("Foot_R")));
+	SentinelLegBones.Add(FName(TEXT("Thigh_L")));
+	SentinelLegBones.Add(FName(TEXT("Thigh_R")));
+	SentinelLegBones.Add(FName(TEXT("Calf_L")));
+	SentinelLegBones.Add(FName(TEXT("Calf_R")));
+
+	// Analyze both
+	AnalyzeAnimRangeOfMotion(C3100Walk, C3100LegBones, TEXT("c3100 Guard Walk (a000_002000)"), Lines);
+	AnalyzeAnimRangeOfMotion(SentinelWalk, SentinelLegBones, TEXT("Sentinel Walk (Sentinel_Walk)"), Lines);
+
+	// Summary comparison
+	Lines.Add(TEXT("\n========== COMPARISON SUMMARY =========="));
+	if (C3100Walk && SentinelWalk)
+	{
+		USkeleton* C3100Skel = C3100Walk->GetSkeleton();
+		USkeleton* SentSkel = SentinelWalk->GetSkeleton();
+		Lines.Add(FString::Printf(TEXT("  c3100 skeleton: %s (%d bones)"),
+			C3100Skel ? *C3100Skel->GetName() : TEXT("NULL"),
+			C3100Skel ? C3100Skel->GetReferenceSkeleton().GetNum() : 0));
+		Lines.Add(FString::Printf(TEXT("  Sentinel skeleton: %s (%d bones)"),
+			SentSkel ? *SentSkel->GetName() : TEXT("NULL"),
+			SentSkel ? SentSkel->GetReferenceSkeleton().GetNum() : 0));
+
+		IAnimationDataModel* DM1 = C3100Walk->GetDataModel();
+		IAnimationDataModel* DM2 = SentinelWalk->GetDataModel();
+		if (DM1 && DM2)
+		{
+			Lines.Add(FString::Printf(TEXT("  c3100 frames: %d, duration: %.3f sec"),
+				DM1->GetNumberOfFrames(), C3100Walk->GetPlayLength()));
+			Lines.Add(FString::Printf(TEXT("  Sentinel frames: %d, duration: %.3f sec"),
+				DM2->GetNumberOfFrames(), SentinelWalk->GetPlayLength()));
+		}
+	}
+	Lines.Add(TEXT("\nLook at the FOCUS BONES tables above."));
+	Lines.Add(TEXT("Bones marked MOVES/ROTATES have significant motion during the walk cycle."));
+	Lines.Add(TEXT("Bones marked STATIC are effectively frozen during the walk."));
+	Lines.Add(TEXT("If Sentinel leg bones are all STATIC, the walk animation has no leg data."));
+
+	FString Result = FString::Join(Lines, TEXT("\n"));
+
+	// Write to file
+	const FString OutputPath = TEXT("C:/scripts/SLFConversion/walk_comparison.txt");
+	if (FFileHelper::SaveStringToFile(Result, *OutputPath))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[CompareWalkAnims] Saved to: %s"), *OutputPath);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[CompareWalkAnims] Failed to save to: %s"), *OutputPath);
+	}
+
+	// Also log it
+	for (const FString& Line : Lines)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *Line);
+	}
+
+	return Result;
+}
+
+// ============================================================================
+// DUMP ALL ANIMATION FRAMES TO JSON
+// ============================================================================
+
+FString USLFAutomationLibrary::DumpAnimAllFrames(const FString& AnimPath, const FString& OutputJsonPath)
+{
+	UAnimSequence* Anim = LoadObject<UAnimSequence>(nullptr, *AnimPath);
+	if (!Anim)
+	{
+		FString Err = FString::Printf(TEXT("ERROR: Failed to load animation: %s"), *AnimPath);
+		UE_LOG(LogTemp, Error, TEXT("[DumpAnimAllFrames] %s"), *Err);
+		return Err;
+	}
+
+	USkeleton* Skel = Anim->GetSkeleton();
+	if (!Skel)
+	{
+		FString Err = TEXT("ERROR: Animation has no skeleton");
+		UE_LOG(LogTemp, Error, TEXT("[DumpAnimAllFrames] %s"), *Err);
+		return Err;
+	}
+
+	IAnimationDataModel* DM = Anim->GetDataModel();
+	if (!DM)
+	{
+		FString Err = TEXT("ERROR: Animation has no DataModel");
+		UE_LOG(LogTemp, Error, TEXT("[DumpAnimAllFrames] %s"), *Err);
+		return Err;
+	}
+
+	const FReferenceSkeleton& RefSkel = Skel->GetReferenceSkeleton();
+	int32 NumBones = RefSkel.GetNum();
+	int32 NumFrames = DM->GetNumberOfFrames();
+	double Duration = Anim->GetPlayLength();
+	FFrameRate FR = DM->GetFrameRate();
+
+	TArray<FName> TrackNames;
+	DM->GetBoneTrackNames(TrackNames);
+
+	UE_LOG(LogTemp, Warning, TEXT("[DumpAnimAllFrames] %s: %d bones, %d frames, %.3f sec, %d tracks"),
+		*AnimPath, NumBones, NumFrames, Duration, TrackNames.Num());
+
+	// Build JSON manually for maximum control
+	FString Json;
+	Json.Reserve(NumFrames * NumBones * 200); // Pre-allocate
+
+	Json += TEXT("{\n");
+	Json += FString::Printf(TEXT("  \"animation\": \"%s\",\n"), *AnimPath);
+	Json += FString::Printf(TEXT("  \"skeleton\": \"%s\",\n"), *Skel->GetPathName());
+	Json += FString::Printf(TEXT("  \"bone_count\": %d,\n"), NumBones);
+	Json += FString::Printf(TEXT("  \"track_count\": %d,\n"), TrackNames.Num());
+	Json += FString::Printf(TEXT("  \"frame_count\": %d,\n"), NumFrames);
+	Json += FString::Printf(TEXT("  \"duration\": %.6f,\n"), Duration);
+	Json += FString::Printf(TEXT("  \"frame_rate_num\": %d,\n"), FR.Numerator);
+	Json += FString::Printf(TEXT("  \"frame_rate_den\": %d,\n"), FR.Denominator);
+
+	// Bone info array (names, parent indices)
+	Json += TEXT("  \"bones\": [\n");
+	for (int32 i = 0; i < NumBones; i++)
+	{
+		FName BoneName = RefSkel.GetBoneName(i);
+		int32 ParentIdx = RefSkel.GetParentIndex(i);
+		Json += FString::Printf(TEXT("    {\"index\": %d, \"name\": \"%s\", \"parent\": %d}%s\n"),
+			i, *BoneName.ToString(), ParentIdx,
+			(i < NumBones - 1) ? TEXT(",") : TEXT(""));
+	}
+	Json += TEXT("  ],\n");
+
+	// Reference pose
+	Json += TEXT("  \"ref_pose\": [\n");
+	const TArray<FTransform>& RefPose = RefSkel.GetRefBonePose();
+	for (int32 i = 0; i < NumBones; i++)
+	{
+		const FTransform& T = RefPose[i];
+		FVector Pos = T.GetTranslation();
+		FQuat Rot = T.GetRotation();
+		FVector Scale = T.GetScale3D();
+		Json += FString::Printf(
+			TEXT("    {\"bone\": \"%s\", \"pos\": [%.8f, %.8f, %.8f], \"rot\": [%.8f, %.8f, %.8f, %.8f], \"scale\": [%.8f, %.8f, %.8f]}%s\n"),
+			*RefSkel.GetBoneName(i).ToString(),
+			Pos.X, Pos.Y, Pos.Z,
+			Rot.X, Rot.Y, Rot.Z, Rot.W,
+			Scale.X, Scale.Y, Scale.Z,
+			(i < NumBones - 1) ? TEXT(",") : TEXT(""));
+	}
+	Json += TEXT("  ],\n");
+
+	// Track names (bones that have animation data)
+	Json += TEXT("  \"track_names\": [\n");
+	for (int32 i = 0; i < TrackNames.Num(); i++)
+	{
+		Json += FString::Printf(TEXT("    \"%s\"%s\n"),
+			*TrackNames[i].ToString(),
+			(i < TrackNames.Num() - 1) ? TEXT(",") : TEXT(""));
+	}
+	Json += TEXT("  ],\n");
+
+	// Frames array - for each frame, dump all bone local transforms
+	Json += TEXT("  \"frames\": [\n");
+	for (int32 f = 0; f < NumFrames; f++)
+	{
+		Json += TEXT("    {\n");
+		Json += FString::Printf(TEXT("      \"frame\": %d,\n"), f);
+		Json += TEXT("      \"bones\": {\n");
+
+		int32 TrackIdx = 0;
+		for (const FName& TN : TrackNames)
+		{
+			FTransform T = DM->GetBoneTrackTransform(TN, FFrameNumber(f));
+			FVector Pos = T.GetTranslation();
+			FQuat Rot = T.GetRotation();
+			FVector Scale = T.GetScale3D();
+
+			Json += FString::Printf(
+				TEXT("        \"%s\": {\"pos\": [%.8f, %.8f, %.8f], \"rot\": [%.8f, %.8f, %.8f, %.8f], \"scale\": [%.8f, %.8f, %.8f]}%s\n"),
+				*TN.ToString(),
+				Pos.X, Pos.Y, Pos.Z,
+				Rot.X, Rot.Y, Rot.Z, Rot.W,
+				Scale.X, Scale.Y, Scale.Z,
+				(TrackIdx < TrackNames.Num() - 1) ? TEXT(",") : TEXT(""));
+			TrackIdx++;
+		}
+
+		Json += TEXT("      }\n");
+		Json += (f < NumFrames - 1) ? TEXT("    },\n") : TEXT("    }\n");
+	}
+	Json += TEXT("  ]\n");
+	Json += TEXT("}\n");
+
+	// Write to file
+	if (FFileHelper::SaveStringToFile(Json, *OutputJsonPath))
+	{
+		FString Summary = FString::Printf(
+			TEXT("SUCCESS: Dumped %d frames x %d tracks to %s (%.1f KB)"),
+			NumFrames, TrackNames.Num(), *OutputJsonPath, Json.Len() / 1024.0f);
+		UE_LOG(LogTemp, Warning, TEXT("[DumpAnimAllFrames] %s"), *Summary);
+		return Summary;
+	}
+	else
+	{
+		FString Err = FString::Printf(TEXT("ERROR: Failed to write to %s"), *OutputJsonPath);
+		UE_LOG(LogTemp, Error, TEXT("[DumpAnimAllFrames] %s"), *Err);
+		return Err;
+	}
+}
+
+// ============================================================================
+// SETUP SENTINEL MATERIAL: Import PBR textures, create material, assign to mesh
+// ============================================================================
+FString USLFAutomationLibrary::SetupSentinelMaterial(
+	const FString& TextureDir,
+	const FString& DestPath,
+	const FString& MeshPath)
+{
+	// --- Step 1: Find PNG files ---
+	TArray<FString> PNGFiles;
+	IFileManager::Get().FindFiles(PNGFiles, *TextureDir, TEXT("*.png"));
+
+	if (PNGFiles.Num() == 0)
+	{
+		return FString::Printf(TEXT("ERROR: No PNG files found in %s"), *TextureDir);
+	}
+
+	FString BaseColorFile, MetallicFile, NormalFile, RoughnessFile;
+	for (const FString& File : PNGFiles)
+	{
+		if (File.Contains(TEXT("_normal")))
+			NormalFile = FPaths::Combine(TextureDir, File);
+		else if (File.Contains(TEXT("_metallic")))
+			MetallicFile = FPaths::Combine(TextureDir, File);
+		else if (File.Contains(TEXT("_roughness")))
+			RoughnessFile = FPaths::Combine(TextureDir, File);
+		else if (File.Contains(TEXT("_texture")))
+			BaseColorFile = FPaths::Combine(TextureDir, File);
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[SetupSentinelMaterial] BaseColor=%s"), *BaseColorFile);
+	UE_LOG(LogTemp, Warning, TEXT("[SetupSentinelMaterial] Metallic=%s"), *MetallicFile);
+	UE_LOG(LogTemp, Warning, TEXT("[SetupSentinelMaterial] Normal=%s"), *NormalFile);
+	UE_LOG(LogTemp, Warning, TEXT("[SetupSentinelMaterial] Roughness=%s"), *RoughnessFile);
+
+	if (BaseColorFile.IsEmpty())
+	{
+		return TEXT("ERROR: Could not find base color texture (*_texture.png)");
+	}
+
+	// --- Step 2: Import textures using UTextureFactory ---
+	// Import ALL textures as sRGB (PNG source data is always sRGB). The material sampler
+	// types (SAMPLERTYPE_Normal, SAMPLERTYPE_LinearColor) handle sRGB→linear conversion
+	// in the shader. This avoids the UE5.7 DDC assertion
+	// "MipView.GammaSpace == LayerData.SourceGammaSpace" which fires when texture SRGB=false
+	// but source data gamma is sRGB (from PNG).
+	auto ImportTexture = [&](const FString& FilePath, const FString& AssetName) -> UTexture2D*
+	{
+		if (FilePath.IsEmpty()) return nullptr;
+
+		FString PackagePath = DestPath / AssetName;
+		UPackage* Package = CreatePackage(*PackagePath);
+		if (!Package) return nullptr;
+
+		// Read file bytes
+		TArray<uint8> FileData;
+		if (!FFileHelper::LoadFileToArray(FileData, *FilePath))
+		{
+			UE_LOG(LogTemp, Error, TEXT("[SetupSentinelMaterial] Failed to read: %s"), *FilePath);
+			return nullptr;
+		}
+
+		// Default factory settings: TC_Default, sRGB=true — matches PNG source gamma.
+		UTextureFactory* Factory = NewObject<UTextureFactory>();
+		Factory->SuppressImportOverwriteDialog();
+
+		const uint8* DataPtr = FileData.GetData();
+		UObject* ImportedObj = Factory->FactoryCreateBinary(
+			UTexture2D::StaticClass(),
+			Package,
+			FName(*AssetName),
+			RF_Public | RF_Standalone,
+			nullptr,
+			TEXT("png"),
+			DataPtr,
+			DataPtr + FileData.Num(),
+			GWarn);
+
+		UTexture2D* Texture = Cast<UTexture2D>(ImportedObj);
+		if (Texture)
+		{
+			// Wait for async texture compilation before saving
+			FAssetCompilingManager::Get().FinishAllCompilation();
+
+			Package->MarkPackageDirty();
+
+			FSavePackageArgs SaveArgs;
+			SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
+			UPackage::SavePackage(Package, Texture, *FPackageName::LongPackageNameToFilename(PackagePath, FPackageName::GetAssetPackageExtension()), SaveArgs);
+
+			UE_LOG(LogTemp, Warning, TEXT("[SetupSentinelMaterial] Imported texture: %s (%dx%d)"),
+				*AssetName, Texture->GetSizeX(), Texture->GetSizeY());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("[SetupSentinelMaterial] Failed to import: %s"), *FilePath);
+		}
+
+		return Texture;
+	};
+
+	UTexture2D* T_BaseColor = ImportTexture(BaseColorFile, TEXT("T_Sentinel_BaseColor"));
+	UTexture2D* T_Metallic = ImportTexture(MetallicFile, TEXT("T_Sentinel_Metallic"));
+	UTexture2D* T_Normal = ImportTexture(NormalFile, TEXT("T_Sentinel_Normal"));
+	UTexture2D* T_Roughness = ImportTexture(RoughnessFile, TEXT("T_Sentinel_Roughness"));
+
+	if (!T_BaseColor)
+	{
+		return TEXT("ERROR: Base color texture import failed");
+	}
+
+	// --- Step 3: Create Material with texture expressions ---
+	FString MatPackagePath = DestPath / TEXT("M_Sentinel");
+	UPackage* MatPackage = CreatePackage(*MatPackagePath);
+	if (!MatPackage)
+	{
+		return TEXT("ERROR: Failed to create material package");
+	}
+
+	UMaterial* Material = NewObject<UMaterial>(MatPackage, FName(TEXT("M_Sentinel")), RF_Public | RF_Standalone);
+	Material->TwoSided = false;
+	Material->SetShadingModel(MSM_DefaultLit);
+
+	// Helper to create a texture sample expression and connect it.
+	// All textures are sRGB-stored. SamplerType controls shader-side gamma handling:
+	// - SAMPLERTYPE_Color: reads as sRGB (base color)
+	// - SAMPLERTYPE_Normal: reads as linear + normal unpack
+	// - SAMPLERTYPE_LinearColor: reads as linear (metallic, roughness)
+	auto MakeTextureSample = [&](UTexture2D* Tex, EMaterialSamplerType SamplerType, int32 PosX, int32 PosY) -> UMaterialExpressionTextureSample*
+	{
+		if (!Tex) return nullptr;
+
+		UMaterialExpressionTextureSample* TexExpr = NewObject<UMaterialExpressionTextureSample>(Material);
+		TexExpr->Texture = Tex;
+		TexExpr->SamplerType = SamplerType;
+		TexExpr->MaterialExpressionEditorX = PosX;
+		TexExpr->MaterialExpressionEditorY = PosY;
+		Material->GetExpressionCollection().AddExpression(TexExpr);
+		return TexExpr;
+	};
+
+	// Base Color (sRGB → sRGB in shader)
+	if (UMaterialExpressionTextureSample* BaseColorExpr = MakeTextureSample(T_BaseColor, SAMPLERTYPE_Color, -400, 0))
+	{
+		Material->GetEditorOnlyData()->BaseColor.Connect(0, BaseColorExpr);
+	}
+
+	// Metallic (sRGB-stored, read as linear in shader)
+	if (UMaterialExpressionTextureSample* MetallicExpr = MakeTextureSample(T_Metallic, SAMPLERTYPE_LinearColor, -400, 200))
+	{
+		Material->GetEditorOnlyData()->Metallic.Connect(0, MetallicExpr);
+	}
+
+	// Normal (sRGB-stored, read as normal map in shader)
+	if (UMaterialExpressionTextureSample* NormalExpr = MakeTextureSample(T_Normal, SAMPLERTYPE_Normal, -400, 400))
+	{
+		Material->GetEditorOnlyData()->Normal.Connect(0, NormalExpr);
+	}
+
+	// Roughness (sRGB-stored, read as linear in shader)
+	if (UMaterialExpressionTextureSample* RoughnessExpr = MakeTextureSample(T_Roughness, SAMPLERTYPE_LinearColor, -400, 600))
+	{
+		Material->GetEditorOnlyData()->Roughness.Connect(0, RoughnessExpr);
+	}
+
+	// Compile and save material
+	Material->PreEditChange(nullptr);
+	Material->PostEditChange();
+	MatPackage->MarkPackageDirty();
+
+	{
+		FSavePackageArgs SaveArgs;
+		SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
+		UPackage::SavePackage(MatPackage, Material, *FPackageName::LongPackageNameToFilename(MatPackagePath, FPackageName::GetAssetPackageExtension()), SaveArgs);
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[SetupSentinelMaterial] Material created: M_Sentinel"));
+
+	// --- Step 4: Assign material to mesh ---
+	USkeletalMesh* Mesh = LoadObject<USkeletalMesh>(nullptr, *MeshPath);
+	if (!Mesh)
+	{
+		return FString::Printf(TEXT("WARNING: Textures+material created but mesh not found: %s"), *MeshPath);
+	}
+
+	// Set material on all LODs, slot 0
+	TArray<FSkeletalMaterial>& MeshMaterials = Mesh->GetMaterials();
+	if (MeshMaterials.Num() > 0)
+	{
+		for (int32 i = 0; i < MeshMaterials.Num(); i++)
+		{
+			MeshMaterials[i].MaterialInterface = Material;
+		}
+	}
+	else
+	{
+		FSkeletalMaterial NewMat;
+		NewMat.MaterialInterface = Material;
+		NewMat.MaterialSlotName = FName(TEXT("Sentinel_Material"));
+		MeshMaterials.Add(NewMat);
+	}
+
+	// Save the mesh package
+	UPackage* MeshPkg = Mesh->GetOutermost();
+	if (MeshPkg)
+	{
+		MeshPkg->MarkPackageDirty();
+		FSavePackageArgs SaveArgs;
+		SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
+		UPackage::SavePackage(MeshPkg, Mesh,
+			*FPackageName::LongPackageNameToFilename(MeshPkg->GetName(), FPackageName::GetAssetPackageExtension()),
+			SaveArgs);
+	}
+
+	int32 TexCount = (T_BaseColor ? 1 : 0) + (T_Metallic ? 1 : 0) + (T_Normal ? 1 : 0) + (T_Roughness ? 1 : 0);
+	FString Summary = FString::Printf(
+		TEXT("SUCCESS: %d textures imported, M_Sentinel created and assigned to %s (%d material slots)"),
+		TexCount, *MeshPath, MeshMaterials.Num());
+	UE_LOG(LogTemp, Warning, TEXT("[SetupSentinelMaterial] %s"), *Summary);
+	return Summary;
+}
+
+FString USLFAutomationLibrary::ImportTextureFromDisk(
+	const FString& SourcePath,
+	const FString& DestPackagePath,
+	const FString& AssetName)
+{
+	// Validate source file exists
+	if (!FPaths::FileExists(SourcePath))
+	{
+		return FString::Printf(TEXT("ERROR: Source file not found: %s"), *SourcePath);
+	}
+
+	// Read file bytes
+	TArray<uint8> FileData;
+	if (!FFileHelper::LoadFileToArray(FileData, *SourcePath))
+	{
+		return FString::Printf(TEXT("ERROR: Failed to read file: %s"), *SourcePath);
+	}
+
+	// Determine file extension
+	FString Extension = FPaths::GetExtension(SourcePath).ToLower();
+	if (Extension.IsEmpty())
+	{
+		Extension = TEXT("png");
+	}
+
+	// Create package
+	FString PackagePath = DestPackagePath / AssetName;
+	UPackage* Package = CreatePackage(*PackagePath);
+	if (!Package)
+	{
+		return FString::Printf(TEXT("ERROR: Failed to create package: %s"), *PackagePath);
+	}
+
+	// Import using UTextureFactory with sRGB defaults (safe for UE5.7 DDC)
+	UTextureFactory* Factory = NewObject<UTextureFactory>();
+	Factory->SuppressImportOverwriteDialog();
+
+	const uint8* DataPtr = FileData.GetData();
+	UObject* ImportedObj = Factory->FactoryCreateBinary(
+		UTexture2D::StaticClass(),
+		Package,
+		FName(*AssetName),
+		RF_Public | RF_Standalone,
+		nullptr,
+		*Extension,
+		DataPtr,
+		DataPtr + FileData.Num(),
+		GWarn);
+
+	UTexture2D* Texture = Cast<UTexture2D>(ImportedObj);
+	if (!Texture)
+	{
+		return FString::Printf(TEXT("ERROR: UTextureFactory failed to import: %s"), *SourcePath);
+	}
+
+	// Cap texture resolution to 4096 to avoid DDC memory blowout on large textures
+	if (Texture->GetSizeX() > 4096 || Texture->GetSizeY() > 4096)
+	{
+		Texture->MaxTextureSize = 4096;
+		UE_LOG(LogTemp, Warning, TEXT("[ImportTextureFromDisk] Capped MaxTextureSize to 4096 (source: %dx%d)"),
+			Texture->GetSizeX(), Texture->GetSizeY());
+	}
+
+	// Wait for async texture compilation before saving
+	FAssetCompilingManager::Get().FinishAllCompilation();
+
+	Package->MarkPackageDirty();
+
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
+	UPackage::SavePackage(Package, Texture,
+		*FPackageName::LongPackageNameToFilename(PackagePath, FPackageName::GetAssetPackageExtension()),
+		SaveArgs);
+
+	FString Result = FString::Printf(TEXT("OK: Imported %s as %s (%dx%d)"),
+		*FPaths::GetCleanFilename(SourcePath), *PackagePath,
+		Texture->GetSizeX(), Texture->GetSizeY());
+	UE_LOG(LogTemp, Warning, TEXT("[ImportTextureFromDisk] %s"), *Result);
+	return Result;
+}
+
+#endif // WITH_EDITOR

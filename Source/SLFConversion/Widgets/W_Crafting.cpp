@@ -589,13 +589,12 @@ void UW_Crafting::EventAsyncLoadCraftables_Implementation()
 						// Last resort - create a unique tag just for this session
 						FString UniqueTagName = FString::Printf(TEXT("SoulslikeFramework.TempItem.%s"), *ItemAsset->GetName());
 						FGameplayTag TempTag = FGameplayTag::RequestGameplayTag(FName(*UniqueTagName), false);
-						if (!TempTag.IsValid())
+						// Skip AddNativeGameplayTag - it crashes after tag manager is finalized (Ensure: !bDoneAddingNativeTags)
+						if (TempTag.IsValid())
 						{
-							// Force add to gameplay tags manager as a dynamic tag
-							TempTag = UGameplayTagsManager::Get().AddNativeGameplayTag(FName(*UniqueTagName));
+							UnlockedCraftables.Add(TempTag, ItemAsset);
 						}
-						UnlockedCraftables.Add(TempTag, ItemAsset);
-						UE_LOG(LogTemp, Log, TEXT("[W_Crafting] Added craftable with temp tag: %s"), *ItemAsset->GetName());
+						UE_LOG(LogTemp, Log, TEXT("[W_Crafting] Added craftable with temp tag: %s (valid=%d)"), *ItemAsset->GetName(), TempTag.IsValid() ? 1 : 0);
 					}
 				}
 			}

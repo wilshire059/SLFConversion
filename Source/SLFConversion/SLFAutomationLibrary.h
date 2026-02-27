@@ -731,13 +731,27 @@ public:
 
 	/**
 	 * Add an ANS_WeaponTrace notify state to a montage at specified time range.
-	 * Uses TAE (Time Act Event) timings from Elden Ring for accurate hitbox windows.
+	 *
+	 * Two modes:
+	 *   1. Two-socket mode (default): Traces between InStartSocket and InEndSocket.
+	 *   2. Directional reach mode: When InWeaponReach > 0, traces from InStartSocket
+	 *      along a computed direction for InWeaponReach cm in world space.
+	 *      Direction is computed from InDirectionBone toward InStartSocket (bone-to-bone),
+	 *      or from the socket's local axis if InDirectionBone is NAME_None.
+	 *
 	 * @param MontagePath - UE path to the montage
 	 * @param StartTime - Start time in seconds
 	 * @param EndTime - End time in seconds
 	 * @param InTraceRadius - Sphere trace radius (default 30)
 	 * @param InStartSocket - Start socket name (default weapon_start)
-	 * @param InEndSocket - End socket name (default weapon_end)
+	 * @param InEndSocket - End socket name (default weapon_end, ignored in reach mode)
+	 * @param InWeaponReach - World-space cm to extend from start socket (0 = two-socket mode)
+	 * @param InDirectionAxis - Which socket local axis = weapon direction (fallback if no DirectionBone)
+	 * @param bInNegateDirection - Negate the direction
+	 * @param InOverrideDamage - Per-attack damage override for AI (-1 = use default 50)
+	 * @param InOverridePoiseDamage - Per-attack poise damage override for AI (-1 = use default 25)
+	 * @param bInDrawDebug - Draw debug trace spheres in PIE
+	 * @param InDirectionBone - Bone to compute direction FROM (toward StartSocket). e.g., "lowerarm_r"
 	 * @return Result string
 	 */
 	static FString AddWeaponTraceToMontage(
@@ -746,7 +760,14 @@ public:
 		float EndTime,
 		float InTraceRadius = 30.0f,
 		const FName& InStartSocket = FName("weapon_start"),
-		const FName& InEndSocket = FName("weapon_end")
+		const FName& InEndSocket = FName("weapon_end"),
+		float InWeaponReach = 0.0f,
+		EAxis::Type InDirectionAxis = EAxis::X,
+		bool bInNegateDirection = false,
+		float InOverrideDamage = -1.0f,
+		float InOverridePoiseDamage = -1.0f,
+		bool bInDrawDebug = false,
+		const FName& InDirectionBone = NAME_None
 	);
 
 	/**
@@ -965,6 +986,25 @@ public:
 		const FString& WorkingDir = TEXT("/Game/Temp/IKRetarget")
 	);
 
+	/**
+	 * Compare c3100 guard walk animation vs Sentinel walk animation.
+	 * Computes per-bone range of motion (min/max translation and rotation) across ALL frames.
+	 * Focuses on leg bones for both skeletons.
+	 * Writes results to C:/scripts/SLFConversion/walk_comparison.txt
+	 * @return Result summary string
+	 */
+	static FString CompareWalkAnimations();
+
+	/**
+	 * Dump ALL frames of a given animation to JSON.
+	 * For each frame: bone local transforms (pos xyz, rot xyzw, scale xyz).
+	 * Includes ref pose, bone names, parent indices, frame count, duration.
+	 * @param AnimPath - UE content path to the AnimSequence
+	 * @param OutputJsonPath - Filesystem path for output JSON file
+	 * @return Result summary string
+	 */
+	static FString DumpAnimAllFrames(const FString& AnimPath, const FString& OutputJsonPath);
+
 #endif // WITH_EDITOR
 
 	/**
@@ -981,4 +1021,32 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "SLF Automation|Debug")
 	static FString CompareCharacters(AActor* ActorA, AActor* ActorB, const FString& OutputPath);
+
+	/**
+	 * Import PBR textures from disk, create a material, and assign to the Sentinel mesh.
+	 * Expects 4 PNGs in TextureDir: *_texture.png (base color), *_metallic.png, *_normal.png, *_roughness.png
+	 * @param TextureDir - Filesystem directory containing the PNG files
+	 * @param DestPath - UE content path for imported assets (e.g. /Game/CustomEnemies/Sentinel/Textures)
+	 * @param MeshPath - UE path to the skeletal mesh to assign the material to
+	 * @return Result string
+	 */
+	static FString SetupSentinelMaterial(
+		const FString& TextureDir,
+		const FString& DestPath,
+		const FString& MeshPath
+	);
+
+	/**
+	 * Import a texture from disk as a UTexture2D asset.
+	 * Uses UTextureFactory with sRGB defaults (safe for UE5.7 DDC).
+	 * @param SourcePath - Absolute path to PNG/JPG file on disk
+	 * @param DestPackagePath - UE package path, e.g. "/Game/UI/Textures"
+	 * @param AssetName - Name for the created asset, e.g. "T_WorldMap"
+	 * @return Result string ("OK: ..." on success, "ERROR: ..." on failure)
+	 */
+	static FString ImportTextureFromDisk(
+		const FString& SourcePath,
+		const FString& DestPackagePath,
+		const FString& AssetName
+	);
 };

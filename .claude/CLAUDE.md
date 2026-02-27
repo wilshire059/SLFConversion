@@ -70,6 +70,7 @@ Console commands registered in `SLFConversion.cpp`:
 - `SLF.Reparent`, `SLF.ClearLogic`, `SLF.Save`
 - `SLF.Test.*` (Actions, Movement, SaveLoad, NPCDialog, SpawnEnemy, Screenshot)
 - `SLF.Sim*` (SimKey, SimAttack, SimDodge, SimMove, SimCrouch)
+- `SLF.SetupSentinelTextures` (import PBR textures from disk, create M_Sentinel material, assign to mesh)
 
 ---
 
@@ -158,27 +159,43 @@ Phase 1+: Process all other Blueprints normally
 
 ---
 
-## Animation Migration Pipeline
+## Custom Enemy Pipeline (Meshy AI + Elden Ring Animations)
 
-End-to-end pipeline for importing Elden Ring character animations into UE5.
+End-to-end pipeline for creating forensically distinct custom enemies. Full details: `.claude/skills/custom-enemy-pipeline/SKILL.md`
 
-**5 Phases:**
-1. **Extract** (Blender headless) - ANIBND/CHRBND -> FBX + TAE JSON
-2. **Import** (UE5 commandlet) - FBX -> USkeleton + UAnimSequence + AnimNotifies
-3. **Setup** (C++ Automation) - AnimBP, BlendSpace, Montages, AI Abilities via `SLFAutomationLibrary`
-4. **Reskin** (Blender headless) - Re-skin custom mesh to target skeleton (auto-weights + FLVER transfer)
-5. **Test** (PIE) - Visual validation with screenshots, AnimNotify monitoring, log export
+**6 Phases (Meshy AI zip → playable enemy):**
+1. **Mesh** (Meshy AI) - Download AI mesh zip (FBX + textures)
+2. **Extract** (Blender headless) - ANIBND/CHRBND → HKX animations via Soulstruct
+3. **Rig + Forensic** (Blender headless) - Build HKX armature, rig AI mesh, 13 forensic transforms, export FBX
+4. **Import** (UE5 commandlet) - FBX → skeleton + mesh + 20 anims + 18 montages + ABP + PDAs + AI abilities (~50 assets)
+5. **C++ Class** - Runtime enemy with montage locomotion, deferred AnimBP, weapon traces
+6. **Test** (PIE) - Visual validation with screenshots, AnimNotify monitoring
 
-**Scripts:** `C:\scripts\elden_ring_tools\` (extract_animations.py, build_proper_blend.py, batch_import_anims.py, reskin_pipeline.py, validate_reskin.py)
+**PREFERRED: Soulstruct Direct** (`test_soulstruct_direct.py`) — bypasses ARP retarget when HKX/FLVER have identical topology. Builds HKX armature, rigs AI mesh with ARP PSEUDO_VOXELS, imports HKX animations directly. Requires per-mesh weapon weight tuning (body-bone distance method). See `custom-enemy-pipeline` skill Phase 3e-3f.
+
+**Quick Start (Sentinel example):**
+```bash
+# Phase 3: Blender (rig + forensic transforms + FBX export)
+"C:/Program Files/Blender Foundation/Blender 5.0/blender.exe" --background \
+  --python C:/scripts/elden_ring_tools/test_soulstruct_direct.py
+
+# Phase 4: UE5 (nuclear clean → build → import)
+rm -f C:/scripts/SLFConversion/Content/CustomEnemies/Sentinel/*.uasset
+Build.bat SLFConversionEditor Win64 Development "C:/scripts/SLFConversion/SLFConversion.uproject"
+"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" \
+  "C:/scripts/SLFConversion/SLFConversion.uproject" \
+  -run=SetupSentinel -forensic -unattended -nosplash -stdout -UTF8Output -FullStdOutLogOutput -NoSound
+```
+
+**Scripts:** `C:\scripts\elden_ring_tools\` (extract_animations.py, build_proper_blend.py, test_soulstruct_direct.py, mesh_animation_pipeline.py, diagnose_weapon_verts2.py)
 
 **Process Docs:**
-- `.claude/reference/animation-pipeline.md` - Full 5-phase pipeline, coordinate space rules, .blend builder
-- `memory/elden_ring_mesh_pipeline.md` - Mesh import details, BONE_CoB chain rule, Blender API
-- `memory/elden_ring_tools.md` - Script reference and character IDs
+- `.claude/skills/custom-enemy-pipeline/SKILL.md` - **COMPLETE end-to-end pipeline with all phases**
+- `.claude/reference/animation-pipeline.md` - Coordinate space rules, .blend builder
+- `memory/sentinel_enemy.md` - Sentinel-specific state, skeleton, weight tuning
+- `memory/elden_ring_mesh_pipeline.md` - Mesh import details, BONE_CoB chain rule
 
 **BONE_CoB Chain Rule:** NEVER chain Blender-space bone locals with CoB appended. Chain in GAME SPACE first, then convert per-bone world transforms to Blender space. See `animation-pipeline.md` for details.
-
-**Blender Review:** `build_proper_blend.py` builds .blend files with HKX armature + FLVER mesh + animations for visual review. Output: `C:\scripts\elden_ring_tools\output\c3100_proper\`
 
 **Critical: ALL UE5 setup/validation uses C++ automation (SLFAutomationLibrary), NEVER Python API.**
 
@@ -208,6 +225,22 @@ Automated PIE testing system for iterative validation:
 **C++ Implementation:** `Source/SLFConversion/Testing/SLFTestManager.h/cpp`
 **Existing tests:** `Source/SLFConversion/Testing/SLFPIETestRunner.h/cpp`
 **Skill:** `.claude/skills/play-test-loop/SKILL.md`
+
+---
+
+## Dungeon Building (Dungeon Architect)
+
+Procedural dungeon generation via `SetupOpenWorldCommandlet` + Dungeon Architect plugin:
+
+- **Plugin**: DA v3.4.1 at `Engine/Plugins/Marketplace/DungeonAcfe38245a8e7V18/`
+- **Module**: `DungeonArchitectRuntime` in Build.cs (editor deps)
+- **API**: `ADungeon` + `UGridDungeonBuilder` + `UGridDungeonConfig` + `UDungeonThemeAsset`
+- **Current theme**: `D_StarterPackTheme` (sci-fi) — customizable per dungeon
+- **3 dungeons**: L_Dungeon_01 (80 cells), L_Dungeon_02 (110), L_Dungeon_03 (140)
+- **Level streaming**: `ASLFLevelStreamManager` — proximity trigger → fade → teleport underground
+- **Key files**: `SetupOpenWorldCommandlet.h/cpp`, `SLFLevelStreamManager.h/cpp`
+
+**Skill:** `.claude/skills/dungeon-building/SKILL.md`
 
 ---
 
@@ -290,6 +323,25 @@ Migrate ALL SoulslikeFramework Blueprint logic to native C++. An item is DONE wh
 
 ---
 
+## Gemini CLI as Pair Programmer
+
+**Use Gemini CLI for complex problem-solving, plan review, and alternative approaches.**
+
+When stuck on a problem (especially after 2+ failed approaches), consult Gemini before iterating further:
+```bash
+gemini --no-sandbox
+```
+
+Use Gemini for:
+- Reviewing plans and keeping on track with goals/todo lists
+- Generating alternative approaches when current approach is failing
+- Debugging complex coordinate space / FBX / animation issues
+- Getting second opinions on architectural decisions
+
+**Workflow**: Describe the problem + all failed approaches → ask for concrete next steps → implement the suggested approach → validate.
+
+---
+
 ## Headless Execution
 
 **ALWAYS use headless mode - never ask user to open editor!**
@@ -310,3 +362,4 @@ Migrate ALL SoulslikeFramework Blueprint logic to native C++. An item is DONE wh
 | `.claude/skills/slf-migration/SKILL.md` | 20-pass validation protocol |
 | `.claude/skills/animBP-fix/SKILL.md` | AnimBP troubleshooting |
 | `.claude/skills/play-test-loop/SKILL.md` | Automated PIE testing |
+| `.claude/skills/dungeon-building/SKILL.md` | DA dungeon generation, themes, level streaming |

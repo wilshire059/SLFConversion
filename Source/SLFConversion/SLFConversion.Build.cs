@@ -32,6 +32,7 @@ public class SLFConversion : ModuleRules
 			"Core",
 			"CoreUObject",
 			"Engine",
+			"RenderCore",         // For FlushRenderingCommands
 			"InputCore",
 			"EnhancedInput",      // For UInputMappingContext
 			"GameplayTags",
@@ -50,7 +51,9 @@ public class SLFConversion : ModuleRules
 			"GeometryCollectionEngine",  // For UGeometryCollection
 			"MediaAssets",        // For UMediaPlayer
 			"PhysicsCore",        // For EPhysicalSurface
-			"EngineCameras"       // For ULegacyCameraShake
+			"EngineCameras",      // For ULegacyCameraShake
+			"Landscape",          // For ALandscapeProxy, landscape creation
+			"Foliage"             // For foliage painting
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
@@ -69,7 +72,13 @@ public class SLFConversion : ModuleRules
 				"Json",             // For JSON serialization
 				"JsonUtilities",    // For JSON helpers
 				"EditorScriptingUtilities",  // For UEditorAssetLibrary
-				"FBX"               // For FFbxImporter access (animation import)
+				"FBX",              // For FFbxImporter access (animation import)
+				"IKRig",            // For UIKRigDefinition, retarget chains
+				"IKRigEditor",      // For UIKRetargeterController (programmatic retarget setup)
+				"AssetTools",       // For UAssetImportTask pipeline
+				"LandscapeEditor",  // For landscape import/creation in editor
+				"DungeonArchitectRuntime",  // For ADungeon, UGridDungeonConfig, UGridDungeonBuilder
+				"ImageWrapper"              // For PNG export (map capture)
 			});
 		}
 

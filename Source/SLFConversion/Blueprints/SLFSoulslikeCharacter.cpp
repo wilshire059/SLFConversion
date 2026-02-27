@@ -22,6 +22,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "EngineUtils.h"
 #include "Components/ChildActorComponent.h"
 #include "Components/InputBufferComponent.h"
 #include "Components/AC_ActionManager.h"
@@ -242,6 +243,8 @@ void ASLFSoulslikeCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] ===== BeginPlay START: %s (Class: %s) ====="), *GetName(), *GetClass()->GetName());
+
+	// Collision diagnostics removed — terrain collision confirmed working
 
 	// Add "Player" tag - required for B_StatusEffectArea overlap detection
 	// Blueprint checks ActorHasTag("Player") before applying status effects

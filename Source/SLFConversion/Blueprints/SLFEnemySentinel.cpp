@@ -4,6 +4,7 @@
 
 #include "SLFEnemySentinel.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Engine/SkeletalMesh.h"
 #include "Animation/Skeleton.h"
 #include "Animation/AnimInstance.h"
@@ -12,10 +13,8 @@
 #include "Components/AICombatManagerComponent.h"
 #include "Components/SLFAIStateMachineComponent.h"
 #include "SLFPrimaryDataAssets.h"
-#include "UObject/UnrealType.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/ChildActorComponent.h"
-#include "Kismet/GameplayStatics.h"
 #include "NavigationInvokerComponent.h"
 
 ASLFEnemySentinel::ASLFEnemySentinel()
@@ -43,7 +42,7 @@ ASLFEnemySentinel::ASLFEnemySentinel()
 void ASLFEnemySentinel::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(LogTemp, Log, TEXT("[EnemySentinel] BeginPlay: %s"), *GetName());
+	UE_LOG(LogTemp, Warning, TEXT("[EnemySentinel] BeginPlay: %s BUILD=20260225A"), *GetName());
 
 	ApplySentinelConfig();
 }
@@ -62,27 +61,20 @@ void ASLFEnemySentinel::ApplySentinelConfig()
 		UE_LOG(LogTemp, Warning, TEXT("[EnemySentinel] No Sentinel mesh found, keeping default"));
 		return;
 	}
-	UE_LOG(LogTemp, Log, TEXT("[EnemySentinel] Using mesh: %s"), *SentinelMesh->GetName());
 
 	// Skeleton is set persistently on the mesh asset by SLF.SetMeshSkeleton commandlet.
-	// Do NOT call SetSkeleton() at runtime — it modifies the shared asset in memory
-	// but the mesh component doesn't rebuild its bone mapping, causing AnimBP init to fail.
 	USkeleton* MeshSkeleton = SentinelMesh->GetSkeleton();
-	UE_LOG(LogTemp, Log, TEXT("[EnemySentinel] Mesh skeleton: %s (%d bones)"),
+	UE_LOG(LogTemp, Log, TEXT("[EnemySentinel] Mesh=%s Skeleton=%s Bones=%d"),
+		*SentinelMesh->GetName(),
 		MeshSkeleton ? *MeshSkeleton->GetName() : TEXT("NULL"),
 		MeshSkeleton ? MeshSkeleton->GetReferenceSkeleton().GetNum() : 0);
 
-	// CRITICAL: Set AnimBP class BEFORE changing the mesh.
-	// SetSkeletalMeshAsset triggers a DEFERRED anim reinit on the next tick.
-	// That reinit uses whatever AnimClass is on the component at that time.
-	// If AnimClass is null, the deferred reinit creates no AnimInstance.
-	// By setting it first, the deferred reinit picks up ABP_Sentinel automatically.
+	// Set AnimBP before mesh change
 	SentinelAnimBPClass = LoadClass<UAnimInstance>(nullptr, *(SentinelDir + TEXT("ABP_Sentinel.ABP_Sentinel_C")));
 	if (SentinelAnimBPClass)
 	{
 		MeshComp->SetAnimInstanceClass(SentinelAnimBPClass);
 		MeshComp->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-		UE_LOG(LogTemp, Warning, TEXT("[EnemySentinel] AnimBP set BEFORE mesh change: %s"), *SentinelAnimBPClass->GetName());
 	}
 
 	MeshComp->SetSkeletalMeshAsset(SentinelMesh);
@@ -93,11 +85,17 @@ void ASLFEnemySentinel::ApplySentinelConfig()
 	MeshComp->SetRelativeLocation(FVector(0.0f, 0.0f, -90.0f));
 	MeshComp->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
 	// Disable mesh collision - capsule handles all character collision.
-	// At 76x scale, mesh physics bodies would conflict with the floor.
 	MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	MeshComp->SetBoundsScale(200.0f);
 	MeshComp->bEnableUpdateRateOptimizations = false;
 	MeshComp->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
+
+	// Capsule sizing for Sentinel (taller than default)
+	if (UCapsuleComponent* Capsule = GetCapsuleComponent())
+	{
+		Capsule->SetCapsuleHalfHeight(90.0f);
+		Capsule->SetCapsuleRadius(35.0f);
+	}
 
 	// AI mesh FBX was imported with embedded textures - materials created automatically.
 	// If no materials exist, apply a default.
@@ -124,7 +122,6 @@ void ASLFEnemySentinel::ApplySentinelConfig()
 			{
 				CAC->DestroyChildActor();
 				CAC->DestroyComponent();
-				UE_LOG(LogTemp, Warning, TEXT("[EnemySentinel] Removed weapon child actor: %s"), *CAC->GetName());
 			}
 		}
 	}
@@ -137,36 +134,32 @@ void ASLFEnemySentinel::ApplySentinelConfig()
 
 		if (ReactionData) CombatManagerComponent->ReactionAnimset = ReactionData;
 		if (PoiseData) CombatManagerComponent->PoiseBreakAsset = PoiseData;
-		UE_LOG(LogTemp, Warning, TEXT("[EnemySentinel] Data assets applied"));
+
+		// Apply bleed status effect to all attacks
+		UPrimaryDataAsset* BleedAsset = LoadObject<UPrimaryDataAsset>(nullptr,
+			TEXT("/Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Bleed"));
+		if (BleedAsset)
+		{
+			FSLFStatusEffectApplication BleedApp;
+			BleedApp.Rank = 1;
+			BleedApp.BuildupAmount = 40.0;
+			CombatManagerComponent->DefaultAttackStatusEffects.Add(BleedAsset, BleedApp);
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("[EnemySentinel] CombatManager configured: Reaction=%s Poise=%s"),
+			ReactionData ? TEXT("y") : TEXT("n"), PoiseData ? TEXT("y") : TEXT("n"));
 	}
 
 	ConfigureAbilities();
-
-	// AnimBP was set before mesh change (above). Log status.
-	UE_LOG(LogTemp, Warning, TEXT("[EnemySentinel] AnimBP class: %s"),
-		SentinelAnimBPClass ? *SentinelAnimBPClass->GetName() : TEXT("NOT FOUND"));
 
 	// Cache locomotion montages
 	IdleMontage = LoadObject<UAnimMontage>(nullptr, *(SentinelDir + TEXT("AM_Sentinel_Idle")));
 	WalkMontage = LoadObject<UAnimMontage>(nullptr, *(SentinelDir + TEXT("AM_Sentinel_Walk")));
 	RunMontage = LoadObject<UAnimMontage>(nullptr, *(SentinelDir + TEXT("AM_Sentinel_Run")));
-	UE_LOG(LogTemp, Warning, TEXT("[EnemySentinel] Locomotion montages: Idle=%s Walk=%s Run=%s"),
-		IdleMontage ? TEXT("yes") : TEXT("no"),
-		WalkMontage ? TEXT("yes") : TEXT("no"),
-		RunMontage ? TEXT("yes") : TEXT("no"));
 
-	// Log skeleton + animation summary
-	if (USkeletalMeshComponent* MC = GetMesh())
-	{
-		if (USkeletalMesh* SM = MC->GetSkeletalMeshAsset())
-		{
-			USkeleton* Skel = SM->GetSkeleton();
-			UE_LOG(LogTemp, Log, TEXT("[EnemySentinel] Mesh=%s Skeleton=%s Bones=%d"),
-				*SM->GetName(),
-				Skel ? *Skel->GetName() : TEXT("NULL"),
-				Skel ? Skel->GetReferenceSkeleton().GetNum() : 0);
-		}
-	}
+	UE_LOG(LogTemp, Warning, TEXT("[EnemySentinel] Locomotion montages: Idle=%s Walk=%s Run=%s AnimBP=%s"),
+		IdleMontage ? TEXT("y") : TEXT("n"), WalkMontage ? TEXT("y") : TEXT("n"), RunMontage ? TEXT("y") : TEXT("n"),
+		SentinelAnimBPClass ? TEXT("y") : TEXT("n"));
 }
 
 void ASLFEnemySentinel::Tick(float DeltaTime)
@@ -178,7 +171,7 @@ void ASLFEnemySentinel::Tick(float DeltaTime)
 	USkeletalMeshComponent* MeshComp = GetMesh();
 	if (!MeshComp) return;
 
-	// Re-apply AnimBP until it sticks (deferred reinit from SetSkeletalMeshAsset kills it)
+	// Deferred AnimBP application — wait a few ticks for mesh to fully initialize
 	if (!bAnimBPApplied && TicksAfterBeginPlay > 5)
 	{
 		UAnimInstance* AnimInst = MeshComp->GetAnimInstance();
@@ -192,15 +185,23 @@ void ASLFEnemySentinel::Tick(float DeltaTime)
 
 		if (AnimInst)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("[EnemySentinel] AnimInstance ready: %s (tick %d)"),
-				*AnimInst->GetClass()->GetName(), TicksAfterBeginPlay);
 			bAnimBPApplied = true;
 
-			// Refresh AI state machine's cached AnimInstance (it cached NULL during BeginPlay)
+			// Start idle montage immediately to suppress base AnimGraph BlendSpacePlayer (Bug #16)
+			if (IdleMontage)
+			{
+				AnimInst->Montage_Play(IdleMontage, 1.0f);
+				AnimInst->Montage_SetNextSection(FName(TEXT("Default")), FName(TEXT("Default")), IdleMontage);
+				ActiveLocomotionMontage = IdleMontage;
+				bMontageLocomotionActive = true;
+			}
+
 			if (USLFAIStateMachineComponent* AISMComp = FindComponentByClass<USLFAIStateMachineComponent>())
 			{
 				AISMComp->RefreshCachedAnimInstance();
 			}
+
+			UE_LOG(LogTemp, Warning, TEXT("[EnemySentinel] AnimBP applied, idle montage started (tick %d)"), TicksAfterBeginPlay);
 		}
 	}
 
@@ -210,9 +211,9 @@ void ASLFEnemySentinel::Tick(float DeltaTime)
 		FixMontageDurations();
 	}
 
-	// ---- Montage-Based Locomotion (matches Guard pattern exactly) ----
-	// AI state machine handles movement/combat. We just switch locomotion montages
-	// based on actual velocity, same as the Guard.
+	// ---- Montage-Based Locomotion (Guard pattern: seamless loop) ----
+	// Montage_SetNextSection("Default","Default") makes montages loop without crossfade hitch.
+	// Identity comparison on montage pointers detects locomotion vs attack montages.
 	if (bAnimBPApplied && MeshComp)
 	{
 		UAnimInstance* AnimInst = MeshComp->GetAnimInstance();
@@ -225,7 +226,7 @@ void ASLFEnemySentinel::Tick(float DeltaTime)
 			}
 
 			UAnimMontage* CurrentMontage = AnimInst->GetCurrentActiveMontage();
-			bool bIsLocomotionMontage = (CurrentMontage == WalkMontage || CurrentMontage == RunMontage || CurrentMontage == IdleMontage);
+			bool bIsLocomotionMontage = (CurrentMontage == IdleMontage || CurrentMontage == WalkMontage || CurrentMontage == RunMontage);
 			bool bIsAttackOrOther = (CurrentMontage != nullptr && !bIsLocomotionMontage);
 
 			// Don't interrupt attack/hit-react/dodge montages
@@ -265,41 +266,9 @@ void ASLFEnemySentinel::Tick(float DeltaTime)
 			}
 			else
 			{
-				// Attack/other montage is playing - clear tracking so we re-evaluate after it ends
+				// Attack/other montage is playing — clear tracking so we re-evaluate after it ends
 				ActiveLocomotionMontage = nullptr;
 			}
-		}
-	}
-
-	// One-shot diagnostic
-	if (!bDiagDone && TicksAfterBeginPlay > 10 && MeshComp)
-	{
-		bDiagDone = true;
-		UAnimInstance* AnimInst = MeshComp->GetAnimInstance();
-		UE_LOG(LogTemp, Warning, TEXT("[EnemySentinel] DIAG: AnimBP=%s AnimInst=%s Scale=%.1f Bones=%d"),
-			bAnimBPApplied ? TEXT("true") : TEXT("false"),
-			AnimInst ? *AnimInst->GetClass()->GetName() : TEXT("NULL"),
-			MeshComp->GetRelativeScale3D().X,
-			MeshComp->GetNumBones());
-	}
-
-	// Periodic movement diagnostic (limited)
-	if (bAnimBPApplied && (TicksAfterBeginPlay % 120 == 0) && MeshComp && MoveDiagCount < 5)
-	{
-		UAnimInstance* AnimInst = MeshComp->GetAnimInstance();
-		if (AnimInst)
-		{
-			float Speed = GetCharacterMovement() ? GetCharacterMovement()->Velocity.Size2D() : 0.0f;
-			UAnimMontage* CurrentMontage = AnimInst->GetCurrentActiveMontage();
-
-			ACharacter* PlayerChar = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-			float DistToPlayer = PlayerChar ? FVector::Dist(GetActorLocation(), PlayerChar->GetActorLocation()) : -1.0f;
-
-			MoveDiagCount++;
-			UE_LOG(LogTemp, Warning, TEXT("[EnemySentinel] MOVE[%d]: Speed=%.0f DistToPlayer=%.0f Montage=%s ActorZ=%.1f"),
-				MoveDiagCount, Speed, DistToPlayer,
-				CurrentMontage ? *CurrentMontage->GetName() : TEXT("none"),
-				GetActorLocation().Z);
 		}
 	}
 }
@@ -314,9 +283,12 @@ void ASLFEnemySentinel::ConfigureAbilities()
 
 	const FString SentinelDir = TEXT("/Game/CustomEnemies/Sentinel/");
 
-	struct FAbilityConfig { const TCHAR* AssetName; float MaxDist; bool bGapCloser; };
+	struct FAbilityConfig { const TCHAR* AssetName; float MaxDist; float Weight; bool bGapCloser; };
 	const FAbilityConfig Configs[] = {
-		{ TEXT("DA_Sentinel_Attack01"),      400.0f, false },
+		{ TEXT("DA_Sentinel_Attack01"),      400.0f, 1.0f,  false },
+		{ TEXT("DA_Sentinel_Attack02"),      400.0f, 1.0f,  false },
+		{ TEXT("DA_Sentinel_Attack03_Fast"), 350.0f, 1.5f,  false },
+		{ TEXT("DA_Sentinel_HeavyAttack"),   500.0f, 0.5f,  true  },
 	};
 
 	TArray<FSLFAIAbility> NewAbilities;
@@ -331,7 +303,7 @@ void ASLFEnemySentinel::ConfigureAbilities()
 
 		FSLFAIAbility Ability;
 		Ability.AbilityAsset = AbilityAsset;
-		Ability.Weight = 1.0f;
+		Ability.Weight = Cfg.Weight;
 		Ability.MaxDistance = Cfg.MaxDist;
 		Ability.bIsGapCloser = Cfg.bGapCloser;
 		NewAbilities.Add(Ability);
@@ -339,20 +311,6 @@ void ASLFEnemySentinel::ConfigureAbilities()
 
 	CombatManagerComponent->Abilities = NewAbilities;
 	UE_LOG(LogTemp, Warning, TEXT("[EnemySentinel] Configured %d AI abilities"), NewAbilities.Num());
-}
-
-void ASLFEnemySentinel::ApplyMontageLocomotionFallback()
-{
-	USkeletalMeshComponent* MeshComp = GetMesh();
-	if (!MeshComp || !IdleMontage) return;
-
-	UAnimInstance* AnimInst = MeshComp->GetAnimInstance();
-	if (AnimInst)
-	{
-		AnimInst->Montage_Play(IdleMontage, 1.0f);
-		bMontageLocomotionActive = true;
-		UE_LOG(LogTemp, Warning, TEXT("[EnemySentinel] Montage locomotion fallback activated"));
-	}
 }
 
 void ASLFEnemySentinel::FixMontageDurations()
@@ -365,7 +323,7 @@ void ASLFEnemySentinel::FixMontageDurations()
 	const FString SentinelDir = TEXT("/Game/CustomEnemies/Sentinel/");
 	const TCHAR* MontageNames[] = {
 		TEXT("AM_Sentinel_Attack01"), TEXT("AM_Sentinel_Attack02"),
-		TEXT("AM_Sentinel_Attack03_Fast"),
+		TEXT("AM_Sentinel_Attack03_Fast"), TEXT("AM_Sentinel_HeavyAttack"),
 		TEXT("AM_Sentinel_HitReact"), TEXT("AM_Sentinel_HitReact_Light"),
 		TEXT("AM_Sentinel_GuardHit"),
 		TEXT("AM_Sentinel_Death_Front"), TEXT("AM_Sentinel_Death_Back"), TEXT("AM_Sentinel_Death_Left"),
@@ -378,10 +336,7 @@ void ASLFEnemySentinel::FixMontageDurations()
 	for (const TCHAR* Name : MontageNames)
 	{
 		UAnimMontage* Montage = LoadObject<UAnimMontage>(nullptr, *(SentinelDir + Name));
-		if (!Montage)
-		{
-			continue;
-		}
+		if (!Montage) continue;
 
 		float CurrentLen = Montage->GetPlayLength();
 		float CalcLen = Montage->CalculateSequenceLength();
@@ -393,8 +348,6 @@ void ASLFEnemySentinel::FixMontageDurations()
 			{
 				*LenPtr = CalcLen;
 				FixedCount++;
-				UE_LOG(LogTemp, Warning, TEXT("[EnemySentinel] Fixed montage %s: %.3f -> %.3f sec"),
-					Name, CurrentLen, CalcLen);
 			}
 		}
 		else if (CalcLen <= 0.01f)

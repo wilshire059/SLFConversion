@@ -15,6 +15,13 @@
 #include "Factories/FbxFactory.h"
 #include "Factories/FbxImportUI.h"
 #include "Factories/FbxSkeletalMeshImportData.h"
+#include "Engine/SceneCapture2D.h"
+#include "Components/SceneCaptureComponent2D.h"
+#include "Engine/TextureRenderTarget2D.h"
+#include "IImageWrapper.h"
+#include "IImageWrapperModule.h"
+#include "Editor.h"
+#include "RenderingThread.h"
 
 // Console command to reparent a Blueprint to a C++ class
 // Usage: SLF.Reparent /Game/Path/To/Blueprint /Script/Module.CppClassName
@@ -1343,6 +1350,292 @@ static FAutoConsoleCommand PlaceSentinelCmd(
 			FRotator(0.0f, 180.0f, 0.0f)
 		);
 		UE_LOG(LogTemp, Warning, TEXT("[SLF.PlaceSentinel] %s"), *Result);
+	})
+);
+
+// ============================================================================
+// ANIMATION ANALYSIS COMMANDS
+// ============================================================================
+
+// Console command to compare c3100 guard walk vs Sentinel walk animation
+// Computes per-bone range of motion (min/max translation and rotation) across ALL frames
+// Focuses on leg bones. Writes results to C:/scripts/SLFConversion/walk_comparison.txt
+// Usage: SLF.CompareWalkAnims
+static FAutoConsoleCommand CompareWalkAnimsCmd(
+	TEXT("SLF.CompareWalkAnims"),
+	TEXT("Compare c3100 guard walk vs Sentinel walk animation (leg bone focus).\nUsage: SLF.CompareWalkAnims"),
+	FConsoleCommandDelegate::CreateLambda([]()
+	{
+		UE_LOG(LogTemp, Warning, TEXT("=== SLF.CompareWalkAnims: Analyzing walk animations ==="));
+		FString Result = USLFAutomationLibrary::CompareWalkAnimations();
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.CompareWalkAnims] Done. Results written to C:/scripts/SLFConversion/walk_comparison.txt"));
+	})
+);
+
+// Console command to dump ALL frames of an animation to JSON
+// Usage: SLF.DumpAnimAllFrames <AnimPath> <OutputJsonPath>
+// Usage: SLF.SetupSentinelTextures [TextureDir] [DestPath] [MeshPath]
+// Defaults: TextureDir=Content/CustomEnemies/Sentinel/Textures, DestPath=/Game/CustomEnemies/Sentinel/Textures, MeshPath=/Game/CustomEnemies/Sentinel/SKM_Sentinel
+static FAutoConsoleCommand SetupSentinelTexturesCmd(
+	TEXT("SLF.SetupSentinelTextures"),
+	TEXT("Import PBR textures, create material, assign to Sentinel mesh.\nUsage: SLF.SetupSentinelTextures [TextureDir] [DestPath] [MeshPath]"),
+	FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
+	{
+		FString TextureDir = FPaths::Combine(FPaths::ProjectContentDir(), TEXT("CustomEnemies/Sentinel/Textures"));
+		FString DestPath = TEXT("/Game/CustomEnemies/Sentinel/Textures");
+		FString MeshPath = TEXT("/Game/CustomEnemies/Sentinel/SKM_Sentinel");
+
+		if (Args.Num() >= 1) TextureDir = Args[0];
+		if (Args.Num() >= 2) DestPath = Args[1];
+		if (Args.Num() >= 3) MeshPath = Args[2];
+
+		FString Result = USLFAutomationLibrary::SetupSentinelMaterial(TextureDir, DestPath, MeshPath);
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.SetupSentinelTextures] %s"), *Result);
+	})
+);
+
+static FAutoConsoleCommand DumpAnimAllFramesCmd(
+	TEXT("SLF.DumpAnimAllFrames"),
+	TEXT("Dump ALL frames of an animation to JSON.\nUsage: SLF.DumpAnimAllFrames <AnimPath> <OutputJsonPath>"),
+	FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
+	{
+		if (Args.Num() < 2)
+		{
+			UE_LOG(LogTemp, Error, TEXT("SLF.DumpAnimAllFrames requires: <AnimPath> <OutputJsonPath>"));
+			return;
+		}
+
+		const FString& AnimPath = Args[0];
+		const FString& OutputJsonPath = Args[1];
+
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.DumpAnimAllFrames] Animation: %s"), *AnimPath);
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.DumpAnimAllFrames] Output: %s"), *OutputJsonPath);
+
+		FString Result = USLFAutomationLibrary::DumpAnimAllFrames(AnimPath, OutputJsonPath);
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.DumpAnimAllFrames] %s"), *Result);
+	})
+);
+
+// Console command to generate the open world level with dungeons
+// Usage: SLF.SetupOpenWorld [-nodungeons] [-nosave]
+static FAutoConsoleCommand SetupOpenWorldCmd(
+	TEXT("SLF.SetupOpenWorld"),
+	TEXT("Generate open world level with landscape, Wasteland meshes, and procedural dungeons.\nUsage: SLF.SetupOpenWorld [-nodungeons] [-nosave]"),
+	FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.SetupOpenWorld] Use commandlet instead: -run=SetupOpenWorld"));
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.SetupOpenWorld] This command requires commandlet mode for level creation."));
+	})
+);
+
+// Helper: performs the actual map capture and PNG export
+static void ExecuteMapCapture(UWorld* World, int32 Resolution, float OrthoWidth,
+	float CenterX, float CenterY, float Height, bool bNoFog, bool bNoShadows, bool bExitAfter)
+{
+	UE_LOG(LogTemp, Warning, TEXT("[SLF.CaptureMap] Executing capture..."));
+	UE_LOG(LogTemp, Warning, TEXT("[SLF.CaptureMap]   Resolution: %d x %d"), Resolution, Resolution);
+	UE_LOG(LogTemp, Warning, TEXT("[SLF.CaptureMap]   OrthoWidth: %.0f (%.1f km)"), OrthoWidth, OrthoWidth / 100000.0f);
+	UE_LOG(LogTemp, Warning, TEXT("[SLF.CaptureMap]   Center: (%.0f, %.0f), Height: %.0f"), CenterX, CenterY, Height);
+	UE_LOG(LogTemp, Warning, TEXT("[SLF.CaptureMap]   World: %s"), *World->GetName());
+
+	// Create render target
+	UTextureRenderTarget2D* RenderTarget = NewObject<UTextureRenderTarget2D>(GetTransientPackage());
+	RenderTarget->RenderTargetFormat = RTF_RGBA8;
+	RenderTarget->InitAutoFormat(Resolution, Resolution);
+	RenderTarget->UpdateResourceImmediate(true);
+
+	// Spawn the built-in scene capture actor
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	ASceneCapture2D* CaptureActor = World->SpawnActor<ASceneCapture2D>(
+		ASceneCapture2D::StaticClass(),
+		FVector(CenterX, CenterY, Height),
+		FRotator(-90.0f, 0.0f, 0.0f),
+		SpawnParams
+	);
+
+	if (!CaptureActor)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[SLF.CaptureMap] Failed to spawn capture actor!"));
+		return;
+	}
+
+	// Configure the capture component
+	USceneCaptureComponent2D* CaptureComp = CaptureActor->GetCaptureComponent2D();
+	CaptureComp->ProjectionType = ECameraProjectionMode::Orthographic;
+	CaptureComp->OrthoWidth = OrthoWidth;
+	CaptureComp->TextureTarget = RenderTarget;
+	CaptureComp->CaptureSource = ESceneCaptureSource::SCS_FinalColorLDR;
+	CaptureComp->bCaptureEveryFrame = false;
+	CaptureComp->bCaptureOnMovement = false;
+
+	// Show flags for clean satellite view
+	if (bNoFog)
+	{
+		CaptureComp->ShowFlags.SetFog(false);
+		CaptureComp->ShowFlags.SetVolumetricFog(false);
+	}
+	if (bNoShadows)
+	{
+		CaptureComp->ShowFlags.SetDynamicShadows(false);
+	}
+	// Disable expensive effects for capture
+	CaptureComp->ShowFlags.SetMotionBlur(false);
+	CaptureComp->ShowFlags.SetBloom(false);
+	CaptureComp->ShowFlags.SetEyeAdaptation(false);
+
+	// Capture the scene
+	CaptureComp->CaptureScene();
+	FlushRenderingCommands();
+
+	// Read pixels from render target
+	FTextureRenderTargetResource* RTResource = RenderTarget->GameThread_GetRenderTargetResource();
+	if (!RTResource)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[SLF.CaptureMap] Failed to get render target resource!"));
+		CaptureActor->Destroy();
+		return;
+	}
+
+	TArray<FColor> Pixels;
+	FReadSurfaceDataFlags ReadFlags(RCM_UNorm);
+	if (!RTResource->ReadPixels(Pixels, ReadFlags))
+	{
+		UE_LOG(LogTemp, Error, TEXT("[SLF.CaptureMap] Failed to read pixels!"));
+		CaptureActor->Destroy();
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[SLF.CaptureMap] Read %d pixels"), Pixels.Num());
+
+	// Force alpha to 255 (scene capture outputs alpha=0, making PNG transparent/black)
+	for (FColor& Pixel : Pixels)
+	{
+		Pixel.A = 255;
+	}
+
+	// Compress to PNG
+	IImageWrapperModule& ImageWrapperModule = FModuleManager::LoadModuleChecked<IImageWrapperModule>(FName("ImageWrapper"));
+	TSharedPtr<IImageWrapper> PngWrapper = ImageWrapperModule.CreateImageWrapper(EImageFormat::PNG);
+	PngWrapper->SetRaw(Pixels.GetData(), Pixels.Num() * sizeof(FColor), Resolution, Resolution, ERGBFormat::BGRA, 8);
+	TArray64<uint8> PngData = PngWrapper->GetCompressed(100);
+
+	// Ensure output directory exists and save
+	FString OutputDir = FPaths::ProjectDir() / TEXT("MapCapture");
+	IFileManager::Get().MakeDirectory(*OutputDir, true);
+
+	FString OutputFile = OutputDir / FString::Printf(TEXT("WorldMap_%dx%d.png"), Resolution, Resolution);
+	if (FFileHelper::SaveArrayToFile(PngData, *OutputFile))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.CaptureMap] SUCCESS! Saved to: %s (%.1f MB)"),
+			*OutputFile, PngData.Num() / (1024.0f * 1024.0f));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[SLF.CaptureMap] Failed to save PNG!"));
+	}
+
+	CaptureActor->Destroy();
+
+	if (bExitAfter)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.CaptureMap] Requesting exit..."));
+		FPlatformMisc::RequestExit(false);
+	}
+}
+
+// Orthographic top-down world map capture
+// Usage: SLF.CaptureMap [Resolution] [OrthoWidth] [CenterX] [CenterY] [Height]
+// Flags: -nofog -noshadows -delay N -exit
+static FAutoConsoleCommand CaptureMapCmd(
+	TEXT("SLF.CaptureMap"),
+	TEXT("Capture orthographic top-down world map as PNG.\nUsage: SLF.CaptureMap [Res=4096] [Ortho=800000] [CX=0] [CY=0] [H=200000]\nFlags: -nofog -noshadows -delay N -exit"),
+	FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
+	{
+		// Parse flags and numeric args
+		TArray<FString> NumericArgs;
+		bool bNoFog = false;
+		bool bNoShadows = false;
+		bool bExitAfter = false;
+		float DelaySeconds = 0.0f;
+		for (int32 i = 0; i < Args.Num(); i++)
+		{
+			if (Args[i] == TEXT("-nofog")) { bNoFog = true; }
+			else if (Args[i] == TEXT("-noshadows")) { bNoShadows = true; }
+			else if (Args[i] == TEXT("-exit")) { bExitAfter = true; }
+			else if (Args[i] == TEXT("-delay") && i + 1 < Args.Num())
+			{
+				DelaySeconds = FCString::Atof(*Args[++i]);
+			}
+			else { NumericArgs.Add(Args[i]); }
+		}
+
+		int32 Resolution = NumericArgs.Num() > 0 ? FCString::Atoi(*NumericArgs[0]) : 4096;
+		float OrthoWidth = NumericArgs.Num() > 1 ? FCString::Atof(*NumericArgs[1]) : 800000.0f;
+		float CenterX = NumericArgs.Num() > 2 ? FCString::Atof(*NumericArgs[2]) : 0.0f;
+		float CenterY = NumericArgs.Num() > 3 ? FCString::Atof(*NumericArgs[3]) : 0.0f;
+		float Height = NumericArgs.Num() > 4 ? FCString::Atof(*NumericArgs[4]) : 200000.0f;
+
+		// Find the game world (works in PIE, editor, or -game mode)
+		UWorld* World = nullptr;
+		for (const FWorldContext& Context : GEngine->GetWorldContexts())
+		{
+			if (Context.WorldType == EWorldType::PIE && Context.World())
+			{
+				World = Context.World();
+				break;
+			}
+			if (Context.WorldType == EWorldType::Game && Context.World())
+			{
+				World = Context.World();
+				// Don't break — prefer PIE if both exist
+			}
+			if (!World && Context.WorldType == EWorldType::Editor && Context.World())
+			{
+				World = Context.World();
+			}
+		}
+
+		if (!World)
+		{
+			UE_LOG(LogTemp, Error, TEXT("[SLF.CaptureMap] No world found!"));
+			return;
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.CaptureMap] Found world: %s (delay: %.1fs)"), *World->GetName(), DelaySeconds);
+
+		if (DelaySeconds > 0.0f)
+		{
+			// Deferred capture — wait for map to stream in
+			UE_LOG(LogTemp, Warning, TEXT("[SLF.CaptureMap] Waiting %.1f seconds for map streaming..."), DelaySeconds);
+			FTimerHandle TimerHandle;
+			World->GetTimerManager().SetTimer(TimerHandle, [World, Resolution, OrthoWidth, CenterX, CenterY, Height, bNoFog, bNoShadows, bExitAfter]()
+			{
+				ExecuteMapCapture(World, Resolution, OrthoWidth, CenterX, CenterY, Height, bNoFog, bNoShadows, bExitAfter);
+			}, DelaySeconds, false);
+		}
+		else
+		{
+			ExecuteMapCapture(World, Resolution, OrthoWidth, CenterX, CenterY, Height, bNoFog, bNoShadows, bExitAfter);
+		}
+	})
+);
+
+// Import a texture from disk as a UTexture2D asset
+// Usage: SLF.ImportTexture "C:/path/to/image.png" /Game/UI/Textures T_AssetName
+static FAutoConsoleCommand ImportTextureCmd(
+	TEXT("SLF.ImportTexture"),
+	TEXT("Import a PNG/JPG texture from disk.\nUsage: SLF.ImportTexture <SourcePath> <DestPackagePath> <AssetName>"),
+	FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
+	{
+		if (Args.Num() < 3)
+		{
+			UE_LOG(LogTemp, Error, TEXT("SLF.ImportTexture requires 3 arguments: <SourcePath> <DestPackagePath> <AssetName>"));
+			return;
+		}
+
+		FString Result = USLFAutomationLibrary::ImportTextureFromDisk(Args[0], Args[1], Args[2]);
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.ImportTexture] %s"), *Result);
 	})
 );
 

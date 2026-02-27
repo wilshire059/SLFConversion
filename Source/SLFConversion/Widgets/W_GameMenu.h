@@ -126,6 +126,10 @@ public:
 	virtual void OnInputDeviceChanged_Implementation();
 
 protected:
+	// Dynamic Map button (proper W_GameMenu_Button created from Blueprint class)
+	UPROPERTY()
+	UW_GameMenu_Button* DynamicMapButton;
+
 	// Populate MenuButtons array from children
 	void PopulateMenuButtons();
 

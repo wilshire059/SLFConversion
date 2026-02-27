@@ -47,6 +47,7 @@ class UW_FirstLootNotification;
 class UW_Resources;
 class UW_StatusEffectBar;
 class UW_StatusEffectNotification;
+class UW_WorldMap;
 class UVerticalBox;
 class UW_Radar;
 
@@ -127,6 +128,10 @@ protected:
 	// Status effect bar widget class for dynamic creation
 	UPROPERTY()
 	TSubclassOf<UW_StatusEffectBar> StatusEffectBarWidgetClass;
+
+	// World map overlay (created dynamically)
+	UPROPERTY()
+	UW_WorldMap* CachedWorldMap;
 
 	// Item wheel widgets - cached to configure SlotsToTrack if needed
 	UW_ItemWheelSlot* CachedItemWheelTools;
@@ -226,6 +231,14 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_HUD|Menu")
 	void EventCloseGameMenu();
 	virtual void EventCloseGameMenu_Implementation();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_HUD|Menu")
+	void EventShowWorldMap();
+	virtual void EventShowWorldMap_Implementation();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_HUD|Menu")
+	void EventCloseWorldMap();
+	virtual void EventCloseWorldMap_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "W_HUD|Menu")
 	void EventOnExitStorage();
@@ -450,6 +463,12 @@ protected:
 
 	UFUNCTION()
 	void OnSettingsClosedHandler();
+
+	UFUNCTION()
+	void OnWorldMapClosedHandler();
+
+	UFUNCTION()
+	void OnFastTravelRequestedHandler(const FSLFRestPointSaveInfo& Destination);
 
 	/** Internal handler bound to W_Settings::OnQuitRequested */
 	UFUNCTION()

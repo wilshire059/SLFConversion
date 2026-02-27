@@ -8,6 +8,8 @@
 #include "Blueprints/B_RestingPoint.h"
 #include "Interfaces/SLFPlayerInterface.h"
 #include "Interfaces/SLFControllerInterface.h"
+#include "Interfaces/SLFRestingPointInterface.h"
+#include "Components/SaveLoadManagerComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
@@ -275,13 +277,32 @@ void AB_RestingPoint::DiscoverPoint(AActor* DiscoveringActor)
 	IsActivated = true;
 	UE_LOG(LogTemp, Log, TEXT("  IsActivated = true"));
 
-	// 6. Trigger save via BPI_Controller::SerializeAllDataForSaving
-	// Blueprint: NewEnumerator1 = SaveInstantly (value 1)
+	// 5b. Register for fast travel
 	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
-	if (IsValid(PC) && PC->GetClass()->ImplementsInterface(USLFControllerInterface::StaticClass()))
+	if (IsValid(PC))
 	{
-		ISLFControllerInterface::Execute_SerializeAllDataForSaving(PC, ESLFSaveBehavior::SaveInstantly);
-		UE_LOG(LogTemp, Log, TEXT("  Called SerializeAllDataForSaving with SaveInstantly"));
+		if (USaveLoadManagerComponent* SaveMgr = PC->FindComponentByClass<USaveLoadManagerComponent>())
+		{
+			FSLFRestPointSaveInfo RestInfo;
+			RestInfo.RestPointId = ID; // FGuid from AB_Interactable base
+			RestInfo.LocationName = LocationName;
+			RestInfo.WorldLocation = GetActorLocation();
+			bool bSpawnSuccess = false;
+			GetRestingPointSpawnPosition(bSpawnSuccess, RestInfo.SpawnLocation, RestInfo.SpawnRotation);
+			if (!bSpawnSuccess)
+			{
+				RestInfo.SpawnLocation = GetActorLocation();
+				RestInfo.SpawnRotation = GetActorRotation();
+			}
+			SaveMgr->RegisterDiscoveredRestPoint(RestInfo);
+		}
+
+		// 6. Trigger save via BPI_Controller::SerializeAllDataForSaving
+		if (PC->GetClass()->ImplementsInterface(USLFControllerInterface::StaticClass()))
+		{
+			ISLFControllerInterface::Execute_SerializeAllDataForSaving(PC, ESLFSaveBehavior::SaveInstantly);
+			UE_LOG(LogTemp, Log, TEXT("  Called SerializeAllDataForSaving with SaveInstantly"));
+		}
 	}
 }
 

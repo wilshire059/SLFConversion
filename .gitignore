@@ -127,4 +127,28 @@ Config/*.local.ini
 # Git LFS pointer files (if using LFS for large binaries)
 # *.uasset filter=lfs diff=lfs merge=lfs -text
 # *.umap filter=lfs diff=lfs merge=lfs -text
+
+# Project Titan content (copied from C:\scripts\ProjectTitan)
+Content/Environment/
+Content/Landscape/
+Content/Audio/
+Content/Blueprint/
+Content/BlueprintDEV/
+Content/Characters/
+Content/VFX/
+Content/Performance/
+Content/Textures/
+Content/Credits/
+Content/Splash/
+Content/__ExternalActors__/Maps/
+Content/__ExternalActors__/Environment/
+Content/__ExternalActors__/Audio/
+Content/__ExternalObjects__/Maps/
+Content/__ExternalObjects__/Environment/
+Content/Maps/TitanMain.umap
+Content/Maps/Lvl_TitanMenu.umap
+Content/Maps/DataLayers/
+Content/Maps/IgnoredMaps/
+Content/Maps/PrimaryAssetLabel_Main.uasset
+Content/Maps/StrT_RegionalNames.uasset
 nul

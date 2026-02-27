@@ -1,6 +1,6 @@
 ---
 name: custom-enemy-pipeline
-description: End-to-end pipeline for creating a forensically distinct custom enemy from an AI-generated mesh zip + Elden Ring animations. Covers mesh prep, ARP retarget, forensic transforms, UE5 commandlet setup, and runtime C++ class. Triggers on "custom enemy", "new enemy", "AI mesh", "enemy pipeline", "forensic enemy", "Meshy". (project)
+description: End-to-end pipeline for creating a forensically distinct custom enemy from an AI-generated mesh zip + Elden Ring animations. Covers mesh prep, Soulstruct direct import, ARP retarget fallback, forensic transforms, UE5 commandlet setup, and runtime C++ class. Triggers on "custom enemy", "new enemy", "AI mesh", "enemy pipeline", "forensic enemy", "Meshy". (project)
 ---
 
 # Custom Enemy Pipeline — AI Mesh + Elden Ring Animations
@@ -12,6 +12,33 @@ Create a fully functional Soulslike enemy from:
 2. **Elden Ring character animations** (extracted via Soulstruct)
 
 The enemy uses forensically distinct animations (13 transform layers), a legally clean mesh, and standard UE5 bone naming. No FromSoft assets ship in the final game.
+
+## END-TO-END QUICK REFERENCE (Sentinel Example)
+
+```bash
+# PHASE 1: Download Meshy AI zip → extract FBX + textures
+
+# PHASE 3: Blender — rig mesh + import HKX animations + forensic transforms + export FBX
+"C:/Program Files/Blender Foundation/Blender 5.0/blender.exe" --background \
+  --python C:/scripts/elden_ring_tools/test_soulstruct_direct.py
+# Output: C:/scripts/elden_ring_tools/output/soulstruct_test/fbx/ (21 FBXes: 20 anims + 1 mesh)
+
+# Copy FBXes to commandlet input directory
+cp C:/scripts/elden_ring_tools/output/soulstruct_test/fbx/*.fbx \
+   C:/scripts/elden_ring_tools/output/sentinel_pipeline/phase3/final/
+
+# PHASE 4: UE5 — nuclear clean + build + commandlet
+rm -f "C:/scripts/SLFConversion/Content/CustomEnemies/Sentinel/"*.uasset
+find "C:/scripts/SLFConversion/Saved/" -name "*Sentinel*" -delete
+Build.bat SLFConversionEditor Win64 Development "C:/scripts/SLFConversion/SLFConversion.uproject"
+"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" \
+  "C:/scripts/SLFConversion/SLFConversion.uproject" \
+  -run=SetupSentinel -forensic \
+  -unattended -nosplash -stdout -UTF8Output -FullStdOutLogOutput -NoSound
+# Output: 50 UE5 assets (20 anims, 18 montages, BS, ABP, 4 PDAs, 4 AI abilities, mesh+skeleton)
+
+# PHASE 6: Open UE5 editor → PIE test with SLF.Test.SpawnEnemy
+```
 
 ---
 
@@ -298,7 +325,35 @@ BONE_OFFSETS_DEG = {
 
 **NOTE**: All bone names use FLVER convention (pre-rename). The rename to UE5 Mannequin names happens as transform #8.
 
-### 3e. Run Pipeline (Phases 1-3)
+### 3e. PREFERRED: Soulstruct Direct Pipeline (Bypasses ARP Retarget)
+
+For characters where HKX and FLVER skeletons have identical topology (e.g., c3100), **bypass ARP retarget entirely**. Soulstruct direct import builds the HKX armature, rigs the AI mesh, imports HKX animations, and applies forensic transforms — all without ARP retarget.
+
+**Script**: `C:/scripts/elden_ring_tools/test_soulstruct_direct.py`
+
+```bash
+"C:/Program Files/Blender Foundation/Blender 5.0/blender.exe" --background \
+  --python C:/scripts/elden_ring_tools/test_soulstruct_direct.py
+```
+
+**Advantages over ARP retarget:**
+- No Attack02 mesh flip (180° rotation artifact)
+- No Walk one-leg freeze
+- Faster (~5min vs ~15min)
+- Identical skeleton topology = bone rename suffices (no retarget math)
+
+**How it works:**
+1. Build HKX armature from ANIBND via Soulstruct (`build_hkx_armature()`)
+2. Import AI mesh, height-match to armature
+3. Mark non-deform bones, skin with ARP PSEUDO_VOXELS
+4. Fix weapon weights (see Phase 3f below)
+5. Save as `rigged_warlord.blend` (rig once, reload per anim)
+6. Per animation: reload → import HKX via `import_animation_to_action()` → strip root motion → 13 forensic transforms → export FBX
+7. Export mesh-only FBX
+
+**Fallback**: Use ARP retarget (`mesh_animation_pipeline.py`) when skeletons differ.
+
+### 3e-alt. ARP Retarget Pipeline (Fallback)
 
 ```bash
 # All phases (mesh prep + ARP retarget + forensic transforms):
@@ -331,7 +386,73 @@ output/<enemy_name>/final/
   SKM_<EnemyName>_retarget.blend # Post-retarget .blend (debug)
 ```
 
-### 3f. Backup Strategy
+### 3f. Auto-Weight Tuning (Per-Mesh, Required)
+
+AI-generated meshes have asymmetric poses (weapon grip, shield hold) that cause auto-weight issues. This tuning is **mesh-specific** — thresholds depend on bone positions and mesh geometry.
+
+#### Non-Deform Bones (mark BEFORE skinning)
+
+```python
+NON_DEFORM_BONES = BONES_TO_PRUNE | {
+    'Master', 'Root',           # Hierarchy utility bones
+    'L_Elbow', 'R_Elbow',       # IK helpers that steal arm weights
+}
+```
+
+**Why**: Without this, auto-weights assign verts to bones that get pruned later → frozen body parts during animation. R_Elbow alone steals ~138K vertices from the forearm/hand chain → skinny arm.
+
+#### ARP PSEUDO_VOXELS Skinning
+
+```python
+scn = bpy.context.scene
+scn.arp_bind_engine = 'PSEUDO_VOXELS'  # Better than basic ARMATURE_AUTO
+scn.arp_bind_scale_fix = False
+scn.arp_bind_apply_sk = False
+bpy.ops.arp.bind_to_rig()
+```
+
+#### Weapon Rigid Weighting (Body-Bone Distance Method)
+
+Weapons (axes, swords, etc.) are rigid objects but auto-weights split them across 20+ bones → bending/deformation. Fix by identifying weapon verts via distance from body bones:
+
+```python
+body_bone_names = [
+    'Pelvis', 'Spine_01', 'Spine_02', 'Spine_03',
+    'L_Thigh', 'R_Thigh', 'L_Calf', 'R_Calf', 'L_Foot', 'R_Foot',
+    'L_UpperArm', 'R_UpperArm', 'L_Forearm', 'R_Forearm',
+    'L_Hand', 'R_ForeArmTwist', 'Neck_01', 'Head',
+]
+weapon_side_x = r_hand_pos.x + 0.02  # Slightly past hand toward body
+
+# Three-tier classification:
+# 1. min_body_dist > 0.25 → definitely weapon (blade)
+# 2. min_body_dist > 0.15 AND dist_hand > 0.12 → probably weapon (handle shaft)
+# 3. X < -1.2 AND min_body_dist > 0.10 → deep weapon territory
+# All weapon verts → clear all weights, assign 100% R_Sword
+```
+
+**IMPORTANT — Thresholds are mesh-specific.** The numbers above work for the Ironbound Warlord axe (R_Hand at X=-0.907). For other meshes:
+
+1. Run pipeline with default thresholds
+2. Open `rigged_<mesh>.blend`, inspect weapon/hand area visually
+3. If weapon deforms, run diagnostic: `diagnose_weapon_verts2.py`
+4. Adjust `weapon_side_x` based on actual R_Hand position
+5. Adjust distance tiers based on mesh proportions
+6. Re-run and verify
+
+#### What DOESN'T Work (Documented Failures)
+
+| Approach | Problem |
+|----------|---------|
+| **Flood-fill from blade** | Leaks through hand grip into entire body (252K verts captured) |
+| **Pommel axis projection** | Grabs gauntlet/hand armor verts, causes back artifacts |
+| **L→R arm weight mirror** | Mesh asymmetric (grip pose), KD-tree mirror causes vertex snagging |
+| **BONE_SCALE_OVERRIDES** | Designed for ARP/FLVER armature, causes skinny arms on HKX armature |
+| **Pure position thresholds** | Misses handle near hand, blade edges outside Z filter |
+
+**Pommel** (short handle stub past hand): Leave weighted to R_Hand. It's small and moves with the hand. Axis projection detection is too unreliable near the gauntlet.
+
+### 3g. Backup Strategy
 
 **ALWAYS back up before each forensic transform change.** Pattern:
 ```bash
@@ -371,7 +492,7 @@ public:
 |------|--------|--------|
 | 0 | Import mesh FBX | `UAssetImportTask` + `UFbxFactory` (CRITICAL: same pipeline as animations — see MEMORY #26) |
 | 0b | Sync skeleton ref pose | `UpdateReferencePoseFromMesh()` + translation retargeting (root=Animation, pelvis=AnimationScaled, all others=Skeleton) |
-| 1 | Import animation FBXs | `UAssetImportTask` per animation (bImportMesh=false, SetDetectImportTypeOnImport(false)) |
+| 1 | Import animation FBXs | `UAssetImportTask` per animation (bImportMesh=false, SetDetectImportTypeOnImport(false), **bSnapToClosestFrameBoundary=true** for 24fps FBXes) |
 | 2 | Add sockets to skeleton | `AddSocketToSkeleton()` |
 | 3 | Create 17 montages | `CreateMontageFromSequence()` |
 | 4 | Create 2D blend space | `CreateBlendSpace2DFromSequences()` |
@@ -384,6 +505,15 @@ public:
 **CRITICAL**: Steps 0 and 1 MUST use `UAssetImportTask` (native UE5 FBX importer), NOT custom C++ functions like `ImportSkeletalMeshFromFBX` or `ImportAnimFBXDirect`. Different import code paths handle FBX PreRotation differently, causing bind pose mismatch → vertex stretching. Using the same `UAssetImportTask` pipeline for both mesh and animation ensures matching bind poses.
 
 **CRITICAL**: Initialize `FSlateApplication::Create()` before import tasks. Do NOT use `-AllowCommandletRendering` (triggers 30+ min shader compilation). Slate creation alone is sufficient for `UAssetImportTask` to work in commandlet mode.
+
+**CRITICAL**: For 24fps FBXes (from Soulstruct direct pipeline's forensic resample), set `bSnapToClosestFrameBoundary = true` on `AnimSequenceImportData`. Without this, UE5 rejects ALL animations with `"Animation length not compatible with import frame-rate 30 fps"`. The 24fps frame boundaries don't align to 30fps grid.
+
+```cpp
+FbxUI->AnimSequenceImportData->AnimationLength = FBXALIT_ExportedTime;
+FbxUI->AnimSequenceImportData->bUseDefaultSampleRate = true;
+FbxUI->AnimSequenceImportData->bRemoveRedundantKeys = false;
+FbxUI->AnimSequenceImportData->bSnapToClosestFrameBoundary = true;  // REQUIRED for 24fps
+```
 
 ### 4b. Socket Configuration
 
@@ -445,7 +575,7 @@ find "C:/scripts/SLFConversion/Saved/" -name "*<EnemyName>*" -delete
   -unattended -nosplash -stdout -UTF8Output -FullStdOutLogOutput -NoSound
 ```
 
-Expected: ~49 assets created (20 anims + 17 montages + BS + ABP + 4 PDAs + 4 AI abilities + BP).
+Expected: ~50 assets created (20 anims + 18 montages + BS + ABP + 4 PDAs + 4 AI abilities + mesh + skeleton).
 
 ---
 
@@ -600,6 +730,10 @@ SLF.Test.Screenshot <Enemy>_Combat
 **Cause**: Skeleton mismatch between mesh and animations.
 **Fix**: Ensure animations are imported against the mesh's own skeleton (auto-created during mesh FBX import), NOT a different skeleton.
 
+### "Animation length not compatible with import frame-rate 30 fps"
+**Cause**: Soulstruct direct pipeline exports at 24fps (forensic resample). Frame boundaries don't align to 30fps grid.
+**Fix**: Set `bSnapToClosestFrameBoundary = true` on `AnimSequenceImportData` in the commandlet. See Phase 4a above.
+
 ### Locked .uasset files during nuclear clean
 **Cause**: UE5 Editor has files open.
 **Fix**: Close UE5 Editor before running nuclear clean. Check with `tasklist.exe | grep UnrealEditor`.
@@ -635,7 +769,9 @@ if hasattr(action, 'is_action_layered') and action.is_action_layered:
 | File | Purpose |
 |------|---------|
 | `C:/scripts/elden_ring_tools/extract_animations.py` | Phase 2: HKX → FBX extraction |
-| `C:/scripts/elden_ring_tools/mesh_animation_pipeline.py` | Phases 1-5: Mesh prep, ARP retarget, 13 forensic transforms, renders, validation (TEMPLATE) |
+| `C:/scripts/elden_ring_tools/test_soulstruct_direct.py` | Phase 3 PREFERRED: Soulstruct direct import (bypasses ARP retarget) |
+| `C:/scripts/elden_ring_tools/mesh_animation_pipeline.py` | Phase 3 FALLBACK: ARP retarget + 13 forensic transforms (TEMPLATE) |
+| `C:/scripts/elden_ring_tools/diagnose_weapon_verts2.py` | Phase 3f: Diagnose bone positions + weapon vertex distribution for weight tuning |
 | `Source/SLFConversion/SetupSentinelCommandlet.cpp` | Phase 4: UE5 asset creation (TEMPLATE) |
 | `Source/SLFConversion/Blueprints/SLFEnemySentinel.cpp` | Phase 5: Runtime enemy class (TEMPLATE) |
 | `Source/SLFConversion/SLFAutomationLibrary.cpp` | C++ automation functions |
@@ -701,7 +837,18 @@ C:/scripts/elden_ring_tools/output/<enemy_name>/final/
 
 ### Mitigations applied
 - 13-layer forensic transform stack changes every exported data sample
-- Different skeleton topology (ARP vs FLVER)
+- Different skeleton topology (renamed bones, pruned cosmetic bones)
 - Different mesh proportions warp retargeted motion
 - 24fps vs 30fps source
 - No FromSoft file names, bone names, or asset paths anywhere
+
+### Best Practice: Multi-Source Animation Mixing
+The biggest remaining forensic risk is **choreographic recognition** — using animations from a single recognizable enemy. All 13 forensic transforms alter data-level samples but preserve the overall movement timing and style.
+
+**Recommendation**: Mix animations from multiple Elden Ring enemies per custom enemy:
+- Attack01 from c3100 (Crucible Knight)
+- Attack02 from c2120 (Malenia)
+- HeavyAttack from c4810 (Erdtree Avatar)
+- Dodges/locomotion from c3100 (generic, low risk)
+
+This makes the resulting moveset unrecognizable as any single FromSoft enemy. All source characters use identical HKX skeleton topology, so `test_soulstruct_direct.py` works for all — just change the `CHAR_ID` and `ANIM_MAP` entries.

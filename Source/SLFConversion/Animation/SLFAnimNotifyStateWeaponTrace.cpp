@@ -26,14 +26,18 @@ void USLFAnimNotifyStateWeaponTrace::NotifyBegin(USkeletalMeshComponent* MeshCom
 	// Clear hit actors list at start of trace
 	HitActors.Empty();
 
-	// Log socket availability for debugging
+	// Log socket availability and mode for debugging
 	bool bHasStart = MeshComp->DoesSocketExist(StartSocketName);
 	bool bHasEnd = MeshComp->DoesSocketExist(EndSocketName);
-	UE_LOG(LogTemp, Log, TEXT("[ANS_WeaponTrace] Begin on %s - Duration: %.2fs, Sockets: %s=%s %s=%s, Radius: %.0f"),
+	bool bReachMode = (WeaponReach > 0.0f);
+	UE_LOG(LogTemp, Log, TEXT("[ANS_WeaponTrace] Begin on %s - Duration: %.2fs, Sockets: %s=%s %s=%s, Radius: %.0f, Mode: %s%s"),
 		*Owner->GetName(), TotalDuration,
 		*StartSocketName.ToString(), bHasStart ? TEXT("YES") : TEXT("NO"),
 		*EndSocketName.ToString(), bHasEnd ? TEXT("YES") : TEXT("NO"),
-		TraceRadius);
+		TraceRadius,
+		bReachMode ? TEXT("Reach") : TEXT("TwoSocket"),
+		bReachMode ? *FString::Printf(TEXT(" (%.0fcm, Axis=%d, Negate=%s)"),
+			WeaponReach, (int32)WeaponDirectionAxis.GetValue(), bNegateDirection ? TEXT("Y") : TEXT("N")) : TEXT(""));
 }
 
 void USLFAnimNotifyStateWeaponTrace::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
@@ -52,12 +56,49 @@ void USLFAnimNotifyStateWeaponTrace::NotifyTick(USkeletalMeshComponent* MeshComp
 	FVector StartPos = FVector::ZeroVector;
 	FVector EndPos = FVector::ZeroVector;
 
-	// Check if sockets exist, otherwise use fallback
 	bool bHasStartSocket = MeshComp->DoesSocketExist(StartSocketName);
 	bool bHasEndSocket = MeshComp->DoesSocketExist(EndSocketName);
 
-	if (bHasStartSocket && bHasEndSocket)
+	if (WeaponReach > 0.0f && bHasStartSocket)
 	{
+		// Directional reach mode: trace from socket origin along weapon direction.
+		FTransform SocketTransform = MeshComp->GetSocketTransform(StartSocketName);
+		StartPos = SocketTransform.GetLocation();
+
+		FVector Direction;
+		bool bUsedBoneDirection = false;
+
+		// Bone-to-bone direction: compute from DirectionBone THROUGH StartSocket
+		// e.g., lowerarm_r -> hand_r = "from elbow through hand toward blade tip"
+		if (!DirectionBoneName.IsNone())
+		{
+			FVector DirBonePos = MeshComp->GetBoneLocation(DirectionBoneName);
+			FVector BoneToSocket = StartPos - DirBonePos;
+			if (BoneToSocket.SizeSquared() > 1.0f)
+			{
+				Direction = BoneToSocket.GetSafeNormal();
+				bUsedBoneDirection = true;
+			}
+		}
+
+		// Fallback: socket local axis
+		if (!bUsedBoneDirection)
+		{
+			switch (WeaponDirectionAxis)
+			{
+				case EAxis::X: Direction = SocketTransform.GetUnitAxis(EAxis::X); break;
+				case EAxis::Y: Direction = SocketTransform.GetUnitAxis(EAxis::Y); break;
+				case EAxis::Z: Direction = SocketTransform.GetUnitAxis(EAxis::Z); break;
+				default:       Direction = SocketTransform.GetUnitAxis(EAxis::X); break;
+			}
+		}
+		if (bNegateDirection) Direction = -Direction;
+
+		EndPos = StartPos + Direction * WeaponReach;
+	}
+	else if (bHasStartSocket && bHasEndSocket)
+	{
+		// Two-socket mode: trace directly between two sockets
 		StartPos = MeshComp->GetSocketLocation(StartSocketName);
 		EndPos = MeshComp->GetSocketLocation(EndSocketName);
 	}
@@ -77,15 +118,13 @@ void USLFAnimNotifyStateWeaponTrace::NotifyTick(USkeletalMeshComponent* MeshComp
 
 		if (!FallbackSocket.IsNone())
 		{
-			// Use found socket as start, extend forward for end
 			StartPos = MeshComp->GetSocketLocation(FallbackSocket);
 			FVector Forward = Owner->GetActorForwardVector();
-			EndPos = StartPos + (Forward * 150.0f); // 150 units forward (weapon reach)
+			EndPos = StartPos + (Forward * 150.0f);
 		}
 		else
 		{
-			// Last resort: trace from character center forward
-			StartPos = Owner->GetActorLocation() + FVector(0, 0, 80.0f); // Chest height
+			StartPos = Owner->GetActorLocation() + FVector(0, 0, 80.0f);
 			FVector Forward = Owner->GetActorForwardVector();
 			EndPos = StartPos + (Forward * 150.0f);
 		}
@@ -111,6 +150,8 @@ void USLFAnimNotifyStateWeaponTrace::NotifyTick(USkeletalMeshComponent* MeshComp
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_WorldDynamic));
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Destructible));
 
+	EDrawDebugTrace::Type DebugDraw = bDrawDebugTrace ? EDrawDebugTrace::ForOneFrame : EDrawDebugTrace::None;
+
 	bool bHit = UKismetSystemLibrary::SphereTraceMultiForObjects(
 		Owner,
 		StartPos,
@@ -119,7 +160,7 @@ void USLFAnimNotifyStateWeaponTrace::NotifyTick(USkeletalMeshComponent* MeshComp
 		ObjectTypes,
 		false, // bTraceComplex
 		ActorsToIgnore,
-		EDrawDebugTrace::None,
+		DebugDraw,
 		HitResults,
 		true // bIgnoreSelf
 	);
@@ -144,7 +185,7 @@ void USLFAnimNotifyStateWeaponTrace::NotifyTick(USkeletalMeshComponent* MeshComp
 			UE_LOG(LogTemp, Log, TEXT("[ANS_WeaponTrace] Hit: %s at %s"),
 				*HitActor->GetName(), *Hit.ImpactPoint.ToString());
 
-			// Get weapon damage info from equipment manager
+			// Get weapon damage info from equipment manager or AI overrides
 			double Damage = 50.0;  // Default damage (10% of typical 500 HP)
 			double PoiseDamage = 25.0;  // Default poise damage
 			TMap<FGameplayTag, UPrimaryDataAsset*> StatusEffectsLegacy;  // For legacy API
@@ -157,19 +198,21 @@ void USLFAnimNotifyStateWeaponTrace::NotifyTick(USkeletalMeshComponent* MeshComp
 				// Get damage values from equipped weapon (player)
 				Damage = EquipmentManager->GetWeaponDamage();
 				PoiseDamage = EquipmentManager->GetWeaponPoiseDamage();
-				// Get weapon's status effects with BuildupAmount
 				WeaponStatusEffects = EquipmentManager->GetWeaponStatusEffects();
 			}
 			else
 			{
-				// For AI enemies without EquipmentManager, get status effects from AICombatManagerComponent
+				// AI attacker: use per-montage overrides if set, otherwise defaults
+				if (OverrideDamage >= 0.0f) Damage = OverrideDamage;
+				if (OverridePoiseDamage >= 0.0f) PoiseDamage = OverridePoiseDamage;
+
+				// Get status effects from AI's DefaultAttackStatusEffects
 				UAICombatManagerComponent* OwnerAICombatManager = Owner->FindComponentByClass<UAICombatManagerComponent>();
 				if (OwnerAICombatManager)
 				{
-					// Get status effects from AI's DefaultAttackStatusEffects
 					WeaponStatusEffects = OwnerAICombatManager->DefaultAttackStatusEffects;
-					UE_LOG(LogTemp, Log, TEXT("[ANS_WeaponTrace] AI attacker - using DefaultAttackStatusEffects (%d effects)"),
-						WeaponStatusEffects.Num());
+					UE_LOG(LogTemp, Log, TEXT("[ANS_WeaponTrace] AI attacker - Damage=%.0f Poise=%.0f StatusEffects=%d"),
+						Damage, PoiseDamage, WeaponStatusEffects.Num());
 				}
 			}
 

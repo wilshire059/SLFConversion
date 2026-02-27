@@ -24,7 +24,10 @@ class UW_CharacterSelection;
 class UW_LoadGame;
 class UW_Settings;
 class UW_Credits;
+class UW_WorldMap;
 class UPrimaryDataAsset;
+class UButton;
+class UTextBlock;
 
 UCLASS()
 class SLFCONVERSION_API UW_MainMenu : public UW_Navigable
@@ -85,6 +88,9 @@ public:
 	UW_MainMenu_Button* BtnCredits;
 
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
+	UW_MainMenu_Button* BtnMap;
+
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
 	UW_MainMenu_Button* BtnQuitGame;
 
 	// Embedded overlay widgets (children in UMG designer hierarchy)
@@ -99,6 +105,14 @@ public:
 
 	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadOnly, Category = "Widgets")
 	UW_Credits* W_Credits;
+
+	// World map overlay (created dynamically in NativeConstruct)
+	UPROPERTY()
+	UW_WorldMap* WorldMapOverlay;
+
+	// Dynamic map button fallback (created if BtnMap is null)
+	UPROPERTY()
+	UButton* DynamicMapButton;
 
 	// Track which overlay is currently active (nullptr = main menu)
 	UPROPERTY()
@@ -201,6 +215,9 @@ protected:
 	void OnCreditsClicked();
 
 	UFUNCTION()
+	void OnMapClicked();
+
+	UFUNCTION()
 	void OnQuitGameClicked();
 
 	// Overlay handlers
@@ -222,6 +239,13 @@ protected:
 
 	UFUNCTION()
 	void OnCreditsClosed();
+
+	UFUNCTION()
+	void OnWorldMapClosed();
+
+	// Dynamic map button click handler
+	UFUNCTION()
+	void OnDynamicMapButtonClicked();
 
 	// Animation finish callback
 	UFUNCTION()

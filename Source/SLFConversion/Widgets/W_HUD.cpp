@@ -40,6 +40,7 @@
 #include "Widgets/W_Radar.h"
 #include "Widgets/W_Boss_Healthbar.h"
 #include "Widgets/W_ItemWheelSlot.h"
+#include "Widgets/W_WorldMap.h"
 #include "Components/VerticalBox.h"
 #include "Components/WidgetSwitcher.h"
 #include "Components/Overlay.h"
@@ -79,6 +80,7 @@ UW_HUD::UW_HUD(const FObjectInitializer& ObjectInitializer)
 	CachedBossHealthbar = nullptr;
 	LootNotificationWidgetClass = nullptr;
 	StatusEffectBarWidgetClass = nullptr;
+	CachedWorldMap = nullptr;
 	CachedItemWheelTools = nullptr;
 	IsDialogActive = false;
 	CinematicMode = false;
@@ -106,6 +108,14 @@ void UW_HUD::NativeConstruct()
 
 void UW_HUD::NativeDestruct()
 {
+	if (CachedWorldMap)
+	{
+		CachedWorldMap->OnMapClosed.RemoveAll(this);
+		CachedWorldMap->OnFastTravelRequested.RemoveAll(this);
+		CachedWorldMap->RemoveFromParent();
+		CachedWorldMap = nullptr;
+	}
+
 	Super::NativeDestruct();
 	UE_LOG(LogTemp, Log, TEXT("UW_HUD::NativeDestruct"));
 }
@@ -858,6 +868,73 @@ void UW_HUD::EventCloseGameMenu_Implementation()
 		}
 
 		PC->SwitchInputContextInternal(ToEnable, ToDisable);
+	}
+}
+
+void UW_HUD::EventShowWorldMap_Implementation()
+{
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowWorldMap"));
+
+	// Create WorldMap widget on first use
+	if (!CachedWorldMap)
+	{
+		if (APlayerController* PC = GetOwningPlayer())
+		{
+			CachedWorldMap = CreateWidget<UW_WorldMap>(PC);
+			if (CachedWorldMap)
+			{
+				CachedWorldMap->AddToViewport(100); // High Z-order to overlay everything
+				CachedWorldMap->SetVisibility(ESlateVisibility::Collapsed);
+				CachedWorldMap->OnMapClosed.AddDynamic(this, &UW_HUD::OnWorldMapClosedHandler);
+				CachedWorldMap->OnFastTravelRequested.AddDynamic(this, &UW_HUD::OnFastTravelRequestedHandler);
+				UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventShowWorldMap - Created WorldMap widget"));
+			}
+		}
+	}
+
+	if (CachedWorldMap)
+	{
+		CachedWorldMap->RefreshMarkers();
+		CachedWorldMap->SetVisibility(ESlateVisibility::Visible);
+		CachedWorldMap->SetFocus();
+	}
+}
+
+void UW_HUD::EventCloseWorldMap_Implementation()
+{
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::EventCloseWorldMap"));
+	if (CachedWorldMap)
+	{
+		CachedWorldMap->SetVisibility(ESlateVisibility::Collapsed);
+	}
+
+	// Return to game menu
+	EventShowGameMenu();
+}
+
+void UW_HUD::OnWorldMapClosedHandler()
+{
+	EventCloseWorldMap();
+}
+
+void UW_HUD::OnFastTravelRequestedHandler(const FSLFRestPointSaveInfo& Destination)
+{
+	UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnFastTravelRequestedHandler - %s"), *Destination.LocationName.ToString());
+
+	// Close world map
+	EventCloseWorldMap();
+
+	// Close game menu
+	EventCloseGameMenu();
+
+	// Execute fast travel via SLFPlayerController
+	if (APlayerController* PC = GetOwningPlayer())
+	{
+		// Include the SLFPlayerController check
+		if (ASLFPlayerController* SLFPC = Cast<ASLFPlayerController>(PC))
+		{
+			SLFPC->ExecuteFastTravel(Destination);
+		}
 	}
 }
 
@@ -1631,6 +1708,7 @@ void UW_HUD::OnGameMenuWidgetRequestHandler(FGameplayTag WidgetTag)
 	static const FGameplayTag CraftingTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Backend.Widgets.Crafting"));
 	static const FGameplayTag StatusTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Backend.Widgets.Status"));
 	static const FGameplayTag SystemTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Backend.Widgets.System"));
+	static const FGameplayTag WorldMapTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Backend.Widgets.WorldMap"));
 
 	if (WidgetTag.MatchesTag(InventoryTag))
 	{
@@ -1656,6 +1734,11 @@ void UW_HUD::OnGameMenuWidgetRequestHandler(FGameplayTag WidgetTag)
 	{
 		UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnGameMenuWidgetRequestHandler - Showing Settings"));
 		EventShowSettings();
+	}
+	else if (WidgetTag.MatchesTag(WorldMapTag))
+	{
+		UE_LOG(LogTemp, Log, TEXT("UW_HUD::OnGameMenuWidgetRequestHandler - Showing WorldMap"));
+		EventShowWorldMap();
 	}
 	else
 	{

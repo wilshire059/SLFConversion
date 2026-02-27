@@ -695,3 +695,92 @@ bool FSLFSpawnBlueprintTest::RunTest(const FString& Parameters)
 
 	return true;
 }
+
+// ============================================================================
+// TEST: Spawn Sentinel Enemy and Verify Setup
+// ============================================================================
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSLFSpawnSentinelTest, "SLF.Spawn.Sentinel",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+
+bool FSLFSpawnSentinelTest::RunTest(const FString& Parameters)
+{
+	AddInfo(TEXT(""));
+	AddInfo(TEXT("═══════════════════════════════════════════════════════════════"));
+	AddInfo(TEXT("   TEST: Spawn Sentinel Enemy"));
+	AddInfo(TEXT("═══════════════════════════════════════════════════════════════"));
+
+	UWorld* World = nullptr;
+	if (GEngine)
+	{
+		for (const FWorldContext& Context : GEngine->GetWorldContexts())
+		{
+			if (Context.World())
+			{
+				World = Context.World();
+				break;
+			}
+		}
+	}
+
+	if (!World)
+	{
+		AddError(TEXT("No world available"));
+		return false;
+	}
+
+	// Load Sentinel Blueprint
+	FString BlueprintPath = TEXT("/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Enemy_Sentinel.B_Soulslike_Enemy_Sentinel_C");
+	UClass* SentinelClass = LoadClass<AActor>(nullptr, *BlueprintPath);
+
+	if (!SentinelClass)
+	{
+		AddWarning(TEXT("Could not load B_Soulslike_Enemy_Sentinel Blueprint"));
+		AddInfo(TEXT("Falling back to C++ ASLFEnemySentinel"));
+
+		SentinelClass = FindObject<UClass>(nullptr, TEXT("/Script/SLFConversion.SLFEnemySentinel"));
+		if (!SentinelClass)
+		{
+			AddError(TEXT("Could not find ASLFEnemySentinel class"));
+			return false;
+		}
+	}
+
+	AddInfo(FString::Printf(TEXT("Using class: %s"), *SentinelClass->GetName()));
+
+	// Spawn
+	FVector SpawnLocation(3000.0f, 2000.0f, 100.0f);
+	FRotator SpawnRotation(0.0f, 270.0f, 0.0f);
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	AActor* Sentinel = World->SpawnActor<AActor>(SentinelClass, SpawnLocation, SpawnRotation, SpawnParams);
+
+	if (!Sentinel)
+	{
+		AddWarning(TEXT("Could not spawn Sentinel actor"));
+		return true;
+	}
+
+	AddInfo(FString::Printf(TEXT("Spawned: %s"), *Sentinel->GetName()));
+	AddInfo(FString::Printf(TEXT("Class: %s"), *Sentinel->GetClass()->GetName()));
+
+	// Check mesh
+	USkeletalMeshComponent* MeshComp = Sentinel->FindComponentByClass<USkeletalMeshComponent>();
+	if (MeshComp)
+	{
+		AddInfo(FString::Printf(TEXT("  Mesh: %s"), MeshComp->GetSkeletalMeshAsset() ? *MeshComp->GetSkeletalMeshAsset()->GetName() : TEXT("NULL")));
+		AddInfo(FString::Printf(TEXT("  AnimInstance: %s"), MeshComp->GetAnimInstance() ? *MeshComp->GetAnimInstance()->GetClass()->GetName() : TEXT("NULL")));
+	}
+
+	// Check components
+	UStatManagerComponent* StatMgr = Sentinel->FindComponentByClass<UStatManagerComponent>();
+	AddInfo(FString::Printf(TEXT("  StatManagerComponent: %s"), StatMgr ? TEXT("FOUND") : TEXT("NOT FOUND")));
+
+	UAC_AI_CombatManager* AICombatMgr = Sentinel->FindComponentByClass<UAC_AI_CombatManager>();
+	AddInfo(FString::Printf(TEXT("  AC_AI_CombatManager: %s"), AICombatMgr ? TEXT("FOUND") : TEXT("NOT FOUND")));
+
+	Sentinel->Destroy();
+
+	AddInfo(TEXT("═══════════════════════════════════════════════════════════════"));
+	return true;
+}

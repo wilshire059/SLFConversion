@@ -310,7 +310,15 @@ enum class ESLFItemSubCategory : uint8
 	Katana = 13			UMETA(DisplayName = "Katana"),
 	Axe = 14			UMETA(DisplayName = "Axe"),
 	Mace = 15			UMETA(DisplayName = "Mace"),
-	Staff = 16			UMETA(DisplayName = "Staff")
+	Staff = 16			UMETA(DisplayName = "Staff"),
+	Dagger = 17			UMETA(DisplayName = "Dagger"),
+	Spear = 18			UMETA(DisplayName = "Spear"),
+	Hammer = 19			UMETA(DisplayName = "Hammer"),
+	Greatsword = 20		UMETA(DisplayName = "Greatsword"),
+	Bow = 21			UMETA(DisplayName = "Bow"),
+	Crossbow = 22		UMETA(DisplayName = "Crossbow"),
+	Catalyst = 23		UMETA(DisplayName = "Catalyst"),
+	BossWeapon = 24		UMETA(DisplayName = "Boss Weapon")
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -635,3 +643,51 @@ using E_ItemCategory = ESLFItemCategory;
 using E_InventorySlotType = ESLFInventorySlotType;
 using E_SaveBehavior = ESLFSaveBehavior;
 using E_EnclosureLevel = ESLFEnclosureLevel;
+
+//////////////////////////////////////////////////////////////////////////
+// ESLFZoneDifficulty
+// Difficulty rating for game zones
+//////////////////////////////////////////////////////////////////////////
+UENUM(BlueprintType)
+enum class ESLFZoneDifficulty : uint8
+{
+	Tutorial = 0	UMETA(DisplayName = "Tutorial"),
+	Easy = 1		UMETA(DisplayName = "Easy"),
+	Medium = 2		UMETA(DisplayName = "Medium"),
+	Hard = 3		UMETA(DisplayName = "Hard"),
+	VeryHard = 4	UMETA(DisplayName = "Very Hard"),
+	Final = 5		UMETA(DisplayName = "Final")
+};
+
+//////////////////////////////////////////////////////////////////////////
+// ESLFFaction
+// World factions that control different zones
+//////////////////////////////////////////////////////////////////////////
+UENUM(BlueprintType)
+enum class ESLFFaction : uint8
+{
+	None = 0			UMETA(DisplayName = "None"),
+	Withered = 1		UMETA(DisplayName = "The Withered"),
+	IronCovenant = 2	UMETA(DisplayName = "The Iron Covenant"),
+	Veilborn = 3		UMETA(DisplayName = "The Veilborn"),
+	AshenOrder = 4		UMETA(DisplayName = "The Ashen Order"),
+	Hollow = 5			UMETA(DisplayName = "The Hollow"),
+	Neutral = 6			UMETA(DisplayName = "Neutral")
+};
+
+//////////////////////////////////////////////////////////////////////////
+// ESLFEnemyRank
+// Enemy rank within a zone (affects loot, difficulty scaling)
+//////////////////////////////////////////////////////////////////////////
+UENUM(BlueprintType)
+enum class ESLFEnemyRank : uint8
+{
+	Regular = 0		UMETA(DisplayName = "Regular"),
+	Elite = 1		UMETA(DisplayName = "Elite"),
+	MiniBoss = 2	UMETA(DisplayName = "Mini-Boss"),
+	Boss = 3		UMETA(DisplayName = "Boss")
+};
+
+using E_ZoneDifficulty = ESLFZoneDifficulty;
+using E_Faction = ESLFFaction;
+using E_EnemyRank = ESLFEnemyRank;
