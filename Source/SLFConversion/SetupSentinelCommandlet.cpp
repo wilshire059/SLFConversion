@@ -595,7 +595,7 @@ int32 USetupSentinelCommandlet::Main(const FString& Params)
 		{
 			// Forensic: import mesh via UAssetImportTask (same pipeline as animations)
 			// This ensures mesh bind pose and animation bind pose use identical FBX import code paths
-			FString FBXPath = TEXT("C:/scripts/elden_ring_tools/output/sentinel_pipeline/phase3/final/SKM_Sentinel.fbx");
+			FString FBXPath = TEXT("C:/scripts/elden_ring_tools/test_meshes/hollow_warden_v2/fbx/SKM_HollowWardenV2.fbx");
 			if (!FPaths::FileExists(FBXPath))
 			{
 				UE_LOG(LogTemp, Error, TEXT("  No Sentinel FBX found at %s"), *FBXPath);
@@ -661,7 +661,7 @@ int32 USetupSentinelCommandlet::Main(const FString& Params)
 		}
 		else
 		{
-			FString FBXPath = TEXT("C:/scripts/elden_ring_tools/output/sentinel/final/SKM_Sentinel.fbx");
+			FString FBXPath = TEXT("C:/scripts/elden_ring_tools/test_meshes/hollow_warden_v2/fbx/SKM_HollowWardenV2.fbx");
 			if (FPaths::FileExists(FBXPath))
 			{
 				Result = USLFAutomationLibrary::ImportSkeletalMeshFromFBX(
@@ -846,8 +846,8 @@ int32 USetupSentinelCommandlet::Main(const FString& Params)
 		// the mesh import, guaranteeing matching bind poses. bImportMesh=false skips mesh re-import.
 		UE_LOG(LogTemp, Warning, TEXT("--- Step 1: UAssetImportTask (native UE5 FBX pipeline) ---"));
 
-		// Use original Phase 3 FBXes (with mesh) to guarantee matching bind pose
-		const FString ForensicDir = TEXT("C:/scripts/elden_ring_tools/output/sentinel_pipeline/phase3/final");
+		// Use Hollow Warden v2 FBXes (body+weapon pipeline output)
+		const FString ForensicDir = TEXT("C:/scripts/elden_ring_tools/test_meshes/hollow_warden_v2/fbx");
 		const FString DestPath = TEXT("/Game/CustomEnemies/Sentinel/Animations");
 
 		// Load the skeleton

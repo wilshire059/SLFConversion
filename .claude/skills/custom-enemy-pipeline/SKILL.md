@@ -68,36 +68,67 @@ C:/Program Files (x86)/Steam/steamapps/common/ELDEN RING/Game/chr/
 
 ---
 
-## PHASE 1: PREPARE AI MESH
+## PHASE 0: CONCEPT ART (GEMINI)
 
-### 1a. Download and Extract
+Generate concept art for the enemy using Gemini's image generation:
+
+1. **Describe the enemy** to Gemini (web UI, CLI `gemini --no-sandbox`, or API)
+2. **Generate concept images**: body design + weapon design (separate images for body+weapon variant)
+3. **Save**: `<enemy_dir>/concept_body.png`, `<enemy_dir>/concept_weapon.png`
+4. These images are fed to Meshy AI's image-to-3D pipeline in Phase 1
+
+**Tips for good concepts**:
+- Clear silhouette against plain background
+- Show the full character/weapon from a 3/4 angle
+- Avoid complex backgrounds or multiple characters
+- For weapons: show the weapon alone, full length, clear handle/blade distinction
+
+---
+
+## PHASE 1: PREPARE AI MESH (MESHY API)
+
+### 1a. Submit to Meshy AI (Image-to-3D)
+
+Submit concept images to Meshy AI's image-to-3D endpoint (via web UI or API):
+- **Single mesh variant**: 1 task (body with integrated weapon)
+- **Body + weapon variant**: 2 separate tasks (body mesh + weapon mesh)
+
+API: `https://api.meshy.ai/openapi/v1/image-to-3d/{task_id}`
+
+### 1b. Download Models
 
 ```bash
-# Meshy AI exports a zip with FBX + texture PNGs
-unzip "C:/Users/james/Downloads/Meshy_AI_<NAME>_texture_fbx.zip" \
-  -d "C:/scripts/elden_ring_tools/output/<enemy_name>/mesh_raw"
+# Register task IDs in download_meshy_models.py, then:
+python C:/scripts/elden_ring_tools/test_meshes/download_meshy_models.py --poll
 ```
 
-Output structure:
-```
-output/<enemy_name>/mesh_raw/
-  model.fbx           # AI-generated mesh
-  texture_diffuse.png  # Color map
-  texture_normal.png   # Normal map (optional)
-  texture_metallic.png # PBR maps (optional)
+For body+weapon variant, save task IDs:
+```bash
+echo "TASK_ID_HERE" > <enemy_dir>/body_task_id.txt
+echo "TASK_ID_HERE" > <enemy_dir>/weapon_task_id.txt
 ```
 
-### 1b. Rig with Auto-Rig Pro in Blender
+Output per task:
+```
+<enemy_dir>/
+  body.fbx / model.fbx    # AI-generated mesh
+  body_tex_base_color.png  # PBR textures
+  body_tex_metallic.png
+  body_tex_normal.png
+  body_tex_roughness.png
+  weapon.fbx               # (body+weapon variant only)
+```
 
-Open Blender (GUI required for initial ARP setup):
+### 1c. Rig with Auto-Rig Pro in Blender (ARP Retarget path only)
+
+Only needed for ARP retarget fallback. Skip if using Soulstruct Direct (preferred):
 
 1. **Import FBX**: File → Import → FBX (`model.fbx`)
-2. **Scale to human proportions**: The mesh should be ~1.7-1.8m tall in Blender units
-3. **Auto-Rig Pro → Smart**: Places bone markers on the mesh
-4. **Adjust markers**: Ensure hips, spine, neck, head, shoulders, elbows, wrists, knees, ankles are correct
-5. **Match to Rig**: Generates the ARP rig with IK/FK chains
-6. **Skin → Voxelize**: Auto-weights the mesh to the rig
-7. **Save as**: `C:/scripts/elden_ring_tools/output/<enemy_name>/final/SKM_<EnemyName>_bound.blend`
+2. **Scale to human proportions**: ~1.7-1.8m tall in Blender units
+3. **Auto-Rig Pro → Smart**: Places bone markers
+4. **Match to Rig**: Generates ARP rig
+5. **Skin → Voxelize**: Auto-weights
+6. **Save as**: `C:/scripts/elden_ring_tools/output/<enemy_name>/final/SKM_<EnemyName>_bound.blend`
 
 ### 1c. Verify Deform Bones
 
@@ -327,29 +358,52 @@ BONE_OFFSETS_DEG = {
 
 ### 3e. PREFERRED: Soulstruct Direct Pipeline (Bypasses ARP Retarget)
 
-For characters where HKX and FLVER skeletons have identical topology (e.g., c3100), **bypass ARP retarget entirely**. Soulstruct direct import builds the HKX armature, rigs the AI mesh, imports HKX animations, and applies forensic transforms — all without ARP retarget.
+For characters where HKX and FLVER skeletons have identical topology (e.g., c3100), **bypass ARP retarget entirely**.
 
-**Script**: `C:/scripts/elden_ring_tools/test_soulstruct_direct.py`
+**Two variants available:**
 
+#### Single Mesh (body with integrated weapon)
+**Script**: `C:/scripts/elden_ring_tools/test_soulstruct_direct.py` or `rig_meshy_to_c3100.py`
 ```bash
 "C:/Program Files/Blender Foundation/Blender 5.0/blender.exe" --background \
   --python C:/scripts/elden_ring_tools/test_soulstruct_direct.py
 ```
+
+#### Body + Weapon (separate meshes, bone-parented weapon) — NEW
+**Script**: `C:/scripts/elden_ring_tools/test_meshes/rig_with_weapon.py`
+```bash
+# Step 1: Initial rig (body + weapon auto-alignment + finger curl for grip)
+"C:/Program Files/Blender Foundation/Blender 5.0/blender.exe" --background \
+  --python C:/scripts/elden_ring_tools/test_meshes/rig_with_weapon.py -- \
+  --name hollow_warden_v2 --body body.fbx --weapon weapon.fbx --align-only
+
+# Step 2: User adjusts weapon position in Blender GUI if needed, saves rigged.blend
+
+# Step 3: Export all 20 animations + mesh FBX
+"C:/Program Files/Blender Foundation/Blender 5.0/blender.exe" --background \
+  --python C:/scripts/elden_ring_tools/test_meshes/rig_with_weapon.py -- \
+  --name hollow_warden_v2 --anims-only
+```
+
+**Body + Weapon pipeline details:**
+1. Builds HKX armature from ANIBND via Soulstruct
+2. Imports body mesh, height-matches, skins with ARP PSEUDO_VOXELS
+3. Imports weapon mesh separately, auto-scales to ~50% character height
+4. `detect_handle_end()` + `set_weapon_origin_to_grip()`: auto-detects handle, sets origin
+5. `attach_weapon()`: snaps weapon to palm center (computed from live finger bone geometry), bone-parents to R_Sword
+6. `curl_fingers_for_grip()`: curls right hand fingers into grip pose, applies as rest pose
+7. Saves `rigged.blend` — user can adjust weapon position interactively
+8. Per animation: reload rigged.blend → import HKX → **strip root motion** → **strip weapon bone fcurves (CRITICAL — Bug #35)** → 13 forensic transforms → export FBX + .blend
+9. Mesh-only export: joins weapon into body with 100% R_Sword vertex group (for UE5 skeletal mesh)
+
+**CRITICAL — Bug #35: Strip Weapon Bone Fcurves**
+Source animations (e.g., c3100 Crucible Knight) have independent keyframes for R_Sword/L_Sword that position the weapon bone for the source enemy's specific weapon geometry. These cause the custom weapon to **drift away from the hand** during animation. `strip_weapon_bone_fcurves()` removes all fcurves for weapon bones (10 per animation). Without its own keyframes, weapon_r inherits from hand_r and stays at a fixed offset. This also **improves forensic traceability** by removing a source-enemy fingerprint.
 
 **Advantages over ARP retarget:**
 - No Attack02 mesh flip (180° rotation artifact)
 - No Walk one-leg freeze
 - Faster (~5min vs ~15min)
 - Identical skeleton topology = bone rename suffices (no retarget math)
-
-**How it works:**
-1. Build HKX armature from ANIBND via Soulstruct (`build_hkx_armature()`)
-2. Import AI mesh, height-match to armature
-3. Mark non-deform bones, skin with ARP PSEUDO_VOXELS
-4. Fix weapon weights (see Phase 3f below)
-5. Save as `rigged_warlord.blend` (rig once, reload per anim)
-6. Per animation: reload → import HKX via `import_animation_to_action()` → strip root motion → 13 forensic transforms → export FBX
-7. Export mesh-only FBX
 
 **Fallback**: Use ARP retarget (`mesh_animation_pipeline.py`) when skeletons differ.
 
@@ -768,10 +822,13 @@ if hasattr(action, 'is_action_layered') and action.is_action_layered:
 ### Scripts
 | File | Purpose |
 |------|---------|
+| `C:/scripts/elden_ring_tools/test_meshes/download_meshy_models.py` | Phase 1: Download Meshy AI models (FBX + textures) |
 | `C:/scripts/elden_ring_tools/extract_animations.py` | Phase 2: HKX → FBX extraction |
-| `C:/scripts/elden_ring_tools/test_soulstruct_direct.py` | Phase 3 PREFERRED: Soulstruct direct import (bypasses ARP retarget) |
-| `C:/scripts/elden_ring_tools/mesh_animation_pipeline.py` | Phase 3 FALLBACK: ARP retarget + 13 forensic transforms (TEMPLATE) |
-| `C:/scripts/elden_ring_tools/diagnose_weapon_verts2.py` | Phase 3f: Diagnose bone positions + weapon vertex distribution for weight tuning |
+| `C:/scripts/elden_ring_tools/test_soulstruct_direct.py` | Phase 3: Soulstruct direct — single mesh variant |
+| `C:/scripts/elden_ring_tools/test_meshes/rig_meshy_to_c3100.py` | Phase 3: Soulstruct direct — single mesh (alt) |
+| `C:/scripts/elden_ring_tools/test_meshes/rig_with_weapon.py` | Phase 3: Body + weapon variant (bone-parented weapon) |
+| `C:/scripts/elden_ring_tools/mesh_animation_pipeline.py` | Phase 3 FALLBACK: ARP retarget + 13 forensic transforms |
+| `C:/scripts/elden_ring_tools/diagnose_weapon_verts2.py` | Phase 3f: Diagnose bone positions + weapon vertex distribution |
 | `Source/SLFConversion/SetupSentinelCommandlet.cpp` | Phase 4: UE5 asset creation (TEMPLATE) |
 | `Source/SLFConversion/Blueprints/SLFEnemySentinel.cpp` | Phase 5: Runtime enemy class (TEMPLATE) |
 | `Source/SLFConversion/SLFAutomationLibrary.cpp` | C++ automation functions |
@@ -839,6 +896,7 @@ C:/scripts/elden_ring_tools/output/<enemy_name>/final/
 - 13-layer forensic transform stack changes every exported data sample
 - Different skeleton topology (renamed bones, pruned cosmetic bones)
 - Different mesh proportions warp retargeted motion
+- **Weapon bone fcurve stripping** (body+weapon variant): removes source enemy's weapon-specific animation data — eliminates a choreographic fingerprint while improving weapon tracking
 - 24fps vs 30fps source
 - No FromSoft file names, bone names, or asset paths anywhere
 
