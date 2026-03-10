@@ -89,6 +89,10 @@
 		{
 			"Name": "DayNightCycle",
 			"Enabled": true
+		},
+		{
+			"Name": "GeometryScripting",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [

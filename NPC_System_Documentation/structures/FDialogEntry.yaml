@@ -1,0 +1,18 @@
+# Struct Export - AUTO-GENERATED
+# DO NOT EDIT - This is the source of truth from bp_only
+
+struct:
+  path: /Game/SoulslikeFramework/Structures/Dialog/FDialogEntry
+  name: FDialogEntry
+
+fields:
+  - name: Entry_3_E3D06962403A4DF403DFBF892EECBE72
+    type: FText
+    offset: 0
+    size: 16
+
+  - name: GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1
+    type: TArray
+    offset: 16
+    size: 16
+

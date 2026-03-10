@@ -1,0 +1,131 @@
+======================================================================
+EXTRACTING ENEMY WEAPON CONFIG FROM BP_ONLY
+======================================================================
+
+--- B_Item_AI_Weapon ---
+  Properties:
+    actor_guid: <Struct 'Guid' (0x0000017308A43450) {}>
+    actor_instance_guid: <Struct 'Guid' (0x0000017308A43460) {}>
+    always_relevant: False
+    auto_destroy_when_finished: False
+    can_be_damaged: True
+    content_bundle_guid: <Struct 'Guid' (0x0000017308A43470) {}>
+    custom_time_dilation: 1.0
+    enable_auto_lod_generation: True
+    find_camera_component_when_view_target: True
+    generate_overlap_events_during_level_streaming: False
+    hidden: False
+    initial_life_span: 0.0
+    is_spatially_loaded: True
+    life_span: 0.0
+    min_net_update_frequency: 2.0
+    net_cull_distance_squared: 225000000.0
+    net_dormancy: <NetDormancy.DORM_AWAKE: 1>
+    net_priority: 1.0
+    net_update_frequency: 100.0
+    net_use_owner_relevancy: False
+    only_relevant_to_owner: False
+    pivot_offset: <Struct 'Vector' (0x0000017308A433F8) {x: 0.000000, y: 0.000000, z: 0.000000}>
+    replicate_using_registered_sub_object_list: False
+    replicates: True
+    spawn_collision_handling_method: <SpawnActorCollisionHandlingMethod.ALWAYS_SPAWN: 1>
+    sprite_scale: 1.0
+    tags: []
+
+--- B_Item_AI_Weapon_Sword ---
+  Properties:
+    actor_guid: <Struct 'Guid' (0x0000017307323450) {}>
+    actor_instance_guid: <Struct 'Guid' (0x0000017307323460) {}>
+    always_relevant: False
+    auto_destroy_when_finished: False
+    can_be_damaged: True
+    content_bundle_guid: <Struct 'Guid' (0x0000017307323470) {}>
+    custom_time_dilation: 1.0
+    enable_auto_lod_generation: True
+    find_camera_component_when_view_target: True
+    generate_overlap_events_during_level_streaming: False
+    hidden: False
+    initial_life_span: 0.0
+    is_spatially_loaded: True
+    life_span: 0.0
+    min_net_update_frequency: 2.0
+    net_cull_distance_squared: 225000000.0
+    net_dormancy: <NetDormancy.DORM_AWAKE: 1>
+    net_priority: 1.0
+    net_update_frequency: 100.0
+    net_use_owner_relevancy: False
+    only_relevant_to_owner: False
+    pivot_offset: <Struct 'Vector' (0x00000173073233F8) {x: 0.000000, y: 0.000000, z: 0.000000}>
+    replicate_using_registered_sub_object_list: False
+    replicates: True
+    spawn_collision_handling_method: <SpawnActorCollisionHandlingMethod.ALWAYS_SPAWN: 1>
+    sprite_scale: 1.0
+    tags: []
+
+--- B_Item_AI_Weapon_Greatsword ---
+  Properties:
+    actor_guid: <Struct 'Guid' (0x00000172FB7EB650) {}>
+    actor_instance_guid: <Struct 'Guid' (0x00000172FB7EB660) {}>
+    always_relevant: False
+    auto_destroy_when_finished: False
+    can_be_damaged: True
+    content_bundle_guid: <Struct 'Guid' (0x00000172FB7EB670) {}>
+    custom_time_dilation: 1.0
+    enable_auto_lod_generation: True
+    find_camera_component_when_view_target: True
+    generate_overlap_events_during_level_streaming: False
+    hidden: False
+    initial_life_span: 0.0
+    is_spatially_loaded: True
+    life_span: 0.0
+    min_net_update_frequency: 2.0
+    net_cull_distance_squared: 225000000.0
+    net_dormancy: <NetDormancy.DORM_AWAKE: 1>
+    net_priority: 1.0
+    net_update_frequency: 100.0
+    net_use_owner_relevancy: False
+    only_relevant_to_owner: False
+    pivot_offset: <Struct 'Vector' (0x00000172FB7EB5F8) {x: 0.000000, y: 0.000000, z: 0.000000}>
+    replicate_using_registered_sub_object_list: False
+    replicates: True
+    spawn_collision_handling_method: <SpawnActorCollisionHandlingMethod.ALWAYS_SPAWN: 1>
+    sprite_scale: 1.0
+    tags: []
+
+--- B_Item_AI_Weapon_BossMace ---
+  Properties:
+    actor_guid: <Struct 'Guid' (0x00000172FE117050) {}>
+    actor_instance_guid: <Struct 'Guid' (0x00000172FE117060) {}>
+    always_relevant: False
+    auto_destroy_when_finished: False
+    can_be_damaged: True
+    content_bundle_guid: <Struct 'Guid' (0x00000172FE117070) {}>
+    custom_time_dilation: 1.0
+    enable_auto_lod_generation: True
+    find_camera_component_when_view_target: True
+    generate_overlap_events_during_level_streaming: False
+    hidden: False
+    initial_life_span: 0.0
+    is_spatially_loaded: True
+    life_span: 0.0
+    min_net_update_frequency: 2.0
+    net_cull_distance_squared: 225000000.0
+    net_dormancy: <NetDormancy.DORM_AWAKE: 1>
+    net_priority: 1.0
+    net_update_frequency: 100.0
+    net_use_owner_relevancy: False
+    only_relevant_to_owner: False
+    pivot_offset: <Struct 'Vector' (0x00000172FE116FF8) {x: 0.000000, y: 0.000000, z: 0.000000}>
+    replicate_using_registered_sub_object_list: False
+    replicates: True
+    spawn_collision_handling_method: <SpawnActorCollisionHandlingMethod.ALWAYS_SPAWN: 1>
+    sprite_scale: 1.0
+    tags: []
+
+======================================================================
+CHECKING ENEMY WEAPON SPAWNING
+======================================================================
+
+--- B_Soulslike_Enemy ---
+
+--- B_Soulslike_Enemy_Guard ---

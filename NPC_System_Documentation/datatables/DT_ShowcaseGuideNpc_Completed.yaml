@@ -1,0 +1,50 @@
+# DataTable Export - AUTO-GENERATED
+# DO NOT EDIT - This is the source of truth from bp_only
+
+datatable:
+  path: /Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DialogTables/DT_ShowcaseGuideNpc_Completed
+  row_struct: FDialogEntry
+  row_count: 5
+
+rows:
+  - row_name: NewRow
+    columns:
+      Entry_3_E3D06962403A4DF403DFBF892EECBE72: Impressive! No one had successfully defeated Malgareth yet.
+      GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1:
+        count: 0
+        items:
+
+  - row_name: NewRow_0
+    columns:
+      Entry_3_E3D06962403A4DF403DFBF892EECBE72: I know, I know. He is a bit dumb. But blame that on the lack of animations!
+      GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1:
+        count: 0
+        items:
+
+  - row_name: NewRow_1
+    columns:
+      Entry_3_E3D06962403A4DF403DFBF892EECBE72: @isikdev would like to thank you for playing the Soulslike Framework showcase demo!
+      GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1:
+        count: 0
+        items:
+
+  - row_name: NewRow_2
+    columns:
+      Entry_3_E3D06962403A4DF403DFBF892EECBE72: Here is some money (not a bribe, really!)
+      GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1:
+        count: 1
+        items:
+          - index: 0
+            EventTag_9_181EFFAD43BC4BE401FC47B8A128C289:
+              TagName: SoulslikeFramework.GameplayEvents.AddCurrency
+            AdditionalTag_11_5D3C0FA94D886E647927ABB4240BFB88:
+              TagName: None
+            CustomData_12_113B3E7B4FF55795A4FEEA8C9108DB1E:
+
+  - row_name: NewRow_3
+    columns:
+      Entry_3_E3D06962403A4DF403DFBF892EECBE72: If you enjoyed your time here - or not - please let @isikdev know! I'm excited - I'll soon be on Fab!
+      GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1:
+        count: 0
+        items:
+

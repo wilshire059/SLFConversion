@@ -1,0 +1,19 @@
+Found: DA_Action_PickupItemMontage
+Class: PDA_Action_C
+
+RelevantData: <Struct 'InstancedStruct' (0x0000024B52FAF868) {}>
+RelevantData type: <class 'InstancedStruct'>
+Error inspecting RelevantData: 'InstancedStruct' object has no attribute 'is_valid'
+
+ActionMontage: <Object '/Game/SoulslikeFramework/Demo/_Animations/Interaction/ItemPickup/AM_SLF_ItemPickup.AM_SLF_ItemPickup' (0x0000024B66A1D900) Class 'AnimMontage'>
+
+ActionClass: <Object '/Game/SoulslikeFramework/Data/Actions/ActionLogic/B_Action_PickupItemMontage.B_Action_PickupItemMontage_C' (0x0000024B66CBE700) Class 'BlueprintGeneratedClass'>
+
+
+=== Searching for pickup montages ===
+Pickup/Loot related montages found: 0
+No pickup montages found. Listing all montages:
+
+
+=== Checking bp_only backup ===
+(Note: Cannot load from backup project directly)

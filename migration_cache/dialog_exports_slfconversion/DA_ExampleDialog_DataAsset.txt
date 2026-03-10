@@ -1,0 +1,20 @@
+=== DATA ASSET EXPORT ===
+Path: /Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DA_ExampleDialog
+Class: PDA_Dialog_C
+
+=== PROPERTIES ===
+Object: DA_ExampleDialog (Class: PDA_Dialog_C)
+  Requirement (Array, Count: 3):
+    [0]:
+      Container = 
+      RelatedDialogTable = 
+    [1]:
+      Container = 
+      RelatedDialogTable = 
+    [2]:
+      Container = 
+      RelatedDialogTable = 
+  DefaultDialogTable = /Game/SoulslikeFramework/Data/Dialog/DT_GenericDefaultDialog.DT_GenericDefaultDialog
+  AssetBundleData (FAssetBundleData):
+    Bundles = 
+  NativeClass = PDA_Dialog_C (Path: /Game/SoulslikeFramework/Data/Dialog/PDA_Dialog.PDA_Dialog_C)

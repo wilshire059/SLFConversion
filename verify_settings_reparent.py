@@ -57,8 +57,15 @@ def check_widget(bp_path, expected_cpp_class):
                     unreal.log_warning(f"  C++ property 'switcher_index': {val} (exists = REPARENTED)")
                     return True
                 elif "Settings_Entry" in name:
-                    val = cdo.get_editor_property('setting_value')
-                    unreal.log_warning(f"  C++ property 'setting_value': exists = REPARENTED")
+                    # Check entry_type which is a C++ defined ESLFSettingEntry enum
+                    val = cdo.get_editor_property('entry_type')
+                    unreal.log_warning(f"  C++ property 'entry_type': {val} (exists = REPARENTED)")
+                    # Also check if drop_down widget binding exists at CDO level
+                    try:
+                        dd = cdo.get_editor_property('drop_down')
+                        unreal.log_warning(f"  C++ property 'drop_down': {dd}")
+                    except:
+                        unreal.log_warning(f"  C++ property 'drop_down': <null at CDO - normal>")
                     return True
                 elif "W_Settings" == name:
                     # W_Settings doesn't have unique C++ properties, check binding

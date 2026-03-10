@@ -10,6 +10,11 @@
 
 #include "Components/AC_ActionManager.h"
 #include "Blueprints/SLFActionBase.h"
+#include "Blueprints/Actions/SLFActionDoubleJump.h"
+#include "Blueprints/Actions/SLFActionMantle.h"
+#include "Blueprints/Actions/SLFActionSlide.h"
+#include "Blueprints/Actions/SLFActionGrapple.h"
+#include "Blueprints/Actions/SLFActionGuardCounter.h"
 #include "Components/StatManagerComponent.h"
 #include "Components/AC_InteractionManager.h"
 #include "Components/AC_CombatManager.h"
@@ -866,6 +871,13 @@ void UAC_ActionManager::InitializeDefaultActions()
 		{TEXT("ScrollWheel.Left"), TEXT("ScrollWheel_LeftHand")},
 		{TEXT("ScrollWheel.Right"), TEXT("ScrollWheel_RightHand")},
 		{TEXT("ScrollWheel.Bottom"), TEXT("ScrollWheel_Tools")},
+		// Advanced movement
+		{TEXT("DoubleJump"), TEXT("DoubleJump")},
+		{TEXT("Mantle"), TEXT("Mantle")},
+		{TEXT("Slide"), TEXT("Slide")},
+		{TEXT("Grapple"), TEXT("Grapple")},
+		// Advanced combat
+		{TEXT("GuardCounter"), TEXT("GuardCounter")},
 	};
 
 	for (const FActionMapping& Mapping : ActionMappings)
@@ -1006,5 +1018,29 @@ void UAC_ActionManager::BuildAvailableActionsFromActionsMap()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("UAC_ActionManager: No ActionClass found for %s"), *ActionData->GetName());
 		}
+	}
+
+	// Register C++ action classes that may not have data assets yet
+	// These are new actions that don't exist in the original Blueprint project
+	RegisterCppActionFallback(TEXT("SoulslikeFramework.Action.DoubleJump"), USLFActionDoubleJump::StaticClass());
+	RegisterCppActionFallback(TEXT("SoulslikeFramework.Action.Mantle"), USLFActionMantle::StaticClass());
+	RegisterCppActionFallback(TEXT("SoulslikeFramework.Action.Slide"), USLFActionSlide::StaticClass());
+	RegisterCppActionFallback(TEXT("SoulslikeFramework.Action.Grapple"), USLFActionGrapple::StaticClass());
+	RegisterCppActionFallback(TEXT("SoulslikeFramework.Action.GuardCounter"), USLFActionGuardCounter::StaticClass());
+}
+
+void UAC_ActionManager::RegisterCppActionFallback(const TCHAR* TagString, UClass* ActionClass)
+{
+	if (!ActionClass) return;
+
+	FGameplayTag Tag = FGameplayTag::RequestGameplayTag(FName(TagString), false);
+	if (!Tag.IsValid()) return;
+
+	// Only add if not already registered
+	if (!AvailableActions.Contains(Tag))
+	{
+		AvailableActions.Add(Tag, ActionClass);
+		UE_LOG(LogTemp, Log, TEXT("UAC_ActionManager: Registered C++ fallback %s -> %s"),
+			TagString, *ActionClass->GetName());
 	}
 }

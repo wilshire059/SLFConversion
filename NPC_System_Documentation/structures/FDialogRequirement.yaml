@@ -1,0 +1,18 @@
+# Struct Export - AUTO-GENERATED
+# DO NOT EDIT - This is the source of truth from bp_only
+
+struct:
+  path: /Game/SoulslikeFramework/Structures/Dialog/FDialogRequirement
+  name: FDialogRequirement
+
+fields:
+  - name: Container_30_6283B6C04FF6E95CBA1B5C8B24550928
+    type: TArray
+    offset: 0
+    size: 16
+
+  - name: RelatedDialogTable_24_92BFB1D84BDD2027495ED1B741E7E3AA
+    type: TSoftObjectPtr<UDataTable>
+    offset: 16
+    size: 48
+

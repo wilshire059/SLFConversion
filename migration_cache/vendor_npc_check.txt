@@ -1,0 +1,18 @@
+============================================================
+CHECK VENDOR NPC - Verifying VendorAsset
+============================================================
+Loaded: B_Soulslike_NPC_ShowcaseVendor
+Generated class: B_Soulslike_NPC_ShowcaseVendor_C
+
+=== Checking SCS Components ===
+SCS access error: 'Blueprint' object has no attribute 'simple_construction_script'
+WARNING: AIInteractionManager component NOT FOUND in SCS!
+
+=== Checking CDO ===
+CDO: Default__B_Soulslike_NPC_ShowcaseVendor_C
+CDO.AIInteractionManager: AC_AI_InteractionManager
+  CDO VendorAsset: DA_ExampleVendor
+
+============================================================
+CHECK COMPLETE
+============================================================

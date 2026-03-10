@@ -1,0 +1,50 @@
+{
+  "project": "SLFConversion",
+  "npcs": [
+    {
+      "actor_name": "B_Soulslike_NPC_ShowcaseGuide_C_1",
+      "component_class": "AIInteractionManagerComponent",
+      "npc_name": "NPC",
+      "dialog_asset": "/Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DA_ExampleDialog.DA_ExampleDialog"
+    },
+    {
+      "actor_name": "B_Soulslike_NPC_ShowcaseVendor_C_1",
+      "component_class": "AIInteractionManagerComponent",
+      "npc_name": "NPC",
+      "dialog_asset": "/Game/SoulslikeFramework/Data/Dialog/ShowcaseVendorNpc/DA_ExampleDialog_Vendor.DA_ExampleDialog_Vendor"
+    }
+  ],
+  "data_tables": [
+    {
+      "path": "/Game/SoulslikeFramework/Data/Dialog/DT_GenericDefaultDialog",
+      "exists": true,
+      "row_struct": "SLFDialogEntry",
+      "row_struct_path": "/Script/SLFConversion.SLFDialogEntry",
+      "rows": [
+        "NewRow"
+      ],
+      "sample_row_data": null
+    }
+  ],
+  "dialog_assets": [
+    {
+      "path": "/Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DA_ExampleDialog",
+      "exists": true,
+      "default_dialog_table": "<Object '/Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DialogTables/DT_ShowcaseGuideNpc_NoProgress.DT_ShowcaseGuideNpc_NoProgress' (0x000001E02D312580) Class 'DataTable'>"
+    },
+    {
+      "path": "/Game/SoulslikeFramework/Data/Dialog/ShowcaseVendorNpc/DA_ExampleDialog_Vendor",
+      "exists": true,
+      "default_dialog_table": "<Object '/Game/SoulslikeFramework/Data/Dialog/ShowcaseVendorNpc/DT_ShowcaseVendorNpc_Generic.DT_ShowcaseVendorNpc_Generic' (0x000001E02CFFF180) Class 'DataTable'>"
+    }
+  ],
+  "w_dialog_parent": {
+    "generated_class": "W_Dialog_C",
+    "generated_class_path": "/Game/SoulslikeFramework/Widgets/HUD/W_Dialog.W_Dialog_C"
+  },
+  "errors": [],
+  "cpp_w_dialog_class": {
+    "exists": true,
+    "name": "W_Dialog"
+  }
+}

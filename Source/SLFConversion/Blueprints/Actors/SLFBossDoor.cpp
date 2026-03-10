@@ -13,9 +13,14 @@
 #include "UObject/ConstructorHelpers.h"
 #include "TimerManager.h"
 #include "Interfaces/BPI_GenericCharacter.h"
+#include "Framework/SLFPlayerController.h"
+#include "Camera/PlayerCameraManager.h"
 
 ASLFBossDoor::ASLFBossDoor()
 {
+	// World Partition: always load boss doors (needed for world map + dungeon entrance)
+	bIsSpatiallyLoaded = false;
+
 	// Boss doors don't auto close
 	bAutoClose = false;
 	bIsLocked = false;
@@ -280,6 +285,45 @@ void ASLFBossDoor::BeginPlay()
 		UE_LOG(LogTemp, Error, TEXT("  FogGateMesh is NULL!"));
 	}
 
+	// ============================================================
+	// Apply dungeon tier color to fog gate wall and Niagara portals
+	// Door frame keeps its original SM_Door material unchanged.
+	// The colored fog wall + portal effects indicate dungeon tier.
+	// ============================================================
+	{
+		FLinearColor TierColor = GetTierColor();
+
+		// Color the fog gate wall (cube mesh) with tier color
+		if (FogGateMesh)
+		{
+			FogGateMesh->SetVisibility(true);
+			UMaterialInterface* BasicMat = LoadObject<UMaterialInterface>(nullptr,
+				TEXT("/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial"));
+			if (BasicMat)
+			{
+				UMaterialInstanceDynamic* FogMat = UMaterialInstanceDynamic::Create(BasicMat, this);
+				if (FogMat)
+				{
+					FogMat->SetVectorParameterValue(FName(TEXT("Color")), TierColor);
+					FogGateMesh->SetMaterial(0, FogMat);
+				}
+			}
+		}
+
+		// Apply tier color to Niagara portal effects
+		if (PortalEffectFront)
+		{
+			PortalEffectFront->SetColorParameter(FName(TEXT("Color")), TierColor);
+		}
+		if (PortalEffectBack)
+		{
+			PortalEffectBack->SetColorParameter(FName(TEXT("Color")), TierColor);
+		}
+
+		UE_LOG(LogTemp, Log, TEXT("[BossDoor] Applied tier color (R=%.2f, G=%.2f, B=%.2f) for tier %d"),
+			TierColor.R, TierColor.G, TierColor.B, (int32)DungeonTier);
+	}
+
 	// Fog gate collision:
 	// - Always starts ON to block physical passage
 	// - Player must INTERACT to pass through (triggers OnInteract)
@@ -406,12 +450,16 @@ void ASLFBossDoor::OnInteract_Implementation(AActor* InteractingActor)
 	UE_LOG(LogTemp, Log, TEXT("[BossDoor] Disabled collision for pass-through"));
 
 	// ============================================================
-	// STEP 6: Handle boss arena entry/exit logic
+	// STEP 6: Dungeon entrance OR boss arena logic
 	// ============================================================
-	if (!bIsActivated)
+	if (bIsDungeonEntrance && !DungeonLevelPath.IsEmpty())
 	{
-		// Player is entering boss arena
-		// OnPlayerEnterArena will seal the door after a delay (allowing player to fully enter)
+		// Dungeon entrance: after walk-through montage, fade to black and teleport
+		BeginDungeonEntrance(InteractingActor);
+	}
+	else if (!bIsActivated)
+	{
+		// Boss arena: seal door after player enters
 		FTimerHandle TimerHandle;
 		FTimerDelegate TimerDelegate;
 		TimerDelegate.BindLambda([this, InteractingActor]()
@@ -423,7 +471,7 @@ void ASLFBossDoor::OnInteract_Implementation(AActor* InteractingActor)
 	}
 	else
 	{
-		// Boss is defeated, player is exiting - re-enable collision after delay
+		// Boss defeated, exiting - re-enable collision after delay
 		FTimerHandle TimerHandle;
 		FTimerDelegate TimerDelegate;
 		TimerDelegate.BindLambda([this]()
@@ -551,6 +599,17 @@ USceneComponent* ASLFBossDoor::GetDeathCurrencySpawnPoint_Implementation()
 	return CurrencySpawnLocation;
 }
 
+FLinearColor ASLFBossDoor::GetTierColor() const
+{
+	switch (DungeonTier)
+	{
+	case ESLFDungeonTier::Normal:    return FLinearColor(0.2f, 0.4f, 1.0f, 0.8f);  // Blue
+	case ESLFDungeonTier::Elite:     return FLinearColor(0.6f, 0.2f, 0.8f, 0.8f);  // Purple
+	case ESLFDungeonTier::Legendary: return FLinearColor(1.0f, 0.05f, 0.05f, 0.8f); // Bright Red
+	default:                         return FLinearColor(0.2f, 0.4f, 1.0f, 0.8f);
+	}
+}
+
 void ASLFBossDoor::InitializeLoadedStates(bool bInCanBeTraced, bool bInIsActivated)
 {
 	bCanBeTraced = bInCanBeTraced;
@@ -589,4 +648,74 @@ void ASLFBossDoor::InitializeLoadedStates(bool bInCanBeTraced, bool bInIsActivat
 			PortalEffectBack->Deactivate();
 		}
 	}
+}
+
+// ============================================================
+// DUNGEON ENTRANCE: Fade to black -> teleport -> fade in
+// ============================================================
+
+void ASLFBossDoor::BeginDungeonEntrance(AActor* Player)
+{
+	UE_LOG(LogTemp, Warning, TEXT("[BossDoor] DUNGEON ENTRANCE: Starting fade to black (5s) for %s"),
+		*DungeonLevelPath);
+
+	DungeonEntrancePlayer = Player;
+
+	// Start fade to black on the player's camera
+	if (APlayerController* PC = Cast<APlayerController>(Cast<APawn>(Player) ? Cast<APawn>(Player)->GetController() : nullptr))
+	{
+		if (APlayerCameraManager* CameraMgr = PC->PlayerCameraManager)
+		{
+			CameraMgr->StartCameraFade(0.0f, 1.0f, 3.0f, FLinearColor::Black, false, true);
+		}
+
+		// Disable input during transition
+		PC->SetIgnoreMoveInput(true);
+		PC->SetIgnoreLookInput(true);
+	}
+
+	// After 3s fade + 2s hold = 5s total, do the teleport
+	GetWorld()->GetTimerManager().SetTimer(
+		DungeonEntranceTimerHandle,
+		this,
+		&ASLFBossDoor::OnDungeonFadeOutComplete,
+		5.0f,
+		false
+	);
+}
+
+void ASLFBossDoor::OnDungeonFadeOutComplete()
+{
+	UE_LOG(LogTemp, Warning, TEXT("[BossDoor] DUNGEON ENTRANCE: Fade complete for %s"),
+		*DungeonLevelPath);
+
+	AActor* Player = DungeonEntrancePlayer.Get();
+	if (!Player) return;
+
+	APlayerController* PC = Cast<APlayerController>(Cast<APawn>(Player) ? Cast<APawn>(Player)->GetController() : nullptr);
+	if (!PC) return;
+
+	// Teleport player to the other side of the door (they walked through already)
+	FVector DoorForward = GetActorForwardVector();
+	FVector ExitPos = GetActorLocation() + DoorForward * 400.0f;
+	ExitPos.Z += 100.0f;
+	if (APawn* Pawn = Cast<APawn>(Player))
+	{
+		Pawn->SetActorLocation(ExitPos, false, nullptr, ETeleportType::TeleportPhysics);
+	}
+
+	// Re-enable collision after player passes through
+	SetFogGateCollision(true);
+
+	// Fade back in
+	if (APlayerCameraManager* CameraMgr = PC->PlayerCameraManager)
+	{
+		CameraMgr->StartCameraFade(1.0f, 0.0f, 1.5f, FLinearColor::Black, false, false);
+	}
+
+	// Re-enable input
+	PC->SetIgnoreMoveInput(false);
+	PC->SetIgnoreLookInput(false);
+
+	UE_LOG(LogTemp, Warning, TEXT("[BossDoor] DUNGEON ENTRANCE: Player teleported to exit, fade in started"));
 }

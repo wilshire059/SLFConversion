@@ -1,0 +1,169 @@
+[StatStance] Initialized with 100/100
+[StatStance] Initialized with 100/100
+[StatStance] Initialized with 100/100
+[StatPoise] Initialized with 50/50
+[StatPoise] Initialized with 50/50
+[StatPoise] Initialized with 50/50
+[StatIncantationPower] Initialized with 100
+[StatIncantationPower] Initialized with 100
+[StatIncantationPower] Initialized with 100
+[StatusEffectBuildup] Created
+[StatusEffectBuildup] Created
+[StatusEffectBuildup] Created
+[StatusEffectBuildup] Created
+[StatWeight] Initialized with 0/50 (X/Y format)
+[StatWeight] Initialized with 0/50 (X/Y format)
+[StatWeight] Initialized with 0/50 (X/Y format)
+[SLFStatArcane] Added Fire AP to StatsToAffect in StatInfo.StatModifiers
+[StatArcane] Initialized with 0, affects Fire AP
+[SLFStatArcane] Added Fire AP to StatsToAffect in StatInfo.StatModifiers
+[StatArcane] Initialized with 0, affects Fire AP
+[SLFStatArcane] Added Fire AP to StatsToAffect in StatInfo.StatModifiers
+[StatArcane] Initialized with 0, affects Fire AP
+[SLFStatDexterity] Added Lightning AP to StatsToAffect in StatInfo.StatModifiers
+[StatDexterity] Initialized with 0, affects Lightning AP
+[SLFStatDexterity] Added Lightning AP to StatsToAffect in StatInfo.StatModifiers
+[StatDexterity] Initialized with 0, affects Lightning AP
+[SLFStatDexterity] Added Lightning AP to StatsToAffect in StatInfo.StatModifiers
+[StatDexterity] Initialized with 0, affects Lightning AP
+[SLFStatEndurance] Added Stamina to StatsToAffect in StatInfo.StatModifiers
+[StatEndurance] Initialized with 0, affects Stamina with modifier 2
+[SLFStatEndurance] Added Stamina to StatsToAffect in StatInfo.StatModifiers
+[StatEndurance] Initialized with 0, affects Stamina with modifier 2
+[SLFStatEndurance] Added Stamina to StatsToAffect in StatInfo.StatModifiers
+[StatEndurance] Initialized with 0, affects Stamina with modifier 2
+[SLFStatFaith] Added Holy AP to StatsToAffect in StatInfo.StatModifiers
+[SLFStatFaith] Added Incantation Power to StatsToAffect in StatInfo.StatModifiers
+[StatFaith] Initialized with 0, affects Holy AP and Incantation Power
+[SLFStatFaith] Added Holy AP to StatsToAffect in StatInfo.StatModifiers
+[SLFStatFaith] Added Incantation Power to StatsToAffect in StatInfo.StatModifiers
+[StatFaith] Initialized with 0, affects Holy AP and Incantation Power
+[SLFStatFaith] Added Holy AP to StatsToAffect in StatInfo.StatModifiers
+[SLFStatFaith] Added Incantation Power to StatsToAffect in StatInfo.StatModifiers
+[StatFaith] Initialized with 0, affects Holy AP and Incantation Power
+[SLFStatIntelligence] Added Magic AP to StatsToAffect in StatInfo.StatModifiers
+[StatIntelligence] Initialized with 0, affects Magic AP with modifier 4
+[SLFStatIntelligence] Added Magic AP to StatsToAffect in StatInfo.StatModifiers
+[StatIntelligence] Initialized with 0, affects Magic AP with modifier 4
+[SLFStatIntelligence] Added Magic AP to StatsToAffect in StatInfo.StatModifiers
+[StatIntelligence] Initialized with 0, affects Magic AP with modifier 4
+[SLFStatMind] Added FP to StatsToAffect in StatInfo.StatModifiers
+[StatMind] Initialized with 0, affects FP with modifier 3
+[SLFStatMind] Added FP to StatsToAffect in StatInfo.StatModifiers
+[StatMind] Initialized with 0, affects FP with modifier 3
+[SLFStatMind] Added FP to StatsToAffect in StatInfo.StatModifiers
+[StatMind] Initialized with 0, affects FP with modifier 3
+[SLFStatStrength] Added Physical AP to StatsToAffect in StatInfo.StatModifiers
+[StatStrength] Initialized with 0, affects Physical AP with modifier 5
+[SLFStatStrength] Added Physical AP to StatsToAffect in StatInfo.StatModifiers
+[StatStrength] Initialized with 0, affects Physical AP with modifier 5
+[SLFStatStrength] Added Physical AP to StatsToAffect in StatInfo.StatModifiers
+[StatStrength] Initialized with 0, affects Physical AP with modifier 5
+[SLFStatVigor] Added HP to StatsToAffect in StatInfo.StatModifiers
+[StatVigor] Initialized with 0, affects HP with modifier 26
+[SLFStatVigor] Added HP to StatsToAffect in StatInfo.StatModifiers
+[StatVigor] Initialized with 0, affects HP with modifier 26
+[SLFStatVigor] Added HP to StatsToAffect in StatInfo.StatModifiers
+[StatVigor] Initialized with 0, affects HP with modifier 26
+[StatFP] Initialized with 100/100
+[StatFP] Initialized with 100/100
+[StatFP] Initialized with 100/100
+[StatHP] Initialized with 500/500
+[StatHP] Initialized with 500/500
+[StatHP] Initialized with 500/500
+[StatStamina] Initialized with 50/50, Regen: 0.0%
+[StatStamina] Initialized with 50/50, Regen: 0.0%
+[StatStamina] Initialized with 50/50, Regen: 0.0%
+[ActionDodge] Initialized
+Warning: AB_DemoRoom::Constructor - Components created
+[AbilityEffectBase] Created
+[ActionBackstab] Initialized
+[ActionComboHeavy] Initialized
+[ActionComboLightL] Initialized
+[ActionComboLightR] Initialized
+[ActionCrouch] Initialized
+[ActionDodge] Initialized
+[ActionDrinkFlaskHP] Initialized
+[ActionDualWieldAttack] Initialized
+[ActionExecute] Initialized
+[ActionGuardCancel] Initialized
+[ActionGuardEnd] Initialized
+[ActionGuardStart] Initialized
+[ActionJump] Initialized
+[ActionJumpAttack] Initialized
+[ActionPickupItemMontage] Initialized
+[ActionScrollWheelLeftHand] Initialized
+[ActionScrollWheelRightHand] Initialized
+[ActionScrollWheelTools] Initialized
+[ActionSprintAttack] Initialized
+[ActionStartSprinting] Initialized
+[ActionStopSprinting] Initialized
+[ActionThrowProjectile] Initialized
+[ActionTwoHandedStanceL] Initialized
+[ActionTwoHandedStanceR] Initialized
+[ActionUseEquippedTool] Initialized
+[ActionWeaponAbility] Initialized
+[BuffAttackPower] Initialized
+[Container] Created
+[DeathTrigger] Created
+[Destructible] Created
+[Discovery] Created
+[DoorBase] Created
+[LocationActor] Created
+[PatrolPath] Created
+[SLFSaveGame] Created
+[SLFSaveSlots] Created with max 10 slots
+[SequenceActor] Created
+[StatDeathCurrency] Initialized with 0
+[StatusEffectArea] Created
+[StatusEffectBleed] Initialized - Duration: 10.0s
+[StatusEffectBurn] Initialized - Duration: 5.0s
+[StatusEffectCorruption] Initialized - Duration: 20.0s
+[StatusEffectFrostbite] Initialized - Duration: 15.0s
+[StatusEffectMadness] Initialized - Duration: 10.0s
+[StatusEffectOneShot] Created
+[StatusEffectPlague] Initialized - Duration: 60.0s
+[StatusEffectPoison] Initialized - Duration: 30.0s
+[Torch] Created
+[LocationActor] Created
+[Bonfire] Created
+[DoorBase] Created
+[BossDoor] Door Frame mesh set to SM_Door, Scale: (1, 1, 1)
+[BossDoor] Created - FogGateMesh Scale: (3.25, 0.1, 4.25), Montages set to AM_SLF_OpenDoor_Boss
+[AbilityEffectBase] Created
+[ChaosForceField] Created
+[DoorBase] Created
+[DoorDemo] Created
+[ProjectileBossFireball] Initialized - Speed: 1500, Homing: Yes
+[ProjectileThrowingKnife] Initialized - Speed: 3000
+[SLFSpellProjectile] Loaded sphere mesh for core
+[AIC_SoulslikeFramework] Constructor - AI Perception configured
+[SLFAIController] Constructor - AI Perception configured
+[SLFGameMode] DefaultPawnClass: SLFSoulslikeCharacter
+[SLFGameMode] PlayerControllerClass: SLFPlayerController
+[ItemWeapon] Initialized
+[ItemWeapon] Initialized
+[ItemAIWeapon] Initialized
+[ItemWeapon] Initialized
+[ItemWeaponBossMace] Initialized
+[ItemWeapon] Initialized
+[ItemWeaponGreatsword] Initialized
+[ItemWeapon] Initialized
+[ItemWeaponKatana] Initialized
+[ItemWeapon] Initialized
+[ItemWeaponPoisonSword] Initialized
+[ItemWeapon] Initialized
+[ItemWeaponShield] Initialized
+Warning: [SLFSoulslikeBoss] Constructor - Created AC_AI_CombatManager: SUCCESS
+Warning: [SLFSoulslikeBoss] Constructor - Created AC_AI_CombatManager: SUCCESS
+Warning: === SetupSentinel Params: [-run=SetupSentinel -unattended -nosplash -stdout -UTF8Output -FullStdOutLogOutput -NoSound] ===
+Warning: === SetupSentinel Commandlet: Starting ===
+Warning: --- Step 0: Import Sentinel Mesh ---
+Warning:   SKM_Sentinel already exists, skipping import
+Warning:   Using c3100 skeleton: /Game/EldenRingAnimations/c3100_guard/c3100_mesh_Skeleton.c3100_mesh_Skeleton (104 bones)
+Warning:   Sentinel mesh old skeleton: c3100_mesh_Skeleton (92 bones)
+Warning:   Unmapped bone [0] FLVER_armature -> set rotation to identity
+Warning:   Updated 92 bones (91 mapped, 1 unmapped->identity)
+Warning:   -> Updated mesh RefSkeleton + RefBasesInvMatrix to FLVER bind pose
+Warning:   -> Reassigned + rebound Sentinel mesh, saved
+Warning: --- Step 1: Importing ARP-retargeted animation FBXs ---

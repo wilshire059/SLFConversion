@@ -1,0 +1,144 @@
+============================================================
+SPELL CREATION SCRIPT
+============================================================
+============================================================
+Creating Spell Data Assets
+============================================================
+
+Creating: DA_FireballSpell
+  Asset already exists, loading...
+  Set name: Fireball
+  Set description
+  Set ItemClass: /Script/SLFConversion.SLFFireballProjectile
+  WARNING: Could not set category: type object 'GameplayTag' has no attribute 'request_gameplay_tag'
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_FireballSpell
+
+Creating: DA_IceShardSpell
+  Asset already exists, loading...
+  Set name: Ice Shard
+  Set description
+  Set ItemClass: /Script/SLFConversion.SLFIceShardProjectile
+  WARNING: Could not set category: type object 'GameplayTag' has no attribute 'request_gameplay_tag'
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_IceShardSpell
+
+Creating: DA_LightningBoltSpell
+  Asset already exists, loading...
+  Set name: Lightning Bolt
+  Set description
+  Set ItemClass: /Script/SLFConversion.SLFLightningBoltProjectile
+  WARNING: Could not set category: type object 'GameplayTag' has no attribute 'request_gameplay_tag'
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_LightningBoltSpell
+
+Creating: DA_HolyOrbSpell
+  Asset already exists, loading...
+  Set name: Holy Orb
+  Set description
+  Set ItemClass: /Script/SLFConversion.SLFHolyOrbProjectile
+  WARNING: Could not set category: type object 'GameplayTag' has no attribute 'request_gameplay_tag'
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_HolyOrbSpell
+
+Creating: DA_PoisonBlobSpell
+  Asset already exists, loading...
+  Set name: Poison Blob
+  Set description
+  Set ItemClass: /Script/SLFConversion.SLFPoisonBlobProjectile
+  WARNING: Could not set category: type object 'GameplayTag' has no attribute 'request_gameplay_tag'
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_PoisonBlobSpell
+
+Creating: DA_ArcaneMissileSpell
+  Asset already exists, loading...
+  Set name: Arcane Missile
+  Set description
+  Set ItemClass: /Script/SLFConversion.SLFArcaneMissileProjectile
+  WARNING: Could not set category: type object 'GameplayTag' has no attribute 'request_gameplay_tag'
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_ArcaneMissileSpell
+
+Creating: DA_BlackholeSpell
+  Asset already exists, loading...
+  Set name: Blackhole
+  Set description
+  Set ItemClass: /Script/SLFConversion.SLFSpellProjectile
+  WARNING: Could not set category: type object 'GameplayTag' has no attribute 'request_gameplay_tag'
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_BlackholeSpell
+
+Creating: DA_BeamSpell
+  Asset already exists, loading...
+  Set name: Energy Beam
+  Set description
+  Set ItemClass: /Script/SLFConversion.SLFBeamSpell
+  WARNING: Could not set category: type object 'GameplayTag' has no attribute 'request_gameplay_tag'
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_BeamSpell
+
+Creating: DA_AOEExplosionSpell
+  Asset already exists, loading...
+  Set name: Explosion
+  Set description
+  Set ItemClass: /Script/SLFConversion.SLFAOESpell
+  WARNING: Could not set category: type object 'GameplayTag' has no attribute 'request_gameplay_tag'
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_AOEExplosionSpell
+
+Creating: DA_ShieldSpell
+  Asset already exists, loading...
+  Set name: Magic Shield
+  Set description
+  Set ItemClass: /Script/SLFConversion.SLFShieldSpell
+  WARNING: Could not set category: type object 'GameplayTag' has no attribute 'request_gameplay_tag'
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_ShieldSpell
+
+Creating: DA_HealingSpell
+  Asset already exists, loading...
+  Set name: Heal
+  Set description
+  Set ItemClass: /Script/SLFConversion.SLFHealingSpell
+  WARNING: Could not set category: type object 'GameplayTag' has no attribute 'request_gameplay_tag'
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_HealingSpell
+
+Creating: DA_SummoningCircleSpell
+  Asset already exists, loading...
+  Set name: Summoning Circle
+  Set description
+  Set ItemClass: /Script/SLFConversion.SLFSummoningCircle
+  WARNING: Could not set category: type object 'GameplayTag' has no attribute 'request_gameplay_tag'
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_SummoningCircleSpell
+
+============================================================
+Created 12 spell assets
+============================================================
+
+============================================================
+Adding Spells to Starting Inventory
+============================================================
+Loaded: PC_SoulslikeFramework
+Got CDO: Default__PC_SoulslikeFramework_C
+WARNING: Could not get starting_inventory: SLFPlayerController: Failed to find property 'starting_inventory' for attribute 'starting_inventory' on 'PC_SoulslikeFramework_C'
+  Added: DA_FireballSpell
+  Added: DA_IceShardSpell
+  Added: DA_LightningBoltSpell
+  Added: DA_HolyOrbSpell
+  Added: DA_PoisonBlobSpell
+  Added: DA_ArcaneMissileSpell
+  Added: DA_BlackholeSpell
+  Added: DA_BeamSpell
+  Added: DA_AOEExplosionSpell
+  Added: DA_ShieldSpell
+  Added: DA_HealingSpell
+  Added: DA_SummoningCircleSpell
+ERROR setting starting_inventory: SLFPlayerController: Failed to find property 'starting_inventory' for attribute 'starting_inventory' on 'PC_SoulslikeFramework_C'
+
+============================================================
+SPELL CREATION COMPLETE
+============================================================
+
+Created 12 spell types:
+  - Fireball: Hurls a blazing fireball that explodes on impact, ...
+  - Ice Shard: Launches a crystalline ice shard that pierces enem...
+  - Lightning Bolt: Strikes enemies with a swift bolt of lightning. Ve...
+  - Holy Orb: Conjures a divine orb of radiant light. Effective ...
+  - Poison Blob: Throws a bubbling mass of toxic sludge that poison...
+  - Arcane Missile: Fires a magical projectile infused with pure arcan...
+  - Blackhole: Conjures a dark void that pulls enemies in and dea...
+  - Energy Beam: Channels a continuous beam of energy that damages ...
+  - Explosion: Creates a devastating explosion at your location, ...
+  - Magic Shield: Creates a protective barrier around you that reduc...
+  - Heal: Channels restorative energy to heal your wounds ov...
+  - Summoning Circle: Creates a magical circle of power that channels my...

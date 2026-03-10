@@ -19,6 +19,10 @@
 #include "Blueprints/SLFRestingPointBase.h"
 #include "Blueprints/SLFNPCVara.h"
 #include "Blueprints/SLFNPCKael.h"
+#include "Blueprints/SLFPickupItemBase.h"
+#include "Blueprints/SLFContainerBase.h"
+#include "Blueprints/Actors/SLFGrapplePoint.h"
+#include "Blueprints/Actors/SLFBossDoor.h"
 #include "UObject/SavePackage.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "AssetCompilingManager.h"
@@ -60,6 +64,7 @@ int32 USetupTitanWorldCommandlet::Main(const FString& Params)
 
 	// ── Initialize zone region data ──
 	InitializeZoneRegions();
+	ExpandSpawnPointsForSubRegions();
 	UE_LOG(LogTemp, Warning, TEXT("Initialized %d zone regions"), ZoneRegions.Num());
 
 	// ── Load TitanMain map ──
@@ -114,6 +119,12 @@ int32 USetupTitanWorldCommandlet::Main(const FString& Params)
 
 		UE_LOG(LogTemp, Warning, TEXT("--- Setting up Boss Encounters ---"));
 		SetupBossEncounters(World);
+
+		UE_LOG(LogTemp, Warning, TEXT("--- Setting up World Loot ---"));
+		SetupWorldLoot(World);
+
+		UE_LOG(LogTemp, Warning, TEXT("--- Setting up Grapple Points ---"));
+		SetupGrapplePoints(World);
 	}
 
 	if (!bZonesOnly && !bSpawnsOnly)
@@ -197,6 +208,7 @@ void USetupTitanWorldCommandlet::InitializeZoneRegions()
 		Hub.DisplayName = TEXT("The Refuge");
 		Hub.Center = FVector(0.0, 0.0, 0.0);
 		Hub.Radius = 5000.0;
+		Hub.MapColor = FLinearColor(0.2f, 0.8f, 0.2f, 0.25f); // Green safe zone
 		Hub.BossArenaLocation = FVector::ZeroVector; // No boss in hub
 		Hub.RestingPointLocations = {
 			FVector(0.0, 200.0, 0.0),      // Hub center resting point
@@ -212,19 +224,33 @@ void USetupTitanWorldCommandlet::InitializeZoneRegions()
 		Zone.DisplayName = TEXT("The Ashfields");
 		Zone.Center = FVector(0.0, -25000.0, 0.0);
 		Zone.Radius = 12000.0;
+		Zone.MapColor = FLinearColor(0.9f, 0.6f, 0.2f, 0.25f); // Warm orange
 		Zone.BossArenaLocation = FVector(3000.0, -32000.0, 0.0);
 		Zone.RestingPointLocations = {
 			FVector(-2000.0, -16000.0, 0.0),   // Zone entrance
 			FVector(1000.0, -24000.0, 0.0),     // Midpoint
 			FVector(2000.0, -30000.0, 0.0),     // Pre-boss
 		};
+		// ~25 spawn points distributed across sub-regions
 		Zone.SpawnPointLocations = {
-			FVector(-3000.0, -18000.0, 0.0),
-			FVector(2000.0, -20000.0, 0.0),
-			FVector(-1000.0, -22000.0, 0.0),
-			FVector(4000.0, -24000.0, 0.0),
-			FVector(0.0, -26000.0, 0.0),
-			FVector(-2000.0, -28000.0, 0.0),
+			FVector(-3000.0, -18000.0, 0.0), FVector(2000.0, -18500.0, 0.0),
+			FVector(-5000.0, -19000.0, 0.0), FVector(4000.0, -19500.0, 0.0),
+			FVector(-1000.0, -20000.0, 0.0), FVector(3000.0, -20500.0, 0.0),
+			FVector(-4000.0, -21000.0, 0.0), FVector(1000.0, -21500.0, 0.0),
+			FVector(-2000.0, -22000.0, 0.0), FVector(5000.0, -22500.0, 0.0),
+			FVector(0.0, -23000.0, 0.0),     FVector(-3000.0, -23500.0, 0.0),
+			FVector(2000.0, -24000.0, 0.0),  FVector(-1000.0, -24500.0, 0.0),
+			FVector(4000.0, -25000.0, 0.0),  FVector(-4000.0, -25500.0, 0.0),
+			FVector(1000.0, -26000.0, 0.0),  FVector(-2000.0, -26500.0, 0.0),
+			FVector(3000.0, -27000.0, 0.0),  FVector(-5000.0, -27500.0, 0.0),
+			FVector(0.0, -28000.0, 0.0),     FVector(2000.0, -28500.0, 0.0),
+			FVector(-3000.0, -29000.0, 0.0), FVector(1000.0, -29500.0, 0.0),
+			FVector(-1000.0, -30000.0, 0.0),
+		};
+		Zone.SubRegions = {
+			{ TEXT("Charred Valley"), FVector(-3000.0, -20000.0, 0.0), 4000.0f, 1.0f, 1.2f, ESLFEnemyRank::Regular },
+			{ TEXT("Slag Pits"),      FVector(3000.0, -25000.0, 0.0),  3500.0f, 1.5f, 1.5f, ESLFEnemyRank::Elite },
+			{ TEXT("Ashen Fields"),   FVector(0.0, -30000.0, 0.0),     3000.0f, 1.2f, 1.0f, ESLFEnemyRank::Elite },
 		};
 		ZoneRegions.Add(Zone);
 	}
@@ -236,6 +262,7 @@ void USetupTitanWorldCommandlet::InitializeZoneRegions()
 		Zone.DisplayName = TEXT("The Ironworks");
 		Zone.Center = FVector(25000.0, 0.0, 0.0);
 		Zone.Radius = 12000.0;
+		Zone.MapColor = FLinearColor(0.6f, 0.4f, 0.2f, 0.25f); // Rust brown
 		Zone.BossArenaLocation = FVector(34000.0, 2000.0, 0.0);
 		Zone.RestingPointLocations = {
 			FVector(16000.0, -1000.0, 0.0),
@@ -243,12 +270,24 @@ void USetupTitanWorldCommandlet::InitializeZoneRegions()
 			FVector(31000.0, 0.0, 0.0),
 		};
 		Zone.SpawnPointLocations = {
-			FVector(18000.0, -2000.0, 0.0),
-			FVector(20000.0, 2000.0, 0.0),
-			FVector(22000.0, -1000.0, 0.0),
-			FVector(26000.0, 3000.0, 0.0),
-			FVector(28000.0, -2000.0, 0.0),
-			FVector(30000.0, 1000.0, 0.0),
+			FVector(18000.0, -2000.0, 0.0), FVector(18500.0, 2000.0, 0.0),
+			FVector(19500.0, -3000.0, 0.0), FVector(20000.0, 1000.0, 0.0),
+			FVector(21000.0, -1000.0, 0.0), FVector(21500.0, 3000.0, 0.0),
+			FVector(22000.0, 0.0, 0.0),     FVector(23000.0, -2000.0, 0.0),
+			FVector(23500.0, 2000.0, 0.0),  FVector(24000.0, -3000.0, 0.0),
+			FVector(25000.0, 1000.0, 0.0),  FVector(25500.0, -1000.0, 0.0),
+			FVector(26000.0, 3000.0, 0.0),  FVector(26500.0, -2000.0, 0.0),
+			FVector(27000.0, 0.0, 0.0),     FVector(28000.0, 2000.0, 0.0),
+			FVector(28500.0, -2000.0, 0.0), FVector(29000.0, 1000.0, 0.0),
+			FVector(29500.0, -1000.0, 0.0), FVector(30000.0, 0.0, 0.0),
+			FVector(30500.0, 2000.0, 0.0),  FVector(31000.0, -1000.0, 0.0),
+			FVector(31500.0, 1000.0, 0.0),  FVector(32000.0, 0.0, 0.0),
+			FVector(32500.0, -2000.0, 0.0),
+		};
+		Zone.SubRegions = {
+			{ TEXT("Foundry District"), FVector(20000.0, 0.0, 0.0), 4000.0f, 1.0f, 1.0f, ESLFEnemyRank::Regular },
+			{ TEXT("Molten Core"),      FVector(27000.0, 0.0, 0.0), 3500.0f, 1.5f, 1.3f, ESLFEnemyRank::Elite },
+			{ TEXT("Forge Depths"),     FVector(32000.0, 0.0, 0.0), 3000.0f, 1.3f, 1.5f, ESLFEnemyRank::Elite },
 		};
 		ZoneRegions.Add(Zone);
 	}
@@ -260,19 +299,33 @@ void USetupTitanWorldCommandlet::InitializeZoneRegions()
 		Zone.DisplayName = TEXT("The Rift");
 		Zone.Center = FVector(0.0, 25000.0, 0.0);
 		Zone.Radius = 12000.0;
+		Zone.MapColor = FLinearColor(0.5f, 0.2f, 0.8f, 0.25f); // Deep purple - corrupted
 		Zone.BossArenaLocation = FVector(-2000.0, 34000.0, 0.0);
 		Zone.RestingPointLocations = {
 			FVector(1000.0, 16000.0, 0.0),
 			FVector(-1000.0, 24000.0, 0.0),
 			FVector(0.0, 31000.0, 0.0),
 		};
+		// ~25 spawn points across sub-regions
 		Zone.SpawnPointLocations = {
-			FVector(3000.0, 18000.0, 0.0),
-			FVector(-2000.0, 20000.0, 0.0),
-			FVector(1000.0, 22000.0, 0.0),
-			FVector(-3000.0, 26000.0, 0.0),
-			FVector(2000.0, 28000.0, 0.0),
-			FVector(0.0, 30000.0, 0.0),
+			FVector(3000.0, 18000.0, 0.0),   FVector(-2000.0, 18500.0, 0.0),
+			FVector(1000.0, 19000.0, 0.0),   FVector(-4000.0, 19500.0, 0.0),
+			FVector(4000.0, 20000.0, 0.0),   FVector(-1000.0, 20500.0, 0.0),
+			FVector(2000.0, 21000.0, 0.0),   FVector(-3000.0, 21500.0, 0.0),
+			FVector(0.0, 22000.0, 0.0),      FVector(3000.0, 22500.0, 0.0),
+			FVector(-2000.0, 23000.0, 0.0),  FVector(1000.0, 23500.0, 0.0),
+			FVector(-4000.0, 24000.0, 0.0),  FVector(4000.0, 24500.0, 0.0),
+			FVector(-1000.0, 25000.0, 0.0),  FVector(2000.0, 25500.0, 0.0),
+			FVector(-3000.0, 26000.0, 0.0),  FVector(0.0, 26500.0, 0.0),
+			FVector(3000.0, 27000.0, 0.0),   FVector(-2000.0, 27500.0, 0.0),
+			FVector(1000.0, 28000.0, 0.0),   FVector(-1000.0, 29000.0, 0.0),
+			FVector(2000.0, 30000.0, 0.0),   FVector(-3000.0, 31000.0, 0.0),
+			FVector(0.0, 32000.0, 0.0),
+		};
+		Zone.SubRegions = {
+			{ TEXT("Veil Pools"),     FVector(-2000.0, 20000.0, 0.0), 4000.0f, 1.2f, 1.3f, ESLFEnemyRank::Elite },
+			{ TEXT("Fractured Mesa"), FVector(2000.0, 25000.0, 0.0),  3500.0f, 1.5f, 1.0f, ESLFEnemyRank::Elite },
+			{ TEXT("Void Reach"),     FVector(0.0, 31000.0, 0.0),     3000.0f, 1.8f, 1.5f, ESLFEnemyRank::MiniBoss },
 		};
 		ZoneRegions.Add(Zone);
 	}
@@ -284,19 +337,33 @@ void USetupTitanWorldCommandlet::InitializeZoneRegions()
 		Zone.DisplayName = TEXT("Sanctum of Ash");
 		Zone.Center = FVector(-25000.0, 0.0, 0.0);
 		Zone.Radius = 12000.0;
+		Zone.MapColor = FLinearColor(0.9f, 0.85f, 0.4f, 0.25f); // Golden/holy
 		Zone.BossArenaLocation = FVector(-34000.0, -1000.0, 0.0);
 		Zone.RestingPointLocations = {
 			FVector(-16000.0, 1000.0, 0.0),
 			FVector(-24000.0, -1000.0, 0.0),
 			FVector(-31000.0, 0.0, 0.0),
 		};
+		// ~25 spawn points across sub-regions
 		Zone.SpawnPointLocations = {
-			FVector(-18000.0, 2000.0, 0.0),
-			FVector(-20000.0, -2000.0, 0.0),
-			FVector(-22000.0, 1000.0, 0.0),
-			FVector(-26000.0, -3000.0, 0.0),
-			FVector(-28000.0, 2000.0, 0.0),
-			FVector(-30000.0, -1000.0, 0.0),
+			FVector(-18000.0, 2000.0, 0.0),  FVector(-18500.0, -2000.0, 0.0),
+			FVector(-19000.0, 3000.0, 0.0),  FVector(-19500.0, -1000.0, 0.0),
+			FVector(-20000.0, 0.0, 0.0),     FVector(-20500.0, 2000.0, 0.0),
+			FVector(-21000.0, -3000.0, 0.0), FVector(-21500.0, 1000.0, 0.0),
+			FVector(-22000.0, -2000.0, 0.0), FVector(-22500.0, 3000.0, 0.0),
+			FVector(-23000.0, 0.0, 0.0),     FVector(-23500.0, -1000.0, 0.0),
+			FVector(-24000.0, 2000.0, 0.0),  FVector(-24500.0, -3000.0, 0.0),
+			FVector(-25000.0, 1000.0, 0.0),  FVector(-25500.0, -2000.0, 0.0),
+			FVector(-26000.0, 3000.0, 0.0),  FVector(-26500.0, 0.0, 0.0),
+			FVector(-27000.0, -1000.0, 0.0), FVector(-28000.0, 2000.0, 0.0),
+			FVector(-28500.0, -2000.0, 0.0), FVector(-29000.0, 1000.0, 0.0),
+			FVector(-30000.0, -1000.0, 0.0), FVector(-31000.0, 2000.0, 0.0),
+			FVector(-32000.0, 0.0, 0.0),
+		};
+		Zone.SubRegions = {
+			{ TEXT("Outer Cloister"),  FVector(-19000.0, 0.0, 0.0),  4000.0f, 1.0f, 1.0f, ESLFEnemyRank::Elite },
+			{ TEXT("Burning Nave"),    FVector(-25000.0, 0.0, 0.0),  3500.0f, 1.5f, 1.3f, ESLFEnemyRank::Elite },
+			{ TEXT("Inner Sanctum"),   FVector(-31000.0, 0.0, 0.0),  3000.0f, 2.0f, 1.5f, ESLFEnemyRank::MiniBoss },
 		};
 		ZoneRegions.Add(Zone);
 	}
@@ -308,18 +375,30 @@ void USetupTitanWorldCommandlet::InitializeZoneRegions()
 		Zone.DisplayName = TEXT("The Undercroft");
 		Zone.Center = FVector(18000.0, 18000.0, -2000.0); // Underground
 		Zone.Radius = 10000.0;
+		Zone.MapColor = FLinearColor(0.3f, 0.5f, 0.3f, 0.25f); // Mossy green - underground
 		Zone.BossArenaLocation = FVector(22000.0, 24000.0, -3000.0);
 		Zone.RestingPointLocations = {
 			FVector(14000.0, 14000.0, -1000.0),
 			FVector(18000.0, 20000.0, -2000.0),
 			FVector(20000.0, 22000.0, -2500.0),
 		};
+		// ~20 spawn points (underground = tighter spacing)
 		Zone.SpawnPointLocations = {
-			FVector(15000.0, 15000.0, -1500.0),
-			FVector(17000.0, 17000.0, -1800.0),
-			FVector(19000.0, 19000.0, -2000.0),
-			FVector(20000.0, 21000.0, -2200.0),
-			FVector(21000.0, 23000.0, -2500.0),
+			FVector(13000.0, 13000.0, -1200.0), FVector(14000.0, 15000.0, -1500.0),
+			FVector(15000.0, 14000.0, -1400.0), FVector(15500.0, 16000.0, -1600.0),
+			FVector(16000.0, 15000.0, -1700.0), FVector(16500.0, 17000.0, -1800.0),
+			FVector(17000.0, 16000.0, -1800.0), FVector(17500.0, 18000.0, -1900.0),
+			FVector(18000.0, 17000.0, -1900.0), FVector(18500.0, 19000.0, -2000.0),
+			FVector(19000.0, 18000.0, -2000.0), FVector(19500.0, 20000.0, -2100.0),
+			FVector(20000.0, 19000.0, -2100.0), FVector(20500.0, 21000.0, -2200.0),
+			FVector(21000.0, 20000.0, -2300.0), FVector(21500.0, 22000.0, -2400.0),
+			FVector(22000.0, 21000.0, -2500.0), FVector(22500.0, 23000.0, -2600.0),
+			FVector(23000.0, 22000.0, -2700.0), FVector(23500.0, 24000.0, -2800.0),
+		};
+		Zone.SubRegions = {
+			{ TEXT("Root Warrens"),   FVector(15000.0, 15000.0, -1500.0), 3500.0f, 1.3f, 1.5f, ESLFEnemyRank::Elite },
+			{ TEXT("Fungal Depths"), FVector(19000.0, 19000.0, -2000.0), 3000.0f, 1.8f, 1.3f, ESLFEnemyRank::MiniBoss },
+			{ TEXT("Hollow Heart"),  FVector(22000.0, 22000.0, -2500.0), 2500.0f, 2.0f, 1.8f, ESLFEnemyRank::MiniBoss },
 		};
 		ZoneRegions.Add(Zone);
 	}
@@ -331,16 +410,26 @@ void USetupTitanWorldCommandlet::InitializeZoneRegions()
 		Zone.DisplayName = TEXT("The Core");
 		Zone.Center = FVector(0.0, 0.0, -5000.0); // Deep underground, below hub
 		Zone.Radius = 8000.0;
+		Zone.MapColor = FLinearColor(0.9f, 0.1f, 0.1f, 0.25f); // Red - danger, final zone
 		Zone.BossArenaLocation = FVector(0.0, 0.0, -6000.0);
 		Zone.RestingPointLocations = {
 			FVector(0.0, -3000.0, -4000.0),   // Entrance
 			FVector(0.0, 0.0, -5500.0),        // Pre-boss
 		};
+		// ~15 spawn points (smallest zone, highest density)
 		Zone.SpawnPointLocations = {
-			FVector(2000.0, -2000.0, -4500.0),
-			FVector(-2000.0, -1000.0, -4800.0),
-			FVector(1000.0, 1000.0, -5000.0),
-			FVector(-1000.0, 2000.0, -5200.0),
+			FVector(2000.0, -2000.0, -4500.0),  FVector(-2000.0, -2000.0, -4500.0),
+			FVector(3000.0, -1000.0, -4600.0),  FVector(-3000.0, -1000.0, -4600.0),
+			FVector(2000.0, 0.0, -4800.0),      FVector(-2000.0, 0.0, -4800.0),
+			FVector(1000.0, 1000.0, -5000.0),   FVector(-1000.0, 1000.0, -5000.0),
+			FVector(3000.0, 1000.0, -5000.0),   FVector(-3000.0, 1000.0, -5000.0),
+			FVector(0.0, 2000.0, -5200.0),      FVector(2000.0, 2000.0, -5200.0),
+			FVector(-2000.0, 2000.0, -5200.0),  FVector(1000.0, -1000.0, -5400.0),
+			FVector(-1000.0, -1000.0, -5400.0),
+		};
+		Zone.SubRegions = {
+			{ TEXT("Ashen Descent"),     FVector(0.0, -2000.0, -4500.0), 3000.0f, 1.5f, 1.0f, ESLFEnemyRank::MiniBoss },
+			{ TEXT("Convergence Point"), FVector(0.0, 1000.0, -5200.0),  2500.0f, 2.5f, 2.0f, ESLFEnemyRank::Boss },
 		};
 		ZoneRegions.Add(Zone);
 	}
@@ -786,6 +875,239 @@ float USetupTitanWorldCommandlet::GetTerrainHeight(UWorld* World, float X, float
 
 	return -200000.0f; // No terrain found
 }
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// World Loot (~320 items across all zones)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void USetupTitanWorldCommandlet::SetupWorldLoot(UWorld* World)
+{
+	int32 PickupCount = 0;
+	int32 ChestCount = 0;
+
+	// Loot distribution per zone (corpse pickups, chests, gathering nodes, currency)
+	struct FZoneLootConfig
+	{
+		FString ZoneName;
+		int32 CorpsePickups;
+		int32 Chests;
+		int32 GatheringNodes;
+		int32 CurrencyItems;
+	};
+
+	TArray<FZoneLootConfig> LootConfigs = {
+		{ TEXT("The Ashfields"),    25, 8,  15, 12 },  // 60 total — starter zone, generous
+		{ TEXT("The Ironworks"),    25, 8,  15, 10 },  // 58 total
+		{ TEXT("The Rift"),         22, 7,  12, 8 },   // 49 total
+		{ TEXT("Sanctum of Ash"),   22, 7,  12, 8 },   // 49 total
+		{ TEXT("The Undercroft"),   18, 6,  10, 7 },   // 41 total — underground, tighter
+		{ TEXT("The Core"),         12, 5,   8, 5 },   // 30 total — endgame
+		{ TEXT("The Refuge"),        8, 4,   5, 5 },   // 22 total — hub has some freebies
+	};
+
+	for (const FZoneRegion& Region : ZoneRegions)
+	{
+		const FZoneLootConfig* Config = nullptr;
+		for (const FZoneLootConfig& LC : LootConfigs)
+		{
+			if (LC.ZoneName == Region.DisplayName)
+			{
+				Config = &LC;
+				break;
+			}
+		}
+		if (!Config) continue;
+
+		int32 TotalForZone = Config->CorpsePickups + Config->Chests + Config->GatheringNodes + Config->CurrencyItems;
+
+		// Distribute items in a spiral/grid pattern within the zone radius
+		for (int32 i = 0; i < TotalForZone; i++)
+		{
+			// Golden angle spiral for even distribution
+			float Angle = i * 2.39996f; // Golden angle in radians
+			float Radius = Region.Radius * FMath::Sqrt((float)i / (float)TotalForZone) * 0.9f;
+			FVector Location = Region.Center + FVector(
+				FMath::Cos(Angle) * Radius,
+				FMath::Sin(Angle) * Radius,
+				0.0f
+			);
+
+			// Add some random jitter
+			Location.X += FMath::RandRange(-300.0f, 300.0f);
+			Location.Y += FMath::RandRange(-300.0f, 300.0f);
+
+			float Height = GetTerrainHeight(World, Location.X, Location.Y);
+			if (Height > -100000.0f)
+			{
+				Location.Z = Height + 10.0f;
+			}
+			else
+			{
+				Location.Z = Region.Center.Z + 10.0f;
+			}
+
+			bool bIsChest = (i >= Config->CorpsePickups && i < Config->CorpsePickups + Config->Chests);
+
+			if (bIsChest)
+			{
+				// Place chest
+				ASLFContainerBase* Container = Cast<ASLFContainerBase>(
+					SpawnActorAtLocation(World, ASLFContainerBase::StaticClass(), Location,
+						FRotator(0.0f, FMath::RandRange(0.0f, 360.0f), 0.0f)));
+				if (Container)
+				{
+					Container->SetFolderPath(FName(*FString::Printf(TEXT("Loot/%s/Chests"), *Region.DisplayName)));
+					ChestCount++;
+				}
+			}
+			else
+			{
+				// Place pickup (corpse, gathering node, or currency — all use same base class)
+				ASLFPickupItemBase* Pickup = Cast<ASLFPickupItemBase>(
+					SpawnActorAtLocation(World, ASLFPickupItemBase::StaticClass(), Location));
+				if (Pickup)
+				{
+					Pickup->SetFolderPath(FName(*FString::Printf(TEXT("Loot/%s/Pickups"), *Region.DisplayName)));
+					PickupCount++;
+				}
+			}
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("  %s: placed %d pickups + %d chests"),
+			*Region.DisplayName, Config->CorpsePickups + Config->GatheringNodes + Config->CurrencyItems, Config->Chests);
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("  Total world loot: %d pickups, %d chests (%d total)"),
+		PickupCount, ChestCount, PickupCount + ChestCount);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Grapple Points (~20-30 per zone at elevated positions)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void USetupTitanWorldCommandlet::SetupGrapplePoints(UWorld* World)
+{
+	int32 Count = 0;
+
+	// Grapple points per zone — placed at elevated positions, cliff faces, and above corridors
+	struct FZoneGrappleConfig
+	{
+		FString ZoneName;
+		int32 NumPoints;
+		float MinElevation; // Minimum height above terrain
+		float MaxElevation;
+	};
+
+	TArray<FZoneGrappleConfig> GrappleConfigs = {
+		{ TEXT("The Ashfields"),    20, 500.0f, 1500.0f },
+		{ TEXT("The Ironworks"),    25, 600.0f, 2000.0f },  // Industrial ruins = more vertical
+		{ TEXT("The Rift"),         25, 800.0f, 2500.0f },  // Corrupted floating terrain
+		{ TEXT("Sanctum of Ash"),   20, 500.0f, 1800.0f },
+		{ TEXT("The Undercroft"),   15, 200.0f, 800.0f },   // Underground = lower ceiling
+		{ TEXT("The Core"),         10, 300.0f, 1000.0f },
+	};
+
+	for (const FZoneRegion& Region : ZoneRegions)
+	{
+		const FZoneGrappleConfig* Config = nullptr;
+		for (const FZoneGrappleConfig& GC : GrappleConfigs)
+		{
+			if (GC.ZoneName == Region.DisplayName)
+			{
+				Config = &GC;
+				break;
+			}
+		}
+		if (!Config) continue;
+
+		for (int32 i = 0; i < Config->NumPoints; i++)
+		{
+			// Distribute around zone using golden angle spiral
+			float Angle = i * 2.39996f;
+			float Radius = Region.Radius * FMath::Sqrt((float)i / (float)Config->NumPoints) * 0.85f;
+			FVector Location = Region.Center + FVector(
+				FMath::Cos(Angle) * Radius,
+				FMath::Sin(Angle) * Radius,
+				0.0f
+			);
+
+			float TerrainZ = GetTerrainHeight(World, Location.X, Location.Y);
+			if (TerrainZ > -100000.0f)
+			{
+				Location.Z = TerrainZ + FMath::RandRange(Config->MinElevation, Config->MaxElevation);
+			}
+			else
+			{
+				Location.Z = Region.Center.Z + FMath::RandRange(Config->MinElevation, Config->MaxElevation);
+			}
+
+			ASLFGrapplePoint* Point = Cast<ASLFGrapplePoint>(
+				SpawnActorAtLocation(World, ASLFGrapplePoint::StaticClass(), Location));
+
+			if (Point)
+			{
+				Point->SetFolderPath(FName(*FString::Printf(TEXT("GrapplePoints/%s"), *Region.DisplayName)));
+				Count++;
+			}
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("  %s: placed %d grapple points"), *Region.DisplayName, Config->NumPoints);
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("  Total grapple points: %d"), Count);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Expand Spawn Points For Sub-Regions (called during InitializeZoneRegions)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void USetupTitanWorldCommandlet::ExpandSpawnPointsForSubRegions()
+{
+	// For each zone with sub-regions, generate additional spawn points
+	// within high-density sub-regions that don't have enough coverage
+	for (FZoneRegion& Region : ZoneRegions)
+	{
+		for (const FSubRegionDef& SubRegion : Region.SubRegions)
+		{
+			// Count existing spawn points within this sub-region
+			int32 ExistingCount = 0;
+			for (const FVector& SpawnLoc : Region.SpawnPointLocations)
+			{
+				float Dist = FVector::Dist2D(SpawnLoc, SubRegion.Center);
+				if (Dist <= SubRegion.Radius)
+				{
+					ExistingCount++;
+				}
+			}
+
+			// Target density: base 5 * EnemyDensity multiplier
+			int32 TargetCount = FMath::RoundToInt(5.0f * SubRegion.EnemyDensity);
+			int32 ToAdd = FMath::Max(0, TargetCount - ExistingCount);
+
+			for (int32 i = 0; i < ToAdd; i++)
+			{
+				float Angle = FMath::RandRange(0.0f, 2.0f * PI);
+				float Dist = FMath::RandRange(0.0f, SubRegion.Radius * 0.8f);
+				FVector NewSpawn = SubRegion.Center + FVector(
+					FMath::Cos(Angle) * Dist,
+					FMath::Sin(Angle) * Dist,
+					0.0f
+				);
+				Region.SpawnPointLocations.Add(NewSpawn);
+			}
+
+			if (ToAdd > 0)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("  Sub-region '%s': added %d spawn points (total in area: %d)"),
+					*SubRegion.Name, ToAdd, ExistingCount + ToAdd);
+			}
+		}
+	}
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Save Level
+// ═══════════════════════════════════════════════════════════════════════════════
 
 bool USetupTitanWorldCommandlet::SaveLevel(UWorld* World)
 {

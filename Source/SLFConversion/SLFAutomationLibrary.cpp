@@ -15954,7 +15954,7 @@ FString USLFAutomationLibrary::SetupSentinelMaterial(
 			MetallicFile = FPaths::Combine(TextureDir, File);
 		else if (File.Contains(TEXT("_roughness")))
 			RoughnessFile = FPaths::Combine(TextureDir, File);
-		else if (File.Contains(TEXT("_texture")))
+		else if (File.Contains(TEXT("_texture")) || File.Contains(TEXT("_base_color")))
 			BaseColorFile = FPaths::Combine(TextureDir, File);
 	}
 

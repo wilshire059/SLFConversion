@@ -1,0 +1,108 @@
+# Blueprint Export - AUTO-GENERATED
+# DO NOT EDIT - This is the source of truth from bp_only
+
+blueprint:
+  path: /Game/SoulslikeFramework/Blueprints/Components/AC_AI_InteractionManager
+  class: Blueprint
+  parent_class: ActorComponent
+  generated_class: AC_AI_InteractionManager_C
+
+variables:
+  - name: Name
+    type: text
+    subcategory: None
+    category: Config
+    replication: 0
+
+  - name: DialogAsset
+    type: object
+    subcategory: None
+    category: Config
+    replication: 0
+
+  - name: ProgressManager
+    type: object
+    subcategory: None
+    category: Runtime
+    replication: 0
+
+  - name: CurrentIndex
+    type: int
+    subcategory: None
+    category: Runtime
+    replication: 0
+
+  - name: MaxIndex
+    type: int
+    subcategory: None
+    category: Runtime
+    replication: 0
+
+  - name: ActiveTable
+    type: softobject
+    subcategory: None
+    category: Runtime
+    replication: 0
+
+  - name: VendorAsset
+    type: object
+    subcategory: None
+    category: Config
+    replication: 0
+
+  - name: OnDialogFinished
+    type: mcdelegate
+    subcategory: None
+    category: Runtime
+    replication: 0
+
+class_default_object:
+  class: AC_AI_InteractionManager_C
+  name: Default__AC_AI_InteractionManager_C
+  path: /Game/SoulslikeFramework/Blueprints/Components/AC_AI_InteractionManager.Default__AC_AI_InteractionManager_C
+  properties:
+    Name: Npc Name
+    DialogAsset:
+      class: PDA_Dialog_C
+      name: DA_ExampleDialog
+      path: /Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DA_ExampleDialog.DA_ExampleDialog
+    ProgressManager: null
+    CurrentIndex: 0
+    MaxIndex: 0
+    ActiveTable: null
+    VendorAsset:
+      class: PDA_Vendor_C
+      name: DA_ExampleVendor
+      path: /Game/SoulslikeFramework/Data/Vendor/DA_ExampleVendor.DA_ExampleVendor
+    OnDialogFinished: ()
+    PrimaryComponentTick:
+      TickGroup: TG_DuringPhysics
+      EndTickGroup: TG_PrePhysics
+      bTickEvenWhenPaused: false
+      bCanEverTick: false
+      bStartWithTickEnabled: true
+      bAllowTickOnDedicatedServer: true
+      TickInterval: 0.000000
+    ComponentTags:
+      count: 0
+      items:
+    AssetUserData:
+      count: 0
+      items:
+    AssetUserDataEditorOnly:
+      count: 0
+      items:
+    UCSSerializationIndex: -1
+    bNetAddressable: false
+    bReplicateUsingRegisteredSubObjectList: false
+    bReplicates: false
+    bAutoActivate: false
+    bEditableWhenInherited: true
+    bCanEverAffectNavigation: false
+    bIsEditorOnly: false
+    bIsVisualizationComponent: false
+    bNeedsUCSSerializationIndexEvaluted: false
+    CreationMethod: Native
+    OnComponentActivated: ()
+    OnComponentDeactivated: ()
+

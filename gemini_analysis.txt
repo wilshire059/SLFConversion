@@ -1,0 +1,85 @@
+Loaded cached credentials.
+This is a classic and deeply frustrating issue when bridging Blender and Unreal Engine, specifically regarding how the FBX SDK and UE handle the transform stack (PreRotation, Rotation, PostRotation, RotationOffset). The stretching you are seeing is almost certainly due to coordinate space mismatches caused by these offsets when evaluating the local transforms for the animation curves.
+
+Here is a comprehensive breakdown of your questions and actionable solutions to fix this.
+
+### 1. Why does `UFbxFactory` produce 0 bone tracks for mixed FBX files?
+When you programmatically invoke `UFbxFactory` (or `FFbxImporter`) on an FBX containing both mesh and animation, it relies heavily on the `UFbxImportUI` configuration object. 
+
+If you are calling `UFbxFactory::ImportObject` or similar low-level functions directly, you bypass the Editor's asset pipeline logic that correctly splits the FBX into a `USkeletalMesh` and `UAnimSequence`. 
+*   **The specific reason for 0 tracks:** If `UFbxImportUI->bImportAnimations` is false, or if a valid `USkeleton*` is not provided to the factory *before* import, the animation pass is silently skipped. Additionally, if the FBX contains multiple animation stacks (takes) and the importer isn't explicitly told which one to read, it defaults to the first one—which Blender sometimes writes as an empty default stack.
+
+### 2. The CORRECT way to programmatically import FBX (Commandlet/C++)
+Do **not** use `UFbxFactory` directly, and do **not** write custom FBX SDK parsers using `EvaluateGlobalTransform`. Epic has spent a decade writing edge-case code in `FFbxImporter` to handle Autodesk's eccentric matrix math.
+
+The correct, robust way to import assets programmatically in UE is using **`UAssetImportTask`**. This invokes the exact same code path as dragging and dropping a file into the Content Browser.
+
+```cpp
+#include "AssetImportTask.h"
+#include "Factories/FbxImportUI.h"
+#include "Factories/FbxAnimSequenceImportData.h"
+#include "AssetToolsModule.h"
+
+UAssetImportTask* ImportTask = NewObject<UAssetImportTask>();
+ImportTask->Filename = TEXT("C:/Path/To/Your/Anim.fbx");
+ImportTask->DestinationPath = TEXT("/Game/Animations");
+ImportTask->bAutomated = true; // Skips UI dialogs
+ImportTask->bSave = true;
+
+// Configure the FBX specific settings
+UFbxImportUI* FbxUI = NewObject<UFbxImportUI>();
+FbxUI->bImportMesh = false; // We only want the animation
+FbxUI->bImportAnimations = true;
+FbxUI->Skeleton = YourTargetSkeleton; // MUST provide the USkeleton*
+FbxUI->bImportMaterials = false;
+FbxUI->bImportTextures = false;
+
+// Set Animation specific settings
+FbxUI->AnimSequenceImportData->AnimationLength = FBXALIT_ExportedTime;
+FbxUI->AnimSequenceImportData->bImportMeshesInBoneHierarchy = false;
+FbxUI->AnimSequenceImportData->bUseDefaultSampleRate = false;
+FbxUI->AnimSequenceImportData->CustomSampleRate = 30; // Match your Blender framerate
+
+ImportTask->Options = FbxUI;
+
+// Execute the import
+FAssetToolsModule& AssetToolsModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
+AssetToolsModule.Get().ImportAssetTasks({ ImportTask });
+
+// The imported UAnimSequence can now be retrieved from ImportTask->GetObjects()
+```
+*By using this method, UE will correctly resolve the PreRotations exactly as it did for your Skeletal Mesh import.*
+
+### 3. Best Plugins / Addons for the Blender -> UE Pipeline
+If you want to solve this at the pipeline level, these are the industry standards for avoiding Blender/UE FBX quirks:
+
+1.  **Send2Ue (Free, Official Epic Games Plugin):** Epic's official Blender addon. It completely automates the export/import process via Python over RPC, handling scaling, bone rolls, and axis conversions perfectly.
+2.  **Mr Mannequins Tools (Free/Donation):** Specifically built for authoring UE Mannequin-compatible animations in Blender. It handles the specific bone roll and hierarchy requirements of the standard UE skeletons flawlessly.
+3.  **Auto-Rig Pro (Paid, highly recommended):** Has a dedicated "Export to Unreal Engine" preset that restructures the rig on export to guarantee 1:1 matching without twist bone or PreRotation errors.
+4.  **Better FBX Importer & Exporter (Paid, Blender Addon):** Bypasses Blender's native FBX exporter entirely. It has specific options to bake down bone orientations and eliminate the `PreRotation`/`PostRotation` nodes in the exported FBX.
+
+### 4. Separate Animation-Only FBX Files?
+**Yes. Absolutely.** This is the standard AAA pipeline practice.
+Exporting a mesh and animation together in one FBX often causes the importer to incorrectly scale or offset the animation data based on the mesh's transform node. Export your Skeletal Mesh once. Then, for animations, only select the Armature in Blender and export with `use_mesh_modifiers=False` and uncheck "Mesh" in the object types. This guarantees the FBX contains only the transform stack, drastically reducing import errors (and fixing the 0 tracks issue if you stick with your current C++ approach).
+
+### 5. USD or Alembic Alternatives?
+*   **glTF 2.0:** Highly recommended as an alternative to FBX. glTF has strict, standardized mathematical rules for coordinate systems and transforms. Blender's glTF exporter and UE's glTF importer are modern and excellent. It often completely bypasses the legacy FBX rotation offset issues.
+*   **USD (Universal Scene Description):** Excellent for static meshes and complex scenes, but skeletal animation support via USD in UE5 is still slightly heavier and more complex to set up than standard AnimSequences.
+*   **Alembic (.abc):** This will 100% solve your stretching, because Alembic bakes *vertex positions* per frame. It completely ignores bones. However, you import it as a `GeometryCache`, meaning you lose all Unreal skeletal features (AnimBlueprints, State Machines, Blending, IK). Use this *only* for linear cinematic cutscenes, never for gameplay characters.
+
+### 6. Can you strip PreRotation in Blender?
+The "stretching" in UE is usually caused by Blender's "Bone Roll" conflicting with Unreal's expected primary axis.
+In your Python export script, you have:
+`primary_bone_axis='Y', secondary_bone_axis='X'`
+
+The standard Unreal Mannequin skeleton expects **`primary_bone_axis='X'`**. The bones point down the X-axis. Try changing your export script to:
+`primary_bone_axis='X', secondary_bone_axis='Y'` (or Z, depending on how the rig was built).
+
+Additionally, before exporting from Blender, ensure your Armature has a scale of `(1,1,1)` and Rotation of `(0,0,0)` (Apply Transforms: Ctrl+A). 
+
+### 7. The Ultimate Fallback: UE5 IK Retargeter
+If you cannot get the math to match natively, you can bypass the local transform issue entirely using UE5's Retargeting system:
+1. Import your Blender animation onto a *duplicate* of your skeleton (let's call it `SKEL_BlenderImport`). Even if the bones have weird local rotations, the global space animation will look correct.
+2. Create an **IK Rig** for `SKEL_BlenderImport` and an IK Rig for your actual game skeleton (`SKEL_Game`).
+3. Create an **IK Retargeter**.
+4. Retarget the animation. The IK Retargeter evaluates the animation in *Global Space* and bakes it down to the *Local Space* of the target skeleton. This mathematically scrubs out any PreRotation/Bone Roll differences between the two assets.

@@ -1,0 +1,370 @@
+========== EXHAUSTIVE ANIMBP DUMP: /Game/EldenRingAnimations/c3100_guard/ABP_c3100_Guard ==========
+
+[BASIC INFO]
+Class: AnimBlueprint
+ParentClass: ABP_SoulslikeEnemy
+GeneratedClass: ABP_c3100_Guard_C
+Status: 3
+TargetSkeleton: /Game/EldenRingAnimations/c3100_guard/c3100_mesh_Skeleton.c3100_mesh_Skeleton (104 bones)
+
+[CDO PROPERTIES]
+  UberGraphFrame (FPointerToUberGraphFrame) = ()
+  __AnimBlueprintMutables (FAnimBlueprintGeneratedMutableData) = (__FloatProperty=0.000000,__FloatProperty_0=0.000000,__BoolProperty_1=False)
+  AnimBlueprintExtension_PropertyAccess (FAnimSubsystemInstance) = ()
+  AnimBlueprintExtension_Base (FAnimSubsystemInstance) = ()
+  AnimGraphNode_Root (FAnimNode_Root) = (Result=(LinkID=9,SourceLinkID=0),Name="AnimGraph",LayerGroup="",InitialUpdateFunction=(ClassName="",FunctionName=""),BecomeRelevantFunction=(ClassName="",FunctionName=""),UpdateFunction=(ClassName=""
+  AnimGraphNode_TransitionResult_2 (FAnimNode_TransitionResult) = (bCanEnterTransition=False,InitialUpdateFunction=(ClassName="",FunctionName=""),BecomeRelevantFunction=(ClassName="",FunctionName=""),UpdateFunction=(ClassName="",FunctionName=""))
+  AnimGraphNode_TransitionResult_1 (FAnimNode_TransitionResult) = (bCanEnterTransition=False,InitialUpdateFunction=(ClassName="",FunctionName=""),BecomeRelevantFunction=(ClassName="",FunctionName=""),UpdateFunction=(ClassName="",FunctionName=""))
+  AnimGraphNode_BlendSpacePlayer (FAnimNode_BlendSpacePlayer) = (GroupName="",GroupRole=CanBeLeader,bOverridePositionWhenJoiningSyncGroupAsLeader=False,Method=DoNotSync,bIgnoreForRelevancyTest=False,X=0.000000,Y=0.000000,PlayRate=1.000000,bLoop=True,bResetPlayTime
+  AnimGraphNode_StateResult_3 (FAnimNode_StateResult) = (StateIndex=1,StateEntryFunction=(ClassName="",FunctionName=""),StateFullyBlendedInFunction=(ClassName="",FunctionName=""),StateExitFunction=(ClassName="",FunctionName=""),StateFullyBlendedOutFunction
+  AnimGraphNode_SequencePlayer_2 (FAnimNode_SequencePlayer) = (GroupName="",GroupRole=CanBeLeader,bOverridePositionWhenJoiningSyncGroupAsLeader=False,Method=DoNotSync,bIgnoreForRelevancyTest=False,Sequence="/Script/Engine.AnimSequence'/Game/EldenRingAnimations/c
+  AnimGraphNode_StateResult_2 (FAnimNode_StateResult) = (StateIndex=0,StateEntryFunction=(ClassName="",FunctionName=""),StateFullyBlendedInFunction=(ClassName="",FunctionName=""),StateExitFunction=(ClassName="",FunctionName=""),StateFullyBlendedOutFunction
+  AnimGraphNode_StateMachine_1 (FAnimNode_StateMachine) = (StateMachineIndexInClass=1,MaxTransitionsPerFrame=3,MaxTransitionsRequests=32,bSkipFirstUpdateTransition=True,bReinitializeOnBecomingRelevant=True,bCreateNotifyMetaData=True,bAllowConduitEntryStates=
+  AnimGraphNode_SaveCachedPose (FAnimNode_SaveCachedPose) = (Pose=(LinkID=7,SourceLinkID=8),CachePoseName="Locomotion",InitialUpdateFunction=(ClassName="",FunctionName=""),BecomeRelevantFunction=(ClassName="",FunctionName=""),UpdateFunction=(ClassName="",Funct
+  AnimGraphNode_Slot (FAnimNode_Slot) = (Source=(LinkID=11,SourceLinkID=9),SlotName="DefaultSlot",bAlwaysUpdateSourcePose=False,InitialUpdateFunction=(ClassName="",FunctionName=""),BecomeRelevantFunction=(ClassName="",FunctionName=""),Updat
+  AnimGraphNode_UseCachedPose (FAnimNode_UseCachedPose) = (LinkToCachingNode=(LinkID=8,SourceLinkID=10),CachePoseName="Locomotion",InitialUpdateFunction=(ClassName="",FunctionName=""),BecomeRelevantFunction=(ClassName="",FunctionName=""),UpdateFunction=(Clas
+  AnimGraphNode_BlendListByBool (FAnimNode_BlendListByBool) = (BlendProfileForFalse=None,bUseSeperateBlendProfileForFalse=False,bActiveValue=False,BlendPose=((LinkID=17,SourceLinkID=11),(LinkID=10,SourceLinkID=11)),BlendTime=(0.200000,0.500000),TransitionType=St
+  AnimGraphNode_TransitionResult (FAnimNode_TransitionResult) = (bCanEnterTransition=False,InitialUpdateFunction=(ClassName="",FunctionName=""),BecomeRelevantFunction=(ClassName="",FunctionName=""),UpdateFunction=(ClassName="",FunctionName=""))
+  AnimGraphNode_SequencePlayer_1 (FAnimNode_SequencePlayer) = (GroupName="",GroupRole=CanBeLeader,bOverridePositionWhenJoiningSyncGroupAsLeader=False,Method=DoNotSync,bIgnoreForRelevancyTest=False,Sequence=None,PlayRateBasis=1.000000,PlayRate=1.000000,PlayRateSc
+  AnimGraphNode_StateResult_1 (FAnimNode_StateResult) = (StateIndex=1,StateEntryFunction=(ClassName="",FunctionName=""),StateFullyBlendedInFunction=(ClassName="",FunctionName=""),StateExitFunction=(ClassName="",FunctionName=""),StateFullyBlendedOutFunction
+  AnimGraphNode_SequencePlayer (FAnimNode_SequencePlayer) = (GroupName="",GroupRole=CanBeLeader,bOverridePositionWhenJoiningSyncGroupAsLeader=False,Method=DoNotSync,bIgnoreForRelevancyTest=False,Sequence=None,PlayRateBasis=1.000000,PlayRate=1.000000,PlayRateSc
+  AnimGraphNode_StateResult (FAnimNode_StateResult) = (StateIndex=0,StateEntryFunction=(ClassName="",FunctionName=""),StateFullyBlendedInFunction=(ClassName="",FunctionName=""),StateExitFunction=(ClassName="",FunctionName=""),StateFullyBlendedOutFunction
+  AnimGraphNode_StateMachine (FAnimNode_StateMachine) = (StateMachineIndexInClass=0,MaxTransitionsPerFrame=3,MaxTransitionsRequests=32,bSkipFirstUpdateTransition=True,bReinitializeOnBecomingRelevant=True,bCreateNotifyMetaData=True,bAllowConduitEntryStates=
+  AC AI Combat Manager (UAC_AI_CombatManager_C*) = None
+  Hit Location (FVector) = (X=0.000000,Y=0.000000,Z=0.000000)
+  SoulslikeCharacter (AActor*) = None
+  MovementComponent (UCharacterMovementComponent*) = None
+  Velocity (FVector) = (X=0.000000,Y=0.000000,Z=0.000000)
+  GroundSpeed (float) = 0.000000
+  IsFalling (bool) = False
+  EquipmentComponent (UActorComponent*) = None
+  LocomotionType (ESLFOverlayState) = Unarmed
+  PhysicsWeight (float) = 1.000000
+  SoulslikeEnemy (AActor*) = None
+  ACAICombatManager (UActorComponent*) = None
+  HitLocation (FVector) = (X=0.000000,Y=0.000000,Z=0.000000)
+  Direction (float) = 0.000000
+  PoiseBroken (bool) = False
+  PoiseBreakAsset (UPDA_PoiseBreakAnimData*) = None
+  IkWeight (float) = 1.000000
+  CurrentHitNormal (FVector) = (X=0.000000,Y=0.000000,Z=0.000000)
+  OwnerCharacter (ACharacter*) = None
+  CachedCombatManager (UActorComponent*) = None
+
+[BLUEPRINT VARIABLES]
+  AC AI Combat Manager: Category=Default Type=object Default=
+  Hit Location: Category=Default Type=struct Default=
+
+[ALL GRAPHS]
+Total Graphs: 16
+
+--- GRAPH: AnimGraph (Nodes=13, Class=AnimationGraph) ---
+  NODE [AnimGraphNode_StateMachine] "Locomotion | State Machine" Pos=(-1408,-160)
+    FAnimNode: AnimNode_StateMachine
+    .MaxTransitionsPerFrame = 3
+    .MaxTransitionsRequests = 32
+    .bSkipFirstUpdateTransition = True
+    .bReinitializeOnBecomingRelevant = True
+    .bCreateNotifyMetaData = True
+    .bAllowConduitEntryStates = False
+    Pin[OUT struct:Pose] SubObj=PoseLink -> Save cached pose 'Locomotion'.Pose
+  NODE [AnimGraphNode_SaveCachedPose] "Save cached pose 'Locomotion'" Pos=(-1232,-144)
+    FAnimNode: AnimNode_SaveCachedPose
+    .Pose = (LinkID=-1,SourceLinkID=-1)
+    Pin[IN struct:Pose] SubObj=PoseLink Default="(LinkID=-1,SourceLinkID=-1)" -> Locomotion.Pose
+  NODE [AnimGraphNode_Root] "Output Pose | AnimGraph" Pos=(208,-48)
+    FAnimNode: AnimNode_Root
+    .Result = (LinkID=-1,SourceLinkID=-1)
+    Pin[IN struct:Result] SubObj=PoseLink Default="(LinkID=-1,SourceLinkID=-1)" -> Slot 'DefaultSlot'.Pose
+  NODE [K2Node_VariableGet] "Get PhysicsWeight" Pos=(-128,-16)
+    Pin[OUT real:PhysicsWeight] Sub=float Default="0.0"
+  NODE [AnimGraphNode_StateMachine] "Poise Broken | State Machine" Pos=(-1280,0)
+    FAnimNode: AnimNode_StateMachine
+    .MaxTransitionsPerFrame = 3
+    .MaxTransitionsRequests = 32
+    .bSkipFirstUpdateTransition = True
+    .bReinitializeOnBecomingRelevant = True
+    .bCreateNotifyMetaData = True
+    .bAllowConduitEntryStates = False
+    Pin[OUT struct:Pose] SubObj=PoseLink -> Blend Poses by bool.BlendPose_0
+  NODE [AnimGraphNode_Slot] "Slot 'DefaultSlot' | Group 'DefaultGroup'" Pos=(-768,0)
+    FAnimNode: AnimNode_Slot
+    .Source = (LinkID=-1,SourceLinkID=-1)
+    .SlotName = DefaultSlot
+    .bAlwaysUpdateSourcePose = False
+    Pin[IN struct:Source] SubObj=PoseLink Default="(LinkID=-1,SourceLinkID=-1)" -> Blend Poses by bool.Pose
+    Pin[OUT struct:Pose] SubObj=PoseLink -> Output Pose.Result
+  NODE [AnimGraphNode_BlendListByBool] "Blend Poses by bool" Pos=(-1024,16)
+    FAnimNode: AnimNode_BlendListByBool
+    .bUseSeperateBlendProfileForFalse = False
+    .bActiveValue = False
+    .BlendPose = ((),())
+    .BlendTime = (0.100000,0.100000)
+    .TransitionType = StandardBlend
+    .BlendType = Linear
+    .bResetChildOnActivation = False
+    .ChildUpateMode = Default
+    Pin[IN struct:BlendPose_0] SubObj=PoseLink Default="(LinkID=-1,SourceLinkID=-1)" -> Poise Broken.Pose
+    Pin[IN struct:BlendPose_1] SubObj=PoseLink Default="(LinkID=-1,SourceLinkID=-1)" -> Use cached pose 'Locomotion'.Pose
+    Pin[IN real:BlendTime_0] Sub=float Default="0.200000"
+    Pin[IN real:BlendTime_1] Sub=float Default="0.500000"
+    Pin[IN bool:bActiveValue] Default="False" -> Get PoiseBroken.PoiseBroken
+    Pin[OUT struct:Pose] SubObj=PoseLink -> Slot 'DefaultSlot'.Source
+  NODE [AnimGraphNode_UseCachedPose] "Use cached pose 'Locomotion'" Pos=(-1280,128)
+    FAnimNode: AnimNode_UseCachedPose
+    .LinkToCachingNode = (LinkID=-1,SourceLinkID=-1)
+    Pin[OUT struct:Pose] SubObj=PoseLink -> Blend Poses by bool.BlendPose_1
+  NODE [K2Node_CallFunction] "NOT Boolean" Pos=(-512,144)
+    Pin[IN object:self] SubObj=KismetMathLibrary DefaultObj=/Script/Engine.Default__KismetMathLibrary [HIDDEN]
+    Pin[IN bool:A] Default="false" -> Get IsFalling.IsFalling
+    Pin[OUT bool:ReturnValue] Default="false"
+  NODE [K2Node_VariableGet] "Get IsFalling" Pos=(-512,176)
+    Pin[OUT bool:IsFalling] Default="false" -> NOT Boolean.A
+  NODE [K2Node_VariableGet] "Get PoiseBroken" Pos=(-1024,224)
+    Pin[OUT bool:PoiseBroken] Default="false" -> Blend Poses by bool.bActiveValue
+  NODE [K2Node_VariableGet] "Get Hit Location" Pos=(-512,240)
+    Pin[OUT struct:Hit Location] SubObj=Vector Default="0, 0, 0" -> vector * vector.A
+  NODE [K2Node_PromotableOperator] "vector * vector" Pos=(-512,272)
+    Pin[IN struct:A] SubObj=Vector -> Get Hit Location.Hit Location
+    Pin[IN real:B] Sub=double Default="15.000000"
+    Pin[OUT struct:ReturnValue] SubObj=Vector
+
+--- GRAPH: EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_SequencePlayer_B64C486449AD6F2F0782FC91106B7941 (Nodes=2, Class=EdGraph) ---
+  NODE [K2Node_FunctionEntry] "$$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_SequencePlayer_B64C486449AD6F2F0782FC91106B7941 $$" Pos=(-200,-1600)
+    Pin[OUT exec:then] -> Execute Ubergraph ABP C 3100 Guard.execute
+  NODE [K2Node_CallFunction] "Execute Ubergraph ABP C 3100 Guard" Pos=(300,-1600)
+    Pin[IN exec:execute] -> $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_SequencePlayer_B64C486449AD6F2F0782FC91106B7941 $$.then
+    Pin[OUT exec:then]
+    Pin[IN object:self] Sub=self SubObj=SKEL_ABP_c3100_Guard_C
+    Pin[IN int:EntryPoint] Default="0"
+
+--- GRAPH: EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_SequencePlayer_BE2DA93F486DF30C8FB792AF5ED679AF (Nodes=2, Class=EdGraph) ---
+  NODE [K2Node_FunctionEntry] "$$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_SequencePlayer_BE2DA93F486DF30C8FB792AF5ED679AF $$" Pos=(-200,-1600)
+    Pin[OUT exec:then] -> Execute Ubergraph ABP C 3100 Guard.execute
+  NODE [K2Node_CallFunction] "Execute Ubergraph ABP C 3100 Guard" Pos=(300,-1200)
+    Pin[IN exec:execute] -> $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_SequencePlayer_BE2DA93F486DF30C8FB792AF5ED679AF $$.then
+    Pin[OUT exec:then]
+    Pin[IN object:self] Sub=self SubObj=SKEL_ABP_c3100_Guard_C
+    Pin[IN int:EntryPoint] Default="0"
+
+--- GRAPH: EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_4FCF23864A55DE07EA82F39464863A29 (Nodes=2, Class=EdGraph) ---
+  NODE [K2Node_FunctionEntry] "$$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_4FCF23864A55DE07EA82F39464863A29 $$" Pos=(-200,-1600)
+    Pin[OUT exec:then] -> Execute Ubergraph ABP C 3100 Guard.execute
+  NODE [K2Node_CallFunction] "Execute Ubergraph ABP C 3100 Guard" Pos=(300,-1600)
+    Pin[IN exec:execute] -> $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_4FCF23864A55DE07EA82F39464863A29 $$.then
+    Pin[OUT exec:then]
+    Pin[IN object:self] Sub=self SubObj=SKEL_ABP_c3100_Guard_C
+    Pin[IN int:EntryPoint] Default="0"
+
+--- GRAPH: EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_682882D2418D6D68314AFBAE2E972761 (Nodes=2, Class=EdGraph) ---
+  NODE [K2Node_FunctionEntry] "$$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_682882D2418D6D68314AFBAE2E972761 $$" Pos=(-200,-1600)
+    Pin[OUT exec:then] -> Execute Ubergraph ABP C 3100 Guard.execute
+  NODE [K2Node_CallFunction] "Execute Ubergraph ABP C 3100 Guard" Pos=(300,-1600)
+    Pin[IN exec:execute] -> $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_682882D2418D6D68314AFBAE2E972761 $$.then
+    Pin[OUT exec:then]
+    Pin[IN object:self] Sub=self SubObj=SKEL_ABP_c3100_Guard_C
+    Pin[IN int:EntryPoint] Default="0"
+
+--- GRAPH: EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_FFA532B94F03CBA3253D13A17F498258 (Nodes=2, Class=EdGraph) ---
+  NODE [K2Node_FunctionEntry] "$$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_FFA532B94F03CBA3253D13A17F498258 $$" Pos=(-200,-1600)
+    Pin[OUT exec:then] -> Execute Ubergraph ABP C 3100 Guard.execute
+  NODE [K2Node_CallFunction] "Execute Ubergraph ABP C 3100 Guard" Pos=(300,-1600)
+    Pin[IN exec:execute] -> $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_FFA532B94F03CBA3253D13A17F498258 $$.then
+    Pin[OUT exec:then]
+    Pin[IN object:self] Sub=self SubObj=SKEL_ABP_c3100_Guard_C
+    Pin[IN int:EntryPoint] Default="0"
+
+--- GRAPH: EventGraph (Nodes=0, Class=EdGraph) ---
+
+--- GRAPH: Idle (Nodes=2, Class=AnimationStateGraph) ---
+  NODE [AnimGraphNode_SequencePlayer] "a000_000020 | Sequence Player" Pos=(-256,0)
+    FAnimNode: AnimNode_SequencePlayer
+    .GroupRole = CanBeLeader
+    .bOverridePositionWhenJoiningSyncGroupAsLeader = False
+    .Method = DoNotSync
+    .bIgnoreForRelevancyTest = False
+    .Sequence = /Script/Engine.AnimSequence'/Game/EldenRingAnimations/c3100_guard/Animations/a000_000020.a000_000020'
+    .PlayRateBasis = 1.000000
+    .PlayRate = 1.000000
+    .PlayRateScaleBiasClampConstants = (InRange=(Max=1.000000),OutRange=(Max=1.000000),Scale=1.000000,ClampMax=1.000000,InterpSpeedIncreasing=10.000000,InterpSpeedDecreasing=10.000000)
+    .PlayRateScaleBiasClamp = (InRange=(Max=1.000000),OutRange=(Max=1.000000),Scale=1.000000,ClampMax=1.000000,InterpSpeedIncreasing=10.000000,InterpSpeedDecreasing=10.000000)
+    .bLoopAnimation = False
+    .bStartFromMatchingPose = False
+    .GroupIndex = -1
+    .GroupScope = Local
+    Pin[OUT struct:Pose] SubObj=PoseLink -> Output Animation Pose.Result
+  NODE [AnimGraphNode_StateResult] "Output Animation Pose" Pos=(0,16)
+    FAnimNode: AnimNode_StateResult
+    .StateIndex = -1
+    .Result = (LinkID=-1,SourceLinkID=-1)
+    .LayerGroup = DefaultSharedGroup
+    Pin[IN struct:Result] SubObj=PoseLink Default="(LinkID=-1,SourceLinkID=-1)" -> Sequence Player 'a000_000020'.Pose
+
+--- GRAPH: Locomotion (Nodes=5, Class=AnimationStateMachineGraph) ---
+  NODE [AnimStateTransitionNode] "Idle to Walk / Run" Pos=(284,-18)
+    LogicType: 0
+    bAutomaticRuleBasedOnSequencePlayerInState: false
+    TransitionDuration: 0.200
+    BoundGraph: Transition (3 nodes)
+    Pin[IN Transition:In] -> Idle.Out [HIDDEN]
+    Pin[OUT Transition:Out] -> Walk / Run.In [HIDDEN]
+  NODE [AnimStateEntryNode] "Locomotion" Pos=(0,0)
+    Pin[OUT exec:Entry] -> Idle.In
+  NODE [AnimStateNode] "Idle" Pos=(128,0)
+    InnerGraph: Idle (2 nodes)
+    Pin[IN Transition:In] -> Locomotion.Entry -> Walk / Run to Idle.Out
+    Pin[OUT Transition:Out] -> Idle to Walk / Run.In
+  NODE [AnimStateNode] "Walk / Run" Pos=(384,0)
+    InnerGraph: Walk / Run (4 nodes)
+    Pin[IN Transition:In] -> Idle to Walk / Run.Out
+    Pin[OUT Transition:Out] -> Walk / Run to Idle.In
+  NODE [AnimStateTransitionNode] "Walk / Run to Idle" Pos=(284,41)
+    LogicType: 0
+    bAutomaticRuleBasedOnSequencePlayerInState: false
+    TransitionDuration: 0.300
+    BoundGraph: Transition (3 nodes)
+    Pin[IN Transition:In] -> Walk / Run.Out [HIDDEN]
+    Pin[OUT Transition:Out] -> Idle.In [HIDDEN]
+
+--- GRAPH: Loop (Nodes=4, Class=AnimationStateGraph) ---
+  NODE [K2Node_VariableGet] "Get PoiseBreakAsset" Pos=(-256,-48)
+    Pin[OUT object:PoiseBreakAsset] SubObj=PDA_PoiseBreakAnimData -> Get PoiseBreak_Loop.self
+  NODE [K2Node_VariableGet] "Get PoiseBreak_Loop" Pos=(-256,-16)
+    Pin[OUT object:PoiseBreak_Loop] SubObj=AnimSequence -> Sequence Player.Sequence
+    Pin[IN object:self] SubObj=PDA_PoiseBreakAnimData -> Get PoiseBreakAsset.PoiseBreakAsset
+  NODE [AnimGraphNode_SequencePlayer] "Sequence Player" Pos=(-256,16)
+    FAnimNode: AnimNode_SequencePlayer
+    .GroupRole = CanBeLeader
+    .bOverridePositionWhenJoiningSyncGroupAsLeader = False
+    .Method = DoNotSync
+    .bIgnoreForRelevancyTest = False
+    .PlayRateBasis = 1.000000
+    .PlayRate = 1.000000
+    .PlayRateScaleBiasClampConstants = (InRange=(Max=1.000000),OutRange=(Max=1.000000),Scale=1.000000,ClampMax=1.000000,InterpSpeedIncreasing=10.000000,InterpSpeedDecreasing=10.000000)
+    .PlayRateScaleBiasClamp = (InRange=(Max=1.000000),OutRange=(Max=1.000000),Scale=1.000000,ClampMax=1.000000,InterpSpeedIncreasing=10.000000,InterpSpeedDecreasing=10.000000)
+    .bLoopAnimation = True
+    .bStartFromMatchingPose = False
+    .GroupIndex = -1
+    .GroupScope = Local
+    Pin[IN object:Sequence] SubObj=AnimSequenceBase -> Get PoiseBreak_Loop.PoiseBreak_Loop
+    Pin[OUT struct:Pose] SubObj=PoseLink -> Output Animation Pose.Result
+  NODE [AnimGraphNode_StateResult] "Output Animation Pose" Pos=(0,16)
+    FAnimNode: AnimNode_StateResult
+    .StateIndex = -1
+    .Result = (LinkID=-1,SourceLinkID=-1)
+    .LayerGroup = DefaultSharedGroup
+    Pin[IN struct:Result] SubObj=PoseLink Default="(LinkID=-1,SourceLinkID=-1)" -> Sequence Player.Pose
+
+--- GRAPH: Poise Broken (Nodes=4, Class=AnimationStateMachineGraph) ---
+  NODE [AnimStateTransitionNode] "Start to Loop" Pos=(292,-18)
+    LogicType: 0
+    bAutomaticRuleBasedOnSequencePlayerInState: false
+    TransitionDuration: 0.200
+    BoundGraph: Transition (3 nodes)
+    Pin[IN Transition:In] -> Start.Out [HIDDEN]
+    Pin[OUT Transition:Out] -> Loop.In [HIDDEN]
+  NODE [AnimStateEntryNode] "Poise Broken" Pos=(0,0)
+    Pin[OUT exec:Entry] -> Start.In
+  NODE [AnimStateNode] "Start" Pos=(128,0)
+    InnerGraph: Start (4 nodes)
+    Pin[IN Transition:In] -> Poise Broken.Entry
+    Pin[OUT Transition:Out] -> Start to Loop.In
+  NODE [AnimStateNode] "Loop" Pos=(384,0)
+    InnerGraph: Loop (4 nodes)
+    Pin[IN Transition:In] -> Start to Loop.Out
+    Pin[OUT Transition:Out]
+
+--- GRAPH: Start (Nodes=4, Class=AnimationStateGraph) ---
+  NODE [K2Node_VariableGet] "Get PoiseBreakAsset" Pos=(-256,-64)
+    Pin[OUT object:PoiseBreakAsset] SubObj=PDA_PoiseBreakAnimData -> Get PoiseBreak_Start.self
+  NODE [K2Node_VariableGet] "Get PoiseBreak_Start" Pos=(-256,-32)
+    Pin[OUT object:PoiseBreak_Start] SubObj=AnimSequence -> Sequence Player.Sequence
+    Pin[IN object:self] SubObj=PDA_PoiseBreakAnimData -> Get PoiseBreakAsset.PoiseBreakAsset
+  NODE [AnimGraphNode_SequencePlayer] "Sequence Player" Pos=(-256,0)
+    FAnimNode: AnimNode_SequencePlayer
+    .GroupRole = CanBeLeader
+    .bOverridePositionWhenJoiningSyncGroupAsLeader = False
+    .Method = DoNotSync
+    .bIgnoreForRelevancyTest = False
+    .PlayRateBasis = 1.000000
+    .PlayRate = 1.000000
+    .PlayRateScaleBiasClampConstants = (InRange=(Max=1.000000),OutRange=(Max=1.000000),Scale=1.000000,ClampMax=1.000000,InterpSpeedIncreasing=10.000000,InterpSpeedDecreasing=10.000000)
+    .PlayRateScaleBiasClamp = (InRange=(Max=1.000000),OutRange=(Max=1.000000),Scale=1.000000,ClampMax=1.000000,InterpSpeedIncreasing=10.000000,InterpSpeedDecreasing=10.000000)
+    .bLoopAnimation = False
+    .bStartFromMatchingPose = False
+    .GroupIndex = -1
+    .GroupScope = Local
+    Pin[IN object:Sequence] SubObj=AnimSequenceBase -> Get PoiseBreak_Start.PoiseBreak_Start
+    Pin[OUT struct:Pose] SubObj=PoseLink -> Output Animation Pose.Result
+  NODE [AnimGraphNode_StateResult] "Output Animation Pose" Pos=(0,0)
+    FAnimNode: AnimNode_StateResult
+    .StateIndex = -1
+    .Result = (LinkID=-1,SourceLinkID=-1)
+    .LayerGroup = DefaultSharedGroup
+    Pin[IN struct:Result] SubObj=PoseLink Default="(LinkID=-1,SourceLinkID=-1)" -> Sequence Player.Pose
+
+--- GRAPH: Transition (Nodes=3, Class=AnimationTransitionGraph) ---
+  NODE [AnimGraphNode_TransitionResult] "Result" Pos=(0,-7)
+    FAnimNode: AnimNode_TransitionResult
+    .bCanEnterTransition = False
+    Pin[IN bool:bCanEnterTransition] Default="False" -> float > float.ReturnValue
+  NODE [K2Node_VariableGet] "Get GroundSpeed" Pos=(-448,80)
+    Pin[OUT real:GroundSpeed] Sub=float Default="0.0" -> float > float.A
+  NODE [K2Node_PromotableOperator] "float > float" Pos=(-288,96)
+    Pin[IN real:A] Sub=double -> Get GroundSpeed.GroundSpeed
+    Pin[IN real:B] Sub=double Default="0.100000"
+    Pin[OUT bool:ReturnValue] -> Result.bCanEnterTransition
+
+--- GRAPH: Transition (Nodes=3, Class=AnimationTransitionGraph) ---
+  NODE [AnimGraphNode_TransitionResult] "Result" Pos=(0,-22)
+    FAnimNode: AnimNode_TransitionResult
+    .bCanEnterTransition = False
+    Pin[IN bool:bCanEnterTransition] Default="False" -> float < float.ReturnValue
+  NODE [K2Node_PromotableOperator] "float < float" Pos=(-256,48)
+    Pin[IN real:A] Sub=double -> Get GroundSpeed.GroundSpeed
+    Pin[IN real:B] Sub=double Default="0.100000"
+    Pin[OUT bool:ReturnValue] -> Result.bCanEnterTransition
+  NODE [K2Node_VariableGet] "Get GroundSpeed" Pos=(-432,80)
+    Pin[OUT real:GroundSpeed] Sub=float Default="0.0" -> float < float.A
+
+--- GRAPH: Transition (Nodes=3, Class=AnimationTransitionGraph) ---
+  NODE [AnimGraphNode_TransitionResult] "Result" Pos=(0,0)
+    FAnimNode: AnimNode_TransitionResult
+    .bCanEnterTransition = False
+    Pin[IN bool:bCanEnterTransition] Default="False" -> float < float.ReturnValue
+  NODE [K2Node_AnimGetter] "Time Remaining (ratio)" Pos=(-512,128)
+    Pin[IN int:AssetPlayerIndex] Default="0" [HIDDEN]
+    Pin[OUT real:ReturnValue] Sub=float Default="0.0" -> float < float.A
+  NODE [K2Node_PromotableOperator] "float < float" Pos=(-192,160)
+    Pin[IN real:A] Sub=double -> Time Remaining (ratio).ReturnValue
+    Pin[IN real:B] Sub=double Default="0.100000"
+    Pin[OUT bool:ReturnValue] -> Result.bCanEnterTransition
+
+--- GRAPH: Walk / Run (Nodes=4, Class=AnimationStateGraph) ---
+  NODE [AnimGraphNode_BlendSpacePlayer] "BS_c3100_Locomotion | Blendspace Player" Pos=(-256,-16)
+    FAnimNode: AnimNode_BlendSpacePlayer
+    .GroupRole = CanBeLeader
+    .bOverridePositionWhenJoiningSyncGroupAsLeader = False
+    .Method = DoNotSync
+    .bIgnoreForRelevancyTest = False
+    .PlayRate = 1.000000
+    .bLoop = True
+    .bResetPlayTimeWhenBlendSpaceChanges = True
+    .BlendSpace = /Script/Engine.BlendSpace'/Game/EldenRingAnimations/c3100_guard/BS_c3100_Locomotion.BS_c3100_Locomotion'
+    .GroupIndex = -1
+    .GroupScope = Local
+    Pin[IN real:X] Sub=float Default="0.000000" -> Get Direction.Direction
+    Pin[IN real:Y] Sub=float Default="0.000000" -> Get GroundSpeed.GroundSpeed
+    Pin[OUT struct:Pose] SubObj=PoseLink -> Output Animation Pose.Result
+  NODE [K2Node_VariableGet] "Get Direction" Pos=(-400,0)
+    Pin[OUT real:Direction] Sub=float Default="0.0" -> Blendspace Player 'BS_c3100_Locomotion'.X
+  NODE [AnimGraphNode_StateResult] "Output Animation Pose" Pos=(0,0)
+    FAnimNode: AnimNode_StateResult
+    .StateIndex = -1
+    .Result = (LinkID=-1,SourceLinkID=-1)
+    .LayerGroup = DefaultSharedGroup
+    Pin[IN struct:Result] SubObj=PoseLink Default="(LinkID=-1,SourceLinkID=-1)" -> Blendspace Player 'BS_c3100_Locomotion'.Pose
+  NODE [K2Node_VariableGet] "Get GroundSpeed" Pos=(-416,32)
+    Pin[OUT real:GroundSpeed] Sub=float Default="0.0" -> Blendspace Player 'BS_c3100_Locomotion'.Y
+
+[BLEND SPACE DETAILS]

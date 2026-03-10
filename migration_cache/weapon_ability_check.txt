@@ -1,0 +1,12 @@
+Loaded: DA_ExampleWeaponAbility
+Class: PDA_WeaponAbility_C
+
+Properties:
+  Icon: <Object '/Game/SoulslikeFramework/Textures/Abilities/T_Ability_Holy.T_Ability_Holy' (0x000001EF01059000) Class 'Texture2D'>
+  AbilityName: 
+  AffectedStat: <Struct 'GameplayTag' (0x000001EFEB12AB88) {}>
+  Cost: 10.0
+  Montage: <Object '/Game/SoulslikeFramework/Demo/_Animations/Combat/WeaponAbility/AM_SLF_WeaponAbility_Paragon_Aurora.AM_SLF_WeaponAbility_Paragon_Aurora' (0x000001EF013F0A80) Class 'AnimMontage'>
+  AdditionalEffectClass: None
+
+Done.

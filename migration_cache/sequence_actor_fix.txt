@@ -1,0 +1,30 @@
+======================================================================
+FIXING B_SequenceActor - REPARENT AND SET SEQUENCE
+======================================================================
+Loaded Blueprint: B_SequenceActor
+Loaded Sequence: LS_ShowcaseRoom
+
+Step 1: Reparenting to C++ class...
+  Found parent class: B_SequenceActor
+  FAILED: Reparent returned False
+
+Step 2: Clearing EventGraph...
+  ERROR clearing EventGraph: type object 'BlueprintEditorLibrary' has no attribute 'get_all_graphs'
+
+Step 3: Compiling Blueprint...
+  Compiled Blueprint
+
+Step 4: Setting SequenceToPlay property...
+  Got CDO: Default__B_SequenceActor_C
+  Available properties:
+    active_sequence_player: NoneType
+    on_sequence_finished: B_SequenceActor_OnSequenceFinished
+    sequence_to_play: NoneType
+  SUCCESS: Set sequence_to_play
+
+Step 5: Saving Blueprint...
+  Saved: /Game/SoulslikeFramework/Blueprints/_WorldActors/B_SequenceActor
+
+======================================================================
+Done!
+======================================================================

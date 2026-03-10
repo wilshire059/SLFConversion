@@ -70,13 +70,27 @@ protected:
 	bool bIsPanning = false;
 	FVector2D LastMousePos = FVector2D::ZeroVector;
 
+	// Zone overlay
+	UPROPERTY() UTextBlock* DungeonWarningText;
+	TArray<UImage*> ZoneOverlayWidgets;
+	TArray<UTextBlock*> ZoneNameLabels;
+
+	/** Build translucent zone circles on the map */
+	void BuildZoneOverlay();
+
+	/** Update zone overlay positions on zoom/pan */
+	void RepositionZoneOverlay();
+
+	/** Check if fast travel is blocked (dungeon) and show warning */
+	bool CheckFastTravelBlocked() const;
+
 	// Helpers
 	FVector2D WorldToFullMapUV(const FVector& WorldLocation) const;
 	FVector2D FullMapUVToViewport(const FVector2D& MapUV) const;
 	FVector2D ViewportToFullMapUV(const FVector2D& ViewportUV) const;
 	void RepositionAllMarkers();
 	void UpdateMapImageTransform();
-	UImage* CreateMarkerWidget(bool bIsPlayer);
+	UImage* CreateMarkerWidget(bool bIsPlayer, int32 RestPointIndex = -1);
 	void UpdateMarkerSelection();
 	int32 FindNearestMarkerInDirection(const FVector2D& Direction) const;
 	int32 FindMarkerNearScreenPosition(const FVector2D& LocalPosition, const FGeometry& Geometry) const;

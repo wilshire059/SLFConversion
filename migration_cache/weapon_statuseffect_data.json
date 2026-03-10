@@ -1,1 +1,32 @@
-{}
+{
+  "/Game/SoulslikeFramework/Data/Items/DA_BossMace": {
+    "effects": [
+      {
+        "effect_path": "/Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Burn.DA_StatusEffect_Burn",
+        "effect_name": "DA_StatusEffect_Burn",
+        "rank": 1,
+        "buildup_amount": 50.0
+      }
+    ]
+  },
+  "/Game/SoulslikeFramework/Data/Items/DA_Greatsword": {
+    "effects": [
+      {
+        "effect_path": "/Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Bleed.DA_StatusEffect_Bleed",
+        "effect_name": "DA_StatusEffect_Bleed",
+        "rank": 1,
+        "buildup_amount": 50.0
+      }
+    ]
+  },
+  "/Game/SoulslikeFramework/Data/Items/DA_PoisonSword": {
+    "effects": [
+      {
+        "effect_path": "/Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Poison.DA_StatusEffect_Poison",
+        "effect_name": "DA_StatusEffect_Poison",
+        "rank": 1,
+        "buildup_amount": 50.0
+      }
+    ]
+  }
+}

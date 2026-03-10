@@ -1,0 +1,376 @@
+AB_DemoRoom::Constructor - Components created
+[SLFSoulslikeBoss] Constructor - Created AC_AI_CombatManager: SUCCESS
+[SLFSoulslikeBoss] Constructor - Created AC_AI_CombatManager: SUCCESS
+=== SetupSentinel Params: [-run=SetupSentinel -unattended -nosplash -stdout -UTF8Output -FullStdOutLogOutput -NoSound] ===
+=== SetupSentinel Commandlet: Starting ===
+--- Step 0: Import Sentinel Mesh ---
+=== ImportSkeletalMeshFromFBX ===
+  Using c3100 skeleton: /Game/EldenRingAnimations/c3100_guard/c3100_mesh_Skeleton.c3100_mesh_Skeleton (104 bones)
+  Sentinel mesh old skeleton: SKM_Sentinel_Skeleton (161 bones)
+  Unmapped bone [5] L_Foot_Target_end -> set rotation to identity
+  Unmapped bone [9] R_Foot_Target_end -> set rotation to identity
+  Unmapped bone [13] L_Hip_end -> set rotation to identity
+  Unmapped bone [17] L_Calf_Skirt_end -> set rotation to identity
+  Unmapped bone [19] L_CalfTwist_end -> set rotation to identity
+  Unmapped bone [21] L_CalfTwist1_end -> set rotation to identity
+  Unmapped bone [24] L_FootTwist_end -> set rotation to identity
+  Unmapped bone [26] L_Toe0_end -> set rotation to identity
+  Unmapped bone [28] L_Knee_end -> set rotation to identity
+  Unmapped bone [30] L_Knee_Skirt_end -> set rotation to identity
+  Unmapped bone [32] L_Thigh_Skirt_end -> set rotation to identity
+  Unmapped bone [34] L_ThighTwist_end -> set rotation to identity
+  Unmapped bone [36] L_ThighTwist1_end -> set rotation to identity
+  Unmapped bone [38] R_Hip_end -> set rotation to identity
+  Unmapped bone [42] R_Calf_Skirt_end -> set rotation to identity
+  Unmapped bone [44] R_CalfTwist_end -> set rotation to identity
+  Unmapped bone [46] R_CalfTwist1_end -> set rotation to identity
+  Unmapped bone [49] R_FootTwist_end -> set rotation to identity
+  Unmapped bone [51] R_Toe0_end -> set rotation to identity
+  Unmapped bone [53] R_Knee_end -> set rotation to identity
+  Unmapped bone [55] R_Knee_Skirt_end -> set rotation to identity
+  Unmapped bone [57] R_Thigh_Skirt_end -> set rotation to identity
+  Unmapped bone [59] R_ThighTwist_end -> set rotation to identity
+  Unmapped bone [61] R_ThighTwist1_end -> set rotation to identity
+  Unmapped bone [66] Collar_end -> set rotation to identity
+  Unmapped bone [69] L_Shoulder_end -> set rotation to identity
+  Unmapped bone [72] L_Elbow_end -> set rotation to identity
+  Unmapped bone [75] L_ForeArmTwist_end -> set rotation to identity
+  Unmapped bone [77] L_ForeArmTwist1_end -> set rotation to identity
+  Unmapped bone [82] L_Finger02_end -> set rotation to identity
+  Unmapped bone [86] L_Finger12_end -> set rotation to identity
+  Unmapped bone [90] L_Finger22_end -> set rotation to identity
+  Unmapped bone [94] L_Finger32_end -> set rotation to identity
+  Unmapped bone [98] L_Finger42_end -> set rotation to identity
+  Unmapped bone [100] L_Shield_end -> set rotation to identity
+  Unmapped bone [102] L_UpArmTwist_end -> set rotation to identity
+  Unmapped bone [104] L_UpArmTwist1_end -> set rotation to identity
+  Unmapped bone [108] Jaw_end -> set rotation to identity
+  Unmapped bone [110] L_Eye_end -> set rotation to identity
+  Unmapped bone [112] L_Eyelid_end -> set rotation to identity
+  Unmapped bone [114] R_Eye_end -> set rotation to identity
+  Unmapped bone [116] R_Eyelid_end -> set rotation to identity
+  Unmapped bone [119] R_Shoulder_end -> set rotation to identity
+  Unmapped bone [122] R_Elbow_end -> set rotation to identity
+  Unmapped bone [125] R_ForeArmTwist_end -> set rotation to identity
+  Unmapped bone [127] R_ForeArmTwist1_end -> set rotation to identity
+  Unmapped bone [132] R_Finger02_end -> set rotation to identity
+  Unmapped bone [136] R_Finger12_end -> set rotation to identity
+  Unmapped bone [140] R_Finger22_end -> set rotation to identity
+  Unmapped bone [144] R_Finger32_end -> set rotation to identity
+  Unmapped bone [148] R_Finger42_end -> set rotation to identity
+  Unmapped bone [150] R_Sword_end -> set rotation to identity
+  Unmapped bone [152] R_UpArmTwist_end -> set rotation to identity
+  Unmapped bone [154] R_UpArmTwist1_end -> set rotation to identity
+  Unmapped bone [156] Shoulder_end -> set rotation to identity
+  Unmapped bone [158] SpineArmor1_end -> set rotation to identity
+  Unmapped bone [160] SpineArmor2_end -> set rotation to identity
+  Updated 161 bones (104 mapped, 57 unmapped->identity)
+  -> Updated mesh RefSkeleton + RefBasesInvMatrix to FLVER bind pose
+  -> Reassigned + rebound Sentinel mesh, saved
+--- Step 1: Importing ARP-retargeted animation FBXs ---
+=== BatchImportAnimsFBXDirect ===
+  Found 20/20 expected animations
+--- Step 1c: Forensic transforms SKIPPED (GetBoneTransform returns identity in commandlet) ---
+--- Step 2: Adding sockets ---
+  === AddSocket: weapon_start on weapon_r ===
+  === AddSocket: weapon_end on weapon_r ===
+  === AddSocket: hand_r on hand_r ===
+  === AddSocket: hand_l on hand_l ===
+  === AddSocket: foot_l on foot_l ===
+  === AddSocket: foot_r on foot_r ===
+  Skeleton save: SUCCESS
+--- Step 3: Creating montages ---
+  Creating Attack montages (4)...
+    === CreateMontage: AM_Sentinel_Attack01 ===
+    === CreateMontage: AM_Sentinel_Attack02 ===
+    === CreateMontage: AM_Sentinel_Attack03_Fast ===
+    === CreateMontage: AM_Sentinel_HeavyAttack ===
+  Creating Reaction montages (3)...
+    === CreateMontage: AM_Sentinel_HitReact ===
+    === CreateMontage: AM_Sentinel_HitReact_Light ===
+    === CreateMontage: AM_Sentinel_GuardHit ===
+  Creating Death montages (3)...
+    === CreateMontage: AM_Sentinel_Death_Front ===
+    === CreateMontage: AM_Sentinel_Death_Back ===
+    === CreateMontage: AM_Sentinel_Death_Left ===
+  Creating Dodge montages (4)...
+    === CreateMontage: AM_Sentinel_Dodge_Fwd ===
+    === CreateMontage: AM_Sentinel_Dodge_Bwd ===
+    === CreateMontage: AM_Sentinel_Dodge_Left ===
+    === CreateMontage: AM_Sentinel_Dodge_Right ===
+  Creating Locomotion montages (3)...
+    === CreateMontage: AM_Sentinel_Idle ===
+    === CreateMontage: AM_Sentinel_Walk ===
+    === CreateMontage: AM_Sentinel_Run ===
+--- Step 4: Creating 2D blend space ---
+  === CreateBlendSpace2D ===
+--- Step 5: Duplicating AnimBP ---
+  === DuplicateAnimBPForSkeleton ===
+--- Step 5b: Replacing AnimGraph references ---
+  === ReplaceAnimReferences: /Game/CustomEnemies/Sentinel/ABP_Sentinel ===
+--- Step 5c: Removing Control Rig + IK Rig ---
+  === DisableControlRig: /Game/CustomEnemies/Sentinel/ABP_Sentinel ===
+--- Step 6: Creating data assets ---
+  PDA_Sentinel_AnimData: SAVED (BS=yes, Idle=yes)
+  PDA_Sentinel_WeaponAnimset: SAVED
+  PDA_Sentinel_CombatReaction: SAVED
+  PDA_Sentinel_PoiseBreak: SAVED (Start=yes, Loop=yes)
+--- Step 6b: Creating AI Ability data assets ---
+  DA_Sentinel_Attack01: SAVED (Montage=yes, Score=1.0, CD=2.0)
+  DA_Sentinel_Attack02: SAVED (Montage=yes, Score=1.0, CD=2.0)
+  DA_Sentinel_Attack03_Fast: SAVED (Montage=yes, Score=1.5, CD=1.0)
+  DA_Sentinel_HeavyAttack: SAVED (Montage=yes, Score=0.5, CD=5.0)
+--- Step 6c: Adding weapon trace notifies ---
+  OK: Added WeaponTrace to AM_Sentinel_Attack01 (1.167-1.517s, radius=40)
+  OK: Added WeaponTrace to AM_Sentinel_Attack02 (0.700-1.083s, radius=40)
+  OK: Added WeaponTrace to AM_Sentinel_Attack03_Fast (0.700-1.083s, radius=40)
+  OK: Added WeaponTrace to AM_Sentinel_HeavyAttack (2.200-2.750s, radius=80)
+--- Step 7: Validation ---
+=== DETAILED ANIMBP DIAGNOSTIC: /Game/CustomEnemies/Sentinel/ABP_Sentinel ===
+[DiagAnimBP] === DETAILED ANIMBP DIAGNOSTIC: /Game/CustomEnemies/Sentinel/ABP_Sentinel ===
+[DiagAnimBP] Target Skeleton: /Game/EldenRingAnimations/c3100_guard/c3100_mesh_Skeleton.c3100_mesh_Skeleton
+[DiagAnimBP] Bone Count: 104
+[DiagAnimBP]   Bone[0]: c3100 (parent=-1)
+[DiagAnimBP]   Bone[1]: Master (parent=0)
+[DiagAnimBP]   Bone[2]: L_Foot_Target2 (parent=1)
+[DiagAnimBP]   Bone[3]: L_Foot_Target1 (parent=2)
+[DiagAnimBP]   Bone[4]: L_Foot_Target (parent=3)
+[DiagAnimBP]   Bone[5]: R_Foot_Target2 (parent=1)
+[DiagAnimBP]   Bone[6]: R_Foot_Target1 (parent=5)
+[DiagAnimBP]   Bone[7]: R_Foot_Target (parent=6)
+[DiagAnimBP]   Bone[8]: Root (parent=1)
+[DiagAnimBP]   Bone[9]: Pelvis (parent=8)
+[DiagAnimBP]   ... (94 more bones)
+[DiagAnimBP] Sockets: 6
+[DiagAnimBP]   Socket: weapon_start -> Bone: R_Sword Offset=(0.0, 0.0, 50.0)
+[DiagAnimBP]   Socket: weapon_end -> Bone: R_Sword Offset=(0.0, 0.0, -50.0)
+[DiagAnimBP]   Socket: hand_r -> Bone: R_Hand Offset=(0.0, 0.0, 0.0)
+[DiagAnimBP]   Socket: hand_l -> Bone: L_Hand Offset=(0.0, 0.0, 0.0)
+[DiagAnimBP]   Socket: foot_l -> Bone: L_Foot Offset=(0.0, 0.0, 0.0)
+[DiagAnimBP]   Socket: foot_r -> Bone: R_Foot Offset=(0.0, 0.0, 0.0)
+[DiagAnimBP] Total Graphs: 16
+[DiagAnimBP] --- Graph: EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_Sentinel_AnimGraphNode_TransitionResult_59420273460C7055D7421DA8FFECB480 (Nodes=2) ---
+[DiagAnimBP]   [K2Node_FunctionEntry] $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_Sentinel_AnimGraphNode_TransitionResult_59420273460C7055D7421DA8FFECB480 $$
+[DiagAnimBP]     Pin[OUT exec:then] -> Execute Ubergraph ABP Sentinel.execute
+[DiagAnimBP]   [K2Node_CallFunction] Execute Ubergraph ABP Sentinel
+[DiagAnimBP]     Pin[IN exec:execute] -> $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_Sentinel_AnimGraphNode_TransitionResult_59420273460C7055D7421DA8FFECB480 $$.then
+[DiagAnimBP] --- Graph: EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_Sentinel_AnimGraphNode_TransitionResult_40142A324522B61F570E9FA094541C91 (Nodes=2) ---
+[DiagAnimBP]   [K2Node_FunctionEntry] $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_Sentinel_AnimGraphNode_TransitionResult_40142A324522B61F570E9FA094541C91 $$
+[DiagAnimBP]     Pin[OUT exec:then] -> Execute Ubergraph ABP Sentinel.execute
+[DiagAnimBP]   [K2Node_CallFunction] Execute Ubergraph ABP Sentinel
+[DiagAnimBP]     Pin[IN exec:execute] -> $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_Sentinel_AnimGraphNode_TransitionResult_40142A324522B61F570E9FA094541C91 $$.then
+[DiagAnimBP] --- Graph: EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_Sentinel_AnimGraphNode_TransitionResult_978882A04E57ED50D3A2628F3B404324 (Nodes=2) ---
+[DiagAnimBP]   [K2Node_FunctionEntry] $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_Sentinel_AnimGraphNode_TransitionResult_978882A04E57ED50D3A2628F3B404324 $$
+[DiagAnimBP]     Pin[OUT exec:then] -> Execute Ubergraph ABP Sentinel.execute
+[DiagAnimBP]   [K2Node_CallFunction] Execute Ubergraph ABP Sentinel
+[DiagAnimBP]     Pin[IN exec:execute] -> $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_Sentinel_AnimGraphNode_TransitionResult_978882A04E57ED50D3A2628F3B404324 $$.then
+[DiagAnimBP] --- Graph: EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_Sentinel_AnimGraphNode_SequencePlayer_C512276D4268A3C151CF4996080A8EF7 (Nodes=2) ---
+[DiagAnimBP]   [K2Node_FunctionEntry] $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_Sentinel_AnimGraphNode_SequencePlayer_C512276D4268A3C151CF4996080A8EF7 $$
+[DiagAnimBP]     Pin[OUT exec:then] -> Execute Ubergraph ABP Sentinel.execute
+[DiagAnimBP]   [K2Node_CallFunction] Execute Ubergraph ABP Sentinel
+[DiagAnimBP]     Pin[IN exec:execute] -> $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_Sentinel_AnimGraphNode_SequencePlayer_C512276D4268A3C151CF4996080A8EF7 $$.then
+[DiagAnimBP] --- Graph: EventGraph (Nodes=0) ---
+[DiagAnimBP] --- Graph: EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_Sentinel_AnimGraphNode_SequencePlayer_4282358C41181A4E00ADDA82F8EB5FFA (Nodes=2) ---
+[DiagAnimBP]   [K2Node_FunctionEntry] $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_Sentinel_AnimGraphNode_SequencePlayer_4282358C41181A4E00ADDA82F8EB5FFA $$
+[DiagAnimBP]     Pin[OUT exec:then] -> Execute Ubergraph ABP Sentinel.execute
+[DiagAnimBP]   [K2Node_CallFunction] Execute Ubergraph ABP Sentinel
+[DiagAnimBP]     Pin[IN exec:execute] -> $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_Sentinel_AnimGraphNode_SequencePlayer_4282358C41181A4E00ADDA82F8EB5FFA $$.then
+[DiagAnimBP] --- Graph: AnimGraph (Nodes=13) ---
+[DiagAnimBP]   [AnimGraphNode_Root] Output Pose | AnimGraph
+[DiagAnimBP]     FAnimNode: AnimNode_Root
+[DiagAnimBP]     Pin[IN struct:Result] -> Slot 'DefaultSlot'.Pose
+[DiagAnimBP]   [AnimGraphNode_StateMachine] Locomotion | State Machine
+[DiagAnimBP]     FAnimNode: AnimNode_StateMachine
+[DiagAnimBP]     Pin[OUT struct:Pose] -> Save cached pose 'Locomotion'.Pose
+[DiagAnimBP]   [AnimGraphNode_SaveCachedPose] Save cached pose 'Locomotion'
+[DiagAnimBP]     FAnimNode: AnimNode_SaveCachedPose
+[DiagAnimBP]     Pin[IN struct:Pose] -> Locomotion.Pose
+[DiagAnimBP]   [AnimGraphNode_Slot] Slot 'DefaultSlot' | Group 'DefaultGroup'
+[DiagAnimBP]     FAnimNode: AnimNode_Slot
+[DiagAnimBP]     Pin[IN struct:Source] -> Blend Poses by bool.Pose
+[DiagAnimBP]     Pin[OUT struct:Pose] -> Output Pose.Result
+[DiagAnimBP]   [K2Node_VariableGet] Get IsFalling
+[DiagAnimBP]     Pin[OUT bool:IsFalling] -> NOT Boolean.A
+[DiagAnimBP]   [K2Node_CallFunction] NOT Boolean
+[DiagAnimBP]     Pin[IN bool:A] -> Get IsFalling.IsFalling
+[DiagAnimBP]   [K2Node_VariableGet] Get PhysicsWeight
+[DiagAnimBP]   [K2Node_VariableGet] Get Hit Location
+[DiagAnimBP]     Pin[OUT struct:Hit Location] -> vector * vector.A
+[DiagAnimBP]   [K2Node_PromotableOperator] vector * vector
+[DiagAnimBP]     Pin[IN struct:A] -> Get Hit Location.Hit Location
+[DiagAnimBP]   [AnimGraphNode_StateMachine] Poise Broken | State Machine
+[DiagAnimBP]     FAnimNode: AnimNode_StateMachine
+[DiagAnimBP]     Pin[OUT struct:Pose] -> Blend Poses by bool.BlendPose_0
+[DiagAnimBP]   [AnimGraphNode_BlendListByBool] Blend Poses by bool
+[DiagAnimBP]     FAnimNode: AnimNode_BlendListByBool
+[DiagAnimBP]     Pin[IN struct:BlendPose_0] -> Poise Broken.Pose
+[DiagAnimBP]     Pin[IN struct:BlendPose_1] -> Use cached pose 'Locomotion'.Pose
+[DiagAnimBP]     Pin[IN bool:bActiveValue] -> Get PoiseBroken.PoiseBroken
+[DiagAnimBP]     Pin[OUT struct:Pose] -> Slot 'DefaultSlot'.Source
+[DiagAnimBP]   [K2Node_VariableGet] Get PoiseBroken
+[DiagAnimBP]     Pin[OUT bool:PoiseBroken] -> Blend Poses by bool.bActiveValue
+[DiagAnimBP]   [AnimGraphNode_UseCachedPose] Use cached pose 'Locomotion'
+[DiagAnimBP]     FAnimNode: AnimNode_UseCachedPose
+[DiagAnimBP]     Pin[OUT struct:Pose] -> Blend Poses by bool.BlendPose_1
+[DiagAnimBP] --- Graph: Locomotion (Nodes=5) ---
+[DiagAnimBP]   [AnimStateEntryNode] Locomotion
+[DiagAnimBP]     Pin[OUT exec:Entry] -> Idle.In
+[DiagAnimBP]   [AnimStateNode] Idle
+[DiagAnimBP]     Pin[IN Transition:In] -> Locomotion.Entry
+[DiagAnimBP]     Pin[IN Transition:In] -> Walk / Run to Idle.Out
+[DiagAnimBP]     Pin[OUT Transition:Out] -> Idle to Walk / Run.In
+[DiagAnimBP]   [AnimStateNode] Walk / Run
+[DiagAnimBP]     Pin[IN Transition:In] -> Idle to Walk / Run.Out
+[DiagAnimBP]     Pin[OUT Transition:Out] -> Walk / Run to Idle.In
+[DiagAnimBP]   [AnimStateTransitionNode] Idle to Walk / Run
+[DiagAnimBP]     Pin[IN Transition:In] -> Idle.Out
+[DiagAnimBP]     Pin[OUT Transition:Out] -> Walk / Run.In
+[DiagAnimBP]   [AnimStateTransitionNode] Walk / Run to Idle
+[DiagAnimBP]     Pin[IN Transition:In] -> Walk / Run.Out
+[DiagAnimBP]     Pin[OUT Transition:Out] -> Idle.In
+[DiagAnimBP] --- Graph: Poise Broken (Nodes=4) ---
+[DiagAnimBP]   [AnimStateEntryNode] Poise Broken
+[DiagAnimBP]     Pin[OUT exec:Entry] -> Start.In
+[DiagAnimBP]   [AnimStateNode] Start
+[DiagAnimBP]     Pin[IN Transition:In] -> Poise Broken.Entry
+[DiagAnimBP]     Pin[OUT Transition:Out] -> Start to Loop.In
+[DiagAnimBP]   [AnimStateNode] Loop
+[DiagAnimBP]     Pin[IN Transition:In] -> Start to Loop.Out
+[DiagAnimBP]   [AnimStateTransitionNode] Start to Loop
+[DiagAnimBP]     Pin[IN Transition:In] -> Start.Out
+[DiagAnimBP]     Pin[OUT Transition:Out] -> Loop.In
+[DiagAnimBP] --- Graph: Start (Nodes=4) ---
+[DiagAnimBP]   [AnimGraphNode_StateResult] Output Animation Pose
+[DiagAnimBP]     FAnimNode: AnimNode_StateResult
+[DiagAnimBP]     Pin[IN struct:Result] -> Sequence Player.Pose
+[DiagAnimBP]   [AnimGraphNode_SequencePlayer] Sequence Player
+[DiagAnimBP]     FAnimNode: AnimNode_SequencePlayer
+[DiagAnimBP]     Pin[IN object:Sequence] -> Get PoiseBreak_Start.PoiseBreak_Start
+[DiagAnimBP]     Pin[OUT struct:Pose] -> Output Animation Pose.Result
+[DiagAnimBP]   [K2Node_VariableGet] Get PoiseBreakAsset
+[DiagAnimBP]     Pin[OUT object:PoiseBreakAsset] -> Get PoiseBreak_Start.self
+[DiagAnimBP]   [K2Node_VariableGet] Get PoiseBreak_Start
+[DiagAnimBP]     Pin[OUT object:PoiseBreak_Start] -> Sequence Player.Sequence
+[DiagAnimBP]     Pin[IN object:self] -> Get PoiseBreakAsset.PoiseBreakAsset
+[DiagAnimBP] --- Graph: Loop (Nodes=4) ---
+[DiagAnimBP]   [AnimGraphNode_StateResult] Output Animation Pose
+[DiagAnimBP]     FAnimNode: AnimNode_StateResult
+[DiagAnimBP]     Pin[IN struct:Result] -> Sequence Player.Pose
+[DiagAnimBP]   [AnimGraphNode_SequencePlayer] Sequence Player
+[DiagAnimBP]     FAnimNode: AnimNode_SequencePlayer
+[DiagAnimBP]     Pin[IN object:Sequence] -> Get PoiseBreak_Loop.PoiseBreak_Loop
+[DiagAnimBP]     Pin[OUT struct:Pose] -> Output Animation Pose.Result
+[DiagAnimBP]   [K2Node_VariableGet] Get PoiseBreakAsset
+[DiagAnimBP]     Pin[OUT object:PoiseBreakAsset] -> Get PoiseBreak_Loop.self
+[DiagAnimBP]   [K2Node_VariableGet] Get PoiseBreak_Loop
+[DiagAnimBP]     Pin[OUT object:PoiseBreak_Loop] -> Sequence Player.Sequence
+[DiagAnimBP]     Pin[IN object:self] -> Get PoiseBreakAsset.PoiseBreakAsset
+[DiagAnimBP] --- Graph: Idle (Nodes=2) ---
+[DiagAnimBP]   [AnimGraphNode_StateResult] Output Animation Pose
+[DiagAnimBP]     FAnimNode: AnimNode_StateResult
+[DiagAnimBP]     Pin[IN struct:Result] -> Sequence Player 'Sentinel_Idle'.Pose
+[DiagAnimBP]   [AnimGraphNode_SequencePlayer] Sentinel_Idle | Sequence Player
+[DiagAnimBP]     FAnimNode: AnimNode_SequencePlayer
+[DiagAnimBP]     Pin[OUT struct:Pose] -> Output Animation Pose.Result
+[DiagAnimBP] --- Graph: Walk / Run (Nodes=4) ---
+[DiagAnimBP]   [AnimGraphNode_StateResult] Output Animation Pose
+[DiagAnimBP]     FAnimNode: AnimNode_StateResult
+[DiagAnimBP]     Pin[IN struct:Result] -> Blendspace Player 'BS_Sentinel_Locomotion'.Pose
+[DiagAnimBP]   [K2Node_VariableGet] Get GroundSpeed
+[DiagAnimBP]     Pin[OUT real:GroundSpeed] -> Blendspace Player 'BS_Sentinel_Locomotion'.Y
+[DiagAnimBP]   [K2Node_VariableGet] Get Direction
+[DiagAnimBP]     Pin[OUT real:Direction] -> Blendspace Player 'BS_Sentinel_Locomotion'.X
+[DiagAnimBP]   [AnimGraphNode_BlendSpacePlayer] BS_Sentinel_Locomotion | Blendspace Player
+[DiagAnimBP]     FAnimNode: AnimNode_BlendSpacePlayer
+[DiagAnimBP]     *** BLEND SPACE NODE ***
+[DiagAnimBP]     Pin[IN real:X] -> Get Direction.Direction
+[DiagAnimBP]     Pin[IN real:Y] -> Get GroundSpeed.GroundSpeed
+[DiagAnimBP]     Pin[OUT struct:Pose] -> Output Animation Pose.Result
+[DiagAnimBP] --- Graph: Transition (Nodes=3) ---
+[DiagAnimBP]   [AnimGraphNode_TransitionResult] Result
+[DiagAnimBP]     FAnimNode: AnimNode_TransitionResult
+[DiagAnimBP]     Pin[IN bool:bCanEnterTransition] -> float < float.ReturnValue
+[DiagAnimBP]   [K2Node_AnimGetter] Time Remaining (ratio)
+[DiagAnimBP]     Pin[OUT real:ReturnValue] -> float < float.A
+[DiagAnimBP]   [K2Node_PromotableOperator] float < float
+[DiagAnimBP]     Pin[IN real:A] -> Time Remaining (ratio).ReturnValue
+[DiagAnimBP]     Pin[OUT bool:ReturnValue] -> Result.bCanEnterTransition
+[DiagAnimBP] --- Graph: Transition (Nodes=3) ---
+[DiagAnimBP]   [AnimGraphNode_TransitionResult] Result
+[DiagAnimBP]     FAnimNode: AnimNode_TransitionResult
+[DiagAnimBP]     Pin[IN bool:bCanEnterTransition] -> float > float.ReturnValue
+[DiagAnimBP]   [K2Node_VariableGet] Get GroundSpeed
+[DiagAnimBP]     Pin[OUT real:GroundSpeed] -> float > float.A
+[DiagAnimBP]   [K2Node_PromotableOperator] float > float
+[DiagAnimBP]     Pin[IN real:A] -> Get GroundSpeed.GroundSpeed
+[DiagAnimBP]     Pin[OUT bool:ReturnValue] -> Result.bCanEnterTransition
+[DiagAnimBP] --- Graph: Transition (Nodes=3) ---
+[DiagAnimBP]   [AnimGraphNode_TransitionResult] Result
+[DiagAnimBP]     FAnimNode: AnimNode_TransitionResult
+[DiagAnimBP]     Pin[IN bool:bCanEnterTransition] -> float < float.ReturnValue
+[DiagAnimBP]   [K2Node_VariableGet] Get GroundSpeed
+[DiagAnimBP]     Pin[OUT real:GroundSpeed] -> float < float.A
+[DiagAnimBP]   [K2Node_PromotableOperator] float < float
+[DiagAnimBP]     Pin[IN real:A] -> Get GroundSpeed.GroundSpeed
+[DiagAnimBP]     Pin[OUT bool:ReturnValue] -> Result.bCanEnterTransition
+[DiagAnimBP] --- Compilation Status ---
+[DiagAnimBP] GeneratedClass: ABP_Sentinel_C
+[DiagAnimBP] Status: 3
+[DiagAnimBP] Compatible Skeletons: 1
+[DiagAnimBP]   /Game/EldenRingAnimations/c3100_guard/c3100_mesh_Skeleton.c3100_mesh_Skeleton
+--- Verifying montage lengths ---
+  AM_Sentinel_Attack01: 3.167 sec OK
+  AM_Sentinel_Attack02: 2.633 sec OK
+  AM_Sentinel_HeavyAttack: 5.767 sec OK
+  AM_Sentinel_HitReact: 4.433 sec OK
+  AM_Sentinel_Idle: 3.667 sec OK
+  AM_Sentinel_Walk: 1.867 sec OK
+  AM_Sentinel_Run: 0.733 sec OK
+--- Forensic comparison: Sentinel vs Source ---
+  Idle comparison: 89/104 bones differ, max rotation diff: 179.97 degrees
+  Source FPS: 111 keys, Sentinel FPS: 111 keys
+--- Step 8: Create Sentinel Blueprint ---
+  B_Soulslike_Enemy_Sentinel already exists, reparenting to ASLFEnemySentinel
+=== SetupSentinel Commandlet: COMPLETE ===
+AB_DemoRoom::Constructor - Components created
+[SLFSoulslikeBoss] Constructor - Created AC_AI_CombatManager: SUCCESS
+=== SetupSentinel Params: [-run=SetupSentinel -unattended -nosplash -stdout -UTF8Output -FullStdOutLogOutput -NoSound] ===
+=== SetupSentinel Commandlet: Starting ===
+--- Step 0: Import Sentinel Mesh ---
+=== ImportSkeletalMeshFromFBX ===
+  Using c3100 skeleton: /Game/EldenRingAnimations/c3100_guard/c3100_mesh_Skeleton.c3100_mesh_Skeleton (104 bones)
+  Sentinel mesh old skeleton: SKM_Sentinel_Skeleton (161 bones)
+  Unmapped bone [5] L_Foot_Target_end -> set rotation to identity
+  Unmapped bone [9] R_Foot_Target_end -> set rotation to identity
+  Unmapped bone [13] L_Hip_end -> set rotation to identity
+  Unmapped bone [17] L_Calf_Skirt_end -> set rotation to identity
+  Unmapped bone [19] L_CalfTwist_end -> set rotation to identity
+  Unmapped bone [21] L_CalfTwist1_end -> set rotation to identity
+  Unmapped bone [24] L_FootTwist_end -> set rotation to identity
+  Unmapped bone [26] L_Toe0_end -> set rotation to identity
+  Unmapped bone [28] L_Knee_end -> set rotation to identity
+  Unmapped bone [30] L_Knee_Skirt_end -> set rotation to identity
+  Unmapped bone [32] L_Thigh_Skirt_end -> set rotation to identity
+  Unmapped bone [34] L_ThighTwist_end -> set rotation to identity
+  Unmapped bone [36] L_ThighTwist1_end -> set rotation to identity
+  Unmapped bone [38] R_Hip_end -> set rotation to identity
+  Unmapped bone [42] R_Calf_Skirt_end -> set rotation to identity
+  Unmapped bone [44] R_CalfTwist_end -> set rotation to identity
+  Unmapped bone [46] R_CalfTwist1_end -> set rotation to identity
+  Unmapped bone [49] R_FootTwist_end -> set rotation to identity
+  Unmapped bone [51] R_Toe0_end -> set rotation to identity
+  Unmapped bone [53] R_Knee_end -> set rotation to identity
+  Unmapped bone [55] R_Knee_Skirt_end -> set rotation to identity
+  Unmapped bone [57] R_Thigh_Skirt_end -> set rotation to identity
+  Unmapped bone [59] R_ThighTwist_end -> set rotation to identity
+  Unmapped bone [61] R_ThighTwist1_end -> set rotation to identity
+  Unmapped bone [66] Collar_end -> set rotation to identity
+  Unmapped bone [69] L_Shoulder_end -> set rotation to identity
+  Unmapped bone [72] L_Elbow_end -> set rotation to identity
+  Unmapped bone [75] L_ForeArmTwist_end -> set rotation to identity
+  Unmapped bone [77] L_ForeArmTwist1_end -> set rotation to identity
+  Unmapped bone [82] L_Finger02_end -> set rotation to identity
+  Unmapped bone [86] L_Finger12_end -> set rotation to identity
+  Unmapped bone [90] L_Finger22_end -> set rotation to identity
+  Unmapped bone [94] L_Finger32_end -> set rotation to identity
+  Unmapped bone [98] L_Finger42_end -> set rotation to identity

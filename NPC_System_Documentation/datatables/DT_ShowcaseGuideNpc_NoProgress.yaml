@@ -1,0 +1,57 @@
+# DataTable Export - AUTO-GENERATED
+# DO NOT EDIT - This is the source of truth from bp_only
+
+datatable:
+  path: /Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DialogTables/DT_ShowcaseGuideNpc_NoProgress
+  row_struct: FDialogEntry
+  row_count: 6
+
+rows:
+  - row_name: NewRow
+    columns:
+      Entry_3_E3D06962403A4DF403DFBF892EECBE72: Hello! Welcome to Soulslike Framework. You must be new here.
+      GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1:
+        count: 0
+        items:
+
+  - row_name: NewRow_0
+    columns:
+      Entry_3_E3D06962403A4DF403DFBF892EECBE72: As you can see, I am an interactable NPC that says whatever you want.
+      GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1:
+        count: 0
+        items:
+
+  - row_name: NewRow_1
+    columns:
+      Entry_3_E3D06962403A4DF403DFBF892EECBE72: It's a shame that I have such cool armor but had to be placed here like a damn puppet.
+      GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1:
+        count: 0
+        items:
+
+  - row_name: NewRow_2
+    columns:
+      Entry_3_E3D06962403A4DF403DFBF892EECBE72: If you decide to continue further, bad things await. The almighty @isikdev has ordered me to provide you with some health flasks.
+      GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1:
+        count: 0
+        items:
+
+  - row_name: NewRow_3
+    columns:
+      Entry_3_E3D06962403A4DF403DFBF892EECBE72: Take these, and ensure that you equip them from the Equipment menu. You will definitely need them if you want to fight Malgareth.
+      GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1:
+        count: 1
+        items:
+          - index: 0
+            EventTag_9_181EFFAD43BC4BE401FC47B8A128C289:
+              TagName: SoulslikeFramework.GameplayEvents.AddItem
+            AdditionalTag_11_5D3C0FA94D886E647927ABB4240BFB88:
+              TagName: SoulslikeFramework.Items.Examples.HealthFlask
+            CustomData_12_113B3E7B4FF55795A4FEEA8C9108DB1E:
+
+  - row_name: NewRow_4
+    columns:
+      Entry_3_E3D06962403A4DF403DFBF892EECBE72: Best of luck to you now. I guess I'll keep staring at the wall.
+      GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1:
+        count: 0
+        items:
+

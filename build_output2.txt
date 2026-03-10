@@ -1,0 +1,76 @@
+Using bundled DotNet SDK version: 8.0.412 win-x64
+Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" SLFConversionEditor Win64 Development -Project=C:\scripts\SLFConversion\SLFConversion.uproject -WaitMutex -FromMsBuild
+Log file: C:\Users\james\AppData\Local\UnrealBuildTool\Log.txt
+Using 'git status' to determine working set for adaptive non-unity build (C:\scripts\SLFConversion).
+Parsing headers for SLFConversionEditor
+  Running Internal UnrealHeaderTool C:\scripts\SLFConversion\SLFConversion.uproject C:\scripts\SLFConversion\Intermediate\Build\Win64\SLFConversionEditor\Development\SLFConversionEditor.uhtmanifest -WarningsAsErrors -installed
+UHT processed SLFConversionEditor in 6.4007916 seconds (3 files written)
+Building SLFConversionEditor...
+Using Visual Studio 2022 14.44.35222 toolchain (C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207) and Windows 10.0.22621.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+[Upgrade]
+[Upgrade] Using backward-compatible include order. The latest version of UE has changed the order of includes, which may require code changes. The current setting is:
+[Upgrade]     IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_4
+[Upgrade] Suppress this message by setting 'IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_7;' in SLFConversionEditor.Target.cs.
+[Upgrade] Alternatively you can set this to 'EngineIncludeOrderVersion.Latest' to always use the latest include order. This will potentially cause compile errors when integrating new versions of the engine.
+[Upgrade]
+[Adaptive Build] Excluded from SLFConversion unity file: SLFAssetValidator.cpp, SLFAutomationLibrary.cpp, SLFYAMLExporter.cpp, ABP_SoulslikeEnemy.cpp, B_StatusEffect.cpp, SLFNPCShowcaseGuide.cpp, SLFNPCShowcaseVendor.cpp, SLFSoulslikeCharacter.cpp, SLFSoulslikeNPC.cpp, AC_AI_InteractionManager.cpp, AIInteractionManagerComponent.cpp, StatusEffectManagerComponent.cpp, SLFPIETestRunner.cpp, SLFNiagaraFactory.cpp, W_HUD.cpp, W_NPC_Window.cpp
+Determining max actions to execute in parallel (14 physical cores, 20 logical cores)
+  Executing up to 14 processes, one per physical core
+  Requested 1.5 GB memory per action, 1.58 GB available: limiting max parallel actions to 1
+Using XGE executor to run 7 action(s)
+Distributing 7 actions to XGE
+UnrealBuildTool Compile
+
+--------------------Build System Warning---------------------------------------
+License not activated:
+    License is not activated. Please activate the license in the coordinator.
+    This build will run in standalone mode.
+
+-------------------------------------------------------------------------------
+ 
+Build ID: {186DD7EF-5DC3-47EA-9015-192E65923368}
+ 
+--------------------Project: Default-------------------------------------------
+[1/7] Compile [x64] Module.SLFConversion.43.cpp (0:06.87 at +0:00)
+[2/7] Compile [x64] Module.SLFConversion.23.cpp (0:22.12 at +0:00)
+[3/7] Compile [x64] SLFAutomationLibrary.cpp (0:35.79 at +0:00)
+[4/7] Compile [x64] Module.SLFConversion.51.cpp (0:39.75 at +0:00)
+C:\scripts\SLFConversion\Source\SLFConversion\Testing\SLFInputSimulator.cpp(98,7): warning C4996: 'APlayerController::InputKey': Use the version which takes a FInputKeyEventArgs instead. - Please update your code to the new API before upgrading to the next release, otherwise your project will no longer compile.
+		PC->InputKey(FInputKeyParams(Key, EInputEvent::IE_Pressed, 1.0, false));
+		    ^
+C:\scripts\SLFConversion\Source\SLFConversion\Testing\SLFInputSimulator.cpp(110,7): warning C4996: 'APlayerController::InputKey': Use the version which takes a FInputKeyEventArgs instead. - Please update your code to the new API before upgrading to the next release, otherwise your project will no longer compile.
+		PC->InputKey(FInputKeyParams(Key, EInputEvent::IE_Released, 0.0, false));
+		    ^
+C:\scripts\SLFConversion\Source\SLFConversion\Testing\SLFInputSimulator.cpp(272,2): warning C4996: 'FInputKeyParams': Use FInputKeyEventArgs instead - Please update your code to the new API before upgrading to the next release, otherwise your project will no longer compile.
+	FInputKeyParams Params(AxisKey, Value, 0.0, false);
+	^
+C:\scripts\SLFConversion\Source\SLFConversion\Testing\SLFInputSimulator.cpp(272,24): warning C4996: 'FInputKeyParams::FInputKeyParams': Use FInputKeyEventArgs instead - Please update your code to the new API before upgrading to the next release, otherwise your project will no longer compile.
+	FInputKeyParams Params(AxisKey, Value, 0.0, false);
+	                      ^
+C:\scripts\SLFConversion\Source\SLFConversion\Testing\SLFInputSimulator.cpp(273,6): warning C4996: 'APlayerController::InputKey': Use the version which takes a FInputKeyEventArgs instead. - Please update your code to the new API before upgrading to the next release, otherwise your project will no longer compile.
+	PC->InputKey(Params);
+	    ^
+C:\scripts\SLFConversion\Source\SLFConversion\Testing\SLFInputSimulator.cpp(286,2): warning C4996: 'FInputKeyParams': Use FInputKeyEventArgs instead - Please update your code to the new API before upgrading to the next release, otherwise your project will no longer compile.
+	FInputKeyParams Params(Button, bPressed ? EInputEvent::IE_Pressed : EInputEvent::IE_Released, bPressed ? 1.0 : 0.0, false);
+	^
+C:\scripts\SLFConversion\Source\SLFConversion\Testing\SLFInputSimulator.cpp(286,24): warning C4996: 'FInputKeyParams::FInputKeyParams': Use FInputKeyEventArgs instead - Please update your code to the new API before upgrading to the next release, otherwise your project will no longer compile.
+	FInputKeyParams Params(Button, bPressed ? EInputEvent::IE_Pressed : EInputEvent::IE_Released, bPressed ? 1.0 : 0.0, false);
+	                      ^
+[5/7] Link [x64] UnrealEditor-SLFConversion.lib (0:01.12 at +0:39)
+C:\scripts\SLFConversion\Source\SLFConversion\Testing\SLFInputSimulator.cpp(287,6): warning C4996: 'APlayerController::InputKey': Use the version which takes a FInputKeyEventArgs instead. - Please update your code to the new API before upgrading to the next release, otherwise your project will no longer compile.
+	PC->InputKey(Params);
+	    ^
+   Creating library C:/scripts/SLFConversion/Intermediate/Build/Win64/x64/UnrealEditor/Development/SLFConversion/UnrealEditor-SLFConversion.lib and object C:/scripts/SLFConversion/Intermediate/Build/Win64/x64/UnrealEditor/Development/SLFConversion/UnrealEditor-SLFConversion.exp
+[6/7] Link [x64] UnrealEditor-SLFConversion.dll (0:02.37 at +0:39)
+[7/7] WriteMetadata SLFConversionEditor.target (0:00.53 at +0:42)
+---------------------- Done ----------------------
+ 
+    Rebuild All: 1 succeeded, 0 failed, 0 skipped
+ 
+1 build system warning(s):
+   - License not activated
+ 
+Total time in XGE executor: 47.21 seconds
+
+Result: Succeeded
+Total execution time: 54.50 seconds

@@ -1,0 +1,12 @@
+======================================================================
+CHECKING WEAPON STATUS EFFECTS
+======================================================================
+
+DA_PoisonSword:
+  Error: SLFItemInfo: Failed to find property 'weapon_details' for attribute 'weapon_details' on 'SLFItemInfo'
+
+DA_Sword01:
+  Error: SLFItemInfo: Failed to find property 'weapon_details' for attribute 'weapon_details' on 'SLFItemInfo'
+
+DA_Katana:
+  Error: SLFItemInfo: Failed to find property 'weapon_details' for attribute 'weapon_details' on 'SLFItemInfo'

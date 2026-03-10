@@ -13,12 +13,14 @@
 #include "SLFActionBackstab.h"
 #include "AC_CombatManager.h"
 #include "AC_EquipmentManager.h"
+#include "AC_CollisionManager.h"
 #include "Components/CombatManagerComponent.h"
 #include "Components/AICombatManagerComponent.h"
 #include "Interfaces/BPI_GenericCharacter.h"
 #include "Interfaces/BPI_Enemy.h"
 #include "Interfaces/BPI_Executable.h"
 #include "SLFPrimaryDataAssets.h"
+#include "SLFSoulslikeCharacter.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/Controller.h"
 
@@ -194,6 +196,22 @@ void USLFActionBackstab::ExecuteAction_Implementation()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[ActionBackstab] No EquipmentManager found"));
+	}
+
+	// ═══════════════════════════════════════════════════════════════════════════════
+	// STEP 3.5: Apply stealth damage multiplier if attacking from stealth
+	// ═══════════════════════════════════════════════════════════════════════════════
+	if (ASLFSoulslikeCharacter* SoulsChar = Cast<ASLFSoulslikeCharacter>(OwnerActor))
+	{
+		if (SoulsChar->bInStealth)
+		{
+			UAC_CollisionManager* CollisionMgr = OwnerActor->FindComponentByClass<UAC_CollisionManager>();
+			if (CollisionMgr)
+			{
+				CollisionMgr->SetMultipliers(SoulsChar->StealthBackstabDamageMultiplier, 1.0);
+				UE_LOG(LogTemp, Warning, TEXT("[ActionBackstab] STEALTH BACKSTAB! Damage multiplier set to %.1fx"), SoulsChar->StealthBackstabDamageMultiplier);
+			}
+		}
 	}
 
 	// ═══════════════════════════════════════════════════════════════════════════════

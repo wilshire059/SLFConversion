@@ -1,0 +1,18 @@
+# Struct Export - AUTO-GENERATED
+# DO NOT EDIT - This is the source of truth from bp_only
+
+struct:
+  path: /Game/SoulslikeFramework/Structures/Dialog/FDialogProgress
+  name: FDialogProgress
+
+fields:
+  - name: ProgressContainer_20_3886DCA94E048A4A95B8E0A7B72E469D
+    type: FGameplayTagContainer
+    offset: 0
+    size: 32
+
+  - name: State_23_5E2A41B94FDC8A29BBE79683B1B22370
+    type: TEnumAsByte<E_Progress>
+    offset: 32
+    size: 1
+

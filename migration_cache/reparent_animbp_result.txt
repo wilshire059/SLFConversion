@@ -1,0 +1,8 @@
+Loaded AnimBP: ABP_SoulslikeCharacter_Additive
+Could not get parent: 'AnimBlueprintGeneratedClass' object has no attribute 'get_super_class'
+New parent class: ABP_SoulslikeCharacter_Additive
+Reparent result: None
+Compiled successfully
+Saved: True
+
+FINAL RESULT: SUCCESS

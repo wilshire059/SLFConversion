@@ -1,0 +1,341 @@
+# Data Asset Export - AUTO-GENERATED
+# DO NOT EDIT - This is the source of truth from bp_only
+
+data_asset:
+  path: /Game/SoulslikeFramework/Data/Vendor/PDA_Vendor
+  class: Blueprint
+
+properties:
+  class: Blueprint
+  name: PDA_Vendor
+  path: /Game/SoulslikeFramework/Data/Vendor/PDA_Vendor.PDA_Vendor
+  properties:
+    ParentClass:
+      class: Class
+      name: PrimaryDataAsset
+      path: /Script/Engine.PrimaryDataAsset
+    BlueprintType: BPTYPE_Normal
+    bRecompileOnLoad: true
+    bRunConstructionScriptOnDrag: true
+    bRunConstructionScriptInSequencer: false
+    bGenerateConstClass: false
+    bGenerateAbstractClass: false
+    bDeprecate: false
+    bDuplicatingReadOnly: false
+    ShouldCookPropertyGuidsValue: Inherit
+    CompileMode: Default
+    BlueprintDisplayName: 
+    BlueprintDescription: 
+    BlueprintNamespace: 
+    BlueprintCategory: 
+    HideCategories:
+      count: 0
+      items:
+    BlueprintSystemVersion: 2
+    SimpleConstructionScript: null
+    UbergraphPages:
+      count: 1
+      items:
+        - index: 0
+          value: "/Script/Engine.EdGraph'/Game/SoulslikeFramework/Data/Vendor/PDA_Vendor.PDA_Vendor:EventGraph'"
+    FunctionGraphs:
+      count: 1
+      items:
+        - index: 0
+          value: "/Script/Engine.EdGraph'/Game/SoulslikeFramework/Data/Vendor/PDA_Vendor.PDA_Vendor:ReduceItemStock'"
+    DelegateSignatureGraphs:
+      count: 1
+      items:
+        - index: 0
+          value: "/Script/Engine.EdGraph'/Game/SoulslikeFramework/Data/Vendor/PDA_Vendor.PDA_Vendor:OnItemStockUpdated'"
+    MacroGraphs:
+      count: 0
+      items:
+    ComponentTemplates:
+      count: 0
+      items:
+    Timelines:
+      count: 0
+      items:
+    ComponentClassOverrides:
+      count: 0
+      items:
+    InheritableComponentHandler: null
+    NewVariables:
+      count: 5
+      items:
+        - index: 0
+          VarName: Items
+          VarGuid:
+            A: 506683360
+            B: 1187610652
+            C: 1787360129
+            D: 1901639382
+          VarType:
+            PinCategory: struct
+            PinSubCategory: None
+            PinSubCategoryObject: /Script/CoreUObject.UserDefinedStruct'/Game/SoulslikeFramework/Structures/Vendor/FVendorItems.FVendorItems'
+            PinSubCategoryMemberReference:
+              MemberParent: null
+              MemberName: None
+              MemberGuid:
+                A: 0
+                B: 0
+                C: 0
+                D: 0
+            PinValueType:
+              TerminalCategory: None
+              TerminalSubCategory: None
+              TerminalSubCategoryObject: None
+              bTerminalIsConst: false
+              bTerminalIsWeakPointer: false
+              bTerminalIsUObjectWrapper: false
+            ContainerType: Set
+            bIsReference: false
+            bIsConst: false
+            bIsWeakPointer: false
+            bIsUObjectWrapper: false
+            bSerializeAsSinglePrecisionFloat: false
+          FriendlyName: Items
+          Category: Vendor Config
+          PropertyFlags: 65541
+          RepNotifyFunc: None
+          ReplicationCondition: COND_None
+          MetaDataArray:
+            count: 0
+            items:
+          DefaultValue: 
+        - index: 1
+          VarName: DefaultSlotCount
+          VarGuid:
+            A: -1915477060
+            B: 1326731491
+            C: -596331345
+            D: -1233000578
+          VarType:
+            PinCategory: int
+            PinSubCategory: None
+            PinSubCategoryObject: None
+            PinSubCategoryMemberReference:
+              MemberParent: null
+              MemberName: None
+              MemberGuid:
+                A: 0
+                B: 0
+                C: 0
+                D: 0
+            PinValueType:
+              TerminalCategory: None
+              TerminalSubCategory: None
+              TerminalSubCategoryObject: None
+              bTerminalIsConst: false
+              bTerminalIsWeakPointer: false
+              bTerminalIsUObjectWrapper: false
+            ContainerType: None
+            bIsReference: false
+            bIsConst: false
+            bIsWeakPointer: false
+            bIsUObjectWrapper: false
+            bSerializeAsSinglePrecisionFloat: false
+          FriendlyName: Default Slot Count
+          Category: Vendor Config
+          PropertyFlags: 65541
+          RepNotifyFunc: None
+          ReplicationCondition: COND_None
+          MetaDataArray:
+            count: 0
+            items:
+          DefaultValue: 
+        - index: 2
+          VarName: DefaultSlotsPerRow
+          VarGuid:
+            A: -1575713447
+            B: 1125673844
+            C: -1175210860
+            D: 575241241
+          VarType:
+            PinCategory: int
+            PinSubCategory: None
+            PinSubCategoryObject: None
+            PinSubCategoryMemberReference:
+              MemberParent: null
+              MemberName: None
+              MemberGuid:
+                A: 0
+                B: 0
+                C: 0
+                D: 0
+            PinValueType:
+              TerminalCategory: None
+              TerminalSubCategory: None
+              TerminalSubCategoryObject: None
+              bTerminalIsConst: false
+              bTerminalIsWeakPointer: false
+              bTerminalIsUObjectWrapper: false
+            ContainerType: None
+            bIsReference: false
+            bIsConst: false
+            bIsWeakPointer: false
+            bIsUObjectWrapper: false
+            bSerializeAsSinglePrecisionFloat: false
+          FriendlyName: Default Slots Per Row
+          Category: Vendor Config
+          PropertyFlags: 65541
+          RepNotifyFunc: None
+          ReplicationCondition: COND_None
+          MetaDataArray:
+            count: 0
+            items:
+          DefaultValue: 
+        - index: 3
+          VarName: CachedItems
+          VarGuid:
+            A: -323072455
+            B: 1240883112
+            C: -2016286067
+            D: -865047348
+          VarType:
+            PinCategory: struct
+            PinSubCategory: None
+            PinSubCategoryObject: /Script/CoreUObject.UserDefinedStruct'/Game/SoulslikeFramework/Structures/Vendor/FVendorItems.FVendorItems'
+            PinSubCategoryMemberReference:
+              MemberParent: null
+              MemberName: None
+              MemberGuid:
+                A: 0
+                B: 0
+                C: 0
+                D: 0
+            PinValueType:
+              TerminalCategory: None
+              TerminalSubCategory: None
+              TerminalSubCategoryObject: None
+              bTerminalIsConst: false
+              bTerminalIsWeakPointer: false
+              bTerminalIsUObjectWrapper: false
+            ContainerType: Array
+            bIsReference: false
+            bIsConst: false
+            bIsWeakPointer: false
+            bIsUObjectWrapper: false
+            bSerializeAsSinglePrecisionFloat: false
+          FriendlyName: Cached Items
+          Category: Runtime
+          PropertyFlags: 4398046576645
+          RepNotifyFunc: None
+          ReplicationCondition: COND_None
+          MetaDataArray:
+            count: 0
+            items:
+          DefaultValue: 
+        - index: 4
+          VarName: OnItemStockUpdated
+          VarGuid:
+            A: -1965130849
+            B: 1306928968
+            C: -1688264823
+            D: 522156531
+          VarType:
+            PinCategory: mcdelegate
+            PinSubCategory: None
+            PinSubCategoryObject: None
+            PinSubCategoryMemberReference:
+              MemberParent: null
+              MemberName: None
+              MemberGuid:
+                A: 0
+                B: 0
+                C: 0
+                D: 0
+            PinValueType:
+              TerminalCategory: None
+              TerminalSubCategory: None
+              TerminalSubCategoryObject: None
+              bTerminalIsConst: false
+              bTerminalIsWeakPointer: false
+              bTerminalIsUObjectWrapper: false
+            ContainerType: None
+            bIsReference: false
+            bIsConst: false
+            bIsWeakPointer: false
+            bIsUObjectWrapper: false
+            bSerializeAsSinglePrecisionFloat: false
+          FriendlyName: On Item Stock Updated
+          Category: Runtime
+          PropertyFlags: 21990501056517
+          RepNotifyFunc: None
+          ReplicationCondition: COND_None
+          MetaDataArray:
+            count: 0
+            items:
+          DefaultValue: 
+    GeneratedVariables:
+      count: 0
+      items:
+    CategorySorting:
+      count: 4
+      items:
+        - index: 0
+          value: Vendor Config
+        - index: 1
+          value: None
+        - index: 2
+          value: Runtime
+        - index: 3
+          value: Default
+    ImportedNamespaces: ()
+    ImplementedInterfaces:
+      count: 0
+      items:
+    LastEditedDocuments:
+      count: 2
+      items:
+        - index: 0
+          EditedObjectPath:
+            AssetPath:
+              PackageName: /Game/SoulslikeFramework/Data/Vendor/PDA_Vendor
+              AssetName: PDA_Vendor
+            SubPathString: EventGraph
+          SavedViewOffset:
+            X: 245.000000
+            Y: 157.000000
+          SavedZoomAmount: 1.000000
+        - index: 1
+          EditedObjectPath:
+            AssetPath:
+              PackageName: /Game/SoulslikeFramework/Data/Vendor/PDA_Vendor
+              AssetName: PDA_Vendor
+            SubPathString: ReduceItemStock
+          SavedViewOffset:
+            X: 1201.407837
+            Y: -390.781982
+          SavedZoomAmount: 0.500000
+    Bookmarks:
+      count: 0
+      entries:
+    BookmarkNodes:
+      count: 0
+      items:
+    DeprecatedPinWatches:
+      count: 0
+      items:
+    ComponentTemplateNameIndex:
+      count: 0
+      entries:
+    Extensions:
+      count: 0
+      items:
+    ThumbnailInfo:
+      class: SceneThumbnailInfo
+      name: SceneThumbnailInfo_0
+      path: "/Game/SoulslikeFramework/Data/Vendor/PDA_Vendor.PDA_Vendor:SceneThumbnailInfo_0"
+    GeneratedClass:
+      class: BlueprintGeneratedClass
+      name: PDA_Vendor_C
+      path: /Game/SoulslikeFramework/Data/Vendor/PDA_Vendor.PDA_Vendor_C
+    bLegacyNeedToPurgeSkelRefs: false
+    BlueprintGuid:
+      A: 1701121143
+      B: 1215281381
+      C: -873680729
+      D: 2631485

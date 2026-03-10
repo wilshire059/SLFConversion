@@ -14,6 +14,7 @@
 // - OnConstruction: Camera setup (SittingAngle + 180, CameraDistance, CameraOffset, CameraRotation)
 
 #include "SLFRestingPointBase.h"
+#include "GameFramework/Character.h"
 #include "Interfaces/SLFPlayerInterface.h"
 #include "Interfaces/SLFControllerInterface.h"
 #include "Interfaces/SLFRestingPointInterface.h"
@@ -29,6 +30,9 @@
 
 ASLFRestingPointBase::ASLFRestingPointBase()
 {
+	// World Partition: always load resting points (needed for world map + fast travel)
+	bIsSpatiallyLoaded = false;
+
 	// ═══════════════════════════════════════════════════════════════════════
 	// INTERACTION COLLISION COMPONENT (Created in C++)
 	// ═══════════════════════════════════════════════════════════════════════
@@ -101,6 +105,10 @@ ASLFRestingPointBase::ASLFRestingPointBase()
 
 	// CRITICAL: Default IsActivated to FALSE (not discovered yet)
 	IsActivated = false;
+
+	// Sit-down / stand-up montages from GameAnimationSample
+	SitDownMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT("/Game/GameAnimations/Montages/AM_Rest_SitDown.AM_Rest_SitDown")));
+	StandUpMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT("/Game/GameAnimations/Montages/AM_Rest_StandUp.AM_Rest_StandUp")));
 }
 
 void ASLFRestingPointBase::BeginPlay()
@@ -173,6 +181,26 @@ void ASLFRestingPointBase::BeginPlay()
 	if (IsActivated)
 	{
 		InteractionText = FText::FromString(TEXT("Rest"));
+
+		// If already activated at spawn (e.g., pre-discovered by commandlet),
+		// register with save manager so it appears on the world map immediately
+		APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
+		if (IsValid(PC))
+		{
+			if (USaveLoadManagerComponent* SaveMgr = PC->FindComponentByClass<USaveLoadManagerComponent>())
+			{
+				FSLFRestPointSaveInfo RestInfo;
+				RestInfo.RestPointId = ID;
+				RestInfo.LocationName = LocationName;
+				RestInfo.WorldLocation = GetActorLocation();
+				RestInfo.SpawnLocation = GetActorLocation();
+				RestInfo.SpawnRotation = GetActorRotation();
+				RestInfo.bIsDungeonEntrance = bIsDungeonEntrance;
+				SaveMgr->RegisterDiscoveredRestPoint(RestInfo);
+				UE_LOG(LogTemp, Log, TEXT("[RestingPoint] Auto-registered pre-discovered point: %s"),
+					*LocationName.ToString());
+			}
+		}
 	}
 	else
 	{
@@ -284,6 +312,25 @@ void ASLFRestingPointBase::OnInteract_Implementation(AActor* Interactor)
 			}
 		}
 
+		// Play sit-down montage if available
+		UAnimMontage* SitMontage = SitDownMontage.LoadSynchronous();
+		if (SitMontage)
+		{
+			ACharacter* SitChar = Cast<ACharacter>(SittingActor);
+			if (SitChar && SitChar->GetMesh() && SitChar->GetMesh()->GetAnimInstance())
+			{
+				UAnimInstance* AnimInst = SitChar->GetMesh()->GetAnimInstance();
+				AnimInst->Montage_Play(SitMontage);
+
+				// Bind montage end to open rest menu when sit-down finishes
+				FOnMontageEnded EndDelegate;
+				EndDelegate.BindUObject(this, &ASLFRestingPointBase::OnSitDownMontageEnded);
+				AnimInst->Montage_SetEndDelegate(EndDelegate, SitMontage);
+
+				UE_LOG(LogTemp, Log, TEXT("[RestingPoint] Playing sit-down montage: %s"), *SitMontage->GetName());
+			}
+		}
+
 		// Delay 1.0 second then position the sitting actor
 		GetWorld()->GetTimerManager().SetTimer(
 			PositionTimerHandle,
@@ -378,6 +425,7 @@ void ASLFRestingPointBase::DiscoverPoint(AActor* DiscoveringActor)
 			RestInfo.RestPointId = ID; // FGuid from ASLFInteractableBase
 			RestInfo.LocationName = LocationName;
 			RestInfo.WorldLocation = GetActorLocation();
+			RestInfo.bIsDungeonEntrance = bIsDungeonEntrance;
 			// Get spawn position from interface
 			if (GetClass()->ImplementsInterface(USLFRestingPointInterface::StaticClass()))
 			{
@@ -451,4 +499,57 @@ void ASLFRestingPointBase::PositionSittingActor()
 	// Broadcast OnReady - rest menu can now open
 	OnReady.Broadcast();
 	UE_LOG(LogTemp, Log, TEXT("[RestingPoint] Broadcast OnReady"));
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// OnSitDownMontageEnded — called when sit-down animation finishes
+// ═══════════════════════════════════════════════════════════════════════════════
+void ASLFRestingPointBase::OnSitDownMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	UE_LOG(LogTemp, Log, TEXT("[RestingPoint] Sit-down montage ended (interrupted: %s)"),
+		bInterrupted ? TEXT("true") : TEXT("false"));
+	// OnReady is already broadcast by PositionSittingActor (via timer)
+	// The sit-down animation plays during the positioning delay
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ExitRestingPoint — called when player closes the rest menu
+// Plays stand-up animation and releases the player
+// ═══════════════════════════════════════════════════════════════════════════════
+void ASLFRestingPointBase::ExitRestingPoint()
+{
+	UE_LOG(LogTemp, Log, TEXT("[RestingPoint] ExitRestingPoint"));
+
+	UAnimMontage* StandMontage = StandUpMontage.LoadSynchronous();
+	if (StandMontage && IsValid(SittingActor))
+	{
+		ACharacter* SitChar = Cast<ACharacter>(SittingActor);
+		if (SitChar && SitChar->GetMesh() && SitChar->GetMesh()->GetAnimInstance())
+		{
+			UAnimInstance* AnimInst = SitChar->GetMesh()->GetAnimInstance();
+			AnimInst->Montage_Play(StandMontage);
+
+			// Bind end to fully release player
+			FOnMontageEnded EndDelegate;
+			EndDelegate.BindUObject(this, &ASLFRestingPointBase::OnStandUpMontageEnded);
+			AnimInst->Montage_SetEndDelegate(EndDelegate, StandMontage);
+
+			UE_LOG(LogTemp, Log, TEXT("[RestingPoint] Playing stand-up montage: %s"), *StandMontage->GetName());
+			return;
+		}
+	}
+
+	// No montage — release immediately
+	OnStandUpMontageEnded(nullptr, false);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// OnStandUpMontageEnded — releases the player from the resting point
+// ═══════════════════════════════════════════════════════════════════════════════
+void ASLFRestingPointBase::OnStandUpMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	UE_LOG(LogTemp, Log, TEXT("[RestingPoint] Stand-up complete, releasing player"));
+
+	SittingActor = nullptr;
+	OnExited.Broadcast();
 }

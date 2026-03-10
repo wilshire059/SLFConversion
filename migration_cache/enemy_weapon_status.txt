@@ -1,0 +1,12 @@
+======================================================================
+CHECKING ENEMY WEAPON STATUS EFFECTS
+======================================================================
+
+--- DA_BossMace (should have Burn) ---
+DA_BossMace has 1 status effects:
+  - DA_StatusEffect_Burn: Rank=1, Buildup=50.0
+
+--- Searching for enemy weapon assets ---
+
+--- All weapon data assets ---
+Found 0 weapon data assets

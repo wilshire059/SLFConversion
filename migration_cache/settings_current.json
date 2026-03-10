@@ -1,0 +1,82 @@
+{
+  "W_Settings_Entry": {
+    "_class": "W_Settings_Entry_C",
+    "unhovered_color": {
+      "R": 0.04705899953842163,
+      "G": 0.04705899953842163,
+      "B": 0.04705899953842163,
+      "A": 0.9019610285758972
+    },
+    "hovered_color": {
+      "R": 0.06499999761581421,
+      "G": 0.06499999761581421,
+      "B": 0.06499999761581421,
+      "A": 0.9019610285758972
+    },
+    "setting_tag": "<Struct 'GameplayTag' (0x000001DE0E54D508) {}>",
+    "setting_name": "Setting Entry",
+    "setting_description": "Setting Entry",
+    "entry_type": "<SLFSettingEntry.SLIDER: 3>",
+    "UnhoveredColor": {
+      "R": 0.04705899953842163,
+      "G": 0.04705899953842163,
+      "B": 0.04705899953842163,
+      "A": 0.9019610285758972
+    },
+    "HoveredColor": {
+      "R": 0.06499999761581421,
+      "G": 0.06499999761581421,
+      "B": 0.06499999761581421,
+      "A": 0.9019610285758972
+    },
+    "SettingTag": "<Struct 'GameplayTag' (0x000001DE0E54D508) {}>",
+    "SettingName": "Setting Entry",
+    "SettingDescription": "Setting Entry",
+    "EntryType": "<SLFSettingEntry.SLIDER: 3>",
+    "ButtonText": "",
+    "CurrentValue": "",
+    "Selected": false
+  },
+  "W_Settings_CategoryEntry": {
+    "_class": "W_Settings_CategoryEntry_C",
+    "selected_color": {
+      "R": 0.859375,
+      "G": 0.7441949844360352,
+      "B": 0.618340015411377,
+      "A": 1.0
+    },
+    "deselected_color": {
+      "R": 0.49411800503730774,
+      "G": 0.3921569883823395,
+      "B": 0.282353013753891,
+      "A": 1.0
+    },
+    "setting_category": "<Struct 'GameplayTag' (0x000001DE22993B08) {}>",
+    "switcher_index": 0,
+    "SelectedColor": {
+      "R": 0.859375,
+      "G": 0.7441949844360352,
+      "B": 0.618340015411377,
+      "A": 1.0
+    },
+    "DeselectedColor": {
+      "R": 0.49411800503730774,
+      "G": 0.3921569883823395,
+      "B": 0.282353013753891,
+      "A": 1.0
+    },
+    "SettingCategory": "<Struct 'GameplayTag' (0x000001DE22993B08) {}>",
+    "SwitcherIndex": 0,
+    "Selected": false
+  },
+  "PDA_CustomSettings": {
+    "_class": "PDA_CustomSettings_C"
+  },
+  "W_Settings": {
+    "_class": "W_Settings_C",
+    "categories_to_hide": "[]",
+    "quit_to_desktop": false,
+    "CategoriesToHide": "[]",
+    "QuitToDesktop": false
+  }
+}

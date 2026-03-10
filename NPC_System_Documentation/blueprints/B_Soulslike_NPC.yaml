@@ -1,0 +1,690 @@
+# Blueprint Export - AUTO-GENERATED
+# DO NOT EDIT - This is the source of truth from bp_only
+
+blueprint:
+  path: /Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC
+  class: Blueprint
+  parent_class: B_BaseCharacter_C
+  generated_class: B_Soulslike_NPC_C
+
+variables:
+  - name: CanBeTraced?
+    type: bool
+    subcategory: None
+    category: Interaction
+    replication: 0
+
+  - name: LookAtComponent
+    type: object
+    subcategory: None
+    category: Default
+    replication: 0
+
+  - name: NpcId
+    type: struct
+    subcategory: None
+    category: Saving (Generate GUID for Saving)
+    replication: 0
+
+class_default_object:
+  class: B_Soulslike_NPC_C
+  name: Default__B_Soulslike_NPC_C
+  path: /Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC.Default__B_Soulslike_NPC_C
+  properties:
+    Look At Radius: null
+    AC_AI_InteractionManager: null
+    CanBeTraced?: true
+    LookAtComponent: null
+    NpcId:
+      A: 0
+      B: 0
+      C: 0
+      D: 0
+    TargetLockonWidget: null
+    ProjectileHomingPosition: null
+    ExecutionWidget: null
+    AC_BuffManager: null
+    AC_StatusEffectManager: null
+    TargetLockonComponent: null
+    AC_StatManager: null
+    TL_GenericLocation_Alpha_6087E49D45FBBF5EAA0254AB7B87C1F0: 0.000000
+    TL_GenericLocation__Direction_6087E49D45FBBF5EAA0254AB7B87C1F0: Forward
+    TL_GenericLocation: null
+    TL_GenericRotation_Alpha_996FA36C4FE8FEA442CB9EB18340DDEB: 0.000000
+    TL_GenericRotation__Direction_996FA36C4FE8FEA442CB9EB18340DDEB: Forward
+    TL_GenericRotation: null
+    IK_Weight: 0.000000
+    Cache_Rotation:
+      Pitch: 0.000000
+      Yaw: 0.000000
+      Roll: 0.000000
+    Cache_Location:
+      X: 0.000000
+      Y: 0.000000
+      Z: 0.000000
+    OnLocationLerpEnd: ()
+    OnRotationLerpEnd: ()
+    OnLocationRotationLerpEnd: ()
+    Mesh:
+      class: SkeletalMeshComponent
+      name: CharacterMesh0
+      path: "/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC.Default__B_Soulslike_NPC_C:CharacterMesh0"
+    CharacterMovement:
+      class: CharacterMovementComponent
+      name: CharMoveComp
+      path: "/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC.Default__B_Soulslike_NPC_C:CharMoveComp"
+    CapsuleComponent:
+      class: CapsuleComponent
+      name: CollisionCylinder
+      path: "/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC.Default__B_Soulslike_NPC_C:CollisionCylinder"
+    ArrowComponent:
+      class: ArrowComponent
+      name: Arrow
+      path: "/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC.Default__B_Soulslike_NPC_C:Arrow"
+    BasedMovement:
+      BaseID: 0
+      bServerHasBaseComponent: false
+      bRelativeRotation: false
+      bServerHasVelocity: false
+      BoneName: None
+      MovementBase: null
+      Location:
+        X: 0.000000
+        Y: 0.000000
+        Z: 0.000000
+      Rotation:
+        Pitch: 0.000000
+        Yaw: 0.000000
+        Roll: 0.000000
+    ReplicatedBasedMovement:
+      BaseID: 0
+      bServerHasBaseComponent: false
+      bRelativeRotation: false
+      bServerHasVelocity: false
+      BoneName: None
+      MovementBase: null
+      Location:
+        X: 0.000000
+        Y: 0.000000
+        Z: 0.000000
+      Rotation:
+        Pitch: 0.000000
+        Yaw: 0.000000
+        Roll: 0.000000
+    ReplicatedServerLastTransformUpdateTimeStamp: 0.000000
+    ReplayLastTransformUpdateTimeStamp: 0.000000
+    BaseRotationOffset:
+      X: 0.000000
+      Y: 0.000000
+      Z: 0.000000
+      W: 1.000000
+    BaseTranslationOffset:
+      X: 0.000000
+      Y: 0.000000
+      Z: 0.000000
+    ReplicatedGravityDirection:
+      X: 0.000000
+      Y: 0.000000
+      Z: -1.000000
+    AnimRootMotionTranslationScale: 1.000000
+    CrouchedEyeHeight: 32.000000
+    bInBaseReplication: false
+    bIsCrouched: false
+    bPressedJump: false
+    bSimGravityDisabled: false
+    ReplicatedMovementMode: 0
+    JumpMaxHoldTime: 0.000000
+    JumpMaxCount: 1
+    JumpCurrentCount: 0
+    JumpCurrentCountPreJump: 0
+    OnReachedJumpApex: ()
+    LandedDelegate: ()
+    MovementModeChangedDelegate: ()
+    OnCharacterMovementUpdated: ()
+    RepRootMotion:
+      Animation: null
+      bIsActive: false
+      bRelativePosition: false
+      bRelativeRotation: false
+      Position: 0.000000
+      Location:
+        X: 0.000000
+        Y: 0.000000
+        Z: 0.000000
+      Rotation:
+        Pitch: 0.000000
+        Yaw: 0.000000
+        Roll: 0.000000
+      MovementBase: null
+      MovementBaseBoneName: None
+      AuthoritativeRootMotion:
+        bHasAdditiveSources: false
+        bHasOverrideSources: false
+        bHasOverrideSourcesWithIgnoreZAccumulate: false
+        bIsAdditiveVelocityApplied: false
+        LastAccumulatedSettings:
+          Flags: 0
+        LastPreAdditiveVelocity:
+          X: 0.000000
+          Y: 0.000000
+          Z: 0.000000
+      Acceleration:
+        X: 0.000000
+        Y: 0.000000
+        Z: 0.000000
+      LinearVelocity:
+        X: 0.000000
+        Y: 0.000000
+        Z: 0.000000
+    bUseControllerRotationPitch: false
+    bUseControllerRotationYaw: false
+    bUseControllerRotationRoll: false
+    bCanAffectNavigationGeneration: false
+    BaseEyeHeight: 64.000000
+    AutoPossessPlayer: Disabled
+    AutoPossessAI: PlacedInWorld
+    RemoteViewPitch16: 0
+    RemoteViewPitch: 0
+    AIControllerClass:
+      class: BlueprintGeneratedClass
+      name: AIC_SoulslikeFramework_C
+      path: /Game/SoulslikeFramework/Blueprints/_AI/Misc/AIC_SoulslikeFramework.AIC_SoulslikeFramework_C
+    PlayerState: null
+    Controller: null
+    ReceiveControllerChangedDelegate: ()
+    ReceiveRestartedDelegate: ()
+    OverrideInputComponentClass: null
+    PrimaryActorTick:
+      TickGroup: TG_PrePhysics
+      EndTickGroup: TG_PrePhysics
+      bTickEvenWhenPaused: false
+      bCanEverTick: true
+      bStartWithTickEnabled: true
+      bAllowTickOnDedicatedServer: true
+      TickInterval: 0.000000
+    bNetTemporary: false
+    bOnlyRelevantToOwner: false
+    bAlwaysRelevant: false
+    bReplicateMovement: true
+    bCallPreReplication: true
+    bCallPreReplicationForReplay: true
+    bHidden: false
+    bTearOff: false
+    bForceNetAddressable: false
+    bIsMainWorldOnly: false
+    bNetLoadOnClient: true
+    bNetUseOwnerRelevancy: false
+    bRelevantForNetworkReplays: true
+    bRelevantForLevelBounds: true
+    bReplayRewindable: false
+    bAllowTickBeforeBeginPlay: false
+    bAutoDestroyWhenFinished: false
+    bCanBeDamaged: true
+    bBlockInput: false
+    bCollideWhenPlacing: true
+    bFindCameraComponentWhenViewTarget: true
+    bGenerateOverlapEventsDuringLevelStreaming: true
+    bIgnoresOriginShifting: false
+    bEnableAutoLODGeneration: true
+    bIsEditorOnlyActor: false
+    bReplicates: true
+    bCanBeInCluster: false
+    bMigratingAsset: false
+    bAllowReceiveTickEventOnDedicatedServer: true
+    bReplicateUsingRegisteredSubObjectList: false
+    bActorEnableCollision: true
+    bAsyncPhysicsTickEnabled: false
+    UpdateOverlapsMethodDuringLevelStreaming: UseConfigDefault
+    DefaultUpdateOverlapsMethodDuringLevelStreaming: OnlyUpdateMovable
+    InitialLifeSpan: 0.000000
+    CustomTimeDilation: 1.000000
+    RayTracingGroupId: -1
+    RuntimeGrid: None
+    ReplicatedMovement:
+      LocationQuantizationLevel: RoundTwoDecimals
+      VelocityQuantizationLevel: RoundWholeNumber
+      RotationQuantizationLevel: ByteComponents
+    Owner: null
+    NetDriverName: GameNetDriver
+    Role: ROLE_Authority
+    NetDormancy: DORM_Awake
+    SpawnCollisionHandlingMethod: AdjustIfPossibleButDontSpawnIfColliding
+    AutoReceiveInput: Disabled
+    InputPriority: 0
+    InputComponent: null
+    NetCullDistanceSquared: 225000000.000000
+    NetUpdateFrequency: 100.000000
+    MinNetUpdateFrequency: 2.000000
+    NetPriority: 3.000000
+    PhysicsReplicationMode: Default
+    Instigator: null
+    RootComponent:
+      class: CapsuleComponent
+      name: CollisionCylinder
+      path: "/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC.Default__B_Soulslike_NPC_C:CollisionCylinder"
+    PivotOffset:
+      X: 0.000000
+      Y: 0.000000
+      Z: 0.000000
+    HLODLayer: null
+    Layers:
+      count: 0
+      items:
+    ParentComponent: None
+    ActorGuid:
+      A: 0
+      B: 0
+      C: 0
+      D: 0
+    ContentBundleGuid:
+      A: 0
+      B: 0
+      C: 0
+      D: 0
+    DataLayers:
+      count: 0
+      items:
+    DataLayerAssets:
+      count: 0
+      items:
+    ExternalDataLayerAsset: null
+    SpriteScale: 1.000000
+    ActorLabel: MyPawn_C-1
+    FolderPath: None
+    FolderGuid:
+      A: 0
+      B: 0
+      C: 0
+      D: 0
+    bHiddenEd: false
+    bLockLocation: false
+    bActorLabelEditable: true
+    bEditable: true
+    bListedInSceneOutliner: true
+    bOptimizeBPComponentData: false
+    bCanPlayFromHere: false
+    bIsSpatiallyLoaded: true
+    Tags:
+      count: 0
+      items:
+    OnTakeAnyDamage: ()
+    OnTakePointDamage: ()
+    OnTakeRadialDamage: ()
+    OnActorBeginOverlap: ()
+    OnActorEndOverlap: ()
+    OnBeginCursorOver: ()
+    OnEndCursorOver: ()
+    OnClicked: ()
+    OnReleased: ()
+    OnInputTouchBegin: ()
+    OnInputTouchEnd: ()
+    OnInputTouchEnter: ()
+    OnInputTouchLeave: ()
+    OnActorHit: ()
+    OnDestroyed: ()
+    OnEndPlay: ()
+    InstanceComponents:
+      count: 0
+      items:
+    BlueprintCreatedComponents:
+      count: 0
+      items:
+
+components:
+  - variable_name: AC_AI_InteractionManager
+    component_class: AC_AI_InteractionManager_C
+    parent_variable: None
+    properties:
+      class: AC_AI_InteractionManager_C
+      name: AC_AI_InteractionManager_GEN_VARIABLE
+      path: "/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC.B_Soulslike_NPC_C:AC_AI_InteractionManager_GEN_VARIABLE"
+      properties:
+        Name: Npc Name
+        DialogAsset:
+          class: PDA_Dialog_C
+          name: DA_ExampleDialog
+          path: /Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DA_ExampleDialog.DA_ExampleDialog
+        ProgressManager: null
+        CurrentIndex: 0
+        MaxIndex: 0
+        ActiveTable: null
+        VendorAsset: null
+        OnDialogFinished: ()
+        PrimaryComponentTick:
+          TickGroup: TG_DuringPhysics
+          EndTickGroup: TG_PrePhysics
+          bTickEvenWhenPaused: false
+          bCanEverTick: false
+          bStartWithTickEnabled: true
+          bAllowTickOnDedicatedServer: true
+          TickInterval: 0.000000
+        ComponentTags:
+          count: 0
+          items:
+        AssetUserData:
+          count: 0
+          items:
+        AssetUserDataEditorOnly:
+          count: 0
+          items:
+        UCSSerializationIndex: -1
+        bNetAddressable: false
+        bReplicateUsingRegisteredSubObjectList: false
+        bReplicates: false
+        bAutoActivate: false
+        bEditableWhenInherited: true
+        bCanEverAffectNavigation: false
+        bIsEditorOnly: false
+        bIsVisualizationComponent: false
+        bNeedsUCSSerializationIndexEvaluted: false
+        CreationMethod: Native
+        OnComponentActivated: ()
+        OnComponentDeactivated: ()
+
+  - variable_name: Look At Radius
+    component_class: SphereComponent
+    parent_variable: CollisionCylinder
+    properties:
+      class: SphereComponent
+      name: Look At Radius_GEN_VARIABLE
+      path: "/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC.B_Soulslike_NPC_C:Look At Radius_GEN_VARIABLE"
+      properties:
+        SphereRadius: 300.000000
+        AreaClass:
+          class: Class
+          name: NavArea_Obstacle
+          path: /Script/NavigationSystem.NavArea_Obstacle
+        ShapeColor:
+          B: 0
+          G: 0
+          R: 255
+          A: 255
+        bDrawOnlyIfSelected: false
+        bShouldCollideWhenPlacing: false
+        bDynamicObstacle: false
+        bUseSystemDefaultObstacleAreaClass: true
+        AreaClassOverride: null
+        LineThickness: 0.000000
+        MinDrawDistance: 0.000000
+        LDMaxDrawDistance: 0.000000
+        CachedMaxDrawDistance: 0.000000
+        DepthPriorityGroup: SDPG_World
+        ViewOwnerDepthPriorityGroup: SDPG_World
+        IndirectLightingCacheQuality: ILCQ_Point
+        LightmapType: Default
+        HLODBatchingPolicy: None
+        ShadowCacheInvalidationBehavior: Auto
+        bEnableAutoLODGeneration: true
+        bIsActorTextureStreamingBuiltData: false
+        bIsValidTextureStreamingBuiltData: false
+        bNeverDistanceCull: false
+        bAlwaysCreatePhysicsState: false
+        bGenerateOverlapEvents: true
+        bMultiBodyOverlap: false
+        bTraceComplexOnMove: false
+        bReturnMaterialOnMove: false
+        bUseViewOwnerDepthPriorityGroup: false
+        bAllowCullDistanceVolume: true
+        bVisibleInReflectionCaptures: true
+        bVisibleInRealTimeSkyCaptures: true
+        bVisibleInRayTracing: true
+        bRenderInMainPass: true
+        bRenderInDepthPass: true
+        bReceivesDecals: true
+        bHoldout: false
+        bOwnerNoSee: false
+        bOnlyOwnerSee: false
+        bTreatAsBackgroundForOcclusion: false
+        bUseAsOccluder: false
+        bSelectable: true
+        bWantsEditorEffects: false
+        bConsiderForActorPlacementWhenHidden: false
+        bForceMipStreaming: false
+        bHasPerInstanceHitProxies: false
+        CastShadow: false
+        bEmissiveLightSource: false
+        bAffectDynamicIndirectLighting: true
+        bAffectIndirectLightingWhileHidden: false
+        bAffectDistanceFieldLighting: true
+        bCastDynamicShadow: false
+        bCastStaticShadow: true
+        bCastVolumetricTranslucentShadow: false
+        bCastContactShadow: true
+        bSelfShadowOnly: false
+        bCastFarShadow: false
+        bCastInsetShadow: false
+        bCastCinematicShadow: false
+        bCastHiddenShadow: false
+        bCastShadowAsTwoSided: false
+        bLightAttachmentsAsGroup: false
+        bExcludeFromLightAttachmentGroup: true
+        bReceiveMobileCSMShadows: true
+        bSingleSampleShadowFromStationaryLights: false
+        bIgnoreRadialImpulse: false
+        bIgnoreRadialForce: false
+        bApplyImpulseOnDamage: true
+        bReplicatePhysicsToAutonomousProxy: true
+        bFillCollisionUnderneathForNavmesh: false
+        bRasterizeAsFilledConvexVolume: false
+        AlwaysLoadOnClient: true
+        AlwaysLoadOnServer: true
+        bUseEditorCompositing: true
+        bRenderCustomDepth: false
+        bVisibleInSceneCaptureOnly: false
+        bHiddenInSceneCapture: false
+        bRayTracingFarField: false
+        bLumenHeightfield: false
+        FirstPersonPrimitiveType: None
+        bHasNoStreamableTextures: false
+        bStaticWhenNotMoveable: true
+        bHasCustomNavigableGeometry: Yes
+        HitProxyPriority: HPP_World
+        CanCharacterStepUpOn: ECB_Yes
+        LightingChannels:
+          bChannel0: true
+          bChannel1: false
+          bChannel2: false
+        RayTracingGroupCullingPriority: CP_4_DEFAULT
+        CustomDepthStencilWriteMask: ERSM_Default
+        ExcludeFromHLODLevels: 0
+        RayTracingGroupId: -1
+        VisibilityId: -1
+        CustomDepthStencilValue: 0
+        CustomPrimitiveData:
+          Data:
+            count: 0
+            items:
+        TranslucencySortPriority: 0
+        TranslucencySortDistanceOffset: 0.000000
+        RuntimeVirtualTextures:
+          count: 0
+          items:
+        VirtualTextureLodBias: 0
+        VirtualTextureCullMips: 0
+        VirtualTextureMinCoverage: 0
+        VirtualTextureRenderPassType: Exclusive
+        BoundsScale: 1.000000
+        BodyInstance:
+          PositionSolverIterationCount: 8
+          VelocitySolverIterationCount: 2
+          ProjectionSolverIterationCount: 1
+          ObjectType: ECC_GameTraceChannel3
+          CollisionEnabled: QueryOnly
+          SleepFamily: Normal
+          DOFMode: Default
+          bUseCCD: false
+          bUseMACD: false
+          bAllowPartialIslandSleep: true
+          bIgnoreAnalyticCollisions: false
+          bNotifyRigidBodyCollision: false
+          bSmoothEdgeCollisions: false
+          bLockTranslation: true
+          bLockRotation: true
+          bLockXTranslation: false
+          bLockYTranslation: false
+          bLockZTranslation: false
+          bLockXRotation: false
+          bLockYRotation: false
+          bLockZRotation: false
+          bOverrideMaxAngularVelocity: false
+          bOverrideMaxDepenetrationVelocity: false
+          bOverrideWalkableSlopeOnInstance: false
+          bOverrideIterationCounts: false
+          bInterpolateWhenSubStepping: true
+          bInertiaConditioning: true
+          bOneWayInteraction: false
+          bOverrideSolverAsyncDeltaTime: false
+          SolverAsyncDeltaTime: 0.016667
+          CollisionProfileName: Custom
+          CollisionResponses:
+            ResponseArray:
+              count: 11
+              items:
+                - index: 0
+                  Channel: WorldStatic
+                  Response: ECR_Ignore
+                - index: 1
+                  Channel: WorldDynamic
+                  Response: ECR_Ignore
+                - index: 2
+                  Channel: Pawn
+                  Response: ECR_Ignore
+                - index: 3
+                  Channel: Visibility
+                  Response: ECR_Ignore
+                - index: 4
+                  Channel: Camera
+                  Response: ECR_Ignore
+                - index: 5
+                  Channel: PhysicsBody
+                  Response: ECR_Ignore
+                - index: 6
+                  Channel: Vehicle
+                  Response: ECR_Ignore
+                - index: 7
+                  Channel: Destructible
+                  Response: ECR_Ignore
+                - index: 8
+                  Channel: Interactable
+                  Response: ECR_Ignore
+                - index: 9
+                  Channel: Floor
+                  Response: ECR_Ignore
+                - index: 10
+                  Channel: Focusable
+                  Response: ECR_Overlap
+          MaxDepenetrationVelocity: 0.000000
+          MassInKgOverride: 100.000000
+          LinearDamping: 0.010000
+          AngularDamping: 0.000000
+          CustomDOFPlaneNormal:
+            X: 0.000000
+            Y: 0.000000
+            Z: 0.000000
+          COMNudge:
+            X: 0.000000
+            Y: 0.000000
+            Z: 0.000000
+          MassScale: 1.000000
+          GravityGroupIndex: 0
+          InertiaTensorScale:
+            X: 1.000000
+            Y: 1.000000
+            Z: 1.000000
+          WalkableSlopeOverride:
+            WalkableSlopeBehavior: WalkableSlope_Default
+            WalkableSlopeAngle: 0.000000
+          PhysMaterialOverride: null
+          MaxAngularVelocity: 3600.000000
+          CustomSleepThresholdMultiplier: 1.000000
+          StabilizationThresholdMultiplier: 1.000000
+          PhysicsBlendWeight: 0.000000
+          bSimulatePhysics: false
+          bOverrideMass: false
+          bEnableGravity: true
+          bUpdateKinematicFromSimulation: false
+          bGyroscopicTorqueEnabled: false
+          bAutoWeld: true
+          bStartAwake: true
+          bGenerateWakeEvents: false
+          bUpdateMassWhenScaleChanges: true
+        OnComponentHit: ()
+        OnComponentBeginOverlap: ()
+        OnComponentEndOverlap: ()
+        OnComponentWake: ()
+        OnComponentSleep: ()
+        OnComponentPhysicsStateChanged: ()
+        OnBeginCursorOver: ()
+        OnEndCursorOver: ()
+        OnClicked: ()
+        OnReleased: ()
+        OnInputTouchBegin: ()
+        OnInputTouchEnd: ()
+        OnInputTouchEnter: ()
+        OnInputTouchLeave: ()
+        LODParentPrimitive: null
+        AttachParent: null
+        AttachSocketName: None
+        RelativeLocation:
+          X: 0.000000
+          Y: 0.000000
+          Z: 0.000000
+        RelativeRotation:
+          Pitch: 0.000000
+          Yaw: 0.000000
+          Roll: 0.000000
+        RelativeScale3D:
+          X: 1.000000
+          Y: 1.000000
+          Z: 1.000000
+        ComponentVelocity:
+          X: 0.000000
+          Y: 0.000000
+          Z: 0.000000
+        bAbsoluteLocation: false
+        bAbsoluteRotation: false
+        bAbsoluteScale: false
+        bVisible: true
+        bShouldUpdatePhysicsVolume: false
+        bHiddenInGame: true
+        bBoundsChangeTriggersStreamingDataRebuild: false
+        bUseAttachParentBound: false
+        bComputeFastLocalBounds: false
+        bComputeBoundsOnceForGame: false
+        bComputedBoundsOnceForGame: false
+        bIsNotRenderAttachmentRoot: false
+        bVisualizeComponent: false
+        Mobility: Movable
+        DetailMode: DM_Low
+        PhysicsVolumeChangedDelegate: ()
+        PrimaryComponentTick:
+          TickGroup: TG_DuringPhysics
+          EndTickGroup: TG_PrePhysics
+          bTickEvenWhenPaused: false
+          bCanEverTick: false
+          bStartWithTickEnabled: true
+          bAllowTickOnDedicatedServer: true
+          TickInterval: 0.000000
+        ComponentTags:
+          count: 0
+          items:
+        AssetUserData:
+          count: 0
+          items:
+        AssetUserDataEditorOnly:
+          count: 0
+          items:
+        UCSSerializationIndex: -1
+        bNetAddressable: false
+        bReplicateUsingRegisteredSubObjectList: false
+        bReplicates: false
+        bAutoActivate: false
+        bEditableWhenInherited: true
+        bCanEverAffectNavigation: true
+        bIsEditorOnly: false
+        bIsVisualizationComponent: false
+        bNeedsUCSSerializationIndexEvaluted: false
+        CreationMethod: Native
+        OnComponentActivated: ()
+        OnComponentDeactivated: ()
+

@@ -8,6 +8,10 @@
 #include "SLFAutomationLibrary.h"
 #include "UObject/UnrealType.h"
 #include "Blueprints/Actors/SLFLevelStreamManager.h"
+#include "Blueprints/Actors/SLFShortcutGate.h"
+#include "Blueprints/Actors/SLFTrapBase.h"
+#include "Blueprints/Actors/SLFPuzzleMarker.h"
+#include "Blueprints/Actors/SLFBossDoor.h"
 #include "UObject/SavePackage.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "AssetCompilingManager.h"
@@ -28,6 +32,8 @@
 #include "Components/SkyLightComponent.h"
 #include "Components/ExponentialHeightFogComponent.h"
 #include "GameFramework/PlayerStart.h"
+#include "Engine/TextRenderActor.h"
+#include "Components/TextRenderComponent.h"
 #include "Landscape.h"
 #include "LandscapeInfo.h"
 #include "LandscapeProxy.h"
@@ -41,13 +47,42 @@
 #include "EngineUtils.h"
 #include "Math/RandomStream.h"
 
-// Dungeon Architect
+// Dungeon Architect — Cell Flow + Voxel Cave system
 #include "Core/Dungeon.h"
 #include "Core/DungeonConfig.h"
 #include "Core/DungeonBuilder.h"
+#include "Builders/CellFlow/CellFlowBuilder.h"
+#include "Builders/CellFlow/CellFlowConfig.h"
+#include "Builders/CellFlow/CellFlowAsset.h"
+#include "Builders/CellFlow/CellFlowModel.h"
+#include "Frameworks/FlowImpl/CellFlow/Lib/CellFlowLib.h"
 #include "Builders/Grid/GridDungeonBuilder.h"
 #include "Builders/Grid/GridDungeonConfig.h"
+#include "Builders/Grid/GridDungeonModel.h"
+#include "Frameworks/Flow/ExecGraph/FlowExecGraphScript.h"
+#include "Frameworks/Flow/ExecGraph/FlowExecTask.h"
+#include "Frameworks/FlowImpl/CellFlow/LayoutGraph/Tasks/CellFlowLayoutTaskCreateCellsVoronoi.h"
+#include "Frameworks/FlowImpl/CellFlow/LayoutGraph/Tasks/CellFlowLayoutTaskCreateCellsGrid.h"
+#include "Frameworks/FlowImpl/CellFlow/LayoutGraph/Tasks/CellFlowLayoutTaskCreateMainPath.h"
+#include "Frameworks/FlowImpl/CellFlow/LayoutGraph/Tasks/CellFlowLayoutTaskCreatePath.h"
+#include "Frameworks/FlowImpl/CellFlow/LayoutGraph/Tasks/CellFlowLayoutTaskFinalize.h"
+#include "Frameworks/Voxel/SDFModels/VoxelSDFModel.h"
 #include "Frameworks/ThemeEngine/DungeonThemeAsset.h"
+#include "Frameworks/ThemeEngine/Graph/DungeonThemeCompiledGraph.h"
+
+
+// Cave system classes
+#include "Dungeon/SLFProceduralCaveManager.h"
+#include "Dungeon/SLFCaveMarkerEmitter.h"
+#include "Dungeon/SLFCaveEventListener.h"
+#include "Dungeon/SLFCaveRandomTransform.h"
+#include "Dungeon/SLFCaveSpawnLogic.h"
+#include "Dungeon/SLFCaveMazeBuilder.h"
+
+// Collision
+#include "PhysicsEngine/BodySetup.h"
+
+// Screenshot capture: use SLF.CaptureDungeon console command (in SLFConversion.cpp)
 #endif // WITH_EDITOR
 
 USetupOpenWorldCommandlet::USetupOpenWorldCommandlet()
@@ -66,6 +101,259 @@ int32 USetupOpenWorldCommandlet::Main(const FString& Params)
 
 	const bool bNoDungeons = Params.Contains(TEXT("-nodungeons"));
 	const bool bNoSave = Params.Contains(TEXT("-nosave"));
+	const bool bDungeonsOnly = Params.Contains(TEXT("-dungeonsonly"));
+
+	// Store canvas mode on instance for use in BuildCellFlowCave
+	bCanvasMode = Params.Contains(TEXT("-canvas"));
+
+	// Optional: regenerate only a specific dungeon (-dungeon=2 means dungeon 2)
+	FString DungeonArg;
+	if (FParse::Value(*Params, TEXT("-dungeon="), DungeonArg))
+	{
+		OnlyDungeonNum = FCString::Atoi(*DungeonArg);
+		UE_LOG(LogTemp, Warning, TEXT("Only regenerating dungeon %d"), OnlyDungeonNum);
+	}
+
+	// ── Grid Test: simple floor+wall dungeon, no cave ──
+	if (Params.Contains(TEXT("-gridtest")))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("=== GRID TEST MODE ==="));
+
+		if (!FSlateApplication::IsInitialized())
+		{
+			FSlateApplication::Create();
+		}
+		IAssetRegistry& AR = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry").Get();
+		AR.SearchAllAssets(true);
+
+		const FString LevelName = TEXT("/Game/Maps/L_Dungeon_Test");
+
+		// Delete existing
+		FString ExistingFile = FPackageName::LongPackageNameToFilename(LevelName, FPackageName::GetMapPackageExtension());
+		if (FPlatformFileManager::Get().GetPlatformFile().FileExists(*ExistingFile))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("  Deleting existing: %s"), *ExistingFile);
+			FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*ExistingFile);
+		}
+
+		UPackage* Pkg = CreatePackage(*LevelName);
+		Pkg->FullyLoad();
+		UWorld* TestWorld = UWorld::CreateWorld(EWorldType::None, false, FName(TEXT("L_Dungeon_Test")), Pkg);
+		if (!TestWorld)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Failed to create test dungeon world!"));
+			return 1;
+		}
+		TestWorld->SetFlags(RF_Public | RF_Standalone);
+		FWorldContext& Ctx = GEngine->CreateNewWorldContext(EWorldType::Editor);
+		Ctx.SetCurrentWorld(TestWorld);
+
+		const FVector Origin(0, 0, 0);
+		FRandomStream Rng(77777);
+
+		// Spawn ADungeon with Grid builder — NO voxel cave
+		ADungeon* Dungeon = TestWorld->SpawnActor<ADungeon>(Origin, FRotator::ZeroRotator);
+		Dungeon->SetFolderPath(FName(TEXT("Dungeon")));
+		Dungeon->BuilderClass = UGridDungeonBuilder::StaticClass();
+		Dungeon->CreateBuilderInstance();
+
+		UGridDungeonConfig* Config = Cast<UGridDungeonConfig>(Dungeon->GetConfig());
+		if (!Config)
+		{
+			Config = NewObject<UGridDungeonConfig>(Dungeon);
+			Dungeon->Config = Config;
+		}
+
+		// Parse optional seed
+		int32 TestSeed = 77777;
+		FString SeedArg;
+		if (FParse::Value(*Params, TEXT("-seed="), SeedArg))
+		{
+			TestSeed = FCString::Atoi(*SeedArg);
+		}
+
+		Config->Seed = TestSeed;
+		Config->NumCells = 150;                          // Lots of rooms + corridors
+		Config->GridCellSize = FVector(400, 400, 200);   // 4m x 4m cells, 2m height per floor
+		Config->MinCellSize = 2;
+		Config->MaxCellSize = 6;
+		Config->RoomAreaThreshold = 4;
+		Config->RoomAspectDelta = 0.4f;
+		Config->SpanningTreeLoopProbability = 0.2f;      // Some loops for alternate routes
+		Config->MaxBuildTimePerFrameMs = 0;
+		Config->bClusterWithHeightVariation = true;       // Multi-level with stairs!
+
+		// NO voxel cave — just floors + walls from theme
+		Dungeon->bCarveVoxels = false;
+
+		// Theme — try SimpleShapes first, then StarterPack
+		UDungeonThemeAsset* Theme = LoadObject<UDungeonThemeAsset>(nullptr,
+			TEXT("/DungeonArchitect/Showcase/Samples/Themes/Legacy/SimpleShapes/D_MyTheme1.D_MyTheme1"));
+		if (!Theme)
+		{
+			Theme = LoadObject<UDungeonThemeAsset>(nullptr,
+				TEXT("/DungeonArchitect/Showcase/Samples/Themes/Foundry/T_Theme_Founddry.T_Theme_Founddry"));
+		}
+		if (!Theme)
+		{
+			Theme = LoadObject<UDungeonThemeAsset>(nullptr,
+				TEXT("/DungeonArchitect/Showcase/Samples/Themes/Legacy/SimpleSciFi/DungeonTheme/D_StarterPackTheme.D_StarterPackTheme"));
+		}
+
+		if (Theme)
+		{
+			Dungeon->Themes.Add(Theme);
+			UE_LOG(LogTemp, Warning, TEXT("  Theme: %s"), *Theme->GetPathName());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("  WARNING: No theme found! Dungeon will have no visual meshes."));
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("  Grid config: seed=%d, cells=%d, size=(%d-%d), heightVar=TRUE"),
+			TestSeed, Config->NumCells, Config->MinCellSize, Config->MaxCellSize);
+
+		// Build the dungeon
+		Dungeon->BuildDungeon();
+
+		// Log results
+		UGridDungeonModel* GridModel = Cast<UGridDungeonModel>(Dungeon->GetModel());
+		if (GridModel)
+		{
+			int32 RoomCount = 0, CorridorCount = 0, StairCount = 0;
+			for (const FGridDungeonCell& Cell : GridModel->Cells)
+			{
+				if (Cell.CellType == EGridDungeonCellType::Room) RoomCount++;
+				else if (Cell.CellType == EGridDungeonCellType::Corridor) CorridorCount++;
+				else if (Cell.CellType == EGridDungeonCellType::CorridorPadding) StairCount++;
+			}
+			UE_LOG(LogTemp, Warning, TEXT("  Result: %d rooms, %d corridors, %d stairs, %d doors"),
+				RoomCount, CorridorCount, StairCount, GridModel->Doors.Num());
+		}
+
+		// Add a PlayerStart
+		APlayerStart* PS = TestWorld->SpawnActor<APlayerStart>(Origin + FVector(800, 800, 500), FRotator::ZeroRotator);
+		if (PS) PS->SetFolderPath(FName(TEXT("Gameplay")));
+
+		// Add basic lighting
+		ADirectionalLight* DirLight = TestWorld->SpawnActor<ADirectionalLight>(
+			Origin + FVector(0, 0, 5000), FRotator(-50, 30, 0));
+		if (DirLight)
+		{
+			DirLight->GetComponent()->SetIntensity(5.0f);
+			DirLight->GetComponent()->SetLightColor(FLinearColor(1.0f, 0.95f, 0.9f));
+			DirLight->SetFolderPath(FName(TEXT("Lighting")));
+		}
+
+		ASkyLight* Sky = TestWorld->SpawnActor<ASkyLight>(Origin + FVector(0, 0, 3000), FRotator::ZeroRotator);
+		if (Sky)
+		{
+			Sky->GetLightComponent()->SetIntensity(2.0f);
+			Sky->SetFolderPath(FName(TEXT("Lighting")));
+		}
+
+		// Save
+		bool bSaved = SaveLevel(TestWorld, LevelName);
+		GEngine->DestroyWorldContext(TestWorld);
+
+		UE_LOG(LogTemp, Warning, TEXT("=== GRID TEST %s ==="), bSaved ? TEXT("COMPLETE") : TEXT("FAILED"));
+		return bSaved ? 0 : 1;
+	}
+
+	// ── Cave Test: Unified CellFlow + Voxel cave ──
+	if (Params.Contains(TEXT("-nestedtest")) || Params.Contains(TEXT("-cavetest")))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("=== CAVE DUNGEON TEST MODE (CellFlow + Voxel) ==="));
+
+		if (!FSlateApplication::IsInitialized())
+		{
+			FSlateApplication::Create();
+		}
+		IAssetRegistry& AR = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry").Get();
+		AR.SearchAllAssets(true);
+
+		int32 CaveSeed = 42;
+		FString SeedArg;
+		if (FParse::Value(*Params, TEXT("-seed="), SeedArg))
+		{
+			CaveSeed = FCString::Atoi(*SeedArg);
+		}
+
+		// Create test world
+		const FString LevelName = TEXT("/Game/Maps/L_Dungeon_Nested");
+		FString ExistingFile = FPackageName::LongPackageNameToFilename(LevelName, FPackageName::GetMapPackageExtension());
+		if (FPlatformFileManager::Get().GetPlatformFile().FileExists(*ExistingFile))
+		{
+			FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*ExistingFile);
+		}
+
+		UPackage* Pkg = CreatePackage(*LevelName);
+		Pkg->FullyLoad();
+		UWorld* CaveWorld = UWorld::CreateWorld(EWorldType::None, false, FName(TEXT("L_Dungeon_Nested")), Pkg);
+		if (!CaveWorld)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Failed to create cave dungeon world!"));
+			return 1;
+		}
+		CaveWorld->SetFlags(RF_Public | RF_Standalone);
+		FWorldContext& Ctx = GEngine->CreateNewWorldContext(EWorldType::Editor);
+		Ctx.SetCurrentWorld(CaveWorld);
+
+		// Spawn AProceduralCaveManager with CellFlow asset
+		AProceduralCaveManager* Manager = CaveWorld->SpawnActor<AProceduralCaveManager>(
+			FVector::ZeroVector, FRotator::ZeroRotator);
+		Manager->SetFolderPath(FName(TEXT("CaveDungeon")));
+		Manager->Seed = CaveSeed;
+
+		// Assign CellFlow asset (from AutoBuildDungeon or CLI override)
+		FString CellFlowPath;
+		if (FParse::Value(*Params, TEXT("-cellflow="), CellFlowPath))
+		{
+			Manager->CellFlowAsset = TSoftObjectPtr<UCellFlowAsset>(FSoftObjectPath(CellFlowPath));
+		}
+		else
+		{
+			Manager->CellFlowAsset = TSoftObjectPtr<UCellFlowAsset>(
+				FSoftObjectPath(TEXT("/Game/Dungeons/CellFlow/CF_UnifiedCave.CF_UnifiedCave")));
+		}
+
+		// Build
+		UE_LOG(LogTemp, Warning, TEXT("── Building unified voxel cave ──"));
+		Manager->BuildCaveDungeon();
+
+		// Save
+		bool bSaved = SaveLevel(CaveWorld, LevelName);
+		GEngine->DestroyWorldContext(CaveWorld);
+
+		UE_LOG(LogTemp, Warning, TEXT("=== CAVE TEST %s ==="), bSaved ? TEXT("COMPLETE") : TEXT("FAILED"));
+		return bSaved ? 0 : 1;
+	}
+
+	// If only regenerating dungeons, populate FlatAreas with dungeon entrances and skip overworld
+	if (bDungeonsOnly)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("=== DUNGEONS ONLY MODE %s==="), bCanvasMode ? TEXT("(CANVAS) ") : TEXT(""));
+		FlatAreas.Empty();
+		FlatAreas.Add({FVector(-12000, -10000, 0), 2500.0f, TEXT("dungeon_entrance_1")});
+		FlatAreas.Add({FVector(15000, -8000, 0), 2500.0f, TEXT("dungeon_entrance_2")});
+		FlatAreas.Add({FVector(5000, 18000, 0), 2500.0f, TEXT("dungeon_entrance_3")});
+
+		// Initialize Slate (required for asset operations)
+		if (!FSlateApplication::IsInitialized())
+		{
+			FSlateApplication::Create();
+		}
+
+		IAssetRegistry& AssetRegistry = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry").Get();
+		AssetRegistry.SearchAllAssets(true);
+
+		UE_LOG(LogTemp, Warning, TEXT("=== Generating Dungeons Only ==="));
+		bool bDungeonsOk = GenerateDungeons(nullptr);
+		UE_LOG(LogTemp, Warning, TEXT("Dungeon generation: %s"), bDungeonsOk ? TEXT("SUCCESS") : TEXT("PARTIAL"));
+
+		UE_LOG(LogTemp, Warning, TEXT("=== SetupOpenWorld (DungeonsOnly) COMPLETE ==="));
+		return 0;
+	}
 
 	// ── Pre-flight: Verify plugins ──
 	UE_LOG(LogTemp, Warning, TEXT("--- Pre-flight: Verifying plugins ---"));
@@ -675,9 +963,18 @@ void USetupOpenWorldCommandlet::BuildDungeonEntrance(UWorld* World, FVector Loca
 bool USetupOpenWorldCommandlet::GenerateDungeons(UWorld* OverWorld)
 {
 	int32 DungeonIndex = 0;
+	int32 DungeonsGenerated = 0;
 	for (const FlatArea& Area : FlatAreas)
 	{
 		if (!Area.Purpose.Contains(TEXT("dungeon_entrance"))) continue;
+
+		// Skip if we're only regenerating a specific dungeon
+		if (OnlyDungeonNum > 0 && (DungeonIndex + 1) != OnlyDungeonNum)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Skipping dungeon %d (only regenerating %d)"), DungeonIndex + 1, OnlyDungeonNum);
+			DungeonIndex++;
+			continue;
+		}
 
 		FString LevelName = FString::Printf(TEXT("/Game/Maps/L_Dungeon_%02d"), DungeonIndex + 1);
 		UE_LOG(LogTemp, Warning, TEXT("Generating dungeon %d: %s"), DungeonIndex + 1, *LevelName);
@@ -693,13 +990,22 @@ bool USetupOpenWorldCommandlet::GenerateDungeons(UWorld* OverWorld)
 		}
 
 		DungeonIndex++;
+		DungeonsGenerated++;
 	}
 
-	return DungeonIndex > 0;
+	return DungeonsGenerated > 0;
 }
 
 bool USetupOpenWorldCommandlet::CreateDungeonLevel(int32 DungeonIndex, const FString& LevelName, FVector OverworldEntrance)
 {
+	// Delete existing level file to avoid "Cannot generate unique name for WorldSettings" crash
+	FString ExistingFile = FPackageName::LongPackageNameToFilename(LevelName, FPackageName::GetMapPackageExtension());
+	if (FPlatformFileManager::Get().GetPlatformFile().FileExists(*ExistingFile))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  Deleting existing dungeon level: %s"), *ExistingFile);
+		FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*ExistingFile);
+	}
+
 	// Create a separate level package for this dungeon
 	UPackage* DungeonPkg = CreatePackage(*LevelName);
 	DungeonPkg->FullyLoad();
@@ -722,333 +1028,23 @@ bool USetupOpenWorldCommandlet::CreateDungeonLevel(int32 DungeonIndex, const FSt
 	FRandomStream Rng(DungeonIndex * 12345 + 42);
 
 	// ══════════════════════════════════════════════════════════════════
-	// Try Dungeon Architect (native API — direct class usage, no reflection)
+	// Generate dungeon — Canvas mode routes ALL through Cell Flow;
+	// otherwise Grid builder for dungeon 0 test, Cell Flow for 1+
 	// ══════════════════════════════════════════════════════════════════
-	bool bUsedDA = false;
-
-	// Step 1: Find a theme asset — try multiple paths
-	UDungeonThemeAsset* Theme = nullptr;
+	if (bCanvasMode)
 	{
-		// Try known pre-built theme paths (DA plugin content mount)
-		const TArray<FString> ThemePaths = {
-			TEXT("/DungeonArchitect/Showcase/Samples/Themes/Legacy/SimpleSciFi/DungeonTheme/D_StarterPackTheme"),
-			TEXT("/DungeonArchitect/Showcase/Samples/Themes/Legacy/SimpleShapes/Dungeons/D_MyTheme1"),
-			TEXT("/DungeonArchitect/Showcase/Samples/Themes/Legacy/SimpleShapes/Dungeons/D_MyTheme_Night"),
-			TEXT("/DungeonArchitect/Showcase/Samples/Themes/Foundry/T_Theme_Founddry"),
-			TEXT("/DungeonArchitect/Showcase/Samples/Features/GridFlow/DA_GridFlow/Themes/T_GridFlow_Prehistoric"),
-		};
-
-		for (const FString& Path : ThemePaths)
-		{
-			Theme = LoadObject<UDungeonThemeAsset>(nullptr, *Path);
-			if (Theme)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("  Loaded DA theme: %s"), *Path);
-				break;
-			}
-			else
-			{
-				UE_LOG(LogTemp, Log, TEXT("  Theme not found at: %s"), *Path);
-			}
-		}
-
-		// Fallback: search asset registry for ANY DungeonThemeAsset
-		if (!Theme)
-		{
-			IAssetRegistry& AssetRegistry = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry").Get();
-			TArray<FAssetData> ThemeAssets;
-			AssetRegistry.GetAssetsByClass(UDungeonThemeAsset::StaticClass()->GetClassPathName(), ThemeAssets, true);
-			UE_LOG(LogTemp, Warning, TEXT("  Asset registry found %d DungeonThemeAsset(s)"), ThemeAssets.Num());
-
-			for (const FAssetData& Asset : ThemeAssets)
-			{
-				FString AssetPath = Asset.GetObjectPathString();
-				UE_LOG(LogTemp, Log, TEXT("    Found theme: %s"), *AssetPath);
-				Theme = Cast<UDungeonThemeAsset>(Asset.GetAsset());
-				if (Theme)
-				{
-					UE_LOG(LogTemp, Warning, TEXT("  Using theme from registry: %s"), *AssetPath);
-					break;
-				}
-			}
-		}
+		BuildCellFlowCave(DungeonWorld, DungeonOrigin, DungeonIndex, Rng, true);
 	}
-
-	if (Theme)
+	else if (DungeonIndex == 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("  Dungeon Architect: spawning ADungeon with Grid builder"));
-
-		// Step 2: Spawn ADungeon actor
-		ADungeon* DungeonActor = DungeonWorld->SpawnActor<ADungeon>(DungeonOrigin, FRotator::ZeroRotator);
-		if (DungeonActor)
-		{
-			// Step 3: Set builder class to Grid and create the builder instance
-			DungeonActor->BuilderClass = UGridDungeonBuilder::StaticClass();
-			DungeonActor->CreateBuilderInstance();
-
-			// Step 4: Configure the grid dungeon config
-			UGridDungeonConfig* GridConfig = Cast<UGridDungeonConfig>(DungeonActor->GetConfig());
-			if (GridConfig)
-			{
-				GridConfig->Seed = DungeonIndex * 12345 + 42;
-				GridConfig->NumCells = 80 + DungeonIndex * 30;   // More cells = bigger dungeon
-				GridConfig->GridCellSize = FVector(400, 400, 300); // 4m x 4m x 3m per cell
-				GridConfig->MinCellSize = 2;
-				GridConfig->MaxCellSize = 5;
-				GridConfig->RoomAreaThreshold = 5;
-				GridConfig->RoomAspectDelta = 0.3f;
-				GridConfig->SpanningTreeLoopProbability = 0.15f;  // Few loops, more linear
-				GridConfig->MaxBuildTimePerFrameMs = 0;           // Build entire dungeon in one frame (commandlet)
-				GridConfig->Instanced = false;                    // Non-instanced for commandlet save
-
-				UE_LOG(LogTemp, Warning, TEXT("  GridConfig: Seed=%d NumCells=%d CellSize=(%.0f,%.0f,%.0f)"),
-					GridConfig->Seed, GridConfig->NumCells,
-					GridConfig->GridCellSize.X, GridConfig->GridCellSize.Y, GridConfig->GridCellSize.Z);
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("  Config is not GridDungeonConfig — using defaults"));
-				UDungeonConfig* BaseConfig = DungeonActor->GetConfig();
-				if (BaseConfig)
-				{
-					BaseConfig->Seed = DungeonIndex * 12345 + 42;
-					BaseConfig->MaxBuildTimePerFrameMs = 0;
-				}
-			}
-
-			// Step 5: Assign theme
-			DungeonActor->Themes.Empty();
-			DungeonActor->Themes.Add(Theme);
-
-			// Step 6: Build the dungeon
-			UE_LOG(LogTemp, Warning, TEXT("  Calling BuildDungeon()..."));
-			DungeonActor->BuildDungeon();
-
-			// Check build result
-			UDungeonBuilder* Builder = DungeonActor->GetBuilder();
-			if (Builder && Builder->HasBuildSucceeded())
-			{
-				bUsedDA = true;
-				UE_LOG(LogTemp, Warning, TEXT("  Dungeon Architect BuildDungeon() SUCCEEDED"));
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("  Dungeon Architect BuildDungeon() may have failed — checking spawned actors"));
-				// Count spawned actors as a heuristic
-				int32 SpawnedCount = 0;
-				for (TActorIterator<AActor> It(DungeonWorld); It; ++It)
-				{
-					SpawnedCount++;
-				}
-				if (SpawnedCount > 5) // DA + config + a few generated actors
-				{
-					bUsedDA = true;
-					UE_LOG(LogTemp, Warning, TEXT("  Found %d actors — DA likely generated content"), SpawnedCount);
-				}
-				else
-				{
-					UE_LOG(LogTemp, Warning, TEXT("  Only %d actors — DA generation may have failed"), SpawnedCount);
-				}
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("  Failed to spawn ADungeon actor!"));
-		}
+		BuildGridDungeon(DungeonWorld, DungeonOrigin, DungeonIndex, Rng);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("  No DA theme found — will use fallback room generator"));
+		BuildCellFlowCave(DungeonWorld, DungeonOrigin, DungeonIndex, Rng, false);
 	}
 
-	// ══════════════════════════════════════════════════════════════════
-	// Fallback: hand-built rooms with Wasteland meshes + basic geometry
-	// ══════════════════════════════════════════════════════════════════
-	if (!bUsedDA)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("  Building fallback dungeon rooms"));
-
-		UStaticMesh* CubeMesh = LoadObject<UStaticMesh>(nullptr, TEXT("/Engine/BasicShapes/Cube.Cube"));
-		UStaticMesh* FloorMesh = CubeMesh; // Use cube for floor too — has collision unlike Plane
-
-		if (!CubeMesh)
-		{
-			UE_LOG(LogTemp, Error, TEXT("  Failed to load Cube mesh!"));
-			GEngine->DestroyWorldContext(DungeonWorld);
-			return false;
-		}
-
-		// Try Wasteland meshes for variety
-		TArray<FString> WallMeshPaths = DiscoverWastelandByPrefixes({TEXT("SM_WallMetal"), TEXT("SM_Corrugated"), TEXT("SM_Metals")});
-		FRandomStream WastelandRng(DungeonIndex * 99 + 7);
-
-		// Room layout
-		const int32 NumRooms = 5 + DungeonIndex * 2;
-		const float RoomSize = 1500.0f;
-		const float WallHeight = 600.0f;
-		const float WallThickness = 50.0f;
-		const float HallwayWidth = 400.0f;
-
-		struct DungeonRoom
-		{
-			FVector Center;
-			float SizeX, SizeY;
-			bool bIsBossRoom;
-		};
-		TArray<DungeonRoom> Rooms;
-
-		// Entrance room at dungeon origin
-		Rooms.Add({DungeonOrigin + FVector(0, 0, 0), RoomSize, RoomSize, false});
-
-		for (int32 R = 1; R < NumRooms; R++)
-		{
-			int32 ParentIdx = Rng.RandRange(FMath::Max(0, R - 3), R - 1);
-			const DungeonRoom& Parent = Rooms[ParentIdx];
-
-			int32 Dir = Rng.RandRange(0, 3);
-			FVector Offset;
-			switch (Dir)
-			{
-			case 0: Offset = FVector(RoomSize + HallwayWidth, 0, 0); break;
-			case 1: Offset = FVector(0, RoomSize + HallwayWidth, 0); break;
-			case 2: Offset = FVector(-(RoomSize + HallwayWidth), 0, 0); break;
-			default: Offset = FVector(0, -(RoomSize + HallwayWidth), 0); break;
-			}
-
-			float RSizeX = Rng.FRandRange(RoomSize * 0.8f, RoomSize * 1.5f);
-			float RSizeY = Rng.FRandRange(RoomSize * 0.8f, RoomSize * 1.5f);
-			bool bBoss = (R == NumRooms - 1);
-			if (bBoss) { RSizeX *= 1.5f; RSizeY *= 1.5f; }
-
-			Rooms.Add({Parent.Center + Offset, RSizeX, RSizeY, bBoss});
-		}
-
-		// Build geometry for each room
-		for (int32 R = 0; R < Rooms.Num(); R++)
-		{
-			const DungeonRoom& Room = Rooms[R];
-
-			// Floor — thick cube slab so it has collision
-			{
-				AStaticMeshActor* Floor = DungeonWorld->SpawnActor<AStaticMeshActor>(
-					Room.Center + FVector(0, 0, -55), FRotator::ZeroRotator);
-				if (Floor)
-				{
-					Floor->GetStaticMeshComponent()->SetStaticMesh(CubeMesh);
-					Floor->SetActorScale3D(FVector(Room.SizeX / 100.0f, Room.SizeY / 100.0f, 0.5f));
-					Floor->SetFolderPath(FName(TEXT("Dungeon/Floors")));
-				}
-			}
-
-			// Ceiling
-			{
-				AStaticMeshActor* Ceiling = DungeonWorld->SpawnActor<AStaticMeshActor>(
-					Room.Center + FVector(0, 0, WallHeight + 25), FRotator::ZeroRotator);
-				if (Ceiling)
-				{
-					Ceiling->GetStaticMeshComponent()->SetStaticMesh(CubeMesh);
-					Ceiling->SetActorScale3D(FVector(Room.SizeX / 100.0f, Room.SizeY / 100.0f, 0.5f));
-					Ceiling->SetFolderPath(FName(TEXT("Dungeon/Ceilings")));
-				}
-			}
-
-			// 4 Walls
-			auto SpawnWall = [&](FVector WallCenter, FVector WallScale)
-			{
-				AStaticMeshActor* Wall = DungeonWorld->SpawnActor<AStaticMeshActor>(
-					WallCenter, FRotator::ZeroRotator);
-				if (Wall)
-				{
-					UStaticMesh* WallMesh = CubeMesh;
-					if (WallMeshPaths.Num() > 0)
-					{
-						int32 Idx = WastelandRng.RandRange(0, WallMeshPaths.Num() - 1);
-						UStaticMesh* WM = LoadObject<UStaticMesh>(nullptr, *WallMeshPaths[Idx]);
-						if (WM) WallMesh = WM;
-					}
-					Wall->GetStaticMeshComponent()->SetStaticMesh(WallMesh);
-					Wall->SetActorScale3D(WallScale);
-					Wall->SetFolderPath(FName(TEXT("Dungeon/Walls")));
-				}
-			};
-
-			float HalfX = Room.SizeX / 2.0f;
-			float HalfY = Room.SizeY / 2.0f;
-			float HalfH = WallHeight / 2.0f;
-
-			SpawnWall(Room.Center + FVector(HalfX, 0, HalfH),
-				FVector(WallThickness / 100.0f, Room.SizeY / 100.0f, WallHeight / 100.0f));
-			SpawnWall(Room.Center + FVector(-HalfX, 0, HalfH),
-				FVector(WallThickness / 100.0f, Room.SizeY / 100.0f, WallHeight / 100.0f));
-			SpawnWall(Room.Center + FVector(0, HalfY, HalfH),
-				FVector(Room.SizeX / 100.0f, WallThickness / 100.0f, WallHeight / 100.0f));
-			SpawnWall(Room.Center + FVector(0, -HalfY, HalfH),
-				FVector(Room.SizeX / 100.0f, WallThickness / 100.0f, WallHeight / 100.0f));
-
-			// Point light in each room
-			{
-				APointLight* RoomLight = DungeonWorld->SpawnActor<APointLight>(
-					Room.Center + FVector(0, 0, WallHeight * 0.8f), FRotator::ZeroRotator);
-				if (RoomLight)
-				{
-					RoomLight->PointLightComponent->SetIntensity(Room.bIsBossRoom ? 30000.0f : 15000.0f);
-					RoomLight->PointLightComponent->SetAttenuationRadius(Room.SizeX * 1.5f);
-					RoomLight->PointLightComponent->SetLightColor(FLinearColor(1.0f, 0.7f, 0.4f)); // Warm torch
-					RoomLight->SetFolderPath(FName(TEXT("Dungeon/Lights")));
-				}
-			}
-
-			UE_LOG(LogTemp, Log, TEXT("  Room %d: Center=(%.0f, %.0f, %.0f) Size=%.0fx%.0f %s"),
-				R, Room.Center.X, Room.Center.Y, Room.Center.Z,
-				Room.SizeX, Room.SizeY, Room.bIsBossRoom ? TEXT("[BOSS]") : TEXT(""));
-		}
-
-		// Spawn enemy markers in dungeon rooms (skip entrance room 0)
-		for (int32 R = 1; R < Rooms.Num(); R++)
-		{
-			const DungeonRoom& Room = Rooms[R];
-			int32 EnemyCount = Room.bIsBossRoom ? 1 : (Rng.FRandRange(0.0f, 1.0f) > 0.4f ? 1 : 0);
-			for (int32 E = 0; E < EnemyCount; E++)
-			{
-				FVector SpawnPos = Room.Center + FVector(
-					Rng.FRandRange(-Room.SizeX * 0.3f, Room.SizeX * 0.3f),
-					Rng.FRandRange(-Room.SizeY * 0.3f, Room.SizeY * 0.3f),
-					90.0f);
-
-				AActor* Marker = DungeonWorld->SpawnActor(AActor::StaticClass(), &SpawnPos, &FRotator::ZeroRotator);
-				if (Marker)
-				{
-					Marker->Tags.Add(FName(TEXT("EnemySpawnPoint")));
-					if (Room.bIsBossRoom) Marker->Tags.Add(FName(TEXT("BossEnemy")));
-					Marker->SetFolderPath(FName(TEXT("Dungeon/SpawnPoints")));
-				}
-				UE_LOG(LogTemp, Warning, TEXT("  Enemy spawn: Room %d at (%.0f, %.0f, %.0f) %s"),
-					R, SpawnPos.X, SpawnPos.Y, SpawnPos.Z,
-					Room.bIsBossRoom ? TEXT("[BOSS]") : TEXT(""));
-			}
-		}
-	}
-
-	// Add lighting to DA-generated dungeons too (DA themes might not include lights)
-	if (bUsedDA)
-	{
-		// Add ambient point lights throughout the dungeon area
-		for (int32 LightIdx = 0; LightIdx < 8; LightIdx++)
-		{
-			FVector LightPos = DungeonOrigin + FVector(
-				Rng.FRandRange(-3000.0f, 3000.0f),
-				Rng.FRandRange(-3000.0f, 3000.0f),
-				200.0f);
-			APointLight* DungeonLight = DungeonWorld->SpawnActor<APointLight>(LightPos, FRotator::ZeroRotator);
-			if (DungeonLight)
-			{
-				DungeonLight->PointLightComponent->SetIntensity(20000.0f);
-				DungeonLight->PointLightComponent->SetAttenuationRadius(2500.0f);
-				DungeonLight->PointLightComponent->SetLightColor(FLinearColor(1.0f, 0.65f, 0.3f));
-				DungeonLight->SetFolderPath(FName(TEXT("Dungeon/Lights")));
-			}
-		}
-	}
+	// Screenshots: use SLF.CaptureDungeon console command (requires editor RHI)
 
 	// Save dungeon level
 	bool bSaved = SaveLevel(DungeonWorld, LevelName);
@@ -1056,6 +1052,623 @@ bool USetupOpenWorldCommandlet::CreateDungeonLevel(int32 DungeonIndex, const FSt
 
 	return bSaved;
 }
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Cave Dungeon Generation via Cell Flow + Voxel Cave
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void USetupOpenWorldCommandlet::BuildCellFlowCave(UWorld* DungeonWorld, FVector Origin, int32 DungeonIdx, FRandomStream& Rng, bool bCanvas)
+{
+	UE_LOG(LogTemp, Warning, TEXT("  Building Cell Flow cave dungeon %d at (%.0f, %.0f, %.0f)"),
+		DungeonIdx + 1, Origin.X, Origin.Y, Origin.Z);
+
+	// ══════════════════════════════════════════════════════════════════
+	// 1. Spawn ADungeon actor with Cell Flow builder
+	// ══════════════════════════════════════════════════════════════════
+	ADungeon* Dungeon = DungeonWorld->SpawnActor<ADungeon>(Origin, FRotator::ZeroRotator);
+	if (!Dungeon)
+	{
+		UE_LOG(LogTemp, Error, TEXT("  Failed to spawn ADungeon actor!"));
+		return;
+	}
+
+	Dungeon->SetFolderPath(FName(TEXT("Dungeon/DungeonActor")));
+	Dungeon->BuilderClass = UCellFlowBuilder::StaticClass();
+	Dungeon->CreateBuilderInstance();
+
+	// ══════════════════════════════════════════════════════════════════
+	// 2. Build Cell Flow execution script (Voronoi → paths → finalize)
+	// ══════════════════════════════════════════════════════════════════
+
+	// Per-dungeon parameters
+	struct FCaveFlowParams
+	{
+		FIntPoint WorldSize;
+		int32 NumPoints;       // Voronoi only
+		float MinGroupArea;    // Voronoi only
+		int32 MinCellSize;     // Grid only
+		int32 MaxCellSize;     // Grid only
+		int32 MainPathSize;
+		int32 NumBranches;
+		int32 CeilingHeightMax;
+		FVector GridSize;
+		bool bUseGrid = false; // false = Voronoi, true = Grid
+	};
+
+	FCaveFlowParams Params;
+	switch (DungeonIdx)
+	{
+	case 0: // TEST: Grid cells, long straight line, varied sizes for comparison
+		Params.bUseGrid = true;
+		Params.WorldSize = FIntPoint(40, 10);  // Long and narrow world
+		Params.MinCellSize = 1;   // 1 tile = corridor size
+		Params.MaxCellSize = 8;   // 8 tiles = large room
+		Params.MainPathSize = 10; // Long straight path
+		Params.NumBranches = 0;   // No branches — pure straight line
+		Params.CeilingHeightMax = 3;
+		Params.GridSize = FVector(300, 300, 250);
+		break;
+	case 1: // Medium cave (8-12 rooms, ~10 min clear)
+		Params.WorldSize = FIntPoint(24, 24);
+		Params.NumPoints = 70;
+		Params.MinGroupArea = 14.0f;
+		Params.MainPathSize = 5;
+		Params.NumBranches = 4;
+		Params.CeilingHeightMax = 3;
+		Params.GridSize = FVector(300, 300, 250);
+		break;
+	default: // Large cave with boss (12-16 rooms, ~15 min clear)
+		Params.WorldSize = FIntPoint(28, 28);
+		Params.NumPoints = 90;
+		Params.MinGroupArea = 16.0f;
+		Params.MainPathSize = 6;
+		Params.NumBranches = 5;
+		Params.CeilingHeightMax = 4;
+		Params.GridSize = FVector(300, 300, 300);
+		break;
+	}
+
+	// Canvas mode overrides: large open cave, no branches
+	if (bCanvas)
+	{
+		Params.bUseGrid = false;
+		Params.WorldSize = FIntPoint(40, 40);
+		Params.NumPoints = 40;
+		Params.MinGroupArea = 30.0f;
+		Params.MainPathSize = 8;
+		Params.NumBranches = 0;
+		Params.GridSize = FVector(400, 400, 400);
+		Params.CeilingHeightMax = 4;
+		UE_LOG(LogTemp, Warning, TEXT("  CANVAS MODE: overriding to large open cave"));
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("  Cell Flow params: %dx%d world, %d points, %d main path, %d branches"),
+		Params.WorldSize.X, Params.WorldSize.Y, Params.NumPoints, Params.MainPathSize, Params.NumBranches);
+
+	// ══════════════════════════════════════════════════════════════════
+	// 3. Create Cell Flow execution script
+	// ══════════════════════════════════════════════════════════════════
+
+	// Create the flow asset in a proper package (TSoftObjectPtr requires disk-saved assets)
+	FString FlowPkgName = FString::Printf(TEXT("/Game/DungeonArchitect/CellFlow/CF_Cave_%02d"), DungeonIdx + 1);
+	FString FlowFileName = FPackageName::LongPackageNameToFilename(FlowPkgName, FPackageName::GetAssetPackageExtension());
+
+	// Delete existing file to avoid partial-load crash
+	if (FPlatformFileManager::Get().GetPlatformFile().FileExists(*FlowFileName))
+	{
+		FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*FlowFileName);
+	}
+
+	UPackage* FlowPkg = CreatePackage(*FlowPkgName);
+	FlowPkg->FullyLoad();
+
+	UCellFlowAsset* FlowAsset = NewObject<UCellFlowAsset>(FlowPkg, TEXT("CF_CaveFlow"), RF_Public | RF_Standalone);
+	UFlowExecScript* ExecScript = NewObject<UFlowExecScript>(FlowAsset);
+	UFlowExecScriptGraph* ScriptGraph = NewObject<UFlowExecScriptGraph>(ExecScript);
+	ExecScript->ScriptGraph = ScriptGraph;
+	FlowAsset->ExecScript = ExecScript;
+
+	// Task 1: Create Cells (Grid or Voronoi)
+	UCellFlowLayoutTaskCreateCellsBase* TaskCellsBase = nullptr;
+	if (Params.bUseGrid)
+	{
+		UCellFlowLayoutTaskCreateCellsGrid* TaskGrid = NewObject<UCellFlowLayoutTaskCreateCellsGrid>(FlowAsset);
+		TaskGrid->WorldSize = Params.WorldSize;
+		TaskGrid->MinCellSize = Params.MinCellSize;
+		TaskGrid->MaxCellSize = Params.MaxCellSize;
+		TaskGrid->FitIterations = 30;
+		TaskGrid->MinAspectRatio = 0.6f;
+		TaskGrid->MaxAspectRatio = 1.4f;
+		TaskCellsBase = TaskGrid;
+		UE_LOG(LogTemp, Warning, TEXT("  Using GRID cells: min=%d max=%d"), Params.MinCellSize, Params.MaxCellSize);
+	}
+	else
+	{
+		UCellFlowLayoutTaskCreateCellsVoronoi* TaskVoronoi = NewObject<UCellFlowLayoutTaskCreateCellsVoronoi>(FlowAsset);
+		TaskVoronoi->WorldSize = Params.WorldSize;
+		TaskVoronoi->NumPoints = Params.NumPoints;
+		TaskVoronoi->NumRelaxIterations = 4;
+		TaskVoronoi->bDisableBoundaryCells = true;
+		TaskVoronoi->EdgeConnectionThreshold = 0.10f;
+		TaskVoronoi->MinGroupArea = Params.MinGroupArea;
+		TaskVoronoi->ClusterBlobbiness = 0.25f;
+		TaskCellsBase = TaskVoronoi;
+	}
+
+	// Task 2: Create Main Path (entrance → boss)
+	UCellFlowLayoutTaskCreateMainPath* TaskMain = NewObject<UCellFlowLayoutTaskCreateMainPath>(FlowAsset);
+	TaskMain->PathSize = Params.MainPathSize;
+	TaskMain->PathName = TEXT("main");
+	TaskMain->StartMarkerName = TEXT("SpawnPoint");
+	TaskMain->GoalMarkerName = TEXT("BossRoom");
+	TaskMain->CeilingHeightMin = 2;
+	TaskMain->CeilingHeightMax = Params.CeilingHeightMax;
+
+	// Branch paths — dead ends with loot, ambushes, or traps
+	TArray<UCellFlowLayoutTaskCreatePath*> BranchTasks;
+	const TCHAR* BranchNames[] = { TEXT("treasure"), TEXT("ambush"), TEXT("trap"), TEXT("secret"), TEXT("loot") };
+	for (int32 B = 0; B < Params.NumBranches; B++)
+	{
+		UCellFlowLayoutTaskCreatePath* TaskBranch = NewObject<UCellFlowLayoutTaskCreatePath>(FlowAsset);
+		TaskBranch->PathName = BranchNames[FMath::Min(B, 4)];
+		TaskBranch->MinPathSize = 1;
+		TaskBranch->MaxPathSize = 3;  // Short but meaningful dead ends
+		TaskBranch->StartFromPath = TEXT("main");
+		TaskBranch->CeilingHeightMin = 1;
+		TaskBranch->CeilingHeightMax = FMath::Max(1, Params.CeilingHeightMax - 1);
+		BranchTasks.Add(TaskBranch);
+	}
+
+	// Task 5: Finalize — bSeparateAdjacentRooms defaults to true (inserts wall tiles between rooms)
+	UCellFlowLayoutTaskFinalize* TaskFinalize = NewObject<UCellFlowLayoutTaskFinalize>(FlowAsset);
+	// ══════════════════════════════════════════════════════════════════
+	// Wire execution graph: Cells → Main → Branches → Finalize → Result
+	// ══════════════════════════════════════════════════════════════════
+
+	// Create task nodes
+	UFlowExecScriptTaskNode* NodeCells = NewObject<UFlowExecScriptTaskNode>(ScriptGraph);
+	NodeCells->NodeId = FGuid::NewGuid();
+	NodeCells->Task = TaskCellsBase;
+
+	UFlowExecScriptTaskNode* NodeMain = NewObject<UFlowExecScriptTaskNode>(ScriptGraph);
+	NodeMain->NodeId = FGuid::NewGuid();
+	NodeMain->Task = TaskMain;
+
+	TArray<UFlowExecScriptTaskNode*> BranchNodes;
+	for (UCellFlowLayoutTaskCreatePath* BT : BranchTasks)
+	{
+		UFlowExecScriptTaskNode* BN = NewObject<UFlowExecScriptTaskNode>(ScriptGraph);
+		BN->NodeId = FGuid::NewGuid();
+		BN->Task = BT;
+		BranchNodes.Add(BN);
+	}
+
+	UFlowExecScriptTaskNode* NodeFinalize = NewObject<UFlowExecScriptTaskNode>(ScriptGraph);
+	NodeFinalize->NodeId = FGuid::NewGuid();
+	NodeFinalize->Task = TaskFinalize;
+
+	UFlowExecScriptResultNode* NodeResult = NewObject<UFlowExecScriptResultNode>(ScriptGraph);
+	NodeResult->NodeId = FGuid::NewGuid();
+	ExecScript->ResultNode = NodeResult;
+
+	// Wire: Cells → Main
+	NodeCells->OutgoingNodes.Add(NodeMain);
+	NodeMain->IncomingNodes.Add(NodeCells);
+
+	// Wire: Main → Branch1 → Branch2 → ... → Finalize
+	UFlowExecScriptGraphNode* PrevNode = NodeMain;
+	for (UFlowExecScriptTaskNode* BN : BranchNodes)
+	{
+		PrevNode->OutgoingNodes.Add(BN);
+		BN->IncomingNodes.Add(PrevNode);
+		PrevNode = BN;
+	}
+	PrevNode->OutgoingNodes.Add(NodeFinalize);
+	NodeFinalize->IncomingNodes.Add(PrevNode);
+
+	// Wire: Finalize → Result
+	NodeFinalize->OutgoingNodes.Add(NodeResult);
+	NodeResult->IncomingNodes.Add(NodeFinalize);
+
+	// Add all nodes to graph
+	ScriptGraph->Nodes.Add(NodeCells);
+	ScriptGraph->Nodes.Add(NodeMain);
+	for (UFlowExecScriptTaskNode* BN : BranchNodes)
+	{
+		ScriptGraph->Nodes.Add(BN);
+	}
+	ScriptGraph->Nodes.Add(NodeFinalize);
+	ScriptGraph->Nodes.Add(NodeResult);
+		UE_LOG(LogTemp, Warning, TEXT("  Execution graph: %d nodes wired"), ScriptGraph->Nodes.Num());
+
+	// Save flow asset to disk (required for TSoftObjectPtr::LoadSynchronous)
+	{
+		FlowPkg->MarkPackageDirty();
+		FSavePackageArgs SaveArgs;
+		SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
+		bool bFlowSaved = UPackage::SavePackage(FlowPkg, FlowAsset, *FlowFileName, SaveArgs);
+		UE_LOG(LogTemp, Warning, TEXT("  Flow asset saved: %s (%s)"), *FlowPkgName, bFlowSaved ? TEXT("OK") : TEXT("FAILED"));
+	}
+
+	// ══════════════════════════════════════════════════════════════════
+	// 4. Configure Cell Flow builder
+	// ══════════════════════════════════════════════════════════════════
+	UCellFlowConfig* CellConfig = Cast<UCellFlowConfig>(Dungeon->GetConfig());
+	if (!CellConfig)
+	{
+		CellConfig = NewObject<UCellFlowConfig>(Dungeon);
+		Dungeon->Config = CellConfig;
+	}
+
+	CellConfig->CellFlow = FlowAsset;
+	CellConfig->Seed = Rng.RandRange(1, 999999);
+	CellConfig->GridSize = Params.GridSize;
+	CellConfig->MaxBuildTimePerFrameMs = 0.0f; // Synchronous build
+
+	// ══════════════════════════════════════════════════════════════════
+	// 5. Configure Voxel Cave overlay
+	// ══════════════════════════════════════════════════════════════════
+	ConfigureVoxelCave(Dungeon, DungeonIdx, bCanvas);
+
+	// ══════════════════════════════════════════════════════════════════
+	// 6. Theme + marker emitter + event listener
+	// ══════════════════════════════════════════════════════════════════
+	UDungeonThemeAsset* CaveTheme = GetOrCreateCaveTheme();
+	if (CaveTheme)
+	{
+		Dungeon->Themes.Add(CaveTheme);
+	}
+
+	// Skip gameplay placement in canvas mode — walls and gameplay come after design
+	if (!bCanvas)
+	{
+		// Custom marker emitter for cave decorations
+		USLFCaveMarkerEmitter* MarkerEmitter = NewObject<USLFCaveMarkerEmitter>(Dungeon);
+		MarkerEmitter->GridSize = Params.GridSize;
+		Dungeon->MarkerEmitters.Add(MarkerEmitter);
+
+		// Event listener for gameplay actors
+		USLFCaveEventListener* EventListener = NewObject<USLFCaveEventListener>(Dungeon);
+		EventListener->DungeonIndex = DungeonIdx;
+		Dungeon->EventListeners.Add(EventListener);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  Canvas mode: skipping marker emitter and event listener"));
+	}
+
+	// ══════════════════════════════════════════════════════════════════
+	// 7. Build the dungeon
+	// ══════════════════════════════════════════════════════════════════
+	UE_LOG(LogTemp, Warning, TEXT("  Building dungeon %d..."), DungeonIdx + 1);
+	Dungeon->BuildDungeon();
+
+	bool bBuildOk = Dungeon->GetBuilder() && Dungeon->GetBuilder()->HasBuildSucceeded();
+	UE_LOG(LogTemp, Warning, TEXT("  Dungeon %d build %s"),
+		DungeonIdx + 1, bBuildOk ? TEXT("SUCCEEDED") : TEXT("FAILED"));
+
+	if (!bBuildOk)
+	{
+		UE_LOG(LogTemp, Error, TEXT("  Cell Flow build failed — dungeon %d will be empty"), DungeonIdx + 1);
+	}
+
+	// Export cell graph to JSON (canvas mode or always — useful for design)
+	if (bBuildOk)
+	{
+		FSLFCaveMazeBuilder::ExportCellGraphToJson(Dungeon, DungeonIdx, Origin, Params.GridSize);
+	}
+
+	// Canvas mode: flood the cave with light so it's fully visible for design work
+	if (bCanvas && bBuildOk)
+	{
+		int32 LightsPlaced = 0;
+
+		// Global directional light pointing down — fills the entire cave
+		ADirectionalLight* DirLight = DungeonWorld->SpawnActor<ADirectionalLight>(
+			Origin + FVector(0, 0, 2000.0f), FRotator(-70.0f, 30.0f, 0.0f));
+		if (DirLight)
+		{
+			DirLight->GetComponent()->SetIntensity(8.0f);
+			DirLight->GetComponent()->SetLightColor(FLinearColor(0.95f, 0.92f, 0.85f));
+			DirLight->GetComponent()->SetCastShadows(false);
+			DirLight->SetFolderPath(FName(TEXT("Dungeon/CanvasLights")));
+			LightsPlaced++;
+		}
+
+		// Sky light for ambient fill — eliminates pure-black shadows
+		ASkyLight* SkyLightActor = DungeonWorld->SpawnActor<ASkyLight>(
+			Origin + FVector(0, 0, 1000.0f), FRotator::ZeroRotator);
+		if (SkyLightActor)
+		{
+			SkyLightActor->GetLightComponent()->SetIntensity(3.0f);
+			SkyLightActor->GetLightComponent()->SetLightColor(FLinearColor(0.6f, 0.65f, 0.75f));
+			SkyLightActor->SetFolderPath(FName(TEXT("Dungeon/CanvasLights")));
+			LightsPlaced++;
+		}
+
+		// Per-room point lights — bright center + 6 perimeter lights in every room
+		UCellFlowModel* CellModel = Cast<UCellFlowModel>(Dungeon->GetModel());
+		if (CellModel && CellModel->CellGraph)
+		{
+			UDAFlowCellGraph* CellGraph = CellModel->CellGraph;
+
+			for (int32 GIdx = 0; GIdx < CellGraph->GroupNodes.Num(); GIdx++)
+			{
+				const FDAFlowCellGroupNode& Group = CellGraph->GroupNodes[GIdx];
+				if (!Group.IsActive()) continue;
+
+				FVector2D Center2D = FVector2D::ZeroVector;
+				float TotalArea = 0.0f;
+				int32 LeafCount = 0;
+				for (int32 LeafIdx : Group.LeafNodes)
+				{
+					if (LeafIdx >= 0 && LeafIdx < CellGraph->LeafNodes.Num())
+					{
+						UDAFlowCellLeafNode* Leaf = CellGraph->LeafNodes[LeafIdx];
+						if (Leaf)
+						{
+							Center2D += FVector2d(Leaf->GetCenter());
+							TotalArea += Leaf->GetArea();
+							LeafCount++;
+						}
+					}
+				}
+				if (LeafCount == 0) continue;
+				Center2D /= (float)LeafCount;
+
+				FVector WorldCenter(
+					Origin.X + Center2D.X * Params.GridSize.X,
+					Origin.Y + Center2D.Y * Params.GridSize.Y,
+					Origin.Z + (float)Group.GroupHeight * Params.GridSize.Z
+				);
+				float Radius = FMath::Max(FMath::Sqrt(TotalArea) * Params.GridSize.X * 0.5f, 600.0f);
+
+				// Bright center light
+				APointLight* CenterLight = DungeonWorld->SpawnActor<APointLight>(
+					WorldCenter + FVector(0, 0, 400.0f), FRotator::ZeroRotator);
+				if (CenterLight)
+				{
+					CenterLight->PointLightComponent->SetIntensity(800000.0f);
+					CenterLight->PointLightComponent->SetAttenuationRadius(FMath::Max(Radius * 3.0f, 5000.0f));
+					CenterLight->PointLightComponent->SetLightColor(FLinearColor(1.0f, 0.95f, 0.9f));
+					CenterLight->PointLightComponent->SetCastShadows(false);
+					CenterLight->SetFolderPath(FName(TEXT("Dungeon/CanvasLights")));
+					LightsPlaced++;
+				}
+
+				// 6 perimeter lights in every room
+				for (int32 L = 0; L < 6; L++)
+				{
+					float Angle = L * PI / 3.0f;
+					FVector LightPos = WorldCenter + FVector(
+						FMath::Cos(Angle) * Radius * 0.65f,
+						FMath::Sin(Angle) * Radius * 0.65f,
+						300.0f);
+					APointLight* PL = DungeonWorld->SpawnActor<APointLight>(LightPos, FRotator::ZeroRotator);
+					if (PL)
+					{
+						PL->PointLightComponent->SetIntensity(500000.0f);
+						PL->PointLightComponent->SetAttenuationRadius(4000.0f);
+						PL->PointLightComponent->SetLightColor(FLinearColor(0.95f, 0.9f, 0.85f));
+						PL->PointLightComponent->SetCastShadows(false);
+						PL->SetFolderPath(FName(TEXT("Dungeon/CanvasLights")));
+						LightsPlaced++;
+					}
+				}
+			}
+			UE_LOG(LogTemp, Warning, TEXT("  Canvas mode: placed %d lights (dir+sky+%d room groups)"),
+				LightsPlaced, CellGraph->GroupNodes.Num());
+		}
+	}
+
+	// Canvas mode: build maze walls from layout JSON if it exists
+	if (bCanvas && bBuildOk)
+	{
+		FString LayoutPath = FPaths::ProjectDir() / TEXT("MapCapture") /
+			FString::Printf(TEXT("dungeon_%02d_layout.json"), DungeonIdx + 1);
+
+		if (FPaths::FileExists(LayoutPath))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("  Canvas mode: found layout JSON, building maze walls..."));
+			FSLFCaveMazeBuilder::BuildCaveMaze(DungeonWorld, DungeonIdx);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("  Canvas mode: no layout JSON at %s — skipping wall construction"), *LayoutPath);
+		}
+	}
+
+	// Explicitly fire event listeners — DA may not call them in commandlet mode
+	UE_LOG(LogTemp, Warning, TEXT("  Firing post-build event listeners (%d registered)..."), Dungeon->EventListeners.Num());
+	for (UDungeonEventListener* Listener : Dungeon->EventListeners)
+	{
+		if (Listener)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("    Calling %s"), *Listener->GetClass()->GetName());
+			Listener->OnPostDungeonBuild(Dungeon);
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("  Cave dungeon %d generation COMPLETE"), DungeonIdx + 1);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Grid Dungeon Builder (rooms + corridors)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void USetupOpenWorldCommandlet::BuildGridDungeon(UWorld* DungeonWorld, FVector Origin, int32 DungeonIdx, FRandomStream& Rng)
+{
+	UE_LOG(LogTemp, Warning, TEXT("  Building GRID dungeon %d at (%.0f, %.0f, %.0f)"),
+		DungeonIdx + 1, Origin.X, Origin.Y, Origin.Z);
+
+	// Spawn ADungeon with Grid builder
+	ADungeon* Dungeon = DungeonWorld->SpawnActor<ADungeon>(Origin, FRotator::ZeroRotator);
+	if (!Dungeon)
+	{
+		UE_LOG(LogTemp, Error, TEXT("  Failed to spawn ADungeon actor!"));
+		return;
+	}
+
+	Dungeon->SetFolderPath(FName(TEXT("Dungeon/DungeonActor")));
+	Dungeon->BuilderClass = UGridDungeonBuilder::StaticClass();
+	Dungeon->CreateBuilderInstance();
+
+	// Configure Grid dungeon
+	UGridDungeonConfig* Config = Cast<UGridDungeonConfig>(Dungeon->GetConfig());
+	if (!Config)
+	{
+		Config = NewObject<UGridDungeonConfig>(Dungeon);
+		Dungeon->Config = Config;
+	}
+
+	// Original working config from initial DA integration
+	Config->Seed = DungeonIdx * 12345 + 42;
+	Config->NumCells = 80 + DungeonIdx * 30;
+	Config->GridCellSize = FVector(400, 400, 300);  // 4m x 4m x 3m per cell
+	Config->MinCellSize = 2;
+	Config->MaxCellSize = 5;
+	Config->RoomAreaThreshold = 5;
+	Config->RoomAspectDelta = 0.3f;
+	Config->SpanningTreeLoopProbability = 0.15f;
+	Config->MaxBuildTimePerFrameMs = 0;
+
+	UE_LOG(LogTemp, Warning, TEXT("  Grid config: %d cells, size %d-%d, roomThreshold=%d"),
+		Config->NumCells, Config->MinCellSize, Config->MaxCellSize, Config->RoomAreaThreshold);
+
+	// Voxel cave overlay for ceiling + organic walls
+	ConfigureVoxelCave(Dungeon, DungeonIdx);
+
+	// Theme
+	Dungeon->Themes.Add(GetOrCreateCaveTheme());
+
+	// Event listener for gameplay actors
+	USLFCaveEventListener* Listener = NewObject<USLFCaveEventListener>(Dungeon);
+	Listener->DungeonIndex = DungeonIdx;
+	Dungeon->EventListeners.Add(Listener);
+
+	// Build
+	Dungeon->BuildDungeon();
+
+	// Manually fire event listener (commandlet mode doesn't auto-fire)
+	Listener->OnPostDungeonBuild(Dungeon);
+
+	// Log results
+	UGridDungeonModel* GridModel = Cast<UGridDungeonModel>(Dungeon->GetModel());
+	if (GridModel)
+	{
+		int32 RoomCount = 0, CorridorCount = 0;
+		for (const FGridDungeonCell& Cell : GridModel->Cells)
+		{
+			if (Cell.CellType == EGridDungeonCellType::Room) RoomCount++;
+			else if (Cell.CellType == EGridDungeonCellType::Corridor) CorridorCount++;
+		}
+		UE_LOG(LogTemp, Warning, TEXT("  Grid dungeon %d: %d rooms, %d corridors, %d doors"),
+			DungeonIdx + 1, RoomCount, CorridorCount, GridModel->Doors.Num());
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("  Dungeon %d build SUCCEEDED"), DungeonIdx + 1);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Voxel Cave Configuration
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void USetupOpenWorldCommandlet::ConfigureVoxelCave(ADungeon* Dungeon, int32 DungeonIdx, bool bCanvas)
+{
+	Dungeon->bCarveVoxels = true;
+
+	// Voxel mesh settings
+	Dungeon->VoxelMeshSettings.VoxelSize = 50.0f;
+	Dungeon->VoxelMeshSettings.VoxelChunkSize = 32;
+	Dungeon->VoxelMeshSettings.bEnableCollision = true;
+	Dungeon->VoxelMeshSettings.WallThickness = 250.0f;
+	Dungeon->VoxelMeshSettings.bUseGPU = false; // Required for commandlet (no GPU compute)
+	Dungeon->VoxelMeshSettings.UVScale = 150.0f;
+	Dungeon->VoxelMeshSettings.VoxelShapeTheme.Reset(); // Don't inject DA's default "Preview" theme
+
+	// Try to load a rock material for cave walls
+	UMaterialInterface* RockMat = LoadObject<UMaterialInterface>(nullptr,
+		TEXT("/Game/Wasteland/Materials/Material_Instances/MI_Rock_03.MI_Rock_03"));
+	if (!RockMat)
+	{
+		RockMat = LoadObject<UMaterialInterface>(nullptr,
+			TEXT("/Game/WastelandEnvironment/Materials/Material_Instances/MI_Rock_01.MI_Rock_01"));
+	}
+	if (RockMat)
+	{
+		Dungeon->VoxelMeshSettings.Material = RockMat;
+	}
+
+	// Voxel noise settings (organic cave surfaces)
+	Dungeon->VoxelNoiseSettings.NoiseAmplitude = 400.0f;
+	Dungeon->VoxelNoiseSettings.NoiseOctaves = 5;
+	Dungeon->VoxelNoiseSettings.NoiseFloorScale = 0.15f;      // Nearly flat floors
+	Dungeon->VoxelNoiseSettings.NoiseCeilingScale = 0.85f;     // Rough ceilings
+	Dungeon->VoxelNoiseSettings.NoiseScaleNormalized = 1.2f;
+	Dungeon->VoxelNoiseSettings.bEnableDomainWarp = true;      // Erosion patterns
+	Dungeon->VoxelNoiseSettings.DomainWarpStrength = 0.25f;
+	Dungeon->VoxelNoiseSettings.FloorCeilingTransitionHeight = 500.0f;
+	Dungeon->VoxelNoiseSettings.NoiseScaleVector = FVector(1, 1, 0.7f);
+
+	// Canvas mode: flatter floors, higher ceilings, less noise variation
+	if (bCanvas)
+	{
+		Dungeon->VoxelNoiseSettings.NoiseFloorScale = 0.10f;
+		Dungeon->VoxelNoiseSettings.NoiseCeilingScale = 0.70f;
+	}
+
+	// Cave SDF model
+	UDungeonVoxelSDFModel_Cave* CaveModel = NewObject<UDungeonVoxelSDFModel_Cave>(Dungeon);
+	CaveModel->CeilingExtraHeight = bCanvas ? 1600.0f : 1200.0f;
+	CaveModel->bEnableCeilingHoles = true;
+	CaveModel->CeilingHoleRadius = 500.0f;
+	CaveModel->CeilingHoleHeightOffset = 400.0f;
+	CaveModel->MaxCeilingHolesPerRoom = 3;
+	CaveModel->CeilingHoleSpawnProbability = 0.5f;
+	Dungeon->VoxelSDFModel = CaveModel;
+
+	UE_LOG(LogTemp, Warning, TEXT("  Voxel cave configured: VoxelSize=50, Noise=400, CeilingExtra=1200, bGPU=false"));
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Programmatic Cave Theme
+// ═══════════════════════════════════════════════════════════════════════════════
+
+UDungeonThemeAsset* USetupOpenWorldCommandlet::GetOrCreateCaveTheme()
+{
+	if (CachedCaveTheme) return CachedCaveTheme;
+
+	// Try loading an existing theme first
+	UDungeonThemeAsset* Theme = LoadObject<UDungeonThemeAsset>(nullptr,
+		TEXT("/Game/DungeonArchitect/Themes/DT_CaveTheme.DT_CaveTheme"));
+	if (Theme)
+	{
+		CachedCaveTheme = Theme;
+		return Theme;
+	}
+
+	// Try a bundled DA theme as fallback
+	Theme = LoadObject<UDungeonThemeAsset>(nullptr,
+		TEXT("/DungeonArchitect/Showcase/Samples/Themes/Foundry/T_Theme_Founddry.T_Theme_Founddry"));
+	if (!Theme)
+	{
+		Theme = LoadObject<UDungeonThemeAsset>(nullptr,
+			TEXT("/DungeonArchitect/Showcase/Samples/Themes/Legacy/SimpleSciFi/DungeonTheme/D_StarterPackTheme.D_StarterPackTheme"));
+	}
+
+	if (Theme)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  Using bundled DA theme: %s"), *Theme->GetPathName());
+		CachedCaveTheme = Theme;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  No DA theme found — cave will use voxel mesh only (no decoration meshes)"));
+	}
+
+	return Theme;
+}
+
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // Phase 4: Overworld Actor Population
@@ -1298,6 +1911,67 @@ bool USetupOpenWorldCommandlet::PopulateOverworldActors(UWorld* World)
 		}
 	}
 
+	// ── Dungeon Entrance Resting Points (fast travel targets) ──
+	{
+		UBlueprint* DungeonRestBP = LoadObject<UBlueprint>(nullptr,
+			TEXT("/Game/SoulslikeFramework/Blueprints/_WorldActors/Interactables/B_RestingPoint.B_RestingPoint"));
+		UClass* DungeonRestClass = DungeonRestBP ? DungeonRestBP->GeneratedClass : nullptr;
+
+		static const FString DungeonRestNames[] = {
+			TEXT("Forgotten Catacombs Entrance"),
+			TEXT("Ashen Depths Entrance"),
+			TEXT("Hollow Sanctum Entrance")
+		};
+
+		int32 DungeonRPIdx = 0;
+		for (const FlatArea& Area : FlatAreas)
+		{
+			if (!Area.Purpose.Contains(TEXT("dungeon_entrance"))) continue;
+
+			if (DungeonRestClass)
+			{
+				FVector Loc = Area.Center + FVector(200.0f, 0, 5.0f); // Slightly offset from stream trigger
+				AActor* RP = World->SpawnActor(DungeonRestClass, &Loc, &FRotator::ZeroRotator);
+				if (RP)
+				{
+					RP->SetFolderPath(FName(TEXT("Gameplay/DungeonRestPoints")));
+
+					FString DisplayName = DungeonRPIdx < 3 ? DungeonRestNames[DungeonRPIdx] : TEXT("Dungeon Entrance");
+
+					if (FTextProperty* NameProp = FindFProperty<FTextProperty>(RP->GetClass(), TEXT("LocationName")))
+					{
+						NameProp->SetPropertyValue_InContainer(RP, FText::FromString(DisplayName));
+					}
+					if (FStructProperty* IdProp = FindFProperty<FStructProperty>(RP->GetClass(), TEXT("ID")))
+					{
+						// Deterministic GUID in a different range (0xD0000000) from regular rest points
+						FGuid StableGuid(0xD0000000, DungeonRPIdx + 1, 0, 0);
+						IdProp->CopyCompleteValue(IdProp->ContainerPtrToValuePtr<void>(RP), &StableGuid);
+					}
+					if (FBoolProperty* DungeonProp = FindFProperty<FBoolProperty>(RP->GetClass(), TEXT("bIsDungeonEntrance")))
+					{
+						DungeonProp->SetPropertyValue_InContainer(RP, true);
+					}
+					// TEMP: Pre-discover for testing so they show on world map immediately
+					if (FBoolProperty* ActivatedProp = FindFProperty<FBoolProperty>(RP->GetClass(), TEXT("IsActivated")))
+					{
+						ActivatedProp->SetPropertyValue_InContainer(RP, true);
+					}
+
+					ActorsSpawned++;
+					UE_LOG(LogTemp, Warning, TEXT("  Dungeon RestingPoint '%s' at (%.0f, %.0f, %.0f) [PRE-DISCOVERED]"),
+						*DisplayName, Loc.X, Loc.Y, Loc.Z);
+				}
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("  RestingPoint Blueprint not found — skipping dungeon rest point"));
+			}
+
+			DungeonRPIdx++;
+		}
+	}
+
 	// ── Dungeon Entrance Triggers (ASLFLevelStreamManager) ──
 	{
 		static const FString DungeonNames[] = {
@@ -1373,5 +2047,30 @@ bool USetupOpenWorldCommandlet::SaveLevel(UWorld* World, const FString& PackageN
 
 	return bSaved;
 }
+
+// ═══════════════════════════════════════════════════════════════════════
+// Snap Map Asset Generation — fully automated, no editor UI required
+// ═══════════════════════════════════════════════════════════════════════
+
+bool USetupOpenWorldCommandlet::SaveAssetPackage(UObject* Asset, const FString& PackageName)
+{
+	if (!Asset) return false;
+
+	UPackage* Pkg = Asset->GetOutermost();
+	Pkg->MarkPackageDirty();
+
+	FString FileName = FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension());
+	FString Dir = FPaths::GetPath(FileName);
+	FPlatformFileManager::Get().GetPlatformFile().CreateDirectoryTree(*Dir);
+
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
+	bool bSaved = UPackage::SavePackage(Pkg, Asset, *FileName, SaveArgs);
+
+	UE_LOG(LogTemp, Warning, TEXT("  SaveAsset: %s → %s (%s)"),
+		*PackageName, *FileName, bSaved ? TEXT("OK") : TEXT("FAILED"));
+	return bSaved;
+}
+
 
 #endif // WITH_EDITOR

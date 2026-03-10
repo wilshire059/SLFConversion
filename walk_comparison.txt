@@ -1,0 +1,155 @@
+=== WALK ANIMATION COMPARISON: c3100 Guard vs Sentinel ===
+Generated: 2026.02.23-00.34.10
+
+========== c3100 Guard Walk (a000_002000) ==========
+  Animation: /Game/EldenRingAnimations/c3100_guard/Animations/a000_002000.a000_002000
+  Skeleton: c3100_mesh_Skeleton (104 bones)
+  Frames: 56, Duration: 1.867 sec, FPS: 30/1
+  DataModel tracks: 104
+
+  --- FOCUS BONES: Per-bone range of motion ---
+  Bone                      |   Status |   PosX Range |   PosY Range |   PosZ Range |   RotX Range |   RotY Range |   RotZ Range | MaxRotDeg
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Pelvis                    |  ROTATES |  0.00- 0.00 | -0.00--0.00 | -0.00--0.00 |   0.1-  3.9 |  -0.9-  1.2 |  -2.2-  0.0 | 3.1 deg
+  L_Thigh                   |  ROTATES |  0.00- 0.00 |  0.00- 0.00 | -0.18--0.18 | -179.9-179.9 | -10.7-  4.6 | -58.5-  6.0 | 60.8 deg
+  R_Thigh                   |  ROTATES |  0.00- 0.00 |  0.00- 0.00 |  0.18- 0.18 | -180.0-180.0 |  -9.3-  5.4 | -52.5- -3.7 | 49.6 deg
+  L_Calf                    |  ROTATES |  0.00- 0.00 | -0.64--0.64 | -0.00--0.00 |   0.0-  0.0 |  -0.0-  0.0 | -73.1--14.8 | 42.2 deg
+  R_Calf                    |  ROTATES | -0.00--0.00 | -0.64--0.64 | -0.00--0.00 |  -0.0- -0.0 |   0.0-  0.0 | -68.7--21.4 | 34.2 deg
+  L_Foot                    |  ROTATES | -0.00--0.00 | -0.69--0.69 |  0.00- 0.00 |  -3.9-  7.0 |   4.7- 17.9 | -23.3- 25.8 | 32.2 deg
+  R_Foot                    |  ROTATES | -0.00--0.00 | -0.69--0.69 | -0.00--0.00 |  -4.4-  7.0 | -13.0- -0.2 | -23.1- 28.7 | 30.1 deg
+
+  --- ALL BONES WITH SIGNIFICANT MOTION (rotation range > 1 deg) ---
+    MOVES: master                     MaxRotRange=360.0 deg (R=360.0 P=0.0 Y=16.1)
+    MOVES: l_foot_target              MaxRotRange=112.6 deg (R=8.7 P=18.5 Y=112.6)
+    MOVES: r_foot_target              MaxRotRange=96.3 deg (R=5.7 P=15.0 Y=96.3)
+    MOVES: root                       MaxRotRange=2.9 deg (R=1.9 P=2.9 Y=0.6)
+    MOVES: pelvis                     MaxRotRange=3.9 deg (R=3.9 P=2.1 Y=2.2)
+    MOVES: l_hip                      MaxRotRange=359.9 deg (R=359.9 P=0.1 Y=32.1)
+    MOVES: l_thigh                    MaxRotRange=359.7 deg (R=359.7 P=15.3 Y=64.5)
+    MOVES: l_calf                     MaxRotRange=58.3 deg (R=0.0 P=0.0 Y=58.3)
+    MOVES: l_calf_skirt               MaxRotRange=60.1 deg (R=0.0 P=60.1 Y=0.0)
+    MOVES: l_calftwist                MaxRotRange=13.1 deg (R=0.0 P=13.1 Y=0.0)
+    MOVES: l_calftwist1               MaxRotRange=6.5 deg (R=0.0 P=6.5 Y=0.0)
+    MOVES: l_foot                     MaxRotRange=49.1 deg (R=10.9 P=13.2 Y=49.1)
+    MOVES: l_foottwist                MaxRotRange=1.8 deg (R=0.0 P=1.8 Y=0.1)
+    MOVES: l_toe0                     MaxRotRange=51.0 deg (R=4.2 P=3.1 Y=51.0)
+    MOVES: l_knee                     MaxRotRange=29.1 deg (R=0.0 P=0.0 Y=29.1)
+    MOVES: l_knee_skirt               MaxRotRange=62.0 deg (R=3.3 P=62.0 Y=29.4)
+    MOVES: l_thigh_skirt              MaxRotRange=64.6 deg (R=0.0 P=64.6 Y=0.0)
+    MOVES: l_thightwist               MaxRotRange=15.0 deg (R=0.0 P=15.0 Y=0.0)
+    MOVES: l_thightwist1              MaxRotRange=7.5 deg (R=0.0 P=7.5 Y=0.0)
+    MOVES: r_hip                      MaxRotRange=359.9 deg (R=359.9 P=0.1 Y=24.4)
+    MOVES: r_thigh                    MaxRotRange=359.9 deg (R=359.9 P=14.7 Y=48.9)
+    MOVES: r_calf                     MaxRotRange=47.3 deg (R=0.0 P=0.0 Y=47.3)
+    MOVES: r_calf_skirt               MaxRotRange=59.2 deg (R=0.0 P=59.2 Y=0.0)
+    MOVES: r_calftwist                MaxRotRange=12.9 deg (R=0.0 P=12.9 Y=0.0)
+    MOVES: r_calftwist1               MaxRotRange=6.3 deg (R=0.0 P=6.3 Y=0.0)
+    MOVES: r_foot                     MaxRotRange=51.8 deg (R=11.4 P=12.9 Y=51.8)
+    MOVES: r_foottwist                MaxRotRange=1.8 deg (R=0.0 P=1.8 Y=0.1)
+    MOVES: r_toe0                     MaxRotRange=46.4 deg (R=3.5 P=4.1 Y=46.4)
+    MOVES: r_knee                     MaxRotRange=23.7 deg (R=0.0 P=0.0 Y=23.7)
+    MOVES: r_knee_skirt               MaxRotRange=63.2 deg (R=2.7 P=63.2 Y=23.7)
+    MOVES: r_thigh_skirt              MaxRotRange=67.8 deg (R=0.0 P=67.8 Y=0.0)
+    MOVES: r_thightwist               MaxRotRange=14.5 deg (R=0.0 P=14.5 Y=0.0)
+    MOVES: r_thightwist1              MaxRotRange=7.2 deg (R=0.0 P=7.2 Y=0.0)
+    MOVES: spine                      MaxRotRange=3.8 deg (R=2.0 P=3.8 Y=3.6)
+    MOVES: spine1                     MaxRotRange=6.1 deg (R=1.2 P=6.1 Y=0.9)
+    MOVES: spine2                     MaxRotRange=11.2 deg (R=6.2 P=11.2 Y=0.9)
+    MOVES: collar                     MaxRotRange=6.8 deg (R=6.8 P=0.0 Y=0.7)
+    MOVES: l_clavicle                 MaxRotRange=8.0 deg (R=8.0 P=7.1 Y=0.0)
+    MOVES: l_shoulder                 MaxRotRange=3.8 deg (R=3.4 P=1.2 Y=3.8)
+    MOVES: l_upperarm                 MaxRotRange=7.7 deg (R=6.9 P=5.8 Y=7.7)
+    MOVES: l_elbow                    MaxRotRange=6.2 deg (R=0.0 P=0.0 Y=6.2)
+    MOVES: l_forearm                  MaxRotRange=12.6 deg (R=0.0 P=0.0 Y=12.6)
+    MOVES: l_forearmtwist             MaxRotRange=5.9 deg (R=0.0 P=5.9 Y=0.0)
+    MOVES: l_forearmtwist1            MaxRotRange=3.0 deg (R=0.0 P=3.0 Y=0.0)
+    MOVES: l_hand                     MaxRotRange=26.1 deg (R=26.1 P=6.1 Y=25.0)
+    MOVES: l_uparmtwist               MaxRotRange=6.5 deg (R=0.0 P=6.5 Y=0.0)
+    MOVES: l_uparmtwist1              MaxRotRange=3.2 deg (R=0.0 P=3.2 Y=0.0)
+    MOVES: neck                       MaxRotRange=6.9 deg (R=6.9 P=2.1 Y=0.7)
+    MOVES: head                       MaxRotRange=7.4 deg (R=7.4 P=5.3 Y=6.5)
+    MOVES: r_clavicle                 MaxRotRange=3.5 deg (R=3.5 P=0.1 Y=0.0)
+    MOVES: r_shoulder                 MaxRotRange=4.2 deg (R=4.2 P=0.4 Y=1.3)
+    MOVES: r_upperarm                 MaxRotRange=7.5 deg (R=7.5 P=3.8 Y=6.1)
+    MOVES: r_elbow                    MaxRotRange=4.7 deg (R=0.0 P=0.0 Y=4.7)
+    MOVES: r_forearm                  MaxRotRange=9.5 deg (R=0.0 P=0.0 Y=9.5)
+    MOVES: r_forearmtwist             MaxRotRange=8.6 deg (R=0.0 P=8.6 Y=0.0)
+    MOVES: r_forearmtwist1            MaxRotRange=4.1 deg (R=0.0 P=4.1 Y=0.0)
+    MOVES: r_hand                     MaxRotRange=8.8 deg (R=4.2 P=8.8 Y=6.5)
+    MOVES: r_uparmtwist               MaxRotRange=6.2 deg (R=0.0 P=6.2 Y=0.0)
+    MOVES: r_uparmtwist1              MaxRotRange=3.0 deg (R=0.0 P=3.0 Y=0.0)
+    MOVES: spinearmor1                MaxRotRange=7.6 deg (R=2.4 P=7.6 Y=0.5)
+    MOVES: spinearmor2                MaxRotRange=7.4 deg (R=2.1 P=7.4 Y=0.7)
+  Summary: 61 bones MOVING, 43 bones STATIC (out of 104 tracks)
+
+========== Sentinel Walk (Sentinel_Walk) ==========
+  Animation: /Game/CustomEnemies/Sentinel/Animations/Sentinel_Walk.Sentinel_Walk
+  Skeleton: SKM_Sentinel_Skeleton (55 bones)
+  Frames: 46, Duration: 1.917 sec, FPS: 24/1
+  DataModel tracks: 55
+
+  --- FOCUS BONES: Per-bone range of motion ---
+  Bone                      |   Status |   PosX Range |   PosY Range |   PosZ Range |   RotX Range |   RotY Range |   RotZ Range | MaxRotDeg
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Hips                      |   STATIC | -0.00--0.00 |  0.00- 0.00 | -0.00--0.00 |   0.0-  0.0 |  -0.0- -0.0 |   0.0-  0.0 | 0.0 deg
+  c_thigh_fk_l              |  ROTATES | -0.00- 0.00 | -0.06--0.06 | -0.00- 0.00 |  -2.2- 24.3 | -13.1-  0.4 | -57.9- -0.0 | 60.8 deg
+  c_thigh_fk_r              |   STATIC | -0.00--0.00 | -0.06--0.06 | -0.00--0.00 |   0.0-  0.0 |  -0.0- -0.0 |  -0.0- -0.0 | 0.0 deg
+  c_leg_fk_l                |  ROTATES |  0.00- 0.00 | -0.41--0.41 |  0.00- 0.00 |  -3.5- 11.8 |  -3.8-  3.4 | -45.8-  7.9 | 40.3 deg
+  c_leg_fk_r                |   STATIC | -0.00--0.00 | -0.41--0.41 | -0.00--0.00 |  -0.0- -0.0 |  -0.0- -0.0 |   7.1-  7.1 | 0.0 deg
+  Foot_L                    |  ROTATES | -0.00--0.00 | -0.47--0.47 |  0.00- 0.00 | -94.1--50.9 | -83.0--71.6 | 123.2-151.3 | 30.2 deg
+  Foot_R                    |  ROTATES | -0.00--0.00 | -0.47--0.47 | -0.00--0.00 | -129.8--75.6 |  72.8- 80.8 | -175.3--136.9 | 45.8 deg
+  Thigh_L                   |    MOVES | -0.14--0.11 | -0.04- 0.11 |  0.65- 0.79 | -82.1--61.7 | -56.3-  5.2 | -123.9--100.5 | 64.5 deg
+  Thigh_R                   |    MOVES |  0.03- 0.13 | -0.36--0.00 |  0.65- 0.76 | -93.4--79.8 | -46.6- -3.4 |  87.7-100.5 | 43.7 deg
+  Calf_L                    |    MOVES | -0.17--0.11 | -0.03- 0.29 |  0.47- 0.68 | -80.8--34.7 | -66.2- -1.7 | -153.1--101.6 | 74.3 deg
+  Calf_R                    |    MOVES |  0.01- 0.17 | -0.50--0.02 |  0.46- 0.62 | -93.1--79.8 | -39.6-  3.5 |  87.7-101.6 | 43.7 deg
+
+  --- ALL BONES WITH SIGNIFICANT MOTION (rotation range > 1 deg) ---
+    MOVES: c_pos                      MaxRotRange=359.7 deg (R=6.6 P=2.4 Y=359.7)
+    MOVES: c_root_master_x            MaxRotRange=71.9 deg (R=71.9 P=5.8 Y=18.5)
+    MOVES: c_root_x                   MaxRotRange=356.4 deg (R=356.4 P=13.5 Y=18.6)
+    MOVES: c_thigh_fk_l               MaxRotRange=57.9 deg (R=26.5 P=13.5 Y=57.9)
+    MOVES: c_leg_fk_l                 MaxRotRange=53.7 deg (R=15.3 P=7.2 Y=53.7)
+    MOVES: foot_l                     MaxRotRange=43.2 deg (R=43.2 P=11.4 Y=28.1)
+    MOVES: toe_l                      MaxRotRange=360.0 deg (R=43.4 P=2.0 Y=360.0)
+    MOVES: thightwist_l               MaxRotRange=49.0 deg (R=26.3 P=10.4 Y=49.0)
+    MOVES: c_thigh_b_r                MaxRotRange=47.1 deg (R=45.9 P=44.9 Y=47.1)
+    MOVES: foot_r                     MaxRotRange=54.1 deg (R=54.1 P=8.0 Y=38.4)
+    MOVES: toe_r                      MaxRotRange=359.6 deg (R=358.9 P=8.4 Y=359.6)
+    MOVES: c_spine_01_x               MaxRotRange=72.8 deg (R=72.8 P=13.7 Y=9.3)
+    MOVES: c_spine_02_x               MaxRotRange=8.7 deg (R=5.7 P=8.7 Y=2.2)
+    MOVES: c_shoulder_r               MaxRotRange=13.8 deg (R=13.8 P=4.5 Y=8.6)
+    MOVES: arm_r                      MaxRotRange=6.8 deg (R=6.8 P=3.4 Y=4.7)
+    MOVES: forearm_r                  MaxRotRange=7.9 deg (R=2.4 P=7.9 Y=7.7)
+    MOVES: hand_r                     MaxRotRange=4.0 deg (R=3.3 P=4.0 Y=3.4)
+    MOVES: arm_twist_r                MaxRotRange=6.8 deg (R=6.8 P=2.3 Y=2.9)
+    MOVES: c_shoulder_l               MaxRotRange=359.1 deg (R=43.0 P=6.9 Y=359.1)
+    MOVES: arm_l                      MaxRotRange=8.7 deg (R=8.7 P=2.7 Y=7.9)
+    MOVES: forearm_l                  MaxRotRange=7.3 deg (R=5.6 P=6.1 Y=7.3)
+    MOVES: hand_l                     MaxRotRange=3.0 deg (R=1.9 P=3.0 Y=1.6)
+    MOVES: arm_twist_l                MaxRotRange=8.7 deg (R=8.7 P=4.6 Y=5.5)
+    MOVES: c_neck_x                   MaxRotRange=8.6 deg (R=6.7 P=8.6 Y=1.7)
+    MOVES: head_scale_fix_x           MaxRotRange=359.5 deg (R=6.3 P=2.8 Y=359.5)
+    MOVES: calf_l                     MaxRotRange=64.5 deg (R=46.1 P=64.5 Y=51.5)
+    MOVES: calftwist_l                MaxRotRange=15.5 deg (R=0.0 P=15.5 Y=0.0)
+    MOVES: calf_r                     MaxRotRange=43.1 deg (R=13.3 P=43.1 Y=13.9)
+    MOVES: calftwist_r                MaxRotRange=6.6 deg (R=0.0 P=6.6 Y=0.0)
+    MOVES: thigh_l                    MaxRotRange=61.6 deg (R=20.4 P=61.6 Y=23.4)
+    MOVES: thigh_r                    MaxRotRange=43.2 deg (R=13.6 P=43.2 Y=12.8)
+    MOVES: upperarm_l                 MaxRotRange=3.9 deg (R=3.1 P=3.9 Y=1.0)
+    MOVES: upperarm_r                 MaxRotRange=14.9 deg (R=6.2 P=8.3 Y=14.9)
+    MOVES: lowerarm_l                 MaxRotRange=5.7 deg (R=3.1 P=4.0 Y=5.7)
+    MOVES: forearmtwist_l             MaxRotRange=3.0 deg (R=0.0 P=3.0 Y=0.0)
+    MOVES: lowerarm_r                 MaxRotRange=11.5 deg (R=5.6 P=11.5 Y=9.7)
+    MOVES: forearmtwist_r             MaxRotRange=3.9 deg (R=0.0 P=3.9 Y=0.0)
+  Summary: 37 bones MOVING, 18 bones STATIC (out of 55 tracks)
+
+========== COMPARISON SUMMARY ==========
+  c3100 skeleton: c3100_mesh_Skeleton (104 bones)
+  Sentinel skeleton: SKM_Sentinel_Skeleton (55 bones)
+  c3100 frames: 56, duration: 1.867 sec
+  Sentinel frames: 46, duration: 1.917 sec
+
+Look at the FOCUS BONES tables above.
+Bones marked MOVES/ROTATES have significant motion during the walk cycle.
+Bones marked STATIC are effectively frozen during the walk.
+If Sentinel leg bones are all STATIC, the walk animation has no leg data.

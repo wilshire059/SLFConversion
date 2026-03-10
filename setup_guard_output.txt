@@ -1,0 +1,918 @@
+[2026.02.18-04.07.10:335][  0]LogInit: Display: Running engine for game: SLFConversion
+[2026.02.18-04.07.10:335][  0]LogCore: Display: Requested channels: 'cpu,gpu,frame,log,bookmark,screenshot,region'
+[2026.02.18-04.07.10:335][  0]LogTrace: Display: Control listening on port 1985
+[2026.02.18-04.07.10:335][  0]LogCsvProfiler: Display: Metadata set : platform="Windows"
+[2026.02.18-04.07.10:335][  0]LogCsvProfiler: Display: Metadata set : config="Development"
+[2026.02.18-04.07.10:335][  0]LogCsvProfiler: Display: Metadata set : buildversion="++UE5+Release-5.7-CL-48512491"
+[2026.02.18-04.07.10:335][  0]LogCsvProfiler: Display: Metadata set : engineversion="5.7.1-48512491+++UE5+Release-5.7"
+[2026.02.18-04.07.10:335][  0]LogCsvProfiler: Display: Metadata set : enginereleaseversion="5.7.1"
+[2026.02.18-04.07.10:335][  0]LogCsvProfiler: Display: Metadata set : os="Windows 11 (25H2) [10.0.26200.7840] "
+[2026.02.18-04.07.10:335][  0]LogCsvProfiler: Display: Metadata set : cpu="GenuineIntel|Intel(R) Core(TM) 9 270H"
+[2026.02.18-04.07.10:335][  0]LogCsvProfiler: Display: Metadata set : pgoenabled="0"
+[2026.02.18-04.07.10:335][  0]LogCsvProfiler: Display: Metadata set : pgoprofilingenabled="0"
+[2026.02.18-04.07.10:335][  0]LogCsvProfiler: Display: Metadata set : ltoenabled="0"
+[2026.02.18-04.07.10:335][  0]LogCsvProfiler: Display: Metadata set : asan="0"
+[2026.02.18-04.07.10:335][  0]LogCsvProfiler: Display: Metadata set : mergedmodules="0"
+[2026.02.18-04.07.10:335][  0]LogCsvProfiler: Display: Metadata set : commandline="" C:/scripts/SLFConversion/SLFConversion.uproject -run=SetupC3100 -unattended -nosplash -nullrhi""
+[2026.02.18-04.07.10:335][  0]LogCsvProfiler: Display: Metadata set : loginid="d995c8d241966abb5189efb7e08079c5"
+[2026.02.18-04.07.10:335][  0]LogCsvProfiler: Display: Metadata set : llm="0"
+[2026.02.18-04.07.10:335][  0]LogCsvProfiler: Display: Metadata set : systemresolution.resx="1280"
+[2026.02.18-04.07.10:335][  0]LogCsvProfiler: Display: Metadata set : systemresolution.resy="720"
+[2026.02.18-04.07.10:335][  0]LogAudio: Display: Audio Device Manager not initializing due to all audio being disabled. If this is not intentional, please check command line arguments for "-nosound".
+[2026.02.18-04.07.10:335][  0]LogConfig: Display: Loading Android ini files took 0.04 seconds
+[2026.02.18-04.07.10:335][  0]LogConfig: Display: Loading VulkanPC ini files took 0.04 seconds
+[2026.02.18-04.07.10:335][  0]LogConfig: Display: Loading IOS ini files took 0.04 seconds
+[2026.02.18-04.07.10:335][  0]LogConfig: Display: Loading Mac ini files took 0.05 seconds
+[2026.02.18-04.07.10:335][  0]LogConfig: Display: Loading VisionOS ini files took 0.05 seconds
+[2026.02.18-04.07.10:335][  0]LogConfig: Display: Loading Windows ini files took 0.06 seconds
+[2026.02.18-04.07.10:335][  0]LogConfig: Display: Loading Unix ini files took 0.06 seconds
+[2026.02.18-04.07.10:335][  0]LogConfig: Display: Loading TVOS ini files took 0.06 seconds
+[2026.02.18-04.07.10:335][  0]LogConfig: Display: Loading Linux ini files took 0.06 seconds
+[2026.02.18-04.07.10:335][  0]LogPluginManager: Display: The Plugin StructUtils has been marked deprecated for 5.5 and will be removed soon. Please update your dependencies.
+[2026.02.18-04.07.10:335][  0]RenderDocPlugin: Display: RenderDoc plugin will not be loaded. Use '-AttachRenderDoc' on the cmd line or enable 'renderdoc.AutoAttach' in the plugin settings.
+[2026.02.18-04.07.10:335][  0]LogHAL: Display: Platform has ~ 32 GB [34032443392 / 34359738368 / 32], which maps to Largest [LargestMinGB=32, LargerMinGB=12, DefaultMinGB=8, SmallerMinGB=6, SmallestMinGB=0)
+[2026.02.18-04.07.10:335][  0]LogCsvProfiler: Display: Metadata set : extradevelopmentmemorymb="0"
+[2026.02.18-04.07.10:583][  0]LogObj: Display: Attempting to load config data for Default__SlateThemeManager before the Class has been constructed/registered/linked (likely during module loading or early startup). This will result in the load silently failing and should be fixed.
+[2026.02.18-04.07.10:658][  0]LogCsvProfiler: Display: Metadata set : verbatimrhiname="Null"
+[2026.02.18-04.07.10:658][  0]LogCsvProfiler: Display: Metadata set : rhiname="Null"
+[2026.02.18-04.07.10:658][  0]LogCsvProfiler: Display: Metadata set : rhifeaturelevel="SM6"
+[2026.02.18-04.07.10:658][  0]LogCsvProfiler: Display: Metadata set : shaderplatform="PCD3D_SM6"
+[2026.02.18-04.07.10:662][  0]LogTextureFormatASTC: Display: ASTCEnc version 5.0.1 library loaded
+[2026.02.18-04.07.10:662][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatASTC
+[2026.02.18-04.07.10:662][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatDXT
+[2026.02.18-04.07.10:662][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatETC2
+[2026.02.18-04.07.10:662][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatIntelISPCTexComp
+[2026.02.18-04.07.10:662][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatUncompressed
+[2026.02.18-04.07.10:662][  0]LogTextureFormatOodle: Display: Oodle Texture TFO init; latest sdk version = 2.9.14
+[2026.02.18-04.07.10:662][  0]LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.14.dll
+[2026.02.18-04.07.10:662][  0]LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.5.dll
+[2026.02.18-04.07.10:662][  0]LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatOodle
+[2026.02.18-04.07.10:679][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android'
+[2026.02.18-04.07.10:679][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ASTC'
+[2026.02.18-04.07.10:679][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_DXT'
+[2026.02.18-04.07.10:679][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ETC2'
+[2026.02.18-04.07.10:679][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_OpenXR'
+[2026.02.18-04.07.10:679][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'AndroidClient'
+[2026.02.18-04.07.10:679][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ASTCClient'
+[2026.02.18-04.07.10:679][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_DXTClient'
+[2026.02.18-04.07.10:679][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ETC2Client'
+[2026.02.18-04.07.10:679][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_OpenXRClient'
+[2026.02.18-04.07.10:679][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_Multi'
+[2026.02.18-04.07.10:679][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_MultiClient'
+[2026.02.18-04.07.10:687][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'IOS'
+[2026.02.18-04.07.10:687][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'IOSClient'
+[2026.02.18-04.07.10:696][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Linux'
+[2026.02.18-04.07.10:696][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'LinuxEditor'
+[2026.02.18-04.07.10:696][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'LinuxServer'
+[2026.02.18-04.07.10:696][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'LinuxClient'
+[2026.02.18-04.07.10:704][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Mac'
+[2026.02.18-04.07.10:704][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'MacEditor'
+[2026.02.18-04.07.10:704][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'MacServer'
+[2026.02.18-04.07.10:704][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'MacClient'
+[2026.02.18-04.07.10:712][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'TVOS'
+[2026.02.18-04.07.10:712][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'TVOSClient'
+[2026.02.18-04.07.10:720][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'Windows'
+[2026.02.18-04.07.10:720][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsEditor'
+[2026.02.18-04.07.10:720][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsServer'
+[2026.02.18-04.07.10:720][  0]LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsClient'
+[2026.02.18-04.07.10:720][  0]LogTargetPlatformManager: Display: Building Assets For WindowsEditor
+[2026.02.18-04.07.10:722][  0]LogAudioDebug: Display: Lib vorbis DLL was dynamically loaded.
+[2026.02.18-04.07.10:756][  0]LogDerivedDataCache: Display: Memory: Max Cache Size: -1 MB
+[2026.02.18-04.07.10:953][  0]LogDerivedDataCache: Display: ../../../Engine/DerivedDataCache/Compressed.ddp: Opened pak cache for reading. (1732 MiB)
+[2026.02.18-04.07.10:954][  0]LogZenServiceInstance: Display: Launching zen utility 'C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/zen.exe service status'.
+[2026.02.18-04.07.11:157][  0]LogZenServiceInstance: Display: Launching zen utility 'C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/zen.exe service status'.
+[2026.02.18-04.07.11:362][  0]LogZenServiceInstance: Display: Read zen version cache file from 'C:/Users/james/AppData/Local/UnrealEngine/5.7/Saved/Zen/zen.version', version: '5.7.6-202510061608-windows-x64-release-9a1ebb9'
+[2026.02.18-04.07.11:362][  0]LogZenServiceInstance: Display: Read zen version cache file from 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Install/zen.version', version: '5.7.6-202510061608-windows-x64-release-9a1ebb9'
+[2026.02.18-04.07.11:362][  0]LogZenServiceInstance: Display: Installed service at 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe' is up to date
+[2026.02.18-04.07.11:362][  0]LogZenServiceInstance: Display: Launching executable 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe', working dir 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Install', data dir 'C:/Users/james/AppData/Local/UnrealEngine/Common/Zen/Data', args '--port 8558 --data-dir C:\Users\james\AppData\Local\UnrealEngine\Common\Zen\Data --http asio --gc-cache-duration-seconds 1209600 --gc-interval-seconds 21600 --gc-low-diskspace-threshold 2147483648 --cache-bucket-limit-overwrites --quiet --http-forceloopback --owner-pid 52864  --child-id Zen_52864_Startup'
+[2026.02.18-04.07.11:417][  0]LogZenServiceInstance: Display: Unreal Zen Storage Server HTTP service at http://[::1]:8558 status: OK!.
+[2026.02.18-04.07.11:429][  0]LogDerivedDataCache: Display: ZenLocal: Using ZenServer HTTP service at [::1] with namespace ue.ddc status: OK!.
+[2026.02.18-04.07.11:434][  0]LogDerivedDataCache: Display: C:/Users/james/AppData/Local/UnrealEngine/Common/DerivedDataCache: Performance: Latency=0.01ms. RandomReadSpeed=1561.45MBs, RandomWriteSpeed=257.62MBs. Assigned SpeedClass 'Local'
+[2026.02.18-04.07.11:441][  0]LogUbaHorde: Display: UBA/Horde Configuration [Uba.Provider.Horde]: Not Enabled
+[2026.02.18-04.07.11:448][  0]LogXGEController: Display: Initialized XGE controller. XGE tasks will be spawned on this machine.
+[2026.02.18-04.07.11:448][  0]LogShaderCompilers: Display: Using XGE Controller for shader compilation
+[2026.02.18-04.07.11:449][  0]LogShaderCompilers: Display: Compiling shader autogen file: ../../../../../../scripts/SLFConversion/Intermediate/ShaderAutogen/PCD3D_SM6/AutogenShaderHeaders.ush
+[2026.02.18-04.07.11:449][  0]LogShaderCompilers: Display: Autogen file is unchanged, skipping write.
+[2026.02.18-04.07.11:792][  0]LogEditorDomain: Display: EditorDomain is Disabled
+[2026.02.18-04.07.11:968][  0]LogDeviceProfileManager: Display: Deviceprofile LinuxArm64Editor not found.
+[2026.02.18-04.07.11:968][  0]LogDeviceProfileManager: Display: Deviceprofile LinuxArm64 not found.
+[2026.02.18-04.07.11:998][  0]LogCsvProfiler: Display: Metadata set : deviceprofile="WindowsEditor"
+[2026.02.18-04.07.12:000][  0]LogStreaming: Display: FlushAsyncLoading(1): 1 QueuedPackages, 0 AsyncPackages
+[2026.02.18-04.07.12:006][  0]LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.02.18-04.07.12:006][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultTextMaterialOpaque is adding a dynamic import to package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness because of a recursive sync load
+[2026.02.18-04.07.12:006][  0]LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.02.18-04.07.12:006][  0]LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.02.18-04.07.12:007][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultTextMaterialOpaque is adding a dynamic import to package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec because of a recursive sync load
+[2026.02.18-04.07.12:007][  0]LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.02.18-04.07.12:007][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/WorldGridMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.02.18-04.07.12:008][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/WorldGridMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.02.18-04.07.12:009][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.02.18-04.07.12:009][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultPostProcessMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.02.18-04.07.12:010][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultLightFunctionMaterial is adding a dynamic import to package /Engine/EngineMaterials/DefaultPostProcessMaterial because of a recursive sync load
+[2026.02.18-04.07.12:010][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultPostProcessMaterial (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.02.18-04.07.12:010][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultDeferredDecalMaterial is adding a dynamic import to package /Engine/EngineMaterials/DefaultLightFunctionMaterial because of a recursive sync load
+[2026.02.18-04.07.12:010][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.02.18-04.07.12:010][  0]LogStreaming: Display: Package /Engine/EngineMaterials/WorldGridMaterial is adding a dynamic import to package /Engine/EngineMaterials/DefaultDeferredDecalMaterial because of a recursive sync load
+[2026.02.18-04.07.12:010][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/WorldGridMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.02.18-04.07.12:011][  0]LogStreaming: Display: Package /Engine/EngineMaterials/DefaultTextMaterialOpaque is adding a dynamic import to package /Engine/EngineMaterials/WorldGridMaterial because of a recursive sync load
+[2026.02.18-04.07.12:011][  0]LogStreaming: Display: Flushing package /Engine/EngineMaterials/WorldGridMaterial (state: DeferredPostLoad) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+[2026.02.18-04.07.12:011][  0]LogTextureEncodingSettings: Display: Texture Encode Speed: Final (cook).
+[2026.02.18-04.07.12:011][  0]LogTextureEncodingSettings: Display: Oodle Texture Encode Speed settings: Fast: RDO Off Lambda=0, Effort=Normal Final: RDO Off Lambda=0, Effort=Normal
+[2026.02.18-04.07.12:011][  0]LogTextureEncodingSettings: Display: Shared linear texture encoding: Disabled
+[2026.02.18-04.07.12:023][  0]LogMeshReduction: Display: Using QuadricMeshReduction for automatic static mesh reduction
+[2026.02.18-04.07.12:023][  0]LogMeshReduction: Display: Using SkeletalMeshReduction for automatic skeletal mesh reduction
+[2026.02.18-04.07.12:023][  0]LogMeshReduction: Display: Using ProxyLODMeshReduction for automatic mesh merging
+[2026.02.18-04.07.12:023][  0]LogMeshReduction: Display: No distributed automatic mesh merging module available
+[2026.02.18-04.07.12:125][  0]LogShaderCompilers: Display: Compiling shader autogen file: ../../../../../../scripts/SLFConversion/Intermediate/ShaderAutogen/PCD3D_SM5/AutogenShaderHeaders.ush
+[2026.02.18-04.07.12:125][  0]LogShaderCompilers: Display: Autogen file is unchanged, skipping write.
+[2026.02.18-04.07.12:125][  0]LogVirtualization: Display: VirtualizationSystem name found in ini file: None
+[2026.02.18-04.07.12:125][  0]LogVirtualization: Display: FNullVirtualizationSystem mounted, virtualization will be disabled
+[2026.02.18-04.07.12:175][  0]LogWorldPartition: Display: FWorldPartitionClassDescRegistry::Initialize started...
+[2026.02.18-04.07.12:177][  0]LogWorldPartition: Display: FWorldPartitionClassDescRegistry::Initialize took 1.599 ms
+[2026.02.18-04.07.12:703][  0]LogMetaSound: Display: MetaSound Page Target Initialized to 'Default'
+[2026.02.18-04.07.12:704][  0]LogAudio: Display: Registering Engine Module Parameter Interfaces...
+[2026.02.18-04.07.12:842][  0]LogEnum: Warning: EnumRedirect for enum ESLFDirection maps 'E_Direction::NewEnumerator0' to invalid value 'ESLFDirection::NewEnumerator0'!
+[2026.02.18-04.07.12:842][  0]LogEnum: Warning: EnumRedirect for enum ESLFDirection maps 'E_Direction::NewEnumerator5' to invalid value 'ESLFDirection::NewEnumerator5'!
+[2026.02.18-04.07.12:842][  0]LogEnum: Warning: EnumRedirect for enum ESLFDirection maps 'E_Direction::NewEnumerator3' to invalid value 'ESLFDirection::NewEnumerator3'!
+[2026.02.18-04.07.12:842][  0]LogEnum: Warning: EnumRedirect for enum ESLFDirection maps 'E_Direction::NewEnumerator4' to invalid value 'ESLFDirection::NewEnumerator4'!
+[2026.02.18-04.07.13:032][  0]LogTemp: Warning: AB_DemoRoom::Constructor - Components created
+[2026.02.18-04.07.13:676][  0]LogTemp: Warning: [SLFSoulslikeBoss] Constructor - Created AC_AI_CombatManager: SUCCESS
+[2026.02.18-04.07.13:680][  0]LogTemp: Warning: [SLFSoulslikeBoss] Constructor - Created AC_AI_CombatManager: SUCCESS
+[2026.02.18-04.07.13:905][  0]LogAudioCaptureCore: Display: No Audio Capture implementations found. Audio input will be silent.
+[2026.02.18-04.07.13:905][  0]LogAudioCaptureCore: Display: No Audio Capture implementations found. Audio input will be silent.
+[2026.02.18-04.07.14:072][  0]LogAssetRegistry: Display: Asset registry cache read as 76.9 MiB from ../../../../../../scripts/SLFConversion/Intermediate/CachedAssetRegistry_0.bin.
+[2026.02.18-04.07.14:073][  0]LogAssetRegistry: Display: AssetDataGatherer spent 0.045s loading caches ../../../../../../scripts/SLFConversion/Intermediate/CachedAssetRegistry_*.bin.
+[2026.02.18-04.07.14:139][  0]LogCsvProfiler: Display: Metadata set : largeworldcoordinates="1"
+[2026.02.18-04.07.14:162][  0]LogPython: Display: No pip-enabled plugins with python dependencies found, skipping
+[2026.02.18-04.07.14:459][  0]LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.7/Engine/Plugins/Animation/IKRig/Content/Python/init_unreal.py... started...
+[2026.02.18-04.07.14:472][  0]LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.7/Engine/Plugins/Animation/IKRig/Content/Python/init_unreal.py... took 12.574 ms
+[2026.02.18-04.07.14:472][  0]LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.7/Engine/Plugins/Animation/ControlRig/Content/Python/init_unreal.py... started...
+[2026.02.18-04.07.14:486][  0]LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.7/Engine/Plugins/Animation/ControlRig/Content/Python/init_unreal.py... took 13.402 ms (total: 25.976 ms)
+[2026.02.18-04.07.14:486][  0]LogTemp: Warning: === SetupC3100 Commandlet: Starting ===
+[2026.02.18-04.07.14:486][  0]LogTemp: Warning: --- Step 1: Adding sockets ---
+[2026.02.18-04.07.14:494][  0]LogTemp: Warning: === AddSocket: weapon_start on R_Sword ===
+Socket 'weapon_start' already exists on bone 'R_Sword', updating...
+Saved skeleton
+[2026.02.18-04.07.14:512][  0]LogTemp: Warning: === AddSocket: weapon_end on R_Sword ===
+Socket 'weapon_end' already exists on bone 'R_Sword', updating...
+Saved skeleton
+[2026.02.18-04.07.14:525][  0]LogTemp: Warning: === AddSocket: hand_r on R_Hand ===
+Socket 'hand_r' already exists on bone 'R_Hand', updating...
+Saved skeleton
+[2026.02.18-04.07.14:543][  0]LogTemp: Warning: === AddSocket: hand_l on L_Hand ===
+Socket 'hand_l' already exists on bone 'L_Hand', updating...
+Saved skeleton
+[2026.02.18-04.07.14:550][  0]LogTemp: Warning: === AddSocket: foot_l on L_Foot ===
+Socket 'foot_l' already exists on bone 'L_Foot', updating...
+Saved skeleton
+[2026.02.18-04.07.14:557][  0]LogTemp: Warning: === AddSocket: foot_r on R_Foot ===
+Socket 'foot_r' already exists on bone 'R_Foot', updating...
+Saved skeleton
+[2026.02.18-04.07.14:564][  0]LogTemp: Warning: Skeleton save: SUCCESS
+[2026.02.18-04.07.14:564][  0]LogTemp: Warning: --- Step 2: Creating montages ---
+[2026.02.18-04.07.14:564][  0]LogTemp: Warning:   Creating Attack montages (4)...
+[2026.02.18-04.07.14:575][  0]LogTemp: Warning:   === CreateMontage: AM_c3100_Attack01 ===
+Source length: 3.167 sec
+Length: 3.17 sec, Slot: DefaultSlot
+Post-bracket Length: 3.17 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_Attack01
+[2026.02.18-04.07.14:582][  0]LogTemp: Warning:   === CreateMontage: AM_c3100_Attack02 ===
+Source length: 2.633 sec
+Length: 2.63 sec, Slot: DefaultSlot
+Post-bracket Length: 2.63 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_Attack02
+[2026.02.18-04.07.14:589][  0]LogTemp: Warning:   === CreateMontage: AM_c3100_Attack03_Fast ===
+Source length: 2.333 sec
+Length: 2.33 sec, Slot: DefaultSlot
+Post-bracket Length: 2.33 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_Attack03_Fast
+[2026.02.18-04.07.14:597][  0]LogTemp: Warning:   === CreateMontage: AM_c3100_HeavyAttack ===
+Source length: 5.767 sec
+Length: 5.77 sec, Slot: DefaultSlot
+Post-bracket Length: 5.77 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_HeavyAttack
+[2026.02.18-04.07.14:597][  0]LogTemp: Warning:   Creating Reaction montages (3)...
+[2026.02.18-04.07.14:610][  0]LogTemp: Warning:   === CreateMontage: AM_c3100_HitReact ===
+Source length: 4.433 sec
+Length: 4.43 sec, Slot: DefaultSlot
+Post-bracket Length: 4.43 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_HitReact
+[2026.02.18-04.07.14:621][  0]LogTemp: Warning:   === CreateMontage: AM_c3100_HitReact_Light ===
+Source length: 0.033 sec
+Length: 0.03 sec, Slot: DefaultSlot
+Post-bracket Length: 0.03 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_HitReact_Light
+[2026.02.18-04.07.14:629][  0]LogTemp: Warning:   === CreateMontage: AM_c3100_GuardHit ===
+Source length: 1.167 sec
+Length: 1.17 sec, Slot: DefaultSlot
+Post-bracket Length: 1.17 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_GuardHit
+[2026.02.18-04.07.14:629][  0]LogTemp: Warning:   Creating Death montages (3)...
+[2026.02.18-04.07.14:637][  0]LogTemp: Warning:   === CreateMontage: AM_c3100_Death_Front ===
+Source length: 7.000 sec
+Length: 7.00 sec, Slot: DefaultSlot
+Post-bracket Length: 7.00 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_Death_Front
+[2026.02.18-04.07.14:645][  0]LogTemp: Warning:   === CreateMontage: AM_c3100_Death_Back ===
+Source length: 7.000 sec
+Length: 7.00 sec, Slot: DefaultSlot
+Post-bracket Length: 7.00 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_Death_Back
+[2026.02.18-04.07.14:653][  0]LogTemp: Warning:   === CreateMontage: AM_c3100_Death_Left ===
+Source length: 5.667 sec
+Length: 5.67 sec, Slot: DefaultSlot
+Post-bracket Length: 5.67 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_Death_Left
+[2026.02.18-04.07.14:653][  0]LogTemp: Warning:   Creating Dodge montages (4)...
+[2026.02.18-04.07.14:660][  0]LogTemp: Warning:   === CreateMontage: AM_c3100_Dodge_Fwd ===
+Source length: 0.900 sec
+Length: 0.90 sec, Slot: DefaultSlot
+Post-bracket Length: 0.90 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_Dodge_Fwd
+[2026.02.18-04.07.14:667][  0]LogTemp: Warning:   === CreateMontage: AM_c3100_Dodge_Bwd ===
+Source length: 0.900 sec
+Length: 0.90 sec, Slot: DefaultSlot
+Post-bracket Length: 0.90 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_Dodge_Bwd
+[2026.02.18-04.07.14:674][  0]LogTemp: Warning:   === CreateMontage: AM_c3100_Dodge_Left ===
+Source length: 1.267 sec
+Length: 1.27 sec, Slot: DefaultSlot
+Post-bracket Length: 1.27 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_Dodge_Left
+[2026.02.18-04.07.14:681][  0]LogTemp: Warning:   === CreateMontage: AM_c3100_Dodge_Right ===
+Source length: 1.267 sec
+Length: 1.27 sec, Slot: DefaultSlot
+Post-bracket Length: 1.27 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_Dodge_Right
+[2026.02.18-04.07.14:681][  0]LogTemp: Warning:   Creating Locomotion montages (3)...
+[2026.02.18-04.07.14:687][  0]LogTemp: Warning:   === CreateMontage: AM_c3100_Idle ===
+Source length: 3.667 sec
+Length: 3.67 sec, Slot: DefaultSlot
+Post-bracket Length: 3.67 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_Idle
+[2026.02.18-04.07.14:694][  0]LogTemp: Warning:   === CreateMontage: AM_c3100_Walk ===
+Source length: 1.867 sec
+Length: 1.87 sec, Slot: DefaultSlot
+Post-bracket Length: 1.87 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_Walk
+[2026.02.18-04.07.14:701][  0]LogTemp: Warning:   === CreateMontage: AM_c3100_Run ===
+Source length: 0.733 sec
+Length: 0.73 sec, Slot: DefaultSlot
+Post-bracket Length: 0.73 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_Run
+[2026.02.18-04.07.14:701][  0]LogTemp: Warning: --- Step 3: Creating blend space ---
+[2026.02.18-04.07.14:703][  0]LogTemp: Warning: === CreateBlendSpace1D ===
+Created BlendSpace1D with 3 samples
+Saved: /Game/EldenRingAnimations/c3100_guard/BS_c3100_Locomotion
+=== BLEND SPACE COMPLETE ===
+[2026.02.18-04.07.14:703][  0]LogTemp: Warning: --- Step 4: Duplicating AnimBP ---
+[2026.02.18-04.07.14:890][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\EldenRingAnimations\c3100_guard\ABP_c3100_Guard.uasset: [Compiler] Control Rig  - Hierarchy discrepancy for bone 'Root' - different parents on Control Rig vs SkeletalMesh.
+[2026.02.18-04.07.14:890][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\EldenRingAnimations\c3100_guard\ABP_c3100_Guard.uasset: [Compiler] Control Rig  - Hierarchy discrepancy for bone 'Head' - different parents on Control Rig vs SkeletalMesh.
+[2026.02.18-04.07.14:929][  0]LogTemp: Warning: === DuplicateAnimBPForSkeleton ===
+Source: /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeEnemy
+Target Skeleton: /Game/EldenRingAnimations/c3100_guard/c3100_mesh_Skeleton
+Output: /Game/EldenRingAnimations/c3100_guard/ABP_c3100_Guard
+Source AnimBP loaded: ABP_SoulslikeEnemy (class=ABP_SoulslikeEnemy)
+Set target skeleton to: /Game/EldenRingAnimations/c3100_guard/c3100_mesh_Skeleton.c3100_mesh_Skeleton
+Compiled AnimBP
+Saved AnimBP
+=== DUPLICATION COMPLETE ===
+[2026.02.18-04.07.14:929][  0]LogTemp: Warning: --- Step 4b: Replacing AnimGraph references ---
+[2026.02.18-04.07.14:933][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\EldenRingAnimations\c3100_guard\ABP_c3100_Guard.uasset: [Compiler] Control Rig  - Hierarchy discrepancy for bone 'Root' - different parents on Control Rig vs SkeletalMesh.
+[2026.02.18-04.07.14:933][  0]LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\EldenRingAnimations\c3100_guard\ABP_c3100_Guard.uasset: [Compiler] Control Rig  - Hierarchy discrepancy for bone 'Head' - different parents on Control Rig vs SkeletalMesh.
+[2026.02.18-04.07.14:990][  0]LogTemp: Warning: === ReplaceAnimReferences: /Game/EldenRingAnimations/c3100_guard/ABP_c3100_Guard ===
+  Mapped: ABS_SoulslikeEnemy -> BS_c3100_Locomotion
+  Mapped: AS_RT_Idle_Kwang -> a000_000020
+Scanning 58 graphs...
+  Replaced in node: Sequence Player 'a000_000020' (AnimGraphNode_SequencePlayer)
+  Replaced in node: Blendspace Player 'BS_c3100_Locomotion' (AnimGraphNode_BlendSpacePlayer)
+  Replaced in node: Sequence Player 'a000_000020' (AnimGraphNode_SequencePlayer)
+  Replaced in node: Blendspace Player 'BS_c3100_Locomotion' (AnimGraphNode_BlendSpacePlayer)
+  Replaced in node: Sequence Player 'a000_000020' (AnimGraphNode_SequencePlayer)
+  Replaced in node: Blendspace Player 'BS_c3100_Locomotion' (AnimGraphNode_BlendSpacePlayer)
+Replaced 6 node(s)
+Save: SUCCESS
+[2026.02.18-04.07.14:990][  0]LogTemp: Warning: --- Step 4c: Removing Control Rig + IK Rig ---
+[2026.02.18-04.07.15:039][  0]LogTemp: Warning: === DisableControlRig: /Game/EldenRingAnimations/c3100_guard/ABP_c3100_Guard ===
+  Removing ControlRig node: Control Rig (AnimGraphNode_ControlRig)
+    Pin: Source, Dir=IN, Category=struct, Links=1
+    Pin: Alpha, Dir=IN, Category=real, Links=0
+    Pin: bAlphaBoolEnabled, Dir=IN, Category=bool, Links=0
+    Pin: AlphaCurveName, Dir=IN, Category=name, Links=0
+    Pin: Pose, Dir=OUT, Category=struct, Links=1
+    Pin: ShouldDoIKTrace, Dir=IN, Category=bool, Links=1
+    Rewired: Slot 'DefaultSlot' -> IK Rig (bypassed CR)
+    -> Node REMOVED from graph
+  Removing ControlRig node: IK Rig (AnimGraphNode_IKRig)
+    Pin: Source, Dir=IN, Category=struct, Links=1
+    Pin: bAlphaBoolEnabled, Dir=IN, Category=bool, Links=0
+    Pin: Alpha, Dir=IN, Category=real, Links=1
+    Pin: AlphaCurveName, Dir=IN, Category=name, Links=0
+    Pin: Pose, Dir=OUT, Category=struct, Links=1
+    Pin: Position_spine_05_Goal, Dir=IN, Category=struct, Links=1
+    Pin: PositionAlpha_spine_05_Goal, Dir=IN, Category=real, Links=0
+    Rewired: Slot 'DefaultSlot' -> Output Pose (bypassed CR)
+    -> Node REMOVED from graph
+Removed 2 ControlRig/IKRig node(s)
+Save: SUCCESS
+[2026.02.18-04.07.15:040][  0]LogTemp: Warning: --- Step 5: Creating data assets ---
+[2026.02.18-04.07.15:044][  0]LogTemp: Warning:   PDA_c3100_AnimData: SAVED (BS=yes, Idle=yes)
+[2026.02.18-04.07.15:051][  0]LogTemp: Warning:   PDA_c3100_WeaponAnimset: SAVED
+[2026.02.18-04.07.15:054][  0]LogTemp: Warning:   PDA_c3100_CombatReaction: SAVED
+[2026.02.18-04.07.15:064][  0]LogTemp: Warning:   PDA_c3100_PoiseBreak: SAVED (Start=yes, Loop=yes)
+[2026.02.18-04.07.15:064][  0]LogTemp: Warning: --- Step 6: Creating AI Ability data assets ---
+[2026.02.18-04.07.15:066][  0]LogTemp: Warning:   DA_c3100_Attack01: SAVED (Montage=yes, Score=1.0, CD=2.0)
+[2026.02.18-04.07.15:069][  0]LogTemp: Warning:   DA_c3100_Attack02: SAVED (Montage=yes, Score=1.0, CD=2.0)
+[2026.02.18-04.07.15:071][  0]LogTemp: Warning:   DA_c3100_Attack03_Fast: SAVED (Montage=yes, Score=1.5, CD=1.0)
+[2026.02.18-04.07.15:073][  0]LogTemp: Warning:   DA_c3100_HeavyAttack: SAVED (Montage=yes, Score=0.5, CD=5.0)
+[2026.02.18-04.07.15:073][  0]LogTemp: Warning: --- Step 6b: Verifying montage lengths after save ---
+[2026.02.18-04.07.15:073][  0]LogTemp: Warning:   AM_c3100_Attack01: 3.167 sec OK
+[2026.02.18-04.07.15:073][  0]LogTemp: Warning:   AM_c3100_Attack02: 2.633 sec OK
+[2026.02.18-04.07.15:073][  0]LogTemp: Warning:   AM_c3100_Attack03_Fast: 2.333 sec OK
+[2026.02.18-04.07.15:073][  0]LogTemp: Warning:   AM_c3100_HeavyAttack: 5.767 sec OK
+[2026.02.18-04.07.15:073][  0]LogTemp: Warning:   AM_c3100_HitReact: 4.433 sec OK
+[2026.02.18-04.07.15:073][  0]LogTemp: Warning:   AM_c3100_Idle: 3.667 sec OK
+[2026.02.18-04.07.15:073][  0]LogTemp: Warning: --- Step 7: AnimBP Diagnostic ---
+[2026.02.18-04.07.15:074][  0]LogTemp: Warning: === DETAILED ANIMBP DIAGNOSTIC: /Game/EldenRingAnimations/c3100_guard/ABP_c3100_Guard ===
+Target Skeleton: /Game/EldenRingAnimations/c3100_guard/c3100_mesh_Skeleton.c3100_mesh_Skeleton
+Bone Count: 104
+  Bone[0]: c3100 (parent=-1)
+  Bone[1]: Master (parent=0)
+  Bone[2]: L_Foot_Target2 (parent=1)
+  Bone[3]: L_Foot_Target1 (parent=2)
+  Bone[4]: L_Foot_Target (parent=3)
+  Bone[5]: R_Foot_Target2 (parent=1)
+  Bone[6]: R_Foot_Target1 (parent=5)
+  Bone[7]: R_Foot_Target (parent=6)
+  Bone[8]: Root (parent=1)
+  Bone[9]: Pelvis (parent=8)
+  ... (94 more bones)
+Sockets: 6
+  Socket: weapon_start -> Bone: R_Sword Offset=(0.0, 0.0, 50.0)
+  Socket: weapon_end -> Bone: R_Sword Offset=(0.0, 0.0, -50.0)
+  Socket: hand_r -> Bone: R_Hand Offset=(0.0, 0.0, 0.0)
+  Socket: hand_l -> Bone: L_Hand Offset=(0.0, 0.0, 0.0)
+  Socket: foot_l -> Bone: L_Foot Offset=(0.0, 0.0, 0.0)
+  Socket: foot_r -> Bone: R_Foot Offset=(0.0, 0.0, 0.0)
+
+Total Graphs: 16
+
+--- Graph: EventGraph (Nodes=0) ---
+
+--- Graph: EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_SequencePlayer_CAA389454E5F408CC2AC0C8D0C196E1A (Nodes=2) ---
+  [K2Node_FunctionEntry] $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_SequencePlayer_CAA389454E5F408CC2AC0C8D0C196E1A $$
+    Pin[OUT exec:then] -> Execute Ubergraph ABP C 3100 Guard.execute
+  [K2Node_CallFunction] Execute Ubergraph ABP C 3100 Guard
+    Pin[IN exec:execute] -> $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_SequencePlayer_CAA389454E5F408CC2AC0C8D0C196E1A $$.then
+
+--- Graph: EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_SequencePlayer_1C81C429433A89FF125141A8B3EC8A01 (Nodes=2) ---
+  [K2Node_FunctionEntry] $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_SequencePlayer_1C81C429433A89FF125141A8B3EC8A01 $$
+    Pin[OUT exec:then] -> Execute Ubergraph ABP C 3100 Guard.execute
+  [K2Node_CallFunction] Execute Ubergraph ABP C 3100 Guard
+    Pin[IN exec:execute] -> $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_SequencePlayer_1C81C429433A89FF125141A8B3EC8A01 $$.then
+
+--- Graph: EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_7AFDD28F4BC793B7D108EDA242E424BF (Nodes=2) ---
+  [K2Node_FunctionEntry] $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_7AFDD28F4BC793B7D108EDA242E424BF $$
+    Pin[OUT exec:then] -> Execute Ubergraph ABP C 3100 Guard.execute
+  [K2Node_CallFunction] Execute Ubergraph ABP C 3100 Guard
+    Pin[IN exec:execute] -> $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_7AFDD28F4BC793B7D108EDA242E424BF $$.then
+
+--- Graph: EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_61D9F12A49FD8D23B8A48396A7C28D1F (Nodes=2) ---
+  [K2Node_FunctionEntry] $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_61D9F12A49FD8D23B8A48396A7C28D1F $$
+    Pin[OUT exec:then] -> Execute Ubergraph ABP C 3100 Guard.execute
+  [K2Node_CallFunction] Execute Ubergraph ABP C 3100 Guard
+    Pin[IN exec:execute] -> $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_61D9F12A49FD8D23B8A48396A7C28D1F $$.then
+
+--- Graph: EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_8395ADA246AA9E4DE19F918535AAF6FC (Nodes=2) ---
+  [K2Node_FunctionEntry] $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_8395ADA246AA9E4DE19F918535AAF6FC $$
+    Pin[OUT exec:then] -> Execute Ubergraph ABP C 3100 Guard.execute
+  [K2Node_CallFunction] Execute Ubergraph ABP C 3100 Guard
+    Pin[IN exec:execute] -> $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_8395ADA246AA9E4DE19F918535AAF6FC $$.then
+
+--- Graph: AnimGraph (Nodes=13) ---
+  [AnimGraphNode_Root] Output Pose | AnimGraph
+    FAnimNode: AnimNode_Root
+    Pin[IN struct:Result] -> Slot 'DefaultSlot'.Pose
+  [AnimGraphNode_StateMachine] Locomotion | State Machine
+    FAnimNode: AnimNode_StateMachine
+    Pin[OUT struct:Pose] -> Save cached pose 'Locomotion'.Pose
+  [AnimGraphNode_SaveCachedPose] Save cached pose 'Locomotion'
+    FAnimNode: AnimNode_SaveCachedPose
+    Pin[IN struct:Pose] -> Locomotion.Pose
+  [AnimGraphNode_Slot] Slot 'DefaultSlot' | Group 'DefaultGroup'
+    FAnimNode: AnimNode_Slot
+    Pin[IN struct:Source] -> Blend Poses by bool.Pose
+    Pin[OUT struct:Pose] -> Output Pose.Result
+  [K2Node_VariableGet] Get IsFalling
+    Pin[OUT bool:IsFalling] -> NOT Boolean.A
+  [K2Node_CallFunction] NOT Boolean
+    Pin[IN bool:A] -> Get IsFalling.IsFalling
+  [K2Node_VariableGet] Get PhysicsWeight
+  [K2Node_VariableGet] Get Hit Location
+    Pin[OUT struct:Hit Location] -> vector * vector.A
+  [K2Node_PromotableOperator] vector * vector
+    Pin[IN struct:A] -> Get Hit Location.Hit Location
+  [AnimGraphNode_StateMachine] Poise Broken | State Machine
+    FAnimNode: AnimNode_StateMachine
+    Pin[OUT struct:Pose] -> Blend Poses by bool.BlendPose_0
+  [AnimGraphNode_BlendListByBool] Blend Poses by bool
+    FAnimNode: AnimNode_BlendListByBool
+    Pin[IN struct:BlendPose_0] -> Poise Broken.Pose
+    Pin[IN struct:BlendPose_1] -> Use cached pose 'Locomotion'.Pose
+    Pin[IN bool:bActiveValue] -> Get PoiseBroken.PoiseBroken
+    Pin[OUT struct:Pose] -> Slot 'DefaultSlot'.Source
+  [K2Node_VariableGet] Get PoiseBroken
+    Pin[OUT bool:PoiseBroken] -> Blend Poses by bool.bActiveValue
+  [AnimGraphNode_UseCachedPose] Use cached pose 'Locomotion'
+    FAnimNode: AnimNode_UseCachedPose
+    Pin[OUT struct:Pose] -> Blend Poses by bool.BlendPose_1
+
+--- Graph: Locomotion (Nodes=5) ---
+  [AnimStateEntryNode] Locomotion
+    Pin[OUT exec:Entry] -> Idle.In
+  [AnimStateNode] Idle
+    Pin[IN Transition:In] -> Locomotion.Entry
+    Pin[IN Transition:In] -> Walk / Run to Idle.Out
+    Pin[OUT Transition:Out] -> Idle to Walk / Run.In
+  [AnimStateNode] Walk / Run
+    Pin[IN Transition:In] -> Idle to Walk / Run.Out
+    Pin[OUT Transition:Out] -> Walk / Run to Idle.In
+  [AnimStateTransitionNode] Idle to Walk / Run
+    Pin[IN Transition:In] -> Idle.Out
+    Pin[OUT Transition:Out] -> Walk / Run.In
+  [AnimStateTransitionNode] Walk / Run to Idle
+    Pin[IN Transition:In] -> Walk / Run.Out
+    Pin[OUT Transition:Out] -> Idle.In
+
+--- Graph: Poise Broken (Nodes=4) ---
+  [AnimStateEntryNode] Poise Broken
+    Pin[OUT exec:Entry] -> Start.In
+  [AnimStateNode] Start
+    Pin[IN Transition:In] -> Poise Broken.Entry
+    Pin[OUT Transition:Out] -> Start to Loop.In
+  [AnimStateNode] Loop
+    Pin[IN Transition:In] -> Start to Loop.Out
+  [AnimStateTransitionNode] Start to Loop
+    Pin[IN Transition:In] -> Start.Out
+    Pin[OUT Transition:Out] -> Loop.In
+
+--- Graph: Idle (Nodes=2) ---
+  [AnimGraphNode_StateResult] Output Animation Pose
+    FAnimNode: AnimNode_StateResult
+    Pin[IN struct:Result] -> Sequence Player 'a000_000020'.Pose
+  [AnimGraphNode_SequencePlayer] a000_000020 | Sequence Player
+    FAnimNode: AnimNode_SequencePlayer
+    Pin[OUT struct:Pose] -> Output Animation Pose.Result
+
+--- Graph: Walk / Run (Nodes=4) ---
+  [AnimGraphNode_StateResult] Output Animation Pose
+    FAnimNode: AnimNode_StateResult
+    Pin[IN struct:Result] -> Blendspace Player 'BS_c3100_Locomotion'.Pose
+  [K2Node_VariableGet] Get GroundSpeed
+    Pin[OUT real:GroundSpeed] -> Blendspace Player 'BS_c3100_Locomotion'.Y
+  [K2Node_VariableGet] Get Direction
+    Pin[OUT real:Direction] -> Blendspace Player 'BS_c3100_Locomotion'.X
+  [AnimGraphNode_BlendSpacePlayer] BS_c3100_Locomotion | Blendspace Player
+    FAnimNode: AnimNode_BlendSpacePlayer
+    *** BLEND SPACE NODE ***
+    Pin[IN real:X] -> Get Direction.Direction
+    Pin[IN real:Y] -> Get GroundSpeed.GroundSpeed
+    Pin[OUT struct:Pose] -> Output Animation Pose.Result
+
+--- Graph: Start (Nodes=4) ---
+  [AnimGraphNode_StateResult] Output Animation Pose
+    FAnimNode: AnimNode_StateResult
+    Pin[IN struct:Result] -> Sequence Player.Pose
+  [AnimGraphNode_SequencePlayer] Sequence Player
+    FAnimNode: AnimNode_SequencePlayer
+    Pin[IN object:Sequence] -> Get PoiseBreak_Start.PoiseBreak_Start
+    Pin[OUT struct:Pose] -> Output Animation Pose.Result
+  [K2Node_VariableGet] Get PoiseBreakAsset
+    Pin[OUT object:PoiseBreakAsset] -> Get PoiseBreak_Start.self
+  [K2Node_VariableGet] Get PoiseBreak_Start
+    Pin[OUT object:PoiseBreak_Start] -> Sequence Player.Sequence
+    Pin[IN object:self] -> Get PoiseBreakAsset.PoiseBreakAsset
+
+--- Graph: Loop (Nodes=4) ---
+  [AnimGraphNode_StateResult] Output Animation Pose
+    FAnimNode: AnimNode_StateResult
+    Pin[IN struct:Result] -> Sequence Player.Pose
+  [AnimGraphNode_SequencePlayer] Sequence Player
+    FAnimNode: AnimNode_SequencePlayer
+    Pin[IN object:Sequence] -> Get PoiseBreak_Loop.PoiseBreak_Loop
+    Pin[OUT struct:Pose] -> Output Animation Pose.Result
+  [K2Node_VariableGet] Get PoiseBreakAsset
+    Pin[OUT object:PoiseBreakAsset] -> Get PoiseBreak_Loop.self
+  [K2Node_VariableGet] Get PoiseBreak_Loop
+    Pin[OUT object:PoiseBreak_Loop] -> Sequence Player.Sequence
+    Pin[IN object:self] -> Get PoiseBreakAsset.PoiseBreakAsset
+
+--- Graph: Transition (Nodes=3) ---
+  [AnimGraphNode_TransitionResult] Result
+    FAnimNode: AnimNode_TransitionResult
+    Pin[IN bool:bCanEnterTransition] -> float > float.ReturnValue
+  [K2Node_VariableGet] Get GroundSpeed
+    Pin[OUT real:GroundSpeed] -> float > float.A
+  [K2Node_PromotableOperator] float > float
+    Pin[IN real:A] -> Get GroundSpeed.GroundSpeed
+    Pin[OUT bool:ReturnValue] -> Result.bCanEnterTransition
+
+--- Graph: Transition (Nodes=3) ---
+  [AnimGraphNode_TransitionResult] Result
+    FAnimNode: AnimNode_TransitionResult
+    Pin[IN bool:bCanEnterTransition] -> float < float.ReturnValue
+  [K2Node_VariableGet] Get GroundSpeed
+    Pin[OUT real:GroundSpeed] -> float < float.A
+  [K2Node_PromotableOperator] float < float
+    Pin[IN real:A] -> Get GroundSpeed.GroundSpeed
+    Pin[OUT bool:ReturnValue] -> Result.bCanEnterTransition
+
+--- Graph: Transition (Nodes=3) ---
+  [AnimGraphNode_TransitionResult] Result
+    FAnimNode: AnimNode_TransitionResult
+    Pin[IN bool:bCanEnterTransition] -> float < float.ReturnValue
+  [K2Node_AnimGetter] Time Remaining (ratio)
+    Pin[OUT real:ReturnValue] -> float < float.A
+  [K2Node_PromotableOperator] float < float
+    Pin[IN real:A] -> Time Remaining (ratio).ReturnValue
+    Pin[OUT bool:ReturnValue] -> Result.bCanEnterTransition
+
+--- Compilation Status ---
+GeneratedClass: ABP_c3100_Guard_C
+Status: 3
+Compatible Skeletons: 1
+  /Game/EldenRingAnimations/c3100_guard/c3100_mesh_Skeleton.c3100_mesh_Skeleton
+[2026.02.18-04.07.15:082][  0]LogTemp: Warning: [DiagAnimBP] === DETAILED ANIMBP DIAGNOSTIC: /Game/EldenRingAnimations/c3100_guard/ABP_c3100_Guard ===
+[2026.02.18-04.07.15:082][  0]LogTemp: Warning: [DiagAnimBP] Target Skeleton: /Game/EldenRingAnimations/c3100_guard/c3100_mesh_Skeleton.c3100_mesh_Skeleton
+[2026.02.18-04.07.15:082][  0]LogTemp: Warning: [DiagAnimBP] Bone Count: 104
+[2026.02.18-04.07.15:082][  0]LogTemp: Warning: [DiagAnimBP]   Bone[0]: c3100 (parent=-1)
+[2026.02.18-04.07.15:082][  0]LogTemp: Warning: [DiagAnimBP]   Bone[1]: Master (parent=0)
+[2026.02.18-04.07.15:082][  0]LogTemp: Warning: [DiagAnimBP]   Bone[2]: L_Foot_Target2 (parent=1)
+[2026.02.18-04.07.15:082][  0]LogTemp: Warning: [DiagAnimBP]   Bone[3]: L_Foot_Target1 (parent=2)
+[2026.02.18-04.07.15:083][  0]LogTemp: Warning: [DiagAnimBP]   Bone[4]: L_Foot_Target (parent=3)
+[2026.02.18-04.07.15:083][  0]LogTemp: Warning: [DiagAnimBP]   Bone[5]: R_Foot_Target2 (parent=1)
+[2026.02.18-04.07.15:083][  0]LogTemp: Warning: [DiagAnimBP]   Bone[6]: R_Foot_Target1 (parent=5)
+[2026.02.18-04.07.15:083][  0]LogTemp: Warning: [DiagAnimBP]   Bone[7]: R_Foot_Target (parent=6)
+[2026.02.18-04.07.15:083][  0]LogTemp: Warning: [DiagAnimBP]   Bone[8]: Root (parent=1)
+[2026.02.18-04.07.15:083][  0]LogTemp: Warning: [DiagAnimBP]   Bone[9]: Pelvis (parent=8)
+[2026.02.18-04.07.15:083][  0]LogTemp: Warning: [DiagAnimBP]   ... (94 more bones)
+[2026.02.18-04.07.15:083][  0]LogTemp: Warning: [DiagAnimBP] Sockets: 6
+[2026.02.18-04.07.15:083][  0]LogTemp: Warning: [DiagAnimBP]   Socket: weapon_start -> Bone: R_Sword Offset=(0.0, 0.0, 50.0)
+[2026.02.18-04.07.15:083][  0]LogTemp: Warning: [DiagAnimBP]   Socket: weapon_end -> Bone: R_Sword Offset=(0.0, 0.0, -50.0)
+[2026.02.18-04.07.15:083][  0]LogTemp: Warning: [DiagAnimBP]   Socket: hand_r -> Bone: R_Hand Offset=(0.0, 0.0, 0.0)
+[2026.02.18-04.07.15:083][  0]LogTemp: Warning: [DiagAnimBP]   Socket: hand_l -> Bone: L_Hand Offset=(0.0, 0.0, 0.0)
+[2026.02.18-04.07.15:084][  0]LogTemp: Warning: [DiagAnimBP]   Socket: foot_l -> Bone: L_Foot Offset=(0.0, 0.0, 0.0)
+[2026.02.18-04.07.15:084][  0]LogTemp: Warning: [DiagAnimBP]   Socket: foot_r -> Bone: R_Foot Offset=(0.0, 0.0, 0.0)
+[2026.02.18-04.07.15:084][  0]LogTemp: Warning: [DiagAnimBP] Total Graphs: 16
+[2026.02.18-04.07.15:084][  0]LogTemp: Warning: [DiagAnimBP] --- Graph: EventGraph (Nodes=0) ---
+[2026.02.18-04.07.15:084][  0]LogTemp: Warning: [DiagAnimBP] --- Graph: EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_SequencePlayer_CAA389454E5F408CC2AC0C8D0C196E1A (Nodes=2) ---
+[2026.02.18-04.07.15:084][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_FunctionEntry] $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_SequencePlayer_CAA389454E5F408CC2AC0C8D0C196E1A $$
+[2026.02.18-04.07.15:084][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT exec:then] -> Execute Ubergraph ABP C 3100 Guard.execute
+[2026.02.18-04.07.15:084][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_CallFunction] Execute Ubergraph ABP C 3100 Guard
+[2026.02.18-04.07.15:085][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN exec:execute] -> $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_SequencePlayer_CAA389454E5F408CC2AC0C8D0C196E1A $$.then
+[2026.02.18-04.07.15:085][  0]LogTemp: Warning: [DiagAnimBP] --- Graph: EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_SequencePlayer_1C81C429433A89FF125141A8B3EC8A01 (Nodes=2) ---
+[2026.02.18-04.07.15:085][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_FunctionEntry] $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_SequencePlayer_1C81C429433A89FF125141A8B3EC8A01 $$
+[2026.02.18-04.07.15:085][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT exec:then] -> Execute Ubergraph ABP C 3100 Guard.execute
+[2026.02.18-04.07.15:085][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_CallFunction] Execute Ubergraph ABP C 3100 Guard
+[2026.02.18-04.07.15:085][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN exec:execute] -> $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_SequencePlayer_1C81C429433A89FF125141A8B3EC8A01 $$.then
+[2026.02.18-04.07.15:085][  0]LogTemp: Warning: [DiagAnimBP] --- Graph: EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_7AFDD28F4BC793B7D108EDA242E424BF (Nodes=2) ---
+[2026.02.18-04.07.15:086][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_FunctionEntry] $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_7AFDD28F4BC793B7D108EDA242E424BF $$
+[2026.02.18-04.07.15:086][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT exec:then] -> Execute Ubergraph ABP C 3100 Guard.execute
+[2026.02.18-04.07.15:086][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_CallFunction] Execute Ubergraph ABP C 3100 Guard
+[2026.02.18-04.07.15:086][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN exec:execute] -> $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_7AFDD28F4BC793B7D108EDA242E424BF $$.then
+[2026.02.18-04.07.15:086][  0]LogTemp: Warning: [DiagAnimBP] --- Graph: EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_61D9F12A49FD8D23B8A48396A7C28D1F (Nodes=2) ---
+[2026.02.18-04.07.15:086][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_FunctionEntry] $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_61D9F12A49FD8D23B8A48396A7C28D1F $$
+[2026.02.18-04.07.15:087][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT exec:then] -> Execute Ubergraph ABP C 3100 Guard.execute
+[2026.02.18-04.07.15:087][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_CallFunction] Execute Ubergraph ABP C 3100 Guard
+[2026.02.18-04.07.15:087][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN exec:execute] -> $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_61D9F12A49FD8D23B8A48396A7C28D1F $$.then
+[2026.02.18-04.07.15:087][  0]LogTemp: Warning: [DiagAnimBP] --- Graph: EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_8395ADA246AA9E4DE19F918535AAF6FC (Nodes=2) ---
+[2026.02.18-04.07.15:087][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_FunctionEntry] $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_8395ADA246AA9E4DE19F918535AAF6FC $$
+[2026.02.18-04.07.15:087][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT exec:then] -> Execute Ubergraph ABP C 3100 Guard.execute
+[2026.02.18-04.07.15:087][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_CallFunction] Execute Ubergraph ABP C 3100 Guard
+[2026.02.18-04.07.15:088][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN exec:execute] -> $$ EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_c3100_Guard_AnimGraphNode_TransitionResult_8395ADA246AA9E4DE19F918535AAF6FC $$.then
+[2026.02.18-04.07.15:088][  0]LogTemp: Warning: [DiagAnimBP] --- Graph: AnimGraph (Nodes=13) ---
+[2026.02.18-04.07.15:088][  0]LogTemp: Warning: [DiagAnimBP]   [AnimGraphNode_Root] Output Pose | AnimGraph
+[2026.02.18-04.07.15:088][  0]LogTemp: Warning: [DiagAnimBP]     FAnimNode: AnimNode_Root
+[2026.02.18-04.07.15:088][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN struct:Result] -> Slot 'DefaultSlot'.Pose
+[2026.02.18-04.07.15:088][  0]LogTemp: Warning: [DiagAnimBP]   [AnimGraphNode_StateMachine] Locomotion | State Machine
+[2026.02.18-04.07.15:088][  0]LogTemp: Warning: [DiagAnimBP]     FAnimNode: AnimNode_StateMachine
+[2026.02.18-04.07.15:088][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT struct:Pose] -> Save cached pose 'Locomotion'.Pose
+[2026.02.18-04.07.15:088][  0]LogTemp: Warning: [DiagAnimBP]   [AnimGraphNode_SaveCachedPose] Save cached pose 'Locomotion'
+[2026.02.18-04.07.15:088][  0]LogTemp: Warning: [DiagAnimBP]     FAnimNode: AnimNode_SaveCachedPose
+[2026.02.18-04.07.15:089][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN struct:Pose] -> Locomotion.Pose
+[2026.02.18-04.07.15:089][  0]LogTemp: Warning: [DiagAnimBP]   [AnimGraphNode_Slot] Slot 'DefaultSlot' | Group 'DefaultGroup'
+[2026.02.18-04.07.15:089][  0]LogTemp: Warning: [DiagAnimBP]     FAnimNode: AnimNode_Slot
+[2026.02.18-04.07.15:089][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN struct:Source] -> Blend Poses by bool.Pose
+[2026.02.18-04.07.15:089][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT struct:Pose] -> Output Pose.Result
+[2026.02.18-04.07.15:089][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_VariableGet] Get IsFalling
+[2026.02.18-04.07.15:089][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT bool:IsFalling] -> NOT Boolean.A
+[2026.02.18-04.07.15:089][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_CallFunction] NOT Boolean
+[2026.02.18-04.07.15:089][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN bool:A] -> Get IsFalling.IsFalling
+[2026.02.18-04.07.15:089][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_VariableGet] Get PhysicsWeight
+[2026.02.18-04.07.15:089][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_VariableGet] Get Hit Location
+[2026.02.18-04.07.15:090][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT struct:Hit Location] -> vector * vector.A
+[2026.02.18-04.07.15:090][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_PromotableOperator] vector * vector
+[2026.02.18-04.07.15:090][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN struct:A] -> Get Hit Location.Hit Location
+[2026.02.18-04.07.15:090][  0]LogTemp: Warning: [DiagAnimBP]   [AnimGraphNode_StateMachine] Poise Broken | State Machine
+[2026.02.18-04.07.15:090][  0]LogTemp: Warning: [DiagAnimBP]     FAnimNode: AnimNode_StateMachine
+[2026.02.18-04.07.15:090][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT struct:Pose] -> Blend Poses by bool.BlendPose_0
+[2026.02.18-04.07.15:090][  0]LogTemp: Warning: [DiagAnimBP]   [AnimGraphNode_BlendListByBool] Blend Poses by bool
+[2026.02.18-04.07.15:090][  0]LogTemp: Warning: [DiagAnimBP]     FAnimNode: AnimNode_BlendListByBool
+[2026.02.18-04.07.15:090][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN struct:BlendPose_0] -> Poise Broken.Pose
+[2026.02.18-04.07.15:090][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN struct:BlendPose_1] -> Use cached pose 'Locomotion'.Pose
+[2026.02.18-04.07.15:090][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN bool:bActiveValue] -> Get PoiseBroken.PoiseBroken
+[2026.02.18-04.07.15:091][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT struct:Pose] -> Slot 'DefaultSlot'.Source
+[2026.02.18-04.07.15:091][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_VariableGet] Get PoiseBroken
+[2026.02.18-04.07.15:091][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT bool:PoiseBroken] -> Blend Poses by bool.bActiveValue
+[2026.02.18-04.07.15:091][  0]LogTemp: Warning: [DiagAnimBP]   [AnimGraphNode_UseCachedPose] Use cached pose 'Locomotion'
+[2026.02.18-04.07.15:091][  0]LogTemp: Warning: [DiagAnimBP]     FAnimNode: AnimNode_UseCachedPose
+[2026.02.18-04.07.15:091][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT struct:Pose] -> Blend Poses by bool.BlendPose_1
+[2026.02.18-04.07.15:091][  0]LogTemp: Warning: [DiagAnimBP] --- Graph: Locomotion (Nodes=5) ---
+[2026.02.18-04.07.15:091][  0]LogTemp: Warning: [DiagAnimBP]   [AnimStateEntryNode] Locomotion
+[2026.02.18-04.07.15:091][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT exec:Entry] -> Idle.In
+[2026.02.18-04.07.15:091][  0]LogTemp: Warning: [DiagAnimBP]   [AnimStateNode] Idle
+[2026.02.18-04.07.15:091][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN Transition:In] -> Locomotion.Entry
+[2026.02.18-04.07.15:092][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN Transition:In] -> Walk / Run to Idle.Out
+[2026.02.18-04.07.15:092][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT Transition:Out] -> Idle to Walk / Run.In
+[2026.02.18-04.07.15:092][  0]LogTemp: Warning: [DiagAnimBP]   [AnimStateNode] Walk / Run
+[2026.02.18-04.07.15:092][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN Transition:In] -> Idle to Walk / Run.Out
+[2026.02.18-04.07.15:092][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT Transition:Out] -> Walk / Run to Idle.In
+[2026.02.18-04.07.15:092][  0]LogTemp: Warning: [DiagAnimBP]   [AnimStateTransitionNode] Idle to Walk / Run
+[2026.02.18-04.07.15:092][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN Transition:In] -> Idle.Out
+[2026.02.18-04.07.15:092][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT Transition:Out] -> Walk / Run.In
+[2026.02.18-04.07.15:092][  0]LogTemp: Warning: [DiagAnimBP]   [AnimStateTransitionNode] Walk / Run to Idle
+[2026.02.18-04.07.15:092][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN Transition:In] -> Walk / Run.Out
+[2026.02.18-04.07.15:092][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT Transition:Out] -> Idle.In
+[2026.02.18-04.07.15:093][  0]LogTemp: Warning: [DiagAnimBP] --- Graph: Poise Broken (Nodes=4) ---
+[2026.02.18-04.07.15:093][  0]LogTemp: Warning: [DiagAnimBP]   [AnimStateEntryNode] Poise Broken
+[2026.02.18-04.07.15:093][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT exec:Entry] -> Start.In
+[2026.02.18-04.07.15:093][  0]LogTemp: Warning: [DiagAnimBP]   [AnimStateNode] Start
+[2026.02.18-04.07.15:093][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN Transition:In] -> Poise Broken.Entry
+[2026.02.18-04.07.15:093][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT Transition:Out] -> Start to Loop.In
+[2026.02.18-04.07.15:093][  0]LogTemp: Warning: [DiagAnimBP]   [AnimStateNode] Loop
+[2026.02.18-04.07.15:093][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN Transition:In] -> Start to Loop.Out
+[2026.02.18-04.07.15:093][  0]LogTemp: Warning: [DiagAnimBP]   [AnimStateTransitionNode] Start to Loop
+[2026.02.18-04.07.15:093][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN Transition:In] -> Start.Out
+[2026.02.18-04.07.15:093][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT Transition:Out] -> Loop.In
+[2026.02.18-04.07.15:093][  0]LogTemp: Warning: [DiagAnimBP] --- Graph: Idle (Nodes=2) ---
+[2026.02.18-04.07.15:094][  0]LogTemp: Warning: [DiagAnimBP]   [AnimGraphNode_StateResult] Output Animation Pose
+[2026.02.18-04.07.15:094][  0]LogTemp: Warning: [DiagAnimBP]     FAnimNode: AnimNode_StateResult
+[2026.02.18-04.07.15:094][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN struct:Result] -> Sequence Player 'a000_000020'.Pose
+[2026.02.18-04.07.15:094][  0]LogTemp: Warning: [DiagAnimBP]   [AnimGraphNode_SequencePlayer] a000_000020 | Sequence Player
+[2026.02.18-04.07.15:094][  0]LogTemp: Warning: [DiagAnimBP]     FAnimNode: AnimNode_SequencePlayer
+[2026.02.18-04.07.15:094][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT struct:Pose] -> Output Animation Pose.Result
+[2026.02.18-04.07.15:094][  0]LogTemp: Warning: [DiagAnimBP] --- Graph: Walk / Run (Nodes=4) ---
+[2026.02.18-04.07.15:094][  0]LogTemp: Warning: [DiagAnimBP]   [AnimGraphNode_StateResult] Output Animation Pose
+[2026.02.18-04.07.15:094][  0]LogTemp: Warning: [DiagAnimBP]     FAnimNode: AnimNode_StateResult
+[2026.02.18-04.07.15:094][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN struct:Result] -> Blendspace Player 'BS_c3100_Locomotion'.Pose
+[2026.02.18-04.07.15:094][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_VariableGet] Get GroundSpeed
+[2026.02.18-04.07.15:095][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT real:GroundSpeed] -> Blendspace Player 'BS_c3100_Locomotion'.Y
+[2026.02.18-04.07.15:095][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_VariableGet] Get Direction
+[2026.02.18-04.07.15:095][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT real:Direction] -> Blendspace Player 'BS_c3100_Locomotion'.X
+[2026.02.18-04.07.15:095][  0]LogTemp: Warning: [DiagAnimBP]   [AnimGraphNode_BlendSpacePlayer] BS_c3100_Locomotion | Blendspace Player
+[2026.02.18-04.07.15:095][  0]LogTemp: Warning: [DiagAnimBP]     FAnimNode: AnimNode_BlendSpacePlayer
+[2026.02.18-04.07.15:095][  0]LogTemp: Warning: [DiagAnimBP]     *** BLEND SPACE NODE ***
+[2026.02.18-04.07.15:095][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN real:X] -> Get Direction.Direction
+[2026.02.18-04.07.15:095][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN real:Y] -> Get GroundSpeed.GroundSpeed
+[2026.02.18-04.07.15:095][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT struct:Pose] -> Output Animation Pose.Result
+[2026.02.18-04.07.15:095][  0]LogTemp: Warning: [DiagAnimBP] --- Graph: Start (Nodes=4) ---
+[2026.02.18-04.07.15:095][  0]LogTemp: Warning: [DiagAnimBP]   [AnimGraphNode_StateResult] Output Animation Pose
+[2026.02.18-04.07.15:095][  0]LogTemp: Warning: [DiagAnimBP]     FAnimNode: AnimNode_StateResult
+[2026.02.18-04.07.15:096][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN struct:Result] -> Sequence Player.Pose
+[2026.02.18-04.07.15:096][  0]LogTemp: Warning: [DiagAnimBP]   [AnimGraphNode_SequencePlayer] Sequence Player
+[2026.02.18-04.07.15:096][  0]LogTemp: Warning: [DiagAnimBP]     FAnimNode: AnimNode_SequencePlayer
+[2026.02.18-04.07.15:096][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN object:Sequence] -> Get PoiseBreak_Start.PoiseBreak_Start
+[2026.02.18-04.07.15:096][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT struct:Pose] -> Output Animation Pose.Result
+[2026.02.18-04.07.15:096][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_VariableGet] Get PoiseBreakAsset
+[2026.02.18-04.07.15:096][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT object:PoiseBreakAsset] -> Get PoiseBreak_Start.self
+[2026.02.18-04.07.15:096][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_VariableGet] Get PoiseBreak_Start
+[2026.02.18-04.07.15:096][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT object:PoiseBreak_Start] -> Sequence Player.Sequence
+[2026.02.18-04.07.15:096][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN object:self] -> Get PoiseBreakAsset.PoiseBreakAsset
+[2026.02.18-04.07.15:096][  0]LogTemp: Warning: [DiagAnimBP] --- Graph: Loop (Nodes=4) ---
+[2026.02.18-04.07.15:097][  0]LogTemp: Warning: [DiagAnimBP]   [AnimGraphNode_StateResult] Output Animation Pose
+[2026.02.18-04.07.15:097][  0]LogTemp: Warning: [DiagAnimBP]     FAnimNode: AnimNode_StateResult
+[2026.02.18-04.07.15:097][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN struct:Result] -> Sequence Player.Pose
+[2026.02.18-04.07.15:097][  0]LogTemp: Warning: [DiagAnimBP]   [AnimGraphNode_SequencePlayer] Sequence Player
+[2026.02.18-04.07.15:097][  0]LogTemp: Warning: [DiagAnimBP]     FAnimNode: AnimNode_SequencePlayer
+[2026.02.18-04.07.15:097][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN object:Sequence] -> Get PoiseBreak_Loop.PoiseBreak_Loop
+[2026.02.18-04.07.15:097][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT struct:Pose] -> Output Animation Pose.Result
+[2026.02.18-04.07.15:097][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_VariableGet] Get PoiseBreakAsset
+[2026.02.18-04.07.15:097][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT object:PoiseBreakAsset] -> Get PoiseBreak_Loop.self
+[2026.02.18-04.07.15:097][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_VariableGet] Get PoiseBreak_Loop
+[2026.02.18-04.07.15:097][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT object:PoiseBreak_Loop] -> Sequence Player.Sequence
+[2026.02.18-04.07.15:098][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN object:self] -> Get PoiseBreakAsset.PoiseBreakAsset
+[2026.02.18-04.07.15:098][  0]LogTemp: Warning: [DiagAnimBP] --- Graph: Transition (Nodes=3) ---
+[2026.02.18-04.07.15:098][  0]LogTemp: Warning: [DiagAnimBP]   [AnimGraphNode_TransitionResult] Result
+[2026.02.18-04.07.15:098][  0]LogTemp: Warning: [DiagAnimBP]     FAnimNode: AnimNode_TransitionResult
+[2026.02.18-04.07.15:098][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN bool:bCanEnterTransition] -> float > float.ReturnValue
+[2026.02.18-04.07.15:098][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_VariableGet] Get GroundSpeed
+[2026.02.18-04.07.15:098][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT real:GroundSpeed] -> float > float.A
+[2026.02.18-04.07.15:098][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_PromotableOperator] float > float
+[2026.02.18-04.07.15:098][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN real:A] -> Get GroundSpeed.GroundSpeed
+[2026.02.18-04.07.15:098][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT bool:ReturnValue] -> Result.bCanEnterTransition
+[2026.02.18-04.07.15:098][  0]LogTemp: Warning: [DiagAnimBP] --- Graph: Transition (Nodes=3) ---
+[2026.02.18-04.07.15:098][  0]LogTemp: Warning: [DiagAnimBP]   [AnimGraphNode_TransitionResult] Result
+[2026.02.18-04.07.15:099][  0]LogTemp: Warning: [DiagAnimBP]     FAnimNode: AnimNode_TransitionResult
+[2026.02.18-04.07.15:099][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN bool:bCanEnterTransition] -> float < float.ReturnValue
+[2026.02.18-04.07.15:099][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_VariableGet] Get GroundSpeed
+[2026.02.18-04.07.15:099][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT real:GroundSpeed] -> float < float.A
+[2026.02.18-04.07.15:099][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_PromotableOperator] float < float
+[2026.02.18-04.07.15:099][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN real:A] -> Get GroundSpeed.GroundSpeed
+[2026.02.18-04.07.15:099][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT bool:ReturnValue] -> Result.bCanEnterTransition
+[2026.02.18-04.07.15:099][  0]LogTemp: Warning: [DiagAnimBP] --- Graph: Transition (Nodes=3) ---
+[2026.02.18-04.07.15:099][  0]LogTemp: Warning: [DiagAnimBP]   [AnimGraphNode_TransitionResult] Result
+[2026.02.18-04.07.15:099][  0]LogTemp: Warning: [DiagAnimBP]     FAnimNode: AnimNode_TransitionResult
+[2026.02.18-04.07.15:099][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN bool:bCanEnterTransition] -> float < float.ReturnValue
+[2026.02.18-04.07.15:100][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_AnimGetter] Time Remaining (ratio)
+[2026.02.18-04.07.15:100][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT real:ReturnValue] -> float < float.A
+[2026.02.18-04.07.15:100][  0]LogTemp: Warning: [DiagAnimBP]   [K2Node_PromotableOperator] float < float
+[2026.02.18-04.07.15:100][  0]LogTemp: Warning: [DiagAnimBP]     Pin[IN real:A] -> Time Remaining (ratio).ReturnValue
+[2026.02.18-04.07.15:100][  0]LogTemp: Warning: [DiagAnimBP]     Pin[OUT bool:ReturnValue] -> Result.bCanEnterTransition
+[2026.02.18-04.07.15:100][  0]LogTemp: Warning: [DiagAnimBP] --- Compilation Status ---
+[2026.02.18-04.07.15:100][  0]LogTemp: Warning: [DiagAnimBP] GeneratedClass: ABP_c3100_Guard_C
+[2026.02.18-04.07.15:100][  0]LogTemp: Warning: [DiagAnimBP] Status: 3
+[2026.02.18-04.07.15:100][  0]LogTemp: Warning: [DiagAnimBP] Compatible Skeletons: 1
+[2026.02.18-04.07.15:100][  0]LogTemp: Warning: [DiagAnimBP]   /Game/EldenRingAnimations/c3100_guard/c3100_mesh_Skeleton.c3100_mesh_Skeleton
+[2026.02.18-04.07.15:100][  0]LogTemp: Warning: === SetupC3100 Commandlet: COMPLETE ===
+[2026.02.18-04.07.15:100][  0]LogInit: Display: 
+[2026.02.18-04.07.15:100][  0]LogInit: Display: Warning/Error Summary (Unique only)
+[2026.02.18-04.07.15:100][  0]LogInit: Display: -----------------------------------
+[2026.02.18-04.07.15:101][  0]LogInit: Display: LogEnum: Warning: EnumRedirect for enum ESLFDirection maps 'E_Direction::NewEnumerator0' to invalid value 'ESLFDirection::NewEnumerator0'!
+[2026.02.18-04.07.15:101][  0]LogInit: Display: LogEnum: Warning: EnumRedirect for enum ESLFDirection maps 'E_Direction::NewEnumerator5' to invalid value 'ESLFDirection::NewEnumerator5'!
+[2026.02.18-04.07.15:101][  0]LogInit: Display: LogEnum: Warning: EnumRedirect for enum ESLFDirection maps 'E_Direction::NewEnumerator3' to invalid value 'ESLFDirection::NewEnumerator3'!
+[2026.02.18-04.07.15:101][  0]LogInit: Display: LogEnum: Warning: EnumRedirect for enum ESLFDirection maps 'E_Direction::NewEnumerator4' to invalid value 'ESLFDirection::NewEnumerator4'!
+[2026.02.18-04.07.15:101][  0]LogInit: Display: LogTemp: Warning: AB_DemoRoom::Constructor - Components created
+[2026.02.18-04.07.15:101][  0]LogInit: Display: LogTemp: Warning: [SLFSoulslikeBoss] Constructor - Created AC_AI_CombatManager: SUCCESS
+[2026.02.18-04.07.15:101][  0]LogInit: Display: LogTemp: Warning: === SetupC3100 Commandlet: Starting ===
+[2026.02.18-04.07.15:101][  0]LogInit: Display: LogTemp: Warning: --- Step 1: Adding sockets ---
+[2026.02.18-04.07.15:101][  0]LogInit: Display: LogTemp: Warning: === AddSocket: weapon_start on R_Sword ===
+Socket 'weapon_start' already exists on bone 'R_Sword', updating...
+Saved skeleton
+[2026.02.18-04.07.15:102][  0]LogInit: Display: LogTemp: Warning: === AddSocket: weapon_end on R_Sword ===
+Socket 'weapon_end' already exists on bone 'R_Sword', updating...
+Saved skeleton
+[2026.02.18-04.07.15:102][  0]LogInit: Display: LogTemp: Warning: === AddSocket: hand_r on R_Hand ===
+Socket 'hand_r' already exists on bone 'R_Hand', updating...
+Saved skeleton
+[2026.02.18-04.07.15:102][  0]LogInit: Display: LogTemp: Warning: === AddSocket: hand_l on L_Hand ===
+Socket 'hand_l' already exists on bone 'L_Hand', updating...
+Saved skeleton
+[2026.02.18-04.07.15:102][  0]LogInit: Display: LogTemp: Warning: === AddSocket: foot_l on L_Foot ===
+Socket 'foot_l' already exists on bone 'L_Foot', updating...
+Saved skeleton
+[2026.02.18-04.07.15:102][  0]LogInit: Display: LogTemp: Warning: === AddSocket: foot_r on R_Foot ===
+Socket 'foot_r' already exists on bone 'R_Foot', updating...
+Saved skeleton
+[2026.02.18-04.07.15:102][  0]LogInit: Display: LogTemp: Warning: Skeleton save: SUCCESS
+[2026.02.18-04.07.15:102][  0]LogInit: Display: LogTemp: Warning: --- Step 2: Creating montages ---
+[2026.02.18-04.07.15:102][  0]LogInit: Display: LogTemp: Warning:   Creating Attack montages (4)...
+[2026.02.18-04.07.15:103][  0]LogInit: Display: LogTemp: Warning:   === CreateMontage: AM_c3100_Attack01 ===
+Source length: 3.167 sec
+Length: 3.17 sec, Slot: DefaultSlot
+Post-bracket Length: 3.17 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_Attack01
+[2026.02.18-04.07.15:103][  0]LogInit: Display: LogTemp: Warning:   === CreateMontage: AM_c3100_Attack02 ===
+Source length: 2.633 sec
+Length: 2.63 sec, Slot: DefaultSlot
+Post-bracket Length: 2.63 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_Attack02
+[2026.02.18-04.07.15:103][  0]LogInit: Display: LogTemp: Warning:   === CreateMontage: AM_c3100_Attack03_Fast ===
+Source length: 2.333 sec
+Length: 2.33 sec, Slot: DefaultSlot
+Post-bracket Length: 2.33 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_Attack03_Fast
+[2026.02.18-04.07.15:103][  0]LogInit: Display: LogTemp: Warning:   === CreateMontage: AM_c3100_HeavyAttack ===
+Source length: 5.767 sec
+Length: 5.77 sec, Slot: DefaultSlot
+Post-bracket Length: 5.77 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_HeavyAttack
+[2026.02.18-04.07.15:104][  0]LogInit: Display: LogTemp: Warning:   Creating Reaction montages (3)...
+[2026.02.18-04.07.15:104][  0]LogInit: Display: LogTemp: Warning:   === CreateMontage: AM_c3100_HitReact ===
+Source length: 4.433 sec
+Length: 4.43 sec, Slot: DefaultSlot
+Post-bracket Length: 4.43 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_HitReact
+[2026.02.18-04.07.15:104][  0]LogInit: Display: LogTemp: Warning:   === CreateMontage: AM_c3100_HitReact_Light ===
+Source length: 0.033 sec
+Length: 0.03 sec, Slot: DefaultSlot
+Post-bracket Length: 0.03 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_HitReact_Light
+[2026.02.18-04.07.15:104][  0]LogInit: Display: LogTemp: Warning:   === CreateMontage: AM_c3100_GuardHit ===
+Source length: 1.167 sec
+Length: 1.17 sec, Slot: DefaultSlot
+Post-bracket Length: 1.17 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_GuardHit
+[2026.02.18-04.07.15:104][  0]LogInit: Display: LogTemp: Warning:   Creating Death montages (3)...
+[2026.02.18-04.07.15:105][  0]LogInit: Display: LogTemp: Warning:   === CreateMontage: AM_c3100_Death_Front ===
+Source length: 7.000 sec
+Length: 7.00 sec, Slot: DefaultSlot
+Post-bracket Length: 7.00 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_Death_Front
+[2026.02.18-04.07.15:105][  0]LogInit: Display: LogTemp: Warning:   === CreateMontage: AM_c3100_Death_Back ===
+Source length: 7.000 sec
+Length: 7.00 sec, Slot: DefaultSlot
+Post-bracket Length: 7.00 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_Death_Back
+[2026.02.18-04.07.15:105][  0]LogInit: Display: LogTemp: Warning:   === CreateMontage: AM_c3100_Death_Left ===
+Source length: 5.667 sec
+Length: 5.67 sec, Slot: DefaultSlot
+Post-bracket Length: 5.67 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_Death_Left
+[2026.02.18-04.07.15:105][  0]LogInit: Display: LogTemp: Warning:   Creating Dodge montages (4)...
+[2026.02.18-04.07.15:106][  0]LogInit: Display: LogTemp: Warning:   === CreateMontage: AM_c3100_Dodge_Fwd ===
+Source length: 0.900 sec
+Length: 0.90 sec, Slot: DefaultSlot
+Post-bracket Length: 0.90 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_Dodge_Fwd
+[2026.02.18-04.07.15:107][  0]LogInit: Display: LogTemp: Warning:   === CreateMontage: AM_c3100_Dodge_Bwd ===
+Source length: 0.900 sec
+Length: 0.90 sec, Slot: DefaultSlot
+Post-bracket Length: 0.90 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_Dodge_Bwd
+[2026.02.18-04.07.15:108][  0]LogInit: Display: LogTemp: Warning:   === CreateMontage: AM_c3100_Dodge_Left ===
+Source length: 1.267 sec
+Length: 1.27 sec, Slot: DefaultSlot
+Post-bracket Length: 1.27 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_Dodge_Left
+[2026.02.18-04.07.15:108][  0]LogInit: Display: LogTemp: Warning:   === CreateMontage: AM_c3100_Dodge_Right ===
+Source length: 1.267 sec
+Length: 1.27 sec, Slot: DefaultSlot
+Post-bracket Length: 1.27 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_Dodge_Right
+[2026.02.18-04.07.15:109][  0]LogInit: Display: LogTemp: Warning:   Creating Locomotion montages (3)...
+[2026.02.18-04.07.15:109][  0]LogInit: Display: LogTemp: Warning:   === CreateMontage: AM_c3100_Idle ===
+Source length: 3.667 sec
+Length: 3.67 sec, Slot: DefaultSlot
+Post-bracket Length: 3.67 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_Idle
+[2026.02.18-04.07.15:110][  0]LogInit: Display: LogTemp: Warning:   === CreateMontage: AM_c3100_Walk ===
+Source length: 1.867 sec
+Length: 1.87 sec, Slot: DefaultSlot
+Post-bracket Length: 1.87 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_Walk
+[2026.02.18-04.07.15:110][  0]LogInit: Display: LogTemp: Warning:   === CreateMontage: AM_c3100_Run ===
+Source length: 0.733 sec
+Length: 0.73 sec, Slot: DefaultSlot
+Post-bracket Length: 0.73 sec
+Saved: /Game/EldenRingAnimations/c3100_guard/AM_c3100_Run
+[2026.02.18-04.07.15:111][  0]LogInit: Display: LogTemp: Warning: --- Step 3: Creating blend space ---
+[2026.02.18-04.07.15:111][  0]LogInit: Display: LogTemp: Warning: === CreateBlendSpace1D ===
+Created BlendSpace1D with 3 samples
+Saved: /Game/EldenRingAnimations/c3100_guard/BS_c3100_Locomotion
+=== BLEND SPACE COMPLETE ===
+[2026.02.18-04.07.15:111][  0]LogInit: Display: LogTemp: Warning: --- Step 4: Duplicating AnimBP ---
+[2026.02.18-04.07.15:111][  0]LogInit: Display: LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\EldenRingAnimations\c3100_guard\ABP_c3100_Guard.uasset: [Compiler] Control Rig  - Hierarchy discrepancy for bone 'Root' - different parents on Control Rig vs SkeletalMesh.
+[2026.02.18-04.07.15:113][  0]LogInit: Display: LogBlueprint: Warning: [AssetLog] C:\scripts\SLFConversion\Content\EldenRingAnimations\c3100_guard\ABP_c3100_Guard.uasset: [Compiler] Control Rig  - Hierarchy discrepancy for bone 'Head' - different parents on Control Rig vs SkeletalMesh.
+[2026.02.18-04.07.15:113][  0]LogInit: Display: LogTemp: Warning: === DuplicateAnimBPForSkeleton ===
+Source: /Game/SoulslikeFramework/Demo/_Animations/Locomotion/AnimBP/ABP_SoulslikeEnemy
+Target Skeleton: /Game/EldenRingAnimations/c3100_guard/c3100_mesh_Skeleton
+Output: /Game/EldenRingAnimations/c3100_guard/ABP_c3100_Guard
+Source AnimBP loaded: ABP_SoulslikeEnemy (class=ABP_SoulslikeEnemy)
+Set target skeleton to: /Game/EldenRingAnimations/c3100_guard/c3100_mesh_Skeleton.c3100_mesh_Skeleton
+Compiled AnimBP
+Saved AnimBP
+=== DUPLICATION COMPLETE ===
+[2026.02.18-04.07.15:113][  0]LogInit: Display: LogTemp: Warning: --- Step 4b: Replacing AnimGraph references ---
+[2026.02.18-04.07.15:114][  0]LogInit: Display: LogTemp: Warning: === ReplaceAnimReferences: /Game/EldenRingAnimations/c3100_guard/ABP_c3100_Guard ===
+  Mapped: ABS_SoulslikeEnemy -> BS_c3100_Locomotion
+  Mapped: AS_RT_Idle_Kwang -> a000_000020
+Scanning 58 graphs...
+  Replaced in node: Sequence Player 'a000_000020' (AnimGraphNode_SequencePlayer)
+  Replaced in node: Blendspace Player 'BS_c3100_Locomotion' (AnimGraphNode_BlendSpacePlayer)
+  Replaced in node: Sequence Player 'a000_000020' (AnimGraphNode_SequencePlayer)
+  Replaced in node: Blendspace Player 'BS_c3100_Locomotion' (AnimGraphNode_BlendSpacePlayer)
+  Replaced in node: Sequence Player 'a000_000020' (AnimGraphNode_SequencePlayer)
+  Replaced in node: Blendspace Player 'BS_c3100_Locomotion' (AnimGraphNode_BlendSpacePlayer)
+Replaced 6 node(s)
+Save: SUCCESS
+[2026.02.18-04.07.15:114][  0]LogInit: Display: LogTemp: Warning: --- Step 4c: Removing Control Rig + IK Rig ---
+[2026.02.18-04.07.15:114][  0]LogInit: Display: LogTemp: Warning: === DisableControlRig: /Game/EldenRingAnimations/c3100_guard/ABP_c3100_Guard ===
+  Removing ControlRig node: Control Rig (AnimGraphNode_ControlRig)
+    Pin: Source, Dir=IN, Category=struct, Links=1
+    Pin: Alpha, Dir=IN, Category=real, Links=0
+    Pin: bAlphaBoolEnabled, Dir=IN, Category=bool, Links=0
+    Pin: AlphaCurveName, Dir=IN, Category=name, Links=0
+    Pin: Pose, Dir=OUT, Category=struct, Links=1
+    Pin: ShouldDoIKTrace, Dir=IN, Category=bool, Links=1
+    Rewired: Slot 'DefaultSlot' -> IK Rig (bypassed CR)
+    -> Node REMOVED from graph
+  Removing ControlRig node: IK Rig (AnimGraphNode_IKRig)
+    Pin: Source, Dir=IN, Category=struct, Links=1
+    Pin: bAlphaBoolEnabled, Dir=IN, Category=bool, Links=0
+    Pin: Alpha, Dir=IN, Category=real, Links=1
+    Pin: AlphaCurveName, Dir=IN, Category=name, Links=0
+    Pin: Pose, Dir=OUT, Category=struct, Links=1
+    Pin: Position_spine_05_Goal, Dir=IN, Category=struct, Links=1
+    Pin: PositionAlpha_spine_05_Goal, Dir=IN, Category=real, Links=0
+    Rewired: Slot 'DefaultSlot' -> Output Pose (bypassed CR)
+    -> Node REMOVED from graph
+Removed 2 ControlRig/IKRig node(s)
+Save: SUCCESS
+[2026.02.18-04.07.15:115][  0]LogInit: Display: LogTemp: Warning: --- Step 5: Creating data assets ---
+[2026.02.18-04.07.15:115][  0]LogInit: Display: LogTemp: Warning:   PDA_c3100_AnimData: SAVED (BS=yes, Idle=yes)
+[2026.02.18-04.07.15:116][  0]LogInit: Display: NOTE: Only first 50 warnings displayed.
+[2026.02.18-04.07.15:116][  0]LogInit: Display: 
+[2026.02.18-04.07.15:116][  0]LogInit: Display: Success - 0 error(s), 262 warning(s)
+[2026.02.18-04.07.15:116][  0]LogInit: Display: 
+Execution of commandlet took:  0.61 seconds
+[2026.02.18-04.07.15:238][  0]LogShaderCompilers: Display: Shaders left to compile 0

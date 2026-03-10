@@ -10,6 +10,7 @@
 
 #include "CoreMinimal.h"
 #include "SLFDoorBase.h"
+#include "SLFEnums.h"
 #include "NiagaraComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/BillboardComponent.h"
@@ -118,6 +119,30 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss Door")
 	bool bDestroyOnBossDefeated = true;
 
+	// ============================================================
+	// DUNGEON ENTRANCE PROPERTIES
+	// ============================================================
+
+	/** Dungeon difficulty tier (affects door color) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss Door|Dungeon")
+	ESLFDungeonTier DungeonTier = ESLFDungeonTier::Normal;
+
+	/** Whether this door is a dungeon entrance (vs interior boss fog gate) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss Door|Dungeon")
+	bool bIsDungeonEntrance = true;
+
+	/** Level path to stream in when entering dungeon (e.g. /Game/Maps/L_Dungeon_01) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss Door|Dungeon")
+	FString DungeonLevelPath = TEXT("Dungeon");
+
+	/** Whether this boss gate requires a puzzle to unseal */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss Door|Dungeon")
+	bool bRequiresPuzzle = false;
+
+	/** Get the color for this dungeon tier */
+	UFUNCTION(BlueprintCallable, Category = "Boss Door|Dungeon")
+	FLinearColor GetTierColor() const;
+
 	/** Niagara system asset for portal effects */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss Door|VFX")
 	TSoftObjectPtr<UNiagaraSystem> PortalNiagaraSystem;
@@ -191,4 +216,11 @@ protected:
 
 	/** Set collision on the fog gate mesh */
 	void SetFogGateCollision(bool bEnableCollision);
+
+	/** Handle dungeon entrance: fade to black, teleport, fade in */
+	void BeginDungeonEntrance(AActor* Player);
+	void OnDungeonFadeOutComplete();
+
+	FTimerHandle DungeonEntranceTimerHandle;
+	TWeakObjectPtr<AActor> DungeonEntrancePlayer;
 };

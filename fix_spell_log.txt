@@ -1,0 +1,9 @@
+=== Fixing Magic Spell ItemClass ===
+Loaded spell asset: DA_MagicSpell
+Loaded SLFSpellProjectile class: <Object '/Script/SLFConversion.SLFSpellProjectile' (0x000002143336F500) Class 'Class'>
+Got item_information struct
+Current ItemClass: <Object '/Script/SLFConversion.SLFSpellProjectile' (0x000002143336F500) Class 'Class'>
+Set ItemClass to SLFSpellProjectile
+Verified new ItemClass: <Object '/Script/SLFConversion.SLFSpellProjectile' (0x000002143336F500) Class 'Class'>
+SAVED: /Game/SoulslikeFramework/Data/Items/DA_MagicSpell
+SUCCESS: DA_MagicSpell now uses SLFSpellProjectile

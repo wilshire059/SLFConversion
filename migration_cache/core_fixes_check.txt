@@ -1,0 +1,29 @@
+======================================================================
+CHECKING CORE FIXES
+======================================================================
+
+1. B_SequenceActor:
+   Parent: /Script/SLFConversion.B_SequenceActor
+   sequence_to_play: LS_ShowcaseRoom
+   Compile: OK
+
+2. GI_SoulslikeFramework:
+   Parent: /Script/SLFConversion.SLFGameInstance
+   first_time_on_demo_level: True
+   Compile: OK
+
+3. W_HUD:
+   Parent: /Script/SLFConversion.W_HUD
+   Compile: OK
+
+4. AC_AI_CombatManager:
+   Parent: /Script/SLFConversion.AC_AI_CombatManager
+   Compile: OK
+
+5. AC_AI_Boss:
+   Parent: /Script/SLFConversion.AIBossComponent
+   Compile: OK
+
+======================================================================
+CHECK COMPLETE
+======================================================================

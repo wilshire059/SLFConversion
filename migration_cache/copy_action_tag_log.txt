@@ -1,0 +1,69 @@
+============================================================
+COPYING ACTION TAG FROM DA_MagicSpell
+============================================================
+Source action_to_trigger: <Struct 'GameplayTag' (0x0000018B1483E544) {}>
+Tag type: <class 'GameplayTag'>
+
+Processing: DA_FireballSpell
+  Current action_to_trigger: <Struct 'GameplayTag' (0x0000018B1483F144) {}>
+  Set action_to_trigger: <Struct 'GameplayTag' (0x0000018B1483F144) {}>
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_FireballSpell.DA_FireballSpell
+
+Processing: DA_IceShardSpell
+  Current action_to_trigger: <Struct 'GameplayTag' (0x0000018A951DEB44) {}>
+  Set action_to_trigger: <Struct 'GameplayTag' (0x0000018A951DEB44) {}>
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_IceShardSpell.DA_IceShardSpell
+
+Processing: DA_LightningBoltSpell
+  Current action_to_trigger: <Struct 'GameplayTag' (0x0000018B14B00144) {}>
+  Set action_to_trigger: <Struct 'GameplayTag' (0x0000018B14B00144) {}>
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_LightningBoltSpell.DA_LightningBoltSpell
+
+Processing: DA_HolyOrbSpell
+  Current action_to_trigger: <Struct 'GameplayTag' (0x0000018B14B00D44) {}>
+  Set action_to_trigger: <Struct 'GameplayTag' (0x0000018B14B00D44) {}>
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_HolyOrbSpell.DA_HolyOrbSpell
+
+Processing: DA_PoisonBlobSpell
+  Current action_to_trigger: <Struct 'GameplayTag' (0x0000018B14B01944) {}>
+  Set action_to_trigger: <Struct 'GameplayTag' (0x0000018B14B01944) {}>
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_PoisonBlobSpell.DA_PoisonBlobSpell
+
+Processing: DA_ArcaneMissileSpell
+  Current action_to_trigger: <Struct 'GameplayTag' (0x0000018B14B02544) {}>
+  Set action_to_trigger: <Struct 'GameplayTag' (0x0000018B14B02544) {}>
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_ArcaneMissileSpell.DA_ArcaneMissileSpell
+
+Processing: DA_BlackholeSpell
+  Current action_to_trigger: <Struct 'GameplayTag' (0x0000018B14B03144) {}>
+  Set action_to_trigger: <Struct 'GameplayTag' (0x0000018B14B03144) {}>
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_BlackholeSpell.DA_BlackholeSpell
+
+Processing: DA_BeamSpell
+  Current action_to_trigger: <Struct 'GameplayTag' (0x0000018B14B03D44) {}>
+  Set action_to_trigger: <Struct 'GameplayTag' (0x0000018B14B03D44) {}>
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_BeamSpell.DA_BeamSpell
+
+Processing: DA_AOEExplosionSpell
+  Current action_to_trigger: <Struct 'GameplayTag' (0x0000018B14B04944) {}>
+  Set action_to_trigger: <Struct 'GameplayTag' (0x0000018B14B04944) {}>
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_AOEExplosionSpell.DA_AOEExplosionSpell
+
+Processing: DA_ShieldSpell
+  Current action_to_trigger: <Struct 'GameplayTag' (0x0000018B14B05544) {}>
+  Set action_to_trigger: <Struct 'GameplayTag' (0x0000018B14B05544) {}>
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_ShieldSpell.DA_ShieldSpell
+
+Processing: DA_HealingSpell
+  Current action_to_trigger: <Struct 'GameplayTag' (0x0000018B14B06144) {}>
+  Set action_to_trigger: <Struct 'GameplayTag' (0x0000018B14B06144) {}>
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_HealingSpell.DA_HealingSpell
+
+Processing: DA_SummoningCircleSpell
+  Current action_to_trigger: <Struct 'GameplayTag' (0x0000018B14B06D44) {}>
+  Set action_to_trigger: <Struct 'GameplayTag' (0x0000018B14B06D44) {}>
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_SummoningCircleSpell.DA_SummoningCircleSpell
+
+============================================================
+Results: 12 succeeded, 0 failed
+============================================================

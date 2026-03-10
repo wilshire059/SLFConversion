@@ -50,6 +50,17 @@ private:
 	/** Get terrain height at XY position */
 	float GetTerrainHeight(UWorld* World, float X, float Y);
 
+	/** Sub-region within a zone for density variation */
+	struct FSubRegionDef
+	{
+		FString Name;
+		FVector Center;
+		float Radius;
+		float EnemyDensity;
+		float LootDensity;
+		ESLFEnemyRank MaxRank;
+	};
+
 	/** Zone region definitions — approximate XY bounds on the 8x8km Titan map */
 	struct FZoneRegion
 	{
@@ -57,11 +68,23 @@ private:
 		FString DisplayName;
 		FVector Center;
 		float Radius;
+		FLinearColor MapColor;
 		FVector BossArenaLocation;
 		TArray<FVector> RestingPointLocations;
 		TArray<FVector> SpawnPointLocations;
+		TArray<FSubRegionDef> SubRegions;
 	};
 
 	TArray<FZoneRegion> ZoneRegions;
 	void InitializeZoneRegions();
+
+	// ── World Population (Phase A2-A4) ──
+	/** Place loot pickups across all zones (~320 total) */
+	void SetupWorldLoot(UWorld* World);
+
+	/** Place grapple points at elevated positions */
+	void SetupGrapplePoints(UWorld* World);
+
+	/** Generate additional spawn points within sub-regions */
+	void ExpandSpawnPointsForSubRegions();
 };

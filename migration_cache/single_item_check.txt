@@ -1,0 +1,8 @@
+
+=== Checking: /Game/SoulslikeFramework/Data/Items/DA_HealthFlask.DA_HealthFlask ===
+  Class: PDA_Item_C
+  Class Path: /Game/SoulslikeFramework/Data/PDA_Item.PDA_Item_C
+
+=== Checking: /Game/SoulslikeFramework/Data/Items/Spells/DA_FireballSpell.DA_FireballSpell ===
+  Class: PDA_Item
+  Class Path: /Script/SLFConversion.PDA_Item

@@ -1,0 +1,131 @@
+{
+	"W_Settings_Entry":
+	{
+		"EntryType": 3,
+		"UnhoveredColor":
+		{
+			"R": 1,
+			"G": 1,
+			"B": 1,
+			"A": 1
+		},
+		"HoveredColor":
+		{
+			"R": 1,
+			"G": 1,
+			"B": 0,
+			"A": 1
+		},
+		"ColorAndOpacity":
+		{
+			"R": 1,
+			"G": 1,
+			"B": 1,
+			"A": 1
+		},
+		"DesignSizeMode": 1,
+		"PaletteCategory": "User Created",
+		"TickFrequency": 1,
+		"FlowDirectionPreference": 0,
+		"AccessibleBehavior": 0,
+		"AccessibleSummaryBehavior": 1,
+		"Cursor": 1,
+		"Clipping": 0,
+		"Visibility": 4,
+		"PixelSnapping": 0,
+		"DesignerFlags": 0,
+		"UnhoveredColor_CPP":
+		{
+			"R": 1,
+			"G": 1,
+			"B": 1,
+			"A": 1
+		},
+		"HoveredColor_CPP":
+		{
+			"R": 1,
+			"G": 1,
+			"B": 0,
+			"A": 1
+		},
+		"SettingTag_CPP": "None",
+		"SettingName_CPP": "",
+		"SettingDescription_CPP": "",
+		"ButtonText_CPP": "",
+		"EntryType_CPP": 3
+	},
+	"W_Settings_CategoryEntry":
+	{
+		"SwitcherIndex": 0,
+		"SelectedColor":
+		{
+			"R": 1,
+			"G": 0.8399999737739563,
+			"B": 0,
+			"A": 1
+		},
+		"DeselectedColor":
+		{
+			"R": 0.5,
+			"G": 0.5,
+			"B": 0.5,
+			"A": 1
+		},
+		"ColorAndOpacity":
+		{
+			"R": 1,
+			"G": 1,
+			"B": 1,
+			"A": 1
+		},
+		"Priority": 0,
+		"SettingCategory_CPP": "None",
+		"SwitcherIndex_CPP": 0,
+		"SelectedColor_CPP":
+		{
+			"R": 1,
+			"G": 0.8399999737739563,
+			"B": 0,
+			"A": 1
+		},
+		"DeselectedColor_CPP":
+		{
+			"R": 0.5,
+			"G": 0.5,
+			"B": 0.5,
+			"A": 1
+		}
+	},
+	"W_Settings":
+	{
+		"CategoriesToHide": [],
+		"QuitToDesktop": false,
+		"bIsFocusable": false,
+		"bStopAction": false,
+		"bAutomaticallyRegisterInputOnConstruction": false,
+		"bHasScriptImplementedTick": false,
+		"bHasScriptImplementedPaint": false,
+		"bIsVariable": true,
+		"bCreatedByConstructionScript": false,
+		"bIsEnabled": true,
+		"bOverride_Cursor": false,
+		"bOverrideAccessibleDefaults": false,
+		"bCanChildrenBeAccessible": true,
+		"bIsVolatile": false,
+		"bWrappedByComponent": false,
+		"bHiddenInDesigner": false,
+		"bExpandedInDesigner": false,
+		"bLockedInDesigner": false,
+		"CategoriesToHide_CPP": [],
+		"QuitToDesktop_CPP": false
+	},
+	"PDA_CustomSettings":
+	{
+		"bInvertCamX": false,
+		"bInvertCamY": false,
+		"CamSpeed": 1,
+		"bInvertCamX_CPP": false,
+		"bInvertCamY_CPP": false,
+		"CamSpeed_CPP": 1
+	}
+}

@@ -1,0 +1,27 @@
+=== DATA TABLE EXPORT ===
+Path: /Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DialogTables/DT_ShowcaseGuideNpc_Progress
+RowStruct: FDialogEntry
+
+=== ROWS ===
+Row Count: 5
+
+--- Row: NewRow ---
+  Entry_3_E3D06962403A4DF403DFBF892EECBE72 = NSLOCTEXT("[4296D1B92D44D6F2608C78729DCBD424]", "B4D98D544BC684288A19D488D1980E9A", "Having a good time? Malgareth can be quite hard to defeat.")
+  GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1 = 
+
+--- Row: NewRow_0 ---
+  Entry_3_E3D06962403A4DF403DFBF892EECBE72 = NSLOCTEXT("[4296D1B92D44D6F2608C78729DCBD424]", "133DA8C743C99C03E608C49001E5B900", "@isikdev has told me to remind you about this if you were to struggle. You can guard Malgareth\'s attacks.")
+  GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1 = 
+
+--- Row: NewRow_1 ---
+  Entry_3_E3D06962403A4DF403DFBF892EECBE72 = NSLOCTEXT("[4296D1B92D44D6F2608C78729DCBD424]", "85F7AD4F432A540114CCC7AA68FF3BF0", "Practice guarding on this poor Example Enemy I have to my left. Guarding will be very useful in situations where you are consistently being attacked and dodging is hard.")
+  GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1 = 
+
+--- Row: NewRow_2 ---
+  Entry_3_E3D06962403A4DF403DFBF892EECBE72 = NSLOCTEXT("[4296D1B92D44D6F2608C78729DCBD424]", "54CE87D447834013687B81A986D21B1B", "Also! You can talk to my friend next to me and buy some items that could make your life easier.")
+  GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1 = 
+
+--- Row: NewRow_3 ---
+  Entry_3_E3D06962403A4DF403DFBF892EECBE72 = NSLOCTEXT("[4296D1B92D44D6F2608C78729DCBD424]", "7D9D637643ACF848A8AA6C96CBC513A2", "Good luck! I\'ll return back to staring at this wonderful ladder.")
+  GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1 = 
+

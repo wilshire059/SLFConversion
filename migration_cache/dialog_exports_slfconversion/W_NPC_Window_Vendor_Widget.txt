@@ -1,0 +1,506 @@
+=== WIDGET BLUEPRINT EXPORT ===
+Path: /Game/SoulslikeFramework/Widgets/Vendor/W_NPC_Window_Vendor
+ParentClass: W_NPC_Window_Vendor
+
+=== CLASS DEFAULT OBJECT ===
+Object: Default__W_NPC_Window_Vendor_C (Class: W_NPC_Window_Vendor_C)
+  W_VendorAction = null
+  W_LevelEntry = null
+  W_CurrencyEntry_166 = null
+  W_CurrencyContainer = null
+  VendorTitleText = null
+  VendorTitleIcon = null
+  VendorActionPopup = null
+  UniformInventoryGrid = null
+  TextHeld = null
+  StoredAmountText = null
+  StoredAmountBox = null
+  SecondaryStats = null
+  ScrollRightInputIcon = null
+  ScrollLeftInputIcon = null
+  PrimaryStats = null
+  OnUseBox = null
+  OkInputIcon = null
+  MiscStats = null
+  MaxAmountText = null
+  MainBlur = null
+  ItemOnUseDescription = null
+  ItemNameText_LongDetails = null
+  ItemNameText_Inventory = null
+  ItemNameText_Details = null
+  ItemLongDescription = null
+  ItemInfoBoxSwitcher = null
+  ItemIcon = null
+  ItemDescription = null
+  ItemCategoryText = null
+  InventorySizer = null
+  InventoryScrollBox = null
+  Image_134 = null
+  DetailsLargeImage = null
+  CharacterStatsOverlay = null
+  ButtonsBox = null
+  BackInputIcon = null
+  AmountText = null
+  VendorSlots (Array, Count: 0):
+  OccupiedVendorSlots (Array, Count: 0):
+  SelectedSlot = null
+  CategoryEntries (Array, Count: 0):
+  ActiveFilterCategory = (INVALID)
+  NavigationIndex = 0
+  CurrentVendorAsset = null
+  CurrentNpcName = 
+  VendorType = (INVALID)
+  OnVendorWindowClosed = ()
+  ActiveDeviceType = KeyboardAndMouse
+  KeyCorrelationTable = DT_KeyMappingCorrelation (Path: /Game/SoulslikeFramework/Data/_Datatables/DT_KeyMappingCorrelation.DT_KeyMappingCorrelation)
+  NavigableTag (FGameplayTag):
+    TagName = SoulslikeFramework.Backend.Widgets.NpcMenu.Vendor
+  NavigableInputMapping = IMC_NavigableMenu (Path: /Game/SoulslikeFramework/Input/IMC_NavigableMenu.IMC_NavigableMenu)
+  ColorAndOpacity (FLinearColor):
+    R = 1.000000
+    G = 1.000000
+    B = 1.000000
+    A = 1.000000
+  ColorAndOpacityDelegate = (null).None
+  ForegroundColor (FSlateColor):
+    SpecifiedColor:
+      R = 1.000000
+      G = 0.000000
+      B = 1.000000
+      A = 1.000000
+    ColorUseRule = UseColor_Foreground
+  ForegroundColorDelegate = (null).None
+  OnVisibilityChanged = ()
+  Padding (FMargin):
+    Left = 0.000000
+    Top = 0.000000
+    Right = 0.000000
+    Bottom = 0.000000
+  Priority = 0
+  bIsFocusable = False
+  bStopAction = False
+  bAutomaticallyRegisterInputOnConstruction = False
+  NamedSlotBindings (Array, Count: 0):
+  Extensions (Array, Count: 0):
+  DesignTimeSize (FVector2D):
+    X = 100.000000
+    Y = 100.000000
+  DesignSizeMode = FillScreen
+  PaletteCategory = NSLOCTEXT("UMG", "UserCreated", "User Created")
+  PreviewBackground = null
+  bHasScriptImplementedTick = False
+  bHasScriptImplementedPaint = False
+  TickFrequency = Auto
+  DesiredFocusWidget (FWidgetChild):
+    WidgetName = None
+    WidgetPtr = None
+  Slot = null
+  bIsEnabledDelegate = (null).None
+  ToolTipTextDelegate = (null).None
+  ToolTipText = 
+  ToolTipWidget = null
+  ToolTipWidgetDelegate = (null).None
+  VisibilityDelegate = (null).None
+  RenderTransform (FWidgetTransform):
+    Translation:
+      X = 0.000000
+      Y = 0.000000
+    Scale:
+      X = 1.000000
+      Y = 1.000000
+    Shear:
+      X = 0.000000
+      Y = 0.000000
+    Angle = 0.000000
+  RenderTransformPivot (FVector2D):
+    X = 0.500000
+    Y = 0.500000
+  FlowDirectionPreference = Inherit
+  bIsVariable = True
+  bIsEnabled = True
+  bOverride_Cursor = False
+  bOverrideAccessibleDefaults = False
+  bCanChildrenBeAccessible = True
+  AccessibleBehavior = NotAccessible
+  AccessibleSummaryBehavior = Auto
+  AccessibleText = 
+  AccessibleTextDelegate = (null).None
+  AccessibleSummaryText = 
+  AccessibleSummaryTextDelegate = (null).None
+  bIsVolatile = False
+  bHiddenInDesigner = False
+  bExpandedInDesigner = False
+  bLockedInDesigner = False
+  Cursor = Default
+  Clipping = Inherit
+  Visibility = SelfHitTestInvisible
+  PixelSnapping = Inherit
+  RenderOpacity = 1.000000
+  AccessibleWidgetData = null
+  Navigation = null
+  DisplayLabel = 
+  CategoryName = 
+
+=== WIDGET TREE ===
+  Widget: CanvasPanel_0 (Class: CanvasPanel)
+    Visibility: 4
+    IsVisible: false
+  Widget: Main (Class: Overlay)
+    Visibility: 4
+    IsVisible: false
+  Widget: Background (Class: Overlay)
+    Visibility: 4
+    IsVisible: false
+  Widget: Tint (Class: Border)
+    Visibility: 0
+    IsVisible: false
+  Widget: Blur (Class: BackgroundBlur)
+    Visibility: 4
+    IsVisible: false
+  Widget: TitleSizer (Class: SizeBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: TitleBorder (Class: Border)
+    Visibility: 0
+    IsVisible: false
+  Widget: HorizontalBox_41 (Class: HorizontalBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: IconSizer (Class: SizeBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: Overlay_55 (Class: Overlay)
+    Visibility: 4
+    IsVisible: false
+  Widget: Border (Class: Border)
+    Visibility: 0
+    IsVisible: false
+  Widget: Border_202 (Class: Border)
+    Visibility: 0
+    IsVisible: false
+  Widget: VendorTitleIcon (Class: Image)
+    Visibility: 0
+    IsVisible: false
+  Widget: VendorTitleText (Class: TextBlock)
+    Visibility: 0
+    IsVisible: false
+  Widget: VerticalSizeLimiter (Class: SizeBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: VerticalBox_6 (Class: VerticalBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: W_CurrencyContainer (Class: W_CurrencyContainer_C)
+    Visibility: 4
+    IsVisible: false
+  Widget: HorizontalBox_0 (Class: HorizontalBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: InventoryOverlay (Class: Overlay)
+    Visibility: 4
+    IsVisible: false
+  Widget: InventorySizer (Class: SizeBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: InventoryBackground (Class: Border)
+    Visibility: 0
+    IsVisible: false
+  Widget: SubOverlay (Class: Overlay)
+    Visibility: 4
+    IsVisible: false
+  Widget: VerticalBox_2 (Class: VerticalBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: Overlay_0 (Class: Overlay)
+    Visibility: 4
+    IsVisible: false
+  Widget: ItemNameText_Inventory (Class: TextBlock)
+    Visibility: 1
+    IsVisible: false
+  Widget: InventoryBox (Class: VerticalBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: InventoryScrollBox (Class: ScrollBox)
+    Visibility: 0
+    IsVisible: false
+  Widget: UniformInventoryGrid (Class: UniformGridPanel)
+    Visibility: 4
+    IsVisible: false
+  Widget: ItemInfoBoxSwitcher (Class: WidgetSwitcher)
+    Visibility: 1
+    IsVisible: false
+  Widget: ItemInfoOverlay (Class: Overlay)
+    Visibility: 4
+    IsVisible: false
+  Widget: ItemInfoSizer (Class: SizeBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: Canvas (Class: CanvasPanel)
+    Visibility: 4
+    IsVisible: false
+  Widget: ItemNameText_Details (Class: TextBlock)
+    Visibility: 0
+    IsVisible: false
+  Widget: ItemCategoryText (Class: TextBlock)
+    Visibility: 0
+    IsVisible: false
+  Widget: InformationBox (Class: Overlay)
+    Visibility: 4
+    IsVisible: false
+  Widget: VerticalBox_0 (Class: VerticalBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: HorizontalBox_2 (Class: HorizontalBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: Sizer (Class: SizeBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: Image_114 (Class: Image)
+    Visibility: 0
+    IsVisible: false
+  Widget: ItemNameText_Details_1 (Class: TextBlock)
+    Visibility: 0
+    IsVisible: false
+  Widget: DividerSizer_1 (Class: SizeBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: Border_1 (Class: Border)
+    Visibility: 0
+    IsVisible: false
+  Widget: ItemDescription (Class: TextBlock)
+    Visibility: 0
+    IsVisible: false
+  Widget: OnUseBox (Class: Overlay)
+    Visibility: 4
+    IsVisible: false
+  Widget: VerticalBox (Class: VerticalBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: HorizontalBox (Class: HorizontalBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: Sizer_1 (Class: SizeBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: Image (Class: Image)
+    Visibility: 0
+    IsVisible: false
+  Widget: ItemNameText_Details_2 (Class: TextBlock)
+    Visibility: 0
+    IsVisible: false
+  Widget: DividerSizer_2 (Class: SizeBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: Border_2 (Class: Border)
+    Visibility: 0
+    IsVisible: false
+  Widget: ItemOnUseDescription (Class: TextBlock)
+    Visibility: 0
+    IsVisible: false
+  Widget: VerticalBox_3 (Class: VerticalBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: Amount (Class: HorizontalBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: TextHeld (Class: TextBlock)
+    Visibility: 0
+    IsVisible: false
+  Widget: AmountText (Class: TextBlock)
+    Visibility: 0
+    IsVisible: false
+  Widget: StoredAmountBox (Class: HorizontalBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: TextHeld_2 (Class: TextBlock)
+    Visibility: 0
+    IsVisible: false
+  Widget: StoredAmountText (Class: TextBlock)
+    Visibility: 0
+    IsVisible: false
+  Widget: Amount_1 (Class: HorizontalBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: TextHeld_1 (Class: TextBlock)
+    Visibility: 0
+    IsVisible: false
+  Widget: MaxAmountText (Class: TextBlock)
+    Visibility: 0
+    IsVisible: false
+  Widget: DividerSizer (Class: SizeBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: Border_101 (Class: Border)
+    Visibility: 0
+    IsVisible: false
+  Widget: ItemImageOverlay (Class: Overlay)
+    Visibility: 4
+    IsVisible: false
+  Widget: Border_239 (Class: Border)
+    Visibility: 0
+    IsVisible: false
+  Widget: ScaleBox_0 (Class: ScaleBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: ItemIcon (Class: Image)
+    Visibility: 0
+    IsVisible: false
+  Widget: ItemLongInfo (Class: Overlay)
+    Visibility: 4
+    IsVisible: false
+  Widget: ItemLongInfoSizer (Class: SizeBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: Canvas_1 (Class: CanvasPanel)
+    Visibility: 4
+    IsVisible: false
+  Widget: ImageBorder (Class: Overlay)
+    Visibility: 4
+    IsVisible: false
+  Widget: TintBg (Class: Border)
+    Visibility: 0
+    IsVisible: false
+  Widget: Blur_1 (Class: BackgroundBlur)
+    Visibility: 4
+    IsVisible: false
+  Widget: Border_154 (Class: Border)
+    Visibility: 0
+    IsVisible: false
+  Widget: ScaleBox_1 (Class: ScaleBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: DetailsLargeImage (Class: Image)
+    Visibility: 0
+    IsVisible: false
+  Widget: DividerSizer_3 (Class: SizeBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: Border_3 (Class: Border)
+    Visibility: 0
+    IsVisible: false
+  Widget: ItemNameText_LongDetails (Class: TextBlock)
+    Visibility: 0
+    IsVisible: false
+  Widget: ItemLongDescription (Class: TextBlock)
+    Visibility: 0
+    IsVisible: false
+  Widget: CharacterStatsOverlay (Class: Overlay)
+    Visibility: 4
+    IsVisible: false
+  Widget: CharacterStatsSizer (Class: SizeBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: Canvas_3 (Class: CanvasPanel)
+    Visibility: 4
+    IsVisible: false
+  Widget: DividerSizer_7 (Class: SizeBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: Border_9 (Class: Border)
+    Visibility: 0
+    IsVisible: false
+  Widget: StatusText (Class: HorizontalBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: SizeBox_0 (Class: SizeBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: Image_134 (Class: Image)
+    Visibility: 0
+    IsVisible: false
+  Widget: CharacterStats (Class: TextBlock)
+    Visibility: 0
+    IsVisible: false
+  Widget: VerticalBox_1 (Class: VerticalBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: W_LevelEntry (Class: W_LevelEntry_C)
+    Visibility: 4
+    IsVisible: false
+  Widget: W_CurrencyEntry_166 (Class: W_CurrencyEntry_C)
+    Visibility: 4
+    IsVisible: false
+  Widget: Spacer_103 (Class: Spacer)
+    Visibility: 4
+    IsVisible: false
+  Widget: PrimaryStats (Class: W_StatBlock_C)
+    Visibility: 4
+    IsVisible: false
+  Widget: Spacer (Class: Spacer)
+    Visibility: 4
+    IsVisible: false
+  Widget: SecondaryStats (Class: W_StatBlock_C)
+    Visibility: 4
+    IsVisible: false
+  Widget: Spacer_1 (Class: Spacer)
+    Visibility: 4
+    IsVisible: false
+  Widget: MiscStats (Class: W_StatBlock_C)
+    Visibility: 4
+    IsVisible: false
+  Widget: ButtonsBox (Class: VerticalBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: TextBlock_58 (Class: TextBlock)
+    Visibility: 0
+    IsVisible: false
+  Widget: InputInfo (Class: HorizontalBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: OK (Class: HorizontalBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: SizeBox_1 (Class: SizeBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: OkInputIcon (Class: Image)
+    Visibility: 0
+    IsVisible: false
+  Widget: OkText (Class: TextBlock)
+    Visibility: 0
+    IsVisible: false
+  Widget: Back (Class: HorizontalBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: SizeBox_2 (Class: SizeBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: BackInputIcon (Class: Image)
+    Visibility: 0
+    IsVisible: false
+  Widget: Text (Class: TextBlock)
+    Visibility: 0
+    IsVisible: false
+  Widget: Scroll (Class: HorizontalBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: SizeBox_3 (Class: SizeBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: ScrollLeftInputIcon (Class: Image)
+    Visibility: 0
+    IsVisible: false
+  Widget: SizeBox_4 (Class: SizeBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: ScrollRightInputIcon (Class: Image)
+    Visibility: 0
+    IsVisible: false
+  Widget: Text_1 (Class: TextBlock)
+    Visibility: 0
+    IsVisible: false
+  Widget: MainBlur (Class: BackgroundBlur)
+    Visibility: 4
+    IsVisible: false
+  Widget: VendorActionPopup (Class: Overlay)
+    Visibility: 1
+    IsVisible: false
+  Widget: Darken (Class: Border)
+    Visibility: 0
+    IsVisible: false
+  Widget: W_VendorAction (Class: W_VendorAction_C)
+    Visibility: 4
+    IsVisible: false
+
+=== WIDGET VARIABLES ===

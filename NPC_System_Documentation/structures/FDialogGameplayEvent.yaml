@@ -1,0 +1,23 @@
+# Struct Export - AUTO-GENERATED
+# DO NOT EDIT - This is the source of truth from bp_only
+
+struct:
+  path: /Game/SoulslikeFramework/Structures/Dialog/FDialogGameplayEvent
+  name: FDialogGameplayEvent
+
+fields:
+  - name: EventTag_9_181EFFAD43BC4BE401FC47B8A128C289
+    type: FGameplayTag
+    offset: 0
+    size: 12
+
+  - name: AdditionalTag_11_5D3C0FA94D886E647927ABB4240BFB88
+    type: FGameplayTag
+    offset: 12
+    size: 12
+
+  - name: CustomData_12_113B3E7B4FF55795A4FEEA8C9108DB1E
+    type: FInstancedStruct
+    offset: 24
+    size: 16
+

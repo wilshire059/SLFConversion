@@ -1,0 +1,807 @@
+{
+	"Entries": [
+		{
+			"WidgetName": "ScreenMode",
+			"ClassName": "W_Settings_Entry_C",
+			"SettingTag": "SoulslikeFramework.Settings.ScreenMode",
+			"SettingName": "Screen Mode",
+			"SettingDescription": "Adjust the screen mode to be windowed or fullscreen.",
+			"EntryType": 0,
+			"UnhoveredColor":
+			{
+				"R": 0.047058999538421631,
+				"G": 0.047058999538421631,
+				"B": 0.047058999538421631,
+				"A": 0.90196102857589722
+			},
+			"HoveredColor":
+			{
+				"R": 0.064999997615814209,
+				"G": 0.064999997615814209,
+				"B": 0.064999997615814209,
+				"A": 0.90196102857589722
+			},
+			"Selected": false,
+			"ColorAndOpacity":
+			{
+				"R": 1,
+				"G": 1,
+				"B": 1,
+				"A": 1
+			},
+			"Priority": 0,
+			"DesignSizeMode": 1,
+			"PaletteCategory": "User Created",
+			"TickFrequency": 1,
+			"FlowDirectionPreference": 0,
+			"AccessibleBehavior": 0,
+			"AccessibleSummaryBehavior": 1,
+			"Clipping": 0,
+			"Visibility": 4,
+			"PixelSnapping": 0,
+			"DisplayLabel": "ScreenMode"
+		},
+		{
+			"WidgetName": "Resolution",
+			"ClassName": "W_Settings_Entry_C",
+			"SettingTag": "SoulslikeFramework.Settings.Resolution",
+			"SettingName": "Resolution",
+			"SettingDescription": "Adjust resolution sizing. This will affect quality.",
+			"EntryType": 0,
+			"UnhoveredColor":
+			{
+				"R": 0.047058999538421631,
+				"G": 0.047058999538421631,
+				"B": 0.047058999538421631,
+				"A": 0.90196102857589722
+			},
+			"HoveredColor":
+			{
+				"R": 0.064999997615814209,
+				"G": 0.064999997615814209,
+				"B": 0.064999997615814209,
+				"A": 0.90196102857589722
+			},
+			"Selected": false,
+			"ColorAndOpacity":
+			{
+				"R": 1,
+				"G": 1,
+				"B": 1,
+				"A": 1
+			},
+			"Priority": 0,
+			"DesignSizeMode": 1,
+			"PaletteCategory": "User Created",
+			"TickFrequency": 1,
+			"FlowDirectionPreference": 0,
+			"AccessibleBehavior": 0,
+			"AccessibleSummaryBehavior": 1,
+			"Clipping": 0,
+			"Visibility": 4,
+			"PixelSnapping": 0,
+			"DisplayLabel": "Resolution"
+		},
+		{
+			"WidgetName": "TextureQuality",
+			"ClassName": "W_Settings_Entry_C",
+			"SettingTag": "SoulslikeFramework.Settings.TextureQuality",
+			"SettingName": "Texture Quality",
+			"SettingDescription": "Adjust texture details, reduce to increase performance.",
+			"EntryType": 0,
+			"UnhoveredColor":
+			{
+				"R": 0.047058999538421631,
+				"G": 0.047058999538421631,
+				"B": 0.047058999538421631,
+				"A": 0.90196102857589722
+			},
+			"HoveredColor":
+			{
+				"R": 0.064999997615814209,
+				"G": 0.064999997615814209,
+				"B": 0.064999997615814209,
+				"A": 0.90196102857589722
+			},
+			"Selected": false,
+			"ColorAndOpacity":
+			{
+				"R": 1,
+				"G": 1,
+				"B": 1,
+				"A": 1
+			},
+			"Priority": 0,
+			"DesignSizeMode": 1,
+			"PaletteCategory": "User Created",
+			"TickFrequency": 1,
+			"FlowDirectionPreference": 0,
+			"AccessibleBehavior": 0,
+			"AccessibleSummaryBehavior": 1,
+			"Clipping": 0,
+			"Visibility": 4,
+			"PixelSnapping": 0,
+			"DisplayLabel": "TextureQuality"
+		},
+		{
+			"WidgetName": "AntialiasingQuality",
+			"ClassName": "W_Settings_Entry_C",
+			"SettingTag": "SoulslikeFramework.Settings.AntiAliasing",
+			"SettingName": "Antialiasing Quality",
+			"SettingDescription": "Adjust the antialiasing strength, reduce to increase performance.",
+			"EntryType": 0,
+			"UnhoveredColor":
+			{
+				"R": 0.047058999538421631,
+				"G": 0.047058999538421631,
+				"B": 0.047058999538421631,
+				"A": 0.90196102857589722
+			},
+			"HoveredColor":
+			{
+				"R": 0.064999997615814209,
+				"G": 0.064999997615814209,
+				"B": 0.064999997615814209,
+				"A": 0.90196102857589722
+			},
+			"Selected": false,
+			"ColorAndOpacity":
+			{
+				"R": 1,
+				"G": 1,
+				"B": 1,
+				"A": 1
+			},
+			"Priority": 0,
+			"DesignSizeMode": 1,
+			"PaletteCategory": "User Created",
+			"TickFrequency": 1,
+			"FlowDirectionPreference": 0,
+			"AccessibleBehavior": 0,
+			"AccessibleSummaryBehavior": 1,
+			"Clipping": 0,
+			"Visibility": 4,
+			"PixelSnapping": 0,
+			"DisplayLabel": "AntialiasingQuality"
+		},
+		{
+			"WidgetName": "PostprocessQuality",
+			"ClassName": "W_Settings_Entry_C",
+			"SettingTag": "SoulslikeFramework.Settings.PostProcessing",
+			"SettingName": "Postprocessing Quality",
+			"SettingDescription": "Adjust the overall post-processing effects.",
+			"EntryType": 0,
+			"UnhoveredColor":
+			{
+				"R": 0.047058999538421631,
+				"G": 0.047058999538421631,
+				"B": 0.047058999538421631,
+				"A": 0.90196102857589722
+			},
+			"HoveredColor":
+			{
+				"R": 0.064999997615814209,
+				"G": 0.064999997615814209,
+				"B": 0.064999997615814209,
+				"A": 0.90196102857589722
+			},
+			"Selected": false,
+			"ColorAndOpacity":
+			{
+				"R": 1,
+				"G": 1,
+				"B": 1,
+				"A": 1
+			},
+			"Priority": 0,
+			"DesignSizeMode": 1,
+			"PaletteCategory": "User Created",
+			"TickFrequency": 1,
+			"FlowDirectionPreference": 0,
+			"AccessibleBehavior": 0,
+			"AccessibleSummaryBehavior": 1,
+			"Clipping": 0,
+			"Visibility": 4,
+			"PixelSnapping": 0,
+			"DisplayLabel": "PostprocessQuality"
+		},
+		{
+			"WidgetName": "ShadowQuality",
+			"ClassName": "W_Settings_Entry_C",
+			"SettingTag": "SoulslikeFramework.Settings.ShadowQuality",
+			"SettingName": "Shadow Quality",
+			"SettingDescription": "Adjust shadow details, reduce to increase performance.",
+			"EntryType": 0,
+			"UnhoveredColor":
+			{
+				"R": 0.047058999538421631,
+				"G": 0.047058999538421631,
+				"B": 0.047058999538421631,
+				"A": 0.90196102857589722
+			},
+			"HoveredColor":
+			{
+				"R": 0.064999997615814209,
+				"G": 0.064999997615814209,
+				"B": 0.064999997615814209,
+				"A": 0.90196102857589722
+			},
+			"Selected": false,
+			"ColorAndOpacity":
+			{
+				"R": 1,
+				"G": 1,
+				"B": 1,
+				"A": 1
+			},
+			"Priority": 0,
+			"DesignSizeMode": 1,
+			"PaletteCategory": "User Created",
+			"TickFrequency": 1,
+			"FlowDirectionPreference": 0,
+			"AccessibleBehavior": 0,
+			"AccessibleSummaryBehavior": 1,
+			"Clipping": 0,
+			"Visibility": 4,
+			"PixelSnapping": 0,
+			"DisplayLabel": "ShadowQuality"
+		},
+		{
+			"WidgetName": "ReflectionQuality",
+			"ClassName": "W_Settings_Entry_C",
+			"SettingTag": "SoulslikeFramework.Settings.Reflections",
+			"SettingName": "Reflections Quality",
+			"SettingDescription": "Adjust reflection details, reduce to increase performance.",
+			"EntryType": 0,
+			"UnhoveredColor":
+			{
+				"R": 0.047058999538421631,
+				"G": 0.047058999538421631,
+				"B": 0.047058999538421631,
+				"A": 0.90196102857589722
+			},
+			"HoveredColor":
+			{
+				"R": 0.064999997615814209,
+				"G": 0.064999997615814209,
+				"B": 0.064999997615814209,
+				"A": 0.90196102857589722
+			},
+			"Selected": false,
+			"ColorAndOpacity":
+			{
+				"R": 1,
+				"G": 1,
+				"B": 1,
+				"A": 1
+			},
+			"Priority": 0,
+			"DesignSizeMode": 1,
+			"PaletteCategory": "User Created",
+			"TickFrequency": 1,
+			"FlowDirectionPreference": 0,
+			"AccessibleBehavior": 0,
+			"AccessibleSummaryBehavior": 1,
+			"Clipping": 0,
+			"Visibility": 4,
+			"PixelSnapping": 0,
+			"DisplayLabel": "ReflectionQuality"
+		},
+		{
+			"WidgetName": "ShaderQuality",
+			"ClassName": "W_Settings_Entry_C",
+			"SettingTag": "SoulslikeFramework.Settings.ShaderQuality",
+			"SettingName": "Shader Quality",
+			"SettingDescription": "Adjust shader quality level, reduce to increase performance.",
+			"EntryType": 0,
+			"UnhoveredColor":
+			{
+				"R": 0.047058999538421631,
+				"G": 0.047058999538421631,
+				"B": 0.047058999538421631,
+				"A": 0.90196102857589722
+			},
+			"HoveredColor":
+			{
+				"R": 0.064999997615814209,
+				"G": 0.064999997615814209,
+				"B": 0.064999997615814209,
+				"A": 0.90196102857589722
+			},
+			"Selected": false,
+			"ColorAndOpacity":
+			{
+				"R": 1,
+				"G": 1,
+				"B": 1,
+				"A": 1
+			},
+			"Priority": 0,
+			"DesignSizeMode": 1,
+			"PaletteCategory": "User Created",
+			"TickFrequency": 1,
+			"FlowDirectionPreference": 0,
+			"AccessibleBehavior": 0,
+			"AccessibleSummaryBehavior": 1,
+			"Clipping": 0,
+			"Visibility": 4,
+			"PixelSnapping": 0,
+			"DisplayLabel": "ShaderQuality"
+		},
+		{
+			"WidgetName": "GlobalIlluminationQuality",
+			"ClassName": "W_Settings_Entry_C",
+			"SettingTag": "SoulslikeFramework.Settings.GlobalIllumination",
+			"SettingName": "Global Illuimination Quality",
+			"SettingDescription": "Adjust Global Illumination, reduce to increase performance.",
+			"EntryType": 0,
+			"UnhoveredColor":
+			{
+				"R": 0.047058999538421631,
+				"G": 0.047058999538421631,
+				"B": 0.047058999538421631,
+				"A": 0.90196102857589722
+			},
+			"HoveredColor":
+			{
+				"R": 0.064999997615814209,
+				"G": 0.064999997615814209,
+				"B": 0.064999997615814209,
+				"A": 0.90196102857589722
+			},
+			"Selected": false,
+			"ColorAndOpacity":
+			{
+				"R": 1,
+				"G": 1,
+				"B": 1,
+				"A": 1
+			},
+			"Priority": 0,
+			"DesignSizeMode": 1,
+			"PaletteCategory": "User Created",
+			"TickFrequency": 1,
+			"FlowDirectionPreference": 0,
+			"AccessibleBehavior": 0,
+			"AccessibleSummaryBehavior": 1,
+			"Clipping": 0,
+			"Visibility": 4,
+			"PixelSnapping": 0,
+			"DisplayLabel": "GlobalIlluminationQuality"
+		},
+		{
+			"WidgetName": "ViewDistanceQuality",
+			"ClassName": "W_Settings_Entry_C",
+			"SettingTag": "SoulslikeFramework.Settings.ViewDistance",
+			"SettingName": "View Distance Quality",
+			"SettingDescription": "Adjust the view distance, reduce to increase performance.",
+			"EntryType": 0,
+			"UnhoveredColor":
+			{
+				"R": 0.047058999538421631,
+				"G": 0.047058999538421631,
+				"B": 0.047058999538421631,
+				"A": 0.90196102857589722
+			},
+			"HoveredColor":
+			{
+				"R": 0.064999997615814209,
+				"G": 0.064999997615814209,
+				"B": 0.064999997615814209,
+				"A": 0.90196102857589722
+			},
+			"Selected": false,
+			"ColorAndOpacity":
+			{
+				"R": 1,
+				"G": 1,
+				"B": 1,
+				"A": 1
+			},
+			"Priority": 0,
+			"DesignSizeMode": 1,
+			"PaletteCategory": "User Created",
+			"TickFrequency": 1,
+			"FlowDirectionPreference": 0,
+			"AccessibleBehavior": 0,
+			"AccessibleSummaryBehavior": 1,
+			"Clipping": 0,
+			"Visibility": 4,
+			"PixelSnapping": 0,
+			"DisplayLabel": "ViewDistanceQuality"
+		},
+		{
+			"WidgetName": "FoliageQuality",
+			"ClassName": "W_Settings_Entry_C",
+			"SettingTag": "SoulslikeFramework.Settings.FoliageQuality",
+			"SettingName": "Foliage Quality",
+			"SettingDescription": "Adjust foliage density, reduce to increase performance.",
+			"EntryType": 0,
+			"UnhoveredColor":
+			{
+				"R": 0.047058999538421631,
+				"G": 0.047058999538421631,
+				"B": 0.047058999538421631,
+				"A": 0.90196102857589722
+			},
+			"HoveredColor":
+			{
+				"R": 0.064999997615814209,
+				"G": 0.064999997615814209,
+				"B": 0.064999997615814209,
+				"A": 0.90196102857589722
+			},
+			"Selected": false,
+			"ColorAndOpacity":
+			{
+				"R": 1,
+				"G": 1,
+				"B": 1,
+				"A": 1
+			},
+			"Priority": 0,
+			"DesignSizeMode": 1,
+			"PaletteCategory": "User Created",
+			"TickFrequency": 1,
+			"FlowDirectionPreference": 0,
+			"AccessibleBehavior": 0,
+			"AccessibleSummaryBehavior": 1,
+			"Clipping": 0,
+			"Visibility": 4,
+			"PixelSnapping": 0,
+			"DisplayLabel": "FoliageQuality"
+		},
+		{
+			"WidgetName": "InvertCameraX",
+			"ClassName": "W_Settings_Entry_C",
+			"SettingTag": "SoulslikeFramework.Settings.Custom.InvertCamX",
+			"SettingName": "Invert Camera X-Axis?",
+			"SettingDescription": "Adjust the camera's X-axis movement.",
+			"EntryType": 0,
+			"UnhoveredColor":
+			{
+				"R": 0.047058999538421631,
+				"G": 0.047058999538421631,
+				"B": 0.047058999538421631,
+				"A": 0.90196102857589722
+			},
+			"HoveredColor":
+			{
+				"R": 0.064999997615814209,
+				"G": 0.064999997615814209,
+				"B": 0.064999997615814209,
+				"A": 0.90196102857589722
+			},
+			"Selected": false,
+			"ColorAndOpacity":
+			{
+				"R": 1,
+				"G": 1,
+				"B": 1,
+				"A": 1
+			},
+			"Priority": 0,
+			"DesignSizeMode": 1,
+			"PaletteCategory": "User Created",
+			"TickFrequency": 1,
+			"FlowDirectionPreference": 0,
+			"AccessibleBehavior": 0,
+			"AccessibleSummaryBehavior": 1,
+			"Clipping": 0,
+			"Visibility": 4,
+			"PixelSnapping": 0,
+			"DisplayLabel": "InvertCameraX"
+		},
+		{
+			"WidgetName": "InvertCameraY",
+			"ClassName": "W_Settings_Entry_C",
+			"SettingTag": "SoulslikeFramework.Settings.Custom.InvertCamY",
+			"SettingName": "Invert Camera Y-Axis?",
+			"SettingDescription": "Adjust the camera's Y-axis movement.",
+			"EntryType": 0,
+			"UnhoveredColor":
+			{
+				"R": 0.047058999538421631,
+				"G": 0.047058999538421631,
+				"B": 0.047058999538421631,
+				"A": 0.90196102857589722
+			},
+			"HoveredColor":
+			{
+				"R": 0.064999997615814209,
+				"G": 0.064999997615814209,
+				"B": 0.064999997615814209,
+				"A": 0.90196102857589722
+			},
+			"Selected": false,
+			"ColorAndOpacity":
+			{
+				"R": 1,
+				"G": 1,
+				"B": 1,
+				"A": 1
+			},
+			"Priority": 0,
+			"DesignSizeMode": 1,
+			"PaletteCategory": "User Created",
+			"TickFrequency": 1,
+			"FlowDirectionPreference": 0,
+			"AccessibleBehavior": 0,
+			"AccessibleSummaryBehavior": 1,
+			"Clipping": 0,
+			"Visibility": 4,
+			"PixelSnapping": 0,
+			"DisplayLabel": "InvertCameraY"
+		},
+		{
+			"WidgetName": "CameraSpeed",
+			"ClassName": "W_Settings_Entry_C",
+			"SettingTag": "SoulslikeFramework.Settings.Custom.CamSpeed",
+			"SettingName": "Camera Speed",
+			"SettingDescription": "Adjust the camera speed.",
+			"EntryType": 0,
+			"UnhoveredColor":
+			{
+				"R": 0.047058999538421631,
+				"G": 0.047058999538421631,
+				"B": 0.047058999538421631,
+				"A": 0.90196102857589722
+			},
+			"HoveredColor":
+			{
+				"R": 0.064999997615814209,
+				"G": 0.064999997615814209,
+				"B": 0.064999997615814209,
+				"A": 0.90196102857589722
+			},
+			"Selected": false,
+			"ColorAndOpacity":
+			{
+				"R": 1,
+				"G": 1,
+				"B": 1,
+				"A": 1
+			},
+			"Priority": 0,
+			"DesignSizeMode": 1,
+			"PaletteCategory": "User Created",
+			"TickFrequency": 1,
+			"FlowDirectionPreference": 0,
+			"AccessibleBehavior": 0,
+			"AccessibleSummaryBehavior": 1,
+			"Clipping": 0,
+			"Visibility": 4,
+			"PixelSnapping": 0,
+			"DisplayLabel": "CameraSpeed"
+		},
+		{
+			"WidgetName": "KeyMappingSettings",
+			"ClassName": "W_Settings_Entry_C",
+			"SettingTag": "SoulslikeFramework.Settings.Keymappings",
+			"SettingName": "Controls",
+			"SettingDescription": "Assign or adjust controller/keyboard mappings.",
+			"EntryType": 0,
+			"UnhoveredColor":
+			{
+				"R": 0.047058999538421631,
+				"G": 0.047058999538421631,
+				"B": 0.047058999538421631,
+				"A": 0.90196102857589722
+			},
+			"HoveredColor":
+			{
+				"R": 0.064999997615814209,
+				"G": 0.064999997615814209,
+				"B": 0.064999997615814209,
+				"A": 0.90196102857589722
+			},
+			"Selected": false,
+			"ColorAndOpacity":
+			{
+				"R": 1,
+				"G": 1,
+				"B": 1,
+				"A": 1
+			},
+			"Priority": 0,
+			"DesignSizeMode": 1,
+			"PaletteCategory": "User Created",
+			"TickFrequency": 1,
+			"FlowDirectionPreference": 0,
+			"AccessibleBehavior": 0,
+			"AccessibleSummaryBehavior": 1,
+			"Clipping": 0,
+			"Visibility": 4,
+			"PixelSnapping": 0,
+			"DisplayLabel": "KeyMappingSettings"
+		}
+	],
+	"Categories": [
+		{
+			"WidgetName": "W_Settings_CategoryEntry_Display",
+			"ClassName": "W_Settings_CategoryEntry_C",
+			"SettingCategory": "SoulslikeFramework.Settings.Categories.Display",
+			"Icon": "/Game/SoulslikeFramework/Widgets/_Textures/T_Computer.T_Computer",
+			"SwitcherIndex": 0,
+			"SelectedColor":
+			{
+				"R": 0.859375,
+				"G": 0.74419498443603516,
+				"B": 0.61834001541137695,
+				"A": 1
+			},
+			"DeselectedColor":
+			{
+				"R": 0.49411800503730774,
+				"G": 0.39215698838233948,
+				"B": 0.28235301375389099,
+				"A": 1
+			},
+			"ColorAndOpacity":
+			{
+				"R": 1,
+				"G": 1,
+				"B": 1,
+				"A": 1
+			},
+			"Priority": 0,
+			"PaletteCategory": "User Created",
+			"Slot": "/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings.W_Settings:WidgetTree.CategoriesBox.HorizontalBoxSlot_1"
+		},
+		{
+			"WidgetName": "W_Settings_CategoryEntry_Camera",
+			"ClassName": "W_Settings_CategoryEntry_C",
+			"SettingCategory": "SoulslikeFramework.Settings.Categories.Camera",
+			"Icon": "/Game/SoulslikeFramework/Widgets/_Textures/T_Camera.T_Camera",
+			"SwitcherIndex": 1,
+			"SelectedColor":
+			{
+				"R": 0.859375,
+				"G": 0.74419498443603516,
+				"B": 0.61834001541137695,
+				"A": 1
+			},
+			"DeselectedColor":
+			{
+				"R": 0.49411800503730774,
+				"G": 0.39215698838233948,
+				"B": 0.28235301375389099,
+				"A": 1
+			},
+			"ColorAndOpacity":
+			{
+				"R": 1,
+				"G": 1,
+				"B": 1,
+				"A": 1
+			},
+			"Priority": 0,
+			"PaletteCategory": "User Created",
+			"Slot": "/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings.W_Settings:WidgetTree.CategoriesBox.HorizontalBoxSlot_2"
+		},
+		{
+			"WidgetName": "W_Settings_CategoryEntry_Gameplay",
+			"ClassName": "W_Settings_CategoryEntry_C",
+			"SettingCategory": "SoulslikeFramework.Settings.Categories.Gameplay",
+			"Icon": "/Game/SoulslikeFramework/Widgets/_Textures/T_Controller.T_Controller",
+			"SwitcherIndex": -1,
+			"SelectedColor":
+			{
+				"R": 0.859375,
+				"G": 0.74419498443603516,
+				"B": 0.61834001541137695,
+				"A": 1
+			},
+			"DeselectedColor":
+			{
+				"R": 0.49411800503730774,
+				"G": 0.39215698838233948,
+				"B": 0.28235301375389099,
+				"A": 1
+			},
+			"ColorAndOpacity":
+			{
+				"R": 1,
+				"G": 1,
+				"B": 1,
+				"A": 1
+			},
+			"Priority": 0,
+			"PaletteCategory": "User Created",
+			"Slot": "/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings.W_Settings:WidgetTree.CategoriesBox.HorizontalBoxSlot_3"
+		},
+		{
+			"WidgetName": "W_Settings_CategoryEntry_Keybinds",
+			"ClassName": "W_Settings_CategoryEntry_C",
+			"SettingCategory": "SoulslikeFramework.Settings.Categories.Keymapping",
+			"Icon": "/Game/SoulslikeFramework/Widgets/_Textures/T_Keybinds.T_Keybinds",
+			"SwitcherIndex": 2,
+			"SelectedColor":
+			{
+				"R": 0.859375,
+				"G": 0.74419498443603516,
+				"B": 0.61834001541137695,
+				"A": 1
+			},
+			"DeselectedColor":
+			{
+				"R": 0.49411800503730774,
+				"G": 0.39215698838233948,
+				"B": 0.28235301375389099,
+				"A": 1
+			},
+			"ColorAndOpacity":
+			{
+				"R": 1,
+				"G": 1,
+				"B": 1,
+				"A": 1
+			},
+			"Priority": 0,
+			"PaletteCategory": "User Created",
+			"Slot": "/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings.W_Settings:WidgetTree.CategoriesBox.HorizontalBoxSlot_5"
+		},
+		{
+			"WidgetName": "W_Settings_CategoryEntry_Sounds",
+			"ClassName": "W_Settings_CategoryEntry_C",
+			"SettingCategory": "SoulslikeFramework.Settings.Categories.Sounds",
+			"Icon": "/Game/SoulslikeFramework/Widgets/_Textures/T_Volume.T_Volume",
+			"SwitcherIndex": -1,
+			"SelectedColor":
+			{
+				"R": 0.859375,
+				"G": 0.74419498443603516,
+				"B": 0.61834001541137695,
+				"A": 1
+			},
+			"DeselectedColor":
+			{
+				"R": 0.49411800503730774,
+				"G": 0.39215698838233948,
+				"B": 0.28235301375389099,
+				"A": 1
+			},
+			"ColorAndOpacity":
+			{
+				"R": 1,
+				"G": 1,
+				"B": 1,
+				"A": 1
+			},
+			"Priority": 0,
+			"PaletteCategory": "User Created",
+			"Slot": "/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings.W_Settings:WidgetTree.CategoriesBox.HorizontalBoxSlot_4"
+		},
+		{
+			"WidgetName": "W_Settings_CategoryEntry_Quit",
+			"ClassName": "W_Settings_CategoryEntry_C",
+			"SettingCategory": "SoulslikeFramework.Settings.Categories.Exit",
+			"Icon": "/Game/SoulslikeFramework/Widgets/_Textures/T_Quit.T_Quit",
+			"SwitcherIndex": 3,
+			"SelectedColor":
+			{
+				"R": 0.859375,
+				"G": 0.74419498443603516,
+				"B": 0.61834001541137695,
+				"A": 1
+			},
+			"DeselectedColor":
+			{
+				"R": 0.49411800503730774,
+				"G": 0.39215698838233948,
+				"B": 0.28235301375389099,
+				"A": 1
+			},
+			"ColorAndOpacity":
+			{
+				"R": 1,
+				"G": 1,
+				"B": 1,
+				"A": 1
+			},
+			"Priority": 0,
+			"PaletteCategory": "User Created",
+			"Slot": "/Game/SoulslikeFramework/Widgets/SettingsMenu/W_Settings.W_Settings:WidgetTree.CategoriesBox.HorizontalBoxSlot_6"
+		}
+	]
+}

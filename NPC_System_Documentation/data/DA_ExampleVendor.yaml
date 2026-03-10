@@ -1,0 +1,27 @@
+# Data Asset Export - AUTO-GENERATED
+# DO NOT EDIT - This is the source of truth from bp_only
+
+data_asset:
+  path: /Game/SoulslikeFramework/Data/Vendor/DA_ExampleVendor
+  class: PDA_Vendor_C
+
+properties:
+  class: PDA_Vendor_C
+  name: DA_ExampleVendor
+  path: /Game/SoulslikeFramework/Data/Vendor/DA_ExampleVendor.DA_ExampleVendor
+  properties:
+    Items: ((Item_2_1116033544AEBC89AAD2A6802774460B=\"/Game/SoulslikeFramework/Data/PDA_Item.PDA_Item_C'/Game/SoulslikeFramework/Data/Items/DA_Apple.DA_Apple'\",InfiniteStock?_9_94181B1E4916180B446F3CA05CEB2105=True,Price_7_9E75149B45E0BBB42D90728DF2423D35=10),(Item_2_1116033544AEBC89AAD2A6802774460B=\"/Game/SoulslikeFramework/Data/PDA_Item.PDA_Item_C'/Game/SoulslikeFramework/Data/Items/DA_ThrowingKnife.DA_ThrowingKnife'\",StockAmount_10_B3C6EF404AD6ABFC068837B70513E400=40,Price_7_9E75149B45E0BBB42D90728DF2423D35=50))
+    DefaultSlotCount: 50
+    DefaultSlotsPerRow: 5
+    CachedItems:
+      count: 0
+      items:
+    OnItemStockUpdated: ()
+    AssetBundleData:
+      Bundles:
+        count: 0
+        items:
+    NativeClass:
+      class: BlueprintGeneratedClass
+      name: PDA_Vendor_C
+      path: /Game/SoulslikeFramework/Data/Vendor/PDA_Vendor.PDA_Vendor_C

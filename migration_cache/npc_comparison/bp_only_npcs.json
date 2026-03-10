@@ -1,0 +1,41 @@
+{
+  "B_Soulslike_NPC": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC",
+    "name": "B_Soulslike_NPC",
+    "parent_class": null,
+    "scs_components": [],
+    "has_ac_ai_interaction_manager": false,
+    "has_look_at_radius": false,
+    "anim_class": null,
+    "eventgraph_node_count": 0,
+    "parent_class_error": "Blueprint: Failed to find property 'parent_class' for attribute 'parent_class' on 'Blueprint'",
+    "scs_error": "'Blueprint' object has no attribute 'simple_construction_script'",
+    "eventgraph_error": "'Blueprint' object has no attribute 'ubergraph_pages'"
+  },
+  "B_Soulslike_NPC_ShowcaseGuide": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC_ShowcaseGuide",
+    "name": "B_Soulslike_NPC_ShowcaseGuide",
+    "parent_class": null,
+    "scs_components": [],
+    "has_ac_ai_interaction_manager": false,
+    "has_look_at_radius": false,
+    "anim_class": null,
+    "eventgraph_node_count": 0,
+    "parent_class_error": "Blueprint: Failed to find property 'parent_class' for attribute 'parent_class' on 'Blueprint'",
+    "scs_error": "'Blueprint' object has no attribute 'simple_construction_script'",
+    "eventgraph_error": "'Blueprint' object has no attribute 'ubergraph_pages'"
+  },
+  "B_Soulslike_NPC_ShowcaseVendor": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC_ShowcaseVendor",
+    "name": "B_Soulslike_NPC_ShowcaseVendor",
+    "parent_class": null,
+    "scs_components": [],
+    "has_ac_ai_interaction_manager": false,
+    "has_look_at_radius": false,
+    "anim_class": null,
+    "eventgraph_node_count": 0,
+    "parent_class_error": "Blueprint: Failed to find property 'parent_class' for attribute 'parent_class' on 'Blueprint'",
+    "scs_error": "'Blueprint' object has no attribute 'simple_construction_script'",
+    "eventgraph_error": "'Blueprint' object has no attribute 'ubergraph_pages'"
+  }
+}

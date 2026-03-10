@@ -1,0 +1,13 @@
+=== Reparenting AN_SpawnProjectile Blueprint ===
+Loaded Blueprint: AN_SpawnProjectile
+Loaded C++ class: AN_SpawnProjectile
+Clearing ALL Blueprint logic using ClearAllBlueprintLogic...
+ClearAllBlueprintLogic result: True
+Reparenting Blueprint...
+Reparent result: None
+Compiling Blueprint...
+Compilation complete
+SAVED: /Game/SoulslikeFramework/Blueprints/AnimationRelated/Notifies/AN_SpawnProjectile
+Verified Blueprint saved: AN_SpawnProjectile
+SUCCESS: AN_SpawnProjectile Blueprint now inherits from C++ UAN_SpawnProjectile
+The Blueprint's Received_Notify has been cleared - C++ Notify() will execute

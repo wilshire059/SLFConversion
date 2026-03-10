@@ -152,3 +152,12 @@ Content/Maps/IgnoredMaps/
 Content/Maps/PrimaryAssetLabel_Main.uasset
 Content/Maps/StrT_RegionalNames.uasset
 nul
+
+# Saved backups (large, local-only)
+Saved_backup_*/
+
+# MapCapture (large screenshots)
+MapCapture/
+
+# Stray paths with broken encoding (Windows junction artifacts)
+C\357\200\272*

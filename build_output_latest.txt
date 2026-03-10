@@ -1,0 +1,57 @@
+Using bundled DotNet SDK version: 8.0.412 win-x64
+Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" SLFConversionEditor Win64 Development C:/scripts/SLFConversion/SLFConversion.uproject
+Log file: C:\Users\james\AppData\Local\UnrealBuildTool\Log.txt
+Using 'git status' to determine working set for adaptive non-unity build (C:\scripts\SLFConversion).
+Parsing headers for SLFConversionEditor
+  Running Internal UnrealHeaderTool C:\scripts\SLFConversion\SLFConversion.uproject C:\scripts\SLFConversion\Intermediate\Build\Win64\SLFConversionEditor\Development\SLFConversionEditor.uhtmanifest -WarningsAsErrors -installed
+UHT processed SLFConversionEditor in 2.4525098 seconds (0 files written)
+Building SLFConversionEditor...
+Using Visual Studio 2022 14.44.35222 toolchain (C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207) and Windows 10.0.22621.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+[Upgrade]
+[Upgrade] Using backward-compatible include order. The latest version of UE has changed the order of includes, which may require code changes. The current setting is:
+[Upgrade]     IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_4
+[Upgrade] Suppress this message by setting 'IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_7;' in SLFConversionEditor.Target.cs.
+[Upgrade] Alternatively you can set this to 'EngineIncludeOrderVersion.Latest' to always use the latest include order. This will potentially cause compile errors when integrating new versions of the engine.
+[Upgrade]
+[Adaptive Build] Excluded from SLFConversion unity file: SetupOpenWorldCommandlet.cpp, SetupTitanWorldCommandlet.cpp, SLFRestingPointBase.cpp, SLFSoulslikeCharacter.cpp, SLFActionDoubleJump.cpp, SLFActionGrapple.cpp, SLFActionGuardCounter.cpp, SLFActionMantle.cpp, SLFActionSlide.cpp, SLFBossDoor.cpp, SLFBossPhaseObjective.cpp, SLFGrapplePoint.cpp, SLFPuzzleMarker.cpp, SLFShortcutGate.cpp, SLFTrapBase.cpp, AC_ActionManager.cpp, AC_CombatManager.cpp, SLFCraftingManager.cpp, SLFPlayerController.cpp, W_WorldMap.cpp
+Determining max actions to execute in parallel (14 physical cores, 20 logical cores)
+  Executing up to 14 processes, one per physical core
+  Requested 1.5 GB memory per action, 19.33 GB available: limiting max parallel actions to 12
+Using Unreal Build Accelerator local executor to run 5 action(s)
+  Storage capacity 40Gb
+---- Starting trace: 260228_153845 ----
+UbaSessionServer - Disable remote execution (remote sessions will finish current processes)
+[1/5] Compile [x64] SLFShortcutGate.cpp
+C:\scripts\SLFConversion\Source\SLFConversion\Blueprints\Actors\SLFShortcutGate.h(32,15): error C2143: syntax error: missing ';' before '*'
+	UBoxComponent* BlockingVolume;
+	             ^
+C:\scripts\SLFConversion\Source\SLFConversion\Blueprints\Actors\SLFShortcutGate.h(32,2): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+	UBoxComponent* BlockingVolume;
+	^
+C:\scripts\SLFConversion\Source\SLFConversion\Blueprints\Actors\SLFShortcutGate.h(32,31): error C2238: unexpected token(s) preceding ';'
+	UBoxComponent* BlockingVolume;
+	                             ^
+C:\scripts\SLFConversion\Source\SLFConversion\Blueprints\Actors\SLFShortcutGate.cpp(11,2): error C2065: 'BlockingVolume': undeclared identifier
+	BlockingVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("BlockingVolume"));
+	^
+C:\scripts\SLFConversion\Source\SLFConversion\Blueprints\Actors\SLFShortcutGate.cpp(12,2): error C2065: 'BlockingVolume': undeclared identifier
+	BlockingVolume->SetupAttachment(GateMesh);
+	^
+C:\scripts\SLFConversion\Source\SLFConversion\Blueprints\Actors\SLFShortcutGate.cpp(13,2): error C2065: 'BlockingVolume': undeclared identifier
+	BlockingVolume->SetBoxExtent(FVector(50.0f, 200.0f, 200.0f));
+	^
+C:\scripts\SLFConversion\Source\SLFConversion\Blueprints\Actors\SLFShortcutGate.cpp(14,2): error C2065: 'BlockingVolume': undeclared identifier
+	BlockingVolume->SetCollisionProfileName(TEXT("BlockAll"));
+	^
+C:\scripts\SLFConversion\Source\SLFConversion\Blueprints\Actors\SLFShortcutGate.cpp(41,6): error C2065: 'BlockingVolume': undeclared identifier
+	if (BlockingVolume)
+	    ^
+C:\scripts\SLFConversion\Source\SLFConversion\Blueprints\Actors\SLFShortcutGate.cpp(43,3): error C2065: 'BlockingVolume': undeclared identifier
+		BlockingVolume->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		^
+[2/5] Compile [x64] Module.SLFConversion.29.cpp
+Trace written to file C:/Users/james/AppData/Local/UnrealBuildTool/Log.uba with size 5.2kb
+Total time in Unreal Build Accelerator local executor: 8.73 seconds
+
+Result: Failed (OtherCompilationError)
+Total execution time: 12.50 seconds

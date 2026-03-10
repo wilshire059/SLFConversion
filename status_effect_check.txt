@@ -1,0 +1,35 @@
+=== STATUS EFFECT DATA CHECK ===
+
+
+--- DA_StatusEffect_Burn ---
+  Tag: (Error reading)
+  Icon: (Error reading)
+  BarFillColor: R=0.51, G=0.23, B=0.00, A=1.00
+  Effect Class: (Error reading)
+
+--- DA_StatusEffect_Bleed ---
+  Tag: (Error reading)
+  Icon: (Error reading)
+  BarFillColor: R=0.25, G=0.00, B=0.00, A=1.00
+  Effect Class: (Error reading)
+
+--- DA_StatusEffect_Poison ---
+  Tag: (Error reading)
+  Icon: (Error reading)
+  BarFillColor: R=0.09, G=0.33, B=0.00, A=1.00
+  Effect Class: (Error reading)
+
+--- DA_StatusEffect_Frostbite ---
+  Tag: (Error reading)
+  Icon: (Error reading)
+  BarFillColor: R=0.02, G=0.15, B=0.33, A=1.00
+  Effect Class: (Error reading)
+
+
+=== BOSS WEAPON CHECK ===
+
+Weapon Blueprint: B_Item_AI_Weapon_BossMace
+  CDO: Default__B_Item_AI_Weapon_BossMace_C
+  StaticMeshComponents: 1
+    - WeaponMesh: Mesh=(None)
+  DefaultWeaponMesh: (None)

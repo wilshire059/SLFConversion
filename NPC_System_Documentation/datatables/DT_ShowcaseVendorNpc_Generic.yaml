@@ -1,0 +1,44 @@
+# DataTable Export - AUTO-GENERATED
+# DO NOT EDIT - This is the source of truth from bp_only
+
+datatable:
+  path: /Game/SoulslikeFramework/Data/Dialog/ShowcaseVendorNpc/DT_ShowcaseVendorNpc_Generic
+  row_struct: FDialogEntry
+  row_count: 5
+
+rows:
+  - row_name: NewRow
+    columns:
+      Entry_3_E3D06962403A4DF403DFBF892EECBE72: A traveler..?
+      GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1:
+        count: 0
+        items:
+
+  - row_name: NewRow_2
+    columns:
+      Entry_3_E3D06962403A4DF403DFBF892EECBE72: " This is interesting. This land has been designed by @isikdev only for the best. "
+      GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1:
+        count: 0
+        items:
+
+  - row_name: NewRow_0
+    columns:
+      Entry_3_E3D06962403A4DF403DFBF892EECBE72: You must be worthy. I salute you - nameless traveler.
+      GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1:
+        count: 0
+        items:
+
+  - row_name: NewRow_1
+    columns:
+      Entry_3_E3D06962403A4DF403DFBF892EECBE72: I am an NPC that has a vendor asset. I can sell you some stuff Soulslike Framework has to offer.
+      GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1:
+        count: 0
+        items:
+
+  - row_name: NewRow_3
+    columns:
+      Entry_3_E3D06962403A4DF403DFBF892EECBE72: Are you interested in browsing what I have to offer?
+      GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1:
+        count: 0
+        items:
+

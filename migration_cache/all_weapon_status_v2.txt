@@ -1,0 +1,73 @@
+======================================================================
+CHECKING ALL WEAPON STATUS EFFECTS (V2)
+======================================================================
+
+Found 35 items to check
+
+DA_Sword01: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_PoisonSword: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_Katana: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_Greatsword: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_Apple: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_BossMace: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_CrimsonEverbloom: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_Cube: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_ExampleArmor: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_ExampleArmor02: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_ExampleBracers: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_ExampleGreaves: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_ExampleHat: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_ExampleHelmet: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_ExampleTalisman: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_HealthFlask: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_Lantern: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_MagicSpell: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_PrisonKey: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_Shield01: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_Sword02: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_ThrowingKnife: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_AOEExplosionSpell: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_ArcaneMissileSpell: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_BeamSpell: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_BlackholeSpell: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_FireballSpell: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_HealingSpell: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_HolyOrbSpell: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_IceShardSpell: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_LightningBoltSpell: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_PoisonBlobSpell: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_ShieldSpell: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'
+
+DA_SummoningCircleSpell: Error - SLFEquipmentInfo: Failed to find property 'attack_power' for attribute 'attack_power' on 'SLFEquipmentInfo'

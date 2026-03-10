@@ -1,0 +1,79 @@
+============================================================
+APPLYING SPELL CATEGORIES
+============================================================
+
+Processing: DA_FireballSpell
+  Set category: <SLFItemCategory.TOOLS: 1> -> Tools
+  Set usable: True -> True
+  WARNING: Could not set action_to_trigger: type object 'GameplayTag' has no attribute 'request_gameplay_tag'
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_FireballSpell.DA_FireballSpell
+
+Processing: DA_IceShardSpell
+  Set category: <SLFItemCategory.TOOLS: 1> -> Tools
+  Set usable: True -> True
+  WARNING: Could not set action_to_trigger: type object 'GameplayTag' has no attribute 'request_gameplay_tag'
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_IceShardSpell.DA_IceShardSpell
+
+Processing: DA_LightningBoltSpell
+  Set category: <SLFItemCategory.TOOLS: 1> -> Tools
+  Set usable: True -> True
+  WARNING: Could not set action_to_trigger: type object 'GameplayTag' has no attribute 'request_gameplay_tag'
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_LightningBoltSpell.DA_LightningBoltSpell
+
+Processing: DA_HolyOrbSpell
+  Set category: <SLFItemCategory.TOOLS: 1> -> Tools
+  Set usable: True -> True
+  WARNING: Could not set action_to_trigger: type object 'GameplayTag' has no attribute 'request_gameplay_tag'
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_HolyOrbSpell.DA_HolyOrbSpell
+
+Processing: DA_PoisonBlobSpell
+  Set category: <SLFItemCategory.TOOLS: 1> -> Tools
+  Set usable: True -> True
+  WARNING: Could not set action_to_trigger: type object 'GameplayTag' has no attribute 'request_gameplay_tag'
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_PoisonBlobSpell.DA_PoisonBlobSpell
+
+Processing: DA_ArcaneMissileSpell
+  Set category: <SLFItemCategory.TOOLS: 1> -> Tools
+  Set usable: True -> True
+  WARNING: Could not set action_to_trigger: type object 'GameplayTag' has no attribute 'request_gameplay_tag'
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_ArcaneMissileSpell.DA_ArcaneMissileSpell
+
+Processing: DA_BlackholeSpell
+  Set category: <SLFItemCategory.TOOLS: 1> -> Tools
+  Set usable: True -> True
+  WARNING: Could not set action_to_trigger: type object 'GameplayTag' has no attribute 'request_gameplay_tag'
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_BlackholeSpell.DA_BlackholeSpell
+
+Processing: DA_BeamSpell
+  Set category: <SLFItemCategory.TOOLS: 1> -> Tools
+  Set usable: True -> True
+  WARNING: Could not set action_to_trigger: type object 'GameplayTag' has no attribute 'request_gameplay_tag'
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_BeamSpell.DA_BeamSpell
+
+Processing: DA_AOEExplosionSpell
+  Set category: <SLFItemCategory.TOOLS: 1> -> Tools
+  Set usable: True -> True
+  WARNING: Could not set action_to_trigger: type object 'GameplayTag' has no attribute 'request_gameplay_tag'
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_AOEExplosionSpell.DA_AOEExplosionSpell
+
+Processing: DA_ShieldSpell
+  Set category: <SLFItemCategory.TOOLS: 1> -> Tools
+  Set usable: True -> True
+  WARNING: Could not set action_to_trigger: type object 'GameplayTag' has no attribute 'request_gameplay_tag'
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_ShieldSpell.DA_ShieldSpell
+
+Processing: DA_HealingSpell
+  Set category: <SLFItemCategory.TOOLS: 1> -> Tools
+  Set usable: True -> True
+  WARNING: Could not set action_to_trigger: type object 'GameplayTag' has no attribute 'request_gameplay_tag'
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_HealingSpell.DA_HealingSpell
+
+Processing: DA_SummoningCircleSpell
+  Set category: <SLFItemCategory.TOOLS: 1> -> Tools
+  Set usable: True -> True
+  WARNING: Could not set action_to_trigger: type object 'GameplayTag' has no attribute 'request_gameplay_tag'
+  SAVED: /Game/SoulslikeFramework/Data/Items/Spells/DA_SummoningCircleSpell.DA_SummoningCircleSpell
+
+============================================================
+Results: 12 succeeded, 0 failed
+============================================================

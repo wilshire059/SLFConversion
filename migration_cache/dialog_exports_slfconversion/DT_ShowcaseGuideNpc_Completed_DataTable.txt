@@ -1,0 +1,27 @@
+=== DATA TABLE EXPORT ===
+Path: /Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DialogTables/DT_ShowcaseGuideNpc_Completed
+RowStruct: FDialogEntry
+
+=== ROWS ===
+Row Count: 5
+
+--- Row: NewRow ---
+  Entry_3_E3D06962403A4DF403DFBF892EECBE72 = NSLOCTEXT("[2D56E88BC989134BD568433BEDE4DBAD]", "6FCF0EDE4B4C063F2B3369A90DA1F551", "Impressive! No one had successfully defeated Malgareth yet.")
+  GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1 = 
+
+--- Row: NewRow_0 ---
+  Entry_3_E3D06962403A4DF403DFBF892EECBE72 = NSLOCTEXT("[2D56E88BC989134BD568433BEDE4DBAD]", "564ECA1C4090ABFD5090759FC6F0DA05", "I know, I know. He is a bit dumb. But blame that on the lack of animations!")
+  GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1 = 
+
+--- Row: NewRow_1 ---
+  Entry_3_E3D06962403A4DF403DFBF892EECBE72 = NSLOCTEXT("[2D56E88BC989134BD568433BEDE4DBAD]", "ED1F9A2D41BF149665B1A4B820F67D5B", "@isikdev would like to thank you for playing the Soulslike Framework showcase demo!")
+  GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1 = 
+
+--- Row: NewRow_2 ---
+  Entry_3_E3D06962403A4DF403DFBF892EECBE72 = NSLOCTEXT("[2D56E88BC989134BD568433BEDE4DBAD]", "F34B6ACD4860B5ABA79062BD7859BE5F", "Here is some money (not a bribe, really!)")
+  GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1 = ((EventTag_9_181EFFAD43BC4BE401FC47B8A128C289=(TagName="SoulslikeFramework.GameplayEvents.AddCurrency"),CustomData_12_113B3E7B4FF55795A4FEEA8C9108DB1E=/Game/SoulslikeFramework/Structures/_Misc/FInt.FInt(Int_31_1635518D4B5EA126D75B9481FB7F017E=99999)))
+
+--- Row: NewRow_3 ---
+  Entry_3_E3D06962403A4DF403DFBF892EECBE72 = NSLOCTEXT("[2D56E88BC989134BD568433BEDE4DBAD]", "B1ADDF9444339D7166F7EE9A384F24E6", "If you enjoyed your time here - or not - please let @isikdev know! I\'m excited - I\'ll soon be on Fab!")
+  GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1 = 
+

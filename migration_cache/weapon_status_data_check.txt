@@ -1,0 +1,24 @@
+======================================================================
+CHECKING WEAPON STATUS EFFECT DATA (C++ Structure)
+======================================================================
+
+DA_PoisonSword:
+  Class: PDA_Item_C
+  ItemInformation: Found
+  EquipmentDetails: Found
+  WeaponStatusEffectInfo: 1 entries
+    - Key: DA_StatusEffect_Poison
+      Rank: 3
+      BuildupAmount: 50.0
+
+DA_Sword01:
+  Class: PDA_Item_C
+  ItemInformation: Found
+  EquipmentDetails: Found
+  WeaponStatusEffectInfo: EMPTY or None
+
+DA_Katana:
+  Class: PDA_Item_C
+  ItemInformation: Found
+  EquipmentDetails: Found
+  WeaponStatusEffectInfo: EMPTY or None

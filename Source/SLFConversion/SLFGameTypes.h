@@ -1106,6 +1106,18 @@ struct SLFCONVERSION_API FSLFRestPointSaveInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|FastTravel")
 	FRotator SpawnRotation = FRotator::ZeroRotator;
 
+	/** If true, this is a dungeon entrance (shown with different color on world map) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|FastTravel")
+	bool bIsDungeonEntrance = false;
+
+	/** Dungeon level to stream in (e.g., "/Game/Maps/L_Dungeon_01"). Empty for regular rest points. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|FastTravel")
+	FString DungeonLevelName;
+
+	/** World offset for the streamed dungeon level (dungeons go underground) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Save|FastTravel")
+	FVector DungeonWorldOffset = FVector::ZeroVector;
+
 	FSLFRestPointSaveInfo() {}
 };
 
@@ -1763,7 +1775,89 @@ struct SLFCONVERSION_API FSLFZoneConfig
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zone")
 	FGameplayTag BossProgressTag;
 
+	/** Center of zone in world space (for map overlay) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zone")
+	FVector ZoneCenter = FVector::ZeroVector;
+
+	/** Approximate zone radius in world units */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zone")
+	float ZoneRadius = 12000.0f;
+
+	/** Color for map overlay circle */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Zone")
+	FLinearColor MapColor = FLinearColor(0.5f, 0.5f, 0.5f, 0.3f);
+
 	FSLFZoneConfig() {}
+};
+
+/** Named sub-region within a zone (for loot/enemy density variation) */
+USTRUCT(BlueprintType)
+struct SLFCONVERSION_API FSLFSubRegion
+{
+	GENERATED_BODY()
+
+	/** Sub-region display name */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SubRegion")
+	FText Name;
+
+	/** Center in world space */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SubRegion")
+	FVector Center = FVector::ZeroVector;
+
+	/** Radius of this sub-region */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SubRegion")
+	float Radius = 4000.0f;
+
+	/** Enemy density multiplier (1.0 = normal) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SubRegion")
+	float EnemyDensity = 1.0f;
+
+	/** Loot density multiplier */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SubRegion")
+	float LootDensity = 1.0f;
+
+	/** Maximum enemy rank in this sub-region */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SubRegion")
+	ESLFEnemyRank MaxEnemyRank = ESLFEnemyRank::Regular;
+
+	/** Parent zone tag */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SubRegion")
+	FGameplayTag ParentZoneTag;
+
+	FSLFSubRegion() {}
+};
+
+/** Crafting recipe — inputs → output */
+USTRUCT(BlueprintType)
+struct SLFCONVERSION_API FSLFCraftingRecipe
+{
+	GENERATED_BODY()
+
+	/** Recipe display name */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting")
+	FText RecipeName;
+
+	/** Input items (item class → count) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting")
+	TMap<TSubclassOf<UObject>, int32> Inputs;
+
+	/** Output item class */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting")
+	TSubclassOf<UObject> OutputItem;
+
+	/** Output count */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting")
+	int32 OutputCount = 1;
+
+	/** Whether the player has discovered this recipe */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting")
+	bool bDiscovered = false;
+
+	/** Required zone to craft (empty = anywhere at resting point) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crafting")
+	FGameplayTag RequiredZone;
+
+	FSLFCraftingRecipe() {}
 };
 
 /** Entry in an enemy spawn table for a zone */

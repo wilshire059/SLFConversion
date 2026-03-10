@@ -1,0 +1,116 @@
+=== WIDGET BLUEPRINT EXPORT ===
+Path: /Game/SoulslikeFramework/Widgets/HUD/W_Dialog
+ParentClass: W_Dialog
+
+=== CLASS DEFAULT OBJECT ===
+Object: Default__W_Dialog_C (Class: W_Dialog_C)
+  Image_63 = null
+  DialogText = null
+  OnInventoryRequested = ()
+  OnEquipmentRequested = ()
+  OnStatusRequested = ()
+  OnCraftingRequested = ()
+  OnSettingsRequested = ()
+  ColorAndOpacity (FLinearColor):
+    R = 1.000000
+    G = 1.000000
+    B = 1.000000
+    A = 1.000000
+  ColorAndOpacityDelegate = (null).None
+  ForegroundColor (FSlateColor):
+    SpecifiedColor:
+      R = 1.000000
+      G = 0.000000
+      B = 1.000000
+      A = 1.000000
+    ColorUseRule = UseColor_Foreground
+  ForegroundColorDelegate = (null).None
+  OnVisibilityChanged = ()
+  Padding (FMargin):
+    Left = 0.000000
+    Top = 0.000000
+    Right = 0.000000
+    Bottom = 0.000000
+  Priority = 0
+  bIsFocusable = False
+  bStopAction = False
+  bAutomaticallyRegisterInputOnConstruction = False
+  NamedSlotBindings (Array, Count: 0):
+  Extensions (Array, Count: 0):
+  DesignTimeSize (FVector2D):
+    X = 100.000000
+    Y = 100.000000
+  DesignSizeMode = FillScreen
+  PaletteCategory = NSLOCTEXT("UMG", "UserCreated", "User Created")
+  PreviewBackground = null
+  bHasScriptImplementedTick = False
+  bHasScriptImplementedPaint = False
+  TickFrequency = Auto
+  DesiredFocusWidget (FWidgetChild):
+    WidgetName = None
+    WidgetPtr = None
+  Slot = null
+  bIsEnabledDelegate = (null).None
+  ToolTipTextDelegate = (null).None
+  ToolTipText = 
+  ToolTipWidget = null
+  ToolTipWidgetDelegate = (null).None
+  VisibilityDelegate = (null).None
+  RenderTransform (FWidgetTransform):
+    Translation:
+      X = 0.000000
+      Y = 0.000000
+    Scale:
+      X = 1.000000
+      Y = 1.000000
+    Shear:
+      X = 0.000000
+      Y = 0.000000
+    Angle = 0.000000
+  RenderTransformPivot (FVector2D):
+    X = 0.500000
+    Y = 0.500000
+  FlowDirectionPreference = Inherit
+  bIsVariable = True
+  bIsEnabled = True
+  bOverride_Cursor = False
+  bOverrideAccessibleDefaults = False
+  bCanChildrenBeAccessible = True
+  AccessibleBehavior = NotAccessible
+  AccessibleSummaryBehavior = Auto
+  AccessibleText = 
+  AccessibleTextDelegate = (null).None
+  AccessibleSummaryText = 
+  AccessibleSummaryTextDelegate = (null).None
+  bIsVolatile = False
+  bHiddenInDesigner = False
+  bExpandedInDesigner = False
+  bLockedInDesigner = False
+  Cursor = Default
+  Clipping = Inherit
+  Visibility = SelfHitTestInvisible
+  PixelSnapping = Inherit
+  RenderOpacity = 1.000000
+  AccessibleWidgetData = null
+  Navigation = null
+  DisplayLabel = 
+  CategoryName = 
+
+=== WIDGET TREE ===
+  Widget: MainOverlay (Class: Overlay)
+    Visibility: 4
+    IsVisible: false
+  Widget: Image_63 (Class: Image)
+    Visibility: 0
+    IsVisible: false
+  Widget: RightSideSizer (Class: SizeBox)
+    Visibility: 4
+    IsVisible: false
+  Widget: BorderRight (Class: Border)
+    Visibility: 0
+    IsVisible: false
+  Widget: DialogText (Class: TextBlock)
+    Visibility: 0
+    IsVisible: false
+
+=== WIDGET VARIABLES ===

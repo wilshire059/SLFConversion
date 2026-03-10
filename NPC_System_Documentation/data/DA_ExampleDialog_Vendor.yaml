@@ -1,0 +1,24 @@
+# Data Asset Export - AUTO-GENERATED
+# DO NOT EDIT - This is the source of truth from bp_only
+
+data_asset:
+  path: /Game/SoulslikeFramework/Data/Dialog/ShowcaseVendorNpc/DA_ExampleDialog_Vendor
+  class: PDA_Dialog_C
+
+properties:
+  class: PDA_Dialog_C
+  name: DA_ExampleDialog_Vendor
+  path: /Game/SoulslikeFramework/Data/Dialog/ShowcaseVendorNpc/DA_ExampleDialog_Vendor.DA_ExampleDialog_Vendor
+  properties:
+    Requirement:
+      count: 0
+      items:
+    DefaultDialogTable: /Game/SoulslikeFramework/Data/Dialog/ShowcaseVendorNpc/DT_ShowcaseVendorNpc_Generic.DT_ShowcaseVendorNpc_Generic
+    AssetBundleData:
+      Bundles:
+        count: 0
+        items:
+    NativeClass:
+      class: BlueprintGeneratedClass
+      name: PDA_Dialog_C
+      path: /Game/SoulslikeFramework/Data/Dialog/PDA_Dialog.PDA_Dialog_C

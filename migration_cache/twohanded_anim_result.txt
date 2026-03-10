@@ -1,0 +1,12 @@
+Loaded AnimData: DA_ExampleAnimSetup
+Loaded TwoHandedWeapon_Right: AS_SLF_2h_Pose_R
+Loaded TwoHandedWeapon_Left: AS_SLF_2h_Pose_L
+Asset class: PDA_AnimData_C
+Asset is native class: PDA_AnimData_C
+Current two_handed_weapon_right: AS_SLF_2h_Pose_R
+Current two_handed_weapon_left: AS_SLF_2h_Pose_L
+SUCCESS: Set two_handed_weapon_right = AS_SLF_2h_Pose_R
+SUCCESS: Set two_handed_weapon_left = AS_SLF_2h_Pose_L
+Saved /Game/SoulslikeFramework/Data/_AnimationData/DA_ExampleAnimSetup: True
+
+FINAL RESULT: SUCCESS

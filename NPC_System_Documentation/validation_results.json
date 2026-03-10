@@ -1,0 +1,127 @@
+{
+  "passed": 17,
+  "failed": 2,
+  "warnings": 1,
+  "results": [
+    {
+      "category": "data",
+      "asset": "DA_ExampleDialog",
+      "status": "PASS",
+      "details": "Loaded as PDA_Dialog_C"
+    },
+    {
+      "category": "data",
+      "asset": "DA_ExampleDialog_Vendor",
+      "status": "PASS",
+      "details": "Loaded as PDA_Dialog_C"
+    },
+    {
+      "category": "data",
+      "asset": "DA_ExampleVendor",
+      "status": "PASS",
+      "details": "Loaded as PDA_Vendor_C"
+    },
+    {
+      "category": "data",
+      "asset": "PDA_Dialog",
+      "status": "PASS",
+      "details": "Loaded as Blueprint"
+    },
+    {
+      "category": "data",
+      "asset": "PDA_Vendor",
+      "status": "PASS",
+      "details": "Loaded as Blueprint"
+    },
+    {
+      "category": "data",
+      "asset": "DA_ExampleDialog",
+      "status": "WARN",
+      "details": "Could not fully validate: EditorAssetLibrary: Failed to convert parameter 'object' when calling function 'EditorAssetLibrary.GetMetadataTag' on 'Default__EditorAssetLibrary'\n  TypeError: NativizeProperty: Cannot nativize 'str' as 'Object' (ObjectProperty)\n    TypeError: NativizeObject: Cannot nativize 'str' as 'Object' (allowed Class type: 'Object')"
+    },
+    {
+      "category": "datatables",
+      "asset": "DT_GenericDefaultDialog",
+      "status": "PASS",
+      "details": "1 rows"
+    },
+    {
+      "category": "datatables",
+      "asset": "DT_ShowcaseGuideNpc_NoProgress",
+      "status": "PASS",
+      "details": "6 rows"
+    },
+    {
+      "category": "datatables",
+      "asset": "DT_ShowcaseGuideNpc_Progress",
+      "status": "PASS",
+      "details": "5 rows"
+    },
+    {
+      "category": "datatables",
+      "asset": "DT_ShowcaseGuideNpc_Completed",
+      "status": "FAIL",
+      "details": "Row count mismatch: 5 vs expected 3"
+    },
+    {
+      "category": "datatables",
+      "asset": "DT_ShowcaseVendorNpc_Generic",
+      "status": "FAIL",
+      "details": "Row count mismatch: 5 vs expected 4"
+    },
+    {
+      "category": "widgets",
+      "asset": "W_Dialog",
+      "status": "PASS",
+      "details": "Widget loaded"
+    },
+    {
+      "category": "widgets",
+      "asset": "W_NPC_Window",
+      "status": "PASS",
+      "details": "Widget loaded"
+    },
+    {
+      "category": "widgets",
+      "asset": "W_NPC_Window_Vendor",
+      "status": "PASS",
+      "details": "Widget loaded"
+    },
+    {
+      "category": "widgets",
+      "asset": "W_VendorSlot",
+      "status": "PASS",
+      "details": "Widget loaded"
+    },
+    {
+      "category": "widgets",
+      "asset": "W_VendorAction",
+      "status": "PASS",
+      "details": "Widget loaded"
+    },
+    {
+      "category": "blueprints",
+      "asset": "B_Soulslike_NPC",
+      "status": "PASS",
+      "details": "Loaded as Blueprint"
+    },
+    {
+      "category": "blueprints",
+      "asset": "B_Soulslike_NPC_ShowcaseGuide",
+      "status": "PASS",
+      "details": "Loaded as Blueprint"
+    },
+    {
+      "category": "blueprints",
+      "asset": "B_Soulslike_NPC_ShowcaseVendor",
+      "status": "PASS",
+      "details": "Loaded as Blueprint"
+    },
+    {
+      "category": "blueprints",
+      "asset": "AC_AI_InteractionManager",
+      "status": "PASS",
+      "details": "Loaded as Blueprint"
+    }
+  ]
+}

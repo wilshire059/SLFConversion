@@ -1,0 +1,315 @@
+# Blueprint Export - AUTO-GENERATED
+# DO NOT EDIT - This is the source of truth from bp_only
+
+blueprint:
+  path: /Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC_ShowcaseGuide
+  class: Blueprint
+  parent_class: B_Soulslike_NPC_C
+  generated_class: B_Soulslike_NPC_ShowcaseGuide_C
+
+variables:
+class_default_object:
+  class: B_Soulslike_NPC_ShowcaseGuide_C
+  name: Default__B_Soulslike_NPC_ShowcaseGuide_C
+  path: /Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC_ShowcaseGuide.Default__B_Soulslike_NPC_ShowcaseGuide_C
+  properties:
+    Look At Radius: null
+    AC_AI_InteractionManager: null
+    CanBeTraced?: true
+    LookAtComponent: null
+    NpcId:
+      A: 0
+      B: 0
+      C: 0
+      D: 0
+    TargetLockonWidget: null
+    ProjectileHomingPosition: null
+    ExecutionWidget: null
+    AC_BuffManager: null
+    AC_StatusEffectManager: null
+    TargetLockonComponent: null
+    AC_StatManager: null
+    TL_GenericLocation_Alpha_6087E49D45FBBF5EAA0254AB7B87C1F0: 0.000000
+    TL_GenericLocation__Direction_6087E49D45FBBF5EAA0254AB7B87C1F0: Forward
+    TL_GenericLocation: null
+    TL_GenericRotation_Alpha_996FA36C4FE8FEA442CB9EB18340DDEB: 0.000000
+    TL_GenericRotation__Direction_996FA36C4FE8FEA442CB9EB18340DDEB: Forward
+    TL_GenericRotation: null
+    IK_Weight: 0.000000
+    Cache_Rotation:
+      Pitch: 0.000000
+      Yaw: 0.000000
+      Roll: 0.000000
+    Cache_Location:
+      X: 0.000000
+      Y: 0.000000
+      Z: 0.000000
+    OnLocationLerpEnd: ()
+    OnRotationLerpEnd: ()
+    OnLocationRotationLerpEnd: ()
+    Mesh:
+      class: SkeletalMeshComponent
+      name: CharacterMesh0
+      path: "/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC_ShowcaseGuide.Default__B_Soulslike_NPC_ShowcaseGuide_C:CharacterMesh0"
+    CharacterMovement:
+      class: CharacterMovementComponent
+      name: CharMoveComp
+      path: "/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC_ShowcaseGuide.Default__B_Soulslike_NPC_ShowcaseGuide_C:CharMoveComp"
+    CapsuleComponent:
+      class: CapsuleComponent
+      name: CollisionCylinder
+      path: "/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC_ShowcaseGuide.Default__B_Soulslike_NPC_ShowcaseGuide_C:CollisionCylinder"
+    ArrowComponent:
+      class: ArrowComponent
+      name: Arrow
+      path: "/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC_ShowcaseGuide.Default__B_Soulslike_NPC_ShowcaseGuide_C:Arrow"
+    BasedMovement:
+      BaseID: 0
+      bServerHasBaseComponent: false
+      bRelativeRotation: false
+      bServerHasVelocity: false
+      BoneName: None
+      MovementBase: null
+      Location:
+        X: 0.000000
+        Y: 0.000000
+        Z: 0.000000
+      Rotation:
+        Pitch: 0.000000
+        Yaw: 0.000000
+        Roll: 0.000000
+    ReplicatedBasedMovement:
+      BaseID: 0
+      bServerHasBaseComponent: false
+      bRelativeRotation: false
+      bServerHasVelocity: false
+      BoneName: None
+      MovementBase: null
+      Location:
+        X: 0.000000
+        Y: 0.000000
+        Z: 0.000000
+      Rotation:
+        Pitch: 0.000000
+        Yaw: 0.000000
+        Roll: 0.000000
+    ReplicatedServerLastTransformUpdateTimeStamp: 0.000000
+    ReplayLastTransformUpdateTimeStamp: 0.000000
+    BaseRotationOffset:
+      X: 0.000000
+      Y: 0.000000
+      Z: 0.000000
+      W: 1.000000
+    BaseTranslationOffset:
+      X: 0.000000
+      Y: 0.000000
+      Z: 0.000000
+    ReplicatedGravityDirection:
+      X: 0.000000
+      Y: 0.000000
+      Z: -1.000000
+    AnimRootMotionTranslationScale: 1.000000
+    CrouchedEyeHeight: 32.000000
+    bInBaseReplication: false
+    bIsCrouched: false
+    bPressedJump: false
+    bSimGravityDisabled: false
+    ReplicatedMovementMode: 0
+    JumpMaxHoldTime: 0.000000
+    JumpMaxCount: 1
+    JumpCurrentCount: 0
+    JumpCurrentCountPreJump: 0
+    OnReachedJumpApex: ()
+    LandedDelegate: ()
+    MovementModeChangedDelegate: ()
+    OnCharacterMovementUpdated: ()
+    RepRootMotion:
+      Animation: null
+      bIsActive: false
+      bRelativePosition: false
+      bRelativeRotation: false
+      Position: 0.000000
+      Location:
+        X: 0.000000
+        Y: 0.000000
+        Z: 0.000000
+      Rotation:
+        Pitch: 0.000000
+        Yaw: 0.000000
+        Roll: 0.000000
+      MovementBase: null
+      MovementBaseBoneName: None
+      AuthoritativeRootMotion:
+        bHasAdditiveSources: false
+        bHasOverrideSources: false
+        bHasOverrideSourcesWithIgnoreZAccumulate: false
+        bIsAdditiveVelocityApplied: false
+        LastAccumulatedSettings:
+          Flags: 0
+        LastPreAdditiveVelocity:
+          X: 0.000000
+          Y: 0.000000
+          Z: 0.000000
+      Acceleration:
+        X: 0.000000
+        Y: 0.000000
+        Z: 0.000000
+      LinearVelocity:
+        X: 0.000000
+        Y: 0.000000
+        Z: 0.000000
+    bUseControllerRotationPitch: false
+    bUseControllerRotationYaw: false
+    bUseControllerRotationRoll: false
+    bCanAffectNavigationGeneration: false
+    BaseEyeHeight: 64.000000
+    AutoPossessPlayer: Disabled
+    AutoPossessAI: PlacedInWorld
+    RemoteViewPitch16: 0
+    RemoteViewPitch: 0
+    AIControllerClass:
+      class: BlueprintGeneratedClass
+      name: AIC_SoulslikeFramework_C
+      path: /Game/SoulslikeFramework/Blueprints/_AI/Misc/AIC_SoulslikeFramework.AIC_SoulslikeFramework_C
+    PlayerState: null
+    Controller: null
+    ReceiveControllerChangedDelegate: ()
+    ReceiveRestartedDelegate: ()
+    OverrideInputComponentClass: null
+    PrimaryActorTick:
+      TickGroup: TG_PrePhysics
+      EndTickGroup: TG_PrePhysics
+      bTickEvenWhenPaused: false
+      bCanEverTick: true
+      bStartWithTickEnabled: true
+      bAllowTickOnDedicatedServer: true
+      TickInterval: 0.000000
+    bNetTemporary: false
+    bOnlyRelevantToOwner: false
+    bAlwaysRelevant: false
+    bReplicateMovement: true
+    bCallPreReplication: true
+    bCallPreReplicationForReplay: true
+    bHidden: false
+    bTearOff: false
+    bForceNetAddressable: false
+    bIsMainWorldOnly: false
+    bNetLoadOnClient: true
+    bNetUseOwnerRelevancy: false
+    bRelevantForNetworkReplays: true
+    bRelevantForLevelBounds: true
+    bReplayRewindable: false
+    bAllowTickBeforeBeginPlay: false
+    bAutoDestroyWhenFinished: false
+    bCanBeDamaged: true
+    bBlockInput: false
+    bCollideWhenPlacing: true
+    bFindCameraComponentWhenViewTarget: true
+    bGenerateOverlapEventsDuringLevelStreaming: true
+    bIgnoresOriginShifting: false
+    bEnableAutoLODGeneration: true
+    bIsEditorOnlyActor: false
+    bReplicates: true
+    bCanBeInCluster: false
+    bMigratingAsset: false
+    bAllowReceiveTickEventOnDedicatedServer: true
+    bReplicateUsingRegisteredSubObjectList: false
+    bActorEnableCollision: true
+    bAsyncPhysicsTickEnabled: false
+    UpdateOverlapsMethodDuringLevelStreaming: UseConfigDefault
+    DefaultUpdateOverlapsMethodDuringLevelStreaming: OnlyUpdateMovable
+    InitialLifeSpan: 0.000000
+    CustomTimeDilation: 1.000000
+    RayTracingGroupId: -1
+    RuntimeGrid: None
+    ReplicatedMovement:
+      LocationQuantizationLevel: RoundTwoDecimals
+      VelocityQuantizationLevel: RoundWholeNumber
+      RotationQuantizationLevel: ByteComponents
+    Owner: null
+    NetDriverName: GameNetDriver
+    Role: ROLE_Authority
+    NetDormancy: DORM_Awake
+    SpawnCollisionHandlingMethod: AdjustIfPossibleButDontSpawnIfColliding
+    AutoReceiveInput: Disabled
+    InputPriority: 0
+    InputComponent: null
+    NetCullDistanceSquared: 225000000.000000
+    NetUpdateFrequency: 100.000000
+    MinNetUpdateFrequency: 2.000000
+    NetPriority: 3.000000
+    PhysicsReplicationMode: Default
+    Instigator: null
+    RootComponent:
+      class: CapsuleComponent
+      name: CollisionCylinder
+      path: "/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC_ShowcaseGuide.Default__B_Soulslike_NPC_ShowcaseGuide_C:CollisionCylinder"
+    PivotOffset:
+      X: 0.000000
+      Y: 0.000000
+      Z: 0.000000
+    HLODLayer: null
+    Layers:
+      count: 0
+      items:
+    ParentComponent: None
+    ActorGuid:
+      A: 0
+      B: 0
+      C: 0
+      D: 0
+    ContentBundleGuid:
+      A: 0
+      B: 0
+      C: 0
+      D: 0
+    DataLayers:
+      count: 0
+      items:
+    DataLayerAssets:
+      count: 0
+      items:
+    ExternalDataLayerAsset: null
+    SpriteScale: 1.000000
+    ActorLabel: MyPawn_C-1
+    FolderPath: None
+    FolderGuid:
+      A: 0
+      B: 0
+      C: 0
+      D: 0
+    bHiddenEd: false
+    bLockLocation: false
+    bActorLabelEditable: true
+    bEditable: true
+    bListedInSceneOutliner: true
+    bOptimizeBPComponentData: false
+    bCanPlayFromHere: false
+    bIsSpatiallyLoaded: true
+    Tags:
+      count: 0
+      items:
+    OnTakeAnyDamage: ()
+    OnTakePointDamage: ()
+    OnTakeRadialDamage: ()
+    OnActorBeginOverlap: ()
+    OnActorEndOverlap: ()
+    OnBeginCursorOver: ()
+    OnEndCursorOver: ()
+    OnClicked: ()
+    OnReleased: ()
+    OnInputTouchBegin: ()
+    OnInputTouchEnd: ()
+    OnInputTouchEnter: ()
+    OnInputTouchLeave: ()
+    OnActorHit: ()
+    OnDestroyed: ()
+    OnEndPlay: ()
+    InstanceComponents:
+      count: 0
+      items:
+    BlueprintCreatedComponents:
+      count: 0
+      items:
+
+components:

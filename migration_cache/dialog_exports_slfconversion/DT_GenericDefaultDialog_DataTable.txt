@@ -1,0 +1,11 @@
+=== DATA TABLE EXPORT ===
+Path: /Game/SoulslikeFramework/Data/Dialog/DT_GenericDefaultDialog
+RowStruct: FDialogEntry
+
+=== ROWS ===
+Row Count: 1
+
+--- Row: NewRow ---
+  Entry_3_E3D06962403A4DF403DFBF892EECBE72 = NSLOCTEXT("[DF6B59FCA505B4A3D3606089B4F52472]", "7D064C024B12B20A806438BBFC3D8738", "(Generic Dialogue Text)")
+  GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1 = 
+

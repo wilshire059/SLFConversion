@@ -688,6 +688,33 @@ enum class ESLFEnemyRank : uint8
 	Boss = 3		UMETA(DisplayName = "Boss")
 };
 
+//////////////////////////////////////////////////////////////////////////
+// ESLFDungeonTier
+// Color-coded dungeon difficulty tier (door color)
+//////////////////////////////////////////////////////////////////////////
+UENUM(BlueprintType)
+enum class ESLFDungeonTier : uint8
+{
+	Normal    = 0 UMETA(DisplayName = "Normal"),      // Blue
+	Elite     = 1 UMETA(DisplayName = "Elite"),        // Purple
+	Legendary = 2 UMETA(DisplayName = "Legendary")     // Orange
+};
+
+//////////////////////////////////////////////////////////////////////////
+// EPuzzleType
+// Types of dungeon puzzles
+//////////////////////////////////////////////////////////////////////////
+UENUM(BlueprintType)
+enum class ESLFPuzzleType : uint8
+{
+	Lever        = 0 UMETA(DisplayName = "Lever"),
+	Pressure     = 1 UMETA(DisplayName = "Pressure Plate"),
+	Sequence     = 2 UMETA(DisplayName = "Sequence"),
+	ElementMatch = 3 UMETA(DisplayName = "Element Match")
+};
+
 using E_ZoneDifficulty = ESLFZoneDifficulty;
 using E_Faction = ESLFFaction;
 using E_EnemyRank = ESLFEnemyRank;
+using E_DungeonTier = ESLFDungeonTier;
+using E_PuzzleType = ESLFPuzzleType;

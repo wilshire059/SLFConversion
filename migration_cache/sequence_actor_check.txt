@@ -1,0 +1,20 @@
+Blueprint: B_SequenceActor
+Parent class: /Script/SLFConversion.B_SequenceActor
+Variables: []
+CDO: Default__B_SequenceActor_C
+sequence_to_play: LS_ShowcaseRoom
+sequence_to_play path: /Game/SoulslikeFramework/Cinematics/LS_ShowcaseRoom.LS_ShowcaseRoom
+can_be_skipped: True
+
+Compile status:
+=== COMPILE STATUS: B_SequenceActor ===
+
+Blueprint Status: UP TO DATE
+
+=== NODE ERRORS ===
+
+=== SUMMARY ===
+Errors: 0
+Warnings: 0
+
+No compile errors or warnings found in graph nodes.

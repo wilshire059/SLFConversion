@@ -1,0 +1,16 @@
+[2026.02.12-18.50.39:543][  0]LogPython: Warning: [RT-v4] ============================================================
+[2026.02.12-18.50.39:543][  0]LogPython: Warning: [RT-v4] IK Retarget Test v4 - AssetData approach
+[2026.02.12-18.50.39:543][  0]LogPython: Warning: [RT-v4] ============================================================
+[2026.02.12-18.50.39:576][  0]LogPython: Warning: [RT-v4] 
+[2026.02.12-18.50.39:576][  0]LogPython: Warning: [RT-v4]   Registry: True
+[2026.02.12-18.50.39:576][  0]LogPython: Warning: [RT-v4]   AssetData (object_path): True - AssetData
+[2026.02.12-18.50.39:576][  0]LogPython: Warning: [RT-v4]     is_valid: False
+[2026.02.12-18.50.39:576][  0]LogPython: Warning: [RT-v4]     asset_name: None
+[2026.02.12-18.50.39:577][  0]LogPython: Warning: [RT-v4]     asset_class: <Struct 'TopLevelAssetPath' (0x00000277F5597C9C) {package_name: "", asset_name: ""}>
+[2026.02.12-18.50.39:578][  0]LogPython: Warning: [RT-v4]   All anim assets: 50
+[2026.02.12-18.50.39:578][  0]LogPython: Warning: [RT-v4]   Found test anim AssetData: a000_003000_Anim
+[2026.02.12-18.50.39:578][  0]LogPython: Warning: [RT-v4]   find_asset_data: True - AssetData
+[2026.02.12-18.50.39:578][  0]LogPython: Warning: [RT-v4]     is_valid: True
+[2026.02.12-18.50.39:578][  0]LogPython: Warning: [RT-v4]     asset_name: a000_003000_Anim
+[2026.02.12-18.50.39:578][  0]LogPython: Warning: [RT-v4] 
+[2026.02.12-18.50.39:578][  0]LogPython: Warning: [RT-v4] 

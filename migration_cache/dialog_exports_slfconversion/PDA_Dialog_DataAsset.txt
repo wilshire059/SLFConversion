@@ -1,0 +1,66 @@
+=== DATA ASSET EXPORT ===
+Path: /Game/SoulslikeFramework/Data/Dialog/PDA_Dialog
+Class: Blueprint
+
+=== PROPERTIES ===
+Object: PDA_Dialog (Class: Blueprint)
+  ParentClass = PDA_Dialog (Path: /Script/SLFConversion.PDA_Dialog)
+  BlueprintType = BPTYPE_Normal
+  bRecompileOnLoad = True
+  bRunConstructionScriptOnDrag = True
+  bRunConstructionScriptInSequencer = False
+  bGenerateConstClass = False
+  bGenerateAbstractClass = False
+  bDeprecate = False
+  bDuplicatingReadOnly = False
+  ShouldCookPropertyGuidsValue = Inherit
+  CompileMode = Default
+  BlueprintDisplayName = 
+  BlueprintDescription = 
+  BlueprintNamespace = 
+  BlueprintCategory = 
+  HideCategories (Array, Count: 0):
+  BlueprintSystemVersion = 2
+  SimpleConstructionScript = null
+  UbergraphPages (Array, Count: 1):
+    [0] = /Script/Engine.EdGraph'/Game/SoulslikeFramework/Data/Dialog/PDA_Dialog.PDA_Dialog:EventGraph'
+  FunctionGraphs (Array, Count: 0):
+  DelegateSignatureGraphs (Array, Count: 0):
+  MacroGraphs (Array, Count: 0):
+  ComponentTemplates (Array, Count: 0):
+  Timelines (Array, Count: 0):
+  ComponentClassOverrides (Array, Count: 0):
+  InheritableComponentHandler = null
+  NewVariables (Array, Count: 0):
+  GeneratedVariables (Array, Count: 0):
+  CategorySorting (Array, Count: 3):
+    [0] = Default
+    [1] = None
+    [2] = Config
+  ImportedNamespaces = ()
+  ImplementedInterfaces (Array, Count: 0):
+  LastEditedDocuments (Array, Count: 1):
+    [0]:
+      EditedObjectPath:
+        AssetPath:
+          PackageName = /Game/SoulslikeFramework/Data/Dialog/PDA_Dialog
+          AssetName = PDA_Dialog
+        SubPathString = EventGraph
+      SavedViewOffset:
+        X = -2924.513184
+        Y = -2200.461670
+      SavedZoomAmount = 0.100000
+      EditedObject = null
+  Bookmarks (Map, Count: 0):
+  BookmarkNodes (Array, Count: 0):
+  DeprecatedPinWatches (Array, Count: 0):
+  ComponentTemplateNameIndex (Map, Count: 0):
+  Extensions (Array, Count: 0):
+  ThumbnailInfo = null
+  GeneratedClass = PDA_Dialog_C (Path: /Game/SoulslikeFramework/Data/Dialog/PDA_Dialog.PDA_Dialog_C)
+  bLegacyNeedToPurgeSkelRefs = False
+  BlueprintGuid (FGuid):
+    A = -4423905
+    B = 1200203762
+    C = -1316089683
+    D = -160523001

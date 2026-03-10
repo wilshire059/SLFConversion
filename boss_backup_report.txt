@@ -1,0 +1,19 @@
+
+============================================================
+BOSS BACKUP CHECK: B_Soulslike_Boss_Malgareth
+============================================================
+Class: B_Soulslike_Boss_Malgareth_C
+
+--- All CDO Components ---
+  CollisionCylinder (CapsuleComponent)
+  Arrow (ArrowComponent)
+  CharMoveComp (CharacterMovementComponent)
+  CharacterMesh0 (SkeletalMeshComponent)
+
+--- Parent B_Soulslike_Boss ---
+
+--- B_Soulslike_Enemy Status Effects ---
+
+============================================================
+CHECK COMPLETE
+============================================================

@@ -1,0 +1,16 @@
+# DataTable Export - AUTO-GENERATED
+# DO NOT EDIT - This is the source of truth from bp_only
+
+datatable:
+  path: /Game/SoulslikeFramework/Data/Dialog/DT_GenericDefaultDialog
+  row_struct: FDialogEntry
+  row_count: 1
+
+rows:
+  - row_name: NewRow
+    columns:
+      Entry_3_E3D06962403A4DF403DFBF892EECBE72: (Generic Dialogue Text)
+      GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1:
+        count: 0
+        items:
+

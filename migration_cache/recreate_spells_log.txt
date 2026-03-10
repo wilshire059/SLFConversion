@@ -1,0 +1,71 @@
+======================================================================
+RECREATING SPELLS FROM BLUEPRINT CLASS
+======================================================================
+Template class: PDA_Item_C
+Template class path: /Game/SoulslikeFramework/Data/PDA_Item.PDA_Item_C
+Template category: <SLFItemCategory.TOOLS: 1>
+Template action: <Struct 'GameplayTag' (0x0000011C911FBB44) {}>
+
+Processing: DA_FireballSpell
+  Duplicated. Class: PDA_Item_C
+  Set ItemClass: /Script/SLFConversion.SLFFireballProjectile
+  SAVED: DA_FireballSpell
+
+Processing: DA_IceShardSpell
+  Duplicated. Class: PDA_Item_C
+  Set ItemClass: /Script/SLFConversion.SLFIceShardProjectile
+  SAVED: DA_IceShardSpell
+
+Processing: DA_LightningBoltSpell
+  Duplicated. Class: PDA_Item_C
+  Set ItemClass: /Script/SLFConversion.SLFLightningBoltProjectile
+  SAVED: DA_LightningBoltSpell
+
+Processing: DA_HolyOrbSpell
+  Duplicated. Class: PDA_Item_C
+  Set ItemClass: /Script/SLFConversion.SLFHolyOrbProjectile
+  SAVED: DA_HolyOrbSpell
+
+Processing: DA_PoisonBlobSpell
+  Duplicated. Class: PDA_Item_C
+  Set ItemClass: /Script/SLFConversion.SLFPoisonBlobProjectile
+  SAVED: DA_PoisonBlobSpell
+
+Processing: DA_ArcaneMissileSpell
+  Duplicated. Class: PDA_Item_C
+  Set ItemClass: /Script/SLFConversion.SLFArcaneMissileProjectile
+  SAVED: DA_ArcaneMissileSpell
+
+Processing: DA_BlackholeSpell
+  Duplicated. Class: PDA_Item_C
+  Set ItemClass: /Script/SLFConversion.SLFSpellProjectile
+  SAVED: DA_BlackholeSpell
+
+Processing: DA_BeamSpell
+  Duplicated. Class: PDA_Item_C
+  Set ItemClass: /Script/SLFConversion.SLFBeamSpell
+  SAVED: DA_BeamSpell
+
+Processing: DA_AOEExplosionSpell
+  Duplicated. Class: PDA_Item_C
+  Set ItemClass: /Script/SLFConversion.SLFAOESpell
+  SAVED: DA_AOEExplosionSpell
+
+Processing: DA_ShieldSpell
+  Duplicated. Class: PDA_Item_C
+  Set ItemClass: /Script/SLFConversion.SLFShieldSpell
+  SAVED: DA_ShieldSpell
+
+Processing: DA_HealingSpell
+  Duplicated. Class: PDA_Item_C
+  Set ItemClass: /Script/SLFConversion.SLFHealingSpell
+  SAVED: DA_HealingSpell
+
+Processing: DA_SummoningCircleSpell
+  Duplicated. Class: PDA_Item_C
+  Set ItemClass: /Script/SLFConversion.SLFSummoningCircle
+  SAVED: DA_SummoningCircleSpell
+
+======================================================================
+COMPLETE: 12/12 spells created
+======================================================================

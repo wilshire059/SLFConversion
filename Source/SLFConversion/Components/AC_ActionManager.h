@@ -199,6 +199,9 @@ protected:
 	 */
 	void BuildAvailableActionsFromActionsMap();
 
+	/** Register a C++ action class as fallback (for actions without data assets) */
+	void RegisterCppActionFallback(const TCHAR* TagString, UClass* ActionClass);
+
 	// ═══════════════════════════════════════════════════════════════════════
 	// ASYNC LOADING
 	// ═══════════════════════════════════════════════════════════════════════

@@ -1,0 +1,26 @@
+{
+  "B_Soulslike_NPC": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC",
+    "name": "B_Soulslike_NPC",
+    "mesh": null,
+    "anim_class": null,
+    "components": {},
+    "scs_components": {}
+  },
+  "B_Soulslike_NPC_ShowcaseVendor": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC_ShowcaseVendor",
+    "name": "B_Soulslike_NPC_ShowcaseVendor",
+    "mesh": null,
+    "anim_class": null,
+    "components": {},
+    "scs_components": {}
+  },
+  "B_Soulslike_NPC_ShowcaseGuide": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC_ShowcaseGuide",
+    "name": "B_Soulslike_NPC_ShowcaseGuide",
+    "mesh": null,
+    "anim_class": null,
+    "components": {},
+    "scs_components": {}
+  }
+}

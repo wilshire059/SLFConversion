@@ -1,0 +1,4 @@
+Blender 5.0.1 (hash a3db93c5b259 built 2025-12-16 01:32:30)
+OSError: Python file "C:\scripts\slfconversion\Cscriptselden_ring_tools\reskin_to_c3100.py" could not be opened: No such file or directory
+
+Blender quit

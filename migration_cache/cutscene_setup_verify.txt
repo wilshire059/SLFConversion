@@ -1,0 +1,34 @@
+======================================================================
+VERIFYING CUTSCENE SETUP
+======================================================================
+
+1. B_SequenceActor Blueprint:
+   Parent: /Script/SLFConversion.B_SequenceActor
+   Default sequence_to_play: LS_ShowcaseRoom
+   Default can_be_skipped: True
+   Compile: OK
+
+2. LS_ShowcaseRoom Level Sequence:
+   Found: LS_ShowcaseRoom
+   Class: LevelSequence
+
+3. GI_SoulslikeFramework:
+   Parent: /Script/SLFConversion.SLFGameInstance
+   first_time_on_demo_level (default): True
+   Compile: OK
+
+4. PC_SoulslikeFramework:
+   ERROR: Could not load Blueprint
+
+======================================================================
+CUTSCENE FLOW (C++ Implementation):
+======================================================================
+
+1. PIE starts -> PC_SoulslikeFramework::BeginPlay() runs
+2. C++ checks if level name contains 'Demo_Showcase'
+3. C++ gets USLFGameInstance and checks FirstTimeOnDemoLevel
+4. If true, C++ spawns B_SequenceActor with LS_ShowcaseRoom
+5. C++ sets FirstTimeOnDemoLevel = false
+
+This bypasses the broken Level Blueprint variable references.
+======================================================================

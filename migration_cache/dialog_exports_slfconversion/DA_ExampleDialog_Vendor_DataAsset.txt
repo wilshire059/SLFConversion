@@ -1,0 +1,11 @@
+=== DATA ASSET EXPORT ===
+Path: /Game/SoulslikeFramework/Data/Dialog/ShowcaseVendorNpc/DA_ExampleDialog_Vendor
+Class: PDA_Dialog_C
+
+=== PROPERTIES ===
+Object: DA_ExampleDialog_Vendor (Class: PDA_Dialog_C)
+  Requirement (Array, Count: 0):
+  DefaultDialogTable = /Game/SoulslikeFramework/Data/Dialog/ShowcaseVendorNpc/DT_ShowcaseVendorNpc_Generic.DT_ShowcaseVendorNpc_Generic
+  AssetBundleData (FAssetBundleData):
+    Bundles = 
+  NativeClass = PDA_Dialog_C (Path: /Game/SoulslikeFramework/Data/Dialog/PDA_Dialog.PDA_Dialog_C)

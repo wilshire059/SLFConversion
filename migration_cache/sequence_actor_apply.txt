@@ -1,0 +1,56 @@
+======================================================================
+APPLYING SEQUENCE ACTOR DATA
+======================================================================
+Loaded: /Game/SoulslikeFramework/Blueprints/_WorldActors/B_SequenceActor
+Class: Blueprint
+Generated class: B_SequenceActor_C
+CDO: Default__B_SequenceActor_C
+Available properties:
+  actor_guid: <class 'Guid'>
+  actor_instance_guid: <class 'Guid'>
+  always_relevant: <class 'bool'>
+  auto_destroy_when_finished: <class 'bool'>
+  can_be_damaged: <class 'bool'>
+  content_bundle_guid: <class 'Guid'>
+  custom_time_dilation: <class 'float'>
+  disable_player_input: <class 'bool'>
+  enable_auto_lod_generation: <class 'bool'>
+  find_camera_component_when_view_target: <class 'bool'>
+  generate_overlap_events_during_level_streaming: <class 'bool'>
+  has_played: <class 'bool'>
+  hidden: <class 'bool'>
+  initial_life_span: <class 'float'>
+  instigator: <class 'NoneType'>
+  is_spatially_loaded: <class 'bool'>
+  level_sequence: <class 'NoneType'>
+  life_span: <class 'float'>
+  min_net_update_frequency: <class 'float'>
+  net_cull_distance_squared: <class 'float'>
+  net_dormancy: <class 'NetDormancy'>
+  net_priority: <class 'float'>
+  net_update_frequency: <class 'float'>
+  net_use_owner_relevancy: <class 'bool'>
+  only_relevant_to_owner: <class 'bool'>
+  pivot_offset: <class 'Vector'>
+  play_on_enter: <class 'bool'>
+  play_once: <class 'bool'>
+  replicate_using_registered_sub_object_list: <class 'bool'>
+  replicates: <class 'bool'>
+  root_component: <class 'NoneType'>
+  runtime_grid: <class 'Name'>
+  scene_root: <class 'NoneType'>
+  skippable: <class 'bool'>
+  spawn_collision_handling_method: <class 'SpawnActorCollisionHandlingMethod'>
+  sprite_scale: <class 'float'>
+  tags: <class 'Array'>
+  trigger_volume: <class 'NoneType'>
+
+Loaded sequence: /Game/SoulslikeFramework/Cinematics/LS_ShowcaseRoom
+Sequence class: LevelSequence
+  Failed SequenceToPlay: SLFSequenceActor: Failed to find property 'SequenceToPlay' for attribute 'SequenceToPlay' on 'B_SequenceActor_C'
+  Failed sequence_to_play: SLFSequenceActor: Failed to find property 'sequence_to_play' for attribute 'sequence_to_play' on 'B_SequenceActor_C'
+  Failed Sequence To Play: SLFSequenceActor: Failed to find property 'Sequence To Play' for attribute 'Sequence To Play' on 'B_SequenceActor_C'
+
+======================================================================
+Done!
+======================================================================

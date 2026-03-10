@@ -1,0 +1,22 @@
+
+============================================================
+THROWING KNIFE DATA CHECK AND FIX
+============================================================
+
+--- DA_Action_Projectile ---
+Loaded: DA_Action_Projectile
+  ActionMontage: <Object '/Game/SoulslikeFramework/Demo/_Animations/Combat/OneHanded/AM_SLF_ThrowProjectile.AM_SLF_ThrowProjectile' (0x000001D99AE00700) Class 'AnimMontage'>
+  ActionMontage already set
+
+--- DA_ThrowingKnife ---
+Loaded: DA_ThrowingKnife
+  ItemClass: <Object '/Game/SoulslikeFramework/Blueprints/_WorldActors/Projectiles/B_Projectile_ThrowingKnife.B_Projectile_ThrowingKnife_C' (0x000001D99A8AA800) Class 'BlueprintGeneratedClass'>
+  ItemClass already set
+  SubCategory: <SLFItemSubCategory.PROJECTILES: 2>
+  SubCategory is Projectiles - OK
+
+--- Saving ---
+
+============================================================
+Done. Modified 0 assets.
+============================================================

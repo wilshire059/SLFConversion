@@ -1,0 +1,121 @@
+=== BOSS CONFIGURATION RESULTS ===
+
+--- BEFORE ---
+
+============================================================
+BOSS DIAGNOSTICS: /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss_Malgareth
+============================================================
+CDO: Default__B_Soulslike_Boss_Malgareth_C
+
+--- CDO Components ---
+  CollisionCylinder (CapsuleComponent)
+  Arrow (ArrowComponent)
+  CharMoveComp (CharacterMovementComponent)
+  CharacterMesh0 (SkeletalMeshComponent)
+  StatManagerComponent (StatManagerComponent)
+  StatusEffectManager (AC_StatusEffectManager)
+  DefaultSceneRoot (SceneComponent)
+  ExecutionWidget (WidgetComponent)
+  Healthbar (WidgetComponent)
+  AIStateMachine (SLFAIStateMachineComponent)
+  BossComponent (AIBossComponent)
+  AC_AI_CombatManager (AC_AI_CombatManager)
+  TriggerCollisionSphere (SphereComponent)
+  HealthbarWidget (WidgetComponent)
+  CombatManagerComponent (AICombatManagerComponent)
+  BehaviorManagerComponent (AIBehaviorManagerComponent)
+  SoulsNiagaraComponent (NiagaraComponent)
+  LootDropManagerComponent (LootDropManagerComponent)
+
+--- SCS Components ---
+  SCS: Weapon_L_GEN_VARIABLE (ChildActorComponent)
+    ChildActorClass: B_Item_AI_Weapon_BossMace_C
+  SCS: Weapon_R_GEN_VARIABLE (ChildActorComponent)
+    ChildActorClass: B_Item_AI_Weapon_BossMace_C
+
+--- AIBossComponent ---
+  Phases: 0 entries
+
+============================================================
+
+--- CONFIGURATION ---
+
+============================================================
+CONFIGURING BOSS
+============================================================
+
+--- Loading Assets ---
+  Boss Blueprint: B_Soulslike_Boss_Malgareth
+  Cinematic Sequence: LS_Boss_Start
+  Weapon Blueprint: B_Item_AI_Weapon_BossMace
+  Status Effect: DA_StatusEffect_Burn
+
+--- Configuring SCS Components ---
+  Found ChildActorComponent: Weapon_L_GEN_VARIABLE
+    Current ChildActorClass: B_Item_AI_Weapon_BossMace_C
+    SET ChildActorClass to: B_Item_AI_Weapon_BossMace_C
+  Found ChildActorComponent: Weapon_R_GEN_VARIABLE
+    Current ChildActorClass: B_Item_AI_Weapon_BossMace_C
+    SET ChildActorClass to: B_Item_AI_Weapon_BossMace_C
+
+--- Configuring CDO Components ---
+  Found CDO AIBossComponent: BossComponent
+    Current Phases: 0
+    ADDED Phase1 with cinematic: LS_Boss_Start
+  Found CDO AICombatManagerComponent: CombatManagerComponent
+    Current DefaultAttackStatusEffects: 0
+    ADDED DA_StatusEffect_Burn: Rank=1, Buildup=25.0
+
+--- Saving Blueprint ---
+  Saved: ../../../../../../scripts/SLFConversion/Content/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss_Malgareth.uasset
+
+--- Configuration Summary ---
+  Phases configured: YES
+  Weapon_L configured: YES
+  Weapon_R configured: YES
+  Status effects configured: YES
+
+============================================================
+BOSS CONFIGURATION COMPLETE
+============================================================
+
+--- AFTER ---
+
+============================================================
+BOSS DIAGNOSTICS: /Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss_Malgareth
+============================================================
+CDO: Default__B_Soulslike_Boss_Malgareth_C
+
+--- CDO Components ---
+  CollisionCylinder (CapsuleComponent)
+  Arrow (ArrowComponent)
+  CharMoveComp (CharacterMovementComponent)
+  CharacterMesh0 (SkeletalMeshComponent)
+  StatManagerComponent (StatManagerComponent)
+  StatusEffectManager (AC_StatusEffectManager)
+  DefaultSceneRoot (SceneComponent)
+  ExecutionWidget (WidgetComponent)
+  Healthbar (WidgetComponent)
+  AIStateMachine (SLFAIStateMachineComponent)
+  BossComponent (AIBossComponent)
+  AC_AI_CombatManager (AC_AI_CombatManager)
+  TriggerCollisionSphere (SphereComponent)
+  HealthbarWidget (WidgetComponent)
+  CombatManagerComponent (AICombatManagerComponent)
+  BehaviorManagerComponent (AIBehaviorManagerComponent)
+  SoulsNiagaraComponent (NiagaraComponent)
+  LootDropManagerComponent (LootDropManagerComponent)
+
+--- SCS Components ---
+  SCS: Weapon_L_GEN_VARIABLE (ChildActorComponent)
+    ChildActorClass: B_Item_AI_Weapon_BossMace_C
+  SCS: Weapon_R_GEN_VARIABLE (ChildActorComponent)
+    ChildActorClass: B_Item_AI_Weapon_BossMace_C
+
+--- AIBossComponent ---
+  Phases: 1 entries
+    Phase 0: Phase1
+      HealthThreshold: 1.00
+      PhaseStartSequence: LS_Boss_Start
+
+============================================================

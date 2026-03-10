@@ -159,41 +159,48 @@ Phase 1+: Process all other Blueprints normally
 
 ---
 
-## Custom Enemy Pipeline (Meshy AI + Elden Ring Animations)
+## Custom Enemy Pipeline (Gemini + Meshy AI + Elden Ring Animations)
 
 End-to-end pipeline for creating forensically distinct custom enemies. Full details: `.claude/skills/custom-enemy-pipeline/SKILL.md`
 
-**6 Phases (Meshy AI zip → playable enemy):**
-1. **Mesh** (Meshy AI) - Download AI mesh zip (FBX + textures)
+**7 Phases (Gemini concept → Meshy AI mesh → Blender rig → UE5 → playable enemy):**
+0. **Concept** (Gemini) - Generate concept art images for body + weapon
+1. **Mesh** (Meshy AI) - Submit concepts to image-to-3D, download FBX + textures
 2. **Extract** (Blender headless) - ANIBND/CHRBND → HKX animations via Soulstruct
 3. **Rig + Forensic** (Blender headless) - Build HKX armature, rig AI mesh, 13 forensic transforms, export FBX
 4. **Import** (UE5 commandlet) - FBX → skeleton + mesh + 20 anims + 18 montages + ABP + PDAs + AI abilities (~50 assets)
 5. **C++ Class** - Runtime enemy with montage locomotion, deferred AnimBP, weapon traces
 6. **Test** (PIE) - Visual validation with screenshots, AnimNotify monitoring
 
-**PREFERRED: Soulstruct Direct** (`test_soulstruct_direct.py`) — bypasses ARP retarget when HKX/FLVER have identical topology. Builds HKX armature, rigs AI mesh with ARP PSEUDO_VOXELS, imports HKX animations directly. Requires per-mesh weapon weight tuning (body-bone distance method). See `custom-enemy-pipeline` skill Phase 3e-3f.
+**Two variants:**
+- **Single mesh** (`test_soulstruct_direct.py`, `rig_meshy_to_c3100.py`) — weapon is part of body mesh
+- **Body + weapon** (`rig_with_weapon.py`) — separate weapon bone-parented to R_Sword, auto-aligned to palm, finger curl grip. **CRITICAL: strips weapon bone fcurves** to prevent drift (Bug #35)
 
-**Quick Start (Sentinel example):**
+**Quick Start (Body + Weapon example — Hollow Warden v2):**
 ```bash
-# Phase 3: Blender (rig + forensic transforms + FBX export)
-"C:/Program Files/Blender Foundation/Blender 5.0/blender.exe" --background \
-  --python C:/scripts/elden_ring_tools/test_soulstruct_direct.py
+# Phase 0: Generate concept art with Gemini (web UI / CLI / API)
+# Phase 1: Submit to Meshy AI image-to-3D, download with download_meshy_models.py
+
+# Phase 3: Blender (rig body + attach weapon + forensic transforms + export)
+blender --background --python rig_with_weapon.py -- \
+  --name hollow_warden_v2 --body body.fbx --weapon weapon.fbx --align-only
+# User adjusts weapon in Blender GUI, then:
+blender --background --python rig_with_weapon.py -- \
+  --name hollow_warden_v2 --anims-only
 
 # Phase 4: UE5 (nuclear clean → build → import)
-rm -f C:/scripts/SLFConversion/Content/CustomEnemies/Sentinel/*.uasset
+rm -f C:/scripts/SLFConversion/Content/CustomEnemies/<Enemy>/*.uasset
 Build.bat SLFConversionEditor Win64 Development "C:/scripts/SLFConversion/SLFConversion.uproject"
-"C:/Program Files/Epic Games/UE_5.7/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" \
-  "C:/scripts/SLFConversion/SLFConversion.uproject" \
-  -run=SetupSentinel -forensic -unattended -nosplash -stdout -UTF8Output -FullStdOutLogOutput -NoSound
+UnrealEditor-Cmd.exe SLFConversion.uproject -run=Setup<Enemy> -forensic -unattended -nosplash
 ```
 
-**Scripts:** `C:\scripts\elden_ring_tools\` (extract_animations.py, build_proper_blend.py, test_soulstruct_direct.py, mesh_animation_pipeline.py, diagnose_weapon_verts2.py)
+**Scripts:** `C:\scripts\elden_ring_tools\` + `test_meshes/` (rig_with_weapon.py, rig_meshy_to_c3100.py, test_soulstruct_direct.py, download_meshy_models.py, mesh_animation_pipeline.py)
 
 **Process Docs:**
 - `.claude/skills/custom-enemy-pipeline/SKILL.md` - **COMPLETE end-to-end pipeline with all phases**
 - `.claude/reference/animation-pipeline.md` - Coordinate space rules, .blend builder
+- `memory/custom_enemy_pipeline.md` - Pipeline summary with both variants
 - `memory/sentinel_enemy.md` - Sentinel-specific state, skeleton, weight tuning
-- `memory/elden_ring_mesh_pipeline.md` - Mesh import details, BONE_CoB chain rule
 
 **BONE_CoB Chain Rule:** NEVER chain Blender-space bone locals with CoB appended. Chain in GAME SPACE first, then convert per-bone world transforms to Blender space. See `animation-pipeline.md` for details.
 
@@ -238,9 +245,35 @@ Procedural dungeon generation via `SetupOpenWorldCommandlet` + Dungeon Architect
 - **Current theme**: `D_StarterPackTheme` (sci-fi) — customizable per dungeon
 - **3 dungeons**: L_Dungeon_01 (80 cells), L_Dungeon_02 (110), L_Dungeon_03 (140)
 - **Level streaming**: `ASLFLevelStreamManager` — proximity trigger → fade → teleport underground
-- **Key files**: `SetupOpenWorldCommandlet.h/cpp`, `SLFLevelStreamManager.h/cpp`
+- **Dungeon gameplay**: Tiered doors (blue/purple/orange), shortcut gates, trap markers, puzzle markers, boss immunity objectives
+- **Key files**: `SetupOpenWorldCommandlet.h/cpp`, `SLFLevelStreamManager.h/cpp`, `SLFBossDoor.h/cpp`, `SLFShortcutGate.h/cpp`, `SLFTrapBase.h/cpp`, `SLFPuzzleMarker.h/cpp`, `SLFBossPhaseObjective.h/cpp`
 
 **Skill:** `.claude/skills/dungeon-building/SKILL.md`
+
+---
+
+## GameAnimationSample Integration
+
+Animations from Epic's GameAnimationSample (`C:\scripts\GameAnimationSample`):
+
+- **358 animation files** copied preserving original folder structure for skeleton reference resolution
+- **11 montages** created via `SetupGameAnimCommandlet` (run with `-montages` flag)
+- **Skeleton**: `SK_UEFN_Mannequin` + mesh, physics, rigs, materials, textures
+- **Content path**: `/Game/GameAnimations/Montages/AM_*` and `/Game/Characters/UEFN_Mannequin/Animations/`
+
+### Movement & Combat Actions (Phase 1.5)
+| Action | File | Key Properties |
+|--------|------|---------------|
+| Slide | `SLFActionSlide.h/cpp` | SlideMontage, SlideDuration (0.8s), SlideDistance (400cm), SlideCooldown (1.5s) |
+| Traversal (4 types) | `SLFActionMantle.h/cpp` | VaultMontage, HurdleMontage, MantleMontage, ClimbMontage, height thresholds |
+| Double Jump | `SLFActionDoubleJump.h/cpp` | bHasUsedDoubleJump (reset on land) |
+| Grapple Hook | `SLFActionGrapple.h/cpp` | GrappleRange (3000cm), cooldown (8s), attack damage (1.5x, 0.25x vs boss) |
+| Guard Counter | `SLFActionGuardCounter.h/cpp` | DamageMultiplier (1.8x), PoiseDamageMultiplier (2.0x), window (0.3s) |
+| Landing Reactions | `SLFSoulslikeCharacter.h/cpp` | 4 tier montages, FallStartZ tracking, fall damage above 1200cm |
+| Stealth | `SLFSoulslikeCharacter.h/cpp` | bInStealth, CrouchDetectionMultiplier (0.5), StealthBackstabDamageMultiplier (3.0) |
+| Resting Sit/Stand | `SLFRestingPointBase.h/cpp` | SitDownMontage, StandUpMontage, montage end callbacks |
+
+**Testing guide**: `.claude/reference/testing-phase1.5.md`
 
 ---
 
@@ -359,6 +392,8 @@ Use Gemini for:
 | `.claude/reference/migration-workflow.md` | Detailed 4-step migration workflow |
 | `.claude/reference/animation-pipeline.md` | 5-phase pipeline overview + coordinate space rules |
 | `.claude/reference/animation-import-runbook.md` | **Step-by-step import commands with sample output** |
+| `.claude/reference/game-design.md` | Full GDD: zones, NPCs, enemies, weapons, movement, stealth, dungeons |
+| `.claude/reference/testing-phase1.5.md` | **Testing guide for all Phase 1.5 features (movement, stealth, dungeons)** |
 | `.claude/skills/slf-migration/SKILL.md` | 20-pass validation protocol |
 | `.claude/skills/animBP-fix/SKILL.md` | AnimBP troubleshooting |
 | `.claude/skills/play-test-loop/SKILL.md` | Automated PIE testing |

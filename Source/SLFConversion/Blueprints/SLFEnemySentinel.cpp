@@ -1,6 +1,6 @@
 // SLFEnemySentinel.cpp
 // C++ implementation for B_Soulslike_Enemy_Sentinel
-// Forensically distinct custom enemy using Ironbound Warlord mesh and ARP-retargeted animations
+// Forensically distinct custom enemy using Hollow Warden v2 mesh and forensic animations
 
 #include "SLFEnemySentinel.h"
 #include "Components/SkeletalMeshComponent.h"

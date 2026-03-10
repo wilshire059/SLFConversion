@@ -1,0 +1,28 @@
+# Struct Export - AUTO-GENERATED
+# DO NOT EDIT - This is the source of truth from bp_only
+
+struct:
+  path: /Game/SoulslikeFramework/Structures/Vendor/FVendorItems
+  name: FVendorItems
+
+fields:
+  - name: Item_2_1116033544AEBC89AAD2A6802774460B
+    type: UPDA_Item_C*
+    offset: 0
+    size: 8
+
+  - name: InfiniteStock?_9_94181B1E4916180B446F3CA05CEB2105
+    type: bool
+    offset: 8
+    size: 1
+
+  - name: StockAmount_10_B3C6EF404AD6ABFC068837B70513E400
+    type: int32
+    offset: 12
+    size: 4
+
+  - name: Price_7_9E75149B45E0BBB42D90728DF2423D35
+    type: int32
+    offset: 16
+    size: 4
+

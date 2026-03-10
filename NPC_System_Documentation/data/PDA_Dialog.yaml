@@ -1,0 +1,211 @@
+# Data Asset Export - AUTO-GENERATED
+# DO NOT EDIT - This is the source of truth from bp_only
+
+data_asset:
+  path: /Game/SoulslikeFramework/Data/Dialog/PDA_Dialog
+  class: Blueprint
+
+properties:
+  class: Blueprint
+  name: PDA_Dialog
+  path: /Game/SoulslikeFramework/Data/Dialog/PDA_Dialog.PDA_Dialog
+  properties:
+    ParentClass:
+      class: Class
+      name: PrimaryDataAsset
+      path: /Script/Engine.PrimaryDataAsset
+    BlueprintType: BPTYPE_Normal
+    bRecompileOnLoad: true
+    bRunConstructionScriptOnDrag: true
+    bRunConstructionScriptInSequencer: false
+    bGenerateConstClass: false
+    bGenerateAbstractClass: false
+    bDeprecate: false
+    bDuplicatingReadOnly: false
+    ShouldCookPropertyGuidsValue: Inherit
+    CompileMode: Default
+    BlueprintDisplayName: 
+    BlueprintDescription: 
+    BlueprintNamespace: 
+    BlueprintCategory: 
+    HideCategories:
+      count: 0
+      items:
+    BlueprintSystemVersion: 2
+    SimpleConstructionScript: null
+    UbergraphPages:
+      count: 1
+      items:
+        - index: 0
+          value: "/Script/Engine.EdGraph'/Game/SoulslikeFramework/Data/Dialog/PDA_Dialog.PDA_Dialog:EventGraph'"
+    FunctionGraphs:
+      count: 1
+      items:
+        - index: 0
+          value: "/Script/Engine.EdGraph'/Game/SoulslikeFramework/Data/Dialog/PDA_Dialog.PDA_Dialog:GetDialogTableBasedOnProgress'"
+    DelegateSignatureGraphs:
+      count: 0
+      items:
+    MacroGraphs:
+      count: 0
+      items:
+    ComponentTemplates:
+      count: 0
+      items:
+    Timelines:
+      count: 0
+      items:
+    ComponentClassOverrides:
+      count: 0
+      items:
+    InheritableComponentHandler: null
+    NewVariables:
+      count: 2
+      items:
+        - index: 0
+          VarName: Requirement
+          VarGuid:
+            A: 1393262507
+            B: 1307320838
+            C: -76463699
+            D: -938173519
+          VarType:
+            PinCategory: struct
+            PinSubCategory: None
+            PinSubCategoryObject: /Script/CoreUObject.UserDefinedStruct'/Game/SoulslikeFramework/Structures/Dialog/FDialogRequirement.FDialogRequirement'
+            PinSubCategoryMemberReference:
+              MemberParent: null
+              MemberName: None
+              MemberGuid:
+                A: 0
+                B: 0
+                C: 0
+                D: 0
+            PinValueType:
+              TerminalCategory: None
+              TerminalSubCategory: None
+              TerminalSubCategoryObject: None
+              bTerminalIsConst: false
+              bTerminalIsWeakPointer: false
+              bTerminalIsUObjectWrapper: false
+            ContainerType: Array
+            bIsReference: false
+            bIsConst: false
+            bIsWeakPointer: false
+            bIsUObjectWrapper: false
+            bSerializeAsSinglePrecisionFloat: false
+          FriendlyName: Requirement
+          Category: Config
+          PropertyFlags: 65541
+          RepNotifyFunc: None
+          ReplicationCondition: COND_None
+          MetaDataArray:
+            count: 0
+            items:
+          DefaultValue: 
+        - index: 1
+          VarName: DefaultDialogTable
+          VarGuid:
+            A: -491145238
+            B: 1119274972
+            C: -1394074980
+            D: 328770879
+          VarType:
+            PinCategory: softobject
+            PinSubCategory: None
+            PinSubCategoryObject: /Script/CoreUObject.Class'/Script/Engine.DataTable'
+            PinSubCategoryMemberReference:
+              MemberParent: null
+              MemberName: None
+              MemberGuid:
+                A: 0
+                B: 0
+                C: 0
+                D: 0
+            PinValueType:
+              TerminalCategory: None
+              TerminalSubCategory: None
+              TerminalSubCategoryObject: None
+              bTerminalIsConst: false
+              bTerminalIsWeakPointer: false
+              bTerminalIsUObjectWrapper: false
+            ContainerType: None
+            bIsReference: false
+            bIsConst: false
+            bIsWeakPointer: false
+            bIsUObjectWrapper: false
+            bSerializeAsSinglePrecisionFloat: false
+          FriendlyName: Default Dialog Table
+          Category: Config|Defaults
+          PropertyFlags: 65541
+          RepNotifyFunc: None
+          ReplicationCondition: COND_None
+          MetaDataArray:
+            count: 0
+            items:
+          DefaultValue: 
+    GeneratedVariables:
+      count: 0
+      items:
+    CategorySorting:
+      count: 3
+      items:
+        - index: 0
+          value: Default
+        - index: 1
+          value: None
+        - index: 2
+          value: Config
+    ImportedNamespaces: ()
+    ImplementedInterfaces:
+      count: 0
+      items:
+    LastEditedDocuments:
+      count: 2
+      items:
+        - index: 0
+          EditedObjectPath:
+            AssetPath:
+              PackageName: /Game/SoulslikeFramework/Data/Dialog/PDA_Dialog
+              AssetName: PDA_Dialog
+            SubPathString: EventGraph
+          SavedViewOffset:
+            X: -2924.513184
+            Y: -2200.461670
+          SavedZoomAmount: 0.100000
+        - index: 1
+          EditedObjectPath:
+            AssetPath:
+              PackageName: /Game/SoulslikeFramework/Data/Dialog/PDA_Dialog
+              AssetName: PDA_Dialog
+            SubPathString: GetDialogTableBasedOnProgress
+          SavedViewOffset:
+            X: 1776.136963
+            Y: -187.668152
+          SavedZoomAmount: 0.675000
+    Bookmarks:
+      count: 0
+      entries:
+    BookmarkNodes:
+      count: 0
+      items:
+    DeprecatedPinWatches:
+      count: 0
+      items:
+    ComponentTemplateNameIndex:
+      count: 0
+      entries:
+    Extensions:
+      count: 0
+      items:
+    ThumbnailInfo: null
+    GeneratedClass:
+      class: BlueprintGeneratedClass
+      name: PDA_Dialog_C
+      path: /Game/SoulslikeFramework/Data/Dialog/PDA_Dialog.PDA_Dialog_C
+    bLegacyNeedToPurgeSkelRefs: false
+    BlueprintGuid:
+      A: -4423905
+      B: 1200203762
+      C: -1316089683
+      D: -160523001

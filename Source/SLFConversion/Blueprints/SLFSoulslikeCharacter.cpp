@@ -28,6 +28,8 @@
 #include "Components/AC_ActionManager.h"
 #include "Components/AC_CombatManager.h"
 #include "Components/AC_InteractionManager.h"
+#include "Blueprints/Actions/SLFActionSwim.h"
+#include "GameFramework/PhysicsVolume.h"
 #include "Components/StatManagerComponent.h"  // For CachedStatManager->IsStatMoreThan()
 #include "Components/AC_EquipmentManager.h"
 #include "Components/ProgressManagerComponent.h"  // For dialog GameplayEvents
@@ -52,6 +54,10 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "KismetAnimationLibrary.h"
 #include "BFL_Helper.h"
+#include "Components/SLFAIStateMachineComponent.h"
+#include "WaterBodyActor.h"
+#include "WaterSubsystem.h"
+#include "WaterBodyComponent.h"
 
 ASLFSoulslikeCharacter::ASLFSoulslikeCharacter()
 {
@@ -236,6 +242,12 @@ ASLFSoulslikeCharacter::ASLFSoulslikeCharacter()
 		MovementComp->GetNavAgentPropertiesRef().bCanCrouch = true;
 		MovementComp->bCanWalkOffLedgesWhenCrouching = true;
 	}
+
+	// Landing reaction montages
+	LandingLightMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT("/Game/GameAnimations/Montages/AM_Landing_Light.AM_Landing_Light")));
+	LandingHeavyMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT("/Game/GameAnimations/Montages/AM_Landing_Heavy.AM_Landing_Heavy")));
+	LandingRollMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT("/Game/GameAnimations/Montages/AM_Landing_Roll.AM_Landing_Roll")));
+	LandingStumbleMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT("/Game/GameAnimations/Montages/AM_Landing_Stumble.AM_Landing_Stumble")));
 }
 
 void ASLFSoulslikeCharacter::BeginPlay()
@@ -257,7 +269,11 @@ void ASLFSoulslikeCharacter::BeginPlay()
 	{
 		MovementComp->GetNavAgentPropertiesRef().bCanCrouch = true;
 		MovementComp->bCanWalkOffLedgesWhenCrouching = true;
-		UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Enabled crouching on CharacterMovement"));
+		// Higher air control for directional jumping (UE5 default is 0.05 which feels floaty)
+		MovementComp->AirControl = 0.35f;
+		MovementComp->AirControlBoostMultiplier = 2.0f;
+		MovementComp->AirControlBoostVelocityThreshold = 25.0f;
+		UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Enabled crouching + air control (0.35) on CharacterMovement"));
 	}
 
 	// Cache component references from Blueprint SCS
@@ -290,6 +306,71 @@ void ASLFSoulslikeCharacter::BeginPlay()
 		CachedInputBuffer->OnInputBufferConsumed.AddDynamic(this, &ASLFSoulslikeCharacter::OnInputBufferConsumed);
 		UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Bound to InputBuffer OnInputBufferConsumed"));
 	}
+
+	// Create swim action (standalone, not part of action manager — driven by water depth)
+	CachedSwimAction = NewObject<USLFActionSwim>(this);
+	CachedSwimAction->OwnerActor = this;
+
+	// Find ocean water body and cache its surface Z for water detection in Tick
+	for (TActorIterator<AWaterBody> It(GetWorld()); It; ++It)
+	{
+		AWaterBody* WB = *It;
+		if (WB)
+		{
+			CachedOceanSurfaceZ = WB->GetActorLocation().Z;
+			bHasOceanSurface = true;
+			CachedWaterBodyActor = WB;
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] Found WaterBody '%s' at Z=%.1f (Type: %s)"),
+				*WB->GetName(), CachedOceanSurfaceZ, *WB->GetClass()->GetName());
+			break;
+		}
+	}
+	if (!bHasOceanSurface)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] No WaterBody actors found in level"));
+	}
+
+	// Auto-equip a default weapon for testing
+	// Deferred 0.5s so Controller + EquipmentManager + save system have finished initializing
+	FTimerHandle AutoEquipHandle;
+	GetWorldTimerManager().SetTimer(AutoEquipHandle, [this]()
+	{
+		// EquipmentManager lives on the PlayerController, NOT the character
+		AController* PC = GetController();
+		if (!PC)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] Auto-equip: No controller"));
+			return;
+		}
+
+		UAC_EquipmentManager* EquipMgr = PC->FindComponentByClass<UAC_EquipmentManager>();
+		if (!EquipMgr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] Auto-equip: No EquipmentManager on controller %s"), *PC->GetName());
+			return;
+		}
+
+		FGameplayTag RightHand1 = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Equipment.SlotType.Right Hand Weapon 1"));
+		if (EquipMgr->IsSlotOccupied_Implementation(RightHand1))
+		{
+			UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Auto-equip: Right Hand 1 already occupied, skipping"));
+			return;
+		}
+
+		UPrimaryDataAsset* Weapon = Cast<UPrimaryDataAsset>(
+			StaticLoadObject(UPrimaryDataAsset::StaticClass(), nullptr,
+				TEXT("/Game/SoulslikeFramework/Data/Items/DA_Sword01.DA_Sword01")));
+		if (!Weapon)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] Auto-equip: Failed to load DA_Sword01"));
+			return;
+		}
+
+		bool S1, S2, S3, S4;
+		EquipMgr->EquipWeaponToSlot_Implementation(Weapon, RightHand1, true, S1, S2, S3, S4);
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] Auto-equipped %s to Right Hand 1 (Success: %d)"),
+			*Weapon->GetName(), S1);
+	}, 0.5f, false);
 }
 
 void ASLFSoulslikeCharacter::Tick(float DeltaTime)
@@ -303,6 +384,192 @@ void ASLFSoulslikeCharacter::Tick(float DeltaTime)
 	// Handle continuous target lock rotation
 	// This rotates the character towards the locked target each frame
 	TickTargetLockRotation(DeltaTime);
+
+	// Swimming — soulslike surface swimming
+	// Character stays ON the water surface (WaterBody collision is the floor).
+	// We just play swim animations and slow movement — no sinking, no MOVE_Swimming.
+	// This matches Dark Souls / Elden Ring water behavior.
+	if (CachedSwimAction && GetCharacterMovement())
+	{
+		bool bOnWater = false;
+
+		// Check if standing on a WaterBody
+		if (GetCharacterMovement()->IsMovingOnGround())
+		{
+			const FFindFloorResult& Floor = GetCharacterMovement()->CurrentFloor;
+			if (Floor.IsWalkableFloor())
+			{
+				AActor* FloorActor = Floor.HitResult.GetActor();
+				if (FloorActor)
+				{
+					FString ActorClass = FloorActor->GetClass()->GetName();
+					if (ActorClass.Contains(TEXT("WaterBody")))
+					{
+						bOnWater = true;
+					}
+				}
+			}
+		}
+
+		// Enter water
+		if (bOnWater && !CachedSwimAction->bIsInWater)
+		{
+			CachedSwimAction->bIsInWater = true;
+			WaterExitGraceTimer = 0.0f;
+			GetCharacterMovement()->MaxWalkSpeed *= 0.6f;
+
+			if (!bMeshSubmerged && GetMesh())
+			{
+				OriginalMeshRelativeZ = GetMesh()->GetRelativeLocation().Z;
+				bMeshSubmerged = true;
+			}
+
+			UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] Entered water — swim animations active, speed reduced"));
+		}
+		// Exit water — use grace period to avoid flickering when jumping in water
+		else if (!bOnWater && CachedSwimAction->bIsInWater)
+		{
+			if (bOnWater)
+			{
+				WaterExitGraceTimer = 0.0f;
+			}
+			else
+			{
+				WaterExitGraceTimer += DeltaTime;
+			}
+
+			// Only actually exit water after grace period expires
+			if (WaterExitGraceTimer >= WaterExitGraceDuration)
+			{
+				CachedSwimAction->bIsInWater = false;
+				GetCharacterMovement()->MaxWalkSpeed /= 0.6f;
+				if (UAnimInstance* AnimInst = GetMesh()->GetAnimInstance())
+				{
+					AnimInst->Montage_Stop(0.25f);
+				}
+
+				// Restore mesh position
+				if (bMeshSubmerged && GetMesh())
+				{
+					FVector MeshLoc = GetMesh()->GetRelativeLocation();
+					MeshLoc.Z = OriginalMeshRelativeZ;
+					GetMesh()->SetRelativeLocation(MeshLoc);
+					bMeshSubmerged = false;
+					UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] Mesh restored to Z=%.1f"), OriginalMeshRelativeZ);
+				}
+
+				WaterExitGraceTimer = 0.0f;
+				UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] Exited water — normal movement restored"));
+			}
+		}
+		else if (bOnWater && CachedSwimAction->bIsInWater)
+		{
+			// Reset grace timer while still on water
+			WaterExitGraceTimer = 0.0f;
+		}
+
+		// Update swim animation + dynamic mesh positioning relative to wave surface
+		if (CachedSwimAction->bIsInWater)
+		{
+			FVector Vel = GetVelocity();
+			FVector2D SwimInput(Vel.Y, Vel.X);
+			if (Vel.Size2D() > 10.0f)
+				SwimInput.Normalize();
+			else
+				SwimInput = FVector2D::ZeroVector;
+			CachedSwimAction->UpdateSwimAnimation(SwimInput);
+
+			// Position mesh relative to actual wave surface each frame
+			// Character capsule walks on collision box; mesh tracks the visual water surface
+			if (bMeshSubmerged && GetMesh() && CachedWaterBodyActor.IsValid())
+			{
+				AWaterBody* WB = Cast<AWaterBody>(CachedWaterBodyActor.Get());
+				if (WB && WB->GetWaterBodyComponent())
+				{
+					EWaterBodyQueryFlags QueryFlags =
+						EWaterBodyQueryFlags::ComputeLocation
+						| EWaterBodyQueryFlags::IncludeWaves;
+
+					auto QueryResult = WB->GetWaterBodyComponent()->TryQueryWaterInfoClosestToWorldLocation(
+						GetActorLocation(), QueryFlags);
+
+					if (QueryResult.HasValue())
+					{
+						FVector WaterSurfaceLoc = QueryResult.GetValue().GetWaterSurfaceLocation();
+
+						// Dynamically compute submersion from character height.
+						// Mesh root = feet. CapsuleHalfHeight * 2 = full character height.
+						// WaterSurfaceCutRatio 0.75 = water at shoulder height (75% up from feet).
+						float CharHeight = GetCapsuleComponent()->GetScaledCapsuleHalfHeight() * 2.0f;
+						float SubmersionDepth = CharHeight * WaterSurfaceCutRatio;
+						// Place mesh root (feet) this far below the wave surface
+						float DesiredMeshWorldZ = WaterSurfaceLoc.Z - SubmersionDepth;
+						float NewMeshRelZ = DesiredMeshWorldZ - GetActorLocation().Z;
+
+						// Use the average wave position as anchor, only allow small bob around it
+						// Average wave surface is roughly CachedOceanSurfaceZ (captured at BeginPlay)
+						// Only allow ±15 units of bob from the average submersion depth
+						float AvgMeshRelZ = OriginalMeshRelativeZ - SubmersionDepth + (CachedOceanSurfaceZ - GetActorLocation().Z);
+						float MaxBob = 15.0f;
+						NewMeshRelZ = FMath::Clamp(NewMeshRelZ, AvgMeshRelZ - MaxBob, AvgMeshRelZ + MaxBob);
+
+						// Smooth interpolation
+						FVector MeshLoc = GetMesh()->GetRelativeLocation();
+						MeshLoc.Z = FMath::FInterpTo(MeshLoc.Z, NewMeshRelZ, DeltaTime, 4.0f);
+						GetMesh()->SetRelativeLocation(MeshLoc);
+
+						// Log periodically
+						static int32 WaveLogCtr = 0;
+						if (++WaveLogCtr >= 120)
+						{
+							UE_LOG(LogTemp, Log, TEXT("[Swimming] WaveSurfZ=%.1f CharZ=%.1f SubDepth=%.0f DesiredWorldZ=%.1f MeshRelZ=%.1f OrigRelZ=%.1f"),
+								WaterSurfaceLoc.Z, GetActorLocation().Z, SubmersionDepth, DesiredMeshWorldZ, MeshLoc.Z, OriginalMeshRelativeZ);
+							WaveLogCtr = 0;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Fall tracking — only start measuring fall distance when actually descending (velocity.Z < 0)
+	// This prevents downhill jumps from counting the entire hill as fall distance
+	if (GetCharacterMovement())
+	{
+		if (GetCharacterMovement()->IsFalling())
+		{
+			if (!bTrackingFall && GetVelocity().Z < 0.0f)
+			{
+				// Start tracking from the apex (when we start going down)
+				bTrackingFall = true;
+				FallStartZ = GetActorLocation().Z;
+				FallStartXY = FVector2D(GetActorLocation().X, GetActorLocation().Y);
+			}
+		}
+	}
+
+	// Stealth: crouching + no enemy currently targeting us
+	if (bIsCrouched)
+	{
+		bool bAnyEnemyTargeting = false;
+		for (TActorIterator<APawn> It(GetWorld()); It; ++It)
+		{
+			if (*It == this) continue;
+			if (USLFAIStateMachineComponent* AISM = It->FindComponentByClass<USLFAIStateMachineComponent>())
+			{
+				if (AISM->GetCurrentTarget() == this)
+				{
+					bAnyEnemyTargeting = true;
+					break;
+				}
+			}
+		}
+		bInStealth = !bAnyEnemyTargeting;
+	}
+	else
+	{
+		bInStealth = false;
+	}
 }
 
 void ASLFSoulslikeCharacter::OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
@@ -332,6 +599,94 @@ void ASLFSoulslikeCharacter::OnEndCrouch(float HalfHeightAdjust, float ScaledHal
 
 	// NOTE: AnimBP IsCrouched is now handled by NativeUpdateAnimation in UABP_SoulslikeCharacter_Additive
 	UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] OnEndCrouch"));
+}
+
+void ASLFSoulslikeCharacter::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+	bHasUsedDoubleJump = false;
+
+	// Height-aware landing reactions
+	if (bTrackingFall)
+	{
+		float FallDistance = FallStartZ - GetActorLocation().Z;
+		float HorizontalDistance = FVector2D::Distance(FallStartXY, FVector2D(GetActorLocation().X, GetActorLocation().Y));
+		bTrackingFall = false;
+
+		// Filter out slope landings: if horizontal distance is more than vertical,
+		// the character was running down a hill, not falling off a cliff.
+		// Only trigger landing reactions when the fall is predominantly vertical.
+		if (HorizontalDistance > 0.0f && FallDistance > 0.0f)
+		{
+			float FallAngle = FMath::Atan2(FallDistance, HorizontalDistance); // radians
+			// If fall angle < 50 degrees from horizontal, it's a slope — scale down the effective fall distance
+			if (FallAngle < FMath::DegreesToRadians(50.0f))
+			{
+				// Reduce effective fall distance based on how shallow the angle is
+				// At 50° keep full distance, at 0° (flat run) reduce to 0
+				float SlopeScale = FMath::Clamp(FallAngle / FMath::DegreesToRadians(50.0f), 0.0f, 1.0f);
+				FallDistance *= SlopeScale;
+			}
+		}
+
+		if (FallDistance >= MinFallDistanceForReaction)
+		{
+			TSoftObjectPtr<UAnimMontage>* SelectedMontage = nullptr;
+
+			if (FallDistance >= StumbleLandingThreshold)
+			{
+				SelectedMontage = &LandingStumbleMontage;
+				// Apply fall damage
+				float Damage = (FallDistance - StumbleLandingThreshold) * FallDamagePerCm;
+				if (Damage > 0.0f)
+				{
+					UE_LOG(LogTemp, Log, TEXT("[Landing] Stumble! Fall=%.0fcm, Damage=%.0f"), FallDistance, Damage);
+				}
+			}
+			else if (FallDistance >= RollLandingThreshold)
+			{
+				SelectedMontage = &LandingRollMontage;
+				UE_LOG(LogTemp, Log, TEXT("[Landing] Roll landing (fall=%.0fcm)"), FallDistance);
+			}
+			else if (FallDistance >= HeavyLandingThreshold)
+			{
+				SelectedMontage = &LandingHeavyMontage;
+				UE_LOG(LogTemp, Log, TEXT("[Landing] Heavy landing (fall=%.0fcm)"), FallDistance);
+			}
+			else
+			{
+				SelectedMontage = &LandingLightMontage;
+			}
+
+			// Play landing montage with root motion disabled and movement suppressed
+			if (SelectedMontage && !SelectedMontage->IsNull())
+			{
+				UAnimMontage* Montage = SelectedMontage->LoadSynchronous();
+				if (Montage && GetMesh() && GetMesh()->GetAnimInstance())
+				{
+					UAnimInstance* AnimInst = GetMesh()->GetAnimInstance();
+
+					// Disable root motion on landing montages to prevent forward slide
+					Montage->bEnableRootMotionTranslation = false;
+					Montage->bEnableRootMotionRotation = false;
+
+					float Duration = AnimInst->Montage_Play(Montage, 1.0f);
+
+					// For heavy+ landings, briefly suppress movement input
+					if (FallDistance >= HeavyLandingThreshold && Duration > 0.0f)
+					{
+						bLandingMontageActive = true;
+						float SuppressDuration = FMath::Min(Duration * 0.6f, 0.8f);
+						FTimerHandle TimerHandle;
+						GetWorldTimerManager().SetTimer(TimerHandle, [this]()
+						{
+							bLandingMontageActive = false;
+						}, SuppressDuration, false);
+					}
+				}
+			}
+		}
+	}
 }
 
 void ASLFSoulslikeCharacter::UpdateAnimInstanceCrouchState(bool bCrouching)
@@ -586,6 +941,20 @@ void ASLFSoulslikeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 		UE_LOG(LogTemp, Error, TEXT("[SoulslikeCharacter] IA_WeaponSkill is NULL! Special attacks will not work."));
 	}
 
+	// Slide (Sprint + Crouch → slide)
+	if (IA_Slide)
+	{
+		EnhancedInput->BindAction(IA_Slide, ETriggerEvent::Started, this, &ASLFSoulslikeCharacter::HandleSlide);
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] IA_Slide BOUND"));
+	}
+
+	// Grapple
+	if (IA_Grapple)
+	{
+		EnhancedInput->BindAction(IA_Grapple, ETriggerEvent::Started, this, &ASLFSoulslikeCharacter::HandleGrapple);
+		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] IA_Grapple BOUND"));
+	}
+
 	UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] Enhanced input bindings set up"));
 }
 
@@ -606,6 +975,9 @@ void ASLFSoulslikeCharacter::HandleMove(const FInputActionValue& Value)
 		UE_LOG(LogTemp, Warning, TEXT("[SoulslikeCharacter] HandleMove CALLED - Vector: X=%.2f Y=%.2f"), MovementVector.X, MovementVector.Y);
 		bFirstMove = false;
 	}
+
+	// Suppress movement during heavy+ landing recovery
+	if (bLandingMontageActive) return;
 
 	if (Controller)
 	{
@@ -646,6 +1018,18 @@ void ASLFSoulslikeCharacter::HandleJump()
 	// Original Blueprint: IsStatMoreThan(Stamina, 5.0) before QueueAction
 	static const FGameplayTag StaminaTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Stamina"));
 	static const double JumpStaminaRequired = 5.0;
+
+	// If airborne and haven't used double jump yet, attempt double jump
+	if (GetCharacterMovement() && GetCharacterMovement()->IsFalling())
+	{
+		if (!bHasUsedDoubleJump)
+		{
+			bHasUsedDoubleJump = true;
+			static const FGameplayTag DoubleJumpTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.DoubleJump"));
+			ExecuteActionImmediately(DoubleJumpTag);
+		}
+		return;
+	}
 
 	if (CachedStatManager)
 	{
@@ -971,6 +1355,20 @@ void ASLFSoulslikeCharacter::HandleWeaponSkill()
 
 	static const FGameplayTag SpecialAttackTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.SpecialAttack"));
 	ExecuteActionImmediately(SpecialAttackTag);
+}
+
+void ASLFSoulslikeCharacter::HandleSlide()
+{
+	UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] HandleSlide CALLED"));
+	static const FGameplayTag SlideTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.Slide"));
+	QueueActionToBuffer(SlideTag);
+}
+
+void ASLFSoulslikeCharacter::HandleGrapple()
+{
+	UE_LOG(LogTemp, Log, TEXT("[SoulslikeCharacter] HandleGrapple CALLED"));
+	static const FGameplayTag GrappleTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Action.Grapple"));
+	ExecuteActionImmediately(GrappleTag);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════

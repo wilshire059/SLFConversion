@@ -603,6 +603,15 @@ void USLFAIStateMachineComponent::TickIdle(float DeltaTime)
 				EffectiveRadius = Config.DetectionRadius * TargetAcquisitionGraceRadiusMultiplier;
 			}
 
+			// Halve detection radius when player is crouching (stealth)
+			if (ACharacter* TargetChar = Cast<ACharacter>(FoundTarget))
+			{
+				if (TargetChar->bIsCrouched)
+				{
+					EffectiveRadius *= 0.5f;
+				}
+			}
+
 			if (bShouldLogThisTick)
 			{
 				UE_LOG(LogTemp, Warning, TEXT("[AIStateMachine] %s - TickIdle: Dist=%.1f, EffectiveRadius=%.1f, InRange=%s"),

@@ -1,0 +1,69 @@
+Debug Log - Dialog System Fixes (2026-01-31 Update 5 - FINAL)
+=============================================
+
+## Summary of All Fixes
+
+The dialog system was broken because of class hierarchy confusion between two different
+ProgressManager classes. This has been fixed by making all code handle both types.
+
+## Class Hierarchy Issue
+
+There are TWO different ProgressManager classes in the codebase:
+1. `UProgressManagerComponent` - newer class with ExecuteDialogGameplayEvents
+2. `UAC_ProgressManager` - older class with ExecuteGameplayEvents
+
+The Blueprint PC uses `UAC_ProgressManager` (from SCS), but all the C++ code was written
+for `UProgressManagerComponent`. This caused null casts and missing function calls.
+
+## Fixes Applied
+
+### Fix 1: SLFPlayerController - Component Caching (Update 4-5)
+- Changed from `CreateDefaultSubobject` to caching in BeginPlay
+- Now stores reference as `UActorComponent* CachedProgressManager`
+- Finds whatever component exists (either class type)
+
+### Fix 2: AIInteractionManagerComponent - Handle Both Types
+- Changed `ProgressManager` from `UProgressManagerComponent*` to `UActorComponent*`
+- When executing GameplayEvents, tries both class casts:
+  ```cpp
+  if (UProgressManagerComponent* PMC = Cast<>(ProgressManager))
+      PMC->ExecuteDialogGameplayEvents(Events);
+  else if (UAC_ProgressManager* ACPM = Cast<>(ProgressManager))
+      ACPM->ExecuteGameplayEvents(Events);
+  ```
+
+### Fix 3: SLFSoulslikeCharacter - Store Any Type
+- Removed cast to `UProgressManagerComponent*`
+- Stores the component directly as `UActorComponent*`
+- Passes to GetDialogTableBasedOnProgress as generic type
+
+### Fix 4: SLFPrimaryDataAssets - Handle Both Types
+- Added helper function `GetProgressFromManager()` that tries both types
+- `GetDialogTableBasedOnProgress()` now works with either class
+
+## Files Modified
+- Source/SLFConversion/Framework/SLFPlayerController.h
+- Source/SLFConversion/Framework/SLFPlayerController.cpp
+- Source/SLFConversion/Components/AIInteractionManagerComponent.h
+- Source/SLFConversion/Components/AIInteractionManagerComponent.cpp
+- Source/SLFConversion/Blueprints/SLFSoulslikeCharacter.cpp
+- Source/SLFConversion/SLFPrimaryDataAssets.cpp
+
+## Testing Notes
+
+When you talk to the Guide NPC now:
+1. Dialog should progress through all entries
+2. ProgressManager should be found (check logs for class name)
+3. GameplayEvents should execute at end of dialog
+4. Progress should be set to Completed
+5. On 2nd talk, should show one-liner instead of full dialog
+
+Check logs for:
+- [SLFPlayerController] CachedProgressManager: AC_ProgressManager (or similar)
+- [SLFPlayerController] GetProgressManager - Found: AC_ProgressManager
+- [SoulslikeCharacter] Execute_GetProgressManager returned: AC_ProgressManager
+- [PDA_Dialog] ProgressManager type: AC_ProgressManager, Checking X requirements
+- [AIInteractionManager] Processing X gameplay events for entry Y
+- [ProgressManager] ExecuteGameplayEvents: X events (or ExecuteDialogGameplayEvents)
+
+

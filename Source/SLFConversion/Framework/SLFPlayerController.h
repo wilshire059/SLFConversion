@@ -15,6 +15,8 @@ class UInputMappingContext;
 class UW_HUD;
 class URadarManagerComponent;
 class UProgressManagerComponent;
+class ULevelStreamingDynamic;
+class USLFZoneManagerComponent;
 
 UCLASS(Blueprintable, BlueprintType)
 class SLFCONVERSION_API ASLFPlayerController : public APlayerController, public IBPI_Controller
@@ -111,6 +113,10 @@ public:
 	/** Progress Manager component - cached reference, NOT created by C++ */
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components")
 	UActorComponent* CachedProgressManager;
+
+	/** Zone Manager - tracks current zone, discovered zones, boss defeats */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USLFZoneManagerComponent* ZoneManager;
 
 protected:
 	// ═══════════════════════════════════════════════════════════════════
@@ -212,6 +218,14 @@ protected:
 	// FAST TRAVEL
 	// ═══════════════════════════════════════════════════════════════════
 public:
+	/** Whether the player is currently inside a dungeon (restricts fast travel) */
+	UPROPERTY(BlueprintReadWrite, Category = "Dungeon")
+	bool bInDungeon = false;
+
+	/** Set dungeon state — called when entering/exiting dungeons */
+	UFUNCTION(BlueprintCallable, Category = "Dungeon")
+	void SetInDungeon(bool bInside);
+
 	/** Execute fast travel: fade out → teleport → reset enemies → fade in */
 	UFUNCTION(BlueprintCallable, Category = "FastTravel")
 	void ExecuteFastTravel(const FSLFRestPointSaveInfo& Destination);
@@ -228,4 +242,10 @@ private:
 	FTimerHandle FastTravelInputHandle;
 	FTimerHandle FastTravelLandCheckHandle;
 	int32 FastTravelGroundCheckCount = 0;
+
+	// Dungeon level streaming for fast travel
+	UPROPERTY()
+	ULevelStreamingDynamic* FastTravelStreamedLevel = nullptr;
+	UFUNCTION()
+	void OnDungeonLevelLoadedForFastTravel();
 };

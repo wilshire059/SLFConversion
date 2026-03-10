@@ -10,7 +10,12 @@
 #include "Blueprint/WidgetTree.h"
 #include "Engine/Texture2D.h"
 #include "Components/SaveLoadManagerComponent.h"
+#include "Components/SLFZoneManagerComponent.h"
+#include "Framework/SLFPlayerController.h"
 #include "Kismet/GameplayStatics.h"
+#include "Blueprints/SLFRestingPointBase.h"
+#include "Blueprints/Actors/SLFBossDoor.h"
+#include "EngineUtils.h"
 
 UW_WorldMap::UW_WorldMap(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -59,14 +64,14 @@ TSharedRef<SWidget> UW_WorldMap::RebuildWidget()
 			PanelSlot->SetOffsets(FMargin(0.0f));
 		}
 
-		// Location name text (bottom center)
+		// Location name text (top center)
 		LocationNameText = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass(), TEXT("LocationNameText"));
 		RootCanvas->AddChild(LocationNameText);
 		if (UCanvasPanelSlot* PanelSlot = Cast<UCanvasPanelSlot>(LocationNameText->Slot))
 		{
-			PanelSlot->SetAnchors(FAnchors(0.5f, 1.0f, 0.5f, 1.0f));
-			PanelSlot->SetAlignment(FVector2D(0.5f, 1.0f));
-			PanelSlot->SetOffsets(FMargin(0.0f, 0.0f, 0.0f, 80.0f));
+			PanelSlot->SetAnchors(FAnchors(0.5f, 0.0f, 0.5f, 0.0f));
+			PanelSlot->SetAlignment(FVector2D(0.5f, 0.0f));
+			PanelSlot->SetOffsets(FMargin(0.0f, 20.0f, 0.0f, 0.0f));
 			PanelSlot->SetAutoSize(true);
 		}
 		LocationNameText->SetVisibility(ESlateVisibility::Collapsed);
@@ -372,6 +377,78 @@ void UW_WorldMap::RefreshMarkers()
 
 	CachedRestPoints = SaveMgr->GetDiscoveredRestPoints();
 
+	// Scan world for all placed resting points — add undiscovered ones too (for testing/map visibility)
+	UWorld* World = PC->GetWorld();
+	if (World)
+	{
+		int32 RPCount = 0;
+		for (TActorIterator<ASLFRestingPointBase> It(World); It; ++It)
+		{
+			ASLFRestingPointBase* RP = *It;
+			if (!RP) continue;
+
+			// Check if already in discovered list
+			bool bAlreadyExists = false;
+			for (const FSLFRestPointSaveInfo& Existing : CachedRestPoints)
+			{
+				if (FVector::DistSquared(Existing.WorldLocation, RP->GetActorLocation()) < 10000.0f)
+				{
+					bAlreadyExists = true;
+					break;
+				}
+			}
+			if (bAlreadyExists) continue;
+
+			FSLFRestPointSaveInfo Info;
+			Info.RestPointId = FGuid::NewGuid();
+			Info.LocationName = RP->LocationName.IsEmpty() ? FText::FromString(RP->GetName()) : RP->LocationName;
+			Info.WorldLocation = RP->GetActorLocation();
+			// Trace from high above to find terrain surface (resting point may be underground)
+			FVector TraceStart = FVector(RP->GetActorLocation().X, RP->GetActorLocation().Y, 50000.0f);
+			FVector TraceEnd = FVector(RP->GetActorLocation().X, RP->GetActorLocation().Y, -100000.0f);
+			FHitResult Hit;
+			FCollisionQueryParams TraceParams;
+			TraceParams.AddIgnoredActor(RP);
+			if (World->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_Visibility, TraceParams))
+			{
+				Info.SpawnLocation = Hit.ImpactPoint + FVector(0, 0, 200);
+				UE_LOG(LogTemp, Warning, TEXT("[W_WorldMap] RestPoint %s: actor Z=%.0f, terrain Z=%.0f, spawn Z=%.0f"),
+					*RP->GetName(), RP->GetActorLocation().Z, Hit.ImpactPoint.Z, Info.SpawnLocation.Z);
+			}
+			else
+			{
+				Info.SpawnLocation = RP->GetActorLocation() + FVector(0, 0, 500);
+			}
+			Info.SpawnRotation = RP->GetActorRotation();
+			Info.bIsDungeonEntrance = false;
+			CachedRestPoints.Add(Info);
+			RPCount++;
+		}
+
+		// Scan for dungeon entrance doors (ASLFBossDoor with bIsDungeonEntrance=true)
+		int32 DoorCount = 0;
+		for (TActorIterator<ASLFBossDoor> It(World); It; ++It)
+		{
+			ASLFBossDoor* Door = *It;
+			if (!Door || !Door->bIsDungeonEntrance) continue;
+
+			FSLFRestPointSaveInfo DungeonRP;
+			DungeonRP.RestPointId = FGuid::NewGuid();
+			DungeonRP.LocationName = FText::FromString(Door->GetName());
+			DungeonRP.WorldLocation = Door->GetActorLocation();
+			DungeonRP.SpawnLocation = Door->GetActorLocation();
+			DungeonRP.SpawnRotation = Door->GetActorRotation();
+			DungeonRP.bIsDungeonEntrance = true;
+			DungeonRP.DungeonLevelName = Door->DungeonLevelPath;
+			DungeonRP.DungeonWorldOffset = FVector::ZeroVector;
+			CachedRestPoints.Add(DungeonRP);
+			DoorCount++;
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("[W_WorldMap] Found %d resting points + %d dungeon doors in world (total %d markers)"),
+			RPCount, DoorCount, CachedRestPoints.Num());
+	}
+
 	if (CachedRestPoints.Num() == 0)
 	{
 		if (EmptyHintText) EmptyHintText->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
@@ -384,7 +461,7 @@ void UW_WorldMap::RefreshMarkers()
 	// Create markers
 	for (int32 i = 0; i < CachedRestPoints.Num(); ++i)
 	{
-		UImage* Marker = CreateMarkerWidget(false);
+		UImage* Marker = CreateMarkerWidget(false, i);
 		if (Marker) MarkerWidgets.Add(Marker);
 	}
 	PlayerMarker = CreateMarkerWidget(true);
@@ -405,6 +482,7 @@ void UW_WorldMap::RefreshMarkers()
 	}
 	SelectedMarkerIndex = BestIdx;
 
+	BuildZoneOverlay();
 	RepositionAllMarkers();
 	UpdateMapImageTransform();
 	UpdateMarkerSelection();
@@ -508,6 +586,8 @@ void UW_WorldMap::RepositionAllMarkers()
 			}
 		}
 	}
+
+	RepositionZoneOverlay();
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -544,7 +624,7 @@ FVector2D UW_WorldMap::ViewportToFullMapUV(const FVector2D& ViewportUV) const
 // MARKER CREATION & SELECTION
 // ═══════════════════════════════════════════════════════════════════
 
-UImage* UW_WorldMap::CreateMarkerWidget(bool bIsPlayer)
+UImage* UW_WorldMap::CreateMarkerWidget(bool bIsPlayer, int32 RestPointIndex)
 {
 	if (!WidgetTree || !MarkerCanvas) return nullptr;
 
@@ -578,7 +658,17 @@ UImage* UW_WorldMap::CreateMarkerWidget(bool bIsPlayer)
 	}
 	else
 	{
-		Marker->SetColorAndOpacity(FLinearColor(1.0f, 0.75f, 0.0f, 1.0f)); // Gold
+		// Dungeon entrances: emerald green. Regular rest points: gold.
+		bool bIsDungeon = RestPointIndex >= 0 && RestPointIndex < CachedRestPoints.Num()
+			&& CachedRestPoints[RestPointIndex].bIsDungeonEntrance;
+		if (bIsDungeon)
+		{
+			Marker->SetColorAndOpacity(FLinearColor(0.0f, 0.85f, 0.4f, 1.0f)); // Emerald green
+		}
+		else
+		{
+			Marker->SetColorAndOpacity(FLinearColor(1.0f, 0.75f, 0.0f, 1.0f)); // Gold
+		}
 	}
 
 	return Marker;
@@ -590,9 +680,19 @@ void UW_WorldMap::UpdateMarkerSelection()
 	{
 		if (!MarkerWidgets[i]) continue;
 
+		bool bIsDungeon = i < CachedRestPoints.Num() && CachedRestPoints[i].bIsDungeonEntrance;
+
 		if (i == SelectedMarkerIndex)
 		{
-			MarkerWidgets[i]->SetColorAndOpacity(FLinearColor(1.0f, 0.15f, 0.15f, 1.0f)); // Bright red
+			// Selected: bright version of the marker type color
+			if (bIsDungeon)
+			{
+				MarkerWidgets[i]->SetColorAndOpacity(FLinearColor(0.2f, 1.0f, 0.6f, 1.0f)); // Bright green
+			}
+			else
+			{
+				MarkerWidgets[i]->SetColorAndOpacity(FLinearColor(1.0f, 0.15f, 0.15f, 1.0f)); // Bright red
+			}
 			if (UCanvasPanelSlot* PanelSlot = Cast<UCanvasPanelSlot>(MarkerWidgets[i]->Slot))
 			{
 				PanelSlot->SetOffsets(FMargin(0.0f, 0.0f, 56.0f, 56.0f));
@@ -600,7 +700,15 @@ void UW_WorldMap::UpdateMarkerSelection()
 		}
 		else
 		{
-			MarkerWidgets[i]->SetColorAndOpacity(FLinearColor(1.0f, 0.75f, 0.0f, 1.0f)); // Gold
+			// Unselected: normal marker color
+			if (bIsDungeon)
+			{
+				MarkerWidgets[i]->SetColorAndOpacity(FLinearColor(0.0f, 0.85f, 0.4f, 1.0f)); // Emerald green
+			}
+			else
+			{
+				MarkerWidgets[i]->SetColorAndOpacity(FLinearColor(1.0f, 0.75f, 0.0f, 1.0f)); // Gold
+			}
 			if (UCanvasPanelSlot* PanelSlot = Cast<UCanvasPanelSlot>(MarkerWidgets[i]->Slot))
 			{
 				PanelSlot->SetOffsets(FMargin(0.0f, 0.0f, 44.0f, 44.0f));
@@ -665,4 +773,132 @@ int32 UW_WorldMap::FindMarkerNearScreenPosition(const FVector2D& LocalPosition, 
 	}
 
 	return BestIdx;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// ZONE OVERLAY
+// ═══════════════════════════════════════════════════════════════════
+
+void UW_WorldMap::BuildZoneOverlay()
+{
+	if (!WidgetTree || !MarkerCanvas) return;
+
+	APlayerController* PC = GetOwningPlayer();
+	if (!PC) return;
+
+	USLFZoneManagerComponent* ZoneMgr = PC->FindComponentByClass<USLFZoneManagerComponent>();
+	if (!ZoneMgr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[W_WorldMap] No ZoneManagerComponent found on PlayerController"));
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[W_WorldMap] BuildZoneOverlay: %d zones"), ZoneMgr->ZoneConfigs.Num());
+
+	for (const FSLFZoneConfig& Zone : ZoneMgr->ZoneConfigs)
+	{
+		if (Zone.ZoneCenter.IsNearlyZero() && Zone.ZoneRadius < 1.0f)
+			continue;
+
+		// Translucent circle for this zone
+		UImage* ZoneCircle = WidgetTree->ConstructWidget<UImage>(UImage::StaticClass());
+		if (!ZoneCircle) continue;
+
+		MarkerCanvas->AddChild(ZoneCircle);
+		ZoneCircle->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		ZoneCircle->SetColorAndOpacity(Zone.MapColor);
+
+		float SizeUV = (Zone.ZoneRadius * 2.0f) / MapOrthoWidth;
+		FVector2D CenterUV = WorldToFullMapUV(Zone.ZoneCenter);
+		FVector2D ViewUV = FullMapUVToViewport(CenterUV);
+
+		if (UCanvasPanelSlot* PanelSlot = Cast<UCanvasPanelSlot>(ZoneCircle->Slot))
+		{
+			float PixelSize = SizeUV * ZoomLevel * 1920.0f;
+			PanelSlot->SetAnchors(FAnchors(ViewUV.X, ViewUV.Y, ViewUV.X, ViewUV.Y));
+			PanelSlot->SetAlignment(FVector2D(0.5f, 0.5f));
+			PanelSlot->SetOffsets(FMargin(0.0f, 0.0f, PixelSize, PixelSize));
+			PanelSlot->SetAutoSize(false);
+		}
+
+		ZoneOverlayWidgets.Add(ZoneCircle);
+
+		// Zone name label
+		UTextBlock* ZoneLabel = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass());
+		if (ZoneLabel)
+		{
+			MarkerCanvas->AddChild(ZoneLabel);
+			ZoneLabel->SetText(Zone.DisplayName);
+			ZoneLabel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+
+			FSlateFontInfo FontInfo = ZoneLabel->GetFont();
+			FontInfo.Size = 14;
+			ZoneLabel->SetFont(FontInfo);
+			ZoneLabel->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f, 0.7f)));
+
+			if (UCanvasPanelSlot* PanelSlot = Cast<UCanvasPanelSlot>(ZoneLabel->Slot))
+			{
+				PanelSlot->SetAnchors(FAnchors(ViewUV.X, ViewUV.Y, ViewUV.X, ViewUV.Y));
+				PanelSlot->SetAlignment(FVector2D(0.5f, 0.5f));
+				PanelSlot->SetAutoSize(true);
+			}
+
+			ZoneNameLabels.Add(ZoneLabel);
+		}
+	}
+}
+
+void UW_WorldMap::RepositionZoneOverlay()
+{
+	APlayerController* PC = GetOwningPlayer();
+	if (!PC) return;
+
+	USLFZoneManagerComponent* ZoneMgr = PC->FindComponentByClass<USLFZoneManagerComponent>();
+	if (!ZoneMgr) return;
+
+	int32 ZoneIdx = 0;
+	for (const FSLFZoneConfig& Zone : ZoneMgr->ZoneConfigs)
+	{
+		if (Zone.ZoneCenter.IsNearlyZero() && Zone.ZoneRadius < 1.0f)
+			continue;
+
+		FVector2D CenterUV = WorldToFullMapUV(Zone.ZoneCenter);
+		FVector2D ViewUV = FullMapUVToViewport(CenterUV);
+		float SizeUV = (Zone.ZoneRadius * 2.0f) / MapOrthoWidth;
+
+		if (ZoneIdx < ZoneOverlayWidgets.Num() && ZoneOverlayWidgets[ZoneIdx])
+		{
+			if (UCanvasPanelSlot* PanelSlot = Cast<UCanvasPanelSlot>(ZoneOverlayWidgets[ZoneIdx]->Slot))
+			{
+				float PixelSize = SizeUV * ZoomLevel * 1920.0f;
+				PanelSlot->SetAnchors(FAnchors(ViewUV.X, ViewUV.Y, ViewUV.X, ViewUV.Y));
+				PanelSlot->SetOffsets(FMargin(0.0f, 0.0f, PixelSize, PixelSize));
+			}
+
+			bool bOnScreen = (ViewUV.X > -0.3f && ViewUV.X < 1.3f && ViewUV.Y > -0.3f && ViewUV.Y < 1.3f);
+			ZoneOverlayWidgets[ZoneIdx]->SetVisibility(bOnScreen ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+		}
+
+		if (ZoneIdx < ZoneNameLabels.Num() && ZoneNameLabels[ZoneIdx])
+		{
+			if (UCanvasPanelSlot* PanelSlot = Cast<UCanvasPanelSlot>(ZoneNameLabels[ZoneIdx]->Slot))
+			{
+				PanelSlot->SetAnchors(FAnchors(ViewUV.X, ViewUV.Y, ViewUV.X, ViewUV.Y));
+			}
+
+			bool bOnScreen = (ViewUV.X > -0.1f && ViewUV.X < 1.1f && ViewUV.Y > -0.1f && ViewUV.Y < 1.1f);
+			ZoneNameLabels[ZoneIdx]->SetVisibility(bOnScreen ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+		}
+
+		ZoneIdx++;
+	}
+}
+
+bool UW_WorldMap::CheckFastTravelBlocked() const
+{
+	APlayerController* PC = GetOwningPlayer();
+	if (!PC) return false;
+
+	ASLFPlayerController* SLFPC = Cast<ASLFPlayerController>(PC);
+	return SLFPC && SLFPC->bInDungeon;
 }

@@ -1,0 +1,5 @@
+LogWindowsTouchpad: Display: CacheForceMaxTouchpadSensitivityMode SetMaxTouchpadSensitivity
+LogLiveCodingServer: Display: Registered process C:\Program Files\Epic Games\UE_5.7\Engine\Binaries\Win64\UnrealEditor.exe (PID: 26752)
+LogLiveCodingServer: Display: Loading module C:\scripts\SLFConversion\Binaries\Win64\UnrealEditor-SLFConversion.dll (13.157 MB)
+LogLiveCodingServer: Display: Loaded 1 module(s), 629 lazy load module(s), and 358 reserved page ranges (0.000s, 75 translation units)
+LogLiveCodingServer: Display: Live coding ready - Save changes and press Ctrl+Alt+F11 to re-compile code

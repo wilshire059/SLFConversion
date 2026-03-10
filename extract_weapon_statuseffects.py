@@ -1,6 +1,7 @@
 """
 Extract WeaponStatusEffectInfo from bp_only backup.
 Run on bp_only project first!
+Uses EXACT Blueprint GUID-suffixed property names found in JSON exports.
 """
 
 import unreal
@@ -14,9 +15,16 @@ def log(msg):
     unreal.log(msg)
     log_lines.append(str(msg))
 
+# Blueprint struct property names with GUIDs
+EQUIPMENT_DETAILS_PROP = "EquipmentDetails_26_1D4D712C4D1C866608D5FB86D442615C"
+WEAPON_STATUS_EFFECT_PROP = "WeaponStatusEffectInfo_118_50E270B04A50041AE79D29AC86F423A2"
+RANK_PROP = "Rank_4_75FF88964E30AA02AAA1BFAD2A0FFD27"  # Common GUID for Rank
+BUILDUP_PROP = "BuildupAmount_8_EDF77EA344E14C05C59EA89AE44F0CEC"  # Common GUID for BuildupAmount
+
 def extract():
     log("=" * 60)
     log("Extracting Weapon Status Effect Data from bp_only")
+    log("Using GUID-suffixed property names")
     log("=" * 60)
 
     data = {}
@@ -29,50 +37,90 @@ def extract():
     )
     assets = registry.get_assets(filter)
 
+    log(f"\nFound {len(assets)} assets to check")
+
     for asset_data in assets:
         path = str(asset_data.package_name)
-        asset = unreal.EditorAssetLibrary.load_asset(path)
+        name = str(asset_data.asset_name)
 
-        if not asset:
-            continue
-
-        name = asset.get_name()
-
-        # Check if it's an item with equipment details
         try:
-            item_info = asset.get_editor_property("item_information")
+            asset = unreal.EditorAssetLibrary.load_asset(path)
+            if not asset:
+                continue
+
+            # Get ItemInformation (no GUID for top-level PDA property)
+            item_info = None
+            try:
+                item_info = asset.get_editor_property("ItemInformation")
+            except:
+                continue
+
             if not item_info:
                 continue
 
-            equip_details = item_info.get_editor_property("equipment_details")
+            # Get EquipmentDetails using GUID name
+            equip_details = None
+            try:
+                equip_details = item_info.get_editor_property(EQUIPMENT_DETAILS_PROP)
+            except:
+                continue
+
             if not equip_details:
                 continue
 
-            # Get status effect info
-            status_effects = equip_details.get_editor_property("weapon_status_effect_info")
-            if not status_effects or len(status_effects) == 0:
+            # Get WeaponStatusEffectInfo using GUID name
+            status_info = None
+            try:
+                status_info = equip_details.get_editor_property(WEAPON_STATUS_EFFECT_PROP)
+            except:
                 continue
 
-            log(f"\n{name}: {len(status_effects)} status effects")
+            if not status_info or len(status_info) == 0:
+                continue
+
+            log(f"\n{name}: Found {len(status_info)} status effects")
             item_data = {"effects": []}
 
-            for effect_asset, application in status_effects.items():
+            for effect_asset, application in status_info.items():
                 if effect_asset:
-                    effect_path = effect_asset.get_path_name()
-                    rank = application.rank if hasattr(application, 'rank') else 1
-                    buildup = application.buildup_amount if hasattr(application, 'buildup_amount') else 10.0
+                    effect_name = effect_asset.get_name() if hasattr(effect_asset, 'get_name') else str(effect_asset)
+                    effect_path = effect_asset.get_path_name() if hasattr(effect_asset, 'get_path_name') else str(effect_asset)
 
-                    log(f"  {effect_asset.get_name()}: Rank={rank}, Buildup={buildup}")
+                    # Get Rank using GUID name
+                    rank = 1
+                    try:
+                        rank = int(application.get_editor_property(RANK_PROP))
+                    except:
+                        # Try without GUID
+                        try:
+                            rank = int(application.get_editor_property("rank"))
+                        except:
+                            pass
+
+                    # Get BuildupAmount using GUID name
+                    buildup = 50.0
+                    try:
+                        buildup = float(application.get_editor_property(BUILDUP_PROP))
+                    except:
+                        # Try without GUID
+                        try:
+                            buildup = float(application.get_editor_property("buildup_amount"))
+                        except:
+                            pass
+
+                    log(f"  - {effect_name}: Rank={rank}, Buildup={buildup}")
                     item_data["effects"].append({
                         "effect_path": effect_path,
+                        "effect_name": effect_name,
                         "rank": rank,
                         "buildup_amount": buildup
                     })
 
-            data[path] = item_data
+            if item_data["effects"]:
+                data[path] = item_data
 
         except Exception as e:
-            pass
+            log(f"  Error processing {name}: {e}")
 
     log(f"\n\nTotal weapons with status effects: {len(data)}")
 

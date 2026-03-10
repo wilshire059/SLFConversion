@@ -1,0 +1,14 @@
+Blueprint: B_Soulslike_NPC_ShowcaseVendor
+
+=== Parent Class Check ===
+Parent Class: /Script/SLFConversion.SLFNPCShowcaseVendor
+CORRECT: Blueprint is parented to C++ SLFNPCShowcaseVendor
+
+=== SCS Components ===
+  Head_GEN_VARIABLE (SkeletalMeshComponent)
+  Body_GEN_VARIABLE (SkeletalMeshComponent)
+  Arms_GEN_VARIABLE (SkeletalMeshComponent)
+  Legs_GEN_VARIABLE (SkeletalMeshComponent)
+
+NOTE: AIInteractionManager is NOT in Blueprint SCS
+It is created by C++ CreateDefaultSubobject in parent class

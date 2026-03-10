@@ -1,0 +1,7 @@
+======================================================================
+CHECKING DA_GREATSWORD STATUS EFFECTS (POST-FIX)
+======================================================================
+DA_Greatsword StatusEffects: 1 entries
+  - DA_StatusEffect_Bleed: Rank=1, Buildup=50.0
+
+*** STATUS EFFECTS RESTORED SUCCESSFULLY! ***

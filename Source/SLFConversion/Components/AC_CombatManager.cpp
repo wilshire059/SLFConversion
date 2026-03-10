@@ -355,6 +355,9 @@ void UAC_CombatManager::HandleIncomingWeaponDamage_Implementation(AActor* Weapon
 				FGameplayTag StaminaTag = FGameplayTag::RequestGameplayTag(FName("SoulslikeFramework.Stat.Secondary.Stamina"));
 				StatManager->AdjustStat(StaminaTag, ESLFValueType::CurrentValue, -5.0, false, true);
 
+				// Open guard counter window — perfect guard = even better window
+				OpenGuardCounterWindow();
+
 				// No damage taken on perfect guard
 				return;
 			}
@@ -399,6 +402,9 @@ void UAC_CombatManager::HandleIncomingWeaponDamage_Implementation(AActor* Weapon
 					StatManager->AdjustStat(HealthTag, ESLFValueType::CurrentValue, -BlockedDamage, false, true);
 
 					UE_LOG(LogTemp, Log, TEXT("  Blocked! Stamina drained: %f, Chip damage: %f"), StaminaDrain, BlockedDamage);
+
+					// Open guard counter window — player can press heavy attack within 0.3s
+					OpenGuardCounterWindow();
 				}
 				else
 				{
@@ -1129,6 +1135,23 @@ void UAC_CombatManager::GuardGracePeriod_Implementation()
  *
  * Blueprint Logic: Perform sphere trace from hand socket, process hits
  */
+void UAC_CombatManager::OpenGuardCounterWindow()
+{
+	bGuardCounterWindowOpen = true;
+	UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager: Guard counter window OPENED"));
+
+	// Close window after 0.3 seconds
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(GuardCounterTimerHandle);
+		World->GetTimerManager().SetTimer(GuardCounterTimerHandle, [this]()
+		{
+			bGuardCounterWindowOpen = false;
+			UE_LOG(LogTemp, Log, TEXT("UAC_CombatManager: Guard counter window CLOSED"));
+		}, 0.3f, false);
+	}
+}
+
 void UAC_CombatManager::PerformHandTrace(FName SocketName)
 {
 	if (!IsValid(Mesh))

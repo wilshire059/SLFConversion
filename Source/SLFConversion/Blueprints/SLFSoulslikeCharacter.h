@@ -34,6 +34,7 @@ class ULevelSequencePlayer;
 class UPrimitiveComponent;
 class UInputBufferComponent;
 class UAC_ActionManager;
+class USLFActionSwim;
 class UAC_CombatManager;
 class UAC_InteractionManager;
 class UAIInteractionManagerComponent;
@@ -88,6 +89,7 @@ protected:
 	// Crouch state change handlers - update AnimInstance
 	virtual void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 	virtual void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
+	virtual void Landed(const FHitResult& Hit) override;
 
 	// Helper to update AnimInstance crouch state
 	void UpdateAnimInstanceCrouchState(bool bCrouching);
@@ -280,6 +282,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character|Input")
 	UInputAction* IA_WeaponSkill;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character|Input")
+	UInputAction* IA_Slide;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character|Input")
+	UInputAction* IA_Grapple;
+
 	// ═══════════════════════════════════════════════════════════════════
 	// COMPONENT CACHE (populated in BeginPlay)
 	// ═══════════════════════════════════════════════════════════════════
@@ -302,6 +310,99 @@ public:
 
 	// NOTE: CachedStatManager is inherited from ASLFBaseCharacter (UStatManagerComponent*)
 	// Use the inherited variable for stat checks like IsStatMoreThan()
+
+	/** Whether double jump has been used (reset on land) */
+	bool bHasUsedDoubleJump = false;
+
+	/** Cached swim action — created at BeginPlay if not already on ActionManager */
+	UPROPERTY(BlueprintReadOnly, Category = "Character|Swimming")
+	USLFActionSwim* CachedSwimAction = nullptr;
+
+	/** Cached ocean surface Z (found once from WaterBody actors in BeginPlay) */
+	float CachedOceanSurfaceZ = -99999.0f;
+	bool bHasOceanSurface = false;
+
+	/** Where the water surface cuts through the body (0.0 = feet, 1.0 = head). 0.75 = shoulders */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Swimming", meta = (ClampMin = "0.0", ClampMax = "1.0"))
+	float WaterSurfaceCutRatio = 0.60f;
+
+	/** Cached original mesh relative Z before water submersion */
+	float OriginalMeshRelativeZ = 0.0f;
+	bool bMeshSubmerged = false;
+
+	/** Cached WaterBody actor for wave height queries */
+	UPROPERTY()
+	TWeakObjectPtr<AActor> CachedWaterBodyActor;
+
+	/** Grace period timer — keeps swim state briefly when leaving water floor (e.g., jumping) */
+	float WaterExitGraceTimer = 0.0f;
+	static constexpr float WaterExitGraceDuration = 0.5f;
+
+	// ═══════════════════════════════════════════════════════════════════
+	// LANDING REACTIONS (height-aware)
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** Z position when character started descending — used to compute fall distance */
+	float FallStartZ = 0.0f;
+
+	/** XY position when character started descending — used to detect slope vs vertical fall */
+	FVector2D FallStartXY = FVector2D::ZeroVector;
+
+	/** Whether we're tracking a fall */
+	bool bTrackingFall = false;
+
+	/** Light landing montage (short falls < 300cm) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Landing")
+	TSoftObjectPtr<UAnimMontage> LandingLightMontage;
+
+	/** Heavy landing montage (medium falls 300-600cm) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Landing")
+	TSoftObjectPtr<UAnimMontage> LandingHeavyMontage;
+
+	/** Roll landing montage (large falls 600-1200cm) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Landing")
+	TSoftObjectPtr<UAnimMontage> LandingRollMontage;
+
+	/** Stumble landing montage (very large falls > 1200cm, may take damage) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Landing")
+	TSoftObjectPtr<UAnimMontage> LandingStumbleMontage;
+
+	/** Minimum fall distance (cm) before ANY landing reaction plays. Below this = silent land. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Landing")
+	float MinFallDistanceForReaction = 400.0f;
+
+	/** Fall distance thresholds (cm) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Landing")
+	float HeavyLandingThreshold = 700.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Landing")
+	float RollLandingThreshold = 1100.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Landing")
+	float StumbleLandingThreshold = 1500.0f;
+
+	/** Fall damage per cm above stumble threshold */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Landing")
+	float FallDamagePerCm = 0.1f;
+
+	/** Whether movement input is suppressed during a landing montage */
+	bool bLandingMontageActive = false;
+
+	// ═══════════════════════════════════════════════════════════════════
+	// STEALTH (crouching + undetected = stealth)
+	// ═══════════════════════════════════════════════════════════════════
+
+	/** True when crouching AND no enemy is currently targeting this player */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character|Stealth")
+	bool bInStealth = false;
+
+	/** Detection radius multiplier when player is crouching (0.5 = halved) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Stealth")
+	float CrouchDetectionMultiplier = 0.5f;
+
+	/** Damage multiplier for backstabs performed from stealth */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Stealth")
+	float StealthBackstabDamageMultiplier = 3.0f;
 
 	// Sprint/Dodge timing (for tap vs hold detection)
 	// Original Blueprint: If ElapsedSeconds <= 0.2, it's a dodge tap
@@ -415,6 +516,8 @@ protected:
 	void HandleScrollTools();
 	void HandleUseEquippedItem();
 	void HandleWeaponSkill();
+	void HandleSlide();
+	void HandleGrapple();
 
 	/** Queue action to input buffer (checks buffer state) */
 	void QueueActionToBuffer(const FGameplayTag& ActionTag);

@@ -1,0 +1,31 @@
+======================================================================
+CHECKING STATUS EFFECT TRIGGERED TEXT
+======================================================================
+
+--- DA_StatusEffect_Bleed ---
+  TriggeredText: 'HEMORRHAGING'
+  Tag: <Struct 'GameplayTag' (0x000001AB13FB50F8) {}>
+
+--- DA_StatusEffect_Burn ---
+  TriggeredText: 'SCORCHED'
+  Tag: <Struct 'GameplayTag' (0x000001AB13FBFE38) {}>
+
+--- DA_StatusEffect_Poison ---
+  TriggeredText: 'POISONED'
+  Tag: <Struct 'GameplayTag' (0x000001AB13FB4D78) {}>
+
+--- DA_StatusEffect_Frostbite ---
+  TriggeredText: 'FROSTBITTEN'
+  Tag: <Struct 'GameplayTag' (0x000001AB087F42F8) {}>
+
+--- DA_StatusEffect_Madness ---
+  TriggeredText: 'MADDENED'
+  Tag: <Struct 'GameplayTag' (0x000001AAC28A9538) {}>
+
+--- DA_StatusEffect_Plague ---
+  TriggeredText: 'HEXED'
+  Tag: <Struct 'GameplayTag' (0x000001AAC28A8578) {}>
+
+--- DA_StatusEffect_Corruption ---
+  TriggeredText: 'CORRUPTED'
+  Tag: <Struct 'GameplayTag' (0x000001AAC28AD438) {}>

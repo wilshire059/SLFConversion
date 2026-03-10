@@ -296,7 +296,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AC_CombatManager|Events")
 	void EventOnDeath(bool bRagdoll, ESLFDirection KillingBlowDirection);
 
+	/** Open guard counter window after a successful block. Allows heavy attack within 0.3s. */
+	UFUNCTION(BlueprintCallable, Category = "AC_CombatManager|Guard")
+	void OpenGuardCounterWindow();
+
+	/** Whether guard counter window is currently open */
+	UPROPERTY(BlueprintReadOnly, Category = "AC_CombatManager|Guard")
+	bool bGuardCounterWindowOpen = false;
+
 private:
 	// Internal helper for sphere trace hand combat
 	void PerformHandTrace(FName SocketName);
+
+	FTimerHandle GuardCounterTimerHandle;
 };

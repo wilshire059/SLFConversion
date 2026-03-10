@@ -25,7 +25,8 @@ public class SLFConversion : ModuleRules
 			System.IO.Path.Combine(ModuleDirectory, "Framework"),
 			System.IO.Path.Combine(ModuleDirectory, "Interfaces"),
 			System.IO.Path.Combine(ModuleDirectory, "Testing"),
-			System.IO.Path.Combine(ModuleDirectory, "Tests")
+			System.IO.Path.Combine(ModuleDirectory, "Tests"),
+			System.IO.Path.Combine(ModuleDirectory, "Dungeon")
 		});
 
 		PublicDependencyModuleNames.AddRange(new string[] {
@@ -53,7 +54,9 @@ public class SLFConversion : ModuleRules
 			"PhysicsCore",        // For EPhysicalSurface
 			"EngineCameras",      // For ULegacyCameraShake
 			"Landscape",          // For ALandscapeProxy, landscape creation
-			"Foliage"             // For foliage painting
+			"Foliage",            // For foliage painting
+			"DungeonArchitectRuntime",  // For ADungeon, Cell Flow builder, Voxel cave system
+			"Water"                    // For AWaterBody overlap detection (swimming)
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
@@ -77,7 +80,6 @@ public class SLFConversion : ModuleRules
 				"IKRigEditor",      // For UIKRetargeterController (programmatic retarget setup)
 				"AssetTools",       // For UAssetImportTask pipeline
 				"LandscapeEditor",  // For landscape import/creation in editor
-				"DungeonArchitectRuntime",  // For ADungeon, UGridDungeonConfig, UGridDungeonBuilder
 				"ImageWrapper"              // For PNG export (map capture)
 			});
 		}

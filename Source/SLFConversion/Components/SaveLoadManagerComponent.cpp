@@ -10,6 +10,8 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 #include "SaveLoadManagerComponent.h"
+#include "GameFramework/PlayerStart.h"
+#include "EngineUtils.h"
 #include "StatManagerComponent.h"
 #include "ProgressManagerComponent.h"
 #include "InventoryManagerComponent.h"
@@ -675,21 +677,43 @@ void USaveLoadManagerComponent::ApplyLoadedData_Implementation()
 	if (SavedLoc != FVector::ZeroVector)
 	{
 		// Safety: reject saved positions that are underground or absurdly far below terrain
-		// A Z of -10000 or lower almost certainly means a fall-through state
 		if (SavedLoc.Z < -10000.0)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("[SaveLoadManager] REJECTED bad saved position: %s (Z too low, likely fall-through)"), *SavedLoc.ToString());
 		}
 		else
 		{
-			if (AActor* Owner = GetOwner())
+			// Safety: check if saved position is in the current level by comparing against PlayerStarts
+			// If saved position is far from all PlayerStarts, it's likely from a different map — skip it
+			bool bPositionValid = false;
+			if (UWorld* World = GetWorld())
 			{
-				if (APlayerController* PC = Cast<APlayerController>(Owner))
+				for (TActorIterator<APlayerStart> It(World); It; ++It)
 				{
-					if (APawn* Pawn = PC->GetPawn())
+					float Dist = FVector::Dist(SavedLoc, It->GetActorLocation());
+					if (Dist < 50000.0f)  // Within 500m of a PlayerStart = same map
 					{
-						Pawn->SetActorTransform(SaveData.SpawnTransform);
-						UE_LOG(LogTemp, Log, TEXT("[SaveLoadManager] Restored spawn: %s"), *SavedLoc.ToString());
+						bPositionValid = true;
+						break;
+					}
+				}
+				if (!bPositionValid)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("[SaveLoadManager] REJECTED saved position %s — too far from any PlayerStart in current level"), *SavedLoc.ToString());
+				}
+			}
+
+			if (bPositionValid)
+			{
+				if (AActor* Owner = GetOwner())
+				{
+					if (APlayerController* PC = Cast<APlayerController>(Owner))
+					{
+						if (APawn* Pawn = PC->GetPawn())
+						{
+							Pawn->SetActorTransform(SaveData.SpawnTransform);
+							UE_LOG(LogTemp, Log, TEXT("[SaveLoadManager] Restored spawn: %s"), *SavedLoc.ToString());
+						}
 					}
 				}
 			}

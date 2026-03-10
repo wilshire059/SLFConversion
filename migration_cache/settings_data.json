@@ -1,0 +1,45 @@
+{
+  "W_Settings_Entry": {
+    "UnhoveredColor": {
+      "R": 0.04705899953842163,
+      "G": 0.04705899953842163,
+      "B": 0.04705899953842163,
+      "A": 0.9019610285758972
+    },
+    "HoveredColor": {
+      "R": 0.06499999761581421,
+      "G": 0.06499999761581421,
+      "B": 0.06499999761581421,
+      "A": 0.9019610285758972
+    },
+    "SettingName": "Setting Entry",
+    "SettingDescription": "Setting Entry",
+    "ButtonText": "Button Text",
+    "SettingTag": "<Struct 'GameplayTag' (0x0000019814FCD5A0) {}>",
+    "EntryType": "<E_SettingEntry.DROP_DOWN: 0>"
+  },
+  "W_Settings_CategoryEntry": {
+    "SelectedColor": {
+      "R": 0.859375,
+      "G": 0.7441949844360352,
+      "B": 0.618340015411377,
+      "A": 1.0
+    },
+    "DeselectedColor": {
+      "R": 0.49411800503730774,
+      "G": 0.3921569883823395,
+      "B": 0.282353013753891,
+      "A": 1.0
+    },
+    "SwitcherIndex": 0,
+    "SettingCategory": "<Struct 'GameplayTag' (0x00000198230EBF30) {}>"
+  },
+  "W_Settings": {
+    "QuitToDesktop": false
+  },
+  "PDA_CustomSettings": {
+    "InvertCamX": false,
+    "InvertCamY": false,
+    "CamSpeed": 1.0
+  }
+}

@@ -1,20 +1,20 @@
 ============================================================
-Applying Weapon Status Effect Data (v3)
+Applying Weapon Status Effect Data using C++ Automation
 ============================================================
+Loaded 3 weapons from cache
+
+Processing: /Game/SoulslikeFramework/Data/Items/DA_BossMace
+  Effect: DA_StatusEffect_Burn (Rank=1, Buildup=50.0)
+  SUCCESS!
+
+Processing: /Game/SoulslikeFramework/Data/Items/DA_Greatsword
+  Effect: DA_StatusEffect_Bleed (Rank=1, Buildup=50.0)
+  SUCCESS!
 
 Processing: /Game/SoulslikeFramework/Data/Items/DA_PoisonSword
-  Loaded: PDA_Item_C
-  Status effect: DA_StatusEffect_Poison
-  Created application: Rank=3, Buildup=50.0
-  equip_details type: <class 'SLFEquipmentInfo'>
-  Current weapon_status_effect_info: {}
-  Set weapon_status_effect_info to map with 1 entry
-  Set equipment_details back
-  Set item_information back
-  SAVED successfully!
-  Verification - weapon_status_effect_info has 1 entries
-    Key: DA_StatusEffect_Poison, Rank=3, Buildup=50.0
+  Effect: DA_StatusEffect_Poison (Rank=1, Buildup=50.0)
+  SUCCESS!
 
 ============================================================
-Results: 1 succeeded, 0 failed
+Results: 3 succeeded, 0 failed
 ============================================================

@@ -1,0 +1,63 @@
+# Data Asset Export - AUTO-GENERATED
+# DO NOT EDIT - This is the source of truth from bp_only
+
+data_asset:
+  path: /Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DA_ExampleDialog
+  class: PDA_Dialog_C
+
+properties:
+  class: PDA_Dialog_C
+  name: DA_ExampleDialog
+  path: /Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DA_ExampleDialog.DA_ExampleDialog
+  properties:
+    Requirement:
+      count: 3
+      items:
+        - index: 0
+          Container_30_6283B6C04FF6E95CBA1B5C8B24550928:
+            count: 1
+            items:
+              - index: 0
+                ProgressContainer_20_3886DCA94E048A4A95B8E0A7B72E469D:
+                  GameplayTags:
+                    count: 1
+                    items:
+                      - index: 0
+                        TagName: SoulslikeFramework.Chapters.Demo
+                State_23_5E2A41B94FDC8A29BBE79683B1B22370: NewEnumerator0
+          RelatedDialogTable_24_92BFB1D84BDD2027495ED1B741E7E3AA: /Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DialogTables/DT_ShowcaseGuideNpc_NoProgress.DT_ShowcaseGuideNpc_NoProgress
+        - index: 1
+          Container_30_6283B6C04FF6E95CBA1B5C8B24550928:
+            count: 1
+            items:
+              - index: 0
+                ProgressContainer_20_3886DCA94E048A4A95B8E0A7B72E469D:
+                  GameplayTags:
+                    count: 1
+                    items:
+                      - index: 0
+                        TagName: SoulslikeFramework.Chapters.Demo
+                State_23_5E2A41B94FDC8A29BBE79683B1B22370: NewEnumerator1
+          RelatedDialogTable_24_92BFB1D84BDD2027495ED1B741E7E3AA: /Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DialogTables/DT_ShowcaseGuideNpc_Progress.DT_ShowcaseGuideNpc_Progress
+        - index: 2
+          Container_30_6283B6C04FF6E95CBA1B5C8B24550928:
+            count: 1
+            items:
+              - index: 0
+                ProgressContainer_20_3886DCA94E048A4A95B8E0A7B72E469D:
+                  GameplayTags:
+                    count: 1
+                    items:
+                      - index: 0
+                        TagName: SoulslikeFramework.Chapters.Demo
+                State_23_5E2A41B94FDC8A29BBE79683B1B22370: NewEnumerator2
+          RelatedDialogTable_24_92BFB1D84BDD2027495ED1B741E7E3AA: /Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DialogTables/DT_ShowcaseGuideNpc_Completed.DT_ShowcaseGuideNpc_Completed
+    DefaultDialogTable: /Game/SoulslikeFramework/Data/Dialog/DT_GenericDefaultDialog.DT_GenericDefaultDialog
+    AssetBundleData:
+      Bundles:
+        count: 0
+        items:
+    NativeClass:
+      class: BlueprintGeneratedClass
+      name: PDA_Dialog_C
+      path: /Game/SoulslikeFramework/Data/Dialog/PDA_Dialog.PDA_Dialog_C

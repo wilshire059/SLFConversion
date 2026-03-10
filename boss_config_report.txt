@@ -1,0 +1,51 @@
+
+============================================================
+BOSS CONFIG CHECK: B_Soulslike_Boss_Malgareth
+============================================================
+CDO: <Object '/Game/SoulslikeFramework/Blueprints/_Characters/Enemies/B_Soulslike_Boss_Malgareth.Default__B_Soulslike_Boss_Malgareth_C' (0x000002A445EB3C00) Class 'B_Soulslike_Boss_Malgareth_C'>
+Class: B_Soulslike_Boss_Malgareth_C
+
+--- Checking CDO Components ---
+  Component: CollisionCylinder (CapsuleComponent)
+  Component: Arrow (ArrowComponent)
+  Component: CharMoveComp (CharacterMovementComponent)
+  Component: CharacterMesh0 (SkeletalMeshComponent)
+  Component: StatManagerComponent (StatManagerComponent)
+  Component: StatusEffectManager (AC_StatusEffectManager)
+  Component: DefaultSceneRoot (SceneComponent)
+  Component: ExecutionWidget (WidgetComponent)
+  Component: Healthbar (WidgetComponent)
+  Component: AIStateMachine (SLFAIStateMachineComponent)
+  Component: BossComponent (AIBossComponent)
+    FOUND BOSS COMPONENT!
+    Phases array: 0 entries
+    PROBLEM: Phases array is EMPTY!
+  Component: AC_AI_CombatManager (AC_AI_CombatManager)
+    FOUND COMBAT MANAGER!
+    DefaultAttackStatusEffects: 0 entries
+    PROBLEM: DefaultAttackStatusEffects is EMPTY!
+  Component: TriggerCollisionSphere (SphereComponent)
+  Component: HealthbarWidget (WidgetComponent)
+  Component: CombatManagerComponent (AICombatManagerComponent)
+    FOUND COMBAT MANAGER!
+    DefaultAttackStatusEffects: 0 entries
+    PROBLEM: DefaultAttackStatusEffects is EMPTY!
+  Component: BehaviorManagerComponent (AIBehaviorManagerComponent)
+  Component: SoulsNiagaraComponent (NiagaraComponent)
+  Component: LootDropManagerComponent (LootDropManagerComponent)
+
+--- Checking SCS (Blueprint Component Tree) ---
+  Error getting SCS: type object 'BlueprintEditorLibrary' has no attribute 'get_scs_nodes_from_blueprint'
+
+--- Checking Parent B_Soulslike_Boss ---
+  Parent class: B_Soulslike_Boss_C
+  Error: type object 'BlueprintEditorLibrary' has no attribute 'get_scs_nodes_from_blueprint'
+
+--- Checking B_Soulslike_Enemy for DefaultAttackStatusEffects ---
+  Enemy has: CombatManagerComponent (AICombatManagerComponent)
+    DefaultAttackStatusEffects: 1 entries
+      - <Object '/Game/SoulslikeFramework/Data/StatusEffects/StatusEffectData/DA_StatusEffect_Bleed.DA_StatusEffect_Bleed' (0x000002A4454E5240) Class 'PDA_StatusEffect_C'>
+
+============================================================
+CHECK COMPLETE
+============================================================

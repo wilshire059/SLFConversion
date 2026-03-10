@@ -1,0 +1,44 @@
+# DataTable Export - AUTO-GENERATED
+# DO NOT EDIT - This is the source of truth from bp_only
+
+datatable:
+  path: /Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DialogTables/DT_ShowcaseGuideNpc_Progress
+  row_struct: FDialogEntry
+  row_count: 5
+
+rows:
+  - row_name: NewRow
+    columns:
+      Entry_3_E3D06962403A4DF403DFBF892EECBE72: Having a good time? Malgareth can be quite hard to defeat.
+      GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1:
+        count: 0
+        items:
+
+  - row_name: NewRow_0
+    columns:
+      Entry_3_E3D06962403A4DF403DFBF892EECBE72: @isikdev has told me to remind you about this if you were to struggle. You can guard Malgareth's attacks.
+      GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1:
+        count: 0
+        items:
+
+  - row_name: NewRow_1
+    columns:
+      Entry_3_E3D06962403A4DF403DFBF892EECBE72: Practice guarding on this poor Example Enemy I have to my left. Guarding will be very useful in situations where you are consistently being attacked and dodging is hard.
+      GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1:
+        count: 0
+        items:
+
+  - row_name: NewRow_2
+    columns:
+      Entry_3_E3D06962403A4DF403DFBF892EECBE72: Also! You can talk to my friend next to me and buy some items that could make your life easier.
+      GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1:
+        count: 0
+        items:
+
+  - row_name: NewRow_3
+    columns:
+      Entry_3_E3D06962403A4DF403DFBF892EECBE72: Good luck! I'll return back to staring at this wonderful ladder.
+      GameplayEvents_14_DA3D23A841E3F67250D0CE90487375C1:
+        count: 0
+        items:
+

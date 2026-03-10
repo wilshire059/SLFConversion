@@ -1,0 +1,139 @@
+{
+  "project": "SLFConversion",
+  "datatables": {
+    "DT_GenericDefaultDialog": {
+      "path": "/Game/SoulslikeFramework/Data/Dialog/DT_GenericDefaultDialog",
+      "class": "DataTable",
+      "row_struct": {
+        "name": "FDialogEntry",
+        "path": "/Game/SoulslikeFramework/Structures/Dialog/FDialogEntry.FDialogEntry"
+      },
+      "row_count": 1,
+      "row_names": [
+        "NewRow"
+      ]
+    },
+    "DT_ShowcaseGuideNpc_NoProgress": {
+      "path": "/Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DialogTables/DT_ShowcaseGuideNpc_NoProgress",
+      "class": "DataTable",
+      "row_struct": {
+        "name": "FDialogEntry",
+        "path": "/Game/SoulslikeFramework/Structures/Dialog/FDialogEntry.FDialogEntry"
+      },
+      "row_count": 6,
+      "row_names": [
+        "NewRow",
+        "NewRow_0",
+        "NewRow_1",
+        "NewRow_2",
+        "NewRow_3",
+        "NewRow_4"
+      ]
+    },
+    "DT_ShowcaseGuideNpc_InProgress": {
+      "error": "Could not load /Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DialogTables/DT_ShowcaseGuideNpc_InProgress"
+    },
+    "DT_ShowcaseGuideNpc_Complete": {
+      "error": "Could not load /Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DialogTables/DT_ShowcaseGuideNpc_Complete"
+    }
+  },
+  "dialog_assets": {
+    "PDA_Dialog": {
+      "path": "/Game/SoulslikeFramework/Data/Dialog/PDA_Dialog",
+      "class": "Blueprint",
+      "class_path": "/Script/Engine.Blueprint",
+      "class_chain": [
+        "Blueprint",
+        "/Script/Engine"
+      ],
+      "properties": {}
+    },
+    "DA_ExampleDialog": {
+      "path": "/Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DA_ExampleDialog",
+      "class": "PDA_Dialog_C",
+      "class_path": "/Game/SoulslikeFramework/Data/Dialog/PDA_Dialog.PDA_Dialog_C",
+      "class_chain": [
+        "PDA_Dialog_C",
+        "/Game/SoulslikeFramework/Data/Dialog/PDA_Dialog"
+      ],
+      "properties": {
+        "default_dialog_table": "/Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DialogTables/DT_ShowcaseGuideNpc_NoProgress.DT_ShowcaseGuideNpc_NoProgress",
+        "requirement": "[{container: , related_dialog_table: None}, {container: , related_dialog_table: None}, {container: , related_dialog_table: None}]"
+      }
+    },
+    "DA_ExampleDialog_Vendor": {
+      "path": "/Game/SoulslikeFramework/Data/Dialog/ShowcaseVendorNpc/DA_ExampleDialog_Vendor",
+      "class": "PDA_Dialog_C",
+      "class_path": "/Game/SoulslikeFramework/Data/Dialog/PDA_Dialog.PDA_Dialog_C",
+      "class_chain": [
+        "PDA_Dialog_C",
+        "/Game/SoulslikeFramework/Data/Dialog/PDA_Dialog"
+      ],
+      "properties": {
+        "default_dialog_table": "/Game/SoulslikeFramework/Data/Dialog/ShowcaseVendorNpc/DT_ShowcaseVendorNpc_Generic.DT_ShowcaseVendorNpc_Generic",
+        "requirement": "[]"
+      }
+    }
+  },
+  "vendor_assets": {
+    "PDA_Vendor": {
+      "path": "/Game/SoulslikeFramework/Data/Vendor/PDA_Vendor",
+      "class": "Blueprint",
+      "class_path": "/Script/Engine.Blueprint",
+      "class_chain": [
+        "Blueprint",
+        "/Script/Engine"
+      ],
+      "properties": {}
+    },
+    "DA_ExampleVendor": {
+      "error": "Could not load /Game/SoulslikeFramework/Data/Vendor/ShowcaseVendorNpc/DA_ExampleVendor"
+    }
+  },
+  "widgets": {
+    "W_HUD": {
+      "path": "/Game/SoulslikeFramework/Widgets/HUD/W_HUD",
+      "class": "WidgetBlueprint",
+      "generated_class": "W_HUD_C"
+    },
+    "W_Dialog": {
+      "error": "Could not load /Game/SoulslikeFramework/Widgets/Dialog/W_Dialog"
+    },
+    "W_NPC_Window": {
+      "path": "/Game/SoulslikeFramework/Widgets/Vendor/W_NPC_Window",
+      "class": "WidgetBlueprint",
+      "generated_class": "W_NPC_Window_C"
+    },
+    "W_NPC_Window_Vendor": {
+      "path": "/Game/SoulslikeFramework/Widgets/Vendor/W_NPC_Window_Vendor",
+      "class": "WidgetBlueprint",
+      "generated_class": "W_NPC_Window_Vendor_C"
+    }
+  },
+  "blueprints": {
+    "B_Soulslike_NPC": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC",
+      "class": "Blueprint",
+      "generated_class": "B_Soulslike_NPC_C",
+      "generated_class_path": "/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC.B_Soulslike_NPC_C"
+    },
+    "B_Soulslike_NPC_ShowcaseGuide": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC_ShowcaseGuide",
+      "class": "Blueprint",
+      "generated_class": "B_Soulslike_NPC_ShowcaseGuide_C",
+      "generated_class_path": "/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC_ShowcaseGuide.B_Soulslike_NPC_ShowcaseGuide_C"
+    },
+    "B_Soulslike_NPC_ShowcaseVendor": {
+      "path": "/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC_ShowcaseVendor",
+      "class": "Blueprint",
+      "generated_class": "B_Soulslike_NPC_ShowcaseVendor_C",
+      "generated_class_path": "/Game/SoulslikeFramework/Blueprints/_Characters/Npcs/B_Soulslike_NPC_ShowcaseVendor.B_Soulslike_NPC_ShowcaseVendor_C"
+    },
+    "AC_AI_InteractionManager": {
+      "path": "/Game/SoulslikeFramework/Blueprints/Components/AC_AI_InteractionManager",
+      "class": "Blueprint",
+      "generated_class": "AC_AI_InteractionManager_C",
+      "generated_class_path": "/Game/SoulslikeFramework/Blueprints/Components/AC_AI_InteractionManager.AC_AI_InteractionManager_C"
+    }
+  }
+}

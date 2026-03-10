@@ -1,0 +1,5 @@
+======================================================================
+CHECKING PC_SoulslikeFramework
+======================================================================
+Parent: /Script/SLFConversion.SLFPlayerController
+Compile: OK

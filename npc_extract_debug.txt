@@ -1,0 +1,46 @@
+
+======================================================================
+EXTRACTING NPC DATA FROM BLUEPRINTS
+======================================================================
+
+[B_Soulslike_NPC]
+  Error spawning actor: 'World' object has no attribute 'spawn_actor'
+Traceback (most recent call last):
+  File "C:/scripts/SLFConversion/extract_npc_data.py", line 142, in extract_from_spawned_actor
+    actor = world.spawn_actor(gen_class, spawn_loc, spawn_rot)
+            ^^^^^^^^^^^^^^^^^
+AttributeError: 'World' object has no attribute 'spawn_actor'
+
+  No SCS found
+  Summary: Mesh=False, AnimClass=False, Components=0
+
+[B_Soulslike_NPC_ShowcaseVendor]
+  Error spawning actor: 'World' object has no attribute 'spawn_actor'
+Traceback (most recent call last):
+  File "C:/scripts/SLFConversion/extract_npc_data.py", line 142, in extract_from_spawned_actor
+    actor = world.spawn_actor(gen_class, spawn_loc, spawn_rot)
+            ^^^^^^^^^^^^^^^^^
+AttributeError: 'World' object has no attribute 'spawn_actor'
+
+  No SCS found
+  Summary: Mesh=False, AnimClass=False, Components=0
+
+[B_Soulslike_NPC_ShowcaseGuide]
+  Error spawning actor: 'World' object has no attribute 'spawn_actor'
+Traceback (most recent call last):
+  File "C:/scripts/SLFConversion/extract_npc_data.py", line 142, in extract_from_spawned_actor
+    actor = world.spawn_actor(gen_class, spawn_loc, spawn_rot)
+            ^^^^^^^^^^^^^^^^^
+AttributeError: 'World' object has no attribute 'spawn_actor'
+
+  No SCS found
+  Summary: Mesh=False, AnimClass=False, Components=0
+
+======================================================================
+SAVING TO C:/scripts/SLFConversion/migration_cache/npc_data.json
+======================================================================
+
+Extracted data for 3 NPCs
+  - B_Soulslike_NPC
+  - B_Soulslike_NPC_ShowcaseVendor
+  - B_Soulslike_NPC_ShowcaseGuide

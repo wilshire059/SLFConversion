@@ -1,0 +1,17 @@
+======================================================================
+VERIFYING SPELL CLASSES
+======================================================================
+
+/Game/SoulslikeFramework/Data/Items/DA_HealthFlask.DA_HealthFlask
+  Class: PDA_Item_C
+  Class Path: /Game/SoulslikeFramework/Data/PDA_Item.PDA_Item_C
+  Category: <SLFItemCategory.TOOLS: 1>
+  Usable: True
+  ItemClass: None
+
+/Game/SoulslikeFramework/Data/Items/Spells/DA_FireballSpell.DA_FireballSpell
+  Class: PDA_Item_C
+  Class Path: /Game/SoulslikeFramework/Data/PDA_Item.PDA_Item_C
+  Category: <SLFItemCategory.TOOLS: 1>
+  Usable: True
+  ItemClass: <Object '/Script/SLFConversion.SLFFireballProjectile' (0x000001FBB7435C80) Class 'Class'>

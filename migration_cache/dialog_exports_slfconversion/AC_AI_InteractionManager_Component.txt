@@ -1,0 +1,43 @@
+=== BLUEPRINT EXPORT ===
+Path: /Game/SoulslikeFramework/Blueprints/Components/AC_AI_InteractionManager
+Class: Blueprint
+ParentClass: AIInteractionManagerComponent
+GeneratedClass: AC_AI_InteractionManager_C
+
+=== CLASS DEFAULT OBJECT ===
+Object: Default__AC_AI_InteractionManager_C (Class: AC_AI_InteractionManager_C)
+  Name = NSLOCTEXT("[2B064314843F6C72872AB859D70E21F4]", "CEEB42E24D84AF667EFDD9B60C87F322", "Npc Name")
+  DialogAsset = DA_ExampleDialog (Path: /Game/SoulslikeFramework/Data/Dialog/ShowcaseGuideNpc/DA_ExampleDialog.DA_ExampleDialog)
+  VendorAsset = DA_ExampleVendor (Path: /Game/SoulslikeFramework/Data/Vendor/DA_ExampleVendor.DA_ExampleVendor)
+  ProgressManager = null
+  CurrentIndex = 0
+  MaxIndex = 0
+  ActiveTable = 
+  OnDialogFinished = ()
+  PrimaryComponentTick (FActorComponentTickFunction):
+    TickGroup = TG_DuringPhysics
+    EndTickGroup = TG_PrePhysics
+    bTickEvenWhenPaused = False
+    bCanEverTick = False
+    bStartWithTickEnabled = True
+    bAllowTickOnDedicatedServer = True
+    TickInterval = 0.000000
+  ComponentTags (Array, Count: 0):
+  AssetUserData (Array, Count: 0):
+  AssetUserDataEditorOnly (Array, Count: 0):
+  UCSSerializationIndex = -1
+  bNetAddressable = False
+  bReplicateUsingRegisteredSubObjectList = False
+  bReplicates = False
+  bAutoActivate = False
+  bEditableWhenInherited = True
+  bCanEverAffectNavigation = False
+  bIsEditorOnly = False
+  bIsVisualizationComponent = False
+  bNeedsUCSSerializationIndexEvaluted = False
+  CreationMethod = Native
+  OnComponentActivated = ()
+  OnComponentDeactivated = ()
+
+=== BLUEPRINT VARIABLES ===
+

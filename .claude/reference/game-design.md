@@ -115,12 +115,92 @@ Boss.Primordial
 Boss.Convergence
 ```
 
+## Player Movement & Traversal
+| Action | Input | Description | Stamina | Cooldown |
+|--------|-------|-------------|---------|----------|
+| Slide | Sprint + Crouch | Fast ground slide, 400cm over 0.8s, can go under obstacles | — | 1.5s |
+| Double Jump | Jump while airborne | Second jump with upward impulse | 15 | Reset on land |
+| Vault | Auto (jump into obstacle <100cm) | Quick hop over low obstacles | — | — |
+| Hurdle | Auto (obstacle 100-150cm) | Athletic hurdle over medium obstacles | — | — |
+| Mantle | Auto (obstacle 150-250cm) | Climb up onto ledge | — | — |
+| Climb | Auto (obstacle 250-350cm) | Full climb up tall wall | — | — |
+| Grapple | Grapple input (aim at point) | Pull toward grapple point, 3000cm range | — | 8s |
+| Grapple Attack | Attack during grapple | Melee slam at destination, 1.5x damage (0.25x vs bosses) | — | Shared with grapple |
+
+## Landing Reactions
+| Fall Distance | Reaction | Effect |
+|---------------|----------|--------|
+| < 300cm | Light landing | Brief recovery animation |
+| 300-600cm | Heavy landing | Longer recovery, slight stagger |
+| 600-1200cm | Roll landing | Automatic combat roll on impact |
+| > 1200cm | Stumble landing | Long recovery + fall damage (0.1 HP/cm above threshold) |
+
+## Stealth System
+- **Activation**: Crouch + no enemy currently targeting the player
+- **Detection**: Crouching halves enemy detection radius (1500cm → 750cm)
+- **Stealth Backstab**: 3x damage multiplier (vs normal backstab damage)
+- **Breaking Stealth**: Standing up, being detected, attacking (non-backstab)
+
+## Combat Actions
+| Action | Trigger | Damage | Notes |
+|--------|---------|--------|-------|
+| Guard Counter | Heavy attack within 0.3s of blocking | 1.8x, 2.0x poise | Must successfully block first |
+| Jump Attack | Attack while airborne | High poise damage | Long recovery, good for engaging from above |
+| Stealth Backstab | Backstab from stealth | 3x damage | Must be crouching + undetected + behind enemy |
+
+## Resting Points
+- Sit-down/stand-up animations when interacting
+- Menu opens after sit-down completes
+- Stand-up animation plays on exit before releasing player
+- 15-18 total (2-3 per zone)
+
+## Dungeon Features
+| Feature | Description |
+|---------|-------------|
+| Tier-Colored Doors | Blue (Normal), Purple (Elite), Orange (Legendary) entrance doors |
+| Boss Room Barriers | Fog gate seals on entry, unseals on boss defeat |
+| Shortcuts | 1-2 one-way gates per dungeon (open from one side only) |
+| Trap Markers | Pressure plates, arrow launchers, swinging blades (framework) |
+| Puzzle Rooms | 1 per dungeon before boss — Lever/Pressure/Sequence/ElementMatch types |
+| Boss Immunity Phases | Destructible objectives that must be cleared to remove boss invulnerability |
+| No Fast Travel | World map shows "Fast travel unavailable" when inside dungeon |
+
+## Crafting System (Framework)
+| Zone | Material | Use |
+|------|----------|-----|
+| Ashfields | Cinder Bloom | Fire consumables/coatings |
+| Ironworks | Slag Crystal | Weapon upgrade material |
+| Rift | Void Petal | Magic consumables |
+| Sanctum | Sacred Ember | Holy coatings/cures |
+| Undercroft | Hollow Root | Poison/cure materials |
+| Core | Convergence Shard | Endgame upgrades |
+
+## World Map
+- Full-screen overlay with zoom (scroll wheel) and pan (click-drag)
+- Zone circles with color-coding and labels
+- Resting point markers (click to fast travel)
+- Fast travel blocked inside dungeons
+
 ## Production Phases
 ### Phase 1: Foundation
 - Download + integrate Project Titan
 - Zone streaming system
 - Hub safe zone (resting point + NPCs)
 - Zone 1 (Ashfields) playable: 2-3 enemies, 1 boss, 1 dungeon
+
+### Phase 1.5: Movement & Animation (COMPLETE - Feb 2026)
+- GameAnimationSample integration (358 animation files, 11 montages)
+- Advanced traversal: vault/hurdle/mantle/climb with height detection
+- Slide action with crouch transition
+- Height-aware landing reactions (4 tiers)
+- Resting point sit-down/stand-up animations
+- Stealth system (crouch + undetected = stealth, 3x backstab damage)
+- Guard counter and jump attack actions
+- Double jump
+- Grapple hook (traversal + combat attack)
+- Dungeon gameplay: tiered doors, shortcuts, traps, puzzles, boss immunity
+- World map zone overlay + fast travel system
+- Crafting system framework
 
 ### Phase 2: Core Loop
 - 10 weapons across categories

@@ -1,0 +1,44 @@
+{
+  "DA_StatusEffect_Burn": {
+    "icon": "/Game/SoulslikeFramework/Textures/StatusEffects/T_Burn.T_Burn",
+    "bar_fill_color": null,
+    "tag": "<Struct 'GameplayTag' (0x000001F719CBF558) {}>",
+    "triggered_text": null
+  },
+  "DA_StatusEffect_Bleed": {
+    "icon": "/Game/SoulslikeFramework/Textures/StatusEffects/T_Bleed.T_Bleed",
+    "bar_fill_color": null,
+    "tag": "<Struct 'GameplayTag' (0x000001F719CBF018) {}>",
+    "triggered_text": null
+  },
+  "DA_StatusEffect_Poison": {
+    "icon": "/Game/SoulslikeFramework/Textures/StatusEffects/T_Poison.T_Poison",
+    "bar_fill_color": null,
+    "tag": "<Struct 'GameplayTag' (0x000001F719CBF718) {}>",
+    "triggered_text": null
+  },
+  "DA_StatusEffect_Frostbite": {
+    "icon": "/Game/SoulslikeFramework/Textures/StatusEffects/T_Frostbite.T_Frostbite",
+    "bar_fill_color": null,
+    "tag": "<Struct 'GameplayTag' (0x000001F735FDA4D8) {}>",
+    "triggered_text": null
+  },
+  "DA_StatusEffect_Corruption": {
+    "icon": "/Game/SoulslikeFramework/Textures/StatusEffects/T_Corruption.T_Corruption",
+    "bar_fill_color": null,
+    "tag": "<Struct 'GameplayTag' (0x000001F735FD9518) {}>",
+    "triggered_text": null
+  },
+  "DA_StatusEffect_Madness": {
+    "icon": "/Game/SoulslikeFramework/Textures/StatusEffects/T_Madness.T_Madness",
+    "bar_fill_color": null,
+    "tag": "<Struct 'GameplayTag' (0x000001F735FDB9D8) {}>",
+    "triggered_text": null
+  },
+  "DA_StatusEffect_Plague": {
+    "icon": "/Engine/Functions/Engine_MaterialFunctions02/ExampleContent/Textures/testPattern1.testPattern1",
+    "bar_fill_color": null,
+    "tag": "<Struct 'GameplayTag' (0x000001F735FD9358) {}>",
+    "triggered_text": null
+  }
+}

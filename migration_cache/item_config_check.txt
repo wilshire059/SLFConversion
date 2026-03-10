@@ -1,0 +1,40 @@
+
+============================================================
+Checking: /Game/SoulslikeFramework/Data/Items/DA_ThrowingKnife.DA_ThrowingKnife
+============================================================
+  Category: <SLFItemCategory.TOOLS: 1>
+  Usable: True
+  Action tag: <Struct 'GameplayTag' (0x00000210E2C2AF44) {}>
+  Tag name: None
+  Tag dir: ['assign', 'cast', 'copy', 'export_text', 'get_editor_property', 'import_text', 'set_editor_properties', 'set_editor_property', 'static_struct', 'to_tuple']
+  ItemClass: <Object '/Game/SoulslikeFramework/Blueprints/_WorldActors/Projectiles/B_Projectile_ThrowingKnife.B_Projectile_ThrowingKnife_C' (0x0000021157F99300) Class 'BlueprintGeneratedClass'>
+
+============================================================
+Checking: /Game/SoulslikeFramework/Data/Items/DA_MagicSpell.DA_MagicSpell
+============================================================
+  Category: <SLFItemCategory.TOOLS: 1>
+  Usable: True
+  Action tag: <Struct 'GameplayTag' (0x000002116B3DC744) {}>
+  Tag name: None
+  Tag dir: ['assign', 'cast', 'copy', 'export_text', 'get_editor_property', 'import_text', 'set_editor_properties', 'set_editor_property', 'static_struct', 'to_tuple']
+  ItemClass: <Object '/Script/SLFConversion.SLFSpellProjectile' (0x0000021139450780) Class 'Class'>
+
+============================================================
+Checking: /Game/SoulslikeFramework/Data/Items/DA_HealthFlask.DA_HealthFlask
+============================================================
+  Category: <SLFItemCategory.TOOLS: 1>
+  Usable: True
+  Action tag: <Struct 'GameplayTag' (0x000002116B3DD344) {}>
+  Tag name: None
+  Tag dir: ['assign', 'cast', 'copy', 'export_text', 'get_editor_property', 'import_text', 'set_editor_properties', 'set_editor_property', 'static_struct', 'to_tuple']
+  ItemClass: None
+
+============================================================
+Checking: /Game/SoulslikeFramework/Data/Items/Spells/DA_FireballSpell.DA_FireballSpell
+============================================================
+  Category: <SLFItemCategory.TOOLS: 1>
+  Usable: True
+  Action tag: <Struct 'GameplayTag' (0x000002116B3DDF44) {}>
+  Tag name: None
+  Tag dir: ['assign', 'cast', 'copy', 'export_text', 'get_editor_property', 'import_text', 'set_editor_properties', 'set_editor_property', 'static_struct', 'to_tuple']
+  ItemClass: <Object '/Script/SLFConversion.SLFFireballProjectile' (0x0000021139442A80) Class 'Class'>

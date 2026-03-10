@@ -1,0 +1,13 @@
+=== Apply Weapon Abilities Log ===
+Loaded weapon ability: DA_ExampleWeaponAbility
+DEBUG: Got item_info for DA_Katana
+DEBUG: Got equipment_details for DA_Katana
+DEBUG: Current weapon_ability for DA_Katana: <Object '/Game/SoulslikeFramework/Data/WeaponAbilities/DA_ExampleWeaponAbility.DA_ExampleWeaponAbility' (0x00000270A017E700) Class 'PDA_WeaponAbility_C'>
+DEBUG: After set, weapon_ability for DA_Katana: <Object '/Game/SoulslikeFramework/Data/WeaponAbilities/DA_ExampleWeaponAbility.DA_ExampleWeaponAbility' (0x00000270A017E700) Class 'PDA_WeaponAbility_C'>
+OK: DA_Katana -> DA_ExampleWeaponAbility
+DEBUG: Got item_info for DA_PoisonSword
+DEBUG: Got equipment_details for DA_PoisonSword
+DEBUG: Current weapon_ability for DA_PoisonSword: <Object '/Game/SoulslikeFramework/Data/WeaponAbilities/DA_ExampleWeaponAbility.DA_ExampleWeaponAbility' (0x00000270A017E700) Class 'PDA_WeaponAbility_C'>
+DEBUG: After set, weapon_ability for DA_PoisonSword: <Object '/Game/SoulslikeFramework/Data/WeaponAbilities/DA_ExampleWeaponAbility.DA_ExampleWeaponAbility' (0x00000270A017E700) Class 'PDA_WeaponAbility_C'>
+OK: DA_PoisonSword -> DA_ExampleWeaponAbility
+Applied weapon abilities: 2 succeeded, 0 failed

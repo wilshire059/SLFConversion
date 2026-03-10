@@ -1,7 +1,19 @@
 ============================================================
 Extracting Weapon Status Effect Data from bp_only
+Using GUID-suffixed property names
 ============================================================
 
+Found 21 assets to check
 
-Total weapons with status effects: 0
+DA_BossMace: Found 1 status effects
+  - DA_StatusEffect_Burn: Rank=1, Buildup=50.0
+
+DA_Greatsword: Found 1 status effects
+  - DA_StatusEffect_Bleed: Rank=1, Buildup=50.0
+
+DA_PoisonSword: Found 1 status effects
+  - DA_StatusEffect_Poison: Rank=1, Buildup=50.0
+
+
+Total weapons with status effects: 3
 Saved to: C:/scripts/SLFConversion/migration_cache/weapon_statuseffect_data.json

@@ -1,0 +1,2549 @@
+# Widget Blueprint Export - AUTO-GENERATED
+# DO NOT EDIT - This is the source of truth from bp_only
+
+widget:
+  path: /Game/SoulslikeFramework/Widgets/Vendor/W_VendorAction
+  class: WidgetBlueprint
+  parent_class: UserWidget
+
+variables:
+  - name: SelectedSlot
+    type: object
+    subcategory: None
+    subcategory_object: W_VendorSlot_C
+
+  - name: AssignedItemAmount
+    type: int
+    subcategory: None
+
+  - name: MaxPossibleAmount
+    type: int
+    subcategory: None
+
+  - name: DesiredAmount
+    type: int
+    subcategory: None
+
+  - name: OnVendorActionClosed
+    type: mcdelegate
+    subcategory: None
+
+  - name: AssignedItem
+    type: object
+    subcategory: None
+    subcategory_object: PDA_Item_C
+
+  - name: AssignedItemPrice
+    type: int
+    subcategory: None
+
+  - name: OnVendorItemPurchased
+    type: mcdelegate
+    subcategory: None
+
+  - name: ActionType
+    type: byte
+    subcategory: None
+    subcategory_object: E_VendorType
+
+  - name: OnVendorItemSold
+    type: mcdelegate
+    subcategory: None
+
+widget_tree:
+  - name: SizeBox_38
+    class: SizeBox
+    visibility: 4
+    is_visible: false
+    child_count: 1
+    properties:
+      WidthOverride: 1000.000000
+      HeightOverride: 475.000000
+      MinDesiredWidth: 0.000000
+      MinDesiredHeight: 0.000000
+      MaxDesiredWidth: 0.000000
+      MaxDesiredHeight: 0.000000
+      MinAspectRatio: 1.000000
+      MaxAspectRatio: 1.000000
+      bOverride_WidthOverride: true
+      bOverride_HeightOverride: true
+      bOverride_MinDesiredWidth: false
+      bOverride_MinDesiredHeight: false
+      bOverride_MaxDesiredWidth: false
+      bOverride_MaxDesiredHeight: false
+      bOverride_MinAspectRatio: false
+      bOverride_MaxAspectRatio: false
+
+  - name: Overlay_1
+    class: Overlay
+    visibility: 4
+    is_visible: false
+    child_count: 3
+    properties:
+
+  - name: Background
+    class: Border
+    visibility: 0
+    is_visible: false
+    child_count: 1
+    properties:
+      HorizontalAlignment: HAlign_Fill
+      VerticalAlignment: VAlign_Fill
+      bShowEffectWhenDisabled: true
+      ContentColorAndOpacity:
+        R: 1.000000
+        G: 1.000000
+        B: 1.000000
+        A: 1.000000
+      ContentColorAndOpacityDelegate: (null).None
+      Padding:
+        Left: 60.000000
+        Top: 60.000000
+        Right: 60.000000
+        Bottom: 60.000000
+      Background:
+        TintColor:
+          SpecifiedColor:
+            R: 0.046875
+            G: 0.040593
+            B: 0.033728
+            A: 1.000000
+          ColorUseRule: UseColor_Specified
+        DrawAs: Box
+        Tiling: NoTile
+        Mirroring: NoMirror
+        ImageType: FullColor
+        ImageSize:
+          X: 1400.000000
+          Y: 700.000000
+        Margin:
+          Left: 0.250000
+          Top: 0.250000
+          Right: 0.250000
+          Bottom: 0.250000
+        ResourceObject:
+          class: Texture2D
+          name: T_Border_BG
+          path: /Game/SoulslikeFramework/Widgets/_Textures/T_Border_BG.T_Border_BG
+        OutlineSettings:
+          CornerRadii:
+            X: 0.000000
+            Y: 0.000000
+            Z: 0.000000
+            W: 0.000000
+          Color:
+            SpecifiedColor:
+              R: 0.000000
+              G: 0.000000
+              B: 0.000000
+              A: 0.000000
+            ColorUseRule: UseColor_Specified
+          Width: 0.000000
+          RoundingType: HalfHeightRadius
+          bUseBrushTransparency: false
+        UVRegion:
+          Min:
+            X: 0.000000
+            Y: 0.000000
+          Max:
+            X: 0.000000
+            Y: 0.000000
+          bIsValid: false
+        bIsDynamicallyLoaded: false
+        ResourceName: None
+      BackgroundDelegate: (null).None
+      BrushColor:
+        R: 1.000000
+        G: 1.000000
+        B: 1.000000
+        A: 1.000000
+      BrushColorDelegate: (null).None
+      DesiredSizeScale:
+        X: 1.000000
+        Y: 1.000000
+      bFlipForRightToLeftFlowDirection: false
+      OnMouseButtonDownEvent: (null).None
+      OnMouseButtonUpEvent: (null).None
+      OnMouseMoveEvent: (null).None
+      OnMouseDoubleClickEvent: (null).None
+
+  - name: VerticalBox_305
+    class: VerticalBox
+    visibility: 4
+    is_visible: false
+    child_count: 4
+    properties:
+
+  - name: ActionText
+    class: TextBlock
+    visibility: 0
+    is_visible: false
+    properties:
+      Text: Purchase how many?
+      TextDelegate: (null).None
+      ColorAndOpacity:
+        SpecifiedColor:
+          R: 0.859375
+          G: 0.846542
+          B: 0.832520
+          A: 1.000000
+        ColorUseRule: UseColor_Specified
+      ColorAndOpacityDelegate: (null).None
+      MinDesiredWidth: 0.000000
+      Font:
+        FontObject:
+          class: Font
+          name: F_LiberationSerif-Regular
+          path: /Game/SoulslikeFramework/Fonts/F_LiberationSerif-Regular.F_LiberationSerif-Regular
+        FontMaterial: null
+        OutlineSettings:
+          OutlineSize: 0
+          bMiteredCorners: false
+          bSeparateFillAlpha: false
+          bApplyOutlineToDropShadows: false
+          OutlineMaterial: null
+          OutlineColor:
+            R: 0.000000
+            G: 0.000000
+            B: 0.000000
+            A: 1.000000
+        TypefaceFontName: Regular
+        Size: 24.000000
+        LetterSpacing: 0
+        SkewAmount: 0.000000
+        bForceMonospaced: false
+        bMaterialIsStencil: false
+        MonospacedWidth: 1.000000
+      StrikeBrush:
+        TintColor:
+          SpecifiedColor:
+            R: 1.000000
+            G: 1.000000
+            B: 1.000000
+            A: 1.000000
+          ColorUseRule: UseColor_Specified
+        DrawAs: Image
+        Tiling: NoTile
+        Mirroring: NoMirror
+        ImageType: NoImage
+        ImageSize:
+          X: 32.000000
+          Y: 32.000000
+        Margin:
+          Left: 0.000000
+          Top: 0.000000
+          Right: 0.000000
+          Bottom: 0.000000
+        ResourceObject: null
+        OutlineSettings:
+          CornerRadii:
+            X: 0.000000
+            Y: 0.000000
+            Z: 0.000000
+            W: 0.000000
+          Color:
+            SpecifiedColor:
+              R: 0.000000
+              G: 0.000000
+              B: 0.000000
+              A: 0.000000
+            ColorUseRule: UseColor_Specified
+          Width: 0.000000
+          RoundingType: HalfHeightRadius
+          bUseBrushTransparency: false
+        UVRegion:
+          Min:
+            X: 0.000000
+            Y: 0.000000
+          Max:
+            X: 0.000000
+            Y: 0.000000
+          bIsValid: false
+        bIsDynamicallyLoaded: false
+        ResourceName: None
+      ShadowOffset:
+        X: 1.000000
+        Y: 1.000000
+      ShadowColorAndOpacity:
+        R: 0.000000
+        G: 0.000000
+        B: 0.000000
+        A: 0.000000
+      ShadowColorAndOpacityDelegate: (null).None
+      bWrapWithInvalidationPanel: false
+      TextTransformPolicy: None
+      TextOverflowPolicy: Clip
+      bSimpleTextMode: false
+
+  - name: VerticalBox_95
+    class: VerticalBox
+    visibility: 4
+    is_visible: false
+    child_count: 1
+    properties:
+
+  - name: HorizontalBox_62
+    class: HorizontalBox
+    visibility: 4
+    is_visible: false
+    child_count: 2
+    properties:
+
+  - name: SizeBox_129
+    class: SizeBox
+    visibility: 4
+    is_visible: false
+    child_count: 1
+    properties:
+      WidthOverride: 110.000000
+      HeightOverride: 130.000000
+      MinDesiredWidth: 0.000000
+      MinDesiredHeight: 0.000000
+      MaxDesiredWidth: 0.000000
+      MaxDesiredHeight: 0.000000
+      MinAspectRatio: 1.000000
+      MaxAspectRatio: 1.000000
+      bOverride_WidthOverride: true
+      bOverride_HeightOverride: true
+      bOverride_MinDesiredWidth: false
+      bOverride_MinDesiredHeight: false
+      bOverride_MaxDesiredWidth: false
+      bOverride_MaxDesiredHeight: false
+      bOverride_MinAspectRatio: false
+      bOverride_MaxAspectRatio: false
+
+  - name: Overlay_2
+    class: Overlay
+    visibility: 4
+    is_visible: false
+    child_count: 2
+    properties:
+
+  - name: Border_2
+    class: Border
+    visibility: 0
+    is_visible: false
+    child_count: 0
+    properties:
+      HorizontalAlignment: HAlign_Fill
+      VerticalAlignment: VAlign_Fill
+      bShowEffectWhenDisabled: true
+      ContentColorAndOpacity:
+        R: 1.000000
+        G: 1.000000
+        B: 1.000000
+        A: 1.000000
+      ContentColorAndOpacityDelegate: (null).None
+      Padding:
+        Left: 1.000000
+        Top: 1.000000
+        Right: 1.000000
+        Bottom: 1.000000
+      Background:
+        TintColor:
+          SpecifiedColor:
+            R: 0.030000
+            G: 0.030000
+            B: 0.030000
+            A: 0.900000
+          ColorUseRule: UseColor_Specified
+        DrawAs: Box
+        Tiling: NoTile
+        Mirroring: NoMirror
+        ImageType: FullColor
+        ImageSize:
+          X: 1400.000000
+          Y: 700.000000
+        Margin:
+          Left: 0.250000
+          Top: 0.250000
+          Right: 0.250000
+          Bottom: 0.250000
+        ResourceObject:
+          class: Texture2D
+          name: T_Border_BG
+          path: /Game/SoulslikeFramework/Widgets/_Textures/T_Border_BG.T_Border_BG
+        OutlineSettings:
+          CornerRadii:
+            X: 0.000000
+            Y: 0.000000
+            Z: 0.000000
+            W: 0.000000
+          Color:
+            SpecifiedColor:
+              R: 0.000000
+              G: 0.000000
+              B: 0.000000
+              A: 0.000000
+            ColorUseRule: UseColor_Specified
+          Width: 0.000000
+          RoundingType: HalfHeightRadius
+          bUseBrushTransparency: false
+        UVRegion:
+          Min:
+            X: 0.000000
+            Y: 0.000000
+          Max:
+            X: 0.000000
+            Y: 0.000000
+          bIsValid: false
+        bIsDynamicallyLoaded: false
+        ResourceName: None
+      BackgroundDelegate: (null).None
+      BrushColor:
+        R: 1.000000
+        G: 1.000000
+        B: 1.000000
+        A: 1.000000
+      BrushColorDelegate: (null).None
+      DesiredSizeScale:
+        X: 1.000000
+        Y: 1.000000
+      bFlipForRightToLeftFlowDirection: false
+      OnMouseButtonDownEvent: (null).None
+      OnMouseButtonUpEvent: (null).None
+      OnMouseMoveEvent: (null).None
+      OnMouseDoubleClickEvent: (null).None
+
+  - name: Border_0
+    class: Border
+    visibility: 0
+    is_visible: false
+    child_count: 1
+    properties:
+      HorizontalAlignment: HAlign_Fill
+      VerticalAlignment: VAlign_Fill
+      bShowEffectWhenDisabled: true
+      ContentColorAndOpacity:
+        R: 1.000000
+        G: 1.000000
+        B: 1.000000
+        A: 1.000000
+      ContentColorAndOpacityDelegate: (null).None
+      Padding:
+        Left: 1.000000
+        Top: 1.000000
+        Right: 1.000000
+        Bottom: 1.000000
+      Background:
+        TintColor:
+          SpecifiedColor:
+            R: 0.010000
+            G: 0.010000
+            B: 0.010000
+            A: 0.900000
+          ColorUseRule: UseColor_Specified
+        DrawAs: Box
+        Tiling: NoTile
+        Mirroring: NoMirror
+        ImageType: FullColor
+        ImageSize:
+          X: 1400.000000
+          Y: 700.000000
+        Margin:
+          Left: 0.250000
+          Top: 0.250000
+          Right: 0.250000
+          Bottom: 0.250000
+        ResourceObject:
+          class: Texture2D
+          name: T_Border_BG
+          path: /Game/SoulslikeFramework/Widgets/_Textures/T_Border_BG.T_Border_BG
+        OutlineSettings:
+          CornerRadii:
+            X: 0.000000
+            Y: 0.000000
+            Z: 0.000000
+            W: 0.000000
+          Color:
+            SpecifiedColor:
+              R: 0.000000
+              G: 0.000000
+              B: 0.000000
+              A: 0.000000
+            ColorUseRule: UseColor_Specified
+          Width: 0.000000
+          RoundingType: HalfHeightRadius
+          bUseBrushTransparency: false
+        UVRegion:
+          Min:
+            X: 0.000000
+            Y: 0.000000
+          Max:
+            X: 0.000000
+            Y: 0.000000
+          bIsValid: false
+        bIsDynamicallyLoaded: false
+        ResourceName: None
+      BackgroundDelegate: (null).None
+      BrushColor:
+        R: 1.000000
+        G: 1.000000
+        B: 1.000000
+        A: 1.000000
+      BrushColorDelegate: (null).None
+      DesiredSizeScale:
+        X: 1.000000
+        Y: 1.000000
+      bFlipForRightToLeftFlowDirection: false
+      OnMouseButtonDownEvent: (null).None
+      OnMouseButtonUpEvent: (null).None
+      OnMouseMoveEvent: (null).None
+      OnMouseDoubleClickEvent: (null).None
+
+  - name: ScaleBox_0
+    class: ScaleBox
+    visibility: 4
+    is_visible: false
+    child_count: 1
+    properties:
+      Stretch: ScaleToFit
+      StretchDirection: Both
+      UserSpecifiedScale: 1.000000
+      IgnoreInheritedScale: false
+
+  - name: RequiredItemIcon
+    class: Image
+    visibility: 0
+    is_visible: false
+    properties:
+      Brush:
+        TintColor:
+          SpecifiedColor:
+            R: 1.000000
+            G: 1.000000
+            B: 1.000000
+            A: 1.000000
+          ColorUseRule: UseColor_Specified
+        DrawAs: Image
+        Tiling: NoTile
+        Mirroring: NoMirror
+        ImageType: FullColor
+        ImageSize:
+          X: 128.000000
+          Y: 128.000000
+        Margin:
+          Left: 0.000000
+          Top: 0.000000
+          Right: 0.000000
+          Bottom: 0.000000
+        ResourceObject:
+          class: Texture2D
+          name: T_Apple
+          path: /Game/SoulslikeFramework/Textures/Items/T_Apple.T_Apple
+        OutlineSettings:
+          CornerRadii:
+            X: 0.000000
+            Y: 0.000000
+            Z: 0.000000
+            W: 0.000000
+          Color:
+            SpecifiedColor:
+              R: 0.000000
+              G: 0.000000
+              B: 0.000000
+              A: 0.000000
+            ColorUseRule: UseColor_Specified
+          Width: 0.000000
+          RoundingType: HalfHeightRadius
+          bUseBrushTransparency: false
+        UVRegion:
+          Min:
+            X: 0.000000
+            Y: 0.000000
+          Max:
+            X: 0.000000
+            Y: 0.000000
+          bIsValid: false
+        bIsDynamicallyLoaded: false
+        ResourceName: None
+      BrushDelegate: (null).None
+      ColorAndOpacity:
+        R: 1.000000
+        G: 1.000000
+        B: 1.000000
+        A: 1.000000
+      ColorAndOpacityDelegate: (null).None
+      bFlipForRightToLeftFlowDirection: false
+      OnMouseButtonDownEvent: (null).None
+
+  - name: SizeBox_42
+    class: SizeBox
+    visibility: 4
+    is_visible: false
+    child_count: 1
+    properties:
+      WidthOverride: 500.000000
+      HeightOverride: 0.000000
+      MinDesiredWidth: 0.000000
+      MinDesiredHeight: 0.000000
+      MaxDesiredWidth: 0.000000
+      MaxDesiredHeight: 0.000000
+      MinAspectRatio: 1.000000
+      MaxAspectRatio: 1.000000
+      bOverride_WidthOverride: true
+      bOverride_HeightOverride: false
+      bOverride_MinDesiredWidth: false
+      bOverride_MinDesiredHeight: false
+      bOverride_MaxDesiredWidth: false
+      bOverride_MaxDesiredHeight: false
+      bOverride_MinAspectRatio: false
+      bOverride_MaxAspectRatio: false
+
+  - name: VerticalBox_307
+    class: VerticalBox
+    visibility: 4
+    is_visible: false
+    child_count: 4
+    properties:
+
+  - name: ItemNameText
+    class: TextBlock
+    visibility: 0
+    is_visible: false
+    properties:
+      Text: Item Name Text
+      TextDelegate: (null).None
+      ColorAndOpacity:
+        SpecifiedColor:
+          R: 0.859375
+          G: 0.846542
+          B: 0.832520
+          A: 1.000000
+        ColorUseRule: UseColor_Specified
+      ColorAndOpacityDelegate: (null).None
+      MinDesiredWidth: 0.000000
+      Font:
+        FontObject:
+          class: Font
+          name: F_LiberationSerif-Regular
+          path: /Game/SoulslikeFramework/Fonts/F_LiberationSerif-Regular.F_LiberationSerif-Regular
+        FontMaterial: null
+        OutlineSettings:
+          OutlineSize: 0
+          bMiteredCorners: false
+          bSeparateFillAlpha: false
+          bApplyOutlineToDropShadows: false
+          OutlineMaterial: null
+          OutlineColor:
+            R: 0.000000
+            G: 0.000000
+            B: 0.000000
+            A: 1.000000
+        TypefaceFontName: Regular
+        Size: 18.000000
+        LetterSpacing: 0
+        SkewAmount: 0.000000
+        bForceMonospaced: false
+        bMaterialIsStencil: false
+        MonospacedWidth: 1.000000
+      StrikeBrush:
+        TintColor:
+          SpecifiedColor:
+            R: 1.000000
+            G: 1.000000
+            B: 1.000000
+            A: 1.000000
+          ColorUseRule: UseColor_Specified
+        DrawAs: Image
+        Tiling: NoTile
+        Mirroring: NoMirror
+        ImageType: NoImage
+        ImageSize:
+          X: 32.000000
+          Y: 32.000000
+        Margin:
+          Left: 0.000000
+          Top: 0.000000
+          Right: 0.000000
+          Bottom: 0.000000
+        ResourceObject: null
+        OutlineSettings:
+          CornerRadii:
+            X: 0.000000
+            Y: 0.000000
+            Z: 0.000000
+            W: 0.000000
+          Color:
+            SpecifiedColor:
+              R: 0.000000
+              G: 0.000000
+              B: 0.000000
+              A: 0.000000
+            ColorUseRule: UseColor_Specified
+          Width: 0.000000
+          RoundingType: HalfHeightRadius
+          bUseBrushTransparency: false
+        UVRegion:
+          Min:
+            X: 0.000000
+            Y: 0.000000
+          Max:
+            X: 0.000000
+            Y: 0.000000
+          bIsValid: false
+        bIsDynamicallyLoaded: false
+        ResourceName: None
+      ShadowOffset:
+        X: 1.000000
+        Y: 1.000000
+      ShadowColorAndOpacity:
+        R: 0.000000
+        G: 0.000000
+        B: 0.000000
+        A: 0.000000
+      ShadowColorAndOpacityDelegate: (null).None
+      bWrapWithInvalidationPanel: false
+      TextTransformPolicy: None
+      TextOverflowPolicy: Clip
+      bSimpleTextMode: false
+
+  - name: Border_70
+    class: Border
+    visibility: 0
+    is_visible: false
+    child_count: 0
+    properties:
+      HorizontalAlignment: HAlign_Fill
+      VerticalAlignment: VAlign_Fill
+      bShowEffectWhenDisabled: true
+      ContentColorAndOpacity:
+        R: 1.000000
+        G: 1.000000
+        B: 1.000000
+        A: 1.000000
+      ContentColorAndOpacityDelegate: (null).None
+      Padding:
+        Left: 4.000000
+        Top: 2.000000
+        Right: 4.000000
+        Bottom: 2.000000
+      Background:
+        TintColor:
+          SpecifiedColor:
+            R: 0.859375
+            G: 0.744195
+            B: 0.618340
+            A: 1.000000
+          ColorUseRule: UseColor_Specified
+        DrawAs: Image
+        Tiling: NoTile
+        Mirroring: NoMirror
+        ImageType: FullColor
+        ImageSize:
+          X: 32.000000
+          Y: 32.000000
+        Margin:
+          Left: 0.000000
+          Top: 0.000000
+          Right: 0.000000
+          Bottom: 0.000000
+        ResourceObject:
+          class: MaterialInstanceConstant
+          name: MI_FadingBorder_Double_Soft
+          path: /Game/SoulslikeFramework/Widgets/_Materials/MI_FadingBorder_Double_Soft.MI_FadingBorder_Double_Soft
+        OutlineSettings:
+          CornerRadii:
+            X: 0.000000
+            Y: 0.000000
+            Z: 0.000000
+            W: 0.000000
+          Color:
+            SpecifiedColor:
+              R: 0.000000
+              G: 0.000000
+              B: 0.000000
+              A: 0.000000
+            ColorUseRule: UseColor_Specified
+          Width: 0.000000
+          RoundingType: HalfHeightRadius
+          bUseBrushTransparency: false
+        UVRegion:
+          Min:
+            X: 0.000000
+            Y: 0.000000
+          Max:
+            X: 0.000000
+            Y: 0.000000
+          bIsValid: false
+        bIsDynamicallyLoaded: false
+        ResourceName: None
+      BackgroundDelegate: (null).None
+      BrushColor:
+        R: 1.000000
+        G: 1.000000
+        B: 1.000000
+        A: 1.000000
+      BrushColorDelegate: (null).None
+      DesiredSizeScale:
+        X: 1.000000
+        Y: 1.000000
+      bFlipForRightToLeftFlowDirection: false
+      OnMouseButtonDownEvent: (null).None
+      OnMouseButtonUpEvent: (null).None
+      OnMouseMoveEvent: (null).None
+      OnMouseDoubleClickEvent: (null).None
+
+  - name: Overlay_3
+    class: Overlay
+    visibility: 4
+    is_visible: false
+    child_count: 2
+    properties:
+
+  - name: HorizontalBox_0
+    class: HorizontalBox
+    visibility: 4
+    is_visible: false
+    child_count: 3
+    properties:
+
+  - name: CurrentAmountText
+    class: TextBlock
+    visibility: 0
+    is_visible: false
+    properties:
+      Text: 1
+      TextDelegate: (null).None
+      ColorAndOpacity:
+        SpecifiedColor:
+          R: 0.859375
+          G: 0.846542
+          B: 0.832520
+          A: 1.000000
+        ColorUseRule: UseColor_Specified
+      ColorAndOpacityDelegate: (null).None
+      MinDesiredWidth: 0.000000
+      Font:
+        FontObject:
+          class: Font
+          name: F_LiberationSerif-Regular
+          path: /Game/SoulslikeFramework/Fonts/F_LiberationSerif-Regular.F_LiberationSerif-Regular
+        FontMaterial: null
+        OutlineSettings:
+          OutlineSize: 0
+          bMiteredCorners: false
+          bSeparateFillAlpha: false
+          bApplyOutlineToDropShadows: false
+          OutlineMaterial: null
+          OutlineColor:
+            R: 0.000000
+            G: 0.000000
+            B: 0.000000
+            A: 1.000000
+        TypefaceFontName: Regular
+        Size: 18.000000
+        LetterSpacing: 0
+        SkewAmount: 0.000000
+        bForceMonospaced: false
+        bMaterialIsStencil: false
+        MonospacedWidth: 1.000000
+      StrikeBrush:
+        TintColor:
+          SpecifiedColor:
+            R: 1.000000
+            G: 1.000000
+            B: 1.000000
+            A: 1.000000
+          ColorUseRule: UseColor_Specified
+        DrawAs: Image
+        Tiling: NoTile
+        Mirroring: NoMirror
+        ImageType: NoImage
+        ImageSize:
+          X: 32.000000
+          Y: 32.000000
+        Margin:
+          Left: 0.000000
+          Top: 0.000000
+          Right: 0.000000
+          Bottom: 0.000000
+        ResourceObject: null
+        OutlineSettings:
+          CornerRadii:
+            X: 0.000000
+            Y: 0.000000
+            Z: 0.000000
+            W: 0.000000
+          Color:
+            SpecifiedColor:
+              R: 0.000000
+              G: 0.000000
+              B: 0.000000
+              A: 0.000000
+            ColorUseRule: UseColor_Specified
+          Width: 0.000000
+          RoundingType: HalfHeightRadius
+          bUseBrushTransparency: false
+        UVRegion:
+          Min:
+            X: 0.000000
+            Y: 0.000000
+          Max:
+            X: 0.000000
+            Y: 0.000000
+          bIsValid: false
+        bIsDynamicallyLoaded: false
+        ResourceName: None
+      ShadowOffset:
+        X: 1.000000
+        Y: 1.000000
+      ShadowColorAndOpacity:
+        R: 0.000000
+        G: 0.000000
+        B: 0.000000
+        A: 0.000000
+      ShadowColorAndOpacityDelegate: (null).None
+      bWrapWithInvalidationPanel: false
+      TextTransformPolicy: None
+      TextOverflowPolicy: Clip
+      bSimpleTextMode: false
+
+  - name: CurrentAmountText_1
+    class: TextBlock
+    visibility: 0
+    is_visible: false
+    properties:
+      Text: /
+      TextDelegate: (null).None
+      ColorAndOpacity:
+        SpecifiedColor:
+          R: 0.859375
+          G: 0.846542
+          B: 0.832520
+          A: 1.000000
+        ColorUseRule: UseColor_Specified
+      ColorAndOpacityDelegate: (null).None
+      MinDesiredWidth: 0.000000
+      Font:
+        FontObject:
+          class: Font
+          name: F_LiberationSerif-Regular
+          path: /Game/SoulslikeFramework/Fonts/F_LiberationSerif-Regular.F_LiberationSerif-Regular
+        FontMaterial: null
+        OutlineSettings:
+          OutlineSize: 0
+          bMiteredCorners: false
+          bSeparateFillAlpha: false
+          bApplyOutlineToDropShadows: false
+          OutlineMaterial: null
+          OutlineColor:
+            R: 0.000000
+            G: 0.000000
+            B: 0.000000
+            A: 1.000000
+        TypefaceFontName: Regular
+        Size: 18.000000
+        LetterSpacing: 0
+        SkewAmount: 0.000000
+        bForceMonospaced: false
+        bMaterialIsStencil: false
+        MonospacedWidth: 1.000000
+      StrikeBrush:
+        TintColor:
+          SpecifiedColor:
+            R: 1.000000
+            G: 1.000000
+            B: 1.000000
+            A: 1.000000
+          ColorUseRule: UseColor_Specified
+        DrawAs: Image
+        Tiling: NoTile
+        Mirroring: NoMirror
+        ImageType: NoImage
+        ImageSize:
+          X: 32.000000
+          Y: 32.000000
+        Margin:
+          Left: 0.000000
+          Top: 0.000000
+          Right: 0.000000
+          Bottom: 0.000000
+        ResourceObject: null
+        OutlineSettings:
+          CornerRadii:
+            X: 0.000000
+            Y: 0.000000
+            Z: 0.000000
+            W: 0.000000
+          Color:
+            SpecifiedColor:
+              R: 0.000000
+              G: 0.000000
+              B: 0.000000
+              A: 0.000000
+            ColorUseRule: UseColor_Specified
+          Width: 0.000000
+          RoundingType: HalfHeightRadius
+          bUseBrushTransparency: false
+        UVRegion:
+          Min:
+            X: 0.000000
+            Y: 0.000000
+          Max:
+            X: 0.000000
+            Y: 0.000000
+          bIsValid: false
+        bIsDynamicallyLoaded: false
+        ResourceName: None
+      ShadowOffset:
+        X: 1.000000
+        Y: 1.000000
+      ShadowColorAndOpacity:
+        R: 0.000000
+        G: 0.000000
+        B: 0.000000
+        A: 0.000000
+      ShadowColorAndOpacityDelegate: (null).None
+      bWrapWithInvalidationPanel: false
+      TextTransformPolicy: None
+      TextOverflowPolicy: Clip
+      bSimpleTextMode: false
+
+  - name: MaxAmountText
+    class: TextBlock
+    visibility: 0
+    is_visible: false
+    properties:
+      Text: 2
+      TextDelegate: (null).None
+      ColorAndOpacity:
+        SpecifiedColor:
+          R: 0.859375
+          G: 0.846542
+          B: 0.832520
+          A: 1.000000
+        ColorUseRule: UseColor_Specified
+      ColorAndOpacityDelegate: (null).None
+      MinDesiredWidth: 0.000000
+      Font:
+        FontObject:
+          class: Font
+          name: F_LiberationSerif-Regular
+          path: /Game/SoulslikeFramework/Fonts/F_LiberationSerif-Regular.F_LiberationSerif-Regular
+        FontMaterial: null
+        OutlineSettings:
+          OutlineSize: 0
+          bMiteredCorners: false
+          bSeparateFillAlpha: false
+          bApplyOutlineToDropShadows: false
+          OutlineMaterial: null
+          OutlineColor:
+            R: 0.000000
+            G: 0.000000
+            B: 0.000000
+            A: 1.000000
+        TypefaceFontName: Regular
+        Size: 18.000000
+        LetterSpacing: 0
+        SkewAmount: 0.000000
+        bForceMonospaced: false
+        bMaterialIsStencil: false
+        MonospacedWidth: 1.000000
+      StrikeBrush:
+        TintColor:
+          SpecifiedColor:
+            R: 1.000000
+            G: 1.000000
+            B: 1.000000
+            A: 1.000000
+          ColorUseRule: UseColor_Specified
+        DrawAs: Image
+        Tiling: NoTile
+        Mirroring: NoMirror
+        ImageType: NoImage
+        ImageSize:
+          X: 32.000000
+          Y: 32.000000
+        Margin:
+          Left: 0.000000
+          Top: 0.000000
+          Right: 0.000000
+          Bottom: 0.000000
+        ResourceObject: null
+        OutlineSettings:
+          CornerRadii:
+            X: 0.000000
+            Y: 0.000000
+            Z: 0.000000
+            W: 0.000000
+          Color:
+            SpecifiedColor:
+              R: 0.000000
+              G: 0.000000
+              B: 0.000000
+              A: 0.000000
+            ColorUseRule: UseColor_Specified
+          Width: 0.000000
+          RoundingType: HalfHeightRadius
+          bUseBrushTransparency: false
+        UVRegion:
+          Min:
+            X: 0.000000
+            Y: 0.000000
+          Max:
+            X: 0.000000
+            Y: 0.000000
+          bIsValid: false
+        bIsDynamicallyLoaded: false
+        ResourceName: None
+      ShadowOffset:
+        X: 1.000000
+        Y: 1.000000
+      ShadowColorAndOpacity:
+        R: 0.000000
+        G: 0.000000
+        B: 0.000000
+        A: 0.000000
+      ShadowColorAndOpacityDelegate: (null).None
+      bWrapWithInvalidationPanel: false
+      TextTransformPolicy: None
+      TextOverflowPolicy: Clip
+      bSimpleTextMode: false
+
+  - name: ButtonsBox
+    class: VerticalBox
+    visibility: 4
+    is_visible: false
+    child_count: 2
+    properties:
+
+  - name: SizeBox_1
+    class: SizeBox
+    visibility: 4
+    is_visible: false
+    child_count: 1
+    properties:
+      WidthOverride: 24.000000
+      HeightOverride: 24.000000
+      MinDesiredWidth: 0.000000
+      MinDesiredHeight: 0.000000
+      MaxDesiredWidth: 0.000000
+      MaxDesiredHeight: 0.000000
+      MinAspectRatio: 1.000000
+      MaxAspectRatio: 1.000000
+      bOverride_WidthOverride: true
+      bOverride_HeightOverride: true
+      bOverride_MinDesiredWidth: false
+      bOverride_MinDesiredHeight: false
+      bOverride_MaxDesiredWidth: false
+      bOverride_MaxDesiredHeight: false
+      bOverride_MinAspectRatio: false
+      bOverride_MaxAspectRatio: false
+
+  - name: IncreaseButton
+    class: Button
+    visibility: 0
+    is_visible: false
+    child_count: 0
+    properties:
+      WidgetStyle:
+        Normal:
+          TintColor:
+            SpecifiedColor:
+              R: 0.859375
+              G: 0.744195
+              B: 0.618340
+              A: 1.000000
+            ColorUseRule: UseColor_Specified
+          DrawAs: Image
+          Tiling: NoTile
+          Mirroring: NoMirror
+          ImageType: FullColor
+          ImageSize:
+            X: 32.000000
+            Y: 32.000000
+          Margin:
+            Left: 0.000000
+            Top: 0.000000
+            Right: 0.000000
+            Bottom: 0.000000
+          ResourceObject:
+            class: Texture2D
+            name: T_ArrowUp
+            path: /Game/SoulslikeFramework/Widgets/_Textures/T_ArrowUp.T_ArrowUp
+          OutlineSettings:
+            CornerRadii:
+              X: 4.000000
+              Y: 4.000000
+              Z: 4.000000
+              W: 4.000000
+            Color:
+              SpecifiedColor:
+                R: 0.695111
+                G: 0.695111
+                B: 0.695111
+                A: 1.000000
+              ColorUseRule: UseColor_Specified
+            Width: 1.000000
+            RoundingType: FixedRadius
+            bUseBrushTransparency: true
+          UVRegion:
+            Min:
+              X: 0.000000
+              Y: 0.000000
+            Max:
+              X: 0.000000
+              Y: 0.000000
+            bIsValid: false
+          bIsDynamicallyLoaded: false
+          ResourceName: None
+        Hovered:
+          TintColor:
+            SpecifiedColor:
+              R: 1.000000
+              G: 0.865972
+              B: 0.719523
+              A: 1.000000
+            ColorUseRule: UseColor_Specified
+          DrawAs: Image
+          Tiling: NoTile
+          Mirroring: NoMirror
+          ImageType: FullColor
+          ImageSize:
+            X: 32.000000
+            Y: 32.000000
+          Margin:
+            Left: 0.000000
+            Top: 0.000000
+            Right: 0.000000
+            Bottom: 0.000000
+          ResourceObject:
+            class: Texture2D
+            name: T_ArrowUp
+            path: /Game/SoulslikeFramework/Widgets/_Textures/T_ArrowUp.T_ArrowUp
+          OutlineSettings:
+            CornerRadii:
+              X: 4.000000
+              Y: 4.000000
+              Z: 4.000000
+              W: 4.000000
+            Color:
+              SpecifiedColor:
+                R: 0.695111
+                G: 0.695111
+                B: 0.695111
+                A: 1.000000
+              ColorUseRule: UseColor_Specified
+            Width: 1.000000
+            RoundingType: FixedRadius
+            bUseBrushTransparency: true
+          UVRegion:
+            Min:
+              X: 0.000000
+              Y: 0.000000
+            Max:
+              X: 0.000000
+              Y: 0.000000
+            bIsValid: false
+          bIsDynamicallyLoaded: false
+          ResourceName: None
+        Pressed:
+          TintColor:
+            SpecifiedColor:
+              R: 0.781250
+              G: 0.676541
+              B: 0.562127
+              A: 1.000000
+            ColorUseRule: UseColor_Specified
+          DrawAs: Image
+          Tiling: NoTile
+          Mirroring: NoMirror
+          ImageType: FullColor
+          ImageSize:
+            X: 32.000000
+            Y: 32.000000
+          Margin:
+            Left: 0.000000
+            Top: 0.000000
+            Right: 0.000000
+            Bottom: 0.000000
+          ResourceObject:
+            class: Texture2D
+            name: T_ArrowUp
+            path: /Game/SoulslikeFramework/Widgets/_Textures/T_ArrowUp.T_ArrowUp
+          OutlineSettings:
+            CornerRadii:
+              X: 4.000000
+              Y: 4.000000
+              Z: 4.000000
+              W: 4.000000
+            Color:
+              SpecifiedColor:
+                R: 0.695111
+                G: 0.695111
+                B: 0.695111
+                A: 1.000000
+              ColorUseRule: UseColor_Specified
+            Width: 1.000000
+            RoundingType: FixedRadius
+            bUseBrushTransparency: true
+          UVRegion:
+            Min:
+              X: 0.000000
+              Y: 0.000000
+            Max:
+              X: 0.000000
+              Y: 0.000000
+            bIsValid: false
+          bIsDynamicallyLoaded: false
+          ResourceName: None
+        Disabled:
+          TintColor:
+            SpecifiedColor:
+              R: 1.000000
+              G: 1.000000
+              B: 1.000000
+              A: 1.000000
+            ColorUseRule: UseColor_Specified
+          DrawAs: NoDrawType
+          Tiling: NoTile
+          Mirroring: NoMirror
+          ImageType: NoImage
+          ImageSize:
+            X: 0.000000
+            Y: 0.000000
+          Margin:
+            Left: 0.000000
+            Top: 0.000000
+            Right: 0.000000
+            Bottom: 0.000000
+          ResourceObject: null
+          OutlineSettings:
+            CornerRadii:
+              X: 0.000000
+              Y: 0.000000
+              Z: 0.000000
+              W: 0.000000
+            Color:
+              SpecifiedColor:
+                R: 0.000000
+                G: 0.000000
+                B: 0.000000
+                A: 0.000000
+              ColorUseRule: UseColor_Specified
+            Width: 0.000000
+            RoundingType: HalfHeightRadius
+            bUseBrushTransparency: false
+          UVRegion:
+            Min:
+              X: 0.000000
+              Y: 0.000000
+            Max:
+              X: 0.000000
+              Y: 0.000000
+            bIsValid: false
+          bIsDynamicallyLoaded: false
+          ResourceName: None
+        NormalForeground:
+          SpecifiedColor:
+            R: 0.000000
+            G: 1.000000
+            B: 1.000000
+            A: 1.000000
+          ColorUseRule: UseColor_Specified
+        HoveredForeground:
+          SpecifiedColor:
+            R: 0.000000
+            G: 1.000000
+            B: 1.000000
+            A: 1.000000
+          ColorUseRule: UseColor_Specified
+        PressedForeground:
+          SpecifiedColor:
+            R: 0.000000
+            G: 1.000000
+            B: 1.000000
+            A: 1.000000
+          ColorUseRule: UseColor_Specified
+        DisabledForeground:
+          SpecifiedColor:
+            R: 0.527115
+            G: 0.527115
+            B: 0.527115
+            A: 1.000000
+          ColorUseRule: UseColor_Specified
+        NormalPadding:
+          Left: 12.000000
+          Top: 1.500000
+          Right: 12.000000
+          Bottom: 1.500000
+        PressedPadding:
+          Left: 12.000000
+          Top: 1.500000
+          Right: 12.000000
+          Bottom: 1.500000
+        PressedSlateSound:
+          ResourceObject: null
+        ClickedSlateSound:
+          ResourceObject: null
+        HoveredSlateSound:
+          ResourceObject: null
+      ColorAndOpacity:
+        R: 1.000000
+        G: 1.000000
+        B: 1.000000
+        A: 1.000000
+      BackgroundColor:
+        R: 1.000000
+        G: 1.000000
+        B: 1.000000
+        A: 1.000000
+      ClickMethod: DownAndUp
+      TouchMethod: DownAndUp
+      PressMethod: DownAndUp
+      IsFocusable: true
+      OnClicked: ()
+      OnPressed: ()
+      OnReleased: ()
+      OnHovered: ()
+      OnUnhovered: ()
+      bAllowDragDrop: false
+
+  - name: SizeBox_0
+    class: SizeBox
+    visibility: 4
+    is_visible: false
+    child_count: 1
+    properties:
+      WidthOverride: 24.000000
+      HeightOverride: 24.000000
+      MinDesiredWidth: 0.000000
+      MinDesiredHeight: 0.000000
+      MaxDesiredWidth: 0.000000
+      MaxDesiredHeight: 0.000000
+      MinAspectRatio: 1.000000
+      MaxAspectRatio: 1.000000
+      bOverride_WidthOverride: true
+      bOverride_HeightOverride: true
+      bOverride_MinDesiredWidth: false
+      bOverride_MinDesiredHeight: false
+      bOverride_MaxDesiredWidth: false
+      bOverride_MaxDesiredHeight: false
+      bOverride_MinAspectRatio: false
+      bOverride_MaxAspectRatio: false
+
+  - name: DecreaseButton
+    class: Button
+    visibility: 0
+    is_visible: false
+    child_count: 0
+    properties:
+      WidgetStyle:
+        Normal:
+          TintColor:
+            SpecifiedColor:
+              R: 0.859375
+              G: 0.744195
+              B: 0.618340
+              A: 1.000000
+            ColorUseRule: UseColor_Specified
+          DrawAs: Image
+          Tiling: NoTile
+          Mirroring: NoMirror
+          ImageType: FullColor
+          ImageSize:
+            X: 32.000000
+            Y: 32.000000
+          Margin:
+            Left: 0.000000
+            Top: 0.000000
+            Right: 0.000000
+            Bottom: 0.000000
+          ResourceObject:
+            class: Texture2D
+            name: T_ArrowDown
+            path: /Game/SoulslikeFramework/Widgets/_Textures/T_ArrowDown.T_ArrowDown
+          OutlineSettings:
+            CornerRadii:
+              X: 4.000000
+              Y: 4.000000
+              Z: 4.000000
+              W: 4.000000
+            Color:
+              SpecifiedColor:
+                R: 0.695111
+                G: 0.695111
+                B: 0.695111
+                A: 1.000000
+              ColorUseRule: UseColor_Specified
+            Width: 1.000000
+            RoundingType: FixedRadius
+            bUseBrushTransparency: true
+          UVRegion:
+            Min:
+              X: 0.000000
+              Y: 0.000000
+            Max:
+              X: 0.000000
+              Y: 0.000000
+            bIsValid: false
+          bIsDynamicallyLoaded: false
+          ResourceName: None
+        Hovered:
+          TintColor:
+            SpecifiedColor:
+              R: 1.000000
+              G: 0.865972
+              B: 0.719523
+              A: 1.000000
+            ColorUseRule: UseColor_Specified
+          DrawAs: Image
+          Tiling: NoTile
+          Mirroring: NoMirror
+          ImageType: FullColor
+          ImageSize:
+            X: 32.000000
+            Y: 32.000000
+          Margin:
+            Left: 0.000000
+            Top: 0.000000
+            Right: 0.000000
+            Bottom: 0.000000
+          ResourceObject:
+            class: Texture2D
+            name: T_ArrowDown
+            path: /Game/SoulslikeFramework/Widgets/_Textures/T_ArrowDown.T_ArrowDown
+          OutlineSettings:
+            CornerRadii:
+              X: 4.000000
+              Y: 4.000000
+              Z: 4.000000
+              W: 4.000000
+            Color:
+              SpecifiedColor:
+                R: 0.695111
+                G: 0.695111
+                B: 0.695111
+                A: 1.000000
+              ColorUseRule: UseColor_Specified
+            Width: 1.000000
+            RoundingType: FixedRadius
+            bUseBrushTransparency: true
+          UVRegion:
+            Min:
+              X: 0.000000
+              Y: 0.000000
+            Max:
+              X: 0.000000
+              Y: 0.000000
+            bIsValid: false
+          bIsDynamicallyLoaded: false
+          ResourceName: None
+        Pressed:
+          TintColor:
+            SpecifiedColor:
+              R: 0.781250
+              G: 0.676541
+              B: 0.562127
+              A: 1.000000
+            ColorUseRule: UseColor_Specified
+          DrawAs: Image
+          Tiling: NoTile
+          Mirroring: NoMirror
+          ImageType: FullColor
+          ImageSize:
+            X: 32.000000
+            Y: 32.000000
+          Margin:
+            Left: 0.000000
+            Top: 0.000000
+            Right: 0.000000
+            Bottom: 0.000000
+          ResourceObject:
+            class: Texture2D
+            name: T_ArrowDown
+            path: /Game/SoulslikeFramework/Widgets/_Textures/T_ArrowDown.T_ArrowDown
+          OutlineSettings:
+            CornerRadii:
+              X: 4.000000
+              Y: 4.000000
+              Z: 4.000000
+              W: 4.000000
+            Color:
+              SpecifiedColor:
+                R: 0.695111
+                G: 0.695111
+                B: 0.695111
+                A: 1.000000
+              ColorUseRule: UseColor_Specified
+            Width: 1.000000
+            RoundingType: FixedRadius
+            bUseBrushTransparency: true
+          UVRegion:
+            Min:
+              X: 0.000000
+              Y: 0.000000
+            Max:
+              X: 0.000000
+              Y: 0.000000
+            bIsValid: false
+          bIsDynamicallyLoaded: false
+          ResourceName: None
+        Disabled:
+          TintColor:
+            SpecifiedColor:
+              R: 1.000000
+              G: 1.000000
+              B: 1.000000
+              A: 1.000000
+            ColorUseRule: UseColor_Specified
+          DrawAs: NoDrawType
+          Tiling: NoTile
+          Mirroring: NoMirror
+          ImageType: NoImage
+          ImageSize:
+            X: 0.000000
+            Y: 0.000000
+          Margin:
+            Left: 0.000000
+            Top: 0.000000
+            Right: 0.000000
+            Bottom: 0.000000
+          ResourceObject: null
+          OutlineSettings:
+            CornerRadii:
+              X: 0.000000
+              Y: 0.000000
+              Z: 0.000000
+              W: 0.000000
+            Color:
+              SpecifiedColor:
+                R: 0.000000
+                G: 0.000000
+                B: 0.000000
+                A: 0.000000
+              ColorUseRule: UseColor_Specified
+            Width: 0.000000
+            RoundingType: HalfHeightRadius
+            bUseBrushTransparency: false
+          UVRegion:
+            Min:
+              X: 0.000000
+              Y: 0.000000
+            Max:
+              X: 0.000000
+              Y: 0.000000
+            bIsValid: false
+          bIsDynamicallyLoaded: false
+          ResourceName: None
+        NormalForeground:
+          SpecifiedColor:
+            R: 0.000000
+            G: 1.000000
+            B: 1.000000
+            A: 1.000000
+          ColorUseRule: UseColor_Specified
+        HoveredForeground:
+          SpecifiedColor:
+            R: 0.000000
+            G: 1.000000
+            B: 1.000000
+            A: 1.000000
+          ColorUseRule: UseColor_Specified
+        PressedForeground:
+          SpecifiedColor:
+            R: 0.000000
+            G: 1.000000
+            B: 1.000000
+            A: 1.000000
+          ColorUseRule: UseColor_Specified
+        DisabledForeground:
+          SpecifiedColor:
+            R: 0.527115
+            G: 0.527115
+            B: 0.527115
+            A: 1.000000
+          ColorUseRule: UseColor_Specified
+        NormalPadding:
+          Left: 12.000000
+          Top: 1.500000
+          Right: 12.000000
+          Bottom: 1.500000
+        PressedPadding:
+          Left: 12.000000
+          Top: 1.500000
+          Right: 12.000000
+          Bottom: 1.500000
+        PressedSlateSound:
+          ResourceObject: null
+        ClickedSlateSound:
+          ResourceObject: null
+        HoveredSlateSound:
+          ResourceObject: null
+      ColorAndOpacity:
+        R: 1.000000
+        G: 1.000000
+        B: 1.000000
+        A: 1.000000
+      BackgroundColor:
+        R: 1.000000
+        G: 1.000000
+        B: 1.000000
+        A: 1.000000
+      ClickMethod: DownAndUp
+      TouchMethod: DownAndUp
+      PressMethod: DownAndUp
+      IsFocusable: true
+      OnClicked: ()
+      OnPressed: ()
+      OnReleased: ()
+      OnHovered: ()
+      OnUnhovered: ()
+      bAllowDragDrop: false
+
+  - name: BuyCostBox
+    class: HorizontalBox
+    visibility: 4
+    is_visible: false
+    child_count: 2
+    properties:
+
+  - name: ReqText
+    class: TextBlock
+    visibility: 0
+    is_visible: false
+    properties:
+      Text: Required Currency
+      TextDelegate: (null).None
+      ColorAndOpacity:
+        SpecifiedColor:
+          R: 0.859375
+          G: 0.846542
+          B: 0.832520
+          A: 1.000000
+        ColorUseRule: UseColor_Specified
+      ColorAndOpacityDelegate: (null).None
+      MinDesiredWidth: 0.000000
+      Font:
+        FontObject:
+          class: Font
+          name: F_LiberationSerif-Regular
+          path: /Game/SoulslikeFramework/Fonts/F_LiberationSerif-Regular.F_LiberationSerif-Regular
+        FontMaterial: null
+        OutlineSettings:
+          OutlineSize: 0
+          bMiteredCorners: false
+          bSeparateFillAlpha: false
+          bApplyOutlineToDropShadows: false
+          OutlineMaterial: null
+          OutlineColor:
+            R: 0.000000
+            G: 0.000000
+            B: 0.000000
+            A: 1.000000
+        TypefaceFontName: Regular
+        Size: 18.000000
+        LetterSpacing: 0
+        SkewAmount: 0.000000
+        bForceMonospaced: false
+        bMaterialIsStencil: false
+        MonospacedWidth: 1.000000
+      StrikeBrush:
+        TintColor:
+          SpecifiedColor:
+            R: 1.000000
+            G: 1.000000
+            B: 1.000000
+            A: 1.000000
+          ColorUseRule: UseColor_Specified
+        DrawAs: Image
+        Tiling: NoTile
+        Mirroring: NoMirror
+        ImageType: NoImage
+        ImageSize:
+          X: 32.000000
+          Y: 32.000000
+        Margin:
+          Left: 0.000000
+          Top: 0.000000
+          Right: 0.000000
+          Bottom: 0.000000
+        ResourceObject: null
+        OutlineSettings:
+          CornerRadii:
+            X: 0.000000
+            Y: 0.000000
+            Z: 0.000000
+            W: 0.000000
+          Color:
+            SpecifiedColor:
+              R: 0.000000
+              G: 0.000000
+              B: 0.000000
+              A: 0.000000
+            ColorUseRule: UseColor_Specified
+          Width: 0.000000
+          RoundingType: HalfHeightRadius
+          bUseBrushTransparency: false
+        UVRegion:
+          Min:
+            X: 0.000000
+            Y: 0.000000
+          Max:
+            X: 0.000000
+            Y: 0.000000
+          bIsValid: false
+        bIsDynamicallyLoaded: false
+        ResourceName: None
+      ShadowOffset:
+        X: 1.000000
+        Y: 1.000000
+      ShadowColorAndOpacity:
+        R: 0.000000
+        G: 0.000000
+        B: 0.000000
+        A: 0.000000
+      ShadowColorAndOpacityDelegate: (null).None
+      bWrapWithInvalidationPanel: false
+      TextTransformPolicy: None
+      TextOverflowPolicy: Clip
+      bSimpleTextMode: false
+
+  - name: HorizontalBox_2
+    class: HorizontalBox
+    visibility: 4
+    is_visible: false
+    child_count: 2
+    properties:
+
+  - name: SizeBox_2
+    class: SizeBox
+    visibility: 4
+    is_visible: false
+    child_count: 1
+    properties:
+      WidthOverride: 32.000000
+      HeightOverride: 32.000000
+      MinDesiredWidth: 0.000000
+      MinDesiredHeight: 0.000000
+      MaxDesiredWidth: 0.000000
+      MaxDesiredHeight: 0.000000
+      MinAspectRatio: 1.000000
+      MaxAspectRatio: 1.000000
+      bOverride_WidthOverride: true
+      bOverride_HeightOverride: true
+      bOverride_MinDesiredWidth: false
+      bOverride_MinDesiredHeight: false
+      bOverride_MaxDesiredWidth: false
+      bOverride_MaxDesiredHeight: false
+      bOverride_MinAspectRatio: false
+      bOverride_MaxAspectRatio: false
+
+  - name: Image_123
+    class: Image
+    visibility: 0
+    is_visible: false
+    properties:
+      Brush:
+        TintColor:
+          SpecifiedColor:
+            R: 1.000000
+            G: 1.000000
+            B: 1.000000
+            A: 1.000000
+          ColorUseRule: UseColor_Specified
+        DrawAs: Image
+        Tiling: NoTile
+        Mirroring: NoMirror
+        ImageType: FullColor
+        ImageSize:
+          X: 64.000000
+          Y: 64.000000
+        Margin:
+          Left: 0.000000
+          Top: 0.000000
+          Right: 0.000000
+          Bottom: 0.000000
+        ResourceObject:
+          class: Texture2D
+          name: T_CurrencyCoin
+          path: /Game/SoulslikeFramework/Widgets/_Textures/T_CurrencyCoin.T_CurrencyCoin
+        OutlineSettings:
+          CornerRadii:
+            X: 0.000000
+            Y: 0.000000
+            Z: 0.000000
+            W: 0.000000
+          Color:
+            SpecifiedColor:
+              R: 0.000000
+              G: 0.000000
+              B: 0.000000
+              A: 0.000000
+            ColorUseRule: UseColor_Specified
+          Width: 0.000000
+          RoundingType: HalfHeightRadius
+          bUseBrushTransparency: false
+        UVRegion:
+          Min:
+            X: 0.000000
+            Y: 0.000000
+          Max:
+            X: 0.000000
+            Y: 0.000000
+          bIsValid: false
+        bIsDynamicallyLoaded: false
+        ResourceName: None
+      BrushDelegate: (null).None
+      ColorAndOpacity:
+        R: 0.859375
+        G: 0.744195
+        B: 0.618340
+        A: 1.000000
+      ColorAndOpacityDelegate: (null).None
+      bFlipForRightToLeftFlowDirection: false
+      OnMouseButtonDownEvent: (null).None
+
+  - name: ReqCurrencyText
+    class: TextBlock
+    visibility: 0
+    is_visible: false
+    properties:
+      Text: 9999
+      TextDelegate: (null).None
+      ColorAndOpacity:
+        SpecifiedColor:
+          R: 0.859375
+          G: 0.846542
+          B: 0.832520
+          A: 1.000000
+        ColorUseRule: UseColor_Specified
+      ColorAndOpacityDelegate: (null).None
+      MinDesiredWidth: 0.000000
+      Font:
+        FontObject:
+          class: Font
+          name: F_LiberationSerif-Regular
+          path: /Game/SoulslikeFramework/Fonts/F_LiberationSerif-Regular.F_LiberationSerif-Regular
+        FontMaterial: null
+        OutlineSettings:
+          OutlineSize: 0
+          bMiteredCorners: false
+          bSeparateFillAlpha: false
+          bApplyOutlineToDropShadows: false
+          OutlineMaterial: null
+          OutlineColor:
+            R: 0.000000
+            G: 0.000000
+            B: 0.000000
+            A: 1.000000
+        TypefaceFontName: Regular
+        Size: 18.000000
+        LetterSpacing: 0
+        SkewAmount: 0.000000
+        bForceMonospaced: false
+        bMaterialIsStencil: false
+        MonospacedWidth: 1.000000
+      StrikeBrush:
+        TintColor:
+          SpecifiedColor:
+            R: 1.000000
+            G: 1.000000
+            B: 1.000000
+            A: 1.000000
+          ColorUseRule: UseColor_Specified
+        DrawAs: Image
+        Tiling: NoTile
+        Mirroring: NoMirror
+        ImageType: NoImage
+        ImageSize:
+          X: 32.000000
+          Y: 32.000000
+        Margin:
+          Left: 0.000000
+          Top: 0.000000
+          Right: 0.000000
+          Bottom: 0.000000
+        ResourceObject: null
+        OutlineSettings:
+          CornerRadii:
+            X: 0.000000
+            Y: 0.000000
+            Z: 0.000000
+            W: 0.000000
+          Color:
+            SpecifiedColor:
+              R: 0.000000
+              G: 0.000000
+              B: 0.000000
+              A: 0.000000
+            ColorUseRule: UseColor_Specified
+          Width: 0.000000
+          RoundingType: HalfHeightRadius
+          bUseBrushTransparency: false
+        UVRegion:
+          Min:
+            X: 0.000000
+            Y: 0.000000
+          Max:
+            X: 0.000000
+            Y: 0.000000
+          bIsValid: false
+        bIsDynamicallyLoaded: false
+        ResourceName: None
+      ShadowOffset:
+        X: 1.000000
+        Y: 1.000000
+      ShadowColorAndOpacity:
+        R: 0.000000
+        G: 0.000000
+        B: 0.000000
+        A: 0.000000
+      ShadowColorAndOpacityDelegate: (null).None
+      bWrapWithInvalidationPanel: false
+      TextTransformPolicy: None
+      TextOverflowPolicy: Clip
+      bSimpleTextMode: false
+
+  - name: HorizontalBox_169
+    class: HorizontalBox
+    visibility: 4
+    is_visible: false
+    child_count: 2
+    properties:
+
+  - name: SizeBox_4
+    class: SizeBox
+    visibility: 4
+    is_visible: false
+    child_count: 1
+    properties:
+      WidthOverride: 250.000000
+      HeightOverride: 0.000000
+      MinDesiredWidth: 0.000000
+      MinDesiredHeight: 0.000000
+      MaxDesiredWidth: 0.000000
+      MaxDesiredHeight: 0.000000
+      MinAspectRatio: 1.000000
+      MaxAspectRatio: 1.000000
+      bOverride_WidthOverride: true
+      bOverride_HeightOverride: false
+      bOverride_MinDesiredWidth: false
+      bOverride_MinDesiredHeight: false
+      bOverride_MaxDesiredWidth: false
+      bOverride_MaxDesiredHeight: false
+      bOverride_MinAspectRatio: false
+      bOverride_MaxAspectRatio: false
+
+  - name: W_GB_OK
+    class: W_GenericButton_C
+    visibility: 4
+    is_visible: false
+    properties:
+      ButtonText: null
+      ButtonBorder: null
+      Button: null
+      Text: OK
+      TextColor:
+        SpecifiedColor:
+          R: 0.859375
+          G: 0.846542
+          B: 0.832520
+          A: 1.000000
+        ColorUseRule: UseColor_Specified
+      TextPadding:
+        Left: 0.000000
+        Top: 5.000000
+        Right: 0.000000
+        Bottom: 5.000000
+      ButtonColor:
+        R: 0.011765
+        G: 0.011765
+        B: 0.011765
+        A: 0.901961
+      OutlineColor:
+        R: 0.376471
+        G: 0.325490
+        B: 0.270588
+        A: 1.000000
+      OutlineWidth: 2.000000
+      OutlineCornerRadii:
+        X: 1.000000
+        Y: 1.000000
+        Z: 1.000000
+        W: 1.000000
+      SelectedButtonColor:
+        R: 0.074510
+        G: 0.074510
+        B: 0.074510
+        A: 0.901961
+      SelectedOutlineColor:
+        R: 0.858824
+        G: 0.745098
+        B: 0.619608
+        A: 1.000000
+      Selected?: false
+      OnButtonSelected: ()
+      OnButtonPressed: ()
+
+  - name: SizeBox_5
+    class: SizeBox
+    visibility: 4
+    is_visible: false
+    child_count: 1
+    properties:
+      WidthOverride: 250.000000
+      HeightOverride: 0.000000
+      MinDesiredWidth: 0.000000
+      MinDesiredHeight: 0.000000
+      MaxDesiredWidth: 0.000000
+      MaxDesiredHeight: 0.000000
+      MinAspectRatio: 1.000000
+      MaxAspectRatio: 1.000000
+      bOverride_WidthOverride: true
+      bOverride_HeightOverride: false
+      bOverride_MinDesiredWidth: false
+      bOverride_MinDesiredHeight: false
+      bOverride_MaxDesiredWidth: false
+      bOverride_MaxDesiredHeight: false
+      bOverride_MinAspectRatio: false
+      bOverride_MaxAspectRatio: false
+
+  - name: W_GB_Cancel
+    class: W_GenericButton_C
+    visibility: 4
+    is_visible: false
+    properties:
+      ButtonText: null
+      ButtonBorder: null
+      Button: null
+      Text: CANCEL
+      TextColor:
+        SpecifiedColor:
+          R: 0.859375
+          G: 0.846542
+          B: 0.832520
+          A: 1.000000
+        ColorUseRule: UseColor_Specified
+      TextPadding:
+        Left: 0.000000
+        Top: 5.000000
+        Right: 0.000000
+        Bottom: 5.000000
+      ButtonColor:
+        R: 0.011765
+        G: 0.011765
+        B: 0.011765
+        A: 0.901961
+      OutlineColor:
+        R: 0.376471
+        G: 0.325490
+        B: 0.270588
+        A: 1.000000
+      OutlineWidth: 2.000000
+      OutlineCornerRadii:
+        X: 1.000000
+        Y: 1.000000
+        Z: 1.000000
+        W: 1.000000
+      SelectedButtonColor:
+        R: 0.074510
+        G: 0.074510
+        B: 0.074510
+        A: 0.901961
+      SelectedOutlineColor:
+        R: 0.858824
+        G: 0.745098
+        B: 0.619608
+        A: 1.000000
+      Selected?: false
+      OnButtonSelected: ()
+      OnButtonPressed: ()
+
+  - name: SizeBox_6
+    class: SizeBox
+    visibility: 4
+    is_visible: false
+    child_count: 1
+    properties:
+      WidthOverride: 635.993591
+      HeightOverride: 0.000000
+      MinDesiredWidth: 0.000000
+      MinDesiredHeight: 0.000000
+      MaxDesiredWidth: 0.000000
+      MaxDesiredHeight: 0.000000
+      MinAspectRatio: 1.000000
+      MaxAspectRatio: 1.000000
+      bOverride_WidthOverride: true
+      bOverride_HeightOverride: false
+      bOverride_MinDesiredWidth: false
+      bOverride_MinDesiredHeight: false
+      bOverride_MaxDesiredWidth: false
+      bOverride_MaxDesiredHeight: false
+      bOverride_MinAspectRatio: false
+      bOverride_MaxAspectRatio: false
+
+  - name: Border_5
+    class: Border
+    visibility: 0
+    is_visible: false
+    child_count: 0
+    properties:
+      HorizontalAlignment: HAlign_Fill
+      VerticalAlignment: VAlign_Fill
+      bShowEffectWhenDisabled: true
+      ContentColorAndOpacity:
+        R: 1.000000
+        G: 1.000000
+        B: 1.000000
+        A: 1.000000
+      ContentColorAndOpacityDelegate: (null).None
+      Padding:
+        Left: 4.000000
+        Top: 2.000000
+        Right: 4.000000
+        Bottom: 2.000000
+      Background:
+        TintColor:
+          SpecifiedColor:
+            R: 0.859375
+            G: 0.744195
+            B: 0.618340
+            A: 1.000000
+          ColorUseRule: UseColor_Specified
+        DrawAs: Image
+        Tiling: NoTile
+        Mirroring: NoMirror
+        ImageType: FullColor
+        ImageSize:
+          X: 32.000000
+          Y: 32.000000
+        Margin:
+          Left: 0.000000
+          Top: 0.000000
+          Right: 0.000000
+          Bottom: 0.000000
+        ResourceObject:
+          class: MaterialInstanceConstant
+          name: MI_FadingBorder_Double_Soft
+          path: /Game/SoulslikeFramework/Widgets/_Materials/MI_FadingBorder_Double_Soft.MI_FadingBorder_Double_Soft
+        OutlineSettings:
+          CornerRadii:
+            X: 0.000000
+            Y: 0.000000
+            Z: 0.000000
+            W: 0.000000
+          Color:
+            SpecifiedColor:
+              R: 0.000000
+              G: 0.000000
+              B: 0.000000
+              A: 0.000000
+            ColorUseRule: UseColor_Specified
+          Width: 0.000000
+          RoundingType: HalfHeightRadius
+          bUseBrushTransparency: false
+        UVRegion:
+          Min:
+            X: 0.000000
+            Y: 0.000000
+          Max:
+            X: 0.000000
+            Y: 0.000000
+          bIsValid: false
+        bIsDynamicallyLoaded: false
+        ResourceName: None
+      BackgroundDelegate: (null).None
+      BrushColor:
+        R: 1.000000
+        G: 1.000000
+        B: 1.000000
+        A: 1.000000
+      BrushColorDelegate: (null).None
+      DesiredSizeScale:
+        X: 1.000000
+        Y: 1.000000
+      bFlipForRightToLeftFlowDirection: false
+      OnMouseButtonDownEvent: (null).None
+      OnMouseButtonUpEvent: (null).None
+      OnMouseMoveEvent: (null).None
+      OnMouseDoubleClickEvent: (null).None
+
+  - name: Border_94
+    class: Border
+    visibility: 0
+    is_visible: false
+    child_count: 0
+    properties:
+      HorizontalAlignment: HAlign_Fill
+      VerticalAlignment: VAlign_Fill
+      bShowEffectWhenDisabled: true
+      ContentColorAndOpacity:
+        R: 1.000000
+        G: 1.000000
+        B: 1.000000
+        A: 1.000000
+      ContentColorAndOpacityDelegate: (null).None
+      Padding:
+        Left: 4.000000
+        Top: 2.000000
+        Right: 4.000000
+        Bottom: 2.000000
+      Background:
+        TintColor:
+          SpecifiedColor:
+            R: 0.375000
+            G: 0.324741
+            B: 0.269823
+            A: 1.000000
+          ColorUseRule: UseColor_Specified
+        DrawAs: Image
+        Tiling: NoTile
+        Mirroring: NoMirror
+        ImageType: FullColor
+        ImageSize:
+          X: 32.000000
+          Y: 32.000000
+        Margin:
+          Left: 0.000000
+          Top: 0.000000
+          Right: 0.000000
+          Bottom: 0.000000
+        ResourceObject:
+          class: MaterialInstanceConstant
+          name: MI_FadingBorder_Double_Soft
+          path: /Game/SoulslikeFramework/Widgets/_Materials/MI_FadingBorder_Double_Soft.MI_FadingBorder_Double_Soft
+        OutlineSettings:
+          CornerRadii:
+            X: 0.000000
+            Y: 0.000000
+            Z: 0.000000
+            W: 0.000000
+          Color:
+            SpecifiedColor:
+              R: 0.000000
+              G: 0.000000
+              B: 0.000000
+              A: 0.000000
+            ColorUseRule: UseColor_Specified
+          Width: 0.000000
+          RoundingType: HalfHeightRadius
+          bUseBrushTransparency: false
+        UVRegion:
+          Min:
+            X: 0.000000
+            Y: 0.000000
+          Max:
+            X: 0.000000
+            Y: 0.000000
+          bIsValid: false
+        bIsDynamicallyLoaded: false
+        ResourceName: None
+      BackgroundDelegate: (null).None
+      BrushColor:
+        R: 1.000000
+        G: 1.000000
+        B: 1.000000
+        A: 1.000000
+      BrushColorDelegate: (null).None
+      DesiredSizeScale:
+        X: 1.000000
+        Y: 1.000000
+      bFlipForRightToLeftFlowDirection: false
+      OnMouseButtonDownEvent: (null).None
+      OnMouseButtonUpEvent: (null).None
+      OnMouseMoveEvent: (null).None
+      OnMouseDoubleClickEvent: (null).None
+
+  - name: Border
+    class: Border
+    visibility: 0
+    is_visible: false
+    child_count: 0
+    properties:
+      HorizontalAlignment: HAlign_Fill
+      VerticalAlignment: VAlign_Fill
+      bShowEffectWhenDisabled: true
+      ContentColorAndOpacity:
+        R: 1.000000
+        G: 1.000000
+        B: 1.000000
+        A: 1.000000
+      ContentColorAndOpacityDelegate: (null).None
+      Padding:
+        Left: 4.000000
+        Top: 2.000000
+        Right: 4.000000
+        Bottom: 2.000000
+      Background:
+        TintColor:
+          SpecifiedColor:
+            R: 0.375000
+            G: 0.324741
+            B: 0.269823
+            A: 1.000000
+          ColorUseRule: UseColor_Specified
+        DrawAs: Image
+        Tiling: NoTile
+        Mirroring: NoMirror
+        ImageType: FullColor
+        ImageSize:
+          X: 32.000000
+          Y: 32.000000
+        Margin:
+          Left: 0.000000
+          Top: 0.000000
+          Right: 0.000000
+          Bottom: 0.000000
+        ResourceObject:
+          class: MaterialInstanceConstant
+          name: MI_FadingBorder_Double_Soft
+          path: /Game/SoulslikeFramework/Widgets/_Materials/MI_FadingBorder_Double_Soft.MI_FadingBorder_Double_Soft
+        OutlineSettings:
+          CornerRadii:
+            X: 0.000000
+            Y: 0.000000
+            Z: 0.000000
+            W: 0.000000
+          Color:
+            SpecifiedColor:
+              R: 0.000000
+              G: 0.000000
+              B: 0.000000
+              A: 0.000000
+            ColorUseRule: UseColor_Specified
+          Width: 0.000000
+          RoundingType: HalfHeightRadius
+          bUseBrushTransparency: false
+        UVRegion:
+          Min:
+            X: 0.000000
+            Y: 0.000000
+          Max:
+            X: 0.000000
+            Y: 0.000000
+          bIsValid: false
+        bIsDynamicallyLoaded: false
+        ResourceName: None
+      BackgroundDelegate: (null).None
+      BrushColor:
+        R: 1.000000
+        G: 1.000000
+        B: 1.000000
+        A: 1.000000
+      BrushColorDelegate: (null).None
+      DesiredSizeScale:
+        X: 1.000000
+        Y: 1.000000
+      bFlipForRightToLeftFlowDirection: false
+      OnMouseButtonDownEvent: (null).None
+      OnMouseButtonUpEvent: (null).None
+      OnMouseMoveEvent: (null).None
+      OnMouseDoubleClickEvent: (null).None
+
+class_default_object:
+  class: W_VendorAction_C
+  name: Default__W_VendorAction_C
+  path: /Game/SoulslikeFramework/Widgets/Vendor/W_VendorAction.Default__W_VendorAction_C
+  properties:
+    W_GB_OK: null
+    W_GB_Cancel: null
+    RequiredItemIcon: null
+    ReqText: null
+    ReqCurrencyText: null
+    MaxAmountText: null
+    ItemNameText: null
+    IncreaseButton: null
+    Image_123: null
+    DecreaseButton: null
+    CurrentAmountText: null
+    BuyCostBox: null
+    ActionText: null
+    SelectedSlot: null
+    AssignedItemAmount: 0
+    MaxPossibleAmount: 0
+    DesiredAmount: 1
+    OnVendorActionClosed: ()
+    AssignedItem: null
+    AssignedItemPrice: 0
+    OnVendorItemPurchased: ()
+    ActionType: NewEnumerator0
+    OnVendorItemSold: ()
+    ColorAndOpacity:
+      R: 1.000000
+      G: 1.000000
+      B: 1.000000
+      A: 1.000000
+    ColorAndOpacityDelegate: (null).None
+    ForegroundColor:
+      SpecifiedColor:
+        R: 1.000000
+        G: 0.000000
+        B: 1.000000
+        A: 1.000000
+      ColorUseRule: UseColor_Foreground
+    ForegroundColorDelegate: (null).None
+    OnVisibilityChanged: ()
+    Padding:
+      Left: 0.000000
+      Top: 0.000000
+      Right: 0.000000
+      Bottom: 0.000000
+    Priority: 0
+    bIsFocusable: true
+    bStopAction: false
+    bAutomaticallyRegisterInputOnConstruction: false
+    NamedSlotBindings:
+      count: 0
+      items:
+    Extensions:
+      count: 0
+      items:
+    DesignTimeSize:
+      X: 100.000000
+      Y: 100.000000
+    DesignSizeMode: Desired
+    PaletteCategory: User Created
+    PreviewBackground: null
+    bHasScriptImplementedTick: false
+    bHasScriptImplementedPaint: false
+    TickFrequency: Auto
+    DesiredFocusWidget:
+      WidgetName: None
+    Slot: null
+    bIsEnabledDelegate: (null).None
+    ToolTipTextDelegate: (null).None
+    ToolTipText: 
+    ToolTipWidget: null
+    ToolTipWidgetDelegate: (null).None
+    VisibilityDelegate: (null).None
+    RenderTransform:
+      Translation:
+        X: 0.000000
+        Y: 0.000000
+      Scale:
+        X: 1.000000
+        Y: 1.000000
+      Shear:
+        X: 0.000000
+        Y: 0.000000
+      Angle: 0.000000
+    RenderTransformPivot:
+      X: 0.500000
+      Y: 0.500000
+    FlowDirectionPreference: Inherit
+    bIsVariable: true
+    bIsEnabled: true
+    bOverride_Cursor: false
+    bOverrideAccessibleDefaults: false
+    bCanChildrenBeAccessible: true
+    AccessibleBehavior: NotAccessible
+    AccessibleSummaryBehavior: Auto
+    AccessibleText: 
+    AccessibleTextDelegate: (null).None
+    AccessibleSummaryText: 
+    AccessibleSummaryTextDelegate: (null).None
+    bIsVolatile: false
+    bHiddenInDesigner: false
+    bExpandedInDesigner: false
+    bLockedInDesigner: false
+    Cursor: Default
+    Clipping: Inherit
+    Visibility: SelfHitTestInvisible
+    PixelSnapping: Inherit
+    RenderOpacity: 1.000000
+    AccessibleWidgetData: null
+    Navigation: null
+    DisplayLabel: 
+    CategoryName: 

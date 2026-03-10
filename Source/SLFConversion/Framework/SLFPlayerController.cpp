@@ -47,8 +47,10 @@
 #include "Interfaces/BPI_ExecutionIndicator.h"
 #include "Interfaces/SLFExecutionIndicatorInterface.h"
 #include "Blueprints/SLFBaseCharacter.h"
+#include "Engine/LevelStreamingDynamic.h"
 #include "Components/WidgetComponent.h"
 #include "Perception/AIPerceptionComponent.h"
+#include "Components/SLFZoneManagerComponent.h"
 
 ASLFPlayerController::ASLFPlayerController()
 {
@@ -60,6 +62,8 @@ ASLFPlayerController::ASLFPlayerController()
 	// NOTE: Do NOT create ProgressManager here - Blueprint SCS owns it
 	IMC_Gameplay = nullptr;
 	IMC_NavigableMenu = nullptr;
+
+	ZoneManager = CreateDefaultSubobject<USLFZoneManagerComponent>(TEXT("ZoneManager"));
 
 	// Load IA_GameMenu input action
 	static ConstructorHelpers::FObjectFinder<UInputAction> GameMenuActionFinder(
@@ -1298,8 +1302,21 @@ void ASLFPlayerController::BlendViewTarget_Implementation(AActor* TargetActor, d
 // FAST TRAVEL
 // ═══════════════════════════════════════════════════════════════════════════════
 
+void ASLFPlayerController::SetInDungeon(bool bInside)
+{
+	bInDungeon = bInside;
+	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] SetInDungeon: %s"),
+		bInside ? TEXT("true") : TEXT("false"));
+}
+
 void ASLFPlayerController::ExecuteFastTravel(const FSLFRestPointSaveInfo& Destination)
 {
+	if (bInDungeon)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] Fast travel blocked — inside dungeon"));
+		return;
+	}
+
 	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] ExecuteFastTravel to %s at %s"),
 		*Destination.LocationName.ToString(), *Destination.SpawnLocation.ToString());
 
@@ -1338,10 +1355,57 @@ void ASLFPlayerController::OnFastTravelFadeOutComplete()
 		return;
 	}
 
-	// Teleport directly to destination spawn location.
-	// When rest points are placed in-editor, SpawnLocation Z is correct (actor is on ground).
-	// No hover/ground-trace needed — just go there.
-	FVector TeleportPos = PendingFastTravelDest.SpawnLocation;
+	// ── Dungeon entrance: stream in level then teleport inside ──
+	if (PendingFastTravelDest.bIsDungeonEntrance && !PendingFastTravelDest.DungeonLevelName.IsEmpty())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] FastTravel - Dungeon entrance: streaming %s"),
+			*PendingFastTravelDest.DungeonLevelName);
+
+		if (UCharacterMovementComponent* MovementComp = ControlledPawn->FindComponentByClass<UCharacterMovementComponent>())
+		{
+			MovementComp->StopMovementImmediately();
+			MovementComp->Velocity = FVector::ZeroVector;
+			MovementComp->DisableMovement();
+		}
+
+		// Stream in the dungeon level
+		bool bSuccess = false;
+		FastTravelStreamedLevel = ULevelStreamingDynamic::LoadLevelInstance(
+			GetWorld(),
+			PendingFastTravelDest.DungeonLevelName,
+			PendingFastTravelDest.DungeonWorldOffset,
+			FRotator::ZeroRotator,
+			bSuccess
+		);
+
+		if (bSuccess && FastTravelStreamedLevel)
+		{
+			FastTravelStreamedLevel->OnLevelLoaded.AddDynamic(this, &ASLFPlayerController::OnDungeonLevelLoadedForFastTravel);
+			UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] Dungeon level streaming started: %s"), *PendingFastTravelDest.DungeonLevelName);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("[SLFPlayerController] Failed to stream dungeon: %s — falling back to direct teleport"),
+				*PendingFastTravelDest.DungeonLevelName);
+			// Fall through to normal teleport as fallback
+			ControlledPawn->SetActorLocation(PendingFastTravelDest.SpawnLocation, false, nullptr, ETeleportType::TeleportPhysics);
+			ControlledPawn->SetActorRotation(PendingFastTravelDest.SpawnRotation);
+		}
+
+		// Update save/load state for dungeon
+		if (USaveLoadManagerComponent* SaveMgr = FindComponentByClass<USaveLoadManagerComponent>())
+		{
+			SaveMgr->SaveToCheckpoint();
+		}
+
+		return; // OnDungeonLevelLoadedForFastTravel will handle fade-in
+	}
+
+	// ── Regular rest point: direct teleport ──
+	// Use the resting point actor's exact world location + 100cm above
+	FVector TeleportPos = PendingFastTravelDest.WorldLocation;
+	TeleportPos.Z += 200.0f; // Spawn a few feet above the resting point
+
 	ControlledPawn->SetActorRotation(PendingFastTravelDest.SpawnRotation);
 
 	if (UCharacterMovementComponent* MovementComp = ControlledPawn->FindComponentByClass<UCharacterMovementComponent>())
@@ -1353,7 +1417,7 @@ void ASLFPlayerController::OnFastTravelFadeOutComplete()
 
 	ControlledPawn->SetActorLocation(TeleportPos, false, nullptr, ETeleportType::TeleportPhysics);
 
-	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] FastTravel - Teleported to %s"),
+	UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] FastTravel - Teleported to %s"),
 		*TeleportPos.ToString());
 
 	// Reset all enemies (Souls-like: resting/traveling resets enemies)
@@ -1464,8 +1528,6 @@ void ASLFPlayerController::OnFastTravelSnapToGround()
 	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] FastTravel - Re-enabling movement at Z=%.1f"),
 		ControlledPawn->GetActorLocation().Z);
 
-	// Re-enable movement at destination. When rest points are real actors placed
-	// in the editor, SpawnLocation Z is already correct (on ground).
 	if (UCharacterMovementComponent* MovementComp = ControlledPawn->FindComponentByClass<UCharacterMovementComponent>())
 	{
 		MovementComp->Velocity = FVector::ZeroVector;
@@ -1524,4 +1586,33 @@ void ASLFPlayerController::OnFastTravelFadeInStart()
 
 	UE_LOG(LogTemp, Log, TEXT("[SLFPlayerController] FastTravel complete to %s"),
 		*PendingFastTravelDest.LocationName.ToString());
+}
+
+void ASLFPlayerController::OnDungeonLevelLoadedForFastTravel()
+{
+	UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] Dungeon level loaded — teleporting player inside"));
+
+	APawn* ControlledPawn = GetPawn();
+	if (ControlledPawn)
+	{
+		// SpawnLocation is the interior spawn point (DungeonWorldOffset + DungeonSpawnOffset)
+		ControlledPawn->SetActorLocation(PendingFastTravelDest.SpawnLocation, false, nullptr, ETeleportType::TeleportPhysics);
+		ControlledPawn->SetActorRotation(PendingFastTravelDest.SpawnRotation);
+
+		UE_LOG(LogTemp, Warning, TEXT("[SLFPlayerController] Teleported to dungeon interior: %s"),
+			*PendingFastTravelDest.SpawnLocation.ToString());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[SLFPlayerController] No pawn for dungeon teleport!"));
+	}
+
+	// Wait for collision to stream in, then fade back in
+	GetWorldTimerManager().SetTimer(
+		FastTravelFadeInHandle,
+		this,
+		&ASLFPlayerController::OnFastTravelSnapToGround,
+		1.5f,
+		false
+	);
 }

@@ -1,0 +1,16 @@
+{
+  "B_BaseProjectile": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Projectiles/B_BaseProjectile",
+    "parent_class": null,
+    "parent_class_path": null,
+    "generated_class": "B_BaseProjectile_C",
+    "scs_components": []
+  },
+  "B_Projectile_ThrowingKnife": {
+    "path": "/Game/SoulslikeFramework/Blueprints/_WorldActors/Projectiles/B_Projectile_ThrowingKnife",
+    "parent_class": null,
+    "parent_class_path": null,
+    "generated_class": "B_Projectile_ThrowingKnife_C",
+    "scs_components": []
+  }
+}

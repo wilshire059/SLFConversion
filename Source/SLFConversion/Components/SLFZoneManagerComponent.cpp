@@ -145,7 +145,7 @@ void USLFZoneManagerComponent::InitializeDefaultZones()
 		return FGameplayTag::RequestGameplayTag(Name, false);
 	};
 
-	// Hub
+	// Hub — center of map
 	{
 		FSLFZoneConfig Z;
 		Z.ZoneTag = MakeTag(FName("Zone.Hub"));
@@ -155,10 +155,13 @@ void USLFZoneManagerComponent::InitializeDefaultZones()
 		Z.SuggestedLevelMin = 1;
 		Z.SuggestedLevelMax = 80;
 		Z.CurrencyMultiplier = 0.0f;
+		Z.ZoneCenter = FVector(0.0, 0.0, 0.0);
+		Z.ZoneRadius = 60000.0f;
+		Z.MapColor = FLinearColor(0.2f, 0.8f, 0.2f, 0.15f);
 		ZoneConfigs.Add(Z);
 	}
 
-	// Zone 1: The Ashfields
+	// Zone 1: The Ashfields — south (warm wasteland terrain)
 	{
 		FSLFZoneConfig Z;
 		Z.ZoneTag = MakeTag(FName("Zone.Ashfields"));
@@ -169,10 +172,13 @@ void USLFZoneManagerComponent::InitializeDefaultZones()
 		Z.SuggestedLevelMax = 15;
 		Z.CurrencyMultiplier = 1.0f;
 		Z.BossProgressTag = MakeTag(FName("Boss.Broodmother"));
+		Z.ZoneCenter = FVector(0.0, 200000.0, 0.0);
+		Z.ZoneRadius = 120000.0f;
+		Z.MapColor = FLinearColor(0.9f, 0.6f, 0.2f, 0.2f);
 		ZoneConfigs.Add(Z);
 	}
 
-	// Zone 2: Ironworks
+	// Zone 2: Ironworks — east (industrial/dark terrain)
 	{
 		FSLFZoneConfig Z;
 		Z.ZoneTag = MakeTag(FName("Zone.Ironworks"));
@@ -183,10 +189,13 @@ void USLFZoneManagerComponent::InitializeDefaultZones()
 		Z.SuggestedLevelMax = 30;
 		Z.CurrencyMultiplier = 1.5f;
 		Z.BossProgressTag = MakeTag(FName("Boss.Forgemaster"));
+		Z.ZoneCenter = FVector(200000.0, 0.0, 0.0);
+		Z.ZoneRadius = 120000.0f;
+		Z.MapColor = FLinearColor(0.6f, 0.4f, 0.2f, 0.2f);
 		ZoneConfigs.Add(Z);
 	}
 
-	// Zone 3: The Rift
+	// Zone 3: The Rift — north (corrupted/orange terrain)
 	{
 		FSLFZoneConfig Z;
 		Z.ZoneTag = MakeTag(FName("Zone.Rift"));
@@ -197,10 +206,13 @@ void USLFZoneManagerComponent::InitializeDefaultZones()
 		Z.SuggestedLevelMax = 50;
 		Z.CurrencyMultiplier = 2.0f;
 		Z.BossProgressTag = MakeTag(FName("Boss.Convergent"));
+		Z.ZoneCenter = FVector(0.0, -200000.0, 0.0);
+		Z.ZoneRadius = 120000.0f;
+		Z.MapColor = FLinearColor(0.5f, 0.2f, 0.8f, 0.2f);
 		ZoneConfigs.Add(Z);
 	}
 
-	// Zone 4: Sanctum of Ash
+	// Zone 4: Sanctum of Ash — west (snowy/mountain terrain)
 	{
 		FSLFZoneConfig Z;
 		Z.ZoneTag = MakeTag(FName("Zone.Sanctum"));
@@ -211,10 +223,13 @@ void USLFZoneManagerComponent::InitializeDefaultZones()
 		Z.SuggestedLevelMax = 50;
 		Z.CurrencyMultiplier = 2.0f;
 		Z.BossProgressTag = MakeTag(FName("Boss.Hierophant"));
+		Z.ZoneCenter = FVector(-200000.0, 0.0, 0.0);
+		Z.ZoneRadius = 120000.0f;
+		Z.MapColor = FLinearColor(0.9f, 0.85f, 0.4f, 0.2f);
 		ZoneConfigs.Add(Z);
 	}
 
-	// Zone 5: The Undercroft
+	// Zone 5: The Undercroft — southeast (dense forest/swamp)
 	{
 		FSLFZoneConfig Z;
 		Z.ZoneTag = MakeTag(FName("Zone.Undercroft"));
@@ -225,10 +240,13 @@ void USLFZoneManagerComponent::InitializeDefaultZones()
 		Z.SuggestedLevelMax = 70;
 		Z.CurrencyMultiplier = 3.0f;
 		Z.BossProgressTag = MakeTag(FName("Boss.Primordial"));
+		Z.ZoneCenter = FVector(180000.0, 180000.0, 0.0);
+		Z.ZoneRadius = 100000.0f;
+		Z.MapColor = FLinearColor(0.3f, 0.5f, 0.3f, 0.2f);
 		ZoneConfigs.Add(Z);
 	}
 
-	// Zone 6: The Core
+	// Zone 6: The Core — center, overlapping hub
 	{
 		FSLFZoneConfig Z;
 		Z.ZoneTag = MakeTag(FName("Zone.Core"));
@@ -239,6 +257,9 @@ void USLFZoneManagerComponent::InitializeDefaultZones()
 		Z.SuggestedLevelMax = 80;
 		Z.CurrencyMultiplier = 4.0f;
 		Z.BossProgressTag = MakeTag(FName("Boss.Convergence"));
+		Z.ZoneCenter = FVector(0.0, 0.0, 0.0);
+		Z.ZoneRadius = 80000.0f;
+		Z.MapColor = FLinearColor(0.9f, 0.1f, 0.1f, 0.15f);
 		ZoneConfigs.Add(Z);
 	}
 }

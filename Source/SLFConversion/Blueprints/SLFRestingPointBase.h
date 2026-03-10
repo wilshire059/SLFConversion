@@ -143,6 +143,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RestingPoint|Config")
 	TSoftObjectPtr<UAnimMontage> DiscoverInteractionMontage;
 
+	/** Montage played when player sits down at resting point */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RestingPoint|Animation")
+	TSoftObjectPtr<UAnimMontage> SitDownMontage;
+
+	/** Montage played when player stands up from resting point */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RestingPoint|Animation")
+	TSoftObjectPtr<UAnimMontage> StandUpMontage;
+
 	// --- View Settings (5) ---
 
 	/** [3/10] Camera angle when sitting */
@@ -174,6 +182,12 @@ public:
 	/** [9/10] Stat tags to replenish when resting */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RestingPoint|Replenish")
 	FGameplayTagContainer StatsToReplenish;
+
+	// --- Dungeon (1) ---
+
+	/** If true, this resting point is a dungeon entrance (shown with different color on world map) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RestingPoint|Config")
+	bool bIsDungeonEntrance = false;
 
 	// --- Runtime (1) ---
 
@@ -222,10 +236,22 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "RestingPoint")
 	void DiscoverPoint(AActor* DiscoveringActor);
 
+	/** Called when player exits the rest menu — plays stand-up animation and cleans up */
+	UFUNCTION(BlueprintCallable, Category = "RestingPoint")
+	void ExitRestingPoint();
+
 protected:
 	/** Timer handle for delayed positioning after rest */
 	FTimerHandle PositionTimerHandle;
 
 	/** Called after 1s delay to position sitting actor and broadcast OnReady */
 	void PositionSittingActor();
+
+	/** Called when sit-down montage ends — transitions to idle and opens menu */
+	UFUNCTION()
+	void OnSitDownMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
+	/** Called when stand-up montage ends — fully releases the player */
+	UFUNCTION()
+	void OnStandUpMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 };
