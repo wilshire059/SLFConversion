@@ -80,6 +80,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace|Damage")
 	float OverridePoiseDamage = -1.0f;
 
+	/** Seconds between clearing the hit list, allowing re-hits on the same target.
+	 *  0 = single hit per target per trace (default for normal attacks).
+	 *  Set > 0 on specific long/whirlwind montages only. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace|Damage")
+	float HitResetInterval = 0.0f;
+
 	// --- Slash VFX ---
 
 	/** Niagara system to spawn as a slash trail during the trace window.
@@ -108,6 +114,12 @@ public:
 
 	UPROPERTY(Transient)
 	class UNiagaraComponent* ActiveSlashComponent = nullptr;
+
+	float HitResetTimer = 0.0f;
+
+	/** Previous frame's start position for swing-arc tracing */
+	FVector PreviousStartPos = FVector::ZeroVector;
+	bool bHasPreviousPos = false;
 
 	virtual FString GetNotifyName_Implementation() const override;
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference) override;

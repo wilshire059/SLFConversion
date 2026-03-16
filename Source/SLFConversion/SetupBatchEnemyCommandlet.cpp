@@ -11,6 +11,7 @@
 
 #if WITH_EDITOR
 #include "SLFAutomationLibrary.h"
+#include "Animation/SLFAnimNotifyStateWeaponTrace.h"
 #include "SLFPrimaryDataAssets.h"
 #include "Animation/Skeleton.h"
 #include "Animation/AnimSequence.h"
@@ -53,6 +54,10 @@
 #include "Materials/MaterialInstanceConstant.h"
 #include "Factories/MaterialInstanceConstantFactoryNew.h"
 #include "Rendering/SkeletalMeshRenderData.h"
+#include "Serialization/JsonReader.h"
+#include "Serialization/JsonSerializer.h"
+#include "Dom/JsonObject.h"
+#include "Internationalization/Regex.h"
 
 USetupBatchEnemyCommandlet::USetupBatchEnemyCommandlet()
 {
@@ -414,7 +419,7 @@ int32 USetupBatchEnemyCommandlet::Main(const FString& Params)
 		// Step 7: Add weapon traces
 		// ═══════════════════════════════════════════════════════════════
 		UE_LOG(LogTemp, Warning, TEXT("--- Step 7: Adding weapon traces ---"));
-		AddWeaponTraces(DestDir, PascalName);
+		AddWeaponTraces(DestDir, PascalName, Enemy);
 
 		// ═══════════════════════════════════════════════════════════════
 		// Step 8: Create Blueprint (parented to ASLFEnemyGeneric, with EnemyTypeName set)
@@ -944,19 +949,43 @@ void USetupBatchEnemyCommandlet::CreateMontages(
 	CreateCategoryMontages(TEXT("GuardHit"), TEXT("GuardHit"), 1);
 	CreateCategoryMontages(TEXT("PoiseBreak"), TEXT("PoiseBreak"), 2);
 	CreateCategoryMontages(TEXT("Idle"), TEXT("Idle"), 1);
-	CreateCategoryMontages(TEXT("Locomotion"), TEXT("Walk"), 1); // First locomotion = walk
 
-	// For locomotion, create Walk and Run separately if we have 2+
+	// Locomotion: pick Walk and Run by Elden Ring anim ID convention
+	// 002000=walk fwd, 002100=run fwd (c3100), 002030=run fwd (infantry)
+	// 002001=walk back, 002002/002003=sidestep L/R, 001800=transition
 	{
 		TArray<FString>* LocoAnims = CategoryToAnims.Find(TEXT("Locomotion"));
-		if (LocoAnims && LocoAnims->Num() >= 2)
+		if (LocoAnims && LocoAnims->Num() > 0)
 		{
-			FString RunPath = AnimDir / (*LocoAnims)[1];
-			FString RunMontagePath = DestDir / FString::Printf(TEXT("AM_%s_Run"), *PascalName);
-			Result = USLFAutomationLibrary::CreateMontageFromSequence(RunPath, RunMontagePath, TEXT("DefaultSlot"));
-			UE_LOG(LogTemp, Warning, TEXT("  %s → AM_%s_Run: %s"), *(*LocoAnims)[1], *PascalName,
-				Result.Contains(TEXT("OK")) || Result.Contains(TEXT("Created")) ? TEXT("OK") : *Result);
-			MontageCount++;
+			FString WalkAnim, RunAnim;
+			for (const FString& AnimName : *LocoAnims)
+			{
+				if (AnimName.Contains(TEXT("002000"))) WalkAnim = AnimName;
+				else if (AnimName.Contains(TEXT("002100"))) RunAnim = AnimName;   // c3100 run
+				else if (AnimName.Contains(TEXT("002030")) && RunAnim.IsEmpty()) RunAnim = AnimName; // infantry run
+			}
+			// Fallback: first loco anim = walk, second = run
+			if (WalkAnim.IsEmpty() && LocoAnims->Num() >= 1) WalkAnim = (*LocoAnims)[0];
+			if (RunAnim.IsEmpty() && LocoAnims->Num() >= 2) RunAnim = (*LocoAnims)[1];
+
+			if (!WalkAnim.IsEmpty())
+			{
+				FString WalkPath = AnimDir / WalkAnim;
+				FString WalkMontagePath = DestDir / FString::Printf(TEXT("AM_%s_Walk"), *PascalName);
+				Result = USLFAutomationLibrary::CreateMontageFromSequence(WalkPath, WalkMontagePath, TEXT("DefaultSlot"));
+				UE_LOG(LogTemp, Warning, TEXT("  %s → AM_%s_Walk: %s"), *WalkAnim, *PascalName,
+					Result.Contains(TEXT("OK")) || Result.Contains(TEXT("Created")) ? TEXT("OK") : *Result);
+				MontageCount++;
+			}
+			if (!RunAnim.IsEmpty())
+			{
+				FString RunPath = AnimDir / RunAnim;
+				FString RunMontagePath = DestDir / FString::Printf(TEXT("AM_%s_Run"), *PascalName);
+				Result = USLFAutomationLibrary::CreateMontageFromSequence(RunPath, RunMontagePath, TEXT("DefaultSlot"));
+				UE_LOG(LogTemp, Warning, TEXT("  %s → AM_%s_Run: %s"), *RunAnim, *PascalName,
+					Result.Contains(TEXT("OK")) || Result.Contains(TEXT("Created")) ? TEXT("OK") : *Result);
+				MontageCount++;
+			}
 		}
 	}
 
@@ -1269,9 +1298,18 @@ void USetupBatchEnemyCommandlet::AddSockets(const FString& SkeletonPath)
 	}
 }
 
-void USetupBatchEnemyCommandlet::AddWeaponTraces(const FString& DestDir, const FString& PascalName)
+void USetupBatchEnemyCommandlet::AddWeaponTraces(const FString& DestDir, const FString& PascalName, const FString& EnemySnakeName)
 {
-	// Find all attack montages and add weapon traces
+	// Try TAE-driven multi-window placement first
+	if (AddWeaponTracesFromTAE(DestDir, PascalName, EnemySnakeName))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  TAE-driven weapon traces applied successfully"));
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("  No TAE JSON found, using heuristic weapon trace placement"));
+
+	// Heuristic fallback: single window per montage
 	FString Result;
 
 	// Auto-detect attack montages
@@ -1283,26 +1321,47 @@ void USetupBatchEnemyCommandlet::AddWeaponTraces(const FString& DestDir, const F
 		if (!Montage) continue;
 
 		float Duration = Montage->GetPlayLength();
-		// Estimate weapon trace window: roughly 30-60% through the animation
-		float StartTime = Duration * 0.3f;
-		float EndTime = Duration * 0.6f;
+		bool bLongAttack = Duration >= 1.5f;
+		float StartTime = Duration * (bLongAttack ? 0.2f : 0.3f);
+		float EndTime = Duration * (bLongAttack ? 0.8f : 0.6f);
 
 		Result = USLFAutomationLibrary::AddWeaponTraceToMontage(
 			MontagePath,
 			StartTime,
 			EndTime,
-			120.0f,                 // TraceRadius (was 60, attacks passed through player)
-			FName("weapon_start"),  // Socket
-			FName("weapon_end"),    // End socket
-			300.0f,                 // WeaponReach (was 200)
-			EAxis::X,              // Fallback axis
-			false,                 // Don't negate
-			60.0f,                 // Damage
-			30.0f,                 // PoiseDamage
-			true,                  // Debug draw
-			FName("lowerarm_r")    // Direction bone
+			120.0f,
+			FName("weapon_start"),
+			FName("weapon_end"),
+			300.0f,
+			EAxis::X,
+			false,
+			bLongAttack ? 40.0f : 60.0f,
+			bLongAttack ? 20.0f : 30.0f,
+			true,
+			FName("lowerarm_r")
 		);
-		UE_LOG(LogTemp, Warning, TEXT("  %s (%.2f-%.2fs): %s"), *MontageName, StartTime, EndTime, *Result);
+
+		if (bLongAttack)
+		{
+			for (FAnimNotifyEvent& Evt : Montage->Notifies)
+			{
+				if (USLFAnimNotifyStateWeaponTrace* WT = Cast<USLFAnimNotifyStateWeaponTrace>(Evt.NotifyStateClass))
+				{
+					WT->HitResetInterval = 0.25f;
+				}
+			}
+			UPackage* MontPkg = Montage->GetOutermost();
+			MontPkg->MarkPackageDirty();
+			FString MontFn = FPackageName::LongPackageNameToFilename(MontPkg->GetName(), FPackageName::GetAssetPackageExtension());
+			FSavePackageArgs MontSA;
+			MontSA.TopLevelFlags = RF_Standalone;
+			UPackage::SavePackage(MontPkg, Montage, *MontFn, MontSA);
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("  %s (%.2f-%.2fs, %s): %s"),
+			*MontageName, StartTime, EndTime,
+			bLongAttack ? TEXT("multi-hit") : TEXT("single"),
+			*Result);
 	}
 
 	// Heavy attack montages
@@ -1323,19 +1382,215 @@ void USetupBatchEnemyCommandlet::AddWeaponTraces(const FString& DestDir, const F
 			MontagePath,
 			StartTime,
 			EndTime,
-			150.0f,                 // Heavy radius (was 90, attacks passed through player)
+			150.0f,
 			FName("weapon_start"),
 			FName("weapon_end"),
-			350.0f,                 // Heavy reach (was 250)
+			350.0f,
 			EAxis::X,
 			false,
-			100.0f,                 // More damage
-			60.0f,                  // More poise
+			100.0f,
+			60.0f,
 			true,
 			FName("lowerarm_r")
 		);
 		UE_LOG(LogTemp, Warning, TEXT("  %s (%.2f-%.2fs): %s"), *MontageName, StartTime, EndTime, *Result);
 	}
+}
+
+bool USetupBatchEnemyCommandlet::AddWeaponTracesFromTAE(const FString& DestDir, const FString& PascalName, const FString& EnemySnakeName)
+{
+	// Look for tae_hitboxes.json in source directory
+	FString JsonPath = FString(SourceBaseDir) / EnemySnakeName / TEXT("tae_hitboxes.json");
+
+	if (!FPaths::FileExists(JsonPath))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("  TAE JSON not found: %s"), *JsonPath);
+		return false;
+	}
+
+	// Read and parse JSON
+	FString JsonString;
+	if (!FFileHelper::LoadFileToString(JsonString, *JsonPath))
+	{
+		UE_LOG(LogTemp, Error, TEXT("  Failed to read TAE JSON: %s"), *JsonPath);
+		return false;
+	}
+
+	TSharedPtr<FJsonObject> RootObject;
+	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonString);
+	if (!FJsonSerializer::Deserialize(Reader, RootObject) || !RootObject.IsValid())
+	{
+		UE_LOG(LogTemp, Error, TEXT("  Failed to parse TAE JSON: %s"), *JsonPath);
+		return false;
+	}
+
+	const TSharedPtr<FJsonObject>* AnimationsObj;
+	if (!RootObject->TryGetObjectField(TEXT("animations"), AnimationsObj))
+	{
+		UE_LOG(LogTemp, Error, TEXT("  TAE JSON missing 'animations' field"));
+		return false;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("  Loaded TAE JSON: %d animations"), (*AnimationsObj)->Values.Num());
+
+	int32 MontagesProcessed = 0;
+
+	// Process attack montages (AM_{PascalName}_Attack01 through Attack08)
+	for (int32 i = 1; i <= 8; i++)
+	{
+		FString MontageName = FString::Printf(TEXT("AM_%s_Attack%02d"), *PascalName, i);
+		FString MontagePath = DestDir / MontageName;
+		UAnimMontage* Montage = LoadObject<UAnimMontage>(nullptr, *MontagePath);
+		if (!Montage) continue;
+
+		// Extract anim_id from the backing animation sequence
+		// Montage's first slot has a reference to the source AnimSequence
+		FString AnimId;
+		if (Montage->SlotAnimTracks.Num() > 0 && Montage->SlotAnimTracks[0].AnimTrack.AnimSegments.Num() > 0)
+		{
+			UAnimSequenceBase* AnimRef = Montage->SlotAnimTracks[0].AnimTrack.AnimSegments[0].GetAnimReference();
+			if (AnimRef)
+			{
+				// AnimSequence name format: {PascalName}_Attack01 or {enemy}_{chr}_{anim_id}
+				// Try to extract anim_id (aXXX_XXXXXX) from the asset name
+				FString SeqName = AnimRef->GetName();
+				FRegexPattern Pattern(TEXT("(a\\d+_\\d+)"));
+				FRegexMatcher Matcher(Pattern, SeqName);
+				if (Matcher.FindNext())
+				{
+					AnimId = Matcher.GetCaptureGroup(1);
+				}
+			}
+		}
+
+		if (AnimId.IsEmpty())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("    %s: Could not determine anim_id, skipping TAE"), *MontageName);
+			continue;
+		}
+
+		// Look up hitbox windows in JSON
+		const TSharedPtr<FJsonObject>* AnimObj;
+		if (!(*AnimationsObj)->TryGetObjectField(AnimId, AnimObj))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("    %s: No TAE data for anim_id %s"), *MontageName, *AnimId);
+			continue;
+		}
+
+		const TArray<TSharedPtr<FJsonValue>>* WindowsArray;
+		if (!(*AnimObj)->TryGetArrayField(TEXT("hitbox_windows"), WindowsArray))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("    %s: No hitbox_windows in TAE data"), *MontageName);
+			continue;
+		}
+
+		// Build weapon trace windows
+		TArray<USLFAutomationLibrary::FWeaponTraceWindow> Windows;
+		for (const TSharedPtr<FJsonValue>& WindowVal : *WindowsArray)
+		{
+			const TSharedPtr<FJsonObject>& WindowObj = WindowVal->AsObject();
+			if (!WindowObj.IsValid()) continue;
+
+			USLFAutomationLibrary::FWeaponTraceWindow W;
+			W.StartTime = WindowObj->GetNumberField(TEXT("start"));
+			W.EndTime = WindowObj->GetNumberField(TEXT("end"));
+			W.DamageMultiplier = 1.0f;
+			Windows.Add(W);
+		}
+
+		if (Windows.Num() == 0) continue;
+
+		// Scale damage inversely with window count (maintain total DPS)
+		float DamagePerHit = (Windows.Num() > 1) ? 40.0f : 60.0f;
+		float PoiseDamagePerHit = (Windows.Num() > 1) ? 20.0f : 30.0f;
+
+		FString Result = USLFAutomationLibrary::AddMultipleWeaponTracesToMontage(
+			MontagePath,
+			Windows,
+			120.0f,                 // TraceRadius
+			FName("weapon_start"),
+			FName("weapon_end"),
+			300.0f,                 // WeaponReach
+			DamagePerHit,
+			PoiseDamagePerHit,
+			true,                   // Debug draw
+			FName("lowerarm_r")
+		);
+
+		UE_LOG(LogTemp, Warning, TEXT("    %s [%s]: %d windows -> %s"),
+			*MontageName, *AnimId, Windows.Num(), *Result);
+		MontagesProcessed++;
+	}
+
+	// Process heavy attack montages
+	for (int32 i = 1; i <= 2; i++)
+	{
+		FString MontageName = (i == 1)
+			? FString::Printf(TEXT("AM_%s_HeavyAttack"), *PascalName)
+			: FString::Printf(TEXT("AM_%s_HeavyAttack%02d"), *PascalName, i);
+		FString MontagePath = DestDir / MontageName;
+		UAnimMontage* Montage = LoadObject<UAnimMontage>(nullptr, *MontagePath);
+		if (!Montage) continue;
+
+		FString AnimId;
+		if (Montage->SlotAnimTracks.Num() > 0 && Montage->SlotAnimTracks[0].AnimTrack.AnimSegments.Num() > 0)
+		{
+			UAnimSequenceBase* AnimRef = Montage->SlotAnimTracks[0].AnimTrack.AnimSegments[0].GetAnimReference();
+			if (AnimRef)
+			{
+				FString SeqName = AnimRef->GetName();
+				FRegexPattern Pattern(TEXT("(a\\d+_\\d+)"));
+				FRegexMatcher Matcher(Pattern, SeqName);
+				if (Matcher.FindNext())
+				{
+					AnimId = Matcher.GetCaptureGroup(1);
+				}
+			}
+		}
+
+		if (AnimId.IsEmpty()) continue;
+
+		const TSharedPtr<FJsonObject>* AnimObj;
+		if (!(*AnimationsObj)->TryGetObjectField(AnimId, AnimObj)) continue;
+
+		const TArray<TSharedPtr<FJsonValue>>* WindowsArray;
+		if (!(*AnimObj)->TryGetArrayField(TEXT("hitbox_windows"), WindowsArray)) continue;
+
+		TArray<USLFAutomationLibrary::FWeaponTraceWindow> Windows;
+		for (const TSharedPtr<FJsonValue>& WindowVal : *WindowsArray)
+		{
+			const TSharedPtr<FJsonObject>& WindowObj = WindowVal->AsObject();
+			if (!WindowObj.IsValid()) continue;
+
+			USLFAutomationLibrary::FWeaponTraceWindow W;
+			W.StartTime = WindowObj->GetNumberField(TEXT("start"));
+			W.EndTime = WindowObj->GetNumberField(TEXT("end"));
+			W.DamageMultiplier = 1.0f;
+			Windows.Add(W);
+		}
+
+		if (Windows.Num() == 0) continue;
+
+		FString Result = USLFAutomationLibrary::AddMultipleWeaponTracesToMontage(
+			MontagePath,
+			Windows,
+			150.0f,                 // Heavy radius
+			FName("weapon_start"),
+			FName("weapon_end"),
+			350.0f,                 // Heavy reach
+			100.0f,                 // Heavy damage
+			60.0f,                  // Heavy poise
+			true,
+			FName("lowerarm_r")
+		);
+
+		UE_LOG(LogTemp, Warning, TEXT("    %s [%s]: %d windows -> %s"),
+			*MontageName, *AnimId, Windows.Num(), *Result);
+		MontagesProcessed++;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("  TAE weapon traces: %d montages processed"), MontagesProcessed);
+	return MontagesProcessed > 0;
 }
 
 bool USetupBatchEnemyCommandlet::SaveAsset(UObject* Asset, UPackage* Pkg)

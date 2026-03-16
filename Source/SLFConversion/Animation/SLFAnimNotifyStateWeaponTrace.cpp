@@ -28,12 +28,15 @@ void USLFAnimNotifyStateWeaponTrace::NotifyBegin(USkeletalMeshComponent* MeshCom
 
 	// Clear hit actors list at start of trace
 	HitActors.Empty();
+	HitResetTimer = 0.0f;
+	PreviousStartPos = FVector::ZeroVector;
+	bHasPreviousPos = false;
 
 	// Log socket availability and mode for debugging
 	bool bHasStart = MeshComp->DoesSocketExist(StartSocketName);
 	bool bHasEnd = MeshComp->DoesSocketExist(EndSocketName);
 	bool bReachMode = (WeaponReach > 0.0f);
-	UE_LOG(LogTemp, Log, TEXT("[ANS_WeaponTrace] Begin on %s - Duration: %.2fs, Sockets: %s=%s %s=%s, Radius: %.0f, Mode: %s%s"),
+	UE_LOG(LogTemp, Warning, TEXT("[ANS_WeaponTrace] BEGIN on %s - Duration: %.2fs, Sockets: %s=%s %s=%s, Radius: %.0f, Mode: %s%s"),
 		*Owner->GetName(), TotalDuration,
 		*StartSocketName.ToString(), bHasStart ? TEXT("YES") : TEXT("NO"),
 		*EndSocketName.ToString(), bHasEnd ? TEXT("YES") : TEXT("NO"),
@@ -80,45 +83,85 @@ void USLFAnimNotifyStateWeaponTrace::NotifyTick(USkeletalMeshComponent* MeshComp
 	UWorld* World = Owner->GetWorld();
 	if (!World) return;
 
+	// Periodically clear hit list for multi-hit attacks (whirlwinds, combos)
+	if (HitResetInterval > 0.0f)
+	{
+		HitResetTimer += FrameDeltaTime;
+		if (HitResetTimer >= HitResetInterval)
+		{
+			HitActors.Empty();
+			HitResetTimer = 0.0f;
+		}
+	}
+
 	// Get socket positions for trace
 	FVector StartPos = FVector::ZeroVector;
 	FVector EndPos = FVector::ZeroVector;
 
+	// Resolve start position: try socket first, then bone names
 	bool bHasStartSocket = MeshComp->DoesSocketExist(StartSocketName);
 	bool bHasEndSocket = MeshComp->DoesSocketExist(EndSocketName);
 
-	if (WeaponReach > 0.0f && bHasStartSocket)
+	// Try to find a valid start bone if socket doesn't exist
+	FName ResolvedStartBone = NAME_None;
+	if (!bHasStartSocket)
 	{
-		// Directional reach mode: trace from socket origin along weapon direction.
-		FTransform SocketTransform = MeshComp->GetSocketTransform(StartSocketName);
-		StartPos = SocketTransform.GetLocation();
+		// Check StartSocketName as a bone
+		if (MeshComp->GetBoneIndex(StartSocketName) != INDEX_NONE)
+		{
+			ResolvedStartBone = StartSocketName;
+		}
+		else
+		{
+			TArray<FName> BoneNames = {
+				FName("R_Hand"), FName("hand_r"), FName("weapon_r"),
+				FName("Hand_R"), FName("RightHand"), FName("R_Sword")
+			};
+			for (const FName& BN : BoneNames)
+			{
+				if (MeshComp->GetBoneIndex(BN) != INDEX_NONE)
+				{
+					ResolvedStartBone = BN;
+					break;
+				}
+			}
+		}
+	}
+
+	bool bHasStart = bHasStartSocket || !ResolvedStartBone.IsNone();
+
+	if (bHasStart && WeaponReach > 0.0f)
+	{
+		// Directional reach mode: trace from hand/weapon bone along weapon direction
+		StartPos = bHasStartSocket
+			? MeshComp->GetSocketLocation(StartSocketName)
+			: MeshComp->GetBoneLocation(ResolvedStartBone);
 
 		FVector Direction;
 		bool bUsedBoneDirection = false;
 
-		// Bone-to-bone direction: compute from DirectionBone THROUGH StartSocket
-		// e.g., lowerarm_r -> hand_r = "from elbow through hand toward blade tip"
+		// Bone-to-bone direction: from DirectionBone THROUGH start point toward blade tip
 		if (!DirectionBoneName.IsNone())
 		{
 			FVector DirBonePos = MeshComp->GetBoneLocation(DirectionBoneName);
-			FVector BoneToSocket = StartPos - DirBonePos;
-			if (BoneToSocket.SizeSquared() > 1.0f)
+			if (DirBonePos.IsNearlyZero())
 			{
-				Direction = BoneToSocket.GetSafeNormal();
+				// Try as socket
+				if (MeshComp->DoesSocketExist(DirectionBoneName))
+					DirBonePos = MeshComp->GetSocketLocation(DirectionBoneName);
+			}
+			FVector BoneToStart = StartPos - DirBonePos;
+			if (BoneToStart.SizeSquared() > 1.0f)
+			{
+				Direction = BoneToStart.GetSafeNormal();
 				bUsedBoneDirection = true;
 			}
 		}
 
-		// Fallback: socket local axis
+		// Fallback: actor forward vector (always reliable)
 		if (!bUsedBoneDirection)
 		{
-			switch (WeaponDirectionAxis)
-			{
-				case EAxis::X: Direction = SocketTransform.GetUnitAxis(EAxis::X); break;
-				case EAxis::Y: Direction = SocketTransform.GetUnitAxis(EAxis::Y); break;
-				case EAxis::Z: Direction = SocketTransform.GetUnitAxis(EAxis::Z); break;
-				default:       Direction = SocketTransform.GetUnitAxis(EAxis::X); break;
-			}
+			Direction = Owner->GetActorForwardVector();
 		}
 		if (bNegateDirection) Direction = -Direction;
 
@@ -126,40 +169,52 @@ void USLFAnimNotifyStateWeaponTrace::NotifyTick(USkeletalMeshComponent* MeshComp
 	}
 	else if (bHasStartSocket && bHasEndSocket)
 	{
-		// Two-socket mode: trace directly between two sockets
+		// Two-socket mode
 		StartPos = MeshComp->GetSocketLocation(StartSocketName);
 		EndPos = MeshComp->GetSocketLocation(EndSocketName);
 	}
+	else if (bHasStart)
+	{
+		// Have a start bone but no reach/end — use actor forward
+		StartPos = bHasStartSocket
+			? MeshComp->GetSocketLocation(StartSocketName)
+			: MeshComp->GetBoneLocation(ResolvedStartBone);
+		FVector Forward = Owner->GetActorForwardVector();
+		EndPos = StartPos + (Forward * 200.0f);
+	}
 	else
 	{
-		// Fallback: Try common socket names (hand_r, weapon_r)
-		FName FallbackSocket = NAME_None;
-		TArray<FName> CommonSockets = { FName("hand_r"), FName("weapon_r"), FName("RightHand"), FName("Hand_R") };
-		for (const FName& SocketName : CommonSockets)
-		{
-			if (MeshComp->DoesSocketExist(SocketName))
-			{
-				FallbackSocket = SocketName;
-				break;
-			}
-		}
-
-		if (!FallbackSocket.IsNone())
-		{
-			StartPos = MeshComp->GetSocketLocation(FallbackSocket);
-			FVector Forward = Owner->GetActorForwardVector();
-			EndPos = StartPos + (Forward * 150.0f);
-		}
-		else
-		{
-			StartPos = Owner->GetActorLocation() + FVector(0, 0, 80.0f);
-			FVector Forward = Owner->GetActorForwardVector();
-			EndPos = StartPos + (Forward * 150.0f);
-		}
+		// Last resort: no bones or sockets found — trace IN FRONT of enemy
+		FVector Forward = Owner->GetActorForwardVector();
+		StartPos = Owner->GetActorLocation() + FVector(0, 0, 80.0f) + (Forward * 100.0f);
+		EndPos = StartPos + (Forward * 200.0f);
 	}
 
+	// --- Swing-arc trace: also sweep between previous and current hand position ---
+	// This catches horizontal slashes, overhead swings, and upcuts that the
+	// forward reach trace would miss.
+	if (bHasPreviousPos)
+	{
+		float SwingDist = FVector::Dist(PreviousStartPos, StartPos);
+		if (SwingDist > 5.0f) // Hand moved enough to constitute a swing
+		{
+			// Interpolate the reach endpoint along the arc too
+			FVector PrevEndPos = PreviousStartPos + (EndPos - StartPos);
+			// We'll trace: PrevStart→Start (hand arc) and PrevEnd→End (weapon tip arc)
+			// Combined with the forward trace below, this covers the full swept volume.
+			// Use the midpoints for a single arc trace that covers the swing path:
+			FVector ArcStart = PreviousStartPos;
+			FVector ArcEnd = EndPos;  // Previous hand → current weapon tip = full swing diagonal
+			StartPos = ArcStart;
+			EndPos = ArcEnd;
+		}
+	}
+	PreviousStartPos = bHasStart
+		? (bHasStartSocket ? MeshComp->GetSocketLocation(StartSocketName) : MeshComp->GetBoneLocation(ResolvedStartBone))
+		: StartPos;
+	bHasPreviousPos = true;
+
 	// Setup trace parameters - use SphereTraceMultiForObjects (by object type)
-	// instead of SweepMultiByChannel which depends on collision channel responses
 	TArray<FHitResult> HitResults;
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Add(Owner);
@@ -210,9 +265,6 @@ void USLFAnimNotifyStateWeaponTrace::NotifyTick(USkeletalMeshComponent* MeshComp
 			// Add to hit list
 			HitActors.Add(HitActor);
 
-			UE_LOG(LogTemp, Log, TEXT("[ANS_WeaponTrace] Hit: %s at %s"),
-				*HitActor->GetName(), *Hit.ImpactPoint.ToString());
-
 			// Get weapon damage info from equipment manager or AI overrides
 			double Damage = 50.0;  // Default damage (10% of typical 500 HP)
 			double PoiseDamage = 25.0;  // Default poise damage
@@ -243,6 +295,9 @@ void USLFAnimNotifyStateWeaponTrace::NotifyTick(USkeletalMeshComponent* MeshComp
 						Damage, PoiseDamage, WeaponStatusEffects.Num());
 				}
 			}
+
+			UE_LOG(LogTemp, Warning, TEXT("[ANS_WeaponTrace] HIT: %s -> %s | Dmg=%.0f Poise=%.0f at %s"),
+				*Owner->GetName(), *HitActor->GetName(), Damage, PoiseDamage, *Hit.ImpactPoint.ToString());
 
 			// Try player combat manager first (UAC_CombatManager)
 			UAC_CombatManager* TargetCombatManager = HitActor->FindComponentByClass<UAC_CombatManager>();
@@ -327,7 +382,7 @@ void USLFAnimNotifyStateWeaponTrace::NotifyEnd(USkeletalMeshComponent* MeshComp,
 
 	if (!MeshComp) return;
 
-	UE_LOG(LogTemp, Log, TEXT("[ANS_WeaponTrace] End - Hit %d actors"), HitActors.Num());
+	UE_LOG(LogTemp, Warning, TEXT("[ANS_WeaponTrace] END - Hit %d actors total"), HitActors.Num());
 
 	// Deactivate slash VFX (auto-destroy handles cleanup)
 	if (ActiveSlashComponent)

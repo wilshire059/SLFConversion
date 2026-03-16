@@ -49,8 +49,11 @@ private:
 	// Add sockets to skeleton
 	void AddSockets(const FString& SkeletonPath);
 
-	// Add weapon traces to attack montages
-	void AddWeaponTraces(const FString& DestDir, const FString& PascalName);
+	// Add weapon traces to attack montages (tries TAE JSON first, falls back to heuristic)
+	void AddWeaponTraces(const FString& DestDir, const FString& PascalName, const FString& EnemySnakeName);
+
+	// Add weapon traces from TAE-extracted hitbox JSON. Returns true if JSON found and applied.
+	bool AddWeaponTracesFromTAE(const FString& DestDir, const FString& PascalName, const FString& EnemySnakeName);
 
 	// Helper: save asset
 	static bool SaveAsset(UObject* Asset, UPackage* Pkg);

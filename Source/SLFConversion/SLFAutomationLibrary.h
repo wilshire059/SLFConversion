@@ -729,6 +729,47 @@ public:
 		const FString& RunSequencePath
 	);
 
+	/** Single hitbox window for AddMultipleWeaponTracesToMontage */
+	struct FWeaponTraceWindow
+	{
+		float StartTime = 0.0f;
+		float EndTime = 0.0f;
+		float DamageMultiplier = 1.0f;
+	};
+
+	/**
+	 * Add multiple ANS_WeaponTrace notify states to a montage from TAE-derived windows.
+	 * Clears existing weapon traces first (idempotent). Each window gets its own
+	 * independent USLFAnimNotifyStateWeaponTrace with separate HitActors tracking.
+	 * Applies UE5 timing widening: start -0.1s, end +0.15s (Bug #18).
+	 *
+	 * @param MontagePath - UE path to the montage
+	 * @param Windows - Array of hitbox windows with start/end times and damage multiplier
+	 * @param TraceRadius - Sphere trace radius
+	 * @param StartSocket - Start socket name
+	 * @param EndSocket - End socket name (ignored in reach mode)
+	 * @param WeaponReach - World-space cm to extend from start socket (0 = two-socket mode)
+	 * @param BaseDamage - Base damage per hit (multiplied by each window's DamageMultiplier)
+	 * @param BasePoiseDamage - Base poise damage per hit
+	 * @param bDrawDebug - Draw debug trace spheres in PIE
+	 * @param DirectionBone - Bone to compute direction FROM (toward StartSocket)
+	 * @return Result string
+	 */
+	static FString AddMultipleWeaponTracesToMontage(
+		const FString& MontagePath,
+		const TArray<FWeaponTraceWindow>& Windows,
+		float TraceRadius = 120.0f,
+		const FName& StartSocket = FName("weapon_start"),
+		const FName& EndSocket = FName("weapon_end"),
+		float WeaponReach = 300.0f,
+		float BaseDamage = 60.0f,
+		float BasePoiseDamage = 30.0f,
+		bool bDrawDebug = true,
+		const FName& DirectionBone = FName("lowerarm_r"),
+		float TelegraphLeadTime = 0.4f,
+		const FLinearColor& TelegraphColor = FLinearColor(1.0f, 0.4f, 0.05f, 1.0f)
+	);
+
 	/**
 	 * Add an ANS_WeaponTrace notify state to a montage at specified time range.
 	 *
@@ -1049,4 +1090,21 @@ public:
 		const FString& DestPackagePath,
 		const FString& AssetName
 	);
+
+	/**
+	 * Import PBR textures and create material for any enemy.
+	 * Generalized version of SetupSentinelMaterial.
+	 * @param TextureSourceDir - Disk directory containing texture_base_color.png, etc.
+	 * @param PascalName - PascalCase enemy name (e.g., "WitheredWanderer")
+	 * @param DestDir - UE package dir (e.g., "/Game/CustomEnemies/WitheredWanderer")
+	 * @return Result string
+	 */
+	static FString SetupEnemyMaterial(
+		const FString& TextureSourceDir,
+		const FString& PascalName,
+		const FString& DestDir
+	);
+
+	/** Convert snake_case to PascalCase (e.g., "withered_wanderer" -> "WitheredWanderer") */
+	static FString ToPascalCase(const FString& SnakeName);
 };

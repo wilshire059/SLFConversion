@@ -3,7 +3,7 @@
 ## Overview
 - **Genre**: Soulslike Action RPG
 - **Engine**: Unreal Engine 5.7
-- **Setting**: Post-apocalyptic open world
+- **Setting**: Post-apocalyptic sci-fi (Borderlands/Fallout aesthetic, NOT fantasy)
 - **Map**: Project Titan (8x8 km)
 - **Progression**: Fully open, difficulty varies by area
 - **Target Playtime**: 10-15 hours main, 20+ completionist
@@ -63,19 +63,22 @@ Ancient technology harnessing unknown energy catastrophically failed. The Conver
 | Sanctum | Ashen Acolyte | Zealot Archer | Censer Bearer | Ashen Champion | The Ashen Hierophant |
 | Undercroft | Cave Lurker | Blight Crawler | Hollow Experiment | The Warden | The Primordial |
 
-## Weapons (25 total)
-| Category | Count | Scaling |
-|----------|-------|---------|
-| Straight Swords | 3 | STR/DEX |
-| Greatswords | 2 | STR |
-| Katanas | 2 | DEX |
-| Daggers | 2 | DEX/ARC |
-| Hammers/Maces | 2 | STR |
-| Spears | 2 | STR/DEX |
-| Shields | 3 | END/STR |
-| Catalysts | 2 | INT/FTH |
-| Bows | 2 | DEX |
-| Boss Weapons | 5 | Unique |
+## Art Direction: Post-Apocalyptic Sci-Fi
+Borderlands meets Fallout meets Soulslike combat. Makeshift weapons, scrap armor, irradiated mutants, rogue machines, wasteland cults. NO medieval fantasy — the Convergence was a tech disaster.
+- **Materials**: Rusted steel, duct tape, welded scrap, exposed wiring, hazmat fabric, cracked concrete
+- **Silhouettes**: Scrap armor, gas masks, welding goggles, jury-rigged exoskeletons
+- **Full enemy roster**: See `.claude/reference/enemy-faction-plan.md` (58 enemies, 5 factions)
+
+## Weapons (25 total — Post-Apocalyptic)
+| Category | Weapons | Scaling |
+|----------|---------|---------|
+| Improvised Melee | Rebar Club, Pipe Wrench, Sledgehammer | STR |
+| Bladed Melee | Machete, Buzz-Saw Blade, Shiv, Cleaver | DEX or STR/DEX |
+| Tech Melee | Shock Baton, Plasma Cutter, Chain Whip, Cattle Prod | DEX/INT |
+| Ballistic Ranged | Pipe Pistol, Nail Gun, Scrap Shotgun, Crossbow | DEX |
+| Energy Ranged | Convergence Pistol, Arc Caster, Void Launcher | INT |
+| Shields/Off-hand | Car Door Shield, Riot Shield, Manhole Cover, Stop Sign | STR/END |
+| Boss Weapons | Broodmother's Claw, Forgemaster's Hammer, Convergence Blade | Unique |
 
 ## Currency & Leveling
 - **Cinders** — dropped by enemies, lost on death, recoverable

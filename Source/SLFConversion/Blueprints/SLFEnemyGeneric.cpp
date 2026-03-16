@@ -35,6 +35,14 @@ ASLFEnemyGeneric::ASLFEnemyGeneric()
 	}
 	NavInvoker = CreateDefaultSubobject<UNavigationInvokerComponent>(TEXT("NavInvoker"));
 	NavInvoker->SetGenerationRadii(3000.0f, 4000.0f);
+
+	// Enable RVO avoidance so enemies don't walk into terrain/each other
+	if (UCharacterMovementComponent* CMC = GetCharacterMovement())
+	{
+		CMC->bUseRVOAvoidance = true;
+		CMC->AvoidanceWeight = 0.5f;
+		CMC->SetAvoidanceEnabled(true);
+	}
 }
 
 void ASLFEnemyGeneric::BeginPlay()
@@ -276,6 +284,10 @@ void ASLFEnemyGeneric::Tick(float DeltaTime)
 
 				if (DesiredMontage && DesiredMontage != ActiveLocomotionMontage)
 				{
+					UE_LOG(LogTemp, Warning, TEXT("[Loco] Speed=%.0f Switching: %s -> %s"),
+						Speed,
+						ActiveLocomotionMontage ? *ActiveLocomotionMontage->GetName() : TEXT("none"),
+						*DesiredMontage->GetName());
 					if (ActiveLocomotionMontage)
 					{
 						AnimInst->Montage_Stop(0.2f, ActiveLocomotionMontage);
@@ -302,8 +314,9 @@ void ASLFEnemyGeneric::ConfigureAbilities()
 
 	TArray<FSLFAIAbility> NewAbilities;
 
-	// Auto-discover attack abilities: DA_<Name>_Attack01 through Attack08
-	for (int32 i = 1; i <= 8; i++)
+	// Auto-discover attack abilities: DA_<Name>_Attack01 through Attack07
+	// (Attack08 was a long-range BulletBehavior anim — excluded for melee enemies)
+	for (int32 i = 1; i <= 7; i++)
 	{
 		FString DAName = FString::Printf(TEXT("DA_%s_Attack%02d"), *EnemyTypeName, i);
 		UDataAsset* AbilityAsset = LoadObject<UDataAsset>(nullptr, *(Dir + DAName));
@@ -315,12 +328,12 @@ void ASLFEnemyGeneric::ConfigureAbilities()
 		// First 2 attacks double as gap closers (lunge from range)
 		if (i <= 2)
 		{
-			Ability.MaxDistance = 600.0f;
+			Ability.MaxDistance = 350.0f;
 			Ability.bIsGapCloser = true;
 		}
 		else
 		{
-			Ability.MaxDistance = 400.0f;
+			Ability.MaxDistance = 250.0f;
 			Ability.bIsGapCloser = false;
 		}
 		NewAbilities.Add(Ability);
@@ -336,7 +349,7 @@ void ASLFEnemyGeneric::ConfigureAbilities()
 		FSLFAIAbility Ability;
 		Ability.AbilityAsset = AbilityAsset;
 		Ability.Weight = 0.5f;
-		Ability.MaxDistance = 500.0f;
+		Ability.MaxDistance = 350.0f;
 		Ability.bIsGapCloser = true;
 		NewAbilities.Add(Ability);
 	}
@@ -357,11 +370,9 @@ void ASLFEnemyGeneric::TrySpawnBodyVFX()
 
 	// CPU access is baked at import time via commandlet (Build() + Save)
 
-	// Only systems WITHOUT distance field dependency work on skeletal meshes
 	static const TCHAR* FXPaths[] = {
 		TEXT("/Game/CharacterBodyFX3/FX/NS_Furnace.NS_Furnace"),
-		TEXT("/Game/CharacterBodyFX3/FX/NS_Ribbon_Dark.NS_Ribbon_Dark"),
-		TEXT("/Game/CharacterBodyFX3/FX/NS_Ribbon_Light.NS_Ribbon_Light"),
+		TEXT("/Game/CharacterBodyFX3/FX/NS_Lightning.NS_Lightning"),
 	};
 
 	UNiagaraSystem* BodyFX = nullptr;

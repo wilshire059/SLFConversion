@@ -13,6 +13,7 @@
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
 #include "Animation/SLFAnimNotifyStateWeaponTrace.h"
+#include "Animation/SLFAnimNotifyStateTelegraph.h"
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "Kismet2/KismetEditorUtilities.h"
 #include "K2Node_Variable.h"
@@ -11729,6 +11730,120 @@ FString USLFAutomationLibrary::AddWeaponTraceToMontage(
 		*FPaths::GetBaseFilename(MontagePath), StartTime, EndTime, InTraceRadius, *ModeStr);
 }
 
+
+FString USLFAutomationLibrary::AddMultipleWeaponTracesToMontage(
+	const FString& MontagePath,
+	const TArray<FWeaponTraceWindow>& Windows,
+	float TraceRadius,
+	const FName& StartSocket,
+	const FName& EndSocket,
+	float WeaponReach,
+	float BaseDamage,
+	float BasePoiseDamage,
+	bool bDrawDebug,
+	const FName& DirectionBone,
+	float TelegraphLeadTime,
+	const FLinearColor& TelegraphColor)
+{
+	UAnimMontage* Montage = LoadObject<UAnimMontage>(nullptr, *MontagePath);
+	if (!Montage)
+	{
+		return FString::Printf(TEXT("ERROR: Montage not found: %s"), *MontagePath);
+	}
+
+	// Clear existing weapon trace and telegraph notifies (idempotent for commandlet reruns)
+	Montage->Notifies.RemoveAll([](const FAnimNotifyEvent& Evt) {
+		return Evt.NotifyStateClass && (
+			Evt.NotifyStateClass->IsA<USLFAnimNotifyStateWeaponTrace>() ||
+			Evt.NotifyStateClass->IsA<USLFAnimNotifyStateTelegraph>());
+	});
+
+	float MontageLen = Montage->GetPlayLength();
+	int32 AddedCount = 0;
+	int32 TelegraphCount = 0;
+
+	for (int32 i = 0; i < Windows.Num(); i++)
+	{
+		const FWeaponTraceWindow& Window = Windows[i];
+
+		// Apply UE5 timing widening (Bug #18: TAE windows too tight for variable framerate)
+		float WidenedStart = Window.StartTime - 0.1f;
+		float WidenedEnd = Window.EndTime + 0.15f;
+
+		// Clamp to montage duration
+		WidenedStart = FMath::Clamp(WidenedStart, 0.0f, MontageLen);
+		WidenedEnd = FMath::Clamp(WidenedEnd, WidenedStart + 0.01f, MontageLen);
+
+		// --- Telegraph VFX: neon glow before the hitbox window ---
+		if (TelegraphLeadTime > 0.0f)
+		{
+			float TelegraphStart = FMath::Max(0.0f, WidenedStart - TelegraphLeadTime);
+			float TelegraphEnd = WidenedStart; // Telegraph ends when trace begins
+
+			if (TelegraphEnd - TelegraphStart > 0.05f) // Skip if too short
+			{
+				USLFAnimNotifyStateTelegraph* Telegraph = NewObject<USLFAnimNotifyStateTelegraph>(Montage);
+				Telegraph->AttachSocket = FName("weapon_r");
+				Telegraph->SecondSocket = FName("hand_r");
+				Telegraph->TelegraphColor = TelegraphColor;
+				Telegraph->VFXScale = 1.5f;
+
+				FAnimNotifyEvent TelegraphEvent;
+				TelegraphEvent.NotifyStateClass = Telegraph;
+				TelegraphEvent.NotifyName = FName(*FString::Printf(TEXT("ANS_Telegraph_%d"), i));
+				TelegraphEvent.SetTime(TelegraphStart);
+				TelegraphEvent.SetDuration(TelegraphEnd - TelegraphStart);
+				TelegraphEvent.TriggerTimeOffset = 0.0f;
+				TelegraphEvent.EndTriggerTimeOffset = 0.0f;
+				TelegraphEvent.TrackIndex = 0;
+				TelegraphEvent.bTriggerOnDedicatedServer = true;
+				TelegraphEvent.bTriggerOnFollower = true;
+
+				Montage->Notifies.Add(TelegraphEvent);
+				TelegraphCount++;
+			}
+		}
+
+		// --- Weapon trace: actual hitbox ---
+		USLFAnimNotifyStateWeaponTrace* WeaponTrace = NewObject<USLFAnimNotifyStateWeaponTrace>(Montage);
+		WeaponTrace->StartSocketName = StartSocket;
+		WeaponTrace->EndSocketName = EndSocket;
+		WeaponTrace->TraceRadius = TraceRadius;
+		WeaponTrace->WeaponReach = WeaponReach;
+		WeaponTrace->DirectionBoneName = DirectionBone;
+		WeaponTrace->WeaponDirectionAxis = EAxis::X;
+		WeaponTrace->bNegateDirection = false;
+		WeaponTrace->OverrideDamage = BaseDamage * Window.DamageMultiplier;
+		WeaponTrace->OverridePoiseDamage = BasePoiseDamage * Window.DamageMultiplier;
+		WeaponTrace->bDrawDebugTrace = bDrawDebug;
+
+		FAnimNotifyEvent NewEvent;
+		NewEvent.NotifyStateClass = WeaponTrace;
+		NewEvent.NotifyName = FName(*FString::Printf(TEXT("ANS_WeaponTrace_%d"), i));
+		NewEvent.SetTime(WidenedStart);
+		NewEvent.SetDuration(WidenedEnd - WidenedStart);
+		NewEvent.TriggerTimeOffset = 0.0f;
+		NewEvent.EndTriggerTimeOffset = 0.0f;
+		NewEvent.TrackIndex = 0;
+		NewEvent.bTriggerOnDedicatedServer = true;
+		NewEvent.bTriggerOnFollower = true;
+
+		Montage->Notifies.Add(NewEvent);
+		AddedCount++;
+	}
+
+	// Save the montage once after all windows added
+	UPackage* Package = Montage->GetOutermost();
+	Package->MarkPackageDirty();
+	FString FileName = FPackageName::LongPackageNameToFilename(Package->GetName(), FPackageName::GetAssetPackageExtension());
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Standalone;
+	UPackage::SavePackage(Package, Montage, *FileName, SaveArgs);
+
+	return FString::Printf(TEXT("OK: Added %d traces + %d telegraphs to %s (montage=%.2fs)"),
+		AddedCount, TelegraphCount, *FPaths::GetBaseFilename(MontagePath), MontageLen);
+}
+
 FString USLFAutomationLibrary::CreateMontageFromSequence(
 	const FString& SequencePath,
 	const FString& OutputPath,
@@ -16229,6 +16344,209 @@ FString USLFAutomationLibrary::ImportTextureFromDisk(
 		Texture->GetSizeX(), Texture->GetSizeY());
 	UE_LOG(LogTemp, Warning, TEXT("[ImportTextureFromDisk] %s"), *Result);
 	return Result;
+}
+
+FString USLFAutomationLibrary::ToPascalCase(const FString& SnakeName)
+{
+	FString Result;
+	bool bCapNext = true;
+	for (TCHAR Ch : SnakeName)
+	{
+		if (Ch == '_')
+		{
+			bCapNext = true;
+			continue;
+		}
+		Result += bCapNext ? FChar::ToUpper(Ch) : Ch;
+		bCapNext = false;
+	}
+	return Result;
+}
+
+FString USLFAutomationLibrary::SetupEnemyMaterial(
+	const FString& TextureSourceDir,
+	const FString& PascalName,
+	const FString& DestDir)
+{
+	// Find texture files
+	FString BaseColorFile = FPaths::Combine(TextureSourceDir, TEXT("texture_base_color.png"));
+	FString MetallicFile = FPaths::Combine(TextureSourceDir, TEXT("texture_metallic.png"));
+	FString NormalFile = FPaths::Combine(TextureSourceDir, TEXT("texture_normal.png"));
+	FString RoughnessFile = FPaths::Combine(TextureSourceDir, TEXT("texture_roughness.png"));
+
+	if (!FPaths::FileExists(BaseColorFile))
+	{
+		// Try alternate naming: _texture.png (Meshy sometimes uses this)
+		TArray<FString> PNGFiles;
+		IFileManager::Get().FindFiles(PNGFiles, *TextureSourceDir, TEXT("*.png"));
+		for (const FString& F : PNGFiles)
+		{
+			FString Full = FPaths::Combine(TextureSourceDir, F);
+			if (F.Contains(TEXT("_base_color")) || F.Contains(TEXT("_texture")))
+				BaseColorFile = Full;
+			else if (F.Contains(TEXT("_metallic")))
+				MetallicFile = Full;
+			else if (F.Contains(TEXT("_normal")))
+				NormalFile = Full;
+			else if (F.Contains(TEXT("_roughness")))
+				RoughnessFile = Full;
+		}
+	}
+
+	if (!FPaths::FileExists(BaseColorFile))
+	{
+		return FString::Printf(TEXT("ERROR: No base color texture in %s"), *TextureSourceDir);
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[SetupEnemyMaterial] %s: BaseColor=%s"), *PascalName, *BaseColorFile);
+
+	// Import textures using UTextureFactory (sRGB defaults, Bug #33 safe)
+	auto ImportTex = [&](const FString& FilePath, const FString& Suffix) -> UTexture2D*
+	{
+		if (!FPaths::FileExists(FilePath)) return nullptr;
+
+		FString AssetName = FString::Printf(TEXT("T_%s_%s"), *PascalName, *Suffix);
+		FString PackagePath = DestDir / AssetName;
+
+		// Delete existing package to avoid partial load (Bug #21)
+		FString DiskPath = FPackageName::LongPackageNameToFilename(PackagePath, FPackageName::GetAssetPackageExtension());
+		if (FPaths::FileExists(DiskPath))
+		{
+			IFileManager::Get().Delete(*DiskPath, false, true);
+		}
+
+		UPackage* Package = CreatePackage(*PackagePath);
+		if (!Package) return nullptr;
+
+		TArray<uint8> FileData;
+		if (!FFileHelper::LoadFileToArray(FileData, *FilePath)) return nullptr;
+
+		UTextureFactory* Factory = NewObject<UTextureFactory>();
+		Factory->SuppressImportOverwriteDialog();
+
+		const uint8* DataPtr = FileData.GetData();
+		UObject* Obj = Factory->FactoryCreateBinary(
+			UTexture2D::StaticClass(), Package, FName(*AssetName),
+			RF_Public | RF_Standalone, nullptr, TEXT("png"),
+			DataPtr, DataPtr + FileData.Num(), GWarn);
+
+		UTexture2D* Tex = Cast<UTexture2D>(Obj);
+		if (Tex)
+		{
+			if (Tex->GetSizeX() > 4096 || Tex->GetSizeY() > 4096)
+				Tex->MaxTextureSize = 4096;
+
+			FAssetCompilingManager::Get().FinishAllCompilation();
+			Package->MarkPackageDirty();
+
+			FSavePackageArgs SaveArgs;
+			SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
+			UPackage::SavePackage(Package, Tex,
+				*FPackageName::LongPackageNameToFilename(PackagePath, FPackageName::GetAssetPackageExtension()),
+				SaveArgs);
+
+			UE_LOG(LogTemp, Warning, TEXT("[SetupEnemyMaterial] %s: T_%s_%s (%dx%d)"),
+				*PascalName, *PascalName, *Suffix, Tex->GetSizeX(), Tex->GetSizeY());
+		}
+		return Tex;
+	};
+
+	UTexture2D* T_BC = ImportTex(BaseColorFile, TEXT("BaseColor"));
+	UTexture2D* T_Met = ImportTex(MetallicFile, TEXT("Metallic"));
+	UTexture2D* T_Norm = ImportTex(NormalFile, TEXT("Normal"));
+	UTexture2D* T_Rough = ImportTex(RoughnessFile, TEXT("Roughness"));
+
+	if (!T_BC)
+	{
+		return FString::Printf(TEXT("ERROR: %s base color import failed"), *PascalName);
+	}
+
+	// Create material M_<PascalName>
+	FString MatName = FString::Printf(TEXT("M_%s"), *PascalName);
+	FString MatPackagePath = DestDir / MatName;
+
+	FString MatDiskPath = FPackageName::LongPackageNameToFilename(MatPackagePath, FPackageName::GetAssetPackageExtension());
+	if (FPaths::FileExists(MatDiskPath))
+	{
+		IFileManager::Get().Delete(*MatDiskPath, false, true);
+	}
+
+	UPackage* MatPackage = CreatePackage(*MatPackagePath);
+	UMaterial* Mat = NewObject<UMaterial>(MatPackage, FName(*MatName), RF_Public | RF_Standalone);
+	Mat->TwoSided = false;
+	Mat->SetShadingModel(MSM_DefaultLit);
+
+	auto MakeTexSample = [&](UTexture2D* Tex, EMaterialSamplerType ST, int32 PosX, int32 PosY) -> UMaterialExpressionTextureSample*
+	{
+		if (!Tex) return nullptr;
+		UMaterialExpressionTextureSample* Expr = NewObject<UMaterialExpressionTextureSample>(Mat);
+		Expr->Texture = Tex;
+		Expr->SamplerType = ST;
+		Expr->MaterialExpressionEditorX = PosX;
+		Expr->MaterialExpressionEditorY = PosY;
+		Mat->GetExpressionCollection().AddExpression(Expr);
+		return Expr;
+	};
+
+	if (auto* E = MakeTexSample(T_BC, SAMPLERTYPE_Color, -400, 0))
+		Mat->GetEditorOnlyData()->BaseColor.Connect(0, E);
+	if (auto* E = MakeTexSample(T_Met, SAMPLERTYPE_LinearColor, -400, 200))
+		Mat->GetEditorOnlyData()->Metallic.Connect(0, E);
+	if (auto* E = MakeTexSample(T_Norm, SAMPLERTYPE_Normal, -400, 400))
+		Mat->GetEditorOnlyData()->Normal.Connect(0, E);
+	if (auto* E = MakeTexSample(T_Rough, SAMPLERTYPE_LinearColor, -400, 600))
+		Mat->GetEditorOnlyData()->Roughness.Connect(0, E);
+
+	Mat->PreEditChange(nullptr);
+	Mat->PostEditChange();
+	MatPackage->MarkPackageDirty();
+
+	{
+		FSavePackageArgs SaveArgs;
+		SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
+		UPackage::SavePackage(MatPackage, Mat,
+			*FPackageName::LongPackageNameToFilename(MatPackagePath, FPackageName::GetAssetPackageExtension()),
+			SaveArgs);
+	}
+
+	// Assign to mesh
+	FString MeshPath = FString::Printf(TEXT("%s/SKM_%s"), *DestDir, *PascalName);
+	USkeletalMesh* Mesh = LoadObject<USkeletalMesh>(nullptr, *MeshPath);
+	if (Mesh)
+	{
+		TArray<FSkeletalMaterial>& MeshMats = Mesh->GetMaterials();
+		if (MeshMats.Num() > 0)
+		{
+			for (int32 i = 0; i < MeshMats.Num(); i++)
+				MeshMats[i].MaterialInterface = Mat;
+		}
+		else
+		{
+			FSkeletalMaterial NewMat;
+			NewMat.MaterialInterface = Mat;
+			NewMat.MaterialSlotName = FName(*FString::Printf(TEXT("%s_Material"), *PascalName));
+			MeshMats.Add(NewMat);
+		}
+
+		UPackage* MeshPkg = Mesh->GetOutermost();
+		if (MeshPkg)
+		{
+			MeshPkg->MarkPackageDirty();
+			FSavePackageArgs SaveArgs;
+			SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
+			UPackage::SavePackage(MeshPkg, Mesh,
+				*FPackageName::LongPackageNameToFilename(MeshPkg->GetName(), FPackageName::GetAssetPackageExtension()),
+				SaveArgs);
+		}
+	}
+
+	int32 TexCount = (T_BC ? 1 : 0) + (T_Met ? 1 : 0) + (T_Norm ? 1 : 0) + (T_Rough ? 1 : 0);
+	FString Summary = FString::Printf(
+		TEXT("OK: %s — %d textures, %s created%s"),
+		*PascalName, TexCount, *MatName,
+		Mesh ? TEXT(", assigned to mesh") : TEXT(", mesh not found (assign manually)"));
+	UE_LOG(LogTemp, Warning, TEXT("[SetupEnemyMaterial] %s"), *Summary);
+	return Summary;
 }
 
 #endif // WITH_EDITOR

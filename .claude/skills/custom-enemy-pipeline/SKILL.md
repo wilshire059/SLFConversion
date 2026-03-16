@@ -60,11 +60,35 @@ C:/Program Files (x86)/Steam/steamapps/common/ELDEN RING/Game/chr/
 ```
 
 ### Character ID Reference
+
+**Primary target skeleton**: c3100 (Crucible Knight, 103 bones). All ARP retargets map onto c3100 armature.
+
+**Same-skeleton sources** (use Soulstruct direct, no ARP needed):
 | ID | Character | Animations | Notes |
 |----|-----------|-----------|-------|
-| c3100 | Crucible Knight / Guard | 112 | Standard humanoid, sword+shield |
-| c2120 | Malenia | 146 | Dual swords, complex combos |
-| c4810 | Erdtree Avatar | 49 | Large boss, unique skeleton |
+| c3100 | Crucible Knight / Guard | 112 | Target skeleton itself |
+
+**Cross-skeleton sources** (ARP retarget required, validated):
+| ID | Character | Shared % | Anims | Quality |
+|----|-----------|---------|-------|---------|
+| c3010 | Banished Knight | 97% | 398 | Tier 1 — best weapon tracking (no R_Sword bone) |
+| c2500 | Crucible Knight | 99% | 261 | Tier 1 — conservative, defensive |
+| c4350 | Lordsworn Knight | 99% | 336 | Tier 1 — good sword swings |
+| c5840 | Black Knight (DLC) | 99% | 266 | Tier 1 — dynamic DLC quality |
+| c5830 | Messmer Soldier (DLC) | 97% | 554 | Tier 2 — cleanest retarget |
+| c3000 | Exile Soldier | 97% | 721 | Tier 2 — largest library |
+| c4310 | Lordsworn Soldier | 97% | 753 | Tier 2 — most animations |
+| c3300 | Nox Swordstress | 97% | 645 | Tier 2 — fluid movement |
+| c3400 | Grave Warden Duelist | 97% | 325 | Tier 2 — overhead swings |
+
+**Non-humanoid (for reference only, not for ARP retarget):**
+| ID | Character | Notes |
+|----|-----------|-------|
+| c2120 | Malenia | 146 anims, dual swords |
+| c4810 | Erdtree Avatar | 49 anims, large boss |
+| c3180 | Dog/Red Wolf | NOT humanoid |
+| c4060 | Horse | NOT humanoid |
+| c3560 | Godskin Apostle | Inhuman proportions |
 
 ---
 
@@ -900,13 +924,188 @@ C:/scripts/elden_ring_tools/output/<enemy_name>/final/
 - 24fps vs 30fps source
 - No FromSoft file names, bone names, or asset paths anywhere
 
-### Best Practice: Multi-Source Animation Mixing
+### Best Practice: Multi-Source Animation Mixing (ARP Cross-Skeleton Retarget)
+
 The biggest remaining forensic risk is **choreographic recognition** — using animations from a single recognizable enemy. All 13 forensic transforms alter data-level samples but preserve the overall movement timing and style.
 
-**Recommendation**: Mix animations from multiple Elden Ring enemies per custom enemy:
-- Attack01 from c3100 (Crucible Knight)
-- Attack02 from c2120 (Malenia)
-- HeavyAttack from c4810 (Erdtree Avatar)
-- Dodges/locomotion from c3100 (generic, low risk)
+**Solution**: Mix animations from multiple Elden Ring enemies via **ARP cross-skeleton retarget**. Each enemy contributes only a few animations — the combined moveset is unrecognizable as any single FromSoft enemy. This adds a **16th forensic layer**: cross-skeleton retarget inherently introduces subtle motion differences from bone orientation deltas between source/target rest poses.
 
-This makes the resulting moveset unrecognizable as any single FromSoft enemy. All source characters use identical HKX skeleton topology, so `test_soulstruct_direct.py` works for all — just change the `CHAR_ID` and `ANIM_MAP` entries.
+#### Validated Humanoid Enemies (from survey of 289 Elden Ring characters)
+
+A full survey (`humanoid_full_comparison.py`) tested 28 humanoid candidates against c3100 target. Results ranked by bone sharing + visual retarget quality:
+
+**Tier 1 — Best sources (99% bone sharing, clean retarget):**
+
+| ID | Name | Shared Bones | % | Total Anims | Notes |
+|----|------|-------------|---|-------------|-------|
+| c3010 | Banished Knight | 100 | 97 | 398 | **Best weapon tracking** — no R_Sword bone in source |
+| c2500 | Crucible Knight | 102 | 99 | 261 | Same archetype as c3100, conservative stance |
+| c4350 | Lordsworn Knight | 102 | 99 | 336 | Good sword swings (needs weapon fix) |
+| c5840 | Black Knight (DLC) | 102 | 99 | 266 | Dynamic DLC-quality poses |
+
+**Tier 2 — Good sources (97-98%, large animation libraries):**
+
+| ID | Name | Shared Bones | % | Total Anims | Notes |
+|----|------|-------------|---|-------------|-------|
+| c5830 | Messmer Soldier (DLC) | 100 | 97 | 554 | Cleanest retarget, military bearing |
+| c3000 | Exile Soldier | 100 | 97 | 721 | Aggressive lunges, huge library |
+| c4310 | Lordsworn Soldier | 100 | 97 | 753 | Largest anim library |
+| c3300 | Nox Swordstress | 100 | 97 | 645 | Fluid movement, large library |
+| c3400 | Grave Warden Duelist | 100 | 97 | 325 | Strong overhead swings |
+| c3500 | Skeleton Warrior | 101 | 98 | 335 | Hunched posture |
+| c3700 | Scholar/Page | 101 | 98 | 444 | |
+| c4290 | Bloodhound Knight | 101 | 98 | 169 | |
+
+**Avoid — poor retarget quality:**
+
+| ID | Name | Problem |
+|----|------|---------|
+| c2100 | Black Knife Assassin | Severe mesh distortion |
+| c3900 | Fire Monk | Arm stretching artifacts |
+| c4380 | Starcaller/Miner | Extreme arm stretching |
+| c3950 | Man-Serpent | Non-standard proportions |
+
+**Non-humanoid (excluded from survey):**
+c3180 (Dog/Red Wolf), c4060 (Horse), c4080/c4090 (Rats), c3560 (Godskin Apostle — inhuman proportions)
+
+#### Recommended Mix (per custom enemy)
+
+| Animation Type | Source Enemy | Why |
+|---------------|-------------|-----|
+| Attacks (light) | c3000 Exile Soldier | Aggressive, 721 anims |
+| Attacks (heavy) | c3400 Grave Warden | Distinctive overhead |
+| Locomotion | c5830 Messmer Soldier | Cleanest retarget |
+| Dodges/Deaths | c3010 Banished Knight | Heavy armored reactions |
+| Guard/HitReact | c2500 Crucible Knight | Defensive style |
+
+#### ARP Cross-Skeleton Retarget Pipeline
+
+**Reference implementation**: `C:/scripts/elden_ring_tools/top5_blend_export.py`
+
+```bash
+# Run ARP retarget for multiple source enemies, output .blend files:
+blender --background --python top5_blend_export.py
+# Output: test_meshes/hollow_warden_v2/retarget_compare/top5_blends/ARP_cXXXX_aXXX.blend
+```
+
+**Algorithm (7 steps)**:
+1. Load source skeleton from `cXXXX.anibnd.dcx` via `read_skeleton_hkx_entry()`
+2. Scan ALL `_divXX.anibnd.dcx` split files for animations (base anibnd has skeleton only)
+3. Build temp armature: `create_armature_from_skeleton_hkx(skeleton_hkx, "temp_cXXXX")`
+4. Import animation: `import_animation_to_action(ctx, anim_hkx, skeleton_hkx, anim_id, temp_arm, chr_id)`
+5. ARP Remap:
+   ```python
+   scene.source_rig = temp_arm.name
+   scene.target_rig = arm_obj.name
+   scene.source_action = source_action.name
+   bpy.ops.arp.build_bones_list()
+   # Exclude weapon bones from mapping
+   for item in scene.bones_map_v2:
+       if item.source_bone in WEAPON_BONES or item.name in WEAPON_BONES:
+           item.source_bone = ''
+   # Set Pelvis as root
+   for item in scene.bones_map_v2:
+       if item.source_bone and 'pelvis' in item.source_bone.lower():
+           item.set_as_root = True
+           break
+   bpy.ops.arp.retarget(frame_start=frame_start, frame_end=frame_end)
+   ```
+6. Post-process (3 steps, order matters):
+   ```python
+   strip_non_root_translations(retargeted_action)   # Zero non-root bone locations
+   strip_weapon_bone_fcurves(retargeted_action)      # Remove weapon bone keyframes (Bug #36)
+   reset_weapon_bone_poses(arm_obj)                  # Reset weapon poses to identity (Bug #36)
+   ```
+7. Save .blend / export FBX
+
+#### Bug #36: ARP Bakes Garbage Weapon Bone Rotations (CRITICAL)
+
+**Symptom**: Weapon spins independently of hand during attack animations. Or weapon floats away after stripping fcurves.
+
+**Root cause**: When the source skeleton has a bone named `R_Sword` (or `W_Sword`, `R_Weapon_Sword`), ARP auto-maps it to the target's `R_Sword`. Even after clearing the mapping (`item.source_bone = ''`), ARP's bake step STILL creates animated rotation keyframes on the target's R_Sword — with wildly varying values (quaternion delta up to 1.8).
+
+**Why c3010 works without the fix**: c3010 (Banished Knight) uses `R_Weapon01/02/03` instead of `R_Sword`. No name match → ARP never maps it → never bakes it → R_Sword has zero fcurves → cleanly inherits from R_Hand parent.
+
+**Source skeleton weapon bone names** (determines if fix is needed):
+| Enemy | Weapon Bones | Fix Needed? |
+|-------|-------------|-------------|
+| c3010 | R_Weapon01/02/03 | NO — no name match |
+| c4350 | R_Sword, L_Shield | YES |
+| c3000 | W_Sword, W_Shield | YES |
+| c4310 | R_Weapon_Sword | YES |
+| c5830 | R_Weapon_Sword | YES |
+| c2500 | (same as c3100) | YES |
+
+**Fix (both steps required)**:
+```python
+def strip_weapon_bone_fcurves(action):
+    """Remove ALL fcurves for weapon bones after ARP retarget."""
+    STRIP_BONES = {"R_Sword", "L_Sword", "L_Shield", "R_Shield",
+                   "weapon_r", "weapon_l", "R_Sword_tip", "L_Sword_tip",
+                   "R_Sheath", "L_Sheath", "R_Quiver"}
+    # ... remove matching fcurves from action (see top5_blend_export.py)
+
+def reset_weapon_bone_poses(arm_obj):
+    """Reset weapon bone pose to identity after stripping.
+    Without this, weapon floats — ARP's bake alters the edit bone
+    rest orientation, stripping fcurves leaves it at wrong rotation."""
+    for bone_name in RESET_BONES:
+        pb = arm_obj.pose.bones.get(bone_name)
+        if pb:
+            pb.location = (0, 0, 0)
+            pb.rotation_quaternion = Quaternion((1, 0, 0, 0))
+            pb.scale = (1, 1, 1)
+```
+
+**Diagnosis**: If weapon behavior seems wrong, check with `investigate_weapon_disconnect.py`:
+- Good: R_Sword has **NO fcurves**, `local_rot = (1.0, 0.0, 0.0, 0.0)` (identity)
+- Bad: R_Sword has **10 fcurves** with ANIMATED rotation_quaternion channels
+
+#### Loading Animations from Div Files (CRITICAL)
+
+Elden Ring splits animations across multiple archive files:
+- `cXXXX.anibnd.dcx` — base file with **skeleton + compendium only** (0 animations)
+- `cXXXX_div00.anibnd.dcx`, `cXXXX_div01.anibnd.dcx`, ... — actual animation data
+- `cXXXX_a0x.anibnd.dcx` — additional animation sets
+
+**MUST scan all div files** or you'll find 0 animations for most enemies:
+```python
+div_pattern = re.compile(rf"^{chr_id}_(div\d+|a\d+x?)\.anibnd\.dcx$")
+for f in sorted(UNPACKED_DIR.iterdir()):
+    if div_pattern.match(f.name):
+        div_binder = Binder.from_path(f)
+        # Load compendium from div (fallback to base compendium)
+        # Collect anim entries
+```
+
+#### Unpacking Game Archives
+
+```bash
+# List all 289 character IDs:
+python unpack_er_archives.py --game-dir "C:/.../ELDEN RING/Game" --output unpacked --list-chr
+
+# Unpack specific enemy:
+python unpack_er_archives.py --game-dir "C:/.../ELDEN RING/Game" --output unpacked --filter "chr/c3010"
+```
+
+Script: `C:/scripts/elden_ring_tools/unpack_er_archives.py` (handles RSA-encrypted BHD/BDT)
+
+#### Multi-Source Pipeline Scripts
+
+| Script | Location | Purpose |
+|--------|----------|---------|
+| `top5_blend_export.py` | `C:/scripts/elden_ring_tools/` | **Reference impl** — full ARP retarget with weapon fix, saves .blend per anim |
+| `humanoid_full_comparison.py` | `C:/scripts/elden_ring_tools/` | Survey 28 humanoid enemies, screenshot NATIVE + ARP for each |
+| `compare_c3010_vs_c4350.py` | `C:/scripts/elden_ring_tools/` | Diagnostic: dump ARP bone mapping, find weapon auto-map differences |
+| `investigate_weapon_disconnect.py` | `C:/scripts/elden_ring_tools/` | Diagnostic: check weapon fcurves, world-space positions per frame |
+| `investigate_weapon_position.py` | `C:/scripts/elden_ring_tools/` | Diagnostic: compare R_Sword rest pose rotation between blends |
+| `unpack_er_archives.py` | `C:/scripts/elden_ring_tools/` | Unpack encrypted BHD/BDT game files |
+
+#### Survey Output
+
+Screenshots: `C:/scripts/elden_ring_tools/test_meshes/hollow_warden_v2/retarget_compare/humanoid_survey/`
+- `ARP_cXXXX.png` — ARP retarget on Sentinel mesh (28 files)
+- `NATIVE_cXXXX.png` — native stick skeleton (28 files, many blank due to scale)
+
+Validated .blend files: `C:/scripts/elden_ring_tools/test_meshes/hollow_warden_v2/retarget_compare/top5_blends/`
+- `ARP_cXXXX_a000_003000.blend` — attack 1 per enemy (15 files total, 3 per enemy)

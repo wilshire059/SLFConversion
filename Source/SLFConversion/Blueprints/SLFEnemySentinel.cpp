@@ -42,9 +42,11 @@ ASLFEnemySentinel::ASLFEnemySentinel()
 void ASLFEnemySentinel::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(LogTemp, Warning, TEXT("[EnemySentinel] BeginPlay: %s BUILD=20260225A"), *GetName());
 
-	ApplySentinelConfig();
+	// Sentinel disabled — destroy self immediately so it doesn't appear in level
+	UE_LOG(LogTemp, Warning, TEXT("[EnemySentinel] Disabled — destroying %s"), *GetName());
+	Destroy();
+	return;
 }
 
 void ASLFEnemySentinel::ApplySentinelConfig()

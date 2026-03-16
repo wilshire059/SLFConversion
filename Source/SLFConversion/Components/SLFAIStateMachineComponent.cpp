@@ -1250,23 +1250,51 @@ void USLFAIStateMachineComponent::MoveToLocation(const FVector& Location)
 {
 	if (!CachedPawn.IsValid()) return;
 
-	// Try NavMesh-based movement first, then fall back to direct AddMovementInput.
-	// Dynamically spawned enemies may not have NavMesh at their spawn location.
+	// Only use AI controller pathfinding if NavMesh exists at the pawn's location.
+	// Without NavMesh, MoveToLocation activates the path follower which produces
+	// zero/minimal velocity that overrides AddMovementInput (Bug: 65cm/s cap).
 	if (CachedAIController.IsValid())
 	{
-		const float AcceptanceRadius = 50.0f;
-		// bUsePathfinding=true requires NavMesh. Try it, and if there's no NavMesh
-		// the AI controller internally falls back. But if no nav data exists at all,
-		// MoveToLocation silently does nothing. So we also do AddMovementInput as insurance.
-		CachedAIController->MoveToLocation(Location, AcceptanceRadius);
+		UNavigationSystemV1* NavSys = UNavigationSystemV1::GetCurrent(CachedPawn->GetWorld());
+		if (NavSys)
+		{
+			FNavLocation NavLoc;
+			if (NavSys->ProjectPointToNavigation(CachedPawn->GetActorLocation(), NavLoc, FVector(500.0f)))
+			{
+				CachedAIController->MoveToLocation(Location, 50.0f);
+			}
+			else
+			{
+				// No NavMesh here — stop any existing path follower movement request
+				CachedAIController->StopMovement();
+			}
+		}
 	}
 
-	// Always also apply direct movement input as a fallback.
-	// If NavMesh pathing is working, the path follower will override this.
-	// If NavMesh is absent, this ensures the character still walks toward the target.
-	FVector Dir = (Location - CachedPawn->GetActorLocation()).GetSafeNormal();
+	// Direct movement input — works with or without NavMesh.
+	FVector Origin = CachedPawn->GetActorLocation();
+	FVector Dir = (Location - Origin).GetSafeNormal();
 	if (ACharacter* Char = Cast<ACharacter>(CachedPawn.Get()))
 	{
+		// Simple obstacle avoidance: line trace forward and slide sideways if blocked
+		UWorld* World = Char->GetWorld();
+		if (World)
+		{
+			FHitResult Hit;
+			FVector TraceStart = Origin + FVector(0, 0, 50.0f);
+			FVector TraceEnd = TraceStart + Dir * 200.0f;
+			FCollisionQueryParams Params;
+			Params.AddIgnoredActor(Char);
+			if (World->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_WorldStatic, Params))
+			{
+				// Obstacle ahead: slide along the surface normal
+				FVector SlideDir = FVector::VectorPlaneProject(Dir, Hit.Normal).GetSafeNormal();
+				if (!SlideDir.IsNearlyZero())
+				{
+					Dir = SlideDir;
+				}
+			}
+		}
 		Char->AddMovementInput(Dir, 1.0f);
 	}
 }
@@ -1797,23 +1825,27 @@ void USLFAIStateMachineComponent::UpdateMovementSpeed()
 {
 	float Distance = GetDistanceToTarget();
 
-	// Sprint when far, walk when close for more tactical approach
+	// Sprint when far, jog at medium range, walk when close
+	float NewSpeed = Config.WalkSpeed;
 	if (Distance > Config.SprintThresholdDistance)
 	{
-		if (!bIsSprinting)
-		{
-			bIsSprinting = true;
-			SetMovementSpeed(Config.RunSpeed);
-		}
+		bIsSprinting = true;
+		NewSpeed = Config.RunSpeed;
 	}
-	else if (Distance < Config.PreferredCombatDistance)
+	else if (Distance > Config.PreferredCombatDistance)
 	{
-		if (bIsSprinting || Distance < Config.AttackRange)
-		{
-			bIsSprinting = false;
-			SetMovementSpeed(Config.WalkSpeed);
-		}
+		bIsSprinting = false;
+		NewSpeed = FMath::Lerp(Config.WalkSpeed, Config.RunSpeed, 0.6f);
 	}
+	else
+	{
+		bIsSprinting = false;
+		NewSpeed = Config.WalkSpeed;
+	}
+	SetMovementSpeed(NewSpeed);
+	UE_LOG(LogTemp, Log, TEXT("[AIMove] Dist=%.0f Speed=%.0f Sprint=%s (Walk=%.0f Run=%.0f Threshold=%.0f)"),
+		Distance, NewSpeed, bIsSprinting ? TEXT("Y") : TEXT("N"),
+		Config.WalkSpeed, Config.RunSpeed, Config.SprintThresholdDistance);
 }
 
 void USLFAIStateMachineComponent::SetMovementSpeed(float NewSpeed)
@@ -1827,7 +1859,13 @@ void USLFAIStateMachineComponent::SetMovementSpeed(float NewSpeed)
 	{
 		if (UCharacterMovementComponent* Movement = Character->GetCharacterMovement())
 		{
+			float OldSpeed = Movement->MaxWalkSpeed;
 			Movement->MaxWalkSpeed = NewSpeed;
+			if (FMath::Abs(OldSpeed - NewSpeed) > 1.0f)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[AIMove] MaxWalkSpeed: %.0f -> %.0f (Velocity=%.0f)"),
+					OldSpeed, NewSpeed, Movement->Velocity.Size());
+			}
 		}
 	}
 }

@@ -3,6 +3,7 @@
 
 #include "SLFPIETestRunner.h"
 #include "SLFInputSimulator.h"
+#include "Blueprints/SLFEnemyGeneric.h"
 #if WITH_EDITOR
 #include "Editor.h"
 #endif
@@ -384,6 +385,78 @@ static FAutoConsoleCommand CCmdSpawnSentinel(
 		UE_LOG(LogTemp, Warning, TEXT("[SLF.SpawnSentinel] %s at %s"),
 			Sentinel ? *Sentinel->GetName() : TEXT("FAILED"),
 			Sentinel ? *Sentinel->GetActorLocation().ToString() : TEXT("N/A"));
+	})
+);
+
+// Spawn any custom enemy by snake_case name
+// Usage: SLF.SpawnCustom withered_wanderer
+static FAutoConsoleCommand CCmdSpawnCustom(
+	TEXT("SLF.SpawnCustom"),
+	TEXT("Spawn a custom enemy by name.\nUsage: SLF.SpawnCustom withered_wanderer"),
+	FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
+	{
+		if (Args.Num() < 1)
+		{
+			UE_LOG(LogTemp, Error, TEXT("[SLF.SpawnCustom] Usage: SLF.SpawnCustom <enemy_name>"));
+			return;
+		}
+
+		UWorld* World = GEngine ? GEngine->GetCurrentPlayWorld() : nullptr;
+		if (!World) { UE_LOG(LogTemp, Error, TEXT("[SLF.SpawnCustom] No play world!")); return; }
+
+		const FString& SnakeName = Args[0];
+
+		// Spawn SLFEnemyGeneric and set EnemyTypeName
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+		APlayerController* PC = World->GetFirstPlayerController();
+		APawn* PlayerPawn = PC ? PC->GetPawn() : nullptr;
+		if (!PlayerPawn) { UE_LOG(LogTemp, Error, TEXT("[SLF.SpawnCustom] No player pawn!")); return; }
+
+		FVector SpawnLoc = PlayerPawn->GetActorLocation() + PlayerPawn->GetActorForwardVector() * 600.f;
+		// Find ground
+		FHitResult Hit;
+		FVector TraceStart = SpawnLoc + FVector(0, 0, 500);
+		FVector TraceEnd = SpawnLoc - FVector(0, 0, 2000);
+		if (World->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_Visibility))
+		{
+			SpawnLoc.Z = Hit.ImpactPoint.Z + 92.f;
+		}
+
+		// Convert snake_case to PascalCase for asset lookup
+		FString PascalName;
+		bool bCapNext = true;
+		for (int32 i = 0; i < SnakeName.Len(); i++)
+		{
+			TCHAR c = SnakeName[i];
+			if (c == '_')
+			{
+				bCapNext = true;
+			}
+			else
+			{
+				PascalName.AppendChar(bCapNext ? FChar::ToUpper(c) : c);
+				bCapNext = false;
+			}
+		}
+
+		ASLFEnemyGeneric* Enemy = World->SpawnActor<ASLFEnemyGeneric>(
+			ASLFEnemyGeneric::StaticClass(), SpawnLoc, FRotator::ZeroRotator, SpawnParams);
+
+		if (Enemy)
+		{
+			Enemy->EnemyTypeName = PascalName;
+			// ApplyEnemyConfig missed in BeginPlay because name wasn't set yet
+			// Call the public BeginPlay path manually to load assets
+			Enemy->ApplyEnemyConfig();
+			UE_LOG(LogTemp, Warning, TEXT("[SLF.SpawnCustom] Spawned %s (%s) at %s"),
+				*SnakeName, *PascalName, *SpawnLoc.ToString());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("[SLF.SpawnCustom] Failed to spawn %s"), *SnakeName);
+		}
 	})
 );
 
@@ -1067,6 +1140,45 @@ static FAutoConsoleCommand CCmdSentinelAnimTest(
 void USLFPIETestRunner::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
+
+	// Auto-spawn a custom enemy 3 seconds after PIE starts
+	if (GetWorld() && GetWorld()->IsPlayInEditor())
+	{
+		FTimerHandle SpawnTimer;
+		GetWorld()->GetTimerManager().SetTimer(SpawnTimer, [this]()
+		{
+			UWorld* World = GetWorld();
+			if (!World) return;
+
+			APlayerController* PC = World->GetFirstPlayerController();
+			APawn* Player = PC ? PC->GetPawn() : nullptr;
+			if (!Player) return;
+
+			FVector SpawnLoc = Player->GetActorLocation() + Player->GetActorForwardVector() * 600.f;
+
+			// Ground trace
+			FHitResult Hit;
+			if (World->LineTraceSingleByChannel(Hit,
+				SpawnLoc + FVector(0, 0, 500), SpawnLoc - FVector(0, 0, 2000), ECC_Visibility))
+			{
+				SpawnLoc.Z = Hit.ImpactPoint.Z + 92.f;
+			}
+
+			FActorSpawnParameters Params;
+			Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+			ASLFEnemyGeneric* Enemy = World->SpawnActor<ASLFEnemyGeneric>(
+				ASLFEnemyGeneric::StaticClass(), SpawnLoc, FRotator::ZeroRotator, Params);
+
+			if (Enemy)
+			{
+				Enemy->EnemyTypeName = TEXT("WitheredWanderer");
+				Enemy->ApplyEnemyConfig();
+				UE_LOG(LogTemp, Warning, TEXT("[PIE AutoSpawn] WitheredWanderer at %s"), *SpawnLoc.ToString());
+			}
+		}, 3.0f, false);
+	}
+
 	UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] Test runner initialized"));
 	UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] Console commands available:"));
 	UE_LOG(LogTemp, Log, TEXT("  SLF.Test.Actions - Run action system test"));

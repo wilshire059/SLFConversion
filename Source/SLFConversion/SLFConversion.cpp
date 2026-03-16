@@ -28,6 +28,8 @@
 #include "Engine/DirectionalLight.h"
 #include "Components/DirectionalLightComponent.h"
 #include "Dungeon/SLFCaveMazeBuilder.h"
+#include "Kismet2/KismetEditorUtilities.h"
+#include "Engine/BlueprintGeneratedClass.h"
 
 // Console command to reparent a Blueprint to a C++ class
 // Usage: SLF.Reparent /Game/Path/To/Blueprint /Script/Module.CppClassName
@@ -1990,6 +1992,234 @@ static FAutoConsoleCommand ImportTextureCmd(
 
 		FString Result = USLFAutomationLibrary::ImportTextureFromDisk(Args[0], Args[1], Args[2]);
 		UE_LOG(LogTemp, Warning, TEXT("[SLF.ImportTexture] %s"), *Result);
+	})
+);
+
+// Import PBR textures + create material for a single enemy
+// Usage: SLF.SetupEnemyTextures <snake_name> [SourceBaseDir]
+// Default SourceBaseDir: C:/scripts/elden_ring_tools/test_meshes
+static FAutoConsoleCommand SetupEnemyTexturesCmd(
+	TEXT("SLF.SetupEnemyTextures"),
+	TEXT("Import PBR textures and create material for an enemy.\nUsage: SLF.SetupEnemyTextures <snake_name> [SourceBaseDir]"),
+	FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
+	{
+		if (Args.Num() < 1)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Usage: SLF.SetupEnemyTextures <snake_name> [SourceBaseDir]"));
+			return;
+		}
+
+		FString SnakeName = Args[0];
+		FString BaseDir = Args.Num() >= 2 ? Args[1] : TEXT("C:/scripts/elden_ring_tools/test_meshes");
+		FString PascalName = USLFAutomationLibrary::ToPascalCase(SnakeName);
+		FString TextureDir = FPaths::Combine(BaseDir, SnakeName);
+		FString DestDir = FString::Printf(TEXT("/Game/CustomEnemies/%s"), *PascalName);
+
+		FString Result = USLFAutomationLibrary::SetupEnemyMaterial(TextureDir, PascalName, DestDir);
+		UE_LOG(LogTemp, Warning, TEXT("[SLF.SetupEnemyTextures] %s"), *Result);
+	})
+);
+
+// Batch texture import for all enemies in a directory
+// Usage: SLF.SetupBatchTextures [SourceBaseDir]
+// Auto-discovers directories with texture_base_color.png
+static FAutoConsoleCommand SetupBatchTexturesCmd(
+	TEXT("SLF.SetupBatchTextures"),
+	TEXT("Import PBR textures for ALL enemies.\nUsage: SLF.SetupBatchTextures [SourceBaseDir]"),
+	FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
+	{
+		FString BaseDir = Args.Num() >= 1 ? Args[0] : TEXT("C:/scripts/elden_ring_tools/test_meshes");
+
+		// Find all directories containing texture_base_color.png
+		TArray<FString> Subdirs;
+		IFileManager::Get().FindFiles(Subdirs, *FPaths::Combine(BaseDir, TEXT("*")), false, true);
+
+		int32 Success = 0;
+		int32 Failed = 0;
+		int32 Skipped = 0;
+
+		for (const FString& Dir : Subdirs)
+		{
+			FString TextureFile = FPaths::Combine(BaseDir, Dir, TEXT("texture_base_color.png"));
+			if (!FPaths::FileExists(TextureFile))
+			{
+				Skipped++;
+				continue;
+			}
+
+			FString PascalName = USLFAutomationLibrary::ToPascalCase(Dir);
+			FString TextureDir = FPaths::Combine(BaseDir, Dir);
+			FString DestDir = FString::Printf(TEXT("/Game/CustomEnemies/%s"), *PascalName);
+
+			UE_LOG(LogTemp, Warning, TEXT("[BatchTextures] Processing: %s -> %s"), *Dir, *PascalName);
+			FString Result = USLFAutomationLibrary::SetupEnemyMaterial(TextureDir, PascalName, DestDir);
+
+			if (Result.StartsWith(TEXT("OK")))
+			{
+				Success++;
+			}
+			else
+			{
+				Failed++;
+				UE_LOG(LogTemp, Error, TEXT("[BatchTextures] %s: %s"), *Dir, *Result);
+			}
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("=== SetupBatchTextures: %d OK, %d FAILED, %d skipped (no textures) ==="),
+			Success, Failed, Skipped);
+	})
+);
+
+// Create Blueprint for a single enemy (parented to ASLFEnemyGeneric, sets EnemyTypeName)
+// Usage: SLF.CreateEnemyBP <PascalName>
+static FAutoConsoleCommand CreateEnemyBPCmd(
+	TEXT("SLF.CreateEnemyBP"),
+	TEXT("Create a Blueprint for an enemy.\nUsage: SLF.CreateEnemyBP <PascalName>"),
+	FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
+	{
+		if (Args.Num() < 1)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Usage: SLF.CreateEnemyBP <PascalName>"));
+			return;
+		}
+		FString PascalName = Args[0];
+		FString BPDir = TEXT("/Game/CustomEnemies") / PascalName;
+		FString BPName = FString::Printf(TEXT("B_%s"), *PascalName);
+
+		UClass* GenericClass = StaticLoadClass(AActor::StaticClass(), nullptr,
+			TEXT("/Script/SLFConversion.SLFEnemyGeneric"));
+		if (!GenericClass)
+		{
+			UE_LOG(LogTemp, Error, TEXT("[CreateEnemyBP] ASLFEnemyGeneric class not found!"));
+			return;
+		}
+
+		// Delete existing
+		FString DiskPath = FPackageName::LongPackageNameToFilename(
+			BPDir / BPName, FPackageName::GetAssetPackageExtension());
+		if (FPaths::FileExists(DiskPath))
+		{
+			IFileManager::Get().Delete(*DiskPath, false, true);
+		}
+
+		UPackage* Pkg = CreatePackage(*(BPDir / BPName));
+		if (!Pkg) return;
+
+		UBlueprint* BP = FKismetEditorUtilities::CreateBlueprint(
+			GenericClass, Pkg, FName(*BPName),
+			BPTYPE_Normal, UBlueprint::StaticClass(),
+			UBlueprintGeneratedClass::StaticClass());
+		if (!BP)
+		{
+			UE_LOG(LogTemp, Error, TEXT("[CreateEnemyBP] Failed to create %s"), *BPName);
+			return;
+		}
+
+		// Set EnemyTypeName on CDO
+		AActor* CDO = Cast<AActor>(BP->GeneratedClass->GetDefaultObject());
+		if (CDO)
+		{
+			FStrProperty* StrProp = CastField<FStrProperty>(
+				BP->GeneratedClass->FindPropertyByName(FName(TEXT("EnemyTypeName"))));
+			if (StrProp)
+			{
+				StrProp->SetPropertyValue_InContainer(CDO, PascalName);
+			}
+		}
+
+		FKismetEditorUtilities::CompileBlueprint(BP, EBlueprintCompileOptions::SkipGarbageCollection);
+
+		FSavePackageArgs SaveArgs;
+		SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
+		FString Filename = FPackageName::LongPackageNameToFilename(
+			Pkg->GetName(), FPackageName::GetAssetPackageExtension());
+		UPackage::SavePackage(Pkg, BP, *Filename, SaveArgs);
+
+		UE_LOG(LogTemp, Warning, TEXT("[CreateEnemyBP] OK: %s (EnemyTypeName=%s)"), *BPName, *PascalName);
+	})
+);
+
+// Batch create Blueprints for all enemies that have a SKM_ mesh in /Game/CustomEnemies/
+// Usage: SLF.CreateBatchEnemyBPs
+static FAutoConsoleCommand CreateBatchEnemyBPsCmd(
+	TEXT("SLF.CreateBatchEnemyBPs"),
+	TEXT("Create Blueprints for ALL enemies in /Game/CustomEnemies/.\nUsage: SLF.CreateBatchEnemyBPs"),
+	FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
+	{
+		// Discover all CustomEnemies directories by scanning disk
+		FString ContentDir = FPaths::Combine(FPaths::ProjectContentDir(), TEXT("CustomEnemies"));
+		TArray<FString> Subdirs;
+		IFileManager::Get().FindFiles(Subdirs, *FPaths::Combine(ContentDir, TEXT("*")), false, true);
+
+		UClass* GenericClass = StaticLoadClass(AActor::StaticClass(), nullptr,
+			TEXT("/Script/SLFConversion.SLFEnemyGeneric"));
+		if (!GenericClass)
+		{
+			UE_LOG(LogTemp, Error, TEXT("[CreateBatchEnemyBPs] ASLFEnemyGeneric not found!"));
+			return;
+		}
+
+		int32 Created = 0;
+		int32 Skipped = 0;
+
+		for (const FString& Dir : Subdirs)
+		{
+			// Skip Sentinel (has dedicated class)
+			if (Dir == TEXT("Sentinel")) { Skipped++; continue; }
+
+			// Check if SKM_ mesh exists
+			FString MeshFile = FPaths::Combine(ContentDir, Dir, FString::Printf(TEXT("SKM_%s.uasset"), *Dir));
+			if (!FPaths::FileExists(MeshFile))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[CreateBatchEnemyBPs] Skip %s (no mesh)"), *Dir);
+				Skipped++;
+				continue;
+			}
+
+			// Check if BP already exists
+			FString BPName = FString::Printf(TEXT("B_%s"), *Dir);
+			FString BPPath = FString::Printf(TEXT("/Game/CustomEnemies/%s/%s"), *Dir, *BPName);
+			FString BPDiskPath = FPackageName::LongPackageNameToFilename(BPPath, FPackageName::GetAssetPackageExtension());
+
+			// Always recreate to ensure latest CDO values
+			if (FPaths::FileExists(BPDiskPath))
+			{
+				IFileManager::Get().Delete(*BPDiskPath, false, true);
+			}
+
+			UPackage* Pkg = CreatePackage(*BPPath);
+			if (!Pkg) continue;
+
+			UBlueprint* BP = FKismetEditorUtilities::CreateBlueprint(
+				GenericClass, Pkg, FName(*BPName),
+				BPTYPE_Normal, UBlueprint::StaticClass(),
+				UBlueprintGeneratedClass::StaticClass());
+			if (!BP) continue;
+
+			AActor* CDO = Cast<AActor>(BP->GeneratedClass->GetDefaultObject());
+			if (CDO)
+			{
+				FStrProperty* StrProp = CastField<FStrProperty>(
+					BP->GeneratedClass->FindPropertyByName(FName(TEXT("EnemyTypeName"))));
+				if (StrProp)
+				{
+					StrProp->SetPropertyValue_InContainer(CDO, Dir);
+				}
+			}
+
+			FKismetEditorUtilities::CompileBlueprint(BP, EBlueprintCompileOptions::SkipGarbageCollection);
+
+			FSavePackageArgs SaveArgs;
+			SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
+			FString Filename = FPackageName::LongPackageNameToFilename(
+				Pkg->GetName(), FPackageName::GetAssetPackageExtension());
+			UPackage::SavePackage(Pkg, BP, *Filename, SaveArgs);
+
+			Created++;
+			UE_LOG(LogTemp, Warning, TEXT("[CreateBatchEnemyBPs] Created B_%s"), *Dir);
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("=== CreateBatchEnemyBPs: %d created, %d skipped ==="), Created, Skipped);
 	})
 );
 
