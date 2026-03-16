@@ -9,6 +9,9 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Engine/World.h"
 #include "Engine/EngineTypes.h"
+#include "NiagaraComponent.h"
+#include "NiagaraSystem.h"
+#include "NiagaraFunctionLibrary.h"
 
 FString USLFAnimNotifyStateWeaponTrace::GetNotifyName_Implementation() const
 {
@@ -38,6 +41,31 @@ void USLFAnimNotifyStateWeaponTrace::NotifyBegin(USkeletalMeshComponent* MeshCom
 		bReachMode ? TEXT("Reach") : TEXT("TwoSocket"),
 		bReachMode ? *FString::Printf(TEXT(" (%.0fcm, Axis=%d, Negate=%s)"),
 			WeaponReach, (int32)WeaponDirectionAxis.GetValue(), bNegateDirection ? TEXT("Y") : TEXT("N")) : TEXT(""));
+
+	// Spawn slash VFX at weapon socket
+	UNiagaraSystem* VFXToUse = SlashVFX;
+	if (!VFXToUse)
+	{
+		VFXToUse = LoadObject<UNiagaraSystem>(nullptr,
+			TEXT("/Game/SoulslikeFramework/VFX/Systems/NS_RibbonTrail.NS_RibbonTrail"));
+	}
+	if (VFXToUse && bHasStart)
+	{
+		ActiveSlashComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(
+			VFXToUse,
+			MeshComp,
+			StartSocketName,
+			FVector::ZeroVector,
+			FRotator::ZeroRotator,
+			EAttachLocation::SnapToTarget,
+			true // bAutoDestroy
+		);
+		if (ActiveSlashComponent)
+		{
+			ActiveSlashComponent->SetRelativeScale3D(FVector(SlashVFXScale));
+			ActiveSlashComponent->SetColorParameter(FName(TEXT("Color")), SlashColor);
+		}
+	}
 }
 
 void USLFAnimNotifyStateWeaponTrace::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
@@ -300,6 +328,13 @@ void USLFAnimNotifyStateWeaponTrace::NotifyEnd(USkeletalMeshComponent* MeshComp,
 	if (!MeshComp) return;
 
 	UE_LOG(LogTemp, Log, TEXT("[ANS_WeaponTrace] End - Hit %d actors"), HitActors.Num());
+
+	// Deactivate slash VFX (auto-destroy handles cleanup)
+	if (ActiveSlashComponent)
+	{
+		ActiveSlashComponent->Deactivate();
+		ActiveSlashComponent = nullptr;
+	}
 
 	// Clear hit actors list
 	HitActors.Empty();

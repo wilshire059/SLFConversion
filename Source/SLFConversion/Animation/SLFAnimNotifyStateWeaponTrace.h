@@ -80,6 +80,21 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace|Damage")
 	float OverridePoiseDamage = -1.0f;
 
+	// --- Slash VFX ---
+
+	/** Niagara system to spawn as a slash trail during the trace window.
+	 *  Defaults to NS_RibbonTrail if not set. Set to None to disable. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace|VFX")
+	class UNiagaraSystem* SlashVFX = nullptr;
+
+	/** Color for the slash trail (Convergence purple by default) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace|VFX")
+	FLinearColor SlashColor = FLinearColor(0.4f, 0.1f, 0.6f, 1.0f);
+
+	/** Scale multiplier for the slash VFX */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace|VFX")
+	float SlashVFXScale = 1.0f;
+
 	// --- Debug ---
 
 	/** Draw debug trace spheres in PIE for visual tuning */
@@ -90,6 +105,9 @@ public:
 
 	UPROPERTY(Transient)
 	TArray<AActor*> HitActors;
+
+	UPROPERTY(Transient)
+	class UNiagaraComponent* ActiveSlashComponent = nullptr;
 
 	virtual FString GetNotifyName_Implementation() const override;
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference) override;
