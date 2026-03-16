@@ -337,8 +337,11 @@ int32 USetupBatchEnemyCommandlet::Main(const FString& Params)
 		// UAssetImportTask for textures crashes in commandlet mode (Slate/ContentBrowser null ptr).
 		// Textures can be imported via SLF.SetupSentinelTextures pattern after commandlet completes.
 		// ═══════════════════════════════════════════════════════════════
-		// Texture import skipped (crashes in commandlet), but create material from existing texture assets
-		ImportTexturesAndCreateMaterial(SourceDir, DestDir, PascalName);
+		// Texture import skipped when -skipmesh (crashes on sequential commandlet runs due to Slate/ContentBrowser)
+		if (!bSkipMesh)
+		{
+			ImportTexturesAndCreateMaterial(SourceDir, DestDir, PascalName);
+		}
 
 		// ═══════════════════════════════════════════════════════════════
 		// Step 1: Import Animations
