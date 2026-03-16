@@ -2396,6 +2396,72 @@ static FAutoConsoleCommand PlaceCaveGameplayCmd(
 	})
 );
 
+// Dump all ADungeon actor properties in the current world to a JSON file
+// Usage: Open Map_DA_Theme_Foundry in editor, build dungeon, then run this
+static FAutoConsoleCommand DumpDungeonCmd(
+	TEXT("SLF.DumpDungeon"),
+	TEXT("Dump all Dungeon actor settings to C:/scripts/SLFConversion/dungeon_dump.json"),
+	FConsoleCommandDelegate::CreateLambda([]()
+	{
+		UWorld* World = GEditor ? GEditor->GetEditorWorldContext().World() : nullptr;
+		if (!World)
+		{
+			UE_LOG(LogTemp, Error, TEXT("[DumpDungeon] No editor world"));
+			return;
+		}
+
+		TArray<FString> Lines;
+		Lines.Add(TEXT("{"));
+		Lines.Add(TEXT("  \"dungeons\": ["));
+
+		int32 DungeonIdx = 0;
+		for (TActorIterator<AActor> It(World); It; ++It)
+		{
+			// Find ADungeon by class name (avoid header dependency)
+			if (!It->GetClass()->GetName().Contains(TEXT("Dungeon"))) continue;
+
+			AActor* Actor = *It;
+			if (DungeonIdx > 0) Lines.Add(TEXT("    ,"));
+			Lines.Add(TEXT("    {"));
+			Lines.Add(FString::Printf(TEXT("      \"class\": \"%s\","), *Actor->GetClass()->GetPathName()));
+			Lines.Add(FString::Printf(TEXT("      \"name\": \"%s\","), *Actor->GetName()));
+			Lines.Add(FString::Printf(TEXT("      \"location\": \"%s\","), *Actor->GetActorLocation().ToString()));
+
+			// Dump all UPROPERTY values via reflection
+			Lines.Add(TEXT("      \"properties\": {"));
+			int32 PropIdx = 0;
+			for (TFieldIterator<FProperty> PropIt(Actor->GetClass()); PropIt; ++PropIt)
+			{
+				FProperty* Prop = *PropIt;
+				FString Value;
+				const void* PropAddr = Prop->ContainerPtrToValuePtr<void>(Actor);
+				Prop->ExportTextItem_Direct(Value, PropAddr, nullptr, Actor, PPF_None);
+
+				if (Value.Len() > 500) Value = Value.Left(500) + TEXT("...[truncated]");
+				Value.ReplaceInline(TEXT("\""), TEXT("\\\""));
+				Value.ReplaceInline(TEXT("\n"), TEXT("\\n"));
+				Value.ReplaceInline(TEXT("\r"), TEXT(""));
+
+				if (PropIdx > 0) Lines.Add(TEXT("        ,"));
+				Lines.Add(FString::Printf(TEXT("        \"%s\": \"%s\""),
+					*Prop->GetName(), *Value));
+				PropIdx++;
+			}
+			Lines.Add(TEXT("      }"));
+			Lines.Add(TEXT("    }"));
+			DungeonIdx++;
+		}
+
+		Lines.Add(TEXT("  ]"));
+		Lines.Add(TEXT("}"));
+
+		FString Output = FString::Join(Lines, TEXT("\n"));
+		FString OutPath = TEXT("C:/scripts/SLFConversion/dungeon_dump.json");
+		FFileHelper::SaveStringToFile(Output, *OutPath);
+		UE_LOG(LogTemp, Warning, TEXT("[DumpDungeon] Exported %d dungeon actors to %s"), DungeonIdx, *OutPath);
+	})
+);
+
 #endif // WITH_EDITOR
 
 IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, SLFConversion, "SLFConversion" );

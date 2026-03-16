@@ -51,6 +51,12 @@ struct FDungeonBiomeConfig
 	float MinHubTerminalDistance = 10000.0f;
 	int32 MaxSeedRetries = 25;
 
+	// ── Generation Mode ──
+	bool bUseVoxels = true;           // true = voxel carving (caves), false = theme-only (bunker/foundry)
+	FString BundledFlowAssetPath;     // If set, use pre-built CellFlow asset instead of generating one
+	FString BundledThemeAssetPath;    // If set, use pre-built theme instead of generating one
+	FString MarkerSettingsPath;       // CellFlow marker settings asset (for Foundry-style themes)
+
 	// ── Voxel ──
 	float VoxelSize = 50.0f;
 	float WallThickness = 125.0f;

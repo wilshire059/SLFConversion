@@ -210,6 +210,35 @@ FDungeonBiomeConfig UAutoBuildDungeonCommandlet::GetBiomePreset(const FString& B
 		Cfg.ThemeAssetPath = TEXT("/Game/Dungeons/Themes/DT_Abyss");
 		Cfg.MapPath = TEXT("/Game/Maps/L_Abyss");
 	}
+	else if (BiomeName.Equals(TEXT("bunker"), ESearchCase::IgnoreCase))
+	{
+		Cfg.BiomeName = TEXT("Bunker");
+		Cfg.bUseVoxels = false;  // Theme-only mode — Foundry meshes provide walls/floors/ceilings
+
+		// Use DA's pre-built Foundry CellFlow + Theme
+		Cfg.BundledFlowAssetPath = TEXT("/DungeonArchitect/Showcase/Samples/Themes/Foundry/CellFlow_Graph_Foundry");
+		Cfg.BundledThemeAssetPath = TEXT("/DungeonArchitect/Showcase/Samples/Themes/Foundry/T_Theme_Founddry");
+		Cfg.MarkerSettingsPath = TEXT("/DungeonArchitect/Showcase/Samples/Themes/Foundry/CF_MarkerSettings_Foundry");
+
+		Cfg.GridSize = FVector(800, 800, 200);  // Wide rooms, low ceiling (bunker feel)
+		Cfg.MaxSeedRetries = 50;
+
+		// Sci-fi lighting — cool fluorescent tones
+		Cfg.PathLightColor = FLinearColor(0.8f, 0.9f, 1.0f);
+		Cfg.PathLightIntensity = 25000.0f;
+		Cfg.TorchColor = FLinearColor(0.6f, 0.85f, 1.0f);
+		Cfg.TorchIntensity = 20000.0f;
+		Cfg.AmbientColor = FLinearColor(0.4f, 0.5f, 0.7f);
+		Cfg.AmbientIntensity = 10000.0f;
+		Cfg.SkyLightColor = FLinearColor(0.5f, 0.6f, 0.8f);
+		Cfg.SkyLightIntensity = 10.0f;
+		Cfg.DirLightColor = FLinearColor(0.7f, 0.8f, 1.0f);
+		Cfg.DirLightIntensity = 4.0f;
+
+		Cfg.FlowAssetPath = TEXT("/Game/Dungeons/CellFlow/CF_Bunker");
+		Cfg.ThemeAssetPath = TEXT("/Game/Dungeons/Themes/DT_Bunker");
+		Cfg.MapPath = TEXT("/Game/Maps/L_Bunker");
+	}
 	else // stone (default)
 	{
 		Cfg.BiomeName = TEXT("Stone Cave");
@@ -222,18 +251,152 @@ FDungeonBiomeConfig UAutoBuildDungeonCommandlet::GetBiomePreset(const FString& B
 int32 UAutoBuildDungeonCommandlet::Main(const FString& Params)
 {
 #if WITH_EDITOR
-	UE_LOG(LogTemp, Warning, TEXT(""));
-	UE_LOG(LogTemp, Warning, TEXT("========================================================"));
-	UE_LOG(LogTemp, Warning, TEXT("   AutoBuildDungeon — Data-Driven Voxel Cave (CellFlow)"));
-	UE_LOG(LogTemp, Warning, TEXT("========================================================"));
-	UE_LOG(LogTemp, Warning, TEXT(""));
-
 	if (!FSlateApplication::IsInitialized())
 	{
 		FSlateApplication::Create();
 	}
 	IAssetRegistry& AR = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry").Get();
 	AR.SearchAllAssets(true);
+
+	// ── Dump mode: load existing map and export dungeon actor properties ──
+	FString DumpMapPath;
+	if (FParse::Value(*Params, TEXT("-DumpMap="), DumpMapPath))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("=== DUMP MODE: Loading %s ==="), *DumpMapPath);
+
+		FString LongPath = DumpMapPath;
+		if (!LongPath.StartsWith(TEXT("/")))
+			LongPath = TEXT("/") + LongPath;
+
+		UPackage* MapPkg = LoadPackage(nullptr, *LongPath, LOAD_None);
+		if (!MapPkg)
+		{
+			UE_LOG(LogTemp, Error, TEXT("  Failed to load map package: %s"), *LongPath);
+			return 1;
+		}
+		MapPkg->FullyLoad();
+
+		UWorld* World = nullptr;
+		for (TObjectIterator<UWorld> It; It; ++It)
+		{
+			if (It->GetOuter() == MapPkg)
+			{
+				World = *It;
+				break;
+			}
+		}
+		if (!World)
+		{
+			UE_LOG(LogTemp, Error, TEXT("  No UWorld found in package"));
+			return 1;
+		}
+
+		TArray<FString> Lines;
+		Lines.Add(TEXT("{"));
+		Lines.Add(TEXT("  \"map\": \"") + DumpMapPath + TEXT("\","));
+		Lines.Add(TEXT("  \"actors\": ["));
+
+		int32 ActorIdx = 0;
+
+		// Iterate all objects in the package to find actors (TActorIterator needs gameplay init)
+		TArray<AActor*> FoundActors;
+		for (TObjectIterator<AActor> It; It; ++It)
+		{
+			if (It->GetWorld() == World || It->GetOuter() == World->PersistentLevel)
+			{
+				FoundActors.Add(*It);
+			}
+		}
+		UE_LOG(LogTemp, Warning, TEXT("  Found %d actors in world"), FoundActors.Num());
+
+		for (AActor* Actor : FoundActors)
+		{
+			if (!Actor) continue;
+
+			// Only dump DA-related actors
+			FString ClassName = Actor->GetClass()->GetName();
+			bool bRelevant = ClassName.Contains(TEXT("Dungeon")) ||
+				ClassName.Contains(TEXT("CellFlow")) ||
+				ClassName.Contains(TEXT("Voxel")) ||
+				ClassName.Contains(TEXT("Cave"));
+			if (!bRelevant) continue;
+
+			if (ActorIdx > 0) Lines.Add(TEXT("    ,"));
+			Lines.Add(TEXT("    {"));
+			Lines.Add(FString::Printf(TEXT("      \"class\": \"%s\","), *Actor->GetClass()->GetPathName()));
+			Lines.Add(FString::Printf(TEXT("      \"name\": \"%s\","), *Actor->GetName()));
+
+			Lines.Add(TEXT("      \"properties\": {"));
+			int32 PropIdx = 0;
+			for (TFieldIterator<FProperty> PropIt(Actor->GetClass()); PropIt; ++PropIt)
+			{
+				FProperty* Prop = *PropIt;
+				FString Value;
+				const void* PropAddr = Prop->ContainerPtrToValuePtr<void>(Actor);
+				Prop->ExportTextItem_Direct(Value, PropAddr, nullptr, Actor, PPF_None);
+
+				if (Value.Len() > 1000) Value = Value.Left(1000) + TEXT("...[truncated]");
+				Value.ReplaceInline(TEXT("\""), TEXT("\\\""));
+				Value.ReplaceInline(TEXT("\n"), TEXT("\\n"));
+				Value.ReplaceInline(TEXT("\r"), TEXT(""));
+
+				if (PropIdx > 0) Lines.Add(TEXT("        ,"));
+				Lines.Add(FString::Printf(TEXT("        \"%s\": \"%s\""),
+					*Prop->GetName(), *Value));
+				PropIdx++;
+			}
+			Lines.Add(TEXT("      }"));
+
+			// Also dump Config sub-object properties
+			FProperty* ConfigProp = Actor->GetClass()->FindPropertyByName(FName("Config"));
+			if (ConfigProp)
+			{
+				FObjectProperty* ObjProp = CastField<FObjectProperty>(ConfigProp);
+				if (ObjProp)
+				{
+					UObject* ConfigObj = ObjProp->GetObjectPropertyValue(ObjProp->ContainerPtrToValuePtr<void>(Actor));
+					if (ConfigObj)
+					{
+						Lines.Add(TEXT("      ,\"config_properties\": {"));
+						int32 CfgPropIdx = 0;
+						for (TFieldIterator<FProperty> CfgPropIt(ConfigObj->GetClass()); CfgPropIt; ++CfgPropIt)
+						{
+							FProperty* CP = *CfgPropIt;
+							FString CV;
+							const void* CPA = CP->ContainerPtrToValuePtr<void>(ConfigObj);
+							CP->ExportTextItem_Direct(CV, CPA, nullptr, ConfigObj, PPF_None);
+							if (CV.Len() > 1000) CV = CV.Left(1000) + TEXT("...[truncated]");
+							CV.ReplaceInline(TEXT("\""), TEXT("\\\""));
+							CV.ReplaceInline(TEXT("\n"), TEXT("\\n"));
+							CV.ReplaceInline(TEXT("\r"), TEXT(""));
+							if (CfgPropIdx > 0) Lines.Add(TEXT("        ,"));
+							Lines.Add(FString::Printf(TEXT("        \"%s\": \"%s\""), *CP->GetName(), *CV));
+							CfgPropIdx++;
+						}
+						Lines.Add(TEXT("      }"));
+					}
+				}
+			}
+
+			Lines.Add(TEXT("    }"));
+			ActorIdx++;
+		}
+
+		Lines.Add(TEXT("  ]"));
+		Lines.Add(TEXT("}"));
+
+		FString Output = FString::Join(Lines, TEXT("\n"));
+		FString OutPath = TEXT("C:/scripts/SLFConversion/dungeon_dump.json");
+		FFileHelper::SaveStringToFile(Output, *OutPath);
+		UE_LOG(LogTemp, Warning, TEXT("=== Exported %d actors to %s ==="), ActorIdx, *OutPath);
+		return 0;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT(""));
+	UE_LOG(LogTemp, Warning, TEXT("========================================================"));
+	UE_LOG(LogTemp, Warning, TEXT("   AutoBuildDungeon — Data-Driven Voxel Cave (CellFlow)"));
+	UE_LOG(LogTemp, Warning, TEXT("========================================================"));
+	UE_LOG(LogTemp, Warning, TEXT(""));
 
 	// ── Parse arguments ──
 	int32 Seed = 42;
@@ -267,9 +430,23 @@ int32 UAutoBuildDungeonCommandlet::Main(const FString& Params)
 	// ════════════════════════════════════════════════════
 	UE_LOG(LogTemp, Warning, TEXT("--- STEP 1: CellFlow Asset ---"));
 
-	// Reset cache so each biome gets its own flow asset
-	CachedCellFlowAsset = nullptr;
-	UCellFlowAsset* FlowAsset = CreateCellFlowAsset(Cfg);
+	UCellFlowAsset* FlowAsset = nullptr;
+
+	// Use bundled CellFlow asset if specified (e.g., Foundry bunker)
+	if (!Cfg.BundledFlowAssetPath.IsEmpty())
+	{
+		FString FullPath = Cfg.BundledFlowAssetPath + TEXT(".") + FPaths::GetBaseFilename(Cfg.BundledFlowAssetPath);
+		FlowAsset = LoadObject<UCellFlowAsset>(nullptr, *FullPath);
+		UE_LOG(LogTemp, Warning, TEXT("  Using bundled CellFlow: %s (%s)"),
+			*Cfg.BundledFlowAssetPath, FlowAsset ? TEXT("OK") : TEXT("NOT FOUND"));
+	}
+
+	if (!FlowAsset)
+	{
+		// Generate custom CellFlow asset
+		CachedCellFlowAsset = nullptr;
+		FlowAsset = CreateCellFlowAsset(Cfg);
+	}
 
 	UE_LOG(LogTemp, Warning, TEXT("  CellFlow: %s"), FlowAsset ? TEXT("OK") : TEXT("FAILED"));
 
@@ -284,7 +461,21 @@ int32 UAutoBuildDungeonCommandlet::Main(const FString& Params)
 	// ════════════════════════════════════════════════════
 	UE_LOG(LogTemp, Warning, TEXT("--- STEP 2: Theme ---"));
 
-	UDungeonThemeAsset* Theme = GenerateUnifiedTheme(Cfg);
+	UDungeonThemeAsset* Theme = nullptr;
+
+	// Use bundled theme if specified
+	if (!Cfg.BundledThemeAssetPath.IsEmpty())
+	{
+		FString FullPath = Cfg.BundledThemeAssetPath + TEXT(".") + FPaths::GetBaseFilename(Cfg.BundledThemeAssetPath);
+		Theme = LoadObject<UDungeonThemeAsset>(nullptr, *FullPath);
+		UE_LOG(LogTemp, Warning, TEXT("  Using bundled theme: %s (%s)"),
+			*Cfg.BundledThemeAssetPath, Theme ? TEXT("OK") : TEXT("NOT FOUND"));
+	}
+
+	if (!Theme)
+	{
+		Theme = GenerateUnifiedTheme(Cfg);
+	}
 
 	UE_LOG(LogTemp, Warning, TEXT("  Theme: %s"), Theme ? TEXT("OK") : TEXT("FAILED"));
 
@@ -1028,74 +1219,100 @@ bool UAutoBuildDungeonCommandlet::GenerateTestLevel(UCellFlowAsset* FlowAsset,
 		Config->Seed = Seed;
 		Config->MaxBuildTimePerFrameMs = 0;
 
-		// Voxel config
-		Dungeon->bCarveVoxels = true;
+		// Load marker config if specified (e.g., CF_MarkerSettings_Foundry)
+		if (!Cfg.MarkerSettingsPath.IsEmpty())
+		{
+			FString MSFullPath = Cfg.MarkerSettingsPath + TEXT(".") + FPaths::GetBaseFilename(Cfg.MarkerSettingsPath);
+			UCellFlowConfigMarkerSettings* MarkerCfg = LoadObject<UCellFlowConfigMarkerSettings>(nullptr, *MSFullPath);
+			if (MarkerCfg)
+			{
+				Config->MarkerConfig = TSoftObjectPtr<UCellFlowConfigMarkerSettings>(FSoftObjectPath(MarkerCfg->GetPathName()));
+				UE_LOG(LogTemp, Warning, TEXT("  MarkerConfig: %s"), *MarkerCfg->GetName());
+			}
+		}
 
-		FDAVoxelMeshGenerationSettings& VMS = Dungeon->VoxelMeshSettings;
-		VMS.VoxelSize = Cfg.VoxelSize;
-		VMS.VoxelChunkSize = 32;
-		VMS.bEnableCollision = true;
-		VMS.WallThickness = Cfg.WallThickness;
-		VMS.bUseGPU = false;
-		VMS.UVScale = 150.0f;
-		VMS.VoxelShapeTheme.Reset();
+		if (Cfg.bUseVoxels)
+		{
+			// ── Voxel mode (caves) ──
+			Dungeon->bCarveVoxels = true;
 
-		// Biome material (import PBR textures) or fallback rock material
-		UMaterialInterface* VoxelMat = nullptr;
-		if (!Cfg.BiomeTextureDiskPath.IsEmpty())
-		{
-			VoxelMat = CreateBiomeMaterial(Cfg);
-		}
-		if (!VoxelMat)
-		{
-			VoxelMat = LoadObject<UMaterialInterface>(nullptr, *Cfg.VoxelMaterialPath);
-		}
-		if (!VoxelMat)
-		{
-			VoxelMat = LoadObject<UMaterialInterface>(nullptr, *Cfg.FallbackMaterialPath);
-		}
-		if (VoxelMat)
-		{
-			VMS.Material = VoxelMat;
-			UE_LOG(LogTemp, Warning, TEXT("  VMS.Material set to: %s (class=%s)"),
-				*VoxelMat->GetPathName(), *VoxelMat->GetClass()->GetName());
+			FDAVoxelMeshGenerationSettings& VMS = Dungeon->VoxelMeshSettings;
+			VMS.VoxelSize = Cfg.VoxelSize;
+			VMS.VoxelChunkSize = 32;
+			VMS.bEnableCollision = true;
+			VMS.WallThickness = Cfg.WallThickness;
+			VMS.bUseGPU = false;
+			VMS.UVScale = 150.0f;
+			VMS.VoxelShapeTheme.Reset();
+
+			// Biome material (import PBR textures) or fallback rock material
+			UMaterialInterface* VoxelMat = nullptr;
+			if (!Cfg.BiomeTextureDiskPath.IsEmpty())
+			{
+				VoxelMat = CreateBiomeMaterial(Cfg);
+			}
+			if (!VoxelMat)
+			{
+				VoxelMat = LoadObject<UMaterialInterface>(nullptr, *Cfg.VoxelMaterialPath);
+			}
+			if (!VoxelMat)
+			{
+				VoxelMat = LoadObject<UMaterialInterface>(nullptr, *Cfg.FallbackMaterialPath);
+			}
+			if (VoxelMat)
+			{
+				VMS.Material = VoxelMat;
+				UE_LOG(LogTemp, Warning, TEXT("  VMS.Material set to: %s (class=%s)"),
+					*VoxelMat->GetPathName(), *VoxelMat->GetClass()->GetName());
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("  VMS.Material is NULL — voxels will use default!"));
+			}
+
+			// Voxel noise
+			FDAVoxelNoiseSettings& VNS = Dungeon->VoxelNoiseSettings;
+			VNS.NoiseAmplitude = Cfg.NoiseAmplitude;
+			VNS.NoiseOctaves = Cfg.NoiseOctaves;
+			VNS.NoiseFloorScale = Cfg.NoiseFloorScale;
+			VNS.NoiseCeilingScale = Cfg.NoiseCeilingScale;
+			VNS.bEnableDomainWarp = Cfg.bDomainWarp;
+			VNS.DomainWarpStrength = Cfg.DomainWarpStrength;
+			VNS.NoiseScaleVector = FVector(1, 1, 0.7f);
+
+			// Cave SDF model
+			UDungeonVoxelSDFModel_Cave* CaveModel = NewObject<UDungeonVoxelSDFModel_Cave>(Dungeon);
+			CaveModel->CeilingExtraHeight = Cfg.CeilingExtraHeight;
+			CaveModel->bEnableCeilingHoles = true;
+			Dungeon->VoxelSDFModel = CaveModel;
 		}
 		else
 		{
-			UE_LOG(LogTemp, Error, TEXT("  VMS.Material is NULL — voxels will use default!"));
+			// ── Theme-only mode (bunker/foundry) ──
+			// No voxel carving — the theme provides walls, floors, ceilings as meshes
+			Dungeon->bCarveVoxels = false;
+			UE_LOG(LogTemp, Warning, TEXT("  Theme-only mode (no voxels) — walls/floors/ceilings from theme meshes"));
 		}
-
-		// Voxel noise
-		FDAVoxelNoiseSettings& VNS = Dungeon->VoxelNoiseSettings;
-		VNS.NoiseAmplitude = Cfg.NoiseAmplitude;
-		VNS.NoiseOctaves = Cfg.NoiseOctaves;
-		VNS.NoiseFloorScale = Cfg.NoiseFloorScale;
-		VNS.NoiseCeilingScale = Cfg.NoiseCeilingScale;
-		VNS.bEnableDomainWarp = Cfg.bDomainWarp;
-		VNS.DomainWarpStrength = Cfg.DomainWarpStrength;
-		VNS.NoiseScaleVector = FVector(1, 1, 0.7f);
-
-		// Cave SDF model
-		UDungeonVoxelSDFModel_Cave* CaveModel = NewObject<UDungeonVoxelSDFModel_Cave>(Dungeon);
-		CaveModel->CeilingExtraHeight = Cfg.CeilingExtraHeight;
-		CaveModel->bEnableCeilingHoles = true;
-		Dungeon->VoxelSDFModel = CaveModel;
 
 		// Theme
-		if (Manager && Manager->CaveTheme)
-		{
-			Dungeon->Themes.Add(Manager->CaveTheme);
-		}
-		else if (Theme)
+		if (Theme)
 		{
 			Dungeon->Themes.Add(Theme);
 		}
+		else if (Manager && Manager->CaveTheme)
+		{
+			Dungeon->Themes.Add(Manager->CaveTheme);
+		}
 
-		// ── Two-pass build with STARFISH distance enforcement ──
+		// ── Build dungeon ──
 		bool bBuildOk = false;
 		int32 CurrentSeed = Seed;
 		float BestMinDistance = 0.0f;
 		int32 BestSeed = Seed;
+
+		// Bundled flow graphs (e.g., Foundry) use their own path naming.
+		// Skip starfish distance enforcement for them — just build and accept.
+		bool bSkipStarfishValidation = !Cfg.BundledFlowAssetPath.IsEmpty();
 
 		for (int32 Retry = 0; Retry < Cfg.MaxSeedRetries; ++Retry)
 		{
@@ -1113,6 +1330,14 @@ bool UAutoBuildDungeonCommandlet::GenerateTestLevel(UCellFlowAsset* FlowAsset,
 				CurrentSeed++;
 				bBuildOk = false;
 				continue;
+			}
+
+			// For bundled graphs, accept the first successful build
+			if (bSkipStarfishValidation)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("  seed=%d: Bundled graph — accepted"), CurrentSeed);
+				BestSeed = CurrentSeed;
+				break;
 			}
 
 			// Find hub + all terminal positions
@@ -1477,9 +1702,10 @@ bool UAutoBuildDungeonCommandlet::GenerateTestLevel(UCellFlowAsset* FlowAsset,
 			if (PS) PS->SetFolderPath(FName(TEXT("Gameplay")));
 		}
 
-		// ── Force material on voxel mesh chunks (use same VoxelMat from pre-build) ──
+		// ── Force material on voxel mesh chunks (voxel mode only) ──
+		if (Cfg.bUseVoxels)
 		{
-			UMaterialInterface* ForceMat = VoxelMat;
+			UMaterialInterface* ForceMat = LoadObject<UMaterialInterface>(nullptr, *Cfg.VoxelMaterialPath);
 			if (!ForceMat)
 			{
 				ForceMat = LoadObject<UMaterialInterface>(nullptr,
