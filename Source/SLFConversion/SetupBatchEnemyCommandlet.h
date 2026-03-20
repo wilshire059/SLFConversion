@@ -44,7 +44,7 @@ private:
 	void CreateAnimBP(const FString& DestDir, const FString& AnimDir, const FString& PascalName, const FString& SkeletonPath);
 
 	// Create data assets (AnimData, WeaponAnimset, CombatReaction, PoiseBreak, AI Abilities)
-	void CreateDataAssets(const FString& DestDir, const FString& AnimDir, const FString& PascalName);
+	void CreateDataAssets(const FString& DestDir, const FString& AnimDir, const FString& PascalName, const FString& EnemySnakeName);
 
 	// Add sockets to skeleton
 	void AddSockets(const FString& SkeletonPath);

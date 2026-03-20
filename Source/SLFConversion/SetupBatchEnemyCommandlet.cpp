@@ -348,13 +348,200 @@ int32 USetupBatchEnemyCommandlet::Main(const FString& Params)
 		// ═══════════════════════════════════════════════════════════════
 		TMap<FString, FString> AnimCategoryMap; // AnimName -> Category
 
+		// Check for animation_config.json — if present, use config-driven import
+		FString ConfigPath = SourceDir / TEXT("animation_config.json");
+		bool bHasAnimConfig = FPaths::FileExists(ConfigPath);
+
+		if (bHasAnimConfig)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("--- Config-driven import: %s ---"), *ConfigPath);
+
+			FString ConfigJson;
+			FFileHelper::LoadFileToString(ConfigJson, *ConfigPath);
+			TSharedPtr<FJsonObject> Config;
+			TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(ConfigJson);
+			FJsonSerializer::Deserialize(Reader, Config);
+
+			if (!Config.IsValid())
+			{
+				UE_LOG(LogTemp, Error, TEXT("  Failed to parse animation_config.json"));
+				continue;
+			}
+
+			// Helper: import a specific FBX by source+anim_id, assign a specific montage name
+			auto ImportAndCreateMontage = [&](const FString& Source, const FString& AnimId,
+				const FString& MontageSuffix) -> bool
+			{
+				// Find the FBX: {enemy}_{source}_{anim_id}.fbx
+				FString FBXName = FString::Printf(TEXT("%s_%s_%s.fbx"), *Enemy, *Source, *AnimId);
+				FString FBXPath = FBXDir / FBXName;
+				if (!FPaths::FileExists(FBXPath))
+				{
+					UE_LOG(LogTemp, Warning, TEXT("    FBX not found: %s"), *FBXName);
+					return false;
+				}
+
+				// Import animation
+				FString AnimName = FString::Printf(TEXT("%s_%s"), *PascalName, *MontageSuffix);
+				FAssetToolsModule& ATModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
+
+				UAssetImportTask* Task = NewObject<UAssetImportTask>();
+				Task->AddToRoot();
+				Task->Filename = FBXPath;
+				Task->DestinationPath = AnimDir;
+				Task->DestinationName = AnimName;
+				Task->bAutomated = true;
+				Task->bReplaceExisting = true;
+				Task->bSave = true;
+
+				UFbxFactory* Factory = NewObject<UFbxFactory>();
+				Factory->SetDetectImportTypeOnImport(false);
+				UFbxImportUI* UI = Factory->ImportUI;
+				UI->bImportMesh = false;
+				UI->bImportMaterials = false;
+				UI->bImportTextures = false;
+				UI->bImportAnimations = true;
+				UI->MeshTypeToImport = FBXIT_Animation;
+				UI->Skeleton = Skeleton;
+				UI->bAutomatedImportShouldDetectType = false;
+				UI->bOverrideFullName = true;
+				UI->bCreatePhysicsAsset = false;
+				UI->AnimSequenceImportData->bSnapToClosestFrameBoundary = true;
+				UI->AnimSequenceImportData->AnimationLength = FBXALIT_ExportedTime;
+
+				Task->Factory = Factory;
+				Task->Options = UI;
+				ATModule.Get().ImportAssetTasks({Task});
+
+				bool bImported = false;
+				for (UObject* Obj : Task->GetObjects())
+				{
+					if (UAnimSequence* Seq = Cast<UAnimSequence>(Obj))
+					{
+						Seq->bForceRootLock = true;
+						Seq->RootMotionRootLock = ERootMotionRootLock::AnimFirstFrame;
+						bImported = true;
+					}
+				}
+				Task->RemoveFromRoot();
+
+				if (!bImported)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("    Failed to import: %s"), *FBXName);
+					return false;
+				}
+
+				// Create montage
+				FString MontageName = FString::Printf(TEXT("AM_%s_%s"), *PascalName, *MontageSuffix);
+				FString MontagePath = DestDir / MontageName;
+				FString AnimPath = AnimDir / AnimName;
+				FString Result = USLFAutomationLibrary::CreateMontageFromSequence(AnimPath, MontagePath, TEXT("DefaultSlot"));
+				UE_LOG(LogTemp, Warning, TEXT("  %s (%s/%s) -> %s"), *MontageName, *Source, *AnimId,
+					Result.Contains(TEXT("OK")) || Result.Contains(TEXT("Created")) ? TEXT("OK") : *Result);
+				return true;
+			};
+
+			// Import attacks
+			const TArray<TSharedPtr<FJsonValue>>* Attacks;
+			if (Config->TryGetArrayField(TEXT("attacks"), Attacks))
+			{
+				for (int32 i = 0; i < Attacks->Num(); i++)
+				{
+					const TSharedPtr<FJsonObject>& A = (*Attacks)[i]->AsObject();
+					FString Src = A->GetStringField(TEXT("source"));
+					FString Aid = A->GetStringField(TEXT("anim_id"));
+					FString Suffix = FString::Printf(TEXT("Attack%02d"), i + 1);
+					ImportAndCreateMontage(Src, Aid, Suffix);
+				}
+			}
+
+			// Import heavy attacks
+			const TArray<TSharedPtr<FJsonValue>>* HeavyAttacks;
+			if (Config->TryGetArrayField(TEXT("heavy_attacks"), HeavyAttacks))
+			{
+				for (int32 i = 0; i < HeavyAttacks->Num(); i++)
+				{
+					const TSharedPtr<FJsonObject>& A = (*HeavyAttacks)[i]->AsObject();
+					FString Src = A->GetStringField(TEXT("source"));
+					FString Aid = A->GetStringField(TEXT("anim_id"));
+					FString Suffix = (HeavyAttacks->Num() == 1)
+						? TEXT("HeavyAttack")
+						: FString::Printf(TEXT("HeavyAttack%02d"), i + 1);
+					ImportAndCreateMontage(Src, Aid, Suffix);
+				}
+			}
+
+			// Import locomotion
+			auto ImportSingle = [&](const FString& Key, const FString& Suffix)
+			{
+				const TSharedPtr<FJsonObject>* Obj;
+				if (Config->TryGetObjectField(Key, Obj))
+				{
+					FString Src = (*Obj)->GetStringField(TEXT("source"));
+					FString Aid = (*Obj)->GetStringField(TEXT("anim_id"));
+					ImportAndCreateMontage(Src, Aid, Suffix);
+				}
+			};
+			ImportSingle(TEXT("idle"), TEXT("Idle"));
+			ImportSingle(TEXT("walk"), TEXT("Walk"));
+			ImportSingle(TEXT("run"), TEXT("Run"));
+			ImportSingle(TEXT("guard"), TEXT("Guard"));
+
+			// Import arrays
+			auto ImportArray = [&](const FString& Key, const FString& Prefix, int32 Max)
+			{
+				const TArray<TSharedPtr<FJsonValue>>* Arr;
+				if (Config->TryGetArrayField(Key, Arr))
+				{
+					for (int32 i = 0; i < FMath::Min(Arr->Num(), Max); i++)
+					{
+						const TSharedPtr<FJsonObject>& A = (*Arr)[i]->AsObject();
+						FString Src = A->GetStringField(TEXT("source"));
+						FString Aid = A->GetStringField(TEXT("anim_id"));
+						FString Suffix = FString::Printf(TEXT("%s%02d"), *Prefix, i + 1);
+						ImportAndCreateMontage(Src, Aid, Suffix);
+					}
+				}
+			};
+			ImportArray(TEXT("dodges"), TEXT("Dodge"), 4);
+			ImportArray(TEXT("hit_reacts"), TEXT("HitReact"), 3);
+			ImportArray(TEXT("deaths"), TEXT("Death"), 3);
+
+			// Populate AnimCategoryMap for downstream steps (blend space, data assets)
+			FAssetRegistryModule& ARM = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+			TArray<FAssetData> AnimAssets;
+			ARM.Get().GetAssetsByPath(FName(*AnimDir), AnimAssets, false);
+			for (const FAssetData& AD : AnimAssets)
+			{
+				if (AD.AssetClassPath.GetAssetName() == FName("AnimSequence"))
+				{
+					FString AnimName = AD.AssetName.ToString();
+					// Categorize by suffix: Attack01 -> Attack, Walk -> Locomotion, etc.
+					if (AnimName.Contains(TEXT("Attack"))) AnimCategoryMap.Add(AnimName, TEXT("Attack"));
+					else if (AnimName.Contains(TEXT("Heavy"))) AnimCategoryMap.Add(AnimName, TEXT("HeavyAttack"));
+					else if (AnimName.Contains(TEXT("Idle"))) AnimCategoryMap.Add(AnimName, TEXT("Idle"));
+					else if (AnimName.Contains(TEXT("Walk")) || AnimName.Contains(TEXT("Run"))) AnimCategoryMap.Add(AnimName, TEXT("Locomotion"));
+					else if (AnimName.Contains(TEXT("Dodge"))) AnimCategoryMap.Add(AnimName, TEXT("Dodge"));
+					else if (AnimName.Contains(TEXT("HitReact"))) AnimCategoryMap.Add(AnimName, TEXT("HitReact"));
+					else if (AnimName.Contains(TEXT("Death"))) AnimCategoryMap.Add(AnimName, TEXT("Death"));
+					else if (AnimName.Contains(TEXT("Guard"))) AnimCategoryMap.Add(AnimName, TEXT("Guard"));
+				}
+			}
+
+			// Add sockets
+			AddSockets(SkeletonObjPath);
+
+			// Skip legacy import + montage creation (already done above)
+			goto SkipLegacyMontages;
+		}
+
 		if (bSkipAnims)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("--- Step 1: SKIP animations (-skipanims) ---"));
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("--- Step 1: Import animations ---"));
+			UE_LOG(LogTemp, Warning, TEXT("--- Step 1: Import animations (legacy scan) ---"));
 			int32 AnimCount = ImportAnimations(FBXDir, AnimDir, PascalName, Skeleton);
 			UE_LOG(LogTemp, Warning, TEXT("  Imported %d animations"), AnimCount);
 		}
@@ -369,18 +556,8 @@ int32 USetupBatchEnemyCommandlet::Main(const FString& Params)
 				if (AD.AssetClassPath.GetAssetName() == FName("AnimSequence"))
 				{
 					FString AnimName = AD.AssetName.ToString();
-					// Extract anim ID: "WitheredWanderer_a000_003001" -> "a000_003001"
-					int32 UnderscoreIdx;
-					FString AnimID;
-					if (AnimName.FindLastChar('_', UnderscoreIdx))
-					{
-						// Walk backwards to find "a000_" pattern
-						int32 AIdx = AnimName.Find(TEXT("a000_"));
-						if (AIdx != INDEX_NONE)
-						{
-							AnimID = AnimName.Mid(AIdx);
-						}
-					}
+					int32 AIdx = AnimName.Find(TEXT("a000_"));
+					FString AnimID = (AIdx != INDEX_NONE) ? AnimName.Mid(AIdx) : TEXT("");
 					FString Category = CategorizeAnimID(AnimID);
 					AnimCategoryMap.Add(AnimName, Category);
 				}
@@ -395,10 +572,12 @@ int32 USetupBatchEnemyCommandlet::Main(const FString& Params)
 		AddSockets(SkeletonObjPath);
 
 		// ═══════════════════════════════════════════════════════════════
-		// Step 3: Create montages
+		// Step 3: Create montages (legacy scan-based)
 		// ═══════════════════════════════════════════════════════════════
 		UE_LOG(LogTemp, Warning, TEXT("--- Step 3: Creating montages ---"));
 		CreateMontages(DestDir, AnimDir, PascalName, AnimCategoryMap);
+
+		SkipLegacyMontages:
 
 		// ═══════════════════════════════════════════════════════════════
 		// Step 4: Create blend space
@@ -416,7 +595,7 @@ int32 USetupBatchEnemyCommandlet::Main(const FString& Params)
 		// Step 6: Create data assets
 		// ═══════════════════════════════════════════════════════════════
 		UE_LOG(LogTemp, Warning, TEXT("--- Step 6: Creating data assets ---"));
-		CreateDataAssets(DestDir, AnimDir, PascalName);
+		CreateDataAssets(DestDir, AnimDir, PascalName, Enemy);
 
 		// ═══════════════════════════════════════════════════════════════
 		// Step 7: Add weapon traces
@@ -1097,9 +1276,13 @@ void USetupBatchEnemyCommandlet::CreateAnimBP(
 }
 
 void USetupBatchEnemyCommandlet::CreateDataAssets(
-	const FString& DestDir, const FString& AnimDir, const FString& PascalName)
+	const FString& DestDir, const FString& AnimDir, const FString& PascalName, const FString& EnemySnakeName)
 {
 	FString Result;
+
+	// Check for animation_config.json
+	FString ConfigPath = FString(SourceBaseDir) / EnemySnakeName / TEXT("animation_config.json");
+	bool bHasConfig = FPaths::FileExists(ConfigPath);
 
 	// Discover animations by category
 	TMap<FString, TArray<FString>> CategoryAnims;
@@ -1223,7 +1406,62 @@ void USetupBatchEnemyCommandlet::CreateDataAssets(
 	}
 
 	// 6e: AI Ability data assets (one per attack montage)
+	if (bHasConfig)
 	{
+		// Config-driven: create exactly the number of DAs matching the config
+		FString ConfigJson;
+		FFileHelper::LoadFileToString(ConfigJson, *ConfigPath);
+		TSharedPtr<FJsonObject> Config;
+		TSharedRef<TJsonReader<>> CfgReader = TJsonReaderFactory<>::Create(ConfigJson);
+		FJsonSerializer::Deserialize(CfgReader, Config);
+
+		if (Config.IsValid())
+		{
+			const TArray<TSharedPtr<FJsonValue>>* Attacks;
+			if (Config->TryGetArrayField(TEXT("attacks"), Attacks))
+			{
+				for (int32 i = 0; i < Attacks->Num(); i++)
+				{
+					FString DAName = FString::Printf(TEXT("DA_%s_Attack%02d"), *PascalName, i + 1);
+					FString MontageName = FString::Printf(TEXT("AM_%s_Attack%02d"), *PascalName, i + 1);
+
+					FString PkgName = DestDir / DAName;
+					UPackage* Pkg = PreparePackage(PkgName, DAName);
+					UPDA_AI_Ability* Ability = NewObject<UPDA_AI_Ability>(Pkg, FName(*DAName), RF_Public | RF_Standalone);
+					Ability->Montage = LoadObject<UAnimMontage>(nullptr, *(DestDir / MontageName));
+					Ability->Score = 1.0;
+					Ability->Cooldown = 2.0;
+					SaveAsset(Ability, Pkg);
+					UE_LOG(LogTemp, Warning, TEXT("  %s: SAVED"), *DAName);
+				}
+			}
+
+			const TArray<TSharedPtr<FJsonValue>>* Heavies;
+			if (Config->TryGetArrayField(TEXT("heavy_attacks"), Heavies))
+			{
+				for (int32 i = 0; i < Heavies->Num(); i++)
+				{
+					// SLFEnemyGeneric discovers DA_*_HeavyAttack01
+					FString DAName = FString::Printf(TEXT("DA_%s_HeavyAttack%02d"), *PascalName, i + 1);
+					FString MontageName = (Heavies->Num() == 1)
+						? FString::Printf(TEXT("AM_%s_HeavyAttack"), *PascalName)
+						: FString::Printf(TEXT("AM_%s_HeavyAttack%02d"), *PascalName, i + 1);
+
+					FString PkgName = DestDir / DAName;
+					UPackage* Pkg = PreparePackage(PkgName, DAName);
+					UPDA_AI_Ability* Ability = NewObject<UPDA_AI_Ability>(Pkg, FName(*DAName), RF_Public | RF_Standalone);
+					Ability->Montage = LoadObject<UAnimMontage>(nullptr, *(DestDir / MontageName));
+					Ability->Score = 0.5;
+					Ability->Cooldown = 5.0;
+					SaveAsset(Ability, Pkg);
+					UE_LOG(LogTemp, Warning, TEXT("  %s: SAVED"), *DAName);
+				}
+			}
+		}
+	}
+	else
+	{
+		// Legacy: scan all imported animations
 		TArray<FString>* AttackAnims = CategoryAnims.Find(TEXT("Attack"));
 		int32 AttackCount = AttackAnims ? FMath::Min(AttackAnims->Num(), 8) : 0;
 		TArray<FString>* HeavyAnims = CategoryAnims.Find(TEXT("HeavyAttack"));
@@ -1236,16 +1474,13 @@ void USetupBatchEnemyCommandlet::CreateDataAssets(
 			FString PkgName = DestDir / DAName;
 			UPackage* Pkg = PreparePackage(PkgName, DAName);
 			UPDA_AI_Ability* Ability = NewObject<UPDA_AI_Ability>(Pkg, FName(*DAName), RF_Public | RF_Standalone);
-
 			Ability->Montage = LoadObject<UAnimMontage>(nullptr, *(DestDir / MontageName));
 			Ability->Score = 1.0;
 			Ability->Cooldown = 2.0;
-
 			SaveAsset(Ability, Pkg);
 			UE_LOG(LogTemp, Warning, TEXT("  %s: SAVED"), *DAName);
 		}
 
-		// Heavy attack abilities
 		if (HeavyAnims)
 		{
 			for (int32 i = 0; i < FMath::Min(HeavyAnims->Num(), 2); i++)
@@ -1258,11 +1493,9 @@ void USetupBatchEnemyCommandlet::CreateDataAssets(
 				FString PkgName = DestDir / DAName;
 				UPackage* Pkg = PreparePackage(PkgName, DAName);
 				UPDA_AI_Ability* Ability = NewObject<UPDA_AI_Ability>(Pkg, FName(*DAName), RF_Public | RF_Standalone);
-
 				Ability->Montage = LoadObject<UAnimMontage>(nullptr, *(DestDir / MontageName));
 				Ability->Score = 0.5;
 				Ability->Cooldown = 5.0;
-
 				SaveAsset(Ability, Pkg);
 				UE_LOG(LogTemp, Warning, TEXT("  %s: SAVED"), *DAName);
 			}
@@ -1436,6 +1669,42 @@ bool USetupBatchEnemyCommandlet::AddWeaponTracesFromTAE(const FString& DestDir, 
 
 	UE_LOG(LogTemp, Warning, TEXT("  Loaded TAE JSON: %d animations"), (*AnimationsObj)->Values.Num());
 
+	// Load animation_config.json for montage-slot-to-anim_id mapping
+	TMap<int32, FString> AttackSlotToAnimId;   // Attack index (1-8) -> anim_id
+	TMap<int32, FString> HeavySlotToAnimId;    // Heavy index (1-2) -> anim_id
+	{
+		FString ConfigPath = FString(SourceBaseDir) / EnemySnakeName / TEXT("animation_config.json");
+		FString ConfigStr;
+		if (FFileHelper::LoadFileToString(ConfigStr, *ConfigPath))
+		{
+			TSharedPtr<FJsonObject> Config;
+			TSharedRef<TJsonReader<>> CfgReader = TJsonReaderFactory<>::Create(ConfigStr);
+			if (FJsonSerializer::Deserialize(CfgReader, Config) && Config.IsValid())
+			{
+				const TArray<TSharedPtr<FJsonValue>>* Attacks;
+				if (Config->TryGetArrayField(TEXT("attacks"), Attacks))
+				{
+					for (int32 idx = 0; idx < Attacks->Num(); idx++)
+					{
+						FString Aid = (*Attacks)[idx]->AsObject()->GetStringField(TEXT("anim_id"));
+						AttackSlotToAnimId.Add(idx + 1, Aid);
+					}
+				}
+				const TArray<TSharedPtr<FJsonValue>>* Heavies;
+				if (Config->TryGetArrayField(TEXT("heavy_attacks"), Heavies))
+				{
+					for (int32 idx = 0; idx < Heavies->Num(); idx++)
+					{
+						FString Aid = (*Heavies)[idx]->AsObject()->GetStringField(TEXT("anim_id"));
+						HeavySlotToAnimId.Add(idx + 1, Aid);
+					}
+				}
+				UE_LOG(LogTemp, Warning, TEXT("  Config mapping: %d attacks, %d heavies"),
+					AttackSlotToAnimId.Num(), HeavySlotToAnimId.Num());
+			}
+		}
+	}
+
 	int32 MontagesProcessed = 0;
 
 	// Process attack montages (AM_{PascalName}_Attack01 through Attack08)
@@ -1446,22 +1715,29 @@ bool USetupBatchEnemyCommandlet::AddWeaponTracesFromTAE(const FString& DestDir, 
 		UAnimMontage* Montage = LoadObject<UAnimMontage>(nullptr, *MontagePath);
 		if (!Montage) continue;
 
-		// Extract anim_id from the backing animation sequence
-		// Montage's first slot has a reference to the source AnimSequence
+		// Get anim_id: first try config mapping, then regex from AnimSequence name
 		FString AnimId;
-		if (Montage->SlotAnimTracks.Num() > 0 && Montage->SlotAnimTracks[0].AnimTrack.AnimSegments.Num() > 0)
+
+		// Config-driven: direct slot -> anim_id mapping
+		if (FString* ConfigAnimId = AttackSlotToAnimId.Find(i))
 		{
-			UAnimSequenceBase* AnimRef = Montage->SlotAnimTracks[0].AnimTrack.AnimSegments[0].GetAnimReference();
-			if (AnimRef)
+			AnimId = *ConfigAnimId;
+		}
+		else
+		{
+			// Legacy: extract from AnimSequence asset name
+			if (Montage->SlotAnimTracks.Num() > 0 && Montage->SlotAnimTracks[0].AnimTrack.AnimSegments.Num() > 0)
 			{
-				// AnimSequence name format: {PascalName}_Attack01 or {enemy}_{chr}_{anim_id}
-				// Try to extract anim_id (aXXX_XXXXXX) from the asset name
-				FString SeqName = AnimRef->GetName();
-				FRegexPattern Pattern(TEXT("(a\\d+_\\d+)"));
-				FRegexMatcher Matcher(Pattern, SeqName);
-				if (Matcher.FindNext())
+				UAnimSequenceBase* AnimRef = Montage->SlotAnimTracks[0].AnimTrack.AnimSegments[0].GetAnimReference();
+				if (AnimRef)
 				{
-					AnimId = Matcher.GetCaptureGroup(1);
+					FString SeqName = AnimRef->GetName();
+					FRegexPattern Pattern(TEXT("(a\\d+_\\d+)"));
+					FRegexMatcher Matcher(Pattern, SeqName);
+					if (Matcher.FindNext())
+					{
+						AnimId = Matcher.GetCaptureGroup(1);
+					}
 				}
 			}
 		}
@@ -1536,17 +1812,27 @@ bool USetupBatchEnemyCommandlet::AddWeaponTracesFromTAE(const FString& DestDir, 
 		if (!Montage) continue;
 
 		FString AnimId;
-		if (Montage->SlotAnimTracks.Num() > 0 && Montage->SlotAnimTracks[0].AnimTrack.AnimSegments.Num() > 0)
+
+		// Config-driven mapping
+		if (FString* ConfigAnimId = HeavySlotToAnimId.Find(i))
 		{
-			UAnimSequenceBase* AnimRef = Montage->SlotAnimTracks[0].AnimTrack.AnimSegments[0].GetAnimReference();
-			if (AnimRef)
+			AnimId = *ConfigAnimId;
+		}
+		else
+		{
+			// Legacy: extract from AnimSequence name
+			if (Montage->SlotAnimTracks.Num() > 0 && Montage->SlotAnimTracks[0].AnimTrack.AnimSegments.Num() > 0)
 			{
-				FString SeqName = AnimRef->GetName();
-				FRegexPattern Pattern(TEXT("(a\\d+_\\d+)"));
-				FRegexMatcher Matcher(Pattern, SeqName);
-				if (Matcher.FindNext())
+				UAnimSequenceBase* AnimRef = Montage->SlotAnimTracks[0].AnimTrack.AnimSegments[0].GetAnimReference();
+				if (AnimRef)
 				{
-					AnimId = Matcher.GetCaptureGroup(1);
+					FString SeqName = AnimRef->GetName();
+					FRegexPattern Pattern(TEXT("(a\\d+_\\d+)"));
+					FRegexMatcher Matcher(Pattern, SeqName);
+					if (Matcher.FindNext())
+					{
+						AnimId = Matcher.GetCaptureGroup(1);
+					}
 				}
 			}
 		}
@@ -1577,14 +1863,14 @@ bool USetupBatchEnemyCommandlet::AddWeaponTracesFromTAE(const FString& DestDir, 
 		FString Result = USLFAutomationLibrary::AddMultipleWeaponTracesToMontage(
 			MontagePath,
 			Windows,
-			150.0f,                 // Heavy radius
+			300.0f,                 // Heavy radius (wide for slam AoE)
 			FName("weapon_start"),
 			FName("weapon_end"),
-			350.0f,                 // Heavy reach
+			150.0f,                 // Short reach (slam hits near body, not extended forward)
 			100.0f,                 // Heavy damage
 			60.0f,                  // Heavy poise
 			true,
-			FName("lowerarm_r")
+			FName("R_Hand")         // Direction from hand (not lowerarm — keeps trace near body)
 		);
 
 		UE_LOG(LogTemp, Warning, TEXT("    %s [%s]: %d windows -> %s"),
