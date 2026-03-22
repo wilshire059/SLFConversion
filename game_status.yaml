@@ -1,0 +1,733 @@
+# ============================================================================
+# ASHBORNE — Game Development Status
+# ============================================================================
+# Status values: done, partial, framework, stub, not_started
+# Add "notes:" to any item to flag work needed
+# Last updated: 2026-03-22
+# ============================================================================
+
+meta:
+  title: "Ashborne"
+  genre: Soulslike Action RPG
+  engine: Unreal Engine 5.7
+  setting: Post-apocalyptic sci-fi (Borderlands/Fallout aesthetic, NOT fantasy)
+  map: Project Titan (8x8 km)
+  target_playtime: "10-15 hours main, 20+ completionist"
+  current_phase: "Phase 1.5 complete, Phase 2 in progress"
+
+# ============================================================================
+# CORE SYSTEMS
+# ============================================================================
+core_systems:
+  combat:
+    status: done
+    cpp_class: CombatManagerComponent
+    details: "37 variables, 28 functions — damage calc, guarding, hit reactions, death, combos"
+    features:
+      light_attacks: { status: done, classes: [SLFActionComboLightL, SLFActionComboLightR] }
+      heavy_attacks: { status: done, class: SLFActionComboHeavy }
+      dual_wield: { status: done, class: SLFActionDualWieldAttack }
+      sprint_attack: { status: done, class: SLFActionSprintAttack }
+      jump_attack: { status: done, class: SLFActionJumpAttack }
+      guard: { status: done, classes: [SLFActionGuardStart, SLFActionGuardEnd, SLFActionGuardCancel] }
+      guard_counter: { status: done, class: SLFActionGuardCounter, damage_mult: 1.8, poise_mult: 2.0, window: 0.3s }
+      dodge: { status: done, class: SLFActionDodge, has_iframes: true }
+      backstab: { status: done, class: SLFActionBackstab, damage_mult: 3.0 }
+      execution: { status: done, class: SLFActionExecute }
+      weapon_ability: { status: done, class: SLFActionWeaponAbility }
+      throw_projectile: { status: done, class: SLFActionThrowProjectile }
+      input_buffer: { status: done, class: InputBufferComponent, notify: ANS_InputBuffer }
+
+  movement:
+    status: done
+    details: "Phase 1.5 complete — all advanced traversal"
+    features:
+      basic_movement: { status: done }
+      sprint: { status: done, classes: [SLFActionStartSprinting, SLFActionStopSprinting] }
+      jump: { status: done, class: SLFActionJump }
+      double_jump: { status: done, class: SLFActionDoubleJump }
+      slide: { status: done, class: SLFActionSlide, duration: 0.8s, distance: 400cm, cooldown: 1.5s }
+      crouch: { status: done, class: SLFActionCrouch }
+      swim: { status: done, class: SLFActionSwim }
+      traversal:
+        status: done
+        class: SLFActionMantle
+        types:
+          vault: { height: "<100cm" }
+          hurdle: { height: "100-150cm" }
+          mantle: { height: "150-250cm" }
+          climb: { height: "250-350cm" }
+      grapple:
+        status: done
+        class: SLFActionGrapple
+        range: 3000cm
+        cooldown: 8s
+        attack_damage: "1.5x normal, 0.25x vs boss"
+      landing_reactions:
+        status: done
+        tiers:
+          - { distance: "<300cm", reaction: light_landing }
+          - { distance: "300-600cm", reaction: heavy_landing }
+          - { distance: "600-1200cm", reaction: roll_landing }
+          - { distance: ">1200cm", reaction: stumble_landing, fall_damage: "0.1 HP/cm above threshold" }
+      ladder_climbing: { status: done, class: SLFLadderBase, component: LadderManagerComponent }
+
+  stealth:
+    status: done
+    details: "Crouch + undetected = stealth mode"
+    features:
+      detection_reduction: { status: done, multiplier: 0.5, range: "1500cm → 750cm" }
+      stealth_backstab: { status: done, damage_mult: 3.0 }
+      breaking_stealth: { status: done, triggers: [stand_up, detected, non_backstab_attack] }
+
+  stats:
+    status: done
+    cpp_class: StatManagerComponent
+    primary_stats:
+      - { name: Vigor, purpose: "Max HP multiplier" }
+      - { name: Endurance, purpose: "Max stamina multiplier" }
+      - { name: Mind, purpose: "Max FP multiplier" }
+      - { name: Strength, purpose: "Physical attack scaling" }
+      - { name: Dexterity, purpose: "Speed/bleed scaling" }
+      - { name: Intelligence, purpose: "Sorcery scaling" }
+      - { name: Faith, purpose: "Incantation scaling" }
+      - { name: Arcane, purpose: "Special effects scaling" }
+    resources: [HP, Stamina, FP, Poise]
+    damage_types: [Physical, Fire, Frost, Lightning, Holy, Magic]
+    resistances: [Vitality, Robustness, Immunity, Focus]
+    total_stat_data_assets: 88
+
+  inventory:
+    status: done
+    cpp_class: InventoryManagerComponent
+    features:
+      item_storage: done
+      equipment_slots: done
+      quick_select_wheel: { status: done, classes: [SLFActionScrollWheelLeftHand, SLFActionScrollWheelRightHand, SLFActionScrollWheelTools] }
+      two_handed_stance: { status: done, classes: [SLFActionTwoHandedStanceL, SLFActionTwoHandedStanceR] }
+      item_pickup: { status: done, class: SLFActionPickupItemMontage }
+      flask_system: { status: done, class: SLFActionDrinkFlaskHP }
+
+  equipment:
+    status: done
+    cpp_class: EquipmentManagerComponent
+    features:
+      weapon_swap: done
+      stat_scaling: done
+      animset_per_weapon: done
+
+  status_effects:
+    status: done
+    cpp_class: StatusEffectManagerComponent
+    effects:
+      - { name: Poison, class: SLFStatusEffectPoison, type: DOT }
+      - { name: Bleed, class: SLFStatusEffectBleed, type: buildup_burst }
+      - { name: Burn, class: SLFStatusEffectBurn, type: DOT }
+      - { name: Frostbite, class: SLFStatusEffectFrostbite, type: slow_damage }
+      - { name: Madness, class: SLFStatusEffectMadness, type: sanity }
+      - { name: Plague, class: SLFStatusEffectPlague, type: buildup }
+      - { name: Corruption, class: SLFStatusEffectCorruption, type: corruption }
+
+  buffs:
+    status: partial
+    cpp_class: BuffManagerComponent
+    implemented: [SLFBuffAttackPower]
+    notes: "Only 1 buff type implemented. Need defense buff, speed buff, resistance buffs"
+
+  progression:
+    status: done
+    features:
+      leveling: { status: done, currency: Cinders }
+      save_load: { status: done, class: SaveLoadManagerComponent, slots: 10 }
+      level_up_menu: { status: done, widget: W_LevelUp }
+      death_currency_drop: { status: done, class: SLFDeathCurrency }
+
+  crafting:
+    status: framework
+    cpp_class: SLFCraftingManager
+    details: "Recipe system architecture done, ingredient/requirement logic in place"
+    widgets: [W_Crafting, W_CraftingEntry, W_CraftingAction]
+    notes: "No crafting recipes or materials defined yet. Need zone-specific materials (Cinder Bloom, Slag Crystal, etc.)"
+
+# ============================================================================
+# AI & ENEMIES
+# ============================================================================
+ai:
+  behavior_tree:
+    status: done
+    details: "Full BT task/service/decorator library"
+    tasks: [SimpleMoveTo, PatrolPath, GetRandomPoint, SwitchState, ToggleFocus, TryExecuteAbility, SetKey, ClearKey, GetStrafePointAroundTarget]
+    services: [DistanceCheck, IsTargetDead, SetMovementModeBasedOnDistance, TryGetAbility, ChaseBounds]
+    decorators: [StateEquals]
+
+  state_machine:
+    status: done
+    cpp_class: SLFAIStateMachineComponent
+    details: "Modern AI state machine — replaces behavior tree for performance"
+
+  combat_ai:
+    status: done
+    cpp_class: AICombatManagerComponent
+    features:
+      attack_selection: done
+      damage_calculation: done
+      hit_reactions: done
+      death: done
+      poise_system: done
+
+  boss_ai:
+    status: partial
+    cpp_class: AIBossComponent
+    details: "Phase management exists, boss encounter triggers work"
+    notes: "No unique boss AI behaviors yet. All bosses use generic attack patterns"
+
+  perception:
+    status: done
+    details: "AI perception with sight/hearing, detection range configurable per enemy"
+
+# ============================================================================
+# CUSTOM ENEMIES
+# ============================================================================
+custom_enemies:
+  pipeline:
+    status: done
+    details: "End-to-end: Gemini concept → Meshy AI mesh → Blender rig → UE5 import"
+    scripts:
+      concept_gen: "Gemini API image generation"
+      mesh_gen: "Meshy AI image-to-3D (download_meshy_models.py)"
+      rigging: "rig_with_weapon.py / rig_meshy_to_c3100.py"
+      animation: "Soulstruct HKX extraction + ARP retarget"
+      import: "SetupBatchEnemyCommandlet (config-driven)"
+      forensic: "24fps resample, time warp, Catmull-Rom noise, bone region weights"
+    variants:
+      single_mesh: { script: rig_meshy_to_c3100.py }
+      body_plus_weapon: { script: rig_with_weapon.py }
+
+  factions:
+    ashen_order:
+      zone: Sanctum of Ash
+      enemies:
+        - { name: AshenChampion, assets: 23, status: done, role: elite }
+        - { name: AshenFlagellant, assets: 45, status: done, role: regular }
+        - { name: AshenHeavy, assets: 28, status: done, role: regular }
+        - { name: AshenHierophant, assets: 45, status: done, role: boss }
+        - { name: AshenInquisitor, assets: 44, status: done, role: regular }
+        - { name: AshenMarksman, assets: 45, status: done, role: regular }
+        - { name: AshenMilitant, assets: 41, status: done, role: regular }
+        - { name: AshenPurifier, assets: 44, status: done, role: regular }
+        - { name: AshenRevenant, assets: 5, status: stub }
+
+    withered:
+      zone: Ashfields
+      enemies:
+        - { name: WitheredWanderer, assets: 31, status: done, role: regular }
+        - { name: WitheredBrute, assets: 44, status: done, role: regular }
+        - { name: WitheredBroodmother, assets: 43, status: done, role: boss }
+        - { name: WitheredBroodling, assets: 43, status: done, role: regular }
+        - { name: WitheredHulk, assets: 44, status: done, role: elite }
+        - { name: WitheredLurker, assets: 44, status: done, role: regular }
+        - { name: WitheredScrounger, assets: 48, status: done, role: regular }
+        - { name: WitheredSpitter, assets: 44, status: done, role: regular }
+        - { name: WitheredHound, assets: 16, status: done, role: regular }
+
+    iron_covenant:
+      zone: Ironworks
+      enemies:
+        - { name: IronBerserker, assets: 44, status: done, role: regular }
+        - { name: IronEnforcer, assets: 44, status: done, role: regular }
+        - { name: IronForgemaster, assets: 44, status: done, role: boss }
+        - { name: IronGrunt, assets: 44, status: done, role: regular }
+        - { name: IronHeavymech, assets: 44, status: done, role: elite }
+        - { name: IronPriest, assets: 44, status: done, role: regular }
+        - { name: IronSparkhound, assets: 36, status: done, role: regular }
+        - { name: IronStoker, assets: 41, status: done, role: regular }
+
+    veilborn:
+      zone: The Rift
+      enemies:
+        - { name: VeilbornConvergent, assets: 44, status: done, role: boss }
+        - { name: VeilbornOperative, assets: 44, status: done, role: regular }
+        - { name: VeilbornPhasehunter, assets: 44, status: done, role: regular }
+        - { name: VeilbornPilgrim, assets: 44, status: done, role: regular }
+        - { name: VeilbornRifthound, assets: 36, status: done, role: regular }
+        - { name: VeilbornSentry, assets: 44, status: done, role: regular }
+        - { name: VeilbornStalker, assets: 44, status: done, role: regular }
+        - { name: VeilbornWarden, assets: 44, status: done, role: elite }
+
+    hollow:
+      zone: The Undercroft
+      enemies:
+        - { name: HollowAlpha, assets: 44, status: done, role: elite }
+        - { name: HollowBreach, assets: 44, status: done, role: regular }
+        - { name: HollowCrawler, assets: 41, status: done, role: regular }
+        - { name: HollowFeral, assets: 45, status: done, role: regular }
+        - { name: HollowPrimordial, assets: 44, status: done, role: boss }
+        - { name: HollowResearcher, assets: 44, status: done, role: regular }
+        - { name: HollowSubject, assets: 44, status: done, role: regular }
+        - { name: HollowSurgeon, assets: 44, status: done, role: regular }
+        - { name: HollowTrooper, assets: 44, status: done, role: regular }
+        - { name: HollowWarden, assets: 48, status: done, role: regular }
+        - { name: HollowWardenV2, assets: 9, status: partial }
+
+    core:
+      zone: The Core
+      enemies:
+        - { name: CoreConvergence, assets: 45, status: done, role: boss }
+        - { name: CoreVanguard, assets: 44, status: done, role: elite }
+
+    wildlife:
+      enemies:
+        - { name: WildlifeRat, assets: 36, status: done, role: ambient }
+        - { name: WildlifeWolf, assets: 36, status: done, role: ambient }
+        - { name: FeralHound, assets: 36, status: done, role: regular }
+
+    other:
+      enemies:
+        - { name: BloatedSpitter, assets: 37, status: done }
+        - { name: Broodling, assets: 39, status: done }
+        - { name: Broodmother, assets: 39, status: done }
+        - { name: IrradiatedHulk, assets: 39, status: done }
+        - { name: MutantBrute, assets: 39, status: done }
+        - { name: PlagueHerald, assets: 14, status: stub }
+        - { name: WastelandScavenger, assets: 39, status: done }
+        - { name: AshLurker, assets: 37, status: done }
+        - { name: Sentinel, assets: 29, status: done, notes: "Primary test enemy for custom pipeline" }
+
+  totals:
+    enemy_count: 57
+    total_assets: "~2000+ uassets"
+    typical_per_enemy: "ABP, SKM, material, texture, ~18 montages, ~20 anim sequences, PDAs, 5 DAs, skeleton"
+
+# ============================================================================
+# ANIMATION SYSTEM
+# ============================================================================
+animation:
+  anim_notifies:
+    status: done
+    total: 25
+    weapon_trace: { status: done, classes: [ANS_WeaponTrace, ANS_AI_WeaponTrace], direction_mode: "bone-to-bone" }
+    fist_trace: { status: done, classes: [ANS_FistTrace, ANS_AI_FistTrace] }
+    input_buffer: { status: done, class: ANS_InputBuffer }
+    hyper_armor: { status: done, class: ANS_HyperArmor }
+    invincibility: { status: done, class: ANS_InvincibilityFrame }
+    trail_vfx: { status: done, classes: [ANS_Trail, ANS_AI_Trail] }
+    combo_register: { status: done, class: ANS_RegisterAttackSequence }
+    camera_shake: { status: done, classes: [AN_CameraShake, AN_WorldCameraShake] }
+    spawn_projectile: { status: done, classes: [AN_SpawnProjectile, AN_AI_SpawnProjectile] }
+    adjust_stat: { status: done, class: AN_AdjustStat }
+    aoe_damage: { status: done, class: AN_AoeDamage }
+    footstep: { status: done, class: AN_FootstepTrace }
+    set_movement: { status: done, class: AN_SetMovementMode }
+    set_ai_state: { status: done, class: AN_SetAiState }
+
+  elden_ring_sources:
+    status: done
+    primary: "c3100 (Crucible Knight)"
+    total_character_ids: 21
+    best_sources:
+      - { id: c3010, name: "Banished Knight", anims: 398 }
+      - { id: c5830, name: "Messmer Soldier", anims: 554 }
+      - { id: c3000, name: "Exile Soldier", anims: 721 }
+      - { id: c4310, name: "Lordsworn Soldier", anims: 753 }
+      - { id: c4350, name: "Lordsworn Knight", anims: 336 }
+    forensic_transforms: "24fps resample, time warp, Catmull-Rom noise, bone region weights"
+
+  game_animation_sample:
+    status: done
+    files: 358
+    montages: 16
+    skeleton: SK_UEFN_Mannequin
+
+  locomotion:
+    status: done
+    method: "Montage-driven (idle/walk/run on DefaultSlot)"
+    details: "Montage_Play + Montage_SetNextSection for seamless loop"
+    notes: "BlendSpacePlayer broken for Elden Ring anims — use montage locomotion only"
+
+  weapon_animsets:
+    status: done
+    sets:
+      - DA_Animset_Greatsword
+      - DA_Animset_Katana
+      - DA_Animset_LightSword
+      - DA_Animset_Shield
+      - DA_Animset_Unarmed
+
+# ============================================================================
+# WEAPONS & ITEMS
+# ============================================================================
+weapons:
+  implemented:
+    player:
+      - { name: Sword, class: SLFItemWeapon, data_assets: [DA_Sword01, DA_Sword02] }
+      - { name: Greatsword, class: SLFItemWeaponGreatsword, data_asset: DA_Greatsword }
+      - { name: Katana, class: SLFItemWeaponKatana, data_asset: DA_Katana }
+      - { name: PoisonSword, class: SLFItemWeaponPoisonSword, data_asset: DA_PoisonSword }
+      - { name: Shield, class: SLFItemWeaponShield, data_asset: DA_Shield01 }
+      - { name: BossMace, class: SLFItemWeaponBossMace, data_asset: DA_BossMace }
+    ai:
+      - { name: AI_Sword, class: SLFItemAIWeapon_Sword }
+      - { name: AI_Greatsword, class: SLFItemAIWeapon_Greatsword }
+      - { name: AI_BossMace, class: SLFItemAIWeapon_BossMace }
+    total_implemented: 9
+
+  planned_but_not_built:
+    improvised_melee: [Rebar Club, Pipe Wrench, Sledgehammer]
+    bladed_melee: [Machete, Buzz-Saw Blade, Shiv, Cleaver]
+    tech_melee: [Shock Baton, Plasma Cutter, Chain Whip, Cattle Prod]
+    ballistic_ranged: [Pipe Pistol, Nail Gun, Scrap Shotgun, Crossbow]
+    energy_ranged: [Convergence Pistol, Arc Caster, Void Launcher]
+    shields: [Car Door Shield, Riot Shield, Manhole Cover, Stop Sign]
+    boss_weapons: ["Broodmother's Claw", "Forgemaster's Hammer", "Convergence Blade"]
+    total_planned: 25
+    notes: "Only 6 unique player weapon types implemented out of 25 planned. No ranged weapons yet."
+
+  items:
+    consumables:
+      - { name: HealthFlask, data_asset: DA_HealthFlask, status: done }
+      - { name: Apple, data_asset: DA_Apple, status: done }
+      - { name: Lantern, class: SLFItemLantern, status: done }
+    key_items:
+      - { name: PrisonKey, data_asset: DA_PrisonKey, status: done }
+      - { name: CrimsonEverbloom, data_asset: DA_CrimsonEverbloom, status: done }
+    armor:
+      implemented: [DA_ExampleArmor, DA_ExampleArmor02, DA_ExampleHelmet, DA_ExampleBracers, DA_ExampleGreaves, DA_ExampleHat]
+      notes: "Only example/placeholder armor. Need full post-apocalyptic armor sets per faction"
+
+# ============================================================================
+# MAGIC / SPELLS
+# ============================================================================
+magic:
+  status: framework
+  spell_classes:
+    beam: { class: SLFBeamSpell, status: done }
+    aoe: { class: SLFAOESpell, status: done }
+    healing: { class: SLFHealingSpell, status: done }
+    shield: { class: SLFShieldSpell, status: done }
+    summoning: { class: SLFSummoningCircle, status: done }
+  projectile_classes:
+    - { name: Fireball, class: SLFFireballProjectile, status: done }
+    - { name: LightningBolt, class: SLFLightningBoltProjectile, status: done }
+    - { name: IceShard, class: SLFIceShardProjectile, status: done }
+    - { name: HolyOrb, class: SLFHolyOrbProjectile, status: done }
+    - { name: ArcaneMissile, class: SLFArcaneMissileProjectile, status: done }
+    - { name: PoisonBlob, class: SLFPoisonBlobProjectile, status: done }
+  boss_projectiles:
+    - { name: BossFireball, class: SLFProjectileBossFireball, status: done }
+    - { name: ThrowingKnife, class: SLFProjectileThrowingKnife, status: done }
+  notes: "C++ spell/projectile classes exist and compile. No spell data assets, casting animations, FP costs, or spell equip UI. Need to create actual castable spells with VFX."
+
+# ============================================================================
+# DUNGEON GENERATION
+# ============================================================================
+dungeons:
+  system:
+    status: done
+    plugin: "Dungeon Architect v3.4.1"
+    builder: "CellFlow + Grid"
+    cpp_classes:
+      manager: SLFProceduralCaveManager
+      marker_emitter: SLFCaveMarkerEmitter
+      event_listener: SLFCaveEventListener
+      maze_builder: SLFCaveMazeBuilder
+      room_selector: SLFCaveRoomSelector
+      spawn_logic: SLFCaveSpawnLogic
+    commandlet: SetupOpenWorldCommandlet
+
+  themes:
+    - { name: DT_UnifiedCave, status: done }
+    - { name: DT_Abyss, status: done }
+    - { name: DT_FungalDepths, status: done }
+    - { name: DT_IceGrotto, status: done }
+    - { name: DT_LavaCavern, status: done }
+    - { name: DT_CavePlaceholder, status: done }
+    - { name: DT_CorridorPlaceholder, status: done }
+    - { name: DT_CorridorRock, status: done }
+    total: 8
+
+  levels:
+    - { name: L_Dungeon_01, cells: 80, status: done }
+    - { name: L_Dungeon_02, cells: 110, status: done }
+    - { name: L_Dungeon_03, cells: 140, status: done }
+    - { name: L_Dungeon_Test, status: done }
+    - { name: L_Dungeon_Nested, status: done }
+
+  gameplay_features:
+    tiered_doors: { status: done, class: SLFBossDoor, tiers: [blue_normal, purple_elite, orange_legendary] }
+    shortcut_gates: { status: done, class: SLFShortcutGate }
+    trap_markers: { status: framework, class: SLFTrapBase, notes: "Base class exists, no specific trap types implemented" }
+    puzzle_markers: { status: framework, class: SLFPuzzleMarker, notes: "Marker only, no puzzle logic" }
+    boss_immunity_objectives: { status: framework, class: SLFBossPhaseObjective }
+    level_streaming: { status: done, class: SLFLevelStreamManager, details: "Proximity trigger → fade → teleport underground" }
+
+  planned_dungeons:
+    - { zone: Ashfields, name: "Collapsed Bunker", cells: 60, status: not_started }
+    - { zone: Ironworks, name: "The Assembly Line", cells: 100, status: not_started }
+    - { zone: The Rift, name: "Fractured Sanctum", cells: 80, status: not_started }
+    - { zone: Sanctum, name: "Catacombs of Ash", cells: 120, status: not_started }
+    - { zone: Undercroft, name: "The Hollow Labs", cells: 150, status: not_started }
+    notes: "Generic test dungeons exist. Zone-specific themed dungeons not yet created."
+
+# ============================================================================
+# WORLD & LEVELS
+# ============================================================================
+world:
+  maps:
+    overworld:
+      - { name: L_OpenWorld, status: done, details: "Primary open world (Project Titan 8x8km)" }
+    demo:
+      - { name: L_Demo_Menu, status: done }
+      - { name: L_Demo_Showcase, status: done, details: "Combat testing area" }
+    themed:
+      - { name: L_Bunker, status: done, theme: "Sci-fi interior" }
+      - { name: L_LavaCavern, status: done }
+      - { name: L_IceGrotto, status: done }
+      - { name: L_FungalDepths, status: done }
+      - { name: L_Abyss, status: done }
+    total: 22
+
+  zones:
+    hub:
+      status: not_started
+      notes: "No safe haven hub zone built yet. Need Vara (merchant), Kael (blacksmith), resting point"
+    ashfields:
+      status: not_started
+      difficulty: easy
+      boss: The Broodmother
+      notes: "Enemies created but not placed. No zone layout, resting points, or encounters"
+    ironworks:
+      status: not_started
+      difficulty: medium
+      boss: The Forgemaster
+      notes: "Enemies created but not placed"
+    the_rift:
+      status: not_started
+      difficulty: medium_hard
+      boss: The Convergent
+      notes: "Enemies created but not placed"
+    sanctum_of_ash:
+      status: not_started
+      difficulty: hard
+      boss: The Ashen Hierophant
+      notes: "Enemies created but not placed"
+    the_undercroft:
+      status: not_started
+      difficulty: very_hard
+      boss: The Primordial
+      notes: "Enemies created but not placed"
+    the_core:
+      status: not_started
+      difficulty: final
+      boss: The Convergence
+      notes: "Final zone, not started"
+
+  world_map:
+    status: framework
+    features:
+      overlay: done
+      zone_display: done
+      fast_travel: done
+      dungeon_block: done
+    notes: "UI framework built. No actual zone data populated on map"
+
+# ============================================================================
+# NPCs & DIALOG
+# ============================================================================
+npcs:
+  system:
+    status: framework
+    cpp_classes: [SLFSoulslikeNPC, ABP_SoulslikeNPC, SLFNPCAnimInstance]
+    widgets: [W_Dialog, W_NPC_Window, W_NPC_Window_Vendor]
+    notes: "NPC character class, dialog widget, vendor widget all exist. No dialog content."
+
+  planned_npcs:
+    - { name: Vara, role: "Guide/merchant", location: Hub, quest: "Main quest — Convergence truth", status: not_started }
+    - { name: Kael, role: Blacksmith, location: Hub, quest: "Weapon upgrades — rare materials", status: not_started }
+    - { name: Serin, role: "Lore keeper", location: "Found injured Zone 2", quest: "Optional: history, rewards spells", status: not_started }
+    - { name: Dren, role: "Covenant deserter", location: "Zone 2 entrance", quest: "Intel + shortcut", status: not_started }
+    - { name: The Whisper, role: "Mysterious entity", location: "Boss arenas post-victory", quest: "Cryptic guidance", status: not_started }
+
+# ============================================================================
+# UI / WIDGETS
+# ============================================================================
+ui:
+  total_widgets: 123
+  categories:
+    hud:
+      status: done
+      widgets: [W_HUD, W_Status, W_Resources, W_Status_StatBlock, W_Status_LevelCurrencyBlock]
+
+    combat_ui:
+      status: done
+      widgets: [W_EnemyHealthbar, W_Boss_Healthbar, W_TargetLock, W_TargetExecutionIndicator, W_StatusEffectBar, W_StatusEffectNotification, W_Buff]
+
+    equipment:
+      status: done
+      widgets: [W_Equipment, W_EquipmentSlot, W_ItemWheel_NextSlot, W_ItemWheelSlot]
+
+    inventory:
+      status: done
+      widgets: [W_Inventory, W_InventorySlot, W_InventoryAction, W_InventoryActionAmount]
+
+    level_up:
+      status: done
+      widgets: [W_LevelUp, W_LevelEntry, W_StatEntry, W_StatBlock, W_LevelUpCost]
+
+    main_menu:
+      status: done
+      widgets: [W_MainMenu, W_MainMenu_Button, W_LoadGame, W_LoadGame_Entry]
+
+    pause_menu:
+      status: done
+      widgets: [W_GameMenu, W_GameMenu_Button]
+
+    settings:
+      status: done
+      widgets: [W_Settings]
+
+    rest_menu:
+      status: done
+      widgets: [W_RestMenu, W_RestMenu_Button, W_TimePass]
+
+    vendor:
+      status: done
+      widgets: [W_NPC_Window_Vendor, W_VendorSlot, W_VendorAction]
+
+    dialog:
+      status: done
+      widgets: [W_Dialog, W_NPC_Window]
+
+    crafting:
+      status: done
+      widgets: [W_Crafting, W_CraftingEntry, W_CraftingAction]
+
+    radar:
+      status: done
+      widgets: [W_Radar, W_Radar_TrackedElement, W_Radar_Cardinal]
+
+    character_select:
+      status: done
+      widgets: [W_CharacterSelection, W_CharacterSelectionCard]
+
+    misc:
+      status: done
+      widgets: [W_Interaction, W_LootNotification, W_BigScreenMessage, W_LoadingScreen, W_Credits, W_WorldMap]
+
+# ============================================================================
+# INTERACTABLES & WORLD ACTORS
+# ============================================================================
+interactables:
+  resting_points: { status: done, class: SLFRestingPointBase, has_sit_stand_anims: true }
+  doors: { status: done, classes: [SLFDoorBase, SLFBossDoor] }
+  containers: { status: done, class: SLFContainer }
+  ladders: { status: done, class: SLFLadderBase }
+  destructibles: { status: done, class: SLFDestructible }
+  grapple_points: { status: done, class: SLFGrapplePoint }
+  torches: { status: done, class: SLFTorch }
+  death_triggers: { status: done }
+  patrol_paths: { status: done, class: SLFPatrolPath }
+  spawn_points: { status: done, class: SLFEnemySpawnPoint }
+
+# ============================================================================
+# TESTING & AUTOMATION
+# ============================================================================
+testing:
+  pie_test_runner: { status: done, class: SLFPIETestRunner }
+  test_manager: { status: done, class: SLFTestManager, features: [spawn, screenshot, log_export, animnotify_monitor] }
+  input_simulator: { status: done, class: SLFInputSimulator }
+  console_commands:
+    spawn: [SLF.Test.SpawnEnemy, SLF.SpawnCustom]
+    simulate: [SLF.SimAttack, SLF.SimDodge, SLF.SimMove, SLF.SimCrouch, SLF.SimKey]
+    screenshot: SLF.Test.Screenshot
+    validate: SLF.Test.Validate
+
+automation:
+  status: done
+  class: SLFAutomationLibrary
+  functions: "100+ automation functions"
+  commandlets:
+    - { name: SetupBatchEnemyCommandlet, purpose: "Config-driven batch enemy import" }
+    - { name: SetupC3100Commandlet, purpose: "c3100 Crucible Knight animation import" }
+    - { name: SetupSentinelCommandlet, purpose: "Sentinel enemy full setup" }
+    - { name: SetupGameAnimCommandlet, purpose: "GameAnimationSample integration" }
+    - { name: SetupOpenWorldCommandlet, purpose: "DA dungeon generation" }
+
+# ============================================================================
+# PRODUCTION PHASES
+# ============================================================================
+phases:
+  phase_1_foundation:
+    status: done
+    deliverables:
+      project_titan: done
+      zone_streaming: done
+      c_plus_plus_migration: "306 blueprints reparented"
+
+  phase_1_5_movement:
+    status: done
+    completed: "Feb 2026"
+    deliverables:
+      game_animation_sample: done
+      advanced_traversal: done
+      slide: done
+      landing_reactions: done
+      resting_animations: done
+      stealth: done
+      guard_counter: done
+      double_jump: done
+      grapple: done
+      dungeon_gameplay: done
+      world_map: done
+      crafting_framework: done
+
+  phase_2_core_loop:
+    status: in_progress
+    deliverables:
+      ten_weapons: { status: partial, notes: "6 types exist, need 4+ more including ranged" }
+      zone_2_playable: { status: not_started }
+      npc_quests: { status: not_started }
+      vfx_audio: { status: not_started }
+      custom_enemies: { status: done, notes: "57 enemies — exceeds plan" }
+
+  phase_3_content:
+    status: not_started
+    deliverables:
+      zones_3_4: not_started
+      all_5_bosses: not_started
+      full_weapon_roster: not_started
+      all_npcs_dialog: not_started
+      all_dungeon_themes: { status: done, notes: "8 themes already created" }
+
+  phase_4_polish:
+    status: not_started
+    deliverables:
+      zones_5_6: not_started
+      final_boss: not_started
+      side_dungeons: not_started
+      balance_pass: not_started
+      title_credits_audio: not_started
+
+# ============================================================================
+# KEY GAPS (prioritized)
+# ============================================================================
+gaps:
+  critical:
+    - "Zone layout and enemy placement — 57 enemies exist but none placed in zones"
+    - "Boss unique AI — all bosses use generic attack patterns, need phase-specific behavior"
+    - "Hub safe zone — no hub with NPCs built"
+    - "NPC dialog content — framework exists, zero dialog written"
+
+  important:
+    - "Ranged weapons — no ballistic or energy weapons implemented"
+    - "Crafting recipes — system exists, no recipes/materials defined"
+    - "Spell casting — C++ classes exist, no usable spells with VFX/FP cost"
+    - "Trap implementations — base class only, no spike/fire/arrow traps"
+    - "Puzzle logic — marker class only, no actual puzzle mechanics"
+    - "Armor roster — only example placeholders, need faction-themed sets"
+    - "Buff variety — only attack power buff, need defense/speed/resistance"
+
+  nice_to_have:
+    - "Quest system — no quest tracking or objectives"
+    - "VFX/audio — no particle effects or sound design"
+    - "Balance pass — no stat tuning or difficulty curves"
+    - "Cinematics — sequence actor exists but no cutscenes"
