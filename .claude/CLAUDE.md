@@ -12,6 +12,16 @@ If your context was just compacted:
 
 ---
 
+## SCRIPT REUSE (CHECK BEFORE WRITING)
+
+**ALWAYS check `scripts/CATALOG.md` before writing any new Python script.** Search the catalog by keyword (e.g., "weapon", "dialog", "montage") to find existing scripts that already do what you need. The catalog has 1900+ scripts indexed with descriptions and function names.
+
+Also check `C:/scripts/elden_ring_tools/` scripts via the catalog's Elden Ring sections.
+
+**Regenerate the catalog** after creating/modifying scripts: `python scripts/generate_catalog.py`
+
+---
+
 ## CRITICAL MIGRATION RULES (NON-NEGOTIABLE)
 
 1. **ALL Blueprint logic MUST be in C++** - NO stubs, NO TODOs, NO "implement later"
