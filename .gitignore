@@ -161,3 +161,13 @@ MapCapture/
 
 # Stray paths with broken encoding (Windows junction artifacts)
 C\357\200\272*
+
+# Claude Code temp worktree directories
+tmpclaude-*-cwd/
+tmpclaude-*
+
+# Untracked output/data at root (already organized into logs/, data/)
+*.log
+*.txt
+!migration_tracker.md
+!BLUEPRINT_MIGRATION_CHECKLIST.md

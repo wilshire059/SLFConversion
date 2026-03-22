@@ -1,0 +1,327 @@
+{
+  "map": "/DungeonArchitect/Showcase/Samples/Themes/Foundry/Map_DA_Theme_Foundry",
+  "actors": [
+    {
+      "class": "/Script/DungeonArchitectRuntime.Dungeon",
+      "name": "Dungeon_1",
+      "properties": {
+        "SpriteComponent": "Sprite"
+        ,
+        "Uid": "13CB75DB429DED9C3E07D3B1663D8B98"
+        ,
+        "Themes": "(\"/Script/DungeonArchitectRuntime.DungeonThemeAsset'/DungeonArchitect/Showcase/Samples/Themes/Foundry/T_Theme_Founddry.T_Theme_Founddry'\")"
+        ,
+        "PCGGraphs": ""
+        ,
+        "BuilderClass": "/Script/CoreUObject.Class'/Script/DungeonArchitectRuntime.CellFlowBuilder'"
+        ,
+        "MarkerEmitters": ""
+        ,
+        "ProceduralMarkerEmitters": ""
+        ,
+        "bCarveVoxels": "False"
+        ,
+        "VoxelMeshSettings": "(VoxelSize=50.000000,VoxelChunkSize=32,VoxelShapeTheme=\"/DungeonArchitect/Core/Runtime/Features/Voxel/DA_Voxel_Core_Shape_Cave_Theme.DA_Voxel_Core_Shape_Cave_Theme\",UVScale=100.000000,bEnableCollision=True,WallThickness=200.000000,bUseGPU=True)"
+        ,
+        "VoxelNoiseSettings": "(NoiseScaleNormalized=1.000000,NoiseAmplitude=350.000000,NoiseOctaves=4,NoiseOffset=(X=0.000000,Y=0.000000,Z=0.000000),NoiseFloorScale=0.300000,NoiseCeilingScale=1.000000,NoiseScaleVector=(X=1.000000,Y=1.000000,Z=1.000000),DomainWarpStrength=0.300000,FloorCeilingTransitionHeight=400.000000,NoiseChannelSeparation=10000.000000,bUsePerAxisSeeds=True)"
+        ,
+        "VoxelSDFModel": "None"
+        ,
+        "EventListeners": ""
+        ,
+        "ClusterThemes": ""
+        ,
+        "bDrawDebugData": "False"
+        ,
+        "bUseCustomItemFolderName": "False"
+        ,
+        "CustomItemFolderName": ""
+        ,
+        "Builder": "/Script/DungeonArchitectRuntime.CellFlowBuilder'/DungeonArchitect/Showcase/Samples/Themes/Foundry/Map_DA_Theme_Foundry.Map_DA_Theme_Foundry:PersistentLevel.Dungeon_1.CellFlowBuilder'"
+        ,
+        "Config": "/Script/DungeonArchitectRuntime.CellFlowConfig'/DungeonArchitect/Showcase/Samples/Themes/Foundry/Map_DA_Theme_Foundry.Map_DA_Theme_Foundry:PersistentLevel.Dungeon_1.CellFlowConfig'"
+        ,
+        "DungeonModel": "/Script/DungeonArchitectRuntime.CellFlowModel'/DungeonArchitect/Showcase/Samples/Themes/Foundry/Map_DA_Theme_Foundry.Map_DA_Theme_Foundry:PersistentLevel.Dungeon_1.CellFlowModel'"
+        ,
+        "ToolData": "/Script/DungeonArchitectRuntime.CellFlowToolData'/DungeonArchitect/Showcase/Samples/Themes/Foundry/Map_DA_Theme_Foundry.Map_DA_Theme_Foundry:PersistentLevel.Dungeon_1.CellFlowToolData'"
+        ,
+        "Query": "/Script/DungeonArchitectRuntime.CellFlowQuery'/DungeonArchitect/Showcase/Samples/Themes/Foundry/Map_DA_Theme_Foundry.Map_DA_Theme_Foundry:PersistentLevel.Dungeon_1.CellFlowQuery'"
+        ,
+        "DebugVisualizer": "DebugVisualizer"
+        ,
+        "TemporaryDebugVisualizers": "()"
+        ,
+        "DungeonSceneRoot": "SceneRoot"
+        ,
+        "DungeonBoundsComponent": "Bounds"
+        ,
+        "PCGComponents": ""
+        ,
+        "PCGCache": "PCGCache"
+        ,
+        "LevelStreamingConfig": "(InitialLoadLocation=AlwaysResidentLocations,VisibilityRoomDepth=1,VisibilityDistance=(X=3000.000000,Y=3000.000000,Z=3000.000000))"
+        ,
+        "LevelStreamingModel": "LevelStreamingModel"
+        ,
+        "BuildPriorityLocation": "(X=22867.142370,Y=18034.522258,Z=319.728212)"
+        ,
+        "OnDungeonBuildComplete": "()"
+        ,
+        "BuildSystemComponent": "DungeonBuildSystem"
+        ,
+        "PrimaryActorTick": "(bCanEverTick=True,bStartWithTickEnabled=True,bAllowTickOnDedicatedServer=True)"
+        ,
+        "bNetTemporary": "False"
+        ,
+        "bOnlyRelevantToOwner": "False"
+        ,
+        "bAlwaysRelevant": "True"
+        ,
+        "bReplicateMovement": "False"
+        ,
+        "bCallPreReplication": "True"
+        ,
+        "bCallPreReplicationForReplay": "True"
+        ,
+        "bHidden": "False"
+        ,
+        "bTearOff": "False"
+        ,
+        "bForceNetAddressable": "False"
+        ,
+        "LevelInstanceType": "None"
+        ,
+        "LevelInstanceFlags": "None"
+        ,
+        "bIsMainWorldOnly": "False"
+        ,
+        "bIgnoreInPIE": "False"
+        ,
+        "bExchangedRoles": "False"
+        ,
+        "bNetLoadOnClient": "True"
+        ,
+        "bNetUseOwnerRelevancy": "False"
+        ,
+        "bRelevantForNetworkReplays": "True"
+        ,
+        "bRelevantForLevelBounds": "True"
+        ,
+        "bReplayRewindable": "False"
+        ,
+        "bAllowTickBeforeBeginPlay": "False"
+        ,
+        "bAutoDestroyWhenFinished": "False"
+        ,
+        "bCanBeDamaged": "True"
+        ,
+        "bBlockInput": "False"
+        ,
+        "bCollideWhenPlacing": "False"
+        ,
+        "bFindCameraComponentWhenViewTarget": "True"
+        ,
+        "bGenerateOverlapEventsDuringLevelStreaming": "False"
+        ,
+        "bIgnoresOriginShifting": "False"
+        ,
+        "bEnableAutoLODGeneration": "True"
+        ,
+        "bIsEditorOnlyActor": "False"
+        ,
+        "bReplicates": "True"
+        ,
+        "bCanBeInCluster": "False"
+        ,
+        "bMigratingAsset": "False"
+        ,
+        "bAllowReceiveTickEventOnDedicatedServer": "True"
+        ,
+        "bReplicateUsingRegisteredSubObjectList": "False"
+        ,
+        "bActorEnableCollision": "True"
+        ,
+        "bActorIsBeingDestroyed": "False"
+        ,
+        "bAsyncPhysicsTickEnabled": "False"
+        ,
+        "UpdateOverlapsMethodDuringLevelStreaming": "UseConfigDefault"
+        ,
+        "DefaultUpdateOverlapsMethodDuringLevelStreaming": "OnlyUpdateMovable"
+        ,
+        "RemoteRole": "ROLE_SimulatedProxy"
+        ,
+        "InitialLifeSpan": "0.000000"
+        ,
+        "CustomTimeDilation": "1.000000"
+        ,
+        "RayTracingGroupId": "-1"
+        ,
+        "GridPlacement": "None"
+        ,
+        "RuntimeGrid": "None"
+        ,
+        "AttachmentReplication": "(LocationOffset=(X=0.000000,Y=0.000000,Z=0.000000),RelativeScale3D=(X=0.000000,Y=0.000000,Z=0.000000),RotationOffset=(Pitch=0.000000,Yaw=0.000000,Roll=0.000000))"
+        ,
+        "ReplicatedMovement": "()"
+        ,
+        "Owner": "None"
+        ,
+        "NetDriverName": "GameNetDriver"
+        ,
+        "Role": "ROLE_Authority"
+        ,
+        "NetDormancy": "DORM_Awake"
+        ,
+        "SpawnCollisionHandlingMethod": "AlwaysSpawn"
+        ,
+        "AutoReceiveInput": "Disabled"
+        ,
+        "InputPriority": "0"
+        ,
+        "InputComponent": "None"
+        ,
+        "NetTag": "0"
+        ,
+        "NetCullDistanceSquared": "225000000.000000"
+        ,
+        "NetUpdateFrequency": "100.000000"
+        ,
+        "MinNetUpdateFrequency": "2.000000"
+        ,
+        "NetPriority": "1.000000"
+        ,
+        "PhysicsReplicationMode": "Default"
+        ,
+        "Instigator": "None"
+        ,
+        "Children": ""
+        ,
+        "RootComponent": "SceneRoot"
+        ,
+        "PivotOffset": "(X=0.000000,Y=0.000000,Z=0.000000)"
+        ,
+        "HLODLayer": "None"
+        ,
+        "ObjectsDetachedFromExternalPackage": ""
+        ,
+        "Layers": ""
+        ,
+        "ParentComponentActor": "None"
+        ,
+        "ParentComponent": "None"
+        ,
+        "ActorGuid": "857F802546A2368D830CE49D49A6E07B"
+        ,
+        "ActorInstanceGuid": "00000000000000000000000000000000"
+        ,
+        "ContentBundleGuid": "00000000000000000000000000000000"
+        ,
+        "DataLayers": ""
+        ,
+        "DataLayerAssets": ""
+        ,
+        "ExternalDataLayerAsset": "None"
+        ,
+        "GroupActor": "None"
+        ,
+        "SpriteScale": "1.000000"
+        ,
+        "HiddenEditorViews": "0"
+        ,
+        "ActorLabel": "Dungeon"
+        ,
+        "FolderPath": "None"
+        ,
+        "FolderGuid": "00000000000000000000000000000000"
+        ,
+        "bHiddenEd": "False"
+        ,
+        "bIsEditorPreviewActor": "False"
+        ,
+        "bHiddenEdLayer": "False"
+        ,
+        "bHiddenEdLevel": "False"
+        ,
+        "bLockLocation": "False"
+        ,
+        "bActorLabelEditable": "True"
+        ,
+        "bEditable": "True"
+        ,
+        "bListedInSceneOutliner": "True"
+        ,
+        "bOptimizeBPComponentData": "False"
+        ,
+        "bCanPlayFromHere": "False"
+        ,
+        "bIsSpatiallyLoaded": "True"
+        ,
+        "bHiddenEdTemporary": "False"
+        ,
+        "bForceExternalActorLevelReferenceForPIE": "False"
+        ,
+        "Tags": ""
+        ,
+        "OnTakeAnyDamage": "()"
+        ,
+        "OnTakePointDamage": "()"
+        ,
+        "OnTakeRadialDamage": "()"
+        ,
+        "OnActorBeginOverlap": "()"
+        ,
+        "OnActorEndOverlap": "()"
+        ,
+        "OnBeginCursorOver": "()"
+        ,
+        "OnEndCursorOver": "()"
+        ,
+        "OnClicked": "()"
+        ,
+        "OnReleased": "()"
+        ,
+        "OnInputTouchBegin": "()"
+        ,
+        "OnInputTouchEnd": "()"
+        ,
+        "OnInputTouchEnter": "()"
+        ,
+        "OnInputTouchLeave": "()"
+        ,
+        "OnActorHit": "()"
+        ,
+        "OnDestroyed": "()"
+        ,
+        "OnEndPlay": "()"
+        ,
+        "InstanceComponents": ""
+        ,
+        "BlueprintCreatedComponents": ""
+      }
+      ,"config_properties": {
+        "CellFlow": "/DungeonArchitect/Showcase/Samples/Themes/Foundry/CellFlow_Graph_Foundry.CellFlow_Graph_Foundry"
+        ,
+        "GridSize": "(X=800.000000,Y=800.000000,Z=200.000000)"
+        ,
+        "MaxRetries": "50"
+        ,
+        "ParameterOverrides": "()"
+        ,
+        "MarkerConfig": "/DungeonArchitect/Showcase/Samples/Themes/Foundry/CF_MarkerSettings_Foundry.CF_MarkerSettings_Foundry"
+        ,
+        "bGenerateVoronoiBaseMesh": "False"
+        ,
+        "DefaultVoronoiMeshProfile": "(LODFactorScale=1.000000,NoiseSettings=(NoiseScale=400.000000,NoiseAmplitudeMin=-10.000000,NoiseAmplitudeMax=40.000000,NumOctaves=15))"
+        ,
+        "VoronoiPathMeshProfiles": "()"
+        ,
+        "Seed": "0"
+        ,
+        "Instanced": "False"
+        ,
+        "MaxBuildTimePerFrameMs": "0.000000"
+      }
+    }
+  ]
+}
