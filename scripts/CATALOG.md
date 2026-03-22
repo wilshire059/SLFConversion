@@ -1,7 +1,8 @@
-# Script Catalog
+# Script & Source Catalog
 
-Auto-generated index of all project scripts. **Check this before writing new scripts.**
-Last generated: 2026-03-22 15:01
+Auto-generated index of all project scripts and C++ source files.
+**Check this before writing new scripts or C++ classes.**
+Last generated: 2026-03-22 15:08
 
 ---
 
@@ -1400,6 +1401,1284 @@ Last generated: 2026-03-22 15:01
 | test_world_actors.py | =============================================================================== | test_interactable_base, test_interactable_interface, test_container_base, tes... | 2026-01-03 | 2026-03-22 |
 | verify_mesh.py | Check C++ SLFSoulslikeCharacter class |  | 2026-01-03 | 2026-03-22 |
 
+## C++ Source (root) (`Source/SLFConversion`)
+**37 files**
+
+| File | Description | Key Functions/Classes | Created | Modified |
+|------|-------------|----------------------|---------|----------|
+| SetupBatchEnemyCommandlet.cpp | SetupBatchEnemyCommandlet.cpp | ToPascalCase, CategorizeAnimID, Main, Printf, StaticClass | 2026-03-15 | 2026-03-22 |
+| SetupBatchEnemyCommandlet.h | SetupBatchEnemyCommandlet.h | **USetupBatchEnemyCommandlet**; CreateMontages | 2026-03-15 | 2026-03-20 |
+| IKRetargetMultiSourceCommandlet.cpp | IKRig headers | Main, ImportMeshFBX, ImportAnimFBX, CreateIKRigForERSkeleton, CreateRetargeter | 2026-03-18 | 2026-03-18 |
+| IKRetargetMultiSourceCommandlet.h | Import multi-source enemy animations and retarget to c3100 via UE5 IK Retargeter | **UIKRetargetMultiSourceCommandlet, UIKRigDefinition, UIKRetargeter**; Create... | 2026-03-18 | 2026-03-18 |
+| AutoBuildDungeonCommandlet.cpp | AutoBuildDungeonCommandlet.cpp | GetBiomePreset, Main, SaveAsset, SavePackage, SaveLevel | 2026-03-09 | 2026-03-16 |
+| AutoBuildDungeonCommandlet.h | AutoBuildDungeonCommandlet.h | **UCellFlowAsset, UDungeonThemeAsset, UAutoBuildDungeonCommandlet**; Generate... | 2026-03-09 | 2026-03-16 |
+| SLFAutomationLibrary.cpp | SLFAutomationLibrary.cpp | GetBlueprintVariables, GetBlueprintFunctions, GetBlueprintEventDispatchers, G... | 2026-01-03 | 2026-03-16 |
+| SLFAutomationLibrary.h | SLFAutomationLibrary.h | **USLFAutomationLibrary**; ApplyWeaponStatData, ApplyArmorStatChanges, Valida... | 2026-01-03 | 2026-03-16 |
+| SLFConversion.cpp | Fill out your copyright notice in the Description page of Project Settings. | StaticClass | 2026-01-03 | 2026-03-16 |
+| SLFEnums.h | SLFEnums.h |  | 2026-01-03 | 2026-03-09 |
+| SLFGameTypes.h | SLFGameTypes.h | **UPDA_ActionBase_C, UPDA_Item_C, UPDA_WeaponAbility_C**; GetTypeHash | 2026-01-03 | 2026-03-09 |
+| SetupGameAnimCommandlet.cpp | SetupGameAnimCommandlet.cpp | Main, CopyAnimAsset, CreateMontageFromSequence, SetupRestingPointAnims, Setup... | 2026-03-09 | 2026-03-09 |
+| SetupGameAnimCommandlet.h | SetupGameAnimCommandlet.h | **USetupGameAnimCommandlet** | 2026-03-09 | 2026-03-09 |
+| SetupOpenWorldCommandlet.cpp | SetupOpenWorldCommandlet.cpp | Main, GenerateHeightmap, CarveFlats, CreateLandscape, DiscoverWastelandAssets | 2026-02-27 | 2026-03-09 |
+| SetupOpenWorldCommandlet.h | SetupOpenWorldCommandlet.h | **ADungeon, UCellFlowAsset, UDungeonThemeAsset**; ScatterCategory | 2026-02-27 | 2026-03-09 |
+| SetupSentinelCommandlet.cpp | (no description) | Main, SavePackage | 2026-02-21 | 2026-03-09 |
+| SetupTitanWorldCommandlet.cpp | SetupTitanWorldCommandlet.cpp | Main, InitializeZoneRegions, SetupZoneTriggers, SetupRestingPoints, SetupEnem... | 2026-02-27 | 2026-03-09 |
+| SetupTitanWorldCommandlet.h | SetupTitanWorldCommandlet.h | **USetupTitanWorldCommandlet** | 2026-02-27 | 2026-03-09 |
+| SetupSentinelCommandlet.h | (no description) | **USetupSentinelCommandlet** | 2026-02-18 | 2026-02-21 |
+| BlueprintFixerLibrary.cpp | BlueprintFixerLibrary.cpp | RefreshFunctionCallsForClass, ReconstructAllNodes, GetFunctionCallInfo, FixEv... | 2026-01-03 | 2026-02-18 |
+| BlueprintFixerLibrary.h | BlueprintFixerLibrary.h | **UBlueprintFixerLibrary** | 2026-01-03 | 2026-02-18 |
+| PythonBridge.cpp | PythonBridge.cpp - Comprehensive Blueprint Export and Migration Utilities | ExtractMapKeyValueTypes, SerializePropertyType, SerializeVariable, SerializeP... | 2026-01-03 | 2026-02-18 |
+| PythonBridge.h | PythonBridge.h - Comprehensive Blueprint Export and Migration Utilities | **UBlueprint, UAnimBlueprint, UUserDefinedEnum** | 2026-01-03 | 2026-02-18 |
+| SLFAssetValidator.cpp | SLFAssetValidator.cpp | ExportObjectProperties, ExportStructProperties, ExportBlueprintProperties, Ex... | 2026-02-07 | 2026-02-18 |
+| SLFAssetValidator.h | SLFAssetValidator.h | **USLFAssetValidator** | 2026-02-07 | 2026-02-18 |
+| SLFYAMLExporter.cpp | SLFYAMLExporter.cpp | GetIndent, ChrN, EscapeYAMLString, Printf, FTextToString | 2026-02-07 | 2026-02-18 |
+| SLFYAMLExporter.h | SLFYAMLExporter.h | **USLFYAMLExporter** | 2026-02-07 | 2026-02-18 |
+| SetupC3100Commandlet.cpp | (no description) | Main, SavePackage | 2026-02-18 | 2026-02-18 |
+| SetupC3100Commandlet.h | (no description) | **USetupC3100Commandlet** | 2026-02-18 | 2026-02-18 |
+| SLFPrimaryDataAssets.cpp | SLFPrimaryDataAssets.cpp | GetDialogTableBasedOnProgress, GetCompletionProgressTag, ReduceItemStock, Get... | 2026-01-07 | 2026-02-07 |
+| SLFPrimaryDataAssets.h | SLFPrimaryDataAssets.h | **UNiagaraSystem, USoundCue, UAnimMontage**; Guard_R, Guard_R_Hit, Guard_L, G... | 2026-01-03 | 2026-02-07 |
+| WeaponDebugLibrary.cpp | WeaponDebugLibrary.cpp | LogAllWeaponsInPIE, SaveWeaponDataToJSON | 2026-01-16 | 2026-01-16 |
+| WeaponDebugLibrary.h | WeaponDebugLibrary.h | **UWeaponDebugLibrary** | 2026-01-16 | 2026-01-16 |
+| MyActor.cpp | Fill out your copyright notice in the Description page of Project Settings. | BeginPlay, Tick | 2026-01-03 | 2026-01-03 |
+| MyActor.h | Fill out your copyright notice in the Description page of Project Settings. | **AMyActor** | 2026-01-03 | 2026-01-03 |
+| SLFConversion.h | Fill out your copyright notice in the Description page of Project Settings. |  | 2026-01-03 | 2026-01-03 |
+| SLFStatTypes.h | SLFStatTypes.h |  | 2026-01-03 | 2026-01-03 |
+
+## C++ AI (`Source/SLFConversion/AI`)
+**54 files**
+
+| File | Description | Key Functions/Classes | Created | Modified |
+|------|-------------|----------------------|---------|----------|
+| BTD_StateEquals.cpp | BTD_StateEquals.cpp | CalculateRawConditionValue, GetStaticDescription, Printf | 2026-01-12 | 2026-01-12 |
+| BTD_StateEquals.h | BTD_StateEquals.h | **UBTD_StateEquals** | 2026-01-12 | 2026-01-12 |
+| BTS_ChaseBounds.cpp | BTS_ChaseBounds.cpp | TickNode | 2026-01-03 | 2026-01-12 |
+| BTS_DebugLog.cpp | BTS_DebugLog.cpp | TickNode | 2026-01-12 | 2026-01-12 |
+| BTS_DebugLog.h | BTS_DebugLog.h | **UBTS_DebugLog** | 2026-01-12 | 2026-01-12 |
+| BTS_IsTargetDead.cpp | BTS_IsTargetDead.cpp | TickNode | 2026-01-03 | 2026-01-12 |
+| BTS_TryGetAbility.cpp | BTS_TryGetAbility.cpp | TickNode | 2026-01-03 | 2026-01-12 |
+| BTT_PatrolPath.cpp | BTT_PatrolPath.cpp | ExecuteTask, AbortTask | 2026-01-03 | 2026-01-12 |
+| BTT_SimpleMoveTo.cpp | BTT_SimpleMoveTo.cpp | ExecuteTask, OnMoveCompleted, CleanupMoveDelegate, AbortTask | 2026-01-03 | 2026-01-12 |
+| BTT_SwitchState.cpp | BTT_SwitchState.cpp | ExecuteTask, AbortTask | 2026-01-03 | 2026-01-12 |
+| BTT_SwitchToPreviousState.cpp | BTT_SwitchToPreviousState.cpp | ExecuteTask, AbortTask | 2026-01-03 | 2026-01-12 |
+| BTT_TryExecuteAbility.cpp | BTT_TryExecuteAbility.cpp | ExecuteTask, OnAttackEndCallback, CleanupDelegateBinding, AbortTask | 2026-01-03 | 2026-01-12 |
+| BTT_TryExecuteAbility.h | BTT_TryExecuteAbility.h | **AB_Soulslike_Enemy, ASLFSoulslikeEnemy, UBTT_TryExecuteAbility** | 2026-01-03 | 2026-01-12 |
+| SLFBTTaskSwitchState.cpp | SLFBTTaskSwitchState.cpp | ExecuteTask, GetStaticDescription, Printf | 2026-01-03 | 2026-01-12 |
+| BTS_ChaseBounds.h | BTS_ChaseBounds.h | **UBTS_ChaseBounds** | 2026-01-03 | 2026-01-03 |
+| BTS_DistanceCheck.cpp | BTS_DistanceCheck.cpp | TickNode | 2026-01-03 | 2026-01-03 |
+| BTS_DistanceCheck.h | BTS_DistanceCheck.h | **UBTS_DistanceCheck** | 2026-01-03 | 2026-01-03 |
+| BTS_IsTargetDead.h | BTS_IsTargetDead.h | **UBTS_IsTargetDead** | 2026-01-03 | 2026-01-03 |
+| BTS_SetMovementModeBasedOnDistance.cpp | BTS_SetMovementModeBasedOnDistance.cpp | TickNode | 2026-01-03 | 2026-01-03 |
+| BTS_SetMovementModeBasedOnDistance.h | BTS_SetMovementModeBasedOnDistance.h | **UBTS_SetMovementModeBasedOnDistance** | 2026-01-03 | 2026-01-03 |
+| BTS_TryGetAbility.h | BTS_TryGetAbility.h | **UBTS_TryGetAbility** | 2026-01-03 | 2026-01-03 |
+| BTT_ClearKey.cpp | BTT_ClearKey.cpp | ExecuteTask, AbortTask | 2026-01-03 | 2026-01-03 |
+| BTT_ClearKey.h | BTT_ClearKey.h | **UBTT_ClearKey** | 2026-01-03 | 2026-01-03 |
+| BTT_GetCurrentLocation.cpp | BTT_GetCurrentLocation.cpp | ExecuteTask, AbortTask | 2026-01-03 | 2026-01-03 |
+| BTT_GetCurrentLocation.h | BTT_GetCurrentLocation.h | **UBTT_GetCurrentLocation** | 2026-01-03 | 2026-01-03 |
+| BTT_GetRandomPoint.cpp | BTT_GetRandomPoint.cpp | ExecuteTask, AbortTask | 2026-01-03 | 2026-01-03 |
+| BTT_GetRandomPoint.h | BTT_GetRandomPoint.h | **UBTT_GetRandomPoint** | 2026-01-03 | 2026-01-03 |
+| BTT_GetRandomPointNearStartPosition.cpp | BTT_GetRandomPointNearStartPosition.cpp | ExecuteTask, AbortTask | 2026-01-03 | 2026-01-03 |
+| BTT_GetRandomPointNearStartPosition.h | BTT_GetRandomPointNearStartPosition.h | **UBTT_GetRandomPointNearStartPosition** | 2026-01-03 | 2026-01-03 |
+| BTT_GetStrafePointAroundTarget.cpp | BTT_GetStrafePointAroundTarget.cpp | ExecuteTask, AbortTask, SetStrafeLocations, PickStrafeMethodBasedOnScore | 2026-01-03 | 2026-01-03 |
+| BTT_GetStrafePointAroundTarget.h | BTT_GetStrafePointAroundTarget.h | **UBTT_GetStrafePointAroundTarget** | 2026-01-03 | 2026-01-03 |
+| BTT_PatrolPath.h | BTT_PatrolPath.h | **UBTT_PatrolPath** | 2026-01-03 | 2026-01-03 |
+| BTT_SetKey.cpp | BTT_SetKey.cpp | ExecuteTask, AbortTask | 2026-01-03 | 2026-01-03 |
+| BTT_SetKey.h | BTT_SetKey.h | **UBTT_SetKey** | 2026-01-03 | 2026-01-03 |
+| BTT_SetMovementMode.cpp | BTT_SetMovementMode.cpp | ExecuteTask, AbortTask | 2026-01-03 | 2026-01-03 |
+| BTT_SetMovementMode.h | BTT_SetMovementMode.h | **UBTT_SetMovementMode** | 2026-01-03 | 2026-01-03 |
+| BTT_SimpleMoveTo.h | BTT_SimpleMoveTo.h | **UBTT_SimpleMoveTo** | 2026-01-03 | 2026-01-03 |
+| BTT_SwitchState.h | BTT_SwitchState.h | **UBTT_SwitchState** | 2026-01-03 | 2026-01-03 |
+| BTT_SwitchToPreviousState.h | BTT_SwitchToPreviousState.h | **UBTT_SwitchToPreviousState** | 2026-01-03 | 2026-01-03 |
+| BTT_ToggleFocus.cpp | BTT_ToggleFocus.cpp | ExecuteTask, AbortTask | 2026-01-03 | 2026-01-03 |
+| BTT_ToggleFocus.h | BTT_ToggleFocus.h | **UBTT_ToggleFocus** | 2026-01-03 | 2026-01-03 |
+| SLFBTServiceDistanceCheck.cpp | SLFBTServiceDistanceCheck.cpp | TickNode | 2026-01-03 | 2026-01-03 |
+| SLFBTServiceDistanceCheck.h | SLFBTServiceDistanceCheck.h | **USLFBTServiceDistanceCheck** | 2026-01-03 | 2026-01-03 |
+| SLFBTServiceIsTargetDead.cpp | SLFBTServiceIsTargetDead.cpp | TickNode | 2026-01-03 | 2026-01-03 |
+| SLFBTServiceIsTargetDead.h | SLFBTServiceIsTargetDead.h | **USLFBTServiceIsTargetDead** | 2026-01-03 | 2026-01-03 |
+| SLFBTTaskGetRandomPoint.cpp | SLFBTTaskGetRandomPoint.cpp | ExecuteTask | 2026-01-03 | 2026-01-03 |
+| SLFBTTaskGetRandomPoint.h | SLFBTTaskGetRandomPoint.h | **USLFBTTaskGetRandomPoint** | 2026-01-03 | 2026-01-03 |
+| SLFBTTaskSimpleMoveTo.cpp | SLFBTTaskSimpleMoveTo.cpp | ExecuteTask, GetStaticDescription, Printf | 2026-01-03 | 2026-01-03 |
+| SLFBTTaskSimpleMoveTo.h | SLFBTTaskSimpleMoveTo.h | **USLFBTTaskSimpleMoveTo** | 2026-01-03 | 2026-01-03 |
+| SLFBTTaskSwitchState.h | SLFBTTaskSwitchState.h | **USLFBTTaskSwitchState** | 2026-01-03 | 2026-01-03 |
+| SLFBTTaskToggleFocus.cpp | SLFBTTaskToggleFocus.cpp | ExecuteTask | 2026-01-03 | 2026-01-03 |
+| SLFBTTaskToggleFocus.h | SLFBTTaskToggleFocus.h | **USLFBTTaskToggleFocus** | 2026-01-03 | 2026-01-03 |
+| SLFBTTaskTryExecuteAbility.cpp | SLFBTTaskTryExecuteAbility.cpp | ExecuteTask | 2026-01-03 | 2026-01-03 |
+| SLFBTTaskTryExecuteAbility.h | SLFBTTaskTryExecuteAbility.h | **USLFBTTaskTryExecuteAbility** | 2026-01-03 | 2026-01-03 |
+
+## C++ AnimNotifies (`Source/SLFConversion/AnimNotifies`)
+**50 files**
+
+| File | Description | Key Functions/Classes | Created | Modified |
+|------|-------------|----------------------|---------|----------|
+| AN_SpawnProjectile.cpp | AN_SpawnProjectile.cpp | Notify, GetNotifyName_Implementation, Printf | 2026-01-03 | 2026-01-29 |
+| ANS_WeaponTrace.cpp | ANS_WeaponTrace.cpp | NotifyBegin, NotifyTick, NotifyEnd, GetNotifyName_Implementation | 2026-01-03 | 2026-01-12 |
+| ANS_WeaponTrace.h | ANS_WeaponTrace.h | **UANS_WeaponTrace** | 2026-01-03 | 2026-01-12 |
+| AN_SetMovementMode.cpp | AN_SetMovementMode.cpp | Notify, GetNotifyName_Implementation | 2026-01-03 | 2026-01-12 |
+| ANS_RegisterAttackSequence.cpp | ANS_RegisterAttackSequence.cpp | GetCombatManager, NotifyBegin, NotifyTick, NotifyEnd, GetNotifyName_Implement... | 2026-01-03 | 2026-01-11 |
+| ANS_RegisterAttackSequence.h | ANS_RegisterAttackSequence.h | **UAC_CombatManager, UANS_RegisterAttackSequence** | 2026-01-03 | 2026-01-11 |
+| ANS_AI_FistTrace.cpp | ANS_AI_FistTrace.cpp | NotifyBegin, NotifyTick, NotifyEnd, GetNotifyName_Implementation | 2026-01-03 | 2026-01-03 |
+| ANS_AI_FistTrace.h | ANS_AI_FistTrace.h | **AB_BaseProjectile, AB_Interactable, UB_Action** | 2026-01-03 | 2026-01-03 |
+| ANS_AI_RotateTowardsTarget.cpp | ANS_AI_RotateTowardsTarget.cpp | NotifyBegin, NotifyTick, NotifyEnd, GetNotifyName_Implementation | 2026-01-03 | 2026-01-03 |
+| ANS_AI_RotateTowardsTarget.h | ANS_AI_RotateTowardsTarget.h | **AB_BaseProjectile, AB_Interactable, UB_Action** | 2026-01-03 | 2026-01-03 |
+| ANS_AI_Trail.cpp | ANS_AI_Trail.cpp | NotifyBegin, NotifyTick, NotifyEnd, GetNotifyName_Implementation | 2026-01-03 | 2026-01-03 |
+| ANS_AI_Trail.h | ANS_AI_Trail.h | **AB_BaseProjectile, AB_Interactable, UB_Action** | 2026-01-03 | 2026-01-03 |
+| ANS_AI_WeaponTrace.cpp | ANS_AI_WeaponTrace.cpp | NotifyBegin, NotifyTick, NotifyEnd, GetNotifyName_Implementation | 2026-01-03 | 2026-01-03 |
+| ANS_AI_WeaponTrace.h | ANS_AI_WeaponTrace.h | **AB_BaseProjectile, AB_Interactable, UB_Action** | 2026-01-03 | 2026-01-03 |
+| ANS_FistTrace.cpp | ANS_FistTrace.cpp | NotifyBegin, NotifyTick, NotifyEnd, GetNotifyName_Implementation | 2026-01-03 | 2026-01-03 |
+| ANS_FistTrace.h | ANS_FistTrace.h | **AB_BaseProjectile, AB_Interactable, UB_Action** | 2026-01-03 | 2026-01-03 |
+| ANS_HyperArmor.cpp | ANS_HyperArmor.cpp | NotifyBegin, NotifyTick, NotifyEnd, GetNotifyName_Implementation | 2026-01-03 | 2026-01-03 |
+| ANS_HyperArmor.h | ANS_HyperArmor.h | **AB_BaseProjectile, AB_Interactable, UB_Action** | 2026-01-03 | 2026-01-03 |
+| ANS_InputBuffer.cpp | ANS_InputBuffer.cpp | NotifyBegin, NotifyTick, NotifyEnd, GetNotifyName_Implementation | 2026-01-03 | 2026-01-03 |
+| ANS_InputBuffer.h | ANS_InputBuffer.h | **AB_BaseProjectile, AB_Interactable, UB_Action** | 2026-01-03 | 2026-01-03 |
+| ANS_InvincibilityFrame.cpp | ANS_InvincibilityFrame.cpp | NotifyBegin, NotifyTick, NotifyEnd, GetNotifyName_Implementation | 2026-01-03 | 2026-01-03 |
+| ANS_InvincibilityFrame.h | ANS_InvincibilityFrame.h | **AB_BaseProjectile, AB_Interactable, UB_Action** | 2026-01-03 | 2026-01-03 |
+| ANS_ToggleChaosField.cpp | ANS_ToggleChaosField.cpp | NotifyBegin, NotifyTick, NotifyEnd, GetNotifyName_Implementation | 2026-01-03 | 2026-01-03 |
+| ANS_ToggleChaosField.h | ANS_ToggleChaosField.h | **AB_BaseProjectile, AB_Interactable, UB_Action** | 2026-01-03 | 2026-01-03 |
+| ANS_Trail.cpp | ANS_Trail.cpp | NotifyBegin, NotifyTick, NotifyEnd, GetNotifyName_Implementation | 2026-01-03 | 2026-01-03 |
+| ANS_Trail.h | ANS_Trail.h | **AB_BaseProjectile, AB_Interactable, UB_Action** | 2026-01-03 | 2026-01-03 |
+| AN_AI_SpawnProjectile.cpp | AN_AI_SpawnProjectile.cpp | Notify, GetNotifyName_Implementation, Printf | 2026-01-03 | 2026-01-03 |
+| AN_AI_SpawnProjectile.h | AN_AI_SpawnProjectile.h | **AB_BaseProjectile, AB_Interactable, UB_Action** | 2026-01-03 | 2026-01-03 |
+| AN_AdjustStat.cpp | AN_AdjustStat.cpp | Notify, GetNotifyName_Implementation, Printf | 2026-01-03 | 2026-01-03 |
+| AN_AdjustStat.h | AN_AdjustStat.h | **AB_BaseProjectile, AB_Interactable, UB_Action** | 2026-01-03 | 2026-01-03 |
+| AN_AoeDamage.cpp | AN_AoeDamage.cpp | Notify, GetNotifyName_Implementation, Printf | 2026-01-03 | 2026-01-03 |
+| AN_AoeDamage.h | AN_AoeDamage.h | **AB_BaseProjectile, AB_Interactable, UB_Action** | 2026-01-03 | 2026-01-03 |
+| AN_CameraShake.cpp | AN_CameraShake.cpp | Notify, GetNotifyName_Implementation | 2026-01-03 | 2026-01-03 |
+| AN_CameraShake.h | AN_CameraShake.h | **UAN_CameraShake** | 2026-01-03 | 2026-01-03 |
+| AN_FootstepTrace.cpp | AN_FootstepTrace.cpp | Notify, GetNotifyName_Implementation | 2026-01-03 | 2026-01-03 |
+| AN_FootstepTrace.h | AN_FootstepTrace.h | **UAN_FootstepTrace** | 2026-01-03 | 2026-01-03 |
+| AN_InterruptMontage.cpp | AN_InterruptMontage.cpp | Notify, GetNotifyName_Implementation | 2026-01-03 | 2026-01-03 |
+| AN_InterruptMontage.h | AN_InterruptMontage.h | **AB_BaseProjectile, AB_Interactable, UB_Action** | 2026-01-03 | 2026-01-03 |
+| AN_LaunchField.cpp | AN_LaunchField.cpp | Notify, GetNotifyName_Implementation | 2026-01-03 | 2026-01-03 |
+| AN_LaunchField.h | AN_LaunchField.h | **AB_BaseProjectile, AB_Interactable, UB_Action** | 2026-01-03 | 2026-01-03 |
+| AN_PlayCameraSequence.cpp | AN_PlayCameraSequence.cpp | Notify, GetNotifyName_Implementation, Printf | 2026-01-03 | 2026-01-03 |
+| AN_PlayCameraSequence.h | AN_PlayCameraSequence.h | **AB_BaseProjectile, AB_Interactable, UB_Action** | 2026-01-03 | 2026-01-03 |
+| AN_SetAiState.cpp | AN_SetAiState.cpp | Notify, GetNotifyName_Implementation | 2026-01-03 | 2026-01-03 |
+| AN_SetAiState.h | AN_SetAiState.h | **AB_BaseProjectile, AB_Interactable, UB_Action** | 2026-01-03 | 2026-01-03 |
+| AN_SetMovementMode.h | AN_SetMovementMode.h | **AB_BaseProjectile, AB_Interactable, UB_Action** | 2026-01-03 | 2026-01-03 |
+| AN_SpawnProjectile.h | AN_SpawnProjectile.h | **AB_BaseProjectile, AB_Interactable, UB_Action** | 2026-01-03 | 2026-01-03 |
+| AN_TryGuard.cpp | AN_TryGuard.cpp | Notify, GetNotifyName_Implementation | 2026-01-03 | 2026-01-03 |
+| AN_TryGuard.h | AN_TryGuard.h | **AB_BaseProjectile, AB_Interactable, UB_Action** | 2026-01-03 | 2026-01-03 |
+| AN_WorldCameraShake.cpp | AN_WorldCameraShake.cpp | Notify, GetNotifyName_Implementation | 2026-01-03 | 2026-01-03 |
+| AN_WorldCameraShake.h | AN_WorldCameraShake.h | **AB_BaseProjectile, AB_Interactable, UB_Action** | 2026-01-03 | 2026-01-03 |
+
+## C++ Animation (`Source/SLFConversion/Animation`)
+**52 files**
+
+| File | Description | Key Functions/Classes | Created | Modified |
+|------|-------------|----------------------|---------|----------|
+| SLFAnimNotifyStateTelegraph.cpp | SLFAnimNotifyStateTelegraph.cpp | GetNotifyName_Implementation, NotifyBegin, NotifyEnd | 2026-03-16 | 2026-03-16 |
+| SLFAnimNotifyStateTelegraph.h | SLFAnimNotifyStateTelegraph.h | **USLFAnimNotifyStateTelegraph, UNiagaraSystem, UNiagaraComponent** | 2026-03-16 | 2026-03-16 |
+| SLFAnimNotifyStateWeaponTrace.cpp | SLFAnimNotifyStateWeaponTrace.cpp | GetNotifyName_Implementation, NotifyBegin, NotifyTick, NotifyEnd | 2026-01-03 | 2026-03-16 |
+| SLFAnimNotifyStateWeaponTrace.h | SLFAnimNotifyStateWeaponTrace.h | **USLFAnimNotifyStateWeaponTrace, UNiagaraSystem, UNiagaraComponent** | 2026-01-03 | 2026-03-16 |
+| ABP_SoulslikeEnemy.cpp | ABP_SoulslikeEnemy.cpp | NativeInitializeAnimation, NativeUpdateAnimation, GetOwnerVelocity, GetOwnerR... | 2026-01-03 | 2026-02-07 |
+| ABP_SoulslikeEnemy.h | ABP_SoulslikeEnemy.h | **UAnimMontage, ACharacter, UCharacterMovementComponent** | 2026-01-03 | 2026-02-07 |
+| ABP_SoulslikeBossNew.cpp | ABP_SoulslikeBossNew.cpp | NativeInitializeAnimation, NativeUpdateAnimation, GetOwnerVelocity, GetOwnerR... | 2026-01-03 | 2026-01-30 |
+| ABP_SoulslikeBossNew.h | ABP_SoulslikeBossNew.h | **UAnimMontage, ACharacter, UCharacterMovementComponent** | 2026-01-03 | 2026-01-30 |
+| ABP_SoulslikeCharacter_Additive.cpp | C++ AnimInstance implementation for ABP_SoulslikeCharacter_Additive | NativeInitializeAnimation, NativeUpdateAnimation, GetOwnerVelocity, GetOwnerR... | 2026-01-03 | 2026-01-29 |
+| ABP_SoulslikeCharacter_Additive.h | C++ AnimInstance for ABP_SoulslikeCharacter_Additive | **UAnimMontage, ACharacter, UAC_ActionManager** | 2026-01-03 | 2026-01-13 |
+| ABP_SoulslikeNPC.cpp | ABP_SoulslikeNPC.cpp | NativeInitializeAnimation, NativeUpdateAnimation, GetOwnerVelocity, GetOwnerR... | 2026-01-03 | 2026-01-11 |
+| ABP_SoulslikeNPC.h | ABP_SoulslikeNPC.h | **UAnimMontage, ACharacter, UCharacterMovementComponent** | 2026-01-03 | 2026-01-11 |
+| ABP_Manny_PostProcess.cpp | ABP_Manny_PostProcess.cpp | NativeInitializeAnimation, NativeUpdateAnimation, GetOwnerVelocity, GetOwnerR... | 2026-01-03 | 2026-01-07 |
+| ABP_Quinn_PostProcess.cpp | ABP_Quinn_PostProcess.cpp | NativeInitializeAnimation, NativeUpdateAnimation, GetOwnerVelocity, GetOwnerR... | 2026-01-03 | 2026-01-07 |
+| SLFAnimNotifyAdjustStat.cpp | SLFAnimNotifyAdjustStat.cpp | GetNotifyName_Implementation, Printf, Notify | 2026-01-03 | 2026-01-07 |
+| SLFAnimNotifyAoeDamage.cpp | SLFAnimNotifyAoeDamage.cpp | GetNotifyName_Implementation, Printf, Notify | 2026-01-03 | 2026-01-07 |
+| SLFAnimNotifyFootstepTrace.cpp | SLFAnimNotifyFootstepTrace.cpp | GetNotifyName_Implementation, Printf, Notify | 2026-01-03 | 2026-01-07 |
+| SLFAnimNotifySetAIState.cpp | SLFAnimNotifySetAIState.cpp | GetNotifyName_Implementation, Printf, Notify | 2026-01-03 | 2026-01-07 |
+| SLFAnimNotifyStateAIRotateToTarget.cpp | SLFAnimNotifyStateAIRotateToTarget.cpp | GetNotifyName_Implementation, NotifyTick | 2026-01-03 | 2026-01-07 |
+| SLFAnimNotifyStateFistTrace.cpp | SLFAnimNotifyStateFistTrace.cpp | GetNotifyName_Implementation, Printf, NotifyBegin, NotifyTick, NotifyEnd | 2026-01-03 | 2026-01-07 |
+| SLFAnimNotifyStateFistTrace.h | SLFAnimNotifyStateFistTrace.h | **USLFAnimNotifyStateFistTrace** | 2026-01-03 | 2026-01-07 |
+| SLFAnimNotifyStateHyperArmor.cpp | SLFAnimNotifyStateHyperArmor.cpp | GetNotifyName_Implementation, NotifyBegin, NotifyEnd | 2026-01-03 | 2026-01-07 |
+| SLFAnimNotifyStateInputBuffer.cpp | SLFAnimNotifyStateInputBuffer.cpp | GetNotifyName_Implementation, NotifyBegin, NotifyEnd | 2026-01-03 | 2026-01-07 |
+| SLFAnimNotifyStateInvincibility.cpp | SLFAnimNotifyStateInvincibility.cpp | GetNotifyName_Implementation, NotifyBegin, NotifyEnd | 2026-01-03 | 2026-01-07 |
+| SLFAnimNotifyStateTrail.cpp | SLFAnimNotifyStateTrail.cpp | GetNotifyName_Implementation, NotifyBegin, NotifyEnd | 2026-01-03 | 2026-01-07 |
+| SLFAnimNotifyTryGuard.cpp | SLFAnimNotifyTryGuard.cpp | GetNotifyName_Implementation, Notify | 2026-01-03 | 2026-01-07 |
+| SLFBossAnimInstance.cpp | SLFBossAnimInstance.cpp | NativeInitializeAnimation, NativeUpdateAnimation, CacheReferences, UpdateAnim... | 2026-01-03 | 2026-01-07 |
+| SLFBossAnimInstance.h | SLFBossAnimInstance.h | **UCharacterMovementComponent, UAICombatManagerComponent, UDataAsset** | 2026-01-03 | 2026-01-07 |
+| SLFEnemyAnimInstance.cpp | SLFEnemyAnimInstance.cpp | NativeInitializeAnimation, NativeUpdateAnimation, CacheReferences, UpdateAnim... | 2026-01-03 | 2026-01-07 |
+| SLFEnemyAnimInstance.h | SLFEnemyAnimInstance.h | **UCharacterMovementComponent, UAICombatManagerComponent, UEquipmentManagerCo... | 2026-01-03 | 2026-01-07 |
+| ABP_Manny_PostProcess.h | ABP_Manny_PostProcess.h | **UAnimMontage, ACharacter, UABP_Manny_PostProcess** | 2026-01-03 | 2026-01-03 |
+| ABP_Quinn_PostProcess.h | ABP_Quinn_PostProcess.h | **UAnimMontage, ACharacter, UABP_Quinn_PostProcess** | 2026-01-03 | 2026-01-03 |
+| SLFAnimNotifyAdjustStat.h | SLFAnimNotifyAdjustStat.h | **USLFAnimNotifyAdjustStat** | 2026-01-03 | 2026-01-03 |
+| SLFAnimNotifyAoeDamage.h | SLFAnimNotifyAoeDamage.h | **USLFAnimNotifyAoeDamage** | 2026-01-03 | 2026-01-03 |
+| SLFAnimNotifyCameraShake.cpp | SLFAnimNotifyCameraShake.cpp | GetNotifyName_Implementation, Notify | 2026-01-03 | 2026-01-03 |
+| SLFAnimNotifyCameraShake.h | SLFAnimNotifyCameraShake.h | **USLFAnimNotifyCameraShake** | 2026-01-03 | 2026-01-03 |
+| SLFAnimNotifyFootstepTrace.h | SLFAnimNotifyFootstepTrace.h | **USLFAnimNotifyFootstepTrace** | 2026-01-03 | 2026-01-03 |
+| SLFAnimNotifyInterruptMontage.cpp | SLFAnimNotifyInterruptMontage.cpp | GetNotifyName_Implementation, Notify | 2026-01-03 | 2026-01-03 |
+| SLFAnimNotifyInterruptMontage.h | SLFAnimNotifyInterruptMontage.h | **USLFAnimNotifyInterruptMontage** | 2026-01-03 | 2026-01-03 |
+| SLFAnimNotifySetAIState.h | SLFAnimNotifySetAIState.h | **USLFAnimNotifySetAIState** | 2026-01-03 | 2026-01-03 |
+| SLFAnimNotifySetMovementMode.cpp | SLFAnimNotifySetMovementMode.cpp | GetNotifyName_Implementation, Notify | 2026-01-03 | 2026-01-03 |
+| SLFAnimNotifySetMovementMode.h | SLFAnimNotifySetMovementMode.h | **USLFAnimNotifySetMovementMode** | 2026-01-03 | 2026-01-03 |
+| SLFAnimNotifySpawnProjectile.cpp | SLFAnimNotifySpawnProjectile.cpp | GetNotifyName_Implementation, Notify | 2026-01-03 | 2026-01-03 |
+| SLFAnimNotifySpawnProjectile.h | SLFAnimNotifySpawnProjectile.h | **USLFAnimNotifySpawnProjectile** | 2026-01-03 | 2026-01-03 |
+| SLFAnimNotifyStateAIRotateToTarget.h | SLFAnimNotifyStateAIRotateToTarget.h | **USLFAnimNotifyStateAIRotateToTarget** | 2026-01-03 | 2026-01-03 |
+| SLFAnimNotifyStateHyperArmor.h | SLFAnimNotifyStateHyperArmor.h | **USLFAnimNotifyStateHyperArmor** | 2026-01-03 | 2026-01-03 |
+| SLFAnimNotifyStateInputBuffer.h | SLFAnimNotifyStateInputBuffer.h | **USLFAnimNotifyStateInputBuffer** | 2026-01-03 | 2026-01-03 |
+| SLFAnimNotifyStateInvincibility.h | SLFAnimNotifyStateInvincibility.h | **USLFAnimNotifyStateInvincibility** | 2026-01-03 | 2026-01-03 |
+| SLFAnimNotifyStateTrail.h | SLFAnimNotifyStateTrail.h | **USLFAnimNotifyStateTrail** | 2026-01-03 | 2026-01-03 |
+| SLFAnimNotifyTryGuard.h | SLFAnimNotifyTryGuard.h | **USLFAnimNotifyTryGuard** | 2026-01-03 | 2026-01-03 |
+| SLFNPCAnimInstance.cpp | SLFNPCAnimInstance.cpp | NativeInitializeAnimation, NativeUpdateAnimation, CacheReferences, UpdateAnim... | 2026-01-03 | 2026-01-03 |
+| SLFNPCAnimInstance.h | SLFNPCAnimInstance.h | **UCharacterMovementComponent, UAICombatManagerComponent, UEquipmentManagerCo... | 2026-01-03 | 2026-01-03 |
+
+## C++ Blueprints (`Source/SLFConversion/Blueprints`)
+**570 files**
+
+| File | Description | Key Functions/Classes | Created | Modified |
+|------|-------------|----------------------|---------|----------|
+| SLFEnemyGeneric.cpp | SLFEnemyGeneric.cpp | BeginPlay, ApplyEnemyConfig, Tick, ConfigureAbilities, TrySpawnBodyVFX | 2026-03-15 | 2026-03-16 |
+| SLFEnemySentinel.cpp | SLFEnemySentinel.cpp | BeginPlay, ApplySentinelConfig, Tick, ConfigureAbilities, FixMontageDurations | 2026-02-21 | 2026-03-16 |
+| SLFEnemyGeneric.h | SLFEnemyGeneric.h | **UNavigationInvokerComponent, UNiagaraComponent, UNiagaraSystem** | 2026-03-15 | 2026-03-15 |
+| SLFEnemySentinel.h | SLFEnemySentinel.h | **UNavigationInvokerComponent, ASLFEnemySentinel** | 2026-01-03 | 2026-03-09 |
+| SLFRestingPointBase.cpp | SLFRestingPointBase.cpp | BeginPlay, OnConstruction, GetReplenishData_Implementation, OnInteract_Implem... | 2026-01-03 | 2026-03-09 |
+| SLFRestingPointBase.h | SLFRestingPointBase.h | **UAnimMontage, UDataAsset, ASLFRestingPointBase** | 2026-01-03 | 2026-03-09 |
+| SLFSoulslikeCharacter.cpp | SLFSoulslikeCharacter.cpp | BeginPlay, Tick, OnStartCrouch, OnEndCrouch, Landed | 2026-01-03 | 2026-03-09 |
+| SLFSoulslikeCharacter.h | SLFSoulslikeCharacter.h | **UInputMappingContext, UInputAction, UDataAsset** | 2026-01-03 | 2026-03-09 |
+| Actions/SLFActionBackstab.cpp | SLFActionBackstab.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-03-09 |
+| Actions/SLFActionDoubleJump.cpp | SLFActionDoubleJump.cpp | CanExecuteAction_Implementation, ExecuteAction_Implementation | 2026-03-09 | 2026-03-09 |
+| Actions/SLFActionDoubleJump.h | SLFActionDoubleJump.h | **USLFActionDoubleJump** | 2026-03-09 | 2026-03-09 |
+| Actions/SLFActionGrapple.cpp | SLFActionGrapple.cpp | FindBestGrapplePoint, CanExecuteAction_Implementation, ExecuteAction_Implemen... | 2026-03-09 | 2026-03-09 |
+| Actions/SLFActionGrapple.h | SLFActionGrapple.h | **ASLFGrapplePoint, USLFActionGrapple** | 2026-03-09 | 2026-03-09 |
+| Actions/SLFActionGuardCounter.cpp | SLFActionGuardCounter.cpp | OpenCounterWindow, CloseCounterWindow, CanExecuteAction_Implementation, Execu... | 2026-03-09 | 2026-03-09 |
+| Actions/SLFActionGuardCounter.h | SLFActionGuardCounter.h | **USLFActionGuardCounter** | 2026-03-09 | 2026-03-09 |
+| Actions/SLFActionJump.cpp | SLFActionJump.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-03-09 |
+| Actions/SLFActionMantle.cpp | SLFActionMantle.cpp | DetectLedge, CanExecuteAction_Implementation, ExecuteAction_Implementation | 2026-03-09 | 2026-03-09 |
+| Actions/SLFActionMantle.h | SLFActionMantle.h | **USLFActionMantle**; UMETA | 2026-03-09 | 2026-03-09 |
+| Actions/SLFActionSlide.cpp | SLFActionSlide.cpp | CanExecuteAction_Implementation, ExecuteAction_Implementation, EndSlide, Clea... | 2026-03-09 | 2026-03-09 |
+| Actions/SLFActionSlide.h | SLFActionSlide.h | **USLFActionSlide** | 2026-03-09 | 2026-03-09 |
+| Actions/SLFActionSwim.cpp | SLFActionSwim.cpp | CanExecuteAction_Implementation, ExecuteAction_Implementation, EnterWater, Ex... | 2026-03-09 | 2026-03-09 |
+| Actions/SLFActionSwim.h | SLFActionSwim.h | **USLFActionSwim** | 2026-03-09 | 2026-03-09 |
+| Actors/SLFBossDoor.cpp | SLFBossDoor.cpp | BeginPlay, SetFogGateCollision, OnTraced_Implementation, OnInteract_Implement... | 2026-01-03 | 2026-03-09 |
+| Actors/SLFBossDoor.h | SLFBossDoor.h | **ASLFBossDoor** | 2026-01-03 | 2026-03-09 |
+| Actors/SLFBossPhaseObjective.cpp | SLFBossPhaseObjective.cpp | BeginPlay, TakeDamage, DestroyObjective | 2026-03-09 | 2026-03-09 |
+| Actors/SLFBossPhaseObjective.h | SLFBossPhaseObjective.h | **ASLFBossPhaseObjective**; TakeDamage | 2026-03-09 | 2026-03-09 |
+| Actors/SLFGrapplePoint.cpp | SLFGrapplePoint.cpp | BeginPlay, GetLandingLocation, IsInRange, Dist | 2026-03-09 | 2026-03-09 |
+| Actors/SLFGrapplePoint.h | SLFGrapplePoint.h | **ASLFGrapplePoint** | 2026-03-09 | 2026-03-09 |
+| Actors/SLFPuzzleMarker.cpp | SLFPuzzleMarker.cpp | BeginPlay, CompleteObjective | 2026-03-09 | 2026-03-09 |
+| Actors/SLFPuzzleMarker.h | SLFPuzzleMarker.h | **ASLFPuzzleMarker** | 2026-03-09 | 2026-03-09 |
+| Actors/SLFShortcutGate.cpp | SLFShortcutGate.cpp | BeginPlay, IsOnOpenSide, OpenGate, OnInteract_Implementation | 2026-03-09 | 2026-03-09 |
+| Actors/SLFShortcutGate.h | SLFShortcutGate.h | **ASLFShortcutGate** | 2026-03-09 | 2026-03-09 |
+| Actors/SLFTrapBase.cpp | SLFTrapBase.cpp | BeginPlay, OnTriggerOverlap, ActivateTrap_Implementation, ResetTrap_Implement... | 2026-03-09 | 2026-03-09 |
+| Actors/SLFTrapBase.h | SLFTrapBase.h | **ASLFTrapBase**; OnTriggerOverlap | 2026-03-09 | 2026-03-09 |
+| B_RestingPoint.cpp | B_RestingPoint.cpp | BeginPlay, GetReplenishData_Implementation, GetRestingPointSpawnPosition_Impl... | 2026-01-03 | 2026-02-27 |
+| SLFNPCKael.cpp | SLFNPCKael.cpp | BeginPlay, GetUpgradeCost, CanUpgradeWeapon, OnInteract_Implementation, OnTra... | 2026-02-27 | 2026-02-27 |
+| SLFNPCKael.h | SLFNPCKael.h | **ASLFNPCKael** | 2026-02-27 | 2026-02-27 |
+| SLFNPCVara.cpp | SLFNPCVara.cpp | BeginPlay, UpdateLocationFromProgress, GetContextualDialog_Implementation, On... | 2026-02-27 | 2026-02-27 |
+| SLFNPCVara.h | SLFNPCVara.h | **ASLFNPCVara** | 2026-02-27 | 2026-02-27 |
+| Actors/SLFBossEncounter.cpp | SLFBossEncounter.cpp | BeginPlay, Tick, StartEncounter, OnBossDefeated, TransitionToPhase | 2026-02-27 | 2026-02-27 |
+| Actors/SLFBossEncounter.h | SLFBossEncounter.h | **UBoxComponent, UStaticMeshComponent, ASLFBossEncounter**; OnFogGateOverlap | 2026-02-27 | 2026-02-27 |
+| Actors/SLFEnemySpawnPoint.cpp | SLFEnemySpawnPoint.cpp | BeginPlay, SpawnEnemy, DespawnEnemy, OnPlayerRested, IsEnemyAlive | 2026-02-27 | 2026-02-27 |
+| Actors/SLFEnemySpawnPoint.h | SLFEnemySpawnPoint.h | **USphereComponent, UBillboardComponent, ASLFSoulslikeEnemy** | 2026-02-27 | 2026-02-27 |
+| Actors/SLFLevelStreamManager.cpp | SLFLevelStreamManager.cpp | BeginPlay, Tick, OnTriggerOverlap, EnterDungeon, ExitDungeon | 2026-02-27 | 2026-02-27 |
+| Actors/SLFLevelStreamManager.h | SLFLevelStreamManager.h | **UBoxComponent, ULevelStreamingDynamic, ASLFLevelStreamManager**; OnTriggerO... | 2026-02-27 | 2026-02-27 |
+| Actors/SLFZoneTrigger.cpp | SLFZoneTrigger.cpp | BeginPlay, OnPlayerEnterZone | 2026-02-27 | 2026-02-27 |
+| Actors/SLFZoneTrigger.h | SLFZoneTrigger.h | **UBoxComponent, ASLFZoneTrigger**; OnPlayerEnterZone | 2026-02-27 | 2026-02-27 |
+| SLFEnemyGuard.cpp | SLFEnemyGuard.cpp | BeginPlay, ApplyC3100Config, Tick, ConfigureAbilities, ApplyMontageLocomotion... | 2026-01-03 | 2026-02-18 |
+| SLFEnemyGuard.h | SLFEnemyGuard.h | **ASLFEnemyGuard** | 2026-01-03 | 2026-02-18 |
+| B_PickupItem.cpp | B_PickupItem.cpp | TryGetItemInfo_Implementation, OnInteract_Implementation, EndPlay | 2026-01-03 | 2026-02-07 |
+| B_PickupItem.h | B_PickupItem.h | **UAnimMontage, UDataTable, AB_PickupItem** | 2026-01-03 | 2026-02-07 |
+| B_SequenceActor.cpp | B_SequenceActor.cpp | BeginPlay, EndPlay, SetupInputBindings, OnAnyKeyInput, OnGameMenuInput | 2026-01-03 | 2026-02-07 |
+| B_SequenceActor.h | B_SequenceActor.h | **UInputAction, UInputMappingContext, AB_SequenceActor** | 2026-01-03 | 2026-02-07 |
+| B_Soulslike_Character.cpp | B_Soulslike_Character.cpp | HandleTargetLock_Implementation, GetAxisValue_Implementation, MakeModularMesh... | 2026-01-03 | 2026-02-07 |
+| B_Soulslike_Character.h | B_Soulslike_Character.h | **UAnimMontage, UDataTable, UAIInteractionManagerComponent** | 2026-01-03 | 2026-02-07 |
+| B_StatusEffect.cpp | B_StatusEffect.cpp | GetOwnerStatManager_Implementation, TryAdjustOwnerStat, GetBuildupPercent_Imp... | 2026-01-03 | 2026-02-07 |
+| SLFNPCShowcaseGuide.cpp | SLFNPCShowcaseGuide.cpp | BeginPlay | 2026-01-03 | 2026-02-07 |
+| SLFNPCShowcaseGuide.h | SLFNPCShowcaseGuide.h | **ASLFNPCShowcaseGuide** | 2026-01-03 | 2026-02-07 |
+| SLFPickupItemBase.cpp | SLFPickupItemBase.cpp | BeginPlay, SetupWorldNiagara, TryGetItemInfo_Implementation, TriggerOnItemLoo... | 2026-01-03 | 2026-02-07 |
+| SLFSoulslikeNPC.cpp | SLFSoulslikeNPC.cpp | BeginPlay, GetLookAtLocation_Implementation, TeleportToLocation_Implementatio... | 2026-01-03 | 2026-02-07 |
+| SLFSoulslikeNPC.h | SLFSoulslikeNPC.h | **UPrimitiveComponent, USphereComponent, UAIInteractionManagerComponent** | 2026-01-03 | 2026-02-07 |
+| SLFNPCShowcaseVendor.cpp | SLFNPCShowcaseVendor.cpp | BeginPlay | 2026-01-03 | 2026-02-01 |
+| SLFNPCShowcaseVendor.h | SLFNPCShowcaseVendor.h | **ASLFNPCShowcaseVendor** | 2026-01-03 | 2026-02-01 |
+| SLFSoulslikeBoss.cpp | SLFSoulslikeBoss.cpp | BeginPlay, OnTriggerBeginOverlap | 2026-01-03 | 2026-01-30 |
+| SLFSoulslikeBoss.h | SLFSoulslikeBoss.h | **UAIBossComponent, UAC_AI_CombatManager, ASLFSoulslikeBoss**; OnTriggerBegin... | 2026-01-03 | 2026-01-30 |
+| B_Action_ScrollWheel_Tools.cpp | B_Action_ScrollWheel_Tools.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-29 |
+| B_Action_WeaponAbility.cpp | B_Action_WeaponAbility.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-29 |
+| SLFBaseCharacter.cpp | SLFBaseCharacter.cpp | BeginPlay, Tick, SetupPlayerInputComponent, PlaySoftSoundAtLocation_Implement... | 2026-01-03 | 2026-01-29 |
+| SLFSpellProjectile.cpp | SLFSpellProjectile.cpp | BeginPlay, Tick, SetupBlackholeEffect, UpdatePulseEffect, GetElementColor | 2026-01-29 | 2026-01-29 |
+| SLFSpellProjectile.h | SLFSpellProjectile.h | **UStaticMeshComponent, UMaterialInstanceDynamic, UPointLightComponent**; UMETA | 2026-01-29 | 2026-01-29 |
+| SLFWeaponBase.cpp | SLFWeaponBase.cpp | BeginPlay, OnWeaponEquip_Implementation, OnWeaponUnequip_Implementation, OnUs... | 2026-01-03 | 2026-01-29 |
+| Actions/SLFActionScrollWheelTools.cpp | SLFActionScrollWheelTools.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-29 |
+| Actions/SLFActionThrowProjectile.cpp | SLFActionThrowProjectile.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-29 |
+| Actions/SLFActionUseEquippedTool.cpp | SLFActionUseEquippedTool.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-29 |
+| Actions/SLFActionWeaponAbility.cpp | SLFActionWeaponAbility.cpp | ExecuteAction_Implementation, BeginSpecialAttack | 2026-01-03 | 2026-01-29 |
+| Actions/SLFActionWeaponAbility.h | SLFActionWeaponAbility.h | **UPDA_WeaponAbility, USLFActionWeaponAbility** | 2026-01-03 | 2026-01-29 |
+| Spells/SLFAOESpell.cpp | SLFAOESpell.cpp | BeginPlay, Tick, SetupAOEEffect, UpdateExpansion | 2026-01-29 | 2026-01-29 |
+| Spells/SLFAOESpell.h | SLFAOESpell.h | **UStaticMeshComponent, UMaterialInstanceDynamic, UPointLightComponent** | 2026-01-29 | 2026-01-29 |
+| Spells/SLFArcaneMissileProjectile.cpp | SLFArcaneMissileProjectile.cpp | BeginPlay, Tick, SetupArcaneEffect, UpdateMagicalEffect | 2026-01-29 | 2026-01-29 |
+| Spells/SLFArcaneMissileProjectile.h | SLFArcaneMissileProjectile.h | **UStaticMeshComponent, UMaterialInstanceDynamic, UPointLightComponent** | 2026-01-29 | 2026-01-29 |
+| Spells/SLFBeamSpell.cpp | SLFBeamSpell.cpp | BeginPlay, Tick, SetupBeamEffect, UpdateBeamEffect | 2026-01-29 | 2026-01-29 |
+| Spells/SLFBeamSpell.h | SLFBeamSpell.h | **UStaticMeshComponent, UMaterialInstanceDynamic, UPointLightComponent** | 2026-01-29 | 2026-01-29 |
+| Spells/SLFFireballProjectile.cpp | SLFFireballProjectile.cpp | BeginPlay, Tick, SetupFireEffect, UpdateFlickerEffect | 2026-01-29 | 2026-01-29 |
+| Spells/SLFFireballProjectile.h | SLFFireballProjectile.h | **UStaticMeshComponent, UMaterialInstanceDynamic, UPointLightComponent** | 2026-01-29 | 2026-01-29 |
+| Spells/SLFHealingSpell.cpp | SLFHealingSpell.cpp | BeginPlay, Tick, SetupHealingEffect, UpdateHealingEffect | 2026-01-29 | 2026-01-29 |
+| Spells/SLFHealingSpell.h | SLFHealingSpell.h | **UStaticMeshComponent, UMaterialInstanceDynamic, UPointLightComponent** | 2026-01-29 | 2026-01-29 |
+| Spells/SLFHolyOrbProjectile.cpp | SLFHolyOrbProjectile.cpp | BeginPlay, Tick, SetupHolyEffect, UpdateRadianceEffect | 2026-01-29 | 2026-01-29 |
+| Spells/SLFHolyOrbProjectile.h | SLFHolyOrbProjectile.h | **UStaticMeshComponent, UMaterialInstanceDynamic, UPointLightComponent** | 2026-01-29 | 2026-01-29 |
+| Spells/SLFIceShardProjectile.cpp | SLFIceShardProjectile.cpp | BeginPlay, Tick, SetupIceEffect, UpdateShimmerEffect | 2026-01-29 | 2026-01-29 |
+| Spells/SLFIceShardProjectile.h | SLFIceShardProjectile.h | **UStaticMeshComponent, UMaterialInstanceDynamic, UPointLightComponent** | 2026-01-29 | 2026-01-29 |
+| Spells/SLFLightningBoltProjectile.cpp | SLFLightningBoltProjectile.cpp | BeginPlay, Tick, SetupLightningEffect, UpdateElectricEffect | 2026-01-29 | 2026-01-29 |
+| Spells/SLFLightningBoltProjectile.h | SLFLightningBoltProjectile.h | **UStaticMeshComponent, UMaterialInstanceDynamic, UPointLightComponent** | 2026-01-29 | 2026-01-29 |
+| Spells/SLFPoisonBlobProjectile.cpp | SLFPoisonBlobProjectile.cpp | BeginPlay, Tick, SetupPoisonEffect, UpdateBubblingEffect | 2026-01-29 | 2026-01-29 |
+| Spells/SLFPoisonBlobProjectile.h | SLFPoisonBlobProjectile.h | **UStaticMeshComponent, UMaterialInstanceDynamic, UPointLightComponent** | 2026-01-29 | 2026-01-29 |
+| Spells/SLFShieldSpell.cpp | SLFShieldSpell.cpp | BeginPlay, Tick, SetupShieldEffect, UpdateShieldEffect | 2026-01-29 | 2026-01-29 |
+| Spells/SLFShieldSpell.h | SLFShieldSpell.h | **UStaticMeshComponent, UMaterialInstanceDynamic, UPointLightComponent** | 2026-01-29 | 2026-01-29 |
+| Spells/SLFSummoningCircle.cpp | SLFSummoningCircle.cpp | BeginPlay, Tick, SetupCircleEffect, UpdateCircleEffect | 2026-01-29 | 2026-01-29 |
+| Spells/SLFSummoningCircle.h | SLFSummoningCircle.h | **UStaticMeshComponent, UMaterialInstanceDynamic, UPointLightComponent** | 2026-01-29 | 2026-01-29 |
+| B_BaseProjectile.cpp | B_BaseProjectile.cpp | BeginPlay, CacheComponentReferences, OnTriggerOverlap, InitializeProjectile_I... | 2026-01-03 | 2026-01-28 |
+| B_BaseProjectile.h | B_BaseProjectile.h | **UAnimMontage, UDataTable, UProjectileMovementComponent**; OnTriggerOverlap | 2026-01-03 | 2026-01-28 |
+| SLFProjectileBase.cpp | SLFProjectileBase.cpp | BeginPlay, Tick, SetupProjectile_Implementation, OnProjectileHit_Implementati... | 2026-01-03 | 2026-01-28 |
+| SLFProjectileBase.h | SLFProjectileBase.h | **UNiagaraSystem, UNiagaraComponent, UProjectileMovementComponent**; OnTrigge... | 2026-01-03 | 2026-01-28 |
+| B_Action.cpp | B_Action.cpp | GetEquipmentManager_Implementation, GetInteractionManager_Implementation, Get... | 2026-01-03 | 2026-01-27 |
+| B_Action.h | B_Action.h | **UAnimMontage, UDataTable, UAC_EquipmentManager** | 2026-01-03 | 2026-01-27 |
+| B_Action_DrinkFlask_HP.cpp | B_Action_DrinkFlask_HP.cpp | ExecuteAction_Implementation, GetChangeAmountFromPercent_Implementation | 2026-01-03 | 2026-01-27 |
+| B_Action_DrinkFlask_HP.h | B_Action_DrinkFlask_HP.h | **UAnimMontage, UDataTable, UB_Action_DrinkFlask_HP** | 2026-01-03 | 2026-01-27 |
+| B_Action_ScrollWheel_LeftHand.cpp | B_Action_ScrollWheel_LeftHand.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-27 |
+| B_Action_ScrollWheel_RightHand.cpp | B_Action_ScrollWheel_RightHand.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-27 |
+| SLFActionBase.cpp | SLFActionBase.cpp | GetEquipmentManager_Implementation, GetInteractionManager_Implementation, Get... | 2026-01-03 | 2026-01-27 |
+| SLFActionBase.h | SLFActionBase.h | **UDataAsset, UAnimInstance, UStatManagerComponent** | 2026-01-03 | 2026-01-27 |
+| Actions/SLFActionDrinkFlaskHP.cpp | SLFActionDrinkFlaskHP.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-27 |
+| Actions/SLFActionScrollWheelLeftHand.cpp | SLFActionScrollWheelLeftHand.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-27 |
+| Actions/SLFActionScrollWheelRightHand.cpp | SLFActionScrollWheelRightHand.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-27 |
+| AIC_SoulslikeFramework.cpp | AIC_SoulslikeFramework.cpp | BeginPlay, OnPossess, Tick, InitializeBehavior_Implementation | 2026-01-03 | 2026-01-26 |
+| B_Action_PickupItemMontage.cpp | B_Action_PickupItemMontage.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-26 |
+| B_Chaos_ForceField.h | B_Chaos_ForceField.h | **UStaticMeshComponent, USkeletalMeshComponent, USphereComponent** | 2026-01-03 | 2026-01-26 |
+| B_Container.cpp | B_Container.cpp | BeginPlay, OnConstruction, OnInteract_Implementation, OpenContainer_Implement... | 2026-01-03 | 2026-01-26 |
+| B_Container.h | B_Container.h | **UAC_LootDropManager, AB_PickupItem, AB_Container** | 2026-01-03 | 2026-01-26 |
+| B_DeathCurrency.cpp | B_DeathCurrency.cpp | BeginPlay, OnInteract_Implementation, OnSpawnedFromSave_Implementation | 2026-01-03 | 2026-01-26 |
+| B_DeathCurrency.h | B_DeathCurrency.h | **UAnimMontage, UDataTable, AB_DeathCurrency** | 2026-01-03 | 2026-01-26 |
+| B_Destructible.cpp | B_Destructible.cpp | BeginPlay, OnConstruction, OnChaosBreakEvent | 2026-01-03 | 2026-01-26 |
+| B_Interactable.cpp | B_Interactable.cpp | BeginPlay, AddInteractableStateToSaveData_Implementation, AddSpawnedInteracta... | 2026-01-03 | 2026-01-26 |
+| B_Interactable.h | B_Interactable.h | **UAnimMontage, UDataTable, AB_Interactable** | 2026-01-03 | 2026-01-26 |
+| B_Ladder.cpp | B_Ladder.cpp | OnConstruction, GetPoleHeight_Implementation, CreateLadder_Implementation, Be... | 2026-01-03 | 2026-01-26 |
+| B_RestingPoint.h | B_RestingPoint.h | **UAnimMontage, UDataTable, AB_RestingPoint** | 2026-01-03 | 2026-01-26 |
+| B_StatusEffect.h | B_StatusEffect.h | **UAC_StatManager, UPrimaryDataAsset, UNiagaraComponent** | 2026-01-03 | 2026-01-26 |
+| B_StatusEffectArea.cpp | B_StatusEffectArea.cpp | BeginPlay, OnBoxBeginOverlap, OnBoxEndOverlap | 2026-01-03 | 2026-01-26 |
+| B_StatusEffectArea.h | B_StatusEffectArea.h | **UPrimaryDataAsset, UAC_StatusEffectManager, AB_StatusEffectArea**; OnBoxBeg... | 2026-01-03 | 2026-01-26 |
+| SLFBaseCharacter.h | SLFBaseCharacter.h | **UStatManagerComponent, UStatusEffectManagerComponent, UAC_StatusEffectManag... | 2026-01-03 | 2026-01-26 |
+| SLFLadderBase.cpp | SLFLadderBase.cpp | OnConstruction, BeginPlay, GetPoleHeight_Implementation, CreateLadder_Impleme... | 2026-01-03 | 2026-01-26 |
+| SLFLadderBase.h | SLFLadderBase.h | **ULadderManagerComponent, ASLFLadderBase**; OnClimbingCollisionEndOverlap, O... | 2026-01-03 | 2026-01-26 |
+| SLFSoulslikeEnemy.cpp | SLFSoulslikeEnemy.cpp | BeginPlay, Tick, UpdateAnimationVariables, SetupPerceptionCallbacks, OnPercep... | 2026-01-03 | 2026-01-26 |
+| SLFSoulslikeEnemy.h | SLFSoulslikeEnemy.h | **UAICombatManagerComponent, UAIBehaviorManagerComponent, ULootDropManagerCom... | 2026-01-03 | 2026-01-26 |
+| SLFWeaponBase.h | SLFWeaponBase.h | **UNiagaraSystem, UNiagaraComponent, USoundBase** | 2026-01-03 | 2026-01-26 |
+| Actions/SLFActionPickupItemMontage.cpp | SLFActionPickupItemMontage.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-26 |
+| Actors/SLFInteractableBase.cpp | SLFInteractableBase.cpp | BeginPlay, Interact_Implementation, CanBeInteractedWith_Implementation, Enabl... | 2026-01-03 | 2026-01-26 |
+| Actors/SLFInteractableBase.h | SLFInteractableBase.h | **ASLFInteractableBase** | 2026-01-03 | 2026-01-26 |
+| Stats/SLFAttackPowerFire.cpp | SLFAttackPowerFire.cpp |  | 2026-01-03 | 2026-01-26 |
+| Stats/SLFAttackPowerFrost.cpp | SLFAttackPowerFrost.cpp |  | 2026-01-03 | 2026-01-26 |
+| Stats/SLFAttackPowerHoly.cpp | SLFAttackPowerHoly.cpp |  | 2026-01-03 | 2026-01-26 |
+| Stats/SLFAttackPowerLightning.cpp | SLFAttackPowerLightning.cpp |  | 2026-01-03 | 2026-01-26 |
+| Stats/SLFAttackPowerMagic.cpp | SLFAttackPowerMagic.cpp |  | 2026-01-03 | 2026-01-26 |
+| Stats/SLFAttackPowerPhysical.cpp | SLFAttackPowerPhysical.cpp |  | 2026-01-03 | 2026-01-26 |
+| Stats/SLFDamageNegationFire.cpp | SLFDamageNegationFire.cpp |  | 2026-01-03 | 2026-01-26 |
+| Stats/SLFDamageNegationFrost.cpp | SLFDamageNegationFrost.cpp |  | 2026-01-03 | 2026-01-26 |
+| Stats/SLFDamageNegationHoly.cpp | SLFDamageNegationHoly.cpp |  | 2026-01-03 | 2026-01-26 |
+| Stats/SLFDamageNegationLightning.cpp | SLFDamageNegationLightning.cpp |  | 2026-01-03 | 2026-01-26 |
+| Stats/SLFDamageNegationMagic.cpp | SLFDamageNegationMagic.cpp |  | 2026-01-03 | 2026-01-26 |
+| Stats/SLFDamageNegationPhysical.cpp | SLFDamageNegationPhysical.cpp |  | 2026-01-03 | 2026-01-26 |
+| Stats/SLFResistanceFocus.cpp | SLFResistanceFocus.cpp |  | 2026-01-03 | 2026-01-26 |
+| Stats/SLFResistanceImmunity.cpp | SLFResistanceImmunity.cpp |  | 2026-01-03 | 2026-01-26 |
+| Stats/SLFResistanceRobustness.cpp | SLFResistanceRobustness.cpp |  | 2026-01-03 | 2026-01-26 |
+| Stats/SLFResistanceVitality.cpp | SLFResistanceVitality.cpp |  | 2026-01-03 | 2026-01-26 |
+| Stats/SLFStatArcane.cpp | SLFStatArcane.cpp |  | 2026-01-03 | 2026-01-26 |
+| Stats/SLFStatDexterity.cpp | SLFStatDexterity.cpp |  | 2026-01-03 | 2026-01-26 |
+| Stats/SLFStatEndurance.cpp | SLFStatEndurance.cpp |  | 2026-01-03 | 2026-01-26 |
+| Stats/SLFStatFaith.cpp | SLFStatFaith.cpp |  | 2026-01-03 | 2026-01-26 |
+| Stats/SLFStatIntelligence.cpp | SLFStatIntelligence.cpp |  | 2026-01-03 | 2026-01-26 |
+| Stats/SLFStatMind.cpp | SLFStatMind.cpp |  | 2026-01-03 | 2026-01-26 |
+| Stats/SLFStatStrength.cpp | SLFStatStrength.cpp |  | 2026-01-03 | 2026-01-26 |
+| Stats/SLFStatVigor.cpp | SLFStatVigor.cpp |  | 2026-01-03 | 2026-01-26 |
+| B_Chaos_ForceField.cpp | B_Chaos_ForceField.cpp | BeginPlay, Tick, EnableChaosDestroy_Implementation, DisableChaosDestroy_Imple... | 2026-01-03 | 2026-01-19 |
+| B_Destructible.h | B_Destructible.h | **AB_Destructible** | 2026-01-03 | 2026-01-19 |
+| B_Door.cpp | B_Door.cpp | OnConstruction, BeginPlay, OnInteract_Implementation, ValidateUnlockRequireme... | 2026-01-03 | 2026-01-19 |
+| B_Door.h | B_Door.h | **UAnimMontage, UDataTable, UStaticMeshComponent** | 2026-01-03 | 2026-01-19 |
+| SLFContainerBase.cpp | SLFContainerBase.cpp | BeginPlay, OnInteract_Implementation, DelayedOpenLidAndSpawnItems, Tick, OpenLid | 2026-01-03 | 2026-01-17 |
+| SLFContainerBase.h | SLFContainerBase.h | **UAnimMontage, UNiagaraSystem, ULootDropManagerComponent** | 2026-01-03 | 2026-01-17 |
+| Actors/SLFSkyManager.cpp | SLFSkyManager.cpp | BeginPlay, Tick, SetTimeOfDay_Implementation, AdvanceTime_Implementation, IsD... | 2026-01-03 | 2026-01-17 |
+| Actors/SLFSkyManager.h | SLFSkyManager.h | **UPDA_DayNight, ASLFSkyManager, ADirectionalLight** | 2026-01-03 | 2026-01-17 |
+| B_BossDoor.cpp | B_BossDoor.cpp | BeginPlay, OnInteract_Implementation, GetDeathCurrencySpawnPoint_Implementati... | 2026-01-03 | 2026-01-16 |
+| B_BossDoor.h | B_BossDoor.h | **AB_BossDoor** | 2026-01-03 | 2026-01-16 |
+| B_Item.h | B_Item.h | **UAnimMontage, UDataTable, AB_Item** | 2026-01-03 | 2026-01-16 |
+| B_Ladder.h | B_Ladder.h | **AB_Ladder**; OnClimbingCollisionEndOverlap, OnBottomCollisionBeginOverlap, ... | 2026-01-03 | 2026-01-16 |
+| B_Soulslike_Boss.cpp | B_Soulslike_Boss.cpp | BeginPlay, OnTriggerCollisionBeginOverlap, OnControllerPerceptionUpdated, Try... | 2026-01-03 | 2026-01-16 |
+| B_Soulslike_Boss.h | B_Soulslike_Boss.h | **UAIBossComponent, AB_Soulslike_Boss**; OnTriggerCollisionBeginOverlap | 2026-01-03 | 2026-01-16 |
+| B_Soulslike_Enemy.cpp | B_Soulslike_Enemy.cpp | BeginPlay, CheckSense_Implementation, GetExecutionMoveToTransform_Implementat... | 2026-01-03 | 2026-01-16 |
+| B_Soulslike_Enemy.h | B_Soulslike_Enemy.h | **UAnimMontage, UAIPerceptionComponent, UWidgetComponent** | 2026-01-03 | 2026-01-16 |
+| B_Weight.cpp | B_Weight.cpp |  | 2026-01-03 | 2026-01-16 |
+| CS_Boss_Roar.cpp | CS_Boss_Roar.cpp |  | 2026-01-03 | 2026-01-16 |
+| CS_Boss_Roar.h | CS_Boss_Roar.h | **UCS_Boss_Roar** | 2026-01-03 | 2026-01-16 |
+| SLFStatBase.cpp | SLFStatBase.cpp | GetWorld, AdjustValue_Implementation, AdjustAffectedValue_Implementation, Cal... | 2026-01-03 | 2026-01-16 |
+| Actions/SLFActionExecute.cpp | SLFActionExecute.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-16 |
+| Stats/SLFStatPoise.cpp | SLFStatPoise.cpp |  | 2026-01-03 | 2026-01-16 |
+| Stats/SLFStatWeight.cpp | SLFStatWeight.cpp |  | 2026-01-03 | 2026-01-16 |
+| B_Item_AI_Weapon.cpp | B_Item_AI_Weapon.cpp | BeginPlay | 2026-01-03 | 2026-01-12 |
+| B_Item_AI_Weapon.h | B_Item_AI_Weapon.h | **UAnimMontage, UDataTable, AB_Item_AI_Weapon** | 2026-01-03 | 2026-01-12 |
+| B_Item_AI_Weapon_Greatsword.cpp | B_Item_AI_Weapon_Greatsword.cpp |  | 2026-01-03 | 2026-01-12 |
+| B_Item_AI_Weapon_Sword.cpp | B_Item_AI_Weapon_Sword.cpp |  | 2026-01-03 | 2026-01-12 |
+| Actions/SLFActionStopSprinting.cpp | SLFActionStopSprinting.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-12 |
+| Stats/SLFStatStamina.cpp | SLFStatStamina.cpp |  | 2026-01-03 | 2026-01-12 |
+| AIC_SoulslikeFramework.h | AIC_SoulslikeFramework.h | **UBehaviorTree, UAIPerceptionComponent, AAIC_SoulslikeFramework** | 2026-01-03 | 2026-01-11 |
+| Actions/SLFActionComboHeavy.cpp | SLFActionComboHeavy.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-11 |
+| Actions/SLFActionComboLightL.cpp | SLFActionComboLightL.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-11 |
+| Actions/SLFActionComboLightR.cpp | SLFActionComboLightR.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-11 |
+| Actions/SLFActionStartSprinting.cpp | SLFActionStartSprinting.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-11 |
+| Actions/SLFActionTwoHandedStanceL.cpp | SLFActionTwoHandedStanceL.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-11 |
+| Actions/SLFActionTwoHandedStanceR.cpp | SLFActionTwoHandedStanceR.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-11 |
+| BFL_Helper.cpp | BFL_Helper.cpp | GetKeysForIA, GetInputUserSettings, GetStatCurrentValue, GetStatMaxValue, Get... | 2026-01-03 | 2026-01-10 |
+| SLFPickupItemBase.h | SLFPickupItemBase.h | **UDataAsset, ASLFPickupItemBase** | 2026-01-03 | 2026-01-09 |
+| BFL_Helper.h | BFL_Helper.h | **UAnimMontage, UDataTable, UPrimaryDataAsset** | 2026-01-03 | 2026-01-07 |
+| BFL_StructConversion.cpp | BFL_StructConversion.cpp | ConvertToWorldSaveInfoStruct, ConvertToClassSaveInfoStruct, ConvertToStatInfo... | 2026-01-07 | 2026-01-07 |
+| BFL_StructConversion.h | BFL_StructConversion.h | **UBFL_StructConversion**; ExtractFromInstancedStruct, ExtractArrayFromSaveData | 2026-01-07 | 2026-01-07 |
+| B_AP_Fire.cpp | B_AP_Fire.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_AP_Frost.cpp | B_AP_Frost.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_AP_Holy.cpp | B_AP_Holy.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_AP_Lightning.cpp | B_AP_Lightning.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_AP_Magic.cpp | B_AP_Magic.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_AP_Physical.cpp | B_AP_Physical.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_Action_Backstab.cpp | B_Action_Backstab.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-07 |
+| B_Action_Backstab.h | B_Action_Backstab.h | **UAnimMontage, UDataTable, UB_Action_Backstab** | 2026-01-03 | 2026-01-07 |
+| B_Action_ComboHeavy.cpp | B_Action_ComboHeavy.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-07 |
+| B_Action_ComboHeavy.h | B_Action_ComboHeavy.h | **UAnimMontage, UDataTable, UB_Action_ComboHeavy** | 2026-01-03 | 2026-01-07 |
+| B_Action_ComboLight_L.cpp | B_Action_ComboLight_L.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-07 |
+| B_Action_ComboLight_L.h | B_Action_ComboLight_L.h | **UAnimMontage, UDataTable, UB_Action_ComboLight_L** | 2026-01-03 | 2026-01-07 |
+| B_Action_ComboLight_R.cpp | B_Action_ComboLight_R.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-07 |
+| B_Action_ComboLight_R.h | B_Action_ComboLight_R.h | **UAnimMontage, UDataTable, UB_Action_ComboLight_R** | 2026-01-03 | 2026-01-07 |
+| B_Action_Crouch.cpp | B_Action_Crouch.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-07 |
+| B_Action_Crouch.h | B_Action_Crouch.h | **UAnimMontage, UDataTable, UB_Action_Crouch** | 2026-01-03 | 2026-01-07 |
+| B_Action_Dodge.cpp | B_Action_Dodge.cpp | ExecuteAction_Implementation, GetDirectionalDodgeMontage | 2026-01-03 | 2026-01-07 |
+| B_Action_DualWieldAttack.cpp | B_Action_DualWieldAttack.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-07 |
+| B_Action_DualWieldAttack.h | B_Action_DualWieldAttack.h | **UAnimMontage, UDataTable, UB_Action_DualWieldAttack** | 2026-01-03 | 2026-01-07 |
+| B_Action_Execute.cpp | B_Action_Execute.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-07 |
+| B_Action_Execute.h | B_Action_Execute.h | **UAnimMontage, UDataTable, UB_Action_Execute** | 2026-01-03 | 2026-01-07 |
+| B_Action_GuardCancel.cpp | B_Action_GuardCancel.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-07 |
+| B_Action_GuardCancel.h | B_Action_GuardCancel.h | **UAnimMontage, UDataTable, UB_Action_GuardCancel** | 2026-01-03 | 2026-01-07 |
+| B_Action_GuardEnd.cpp | B_Action_GuardEnd.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-07 |
+| B_Action_GuardEnd.h | B_Action_GuardEnd.h | **UAnimMontage, UDataTable, UB_Action_GuardEnd** | 2026-01-03 | 2026-01-07 |
+| B_Action_GuardStart.cpp | B_Action_GuardStart.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-07 |
+| B_Action_GuardStart.h | B_Action_GuardStart.h | **UAnimMontage, UDataTable, UB_Action_GuardStart** | 2026-01-03 | 2026-01-07 |
+| B_Action_Jump.cpp | B_Action_Jump.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-07 |
+| B_Action_Jump.h | B_Action_Jump.h | **UAnimMontage, UDataTable, UB_Action_Jump** | 2026-01-03 | 2026-01-07 |
+| B_Action_JumpAttack.cpp | B_Action_JumpAttack.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-07 |
+| B_Action_JumpAttack.h | B_Action_JumpAttack.h | **UAnimMontage, UDataTable, UB_Action_JumpAttack** | 2026-01-03 | 2026-01-07 |
+| B_Action_PickupItemMontage.h | B_Action_PickupItemMontage.h | **UAnimMontage, UDataTable, UB_Action_PickupItemMontage** | 2026-01-03 | 2026-01-07 |
+| B_Action_ScrollWheel_LeftHand.h | B_Action_ScrollWheel_LeftHand.h | **UAnimMontage, UDataTable, UB_Action_ScrollWheel_LeftHand** | 2026-01-03 | 2026-01-07 |
+| B_Action_ScrollWheel_RightHand.h | B_Action_ScrollWheel_RightHand.h | **UAnimMontage, UDataTable, UB_Action_ScrollWheel_RightHand** | 2026-01-03 | 2026-01-07 |
+| B_Action_ScrollWheel_Tools.h | B_Action_ScrollWheel_Tools.h | **UAnimMontage, UDataTable, UB_Action_ScrollWheel_Tools** | 2026-01-03 | 2026-01-07 |
+| B_Action_SprintAttack.cpp | B_Action_SprintAttack.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-07 |
+| B_Action_SprintAttack.h | B_Action_SprintAttack.h | **UAnimMontage, UDataTable, UB_Action_SprintAttack** | 2026-01-03 | 2026-01-07 |
+| B_Action_StartSprinting.cpp | B_Action_StartSprinting.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-07 |
+| B_Action_StartSprinting.h | B_Action_StartSprinting.h | **UAnimMontage, UDataTable, UB_Action_StartSprinting** | 2026-01-03 | 2026-01-07 |
+| B_Action_StopSprinting.cpp | B_Action_StopSprinting.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-07 |
+| B_Action_StopSprinting.h | B_Action_StopSprinting.h | **UAnimMontage, UDataTable, UB_Action_StopSprinting** | 2026-01-03 | 2026-01-07 |
+| B_Action_ThrowProjectile.cpp | B_Action_ThrowProjectile.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-07 |
+| B_Action_ThrowProjectile.h | B_Action_ThrowProjectile.h | **UAnimMontage, UDataTable, UB_Action_ThrowProjectile** | 2026-01-03 | 2026-01-07 |
+| B_Action_TwoHandedStance_L.cpp | B_Action_TwoHandedStance_L.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-07 |
+| B_Action_TwoHandedStance_L.h | B_Action_TwoHandedStance_L.h | **UAnimMontage, UDataTable, UB_Action_TwoHandedStance_L** | 2026-01-03 | 2026-01-07 |
+| B_Action_TwoHandedStance_R.cpp | B_Action_TwoHandedStance_R.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-07 |
+| B_Action_TwoHandedStance_R.h | B_Action_TwoHandedStance_R.h | **UAnimMontage, UDataTable, UB_Action_TwoHandedStance_R** | 2026-01-03 | 2026-01-07 |
+| B_Action_UseEquippedTool.cpp | B_Action_UseEquippedTool.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-07 |
+| B_Action_UseEquippedTool.h | B_Action_UseEquippedTool.h | **UAnimMontage, UDataTable, UB_Action_UseEquippedTool** | 2026-01-03 | 2026-01-07 |
+| B_Action_WeaponAbility.h | B_Action_WeaponAbility.h | **UAnimMontage, UDataTable, UB_Action_WeaponAbility** | 2026-01-03 | 2026-01-07 |
+| B_Arcane.cpp | B_Arcane.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_DN_Fire.cpp | B_DN_Fire.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_DN_Frost.cpp | B_DN_Frost.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_DN_Holy.cpp | B_DN_Holy.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_DN_Lightning.cpp | B_DN_Lightning.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_DN_Magic.cpp | B_DN_Magic.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_DN_Physical.cpp | B_DN_Physical.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_DemoRoom.cpp | B_DemoRoom.cpp | OnConstruction, BeginPlay, CreateInstances_Implementation, Redraw_Implementat... | 2026-01-03 | 2026-01-07 |
+| B_DemoRoom.h | B_DemoRoom.h | **UAnimMontage, UDataTable, AB_DemoRoom** | 2026-01-03 | 2026-01-07 |
+| B_Dexterity.cpp | B_Dexterity.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_Endurance.cpp | B_Endurance.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_FP.cpp | B_FP.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_Faith.cpp | B_Faith.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_HP.cpp | B_HP.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_IncantationPower.cpp | B_IncantationPower.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_Intelligence.cpp | B_Intelligence.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_Item_Weapon.cpp | B_Item_Weapon.cpp | GetAttackPowerStats_Implementation, GetWeaponStat_Implementation, GetWeaponSt... | 2026-01-03 | 2026-01-07 |
+| B_Mind.cpp | B_Mind.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_PatrolPath.cpp | B_PatrolPath.cpp | GetWorldPositionForCurrentPoint_Implementation | 2026-01-03 | 2026-01-07 |
+| B_Poise.cpp | B_Poise.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_Resistance_Focus.cpp | B_Resistance_Focus.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_Resistance_Immunity.cpp | B_Resistance_Immunity.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_Resistance_Robustness.cpp | B_Resistance_Robustness.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_Resistance_Vitality.cpp | B_Resistance_Vitality.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_Soulslike_NPC.cpp | B_Soulslike_NPC.cpp | BeginPlay, GetLookAtLocation, TryGetItemInfo_Implementation, OnSpawnedFromSav... | 2026-01-03 | 2026-01-07 |
+| B_Soulslike_NPC.h | B_Soulslike_NPC.h | **UAIInteractionManagerComponent, USphereComponent, AB_Soulslike_NPC** | 2026-01-03 | 2026-01-07 |
+| B_Stamina.cpp | B_Stamina.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_Stance.cpp | B_Stance.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_Stat.cpp | B_Stat.cpp | GetWorld, AdjustValue_Implementation, AdjustAffectedValue_Implementation, Cal... | 2026-01-03 | 2026-01-07 |
+| B_Stat.h | B_Stat.h | **UAnimMontage, UDataTable, UB_Stat** | 2026-01-03 | 2026-01-07 |
+| B_StatusEffectBuildup.cpp | B_StatusEffectBuildup.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_Strength.cpp | B_Strength.cpp |  | 2026-01-03 | 2026-01-07 |
+| B_Vigor.cpp | B_Vigor.cpp |  | 2026-01-03 | 2026-01-07 |
+| SG_SaveSlots.cpp | SG_SaveSlots.cpp | AddSlot_Implementation, GetLastSaveSlot_Implementation, GetAllSlots_Implement... | 2026-01-03 | 2026-01-07 |
+| SG_SaveSlots.h | SG_SaveSlots.h | **UAnimMontage, UDataTable, USG_SaveSlots** | 2026-01-03 | 2026-01-07 |
+| SG_SoulslikeFramework.cpp | SG_SoulslikeFramework.cpp | SetSavedData_Implementation, GetSavedData_Implementation | 2026-01-03 | 2026-01-07 |
+| SG_SoulslikeFramework.h | SG_SoulslikeFramework.h | **UAnimMontage, UDataTable, USG_SoulslikeFramework** | 2026-01-03 | 2026-01-07 |
+| SLFItemBase.h | SLFItemBase.h | **UDataAsset, ASLFItemBase** | 2026-01-03 | 2026-01-07 |
+| SLFStatBase.h | SLFStatBase.h | **USLFStatBase, USLFStatBase** | 2026-01-03 | 2026-01-07 |
+| SLFStatusEffectBase.cpp | SLFStatusEffectBase.cpp | GetOwnerStatManager_Implementation, GetBuildupPercent_Implementation, GetResi... | 2026-01-03 | 2026-01-07 |
+| Actions/SLFActionDualWieldAttack.cpp | SLFActionDualWieldAttack.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-07 |
+| Actions/SLFActionJumpAttack.cpp | SLFActionJumpAttack.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-07 |
+| Actions/SLFActionSprintAttack.cpp | SLFActionSprintAttack.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-07 |
+| Actors/SLFBonfire.cpp | SLFBonfire.cpp | BeginPlay, LightBonfire_Implementation, Rest_Implementation, Kindle_Implement... | 2026-01-03 | 2026-01-07 |
+| Actors/SLFContainer.cpp | SLFContainer.cpp | BeginPlay, Interact_Implementation, OpenContainer_Implementation, LootContain... | 2026-01-03 | 2026-01-07 |
+| Actors/SLFContainer.h | SLFContainer.h | **ASLFContainer, UBoxComponent** | 2026-01-03 | 2026-01-07 |
+| Actors/SLFDestructible.cpp | SLFDestructible.cpp | BeginPlay, ApplyDamage_Implementation, DestroyObject_Implementation, SpawnDeb... | 2026-01-03 | 2026-01-07 |
+| Actors/SLFDiscovery.cpp | SLFDiscovery.cpp | BeginPlay, OnPlayerEnter_Implementation, TriggerDiscovery_Implementation, Sho... | 2026-01-03 | 2026-01-07 |
+| Actors/SLFSequenceActor.cpp | SLFSequenceActor.cpp | BeginPlay, PlaySequence_Implementation, StopSequence_Implementation, OnSequen... | 2026-01-03 | 2026-01-07 |
+| Actors/SLFSequenceActor.h | SLFSequenceActor.h | **ASLFSequenceActor, UBoxComponent, ULevelSequence** | 2026-01-03 | 2026-01-07 |
+| Actors/SLFStatusEffectArea.cpp | SLFStatusEffectArea.cpp | BeginPlay, Tick, OnActorEnter_Implementation, OnActorExit_Implementation, App... | 2026-01-03 | 2026-01-07 |
+| Actors/SLFStatusEffectBuildup.cpp | SLFStatusEffectBuildup.cpp | BeginPlay, ApplyBuildup_Implementation, SetTarget_Implementation, OnStatusEff... | 2026-01-03 | 2026-01-07 |
+| Actors/SLFStatusEffectOneShot.cpp | SLFStatusEffectOneShot.cpp | BeginPlay, OnActorOverlap_Implementation, TriggerEffect_Implementation | 2026-01-03 | 2026-01-07 |
+| Buffs/SLFBuffAttackPower.cpp | SLFBuffAttackPower.cpp | OnGranted_Implementation, OnRemoved_Implementation | 2026-01-03 | 2026-01-07 |
+| Actions/SLFActionDodge.cpp | SLFActionDodge.cpp | ExecuteAction_Implementation, GetDirectionalDodgeMontage | 2026-01-03 | 2026-01-04 |
+| Actions/SLFActionGuardCancel.cpp | SLFActionGuardCancel.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-04 |
+| Actions/SLFActionGuardEnd.cpp | SLFActionGuardEnd.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-04 |
+| Actions/SLFActionGuardStart.cpp | SLFActionGuardStart.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-04 |
+| Actors/SLFDoorBase.h | SLFDoorBase.h | **ASLFDoorBase, UBoxComponent** | 2026-01-03 | 2026-01-04 |
+| BML_HelperMacros.cpp | BML_HelperMacros.cpp |  | 2026-01-03 | 2026-01-03 |
+| BML_HelperMacros.h | BML_HelperMacros.h | **UAnimMontage, UDataTable, UBML_HelperMacros** | 2026-01-03 | 2026-01-03 |
+| BML_StructConversion.cpp | BML_StructConversion.cpp |  | 2026-01-03 | 2026-01-03 |
+| BML_StructConversion.h | BML_StructConversion.h | **UAnimMontage, UDataTable, UBML_StructConversion** | 2026-01-03 | 2026-01-03 |
+| B_AP_Fire.h | B_AP_Fire.h | **UAnimMontage, UDataTable, UB_AP_Fire** | 2026-01-03 | 2026-01-03 |
+| B_AP_Frost.h | B_AP_Frost.h | **UAnimMontage, UDataTable, UB_AP_Frost** | 2026-01-03 | 2026-01-03 |
+| B_AP_Holy.h | B_AP_Holy.h | **UAnimMontage, UDataTable, UB_AP_Holy** | 2026-01-03 | 2026-01-03 |
+| B_AP_Lightning.h | B_AP_Lightning.h | **UAnimMontage, UDataTable, UB_AP_Lightning** | 2026-01-03 | 2026-01-03 |
+| B_AP_Magic.h | B_AP_Magic.h | **UAnimMontage, UDataTable, UB_AP_Magic** | 2026-01-03 | 2026-01-03 |
+| B_AP_Physical.h | B_AP_Physical.h | **UAnimMontage, UDataTable, UB_AP_Physical** | 2026-01-03 | 2026-01-03 |
+| B_AbilityEffectBase.cpp | B_AbilityEffectBase.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_AbilityEffectBase.h | B_AbilityEffectBase.h | **UAnimMontage, UDataTable, AB_AbilityEffectBase** | 2026-01-03 | 2026-01-03 |
+| B_Action_Dodge.h | B_Action_Dodge.h | **UAnimMontage, UDataTable, UB_Action_Dodge** | 2026-01-03 | 2026-01-03 |
+| B_Arcane.h | B_Arcane.h | **UAnimMontage, UDataTable, UB_Arcane** | 2026-01-03 | 2026-01-03 |
+| B_BaseCharacter.cpp | B_BaseCharacter.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_BaseCharacter.h | B_BaseCharacter.h | **UAnimMontage, UDataTable, AB_BaseCharacter** | 2026-01-03 | 2026-01-03 |
+| B_Buff.cpp | B_Buff.cpp | GetOwnerStatManager_Implementation, GetMultiplierForCurrentRank_Implementatio... | 2026-01-03 | 2026-01-03 |
+| B_Buff.h | B_Buff.h | **UAnimMontage, UDataTable, UB_Buff** | 2026-01-03 | 2026-01-03 |
+| B_Buff_AttackPower.cpp | B_Buff_AttackPower.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_Buff_AttackPower.h | B_Buff_AttackPower.h | **UAnimMontage, UDataTable, UB_Buff_AttackPower** | 2026-01-03 | 2026-01-03 |
+| B_DN_Fire.h | B_DN_Fire.h | **UAnimMontage, UDataTable, UB_DN_Fire** | 2026-01-03 | 2026-01-03 |
+| B_DN_Frost.h | B_DN_Frost.h | **UAnimMontage, UDataTable, UB_DN_Frost** | 2026-01-03 | 2026-01-03 |
+| B_DN_Holy.h | B_DN_Holy.h | **UAnimMontage, UDataTable, UB_DN_Holy** | 2026-01-03 | 2026-01-03 |
+| B_DN_Lightning.h | B_DN_Lightning.h | **UAnimMontage, UDataTable, UB_DN_Lightning** | 2026-01-03 | 2026-01-03 |
+| B_DN_Magic.h | B_DN_Magic.h | **UAnimMontage, UDataTable, UB_DN_Magic** | 2026-01-03 | 2026-01-03 |
+| B_DN_Physical.h | B_DN_Physical.h | **UAnimMontage, UDataTable, UB_DN_Physical** | 2026-01-03 | 2026-01-03 |
+| B_DeathTrigger.cpp | B_DeathTrigger.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_DeathTrigger.h | B_DeathTrigger.h | **UAnimMontage, UDataTable, AB_DeathTrigger** | 2026-01-03 | 2026-01-03 |
+| B_DemoDisplay.cpp | B_DemoDisplay.cpp | OnConstruction, CreateInstances_Implementation, CreateDisplay_Implementation,... | 2026-01-03 | 2026-01-03 |
+| B_DemoDisplay.h | B_DemoDisplay.h | **UAnimMontage, UDataTable, AB_DemoDisplay** | 2026-01-03 | 2026-01-03 |
+| B_Demo_TimeSlider.cpp | B_Demo_TimeSlider.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_Demo_TimeSlider.h | B_Demo_TimeSlider.h | **UAnimMontage, UDataTable, AB_SkyManager** | 2026-01-03 | 2026-01-03 |
+| B_Dexterity.h | B_Dexterity.h | **UAnimMontage, UDataTable, UB_Dexterity** | 2026-01-03 | 2026-01-03 |
+| B_Discovery.cpp | B_Discovery.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_Discovery.h | B_Discovery.h | **UAnimMontage, UDataTable, UB_Discovery** | 2026-01-03 | 2026-01-03 |
+| B_Door_Demo.cpp | B_Door_Demo.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_Door_Demo.h | B_Door_Demo.h | **UAnimMontage, UDataTable, AB_Door_Demo** | 2026-01-03 | 2026-01-03 |
+| B_Endurance.h | B_Endurance.h | **UAnimMontage, UDataTable, UB_Endurance** | 2026-01-03 | 2026-01-03 |
+| B_FP.h | B_FP.h | **UAnimMontage, UDataTable, UB_FP** | 2026-01-03 | 2026-01-03 |
+| B_Faith.h | B_Faith.h | **UAnimMontage, UDataTable, UB_Faith** | 2026-01-03 | 2026-01-03 |
+| B_HP.h | B_HP.h | **UAnimMontage, UDataTable, UB_HP** | 2026-01-03 | 2026-01-03 |
+| B_IncantationPower.h | B_IncantationPower.h | **UAnimMontage, UDataTable, UB_IncantationPower** | 2026-01-03 | 2026-01-03 |
+| B_Intelligence.h | B_Intelligence.h | **UAnimMontage, UDataTable, UB_Intelligence** | 2026-01-03 | 2026-01-03 |
+| B_Item.cpp | B_Item.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_Item_AI_Weapon_BossMace.cpp | B_Item_AI_Weapon_BossMace.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_Item_AI_Weapon_BossMace.h | B_Item_AI_Weapon_BossMace.h | **UAnimMontage, UDataTable, AB_Item_AI_Weapon_BossMace** | 2026-01-03 | 2026-01-03 |
+| B_Item_AI_Weapon_Greatsword.h | B_Item_AI_Weapon_Greatsword.h | **UAnimMontage, UDataTable, AB_Item_AI_Weapon_Greatsword** | 2026-01-03 | 2026-01-03 |
+| B_Item_AI_Weapon_Sword.h | B_Item_AI_Weapon_Sword.h | **UAnimMontage, UDataTable, AB_Item_AI_Weapon_Sword** | 2026-01-03 | 2026-01-03 |
+| B_Item_Lantern.cpp | B_Item_Lantern.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_Item_Lantern.h | B_Item_Lantern.h | **UAnimMontage, UDataTable, AB_Item_Lantern** | 2026-01-03 | 2026-01-03 |
+| B_Item_Weapon.h | B_Item_Weapon.h | **UAnimMontage, UDataTable, AB_Item_Weapon** | 2026-01-03 | 2026-01-03 |
+| B_Item_Weapon_BossMace.cpp | B_Item_Weapon_BossMace.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_Item_Weapon_BossMace.h | B_Item_Weapon_BossMace.h | **UAnimMontage, UDataTable, AB_Item_Weapon_BossMace** | 2026-01-03 | 2026-01-03 |
+| B_Item_Weapon_Greatsword.cpp | B_Item_Weapon_Greatsword.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_Item_Weapon_Greatsword.h | B_Item_Weapon_Greatsword.h | **UAnimMontage, UDataTable, AB_Item_Weapon_Greatsword** | 2026-01-03 | 2026-01-03 |
+| B_Item_Weapon_Katana.cpp | B_Item_Weapon_Katana.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_Item_Weapon_Katana.h | B_Item_Weapon_Katana.h | **UAnimMontage, UDataTable, AB_Item_Weapon_Katana** | 2026-01-03 | 2026-01-03 |
+| B_Item_Weapon_PoisonSword.cpp | B_Item_Weapon_PoisonSword.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_Item_Weapon_PoisonSword.h | B_Item_Weapon_PoisonSword.h | **UAnimMontage, UDataTable, AB_Item_Weapon_PoisonSword** | 2026-01-03 | 2026-01-03 |
+| B_Item_Weapon_Shield.cpp | B_Item_Weapon_Shield.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_Item_Weapon_Shield.h | B_Item_Weapon_Shield.h | **UAnimMontage, UDataTable, AB_Item_Weapon_Shield** | 2026-01-03 | 2026-01-03 |
+| B_Item_Weapon_SwordExample01.cpp | B_Item_Weapon_SwordExample01.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_Item_Weapon_SwordExample01.h | B_Item_Weapon_SwordExample01.h | **UAnimMontage, UDataTable, AB_Item_Weapon_SwordExample01** | 2026-01-03 | 2026-01-03 |
+| B_Item_Weapon_SwordExample02.cpp | B_Item_Weapon_SwordExample02.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_Item_Weapon_SwordExample02.h | B_Item_Weapon_SwordExample02.h | **UAnimMontage, UDataTable, AB_Item_Weapon_SwordExample02** | 2026-01-03 | 2026-01-03 |
+| B_LocationActor.cpp | B_LocationActor.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_LocationActor.h | B_LocationActor.h | **UAnimMontage, UDataTable, AB_LocationActor** | 2026-01-03 | 2026-01-03 |
+| B_Mind.h | B_Mind.h | **UAnimMontage, UDataTable, UB_Mind** | 2026-01-03 | 2026-01-03 |
+| B_PatrolPath.h | B_PatrolPath.h | **UAnimMontage, UDataTable, AB_PatrolPath** | 2026-01-03 | 2026-01-03 |
+| B_Poise.h | B_Poise.h | **UAnimMontage, UDataTable, UB_Poise** | 2026-01-03 | 2026-01-03 |
+| B_Projectile_Boss_Fireball.cpp | B_Projectile_Boss_Fireball.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_Projectile_Boss_Fireball.h | B_Projectile_Boss_Fireball.h | **UAnimMontage, UDataTable, AB_Projectile_Boss_Fireball** | 2026-01-03 | 2026-01-03 |
+| B_Projectile_ThrowingKnife.cpp | B_Projectile_ThrowingKnife.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_Projectile_ThrowingKnife.h | B_Projectile_ThrowingKnife.h | **UAnimMontage, UDataTable, AB_Projectile_ThrowingKnife** | 2026-01-03 | 2026-01-03 |
+| B_Resistance_Focus.h | B_Resistance_Focus.h | **UAnimMontage, UDataTable, UB_Resistance_Focus** | 2026-01-03 | 2026-01-03 |
+| B_Resistance_Immunity.h | B_Resistance_Immunity.h | **UAnimMontage, UDataTable, UB_Resistance_Immunity** | 2026-01-03 | 2026-01-03 |
+| B_Resistance_Robustness.h | B_Resistance_Robustness.h | **UAnimMontage, UDataTable, UB_Resistance_Robustness** | 2026-01-03 | 2026-01-03 |
+| B_Resistance_Vitality.h | B_Resistance_Vitality.h | **UAnimMontage, UDataTable, UB_Resistance_Vitality** | 2026-01-03 | 2026-01-03 |
+| B_ShowcaseEnemy_ExitCombat.cpp | B_ShowcaseEnemy_ExitCombat.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_ShowcaseEnemy_ExitCombat.h | B_ShowcaseEnemy_ExitCombat.h | **UAnimMontage, UDataTable, AB_Soulslike_Enemy** | 2026-01-03 | 2026-01-03 |
+| B_ShowcaseEnemy_StatDisplay.cpp | B_ShowcaseEnemy_StatDisplay.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_ShowcaseEnemy_StatDisplay.h | B_ShowcaseEnemy_StatDisplay.h | **UAnimMontage, UDataTable, AB_Soulslike_Enemy** | 2026-01-03 | 2026-01-03 |
+| B_SkyManager.cpp | B_SkyManager.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_SkyManager.h | B_SkyManager.h | **UAnimMontage, UDataTable, AB_SkyManager** | 2026-01-03 | 2026-01-03 |
+| B_Soulslike_Boss_Malgareth.cpp | B_Soulslike_Boss_Malgareth.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_Soulslike_Boss_Malgareth.h | B_Soulslike_Boss_Malgareth.h | **UAnimMontage, UDataTable, AB_Soulslike_Boss_Malgareth** | 2026-01-03 | 2026-01-03 |
+| B_Soulslike_Enemy_Guard.cpp | B_Soulslike_Enemy_Guard.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_Soulslike_Enemy_Guard.h | B_Soulslike_Enemy_Guard.h | **UAnimMontage, UDataTable, AB_Soulslike_Enemy_Guard** | 2026-01-03 | 2026-01-03 |
+| B_Soulslike_Enemy_Showcase.cpp | B_Soulslike_Enemy_Showcase.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_Soulslike_Enemy_Showcase.h | B_Soulslike_Enemy_Showcase.h | **UAnimMontage, UDataTable, AB_Soulslike_Enemy_Showcase** | 2026-01-03 | 2026-01-03 |
+| B_Soulslike_NPC_ShowcaseGuide.cpp | B_Soulslike_NPC_ShowcaseGuide.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_Soulslike_NPC_ShowcaseGuide.h | B_Soulslike_NPC_ShowcaseGuide.h | **UAnimMontage, UDataTable, AB_Soulslike_NPC_ShowcaseGuide** | 2026-01-03 | 2026-01-03 |
+| B_Soulslike_NPC_ShowcaseVendor.cpp | B_Soulslike_NPC_ShowcaseVendor.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_Soulslike_NPC_ShowcaseVendor.h | B_Soulslike_NPC_ShowcaseVendor.h | **UAnimMontage, UDataTable, AB_Soulslike_NPC_ShowcaseVendor** | 2026-01-03 | 2026-01-03 |
+| B_Stamina.h | B_Stamina.h | **UAnimMontage, UDataTable, UB_Stamina** | 2026-01-03 | 2026-01-03 |
+| B_Stance.h | B_Stance.h | **UAnimMontage, UDataTable, UB_Stance** | 2026-01-03 | 2026-01-03 |
+| B_StatusEffectBuildup.h | B_StatusEffectBuildup.h | **UAnimMontage, UDataTable, UB_StatusEffectBuildup** | 2026-01-03 | 2026-01-03 |
+| B_StatusEffectOneShot.cpp | B_StatusEffectOneShot.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_StatusEffectOneShot.h | B_StatusEffectOneShot.h | **UAnimMontage, UDataTable, AB_BaseCharacter** | 2026-01-03 | 2026-01-03 |
+| B_StatusEffect_Bleed.cpp | B_StatusEffect_Bleed.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_StatusEffect_Bleed.h | B_StatusEffect_Bleed.h | **UAnimMontage, UDataTable, UB_StatusEffect_Bleed** | 2026-01-03 | 2026-01-03 |
+| B_StatusEffect_Burn.cpp | B_StatusEffect_Burn.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_StatusEffect_Burn.h | B_StatusEffect_Burn.h | **UAnimMontage, UDataTable, UB_StatusEffect_Burn** | 2026-01-03 | 2026-01-03 |
+| B_StatusEffect_Corruption.cpp | B_StatusEffect_Corruption.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_StatusEffect_Corruption.h | B_StatusEffect_Corruption.h | **UAnimMontage, UDataTable, UB_StatusEffect_Corruption** | 2026-01-03 | 2026-01-03 |
+| B_StatusEffect_Frostbite.cpp | B_StatusEffect_Frostbite.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_StatusEffect_Frostbite.h | B_StatusEffect_Frostbite.h | **UAnimMontage, UDataTable, UB_StatusEffect_Frostbite** | 2026-01-03 | 2026-01-03 |
+| B_StatusEffect_Madness.cpp | B_StatusEffect_Madness.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_StatusEffect_Madness.h | B_StatusEffect_Madness.h | **UAnimMontage, UDataTable, UB_StatusEffect_Madness** | 2026-01-03 | 2026-01-03 |
+| B_StatusEffect_Plague.cpp | B_StatusEffect_Plague.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_StatusEffect_Plague.h | B_StatusEffect_Plague.h | **UAnimMontage, UDataTable, UB_StatusEffect_Plague** | 2026-01-03 | 2026-01-03 |
+| B_StatusEffect_Poison.cpp | B_StatusEffect_Poison.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_StatusEffect_Poison.h | B_StatusEffect_Poison.h | **UAnimMontage, UDataTable, UB_StatusEffect_Poison** | 2026-01-03 | 2026-01-03 |
+| B_Strength.h | B_Strength.h | **UAnimMontage, UDataTable, UB_Strength** | 2026-01-03 | 2026-01-03 |
+| B_Torch.cpp | B_Torch.cpp |  | 2026-01-03 | 2026-01-03 |
+| B_Torch.h | B_Torch.h | **UAnimMontage, UDataTable, AB_Torch** | 2026-01-03 | 2026-01-03 |
+| B_Vigor.h | B_Vigor.h | **UAnimMontage, UDataTable, UB_Vigor** | 2026-01-03 | 2026-01-03 |
+| B_Weight.h | B_Weight.h | **UAnimMontage, UDataTable, UB_Weight** | 2026-01-03 | 2026-01-03 |
+| CS_Guard.cpp | CS_Guard.cpp |  | 2026-01-03 | 2026-01-03 |
+| CS_Guard.h | CS_Guard.h | **UAnimMontage, UDataTable, UCS_Guard** | 2026-01-03 | 2026-01-03 |
+| CS_JumpHit.cpp | CS_JumpHit.cpp |  | 2026-01-03 | 2026-01-03 |
+| CS_JumpHit.h | CS_JumpHit.h | **UAnimMontage, UDataTable, UCS_JumpHit** | 2026-01-03 | 2026-01-03 |
+| CS_Seq_Handheld.cpp | CS_Seq_Handheld.cpp |  | 2026-01-03 | 2026-01-03 |
+| CS_Seq_Handheld.h | CS_Seq_Handheld.h | **UAnimMontage, UDataTable, UCS_Seq_Handheld** | 2026-01-03 | 2026-01-03 |
+| CS_StrongHit.cpp | CS_StrongHit.cpp |  | 2026-01-03 | 2026-01-03 |
+| CS_StrongHit.h | CS_StrongHit.h | **UAnimMontage, UDataTable, UCS_StrongHit** | 2026-01-03 | 2026-01-03 |
+| CS_SubtleHit.cpp | CS_SubtleHit.cpp |  | 2026-01-03 | 2026-01-03 |
+| CS_SubtleHit.h | CS_SubtleHit.h | **UAnimMontage, UDataTable, UCS_SubtleHit** | 2026-01-03 | 2026-01-03 |
+| GS_SoulslikeFramework.cpp | GS_SoulslikeFramework.cpp |  | 2026-01-03 | 2026-01-03 |
+| GS_SoulslikeFramework.h | GS_SoulslikeFramework.h | **UAnimMontage, UDataTable, AGS_SoulslikeFramework** | 2026-01-03 | 2026-01-03 |
+| PS_SoulslikeFramework.cpp | PS_SoulslikeFramework.cpp |  | 2026-01-03 | 2026-01-03 |
+| PS_SoulslikeFramework.h | PS_SoulslikeFramework.h | **UAnimMontage, UDataTable, APS_SoulslikeFramework** | 2026-01-03 | 2026-01-03 |
+| SLFBossMalgareth.cpp | SLFBossMalgareth.cpp | BeginPlay | 2026-01-03 | 2026-01-03 |
+| SLFBossMalgareth.h | SLFBossMalgareth.h | **ASLFBossMalgareth** | 2026-01-03 | 2026-01-03 |
+| SLFBuffBase.cpp | SLFBuffBase.cpp | GetOwnerStatManager_Implementation, GetMultiplierForCurrentRank_Implementatio... | 2026-01-03 | 2026-01-03 |
+| SLFBuffBase.h | SLFBuffBase.h | **UDataAsset, UStatManagerComponent, UPDA_Buff** | 2026-01-03 | 2026-01-03 |
+| SLFEnemyShowcase.cpp | SLFEnemyShowcase.cpp | BeginPlay | 2026-01-03 | 2026-01-03 |
+| SLFEnemyShowcase.h | SLFEnemyShowcase.h | **UChildActorComponent, ASLFEnemyShowcase** | 2026-01-03 | 2026-01-03 |
+| SLFItemBase.cpp | SLFItemBase.cpp | BeginPlay, OnConstruction, SetupItem_Implementation | 2026-01-03 | 2026-01-03 |
+| SLFStatusEffectBase.h | SLFStatusEffectBase.h | **UDataAsset, UStatManagerComponent, UNiagaraSystem** | 2026-01-03 | 2026-01-03 |
+| Actions/SLFActionBackstab.h | SLFActionBackstab.h | **USLFActionBackstab** | 2026-01-03 | 2026-01-03 |
+| Actions/SLFActionComboHeavy.h | SLFActionComboHeavy.h | **USLFActionComboHeavy** | 2026-01-03 | 2026-01-03 |
+| Actions/SLFActionComboLightL.h | SLFActionComboLightL.h | **USLFActionComboLightL** | 2026-01-03 | 2026-01-03 |
+| Actions/SLFActionComboLightR.h | SLFActionComboLightR.h | **USLFActionComboLightR** | 2026-01-03 | 2026-01-03 |
+| Actions/SLFActionCrouch.cpp | SLFActionCrouch.cpp | ExecuteAction_Implementation | 2026-01-03 | 2026-01-03 |
+| Actions/SLFActionCrouch.h | SLFActionCrouch.h | **USLFActionCrouch** | 2026-01-03 | 2026-01-03 |
+| Actions/SLFActionDodge.h | SLFActionDodge.h | **USLFActionDodge** | 2026-01-03 | 2026-01-03 |
+| Actions/SLFActionDrinkFlaskHP.h | SLFActionDrinkFlaskHP.h | **USLFActionDrinkFlaskHP** | 2026-01-03 | 2026-01-03 |
+| Actions/SLFActionDualWieldAttack.h | SLFActionDualWieldAttack.h | **USLFActionDualWieldAttack** | 2026-01-03 | 2026-01-03 |
+| Actions/SLFActionExecute.h | SLFActionExecute.h | **USLFActionExecute** | 2026-01-03 | 2026-01-03 |
+| Actions/SLFActionGuardCancel.h | SLFActionGuardCancel.h | **USLFActionGuardCancel** | 2026-01-03 | 2026-01-03 |
+| Actions/SLFActionGuardEnd.h | SLFActionGuardEnd.h | **USLFActionGuardEnd** | 2026-01-03 | 2026-01-03 |
+| Actions/SLFActionGuardStart.h | SLFActionGuardStart.h | **USLFActionGuardStart** | 2026-01-03 | 2026-01-03 |
+| Actions/SLFActionJump.h | SLFActionJump.h | **USLFActionJump** | 2026-01-03 | 2026-01-03 |
+| Actions/SLFActionJumpAttack.h | SLFActionJumpAttack.h | **USLFActionJumpAttack** | 2026-01-03 | 2026-01-03 |
+| Actions/SLFActionPickupItemMontage.h | SLFActionPickupItemMontage.h | **USLFActionPickupItemMontage** | 2026-01-03 | 2026-01-03 |
+| Actions/SLFActionScrollWheelLeftHand.h | SLFActionScrollWheelLeftHand.h | **USLFActionScrollWheelLeftHand** | 2026-01-03 | 2026-01-03 |
+| Actions/SLFActionScrollWheelRightHand.h | SLFActionScrollWheelRightHand.h | **USLFActionScrollWheelRightHand** | 2026-01-03 | 2026-01-03 |
+| Actions/SLFActionScrollWheelTools.h | SLFActionScrollWheelTools.h | **USLFActionScrollWheelTools** | 2026-01-03 | 2026-01-03 |
+| Actions/SLFActionSprintAttack.h | SLFActionSprintAttack.h | **USLFActionSprintAttack** | 2026-01-03 | 2026-01-03 |
+| Actions/SLFActionStartSprinting.h | SLFActionStartSprinting.h | **USLFActionStartSprinting** | 2026-01-03 | 2026-01-03 |
+| Actions/SLFActionStopSprinting.h | SLFActionStopSprinting.h | **USLFActionStopSprinting** | 2026-01-03 | 2026-01-03 |
+| Actions/SLFActionThrowProjectile.h | SLFActionThrowProjectile.h | **USLFActionThrowProjectile** | 2026-01-03 | 2026-01-03 |
+| Actions/SLFActionTwoHandedStanceL.h | SLFActionTwoHandedStanceL.h | **USLFActionTwoHandedStanceL** | 2026-01-03 | 2026-01-03 |
+| Actions/SLFActionTwoHandedStanceR.h | SLFActionTwoHandedStanceR.h | **USLFActionTwoHandedStanceR** | 2026-01-03 | 2026-01-03 |
+| Actions/SLFActionUseEquippedTool.h | SLFActionUseEquippedTool.h | **USLFActionUseEquippedTool** | 2026-01-03 | 2026-01-03 |
+| Actors/SLFAbilityEffectBase.cpp | SLFAbilityEffectBase.cpp | BeginPlay, Tick, ActivateEffect_Implementation, DeactivateEffect_Implementati... | 2026-01-03 | 2026-01-03 |
+| Actors/SLFAbilityEffectBase.h | SLFAbilityEffectBase.h | **ASLFAbilityEffectBase, UNiagaraComponent** | 2026-01-03 | 2026-01-03 |
+| Actors/SLFBonfire.h | SLFBonfire.h | **ASLFBonfire, UPointLightComponent, UNiagaraComponent** | 2026-01-03 | 2026-01-03 |
+| Actors/SLFChaosForceField.cpp | SLFChaosForceField.cpp | BeginPlay, OnEffectTick_Implementation, OnActorEnterField_Implementation, Pus... | 2026-01-03 | 2026-01-03 |
+| Actors/SLFChaosForceField.h | SLFChaosForceField.h | **ASLFChaosForceField, USphereComponent** | 2026-01-03 | 2026-01-03 |
+| Actors/SLFDeathTrigger.cpp | SLFDeathTrigger.cpp | BeginPlay, OnActorEnter_Implementation, KillActor_Implementation | 2026-01-03 | 2026-01-03 |
+| Actors/SLFDeathTrigger.h | SLFDeathTrigger.h | **ASLFDeathTrigger, UBoxComponent** | 2026-01-03 | 2026-01-03 |
+| Actors/SLFDestructible.h | SLFDestructible.h | **ASLFDestructible, UNiagaraSystem** | 2026-01-03 | 2026-01-03 |
+| Actors/SLFDiscovery.h | SLFDiscovery.h | **ASLFDiscovery, UBoxComponent** | 2026-01-03 | 2026-01-03 |
+| Actors/SLFDoorBase.cpp | SLFDoorBase.cpp | BeginPlay, Tick, Interact_Implementation, OpenDoor_Implementation, CloseDoor_... | 2026-01-03 | 2026-01-03 |
+| Actors/SLFDoorDemo.cpp | SLFDoorDemo.cpp | BeginPlay, Interact_Implementation, ShowHint_Implementation, HideHint_Impleme... | 2026-01-03 | 2026-01-03 |
+| Actors/SLFDoorDemo.h | SLFDoorDemo.h | **ASLFDoorDemo** | 2026-01-03 | 2026-01-03 |
+| Actors/SLFLocationActor.cpp | SLFLocationActor.cpp | BeginPlay, GetSpawnTransform, UnlockLocation_Implementation, TeleportActorHer... | 2026-01-03 | 2026-01-03 |
+| Actors/SLFLocationActor.h | SLFLocationActor.h | **ASLFLocationActor, UBillboardComponent, UArrowComponent** | 2026-01-03 | 2026-01-03 |
+| Actors/SLFPatrolPath.cpp | SLFPatrolPath.cpp | BeginPlay, OnConstruction, GetPatrolPoint, GetNextPointIndex, GetWaitTimeAtPoint | 2026-01-03 | 2026-01-03 |
+| Actors/SLFPatrolPath.h | SLFPatrolPath.h | **ASLFPatrolPath, USplineComponent** | 2026-01-03 | 2026-01-03 |
+| Actors/SLFStatusEffectArea.h | SLFStatusEffectArea.h | **ASLFStatusEffectArea, UBoxComponent, UNiagaraComponent** | 2026-01-03 | 2026-01-03 |
+| Actors/SLFStatusEffectBuildup.h | SLFStatusEffectBuildup.h | **ASLFStatusEffectBuildup** | 2026-01-03 | 2026-01-03 |
+| Actors/SLFStatusEffectOneShot.h | SLFStatusEffectOneShot.h | **ASLFStatusEffectOneShot, USphereComponent** | 2026-01-03 | 2026-01-03 |
+| Actors/SLFTorch.cpp | SLFTorch.cpp | BeginPlay, LightTorch_Implementation, ExtinguishTorch_Implementation, ToggleT... | 2026-01-03 | 2026-01-03 |
+| Actors/SLFTorch.h | SLFTorch.h | **ASLFTorch, UPointLightComponent, UNiagaraComponent** | 2026-01-03 | 2026-01-03 |
+| Buffs/SLFBuffAttackPower.h | SLFBuffAttackPower.h | **USLFBuffAttackPower** | 2026-01-03 | 2026-01-03 |
+| Items/SLFItemAIWeapon.cpp | SLFItemAIWeapon.cpp |  | 2026-01-03 | 2026-01-03 |
+| Items/SLFItemAIWeapon.h | SLFItemAIWeapon.h | **ASLFItemAIWeapon** | 2026-01-03 | 2026-01-03 |
+| Items/SLFItemLantern.cpp | SLFItemLantern.cpp | ToggleLight | 2026-01-03 | 2026-01-03 |
+| Items/SLFItemLantern.h | SLFItemLantern.h | **ASLFItemLantern, UPointLightComponent** | 2026-01-03 | 2026-01-03 |
+| Items/SLFItemWeapon.cpp | SLFItemWeapon.cpp |  | 2026-01-03 | 2026-01-03 |
+| Items/SLFItemWeapon.h | SLFItemWeapon.h | **ASLFItemWeapon** | 2026-01-03 | 2026-01-03 |
+| Items/SLFItemWeaponBossMace.cpp | SLFItemWeaponBossMace.cpp |  | 2026-01-03 | 2026-01-03 |
+| Items/SLFItemWeaponBossMace.h | SLFItemWeaponBossMace.h | **ASLFItemWeaponBossMace** | 2026-01-03 | 2026-01-03 |
+| Items/SLFItemWeaponGreatsword.cpp | SLFItemWeaponGreatsword.cpp |  | 2026-01-03 | 2026-01-03 |
+| Items/SLFItemWeaponGreatsword.h | SLFItemWeaponGreatsword.h | **ASLFItemWeaponGreatsword** | 2026-01-03 | 2026-01-03 |
+| Items/SLFItemWeaponKatana.cpp | SLFItemWeaponKatana.cpp |  | 2026-01-03 | 2026-01-03 |
+| Items/SLFItemWeaponKatana.h | SLFItemWeaponKatana.h | **ASLFItemWeaponKatana** | 2026-01-03 | 2026-01-03 |
+| Items/SLFItemWeaponPoisonSword.cpp | SLFItemWeaponPoisonSword.cpp |  | 2026-01-03 | 2026-01-03 |
+| Items/SLFItemWeaponPoisonSword.h | SLFItemWeaponPoisonSword.h | **ASLFItemWeaponPoisonSword** | 2026-01-03 | 2026-01-03 |
+| Items/SLFItemWeaponShield.cpp | SLFItemWeaponShield.cpp |  | 2026-01-03 | 2026-01-03 |
+| Items/SLFItemWeaponShield.h | SLFItemWeaponShield.h | **ASLFItemWeaponShield** | 2026-01-03 | 2026-01-03 |
+| Projectiles/SLFProjectileBossFireball.cpp | SLFProjectileBossFireball.cpp |  | 2026-01-03 | 2026-01-03 |
+| Projectiles/SLFProjectileBossFireball.h | SLFProjectileBossFireball.h | **ASLFProjectileBossFireball** | 2026-01-03 | 2026-01-03 |
+| Projectiles/SLFProjectileThrowingKnife.cpp | SLFProjectileThrowingKnife.cpp |  | 2026-01-03 | 2026-01-03 |
+| Projectiles/SLFProjectileThrowingKnife.h | SLFProjectileThrowingKnife.h | **ASLFProjectileThrowingKnife** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFAttackPowerFire.h | SLFAttackPowerFire.h | **USLFAttackPowerFire** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFAttackPowerFrost.h | SLFAttackPowerFrost.h | **USLFAttackPowerFrost** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFAttackPowerHoly.h | SLFAttackPowerHoly.h | **USLFAttackPowerHoly** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFAttackPowerLightning.h | SLFAttackPowerLightning.h | **USLFAttackPowerLightning** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFAttackPowerMagic.h | SLFAttackPowerMagic.h | **USLFAttackPowerMagic** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFAttackPowerPhysical.h | SLFAttackPowerPhysical.h | **USLFAttackPowerPhysical** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFDamageNegationFire.h | SLFDamageNegationFire.h | **USLFDamageNegationFire** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFDamageNegationFrost.h | SLFDamageNegationFrost.h | **USLFDamageNegationFrost** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFDamageNegationHoly.h | SLFDamageNegationHoly.h | **USLFDamageNegationHoly** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFDamageNegationLightning.h | SLFDamageNegationLightning.h | **USLFDamageNegationLightning** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFDamageNegationMagic.h | SLFDamageNegationMagic.h | **USLFDamageNegationMagic** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFDamageNegationPhysical.h | SLFDamageNegationPhysical.h | **USLFDamageNegationPhysical** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFResistanceFocus.h | SLFResistanceFocus.h | **USLFResistanceFocus** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFResistanceImmunity.h | SLFResistanceImmunity.h | **USLFResistanceImmunity** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFResistanceRobustness.h | SLFResistanceRobustness.h | **USLFResistanceRobustness** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFResistanceVitality.h | SLFResistanceVitality.h | **USLFResistanceVitality** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFStatArcane.h | SLFStatArcane.h | **USLFStatArcane** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFStatDeathCurrency.cpp | SLFStatDeathCurrency.cpp |  | 2026-01-03 | 2026-01-03 |
+| Stats/SLFStatDeathCurrency.h | SLFStatDeathCurrency.h | **USLFStatDeathCurrency** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFStatDexterity.h | SLFStatDexterity.h | **USLFStatDexterity** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFStatEndurance.h | SLFStatEndurance.h | **USLFStatEndurance** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFStatFP.cpp | SLFStatFP.cpp |  | 2026-01-03 | 2026-01-03 |
+| Stats/SLFStatFP.h | SLFStatFP.h | **USLFStatFP** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFStatFaith.h | SLFStatFaith.h | **USLFStatFaith** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFStatHP.cpp | SLFStatHP.cpp |  | 2026-01-03 | 2026-01-03 |
+| Stats/SLFStatHP.h | SLFStatHP.h | **USLFStatHP** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFStatIncantationPower.cpp | SLFStatIncantationPower.cpp |  | 2026-01-03 | 2026-01-03 |
+| Stats/SLFStatIncantationPower.h | SLFStatIncantationPower.h | **USLFStatIncantationPower** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFStatIntelligence.h | SLFStatIntelligence.h | **USLFStatIntelligence** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFStatMind.h | SLFStatMind.h | **USLFStatMind** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFStatPoise.h | SLFStatPoise.h | **USLFStatPoise** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFStatStamina.h | SLFStatStamina.h | **USLFStatStamina** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFStatStance.cpp | SLFStatStance.cpp |  | 2026-01-03 | 2026-01-03 |
+| Stats/SLFStatStance.h | SLFStatStance.h | **USLFStatStance** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFStatStrength.h | SLFStatStrength.h | **USLFStatStrength** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFStatVigor.h | SLFStatVigor.h | **USLFStatVigor** | 2026-01-03 | 2026-01-03 |
+| Stats/SLFStatWeight.h | SLFStatWeight.h | **USLFStatWeight** | 2026-01-03 | 2026-01-03 |
+| StatusEffects/SLFStatusEffectBleed.cpp | SLFStatusEffectBleed.cpp |  | 2026-01-03 | 2026-01-03 |
+| StatusEffects/SLFStatusEffectBleed.h | SLFStatusEffectBleed.h | **USLFStatusEffectBleed** | 2026-01-03 | 2026-01-03 |
+| StatusEffects/SLFStatusEffectBurn.cpp | SLFStatusEffectBurn.cpp |  | 2026-01-03 | 2026-01-03 |
+| StatusEffects/SLFStatusEffectBurn.h | SLFStatusEffectBurn.h | **USLFStatusEffectBurn** | 2026-01-03 | 2026-01-03 |
+| StatusEffects/SLFStatusEffectCorruption.cpp | SLFStatusEffectCorruption.cpp |  | 2026-01-03 | 2026-01-03 |
+| StatusEffects/SLFStatusEffectCorruption.h | SLFStatusEffectCorruption.h | **USLFStatusEffectCorruption** | 2026-01-03 | 2026-01-03 |
+| StatusEffects/SLFStatusEffectFrostbite.cpp | SLFStatusEffectFrostbite.cpp |  | 2026-01-03 | 2026-01-03 |
+| StatusEffects/SLFStatusEffectFrostbite.h | SLFStatusEffectFrostbite.h | **USLFStatusEffectFrostbite** | 2026-01-03 | 2026-01-03 |
+| StatusEffects/SLFStatusEffectMadness.cpp | SLFStatusEffectMadness.cpp |  | 2026-01-03 | 2026-01-03 |
+| StatusEffects/SLFStatusEffectMadness.h | SLFStatusEffectMadness.h | **USLFStatusEffectMadness** | 2026-01-03 | 2026-01-03 |
+| StatusEffects/SLFStatusEffectPlague.cpp | SLFStatusEffectPlague.cpp |  | 2026-01-03 | 2026-01-03 |
+| StatusEffects/SLFStatusEffectPlague.h | SLFStatusEffectPlague.h | **USLFStatusEffectPlague** | 2026-01-03 | 2026-01-03 |
+| StatusEffects/SLFStatusEffectPoison.cpp | SLFStatusEffectPoison.cpp |  | 2026-01-03 | 2026-01-03 |
+| StatusEffects/SLFStatusEffectPoison.h | SLFStatusEffectPoison.h | **USLFStatusEffectPoison** | 2026-01-03 | 2026-01-03 |
+
+## C++ Components (`Source/SLFConversion/Components`)
+**91 files**
+
+| File | Description | Key Functions/Classes | Created | Modified |
+|------|-------------|----------------------|---------|----------|
+| SLFAIStateMachineComponent.cpp | SLFAIStateMachineComponent.cpp | BeginPlay, CacheReferences, RefreshCachedAnimInstance, TickComponent, SetState | 2026-01-11 | 2026-03-16 |
+| AC_ActionManager.cpp | AC_ActionManager.cpp | BeginPlay, TickComponent, GetStatManager_Implementation, GetInteractionManage... | 2026-01-03 | 2026-03-09 |
+| AC_ActionManager.h | AC_ActionManager.h | **UAC_CombatManager, UAC_InteractionManager, UStatManagerComponent** | 2026-01-03 | 2026-03-09 |
+| AC_CombatManager.cpp | AC_CombatManager.cpp | BeginPlay, TickComponent, SetGuardState_Implementation, GetIsGuarding_Impleme... | 2026-01-03 | 2026-03-09 |
+| AC_CombatManager.h | AC_CombatManager.h | **UStatManagerComponent, UAnimMontage, UDataTable** | 2026-01-03 | 2026-03-09 |
+| SLFCraftingManager.cpp | SLFCraftingManager.cpp | BeginPlay, DiscoverRecipe, GetDiscoveredRecipes, CanCraft, CraftItem | 2026-03-09 | 2026-03-09 |
+| SLFCraftingManager.h | SLFCraftingManager.h | **USLFCraftingManager** | 2026-03-09 | 2026-03-09 |
+| SLFZoneManagerComponent.cpp | SLFZoneManagerComponent.cpp | BeginPlay, SetCurrentZone, DiscoverZone, DefeatBoss, IsZoneDiscovered | 2026-02-27 | 2026-03-09 |
+| SaveLoadManagerComponent.cpp | SaveLoadManagerComponent.cpp | BeginPlay, SaveToSlot_Implementation, SaveToCheckpoint_Implementation, AutoSa... | 2026-01-03 | 2026-03-09 |
+| SLFZoneManagerComponent.h | SLFZoneManagerComponent.h | **USLFZoneManagerComponent** | 2026-02-27 | 2026-02-27 |
+| SaveLoadManagerComponent.h | SaveLoadManagerComponent.h | **UStatManagerComponent, UInventoryManagerComponent, UEquipmentManagerCompone... | 2026-01-03 | 2026-02-27 |
+| AIBossComponent.cpp | AIBossComponent.cpp | BeginPlay, SetFightActive_Implementation, EndFight_Implementation, SetPhase_I... | 2026-01-03 | 2026-02-18 |
+| AIBossComponent.h | AIBossComponent.h | **UAnimMontage, UAudioComponent, ULevelSequencePlayer** | 2026-01-03 | 2026-02-18 |
+| AICombatManagerComponent.cpp | AICombatManagerComponent.cpp | BeginPlay, HandleIncomingWeaponDamage_AI_Implementation, HandleProjectileDama... | 2026-01-03 | 2026-02-18 |
+| CollisionManagerComponent.cpp | CollisionManagerComponent.cpp | BeginPlay, TickComponent, SetMultipliers_Implementation, GetMultipliers_Imple... | 2026-01-03 | 2026-02-18 |
+| SLFAIStateMachineComponent.h | SLFAIStateMachineComponent.h | **AAIController, APawn, UAnimMontage** | 2026-01-11 | 2026-02-18 |
+| AC_AI_InteractionManager.cpp | AC_AI_InteractionManager.cpp | BeginPlay, TickComponent, GetCurrentDialogEntry_Implementation, EventBeginDia... | 2026-01-03 | 2026-02-07 |
+| AC_AI_InteractionManager.h | AC_AI_InteractionManager.h | **UAC_ProgressManager, UAnimMontage, UDataTable** | 2026-01-03 | 2026-02-07 |
+| AC_SaveLoadManager.cpp | AC_SaveLoadManager.cpp | BeginPlay, TickComponent, GetOwnerPlayerController, GetOwnerPawn, OnAsyncSave... | 2026-01-03 | 2026-02-07 |
+| AIInteractionManagerComponent.cpp | AIInteractionManagerComponent.cpp | GetCurrentDialogEntry, GetCurrentDialogEntryOutParams, BeginDialog_Implementa... | 2026-01-03 | 2026-02-07 |
+| AIInteractionManagerComponent.h | AIInteractionManagerComponent.h | **UDataAsset, UProgressManagerComponent, UUserWidget** | 2026-01-03 | 2026-02-07 |
+| InventoryManagerComponent.cpp | InventoryManagerComponent.cpp | BeginPlay, EquipStartingFlask, EquipStartingSpell, AddItem_Implementation, Re... | 2026-01-03 | 2026-02-07 |
+| ProgressManagerComponent.cpp | ProgressManagerComponent.cpp | BeginPlay, GetProgress_Implementation, SetProgress_Implementation, GetRequire... | 2026-01-03 | 2026-02-07 |
+| ProgressManagerComponent.h | ProgressManagerComponent.h | **UProgressManagerComponent** | 2026-01-03 | 2026-02-07 |
+| StatusEffectManagerComponent.cpp | StatusEffectManagerComponent.cpp | GetTagFromStatusEffectAsset, GetOwnerResistanceStatValue, TriggerStatusEffect... | 2026-01-03 | 2026-02-07 |
+| AC_AI_CombatManager.cpp | AC_AI_CombatManager.cpp | OnRegister, BeginPlay, TickComponent, TryGetAbility_Implementation, EvaluateA... | 2026-01-03 | 2026-01-30 |
+| AC_AI_CombatManager.h | AC_AI_CombatManager.h | **UAC_StatManager, UAnimMontage, UDataTable** | 2026-01-03 | 2026-01-30 |
+| AC_AI_Boss.cpp | AC_AI_Boss.cpp | BeginPlay, TickComponent, SetFightActive_Implementation, SetPhase_Implementat... | 2026-01-03 | 2026-01-29 |
+| AC_EquipmentManager.cpp | AC_EquipmentManager.cpp | BeginPlay, TickComponent, GetLifetimeReplicatedProps, IsSlotOccupied_Implemen... | 2026-01-03 | 2026-01-29 |
+| AC_EquipmentManager.h | AC_EquipmentManager.h | **UAC_BuffManager, UAnimMontage, UDataTable** | 2026-01-03 | 2026-01-29 |
+| AC_InventoryManager.cpp | AC_InventoryManager.cpp | BeginPlay, TickComponent, GetInventoryWidget_Implementation, GetAmountOfItem_... | 2026-01-03 | 2026-01-29 |
+| AC_StatusEffectManager.cpp | AC_StatusEffectManager.cpp | BeginPlay, TickComponent, StartBuildup_Implementation, StopBuildup_Implementa... | 2026-01-03 | 2026-01-29 |
+| AICombatManagerComponent.h | AICombatManagerComponent.h | **UDataAsset, UPrimaryDataAsset, UAnimMontage** | 2026-01-03 | 2026-01-29 |
+| InventoryManagerComponent.h | InventoryManagerComponent.h | **UDataAsset, UUserWidget, UInventoryManagerComponent** | 2026-01-03 | 2026-01-29 |
+| AC_InteractionManager.cpp | AC_InteractionManager.cpp | BeginPlay, TickComponent, GetLifetimeReplicatedProps, EventOnRest, OnRestingP... | 2026-01-03 | 2026-01-27 |
+| EquipmentManagerComponent.cpp | EquipmentManagerComponent.cpp | BeginPlay, GetLifetimeReplicatedProps, EquipWeaponToSlot_Implementation, Uneq... | 2026-01-03 | 2026-01-27 |
+| AC_InteractionManager.h | AC_InteractionManager.h | **UAnimMontage, UDataTable, UPrimaryDataAsset** | 2026-01-03 | 2026-01-26 |
+| AC_InventoryManager.h | AC_InventoryManager.h | **UAnimMontage, UDataTable, UPrimaryDataAsset** | 2026-01-03 | 2026-01-26 |
+| AC_StatManager.cpp | AC_StatManager.cpp | BeginPlay, TickComponent, GetStat_Implementation, GetAllStats_Implementation,... | 2026-01-03 | 2026-01-26 |
+| InteractionManagerComponent.cpp | InteractionManagerComponent.cpp | BeginPlay, TickComponent, GetLifetimeReplicatedProps, TraceForInteractables_I... | 2026-01-03 | 2026-01-26 |
+| LadderManagerComponent.h | LadderManagerComponent.h | **UDataAsset, UAnimMontage, UAnimInstance** | 2026-01-03 | 2026-01-26 |
+| LootDropManagerComponent.cpp | LootDropManagerComponent.cpp | IsOverrideItemValid, GetRandomItemFromTable_Implementation, PickItem_Implemen... | 2026-01-03 | 2026-01-26 |
+| RadarElementComponent.cpp | RadarElementComponent.cpp | EndPlay, AddTrackedElement_Implementation, RemoveTrackedElement_Implementation | 2026-01-03 | 2026-01-26 |
+| RadarElementComponent.h | RadarElementComponent.h | **UUserWidget, UW_Radar_TrackedElement, URadarElementComponent** | 2026-01-03 | 2026-01-26 |
+| RadarManagerComponent.cpp | RadarManagerComponent.cpp | BeginPlay, PopulateDefaultCardinalData, ShowRadar_Implementation, HideRadar_I... | 2026-01-03 | 2026-01-26 |
+| RadarManagerComponent.h | RadarManagerComponent.h | **UCameraComponent, UUserWidget, URadarElementComponent** | 2026-01-03 | 2026-01-26 |
+| StatManagerComponent.cpp | StatManagerComponent.cpp | BeginPlay, GetStat_Implementation, GetAllStats_Implementation, GetStatsForCat... | 2026-01-03 | 2026-01-26 |
+| StatusEffectManagerComponent.h | StatusEffectManagerComponent.h | **UDataAsset, UPDA_StatusEffect, UStatusEffectManagerComponent** | 2026-01-03 | 2026-01-26 |
+| LadderManagerComponent.cpp | LadderManagerComponent.cpp | BeginPlay, TickComponent, OnMoveInput, HandleClimbingInput, SetCurrentLadder_... | 2026-01-03 | 2026-01-19 |
+| AC_CollisionManager.cpp | AC_CollisionManager.cpp | BeginPlay, TickComponent, GetTraceLocations_Implementation, SubsteppedTrace_I... | 2026-01-03 | 2026-01-16 |
+| AIBehaviorManagerComponent.cpp | AIBehaviorManagerComponent.cpp | BeginPlay, SetState_Implementation, SetTarget_Implementation, SetPatrolPath_I... | 2026-01-03 | 2026-01-16 |
+| StatManagerComponent.h | StatManagerComponent.h | **UDataAsset, UStatManagerComponent** | 2026-01-03 | 2026-01-16 |
+| AC_AI_BehaviorManager.cpp | AC_AI_BehaviorManager.cpp | BeginPlay, TickComponent, GetBlackboard_Implementation, SetKeyValue_Implement... | 2026-01-03 | 2026-01-12 |
+| CombatManagerComponent.cpp | CombatManagerComponent.cpp | BeginPlay, HandleIncomingWeaponDamage_Implementation, HandleProjectileDamage_... | 2026-01-03 | 2026-01-12 |
+| AC_StatManager.h | AC_StatManager.h | **UAnimMontage, UDataTable, UPrimaryDataAsset** | 2026-01-03 | 2026-01-10 |
+| ActionManagerComponent.cpp | ActionManagerComponent.cpp | BeginPlay, GetDirectionalDodge, GetCombatManager, GetInteractionManager, GetS... | 2026-01-03 | 2026-01-08 |
+| AC_ProgressManager.cpp | AC_ProgressManager.cpp | BeginPlay, TickComponent, SetProgress_Implementation, GetProgress_Implementat... | 2026-01-03 | 2026-01-07 |
+| AC_ProgressManager.h | AC_ProgressManager.h | **UAnimMontage, UDataTable, UPrimaryDataAsset** | 2026-01-03 | 2026-01-07 |
+| AC_SaveLoadManager.h | AC_SaveLoadManager.h | **UAC_EquipmentManager, UAC_InventoryManager, UAC_ProgressManager** | 2026-01-03 | 2026-01-07 |
+| AC_StatusEffectManager.h | AC_StatusEffectManager.h | **UAnimMontage, UDataTable, UPrimaryDataAsset** | 2026-01-03 | 2026-01-07 |
+| EquipmentManagerComponent.h | EquipmentManagerComponent.h | **UDataTable, UDataAsset, UAnimSequenceBase** | 2026-01-03 | 2026-01-07 |
+| AC_AI_BehaviorManager.h | AC_AI_BehaviorManager.h | **AB_PatrolPath, UAnimMontage, UDataTable** | 2026-01-03 | 2026-01-03 |
+| AC_AI_Boss.h | AC_AI_Boss.h | **UAnimMontage, UDataTable, UPrimaryDataAsset** | 2026-01-03 | 2026-01-03 |
+| AC_BuffManager.cpp | AC_BuffManager.cpp | BeginPlay, TickComponent, TryAddBuff_Implementation, DelayedRemoveBuff_Implem... | 2026-01-03 | 2026-01-03 |
+| AC_BuffManager.h | AC_BuffManager.h | **UAnimMontage, UDataTable, UPrimaryDataAsset** | 2026-01-03 | 2026-01-03 |
+| AC_CollisionManager.h | AC_CollisionManager.h | **UAnimMontage, UDataTable, UPrimaryDataAsset** | 2026-01-03 | 2026-01-03 |
+| AC_DebugCentral.cpp | AC_DebugCentral.cpp | BeginPlay, TickComponent, LateInitialize, CacheComponentReferences, PopulateC... | 2026-01-03 | 2026-01-03 |
+| AC_DebugCentral.h | AC_DebugCentral.h | **UAC_ActionManager, UAC_BuffManager, UAC_CombatManager** | 2026-01-03 | 2026-01-03 |
+| AC_InputBuffer.cpp | AC_InputBuffer.cpp | BeginPlay, TickComponent, QueueAction_Implementation, ConsumeInputBuffer_Impl... | 2026-01-03 | 2026-01-03 |
+| AC_InputBuffer.h | AC_InputBuffer.h | **UAnimMontage, UDataTable, UPrimaryDataAsset** | 2026-01-03 | 2026-01-03 |
+| AC_LadderManager.cpp | AC_LadderManager.cpp | BeginPlay, TickComponent, SetIsOnGround_Implementation, SetIsClimbing_Impleme... | 2026-01-03 | 2026-01-03 |
+| AC_LadderManager.h | AC_LadderManager.h | **UAnimMontage, UDataTable, UPrimaryDataAsset** | 2026-01-03 | 2026-01-03 |
+| AC_LootDropManager.cpp | AC_LootDropManager.cpp | BeginPlay, TickComponent, GetRandomItemFromTable_Implementation, IsOverrideIt... | 2026-01-03 | 2026-01-03 |
+| AC_LootDropManager.h | AC_LootDropManager.h | **UAnimMontage, UDataTable, UPrimaryDataAsset** | 2026-01-03 | 2026-01-03 |
+| AC_RadarElement.cpp | AC_RadarElement.cpp | BeginPlay, EndPlay, TickComponent, RegisterWithRadarManager, UnregisterFromRa... | 2026-01-03 | 2026-01-03 |
+| AC_RadarElement.h | AC_RadarElement.h | **UAnimMontage, UDataTable, UPrimaryDataAsset** | 2026-01-03 | 2026-01-03 |
+| AC_RadarManager.cpp | AC_RadarManager.cpp | BeginPlay, TickComponent, SetupPlayerIcon_Implementation, SetupCardinals_Impl... | 2026-01-03 | 2026-01-03 |
+| AC_RadarManager.h | AC_RadarManager.h | **UAC_RadarElement, UAnimMontage, UDataTable** | 2026-01-03 | 2026-01-03 |
+| AIBehaviorManagerComponent.h | AIBehaviorManagerComponent.h | **UBehaviorTree, UBlackboardComponent, UAIBehaviorManagerComponent**; UMETA | 2026-01-03 | 2026-01-03 |
+| ActionManagerComponent.h | ActionManagerComponent.h | **UDataAsset, UCombatManagerComponent, UInteractionManagerComponent** | 2026-01-03 | 2026-01-03 |
+| BuffManagerComponent.cpp | BuffManagerComponent.cpp | GetBuffsWithTag_Implementation, RemoveBuffWithTag_Implementation, RemoveAllBu... | 2026-01-03 | 2026-01-03 |
+| BuffManagerComponent.h | BuffManagerComponent.h | **UDataAsset, UBuffManagerComponent** | 2026-01-03 | 2026-01-03 |
+| CollisionManagerComponent.h | CollisionManagerComponent.h | **UCollisionManagerComponent** | 2026-01-03 | 2026-01-03 |
+| CombatManagerComponent.h | CombatManagerComponent.h | **UDataAsset, UAnimMontage, UCameraShakeBase** | 2026-01-03 | 2026-01-03 |
+| DebugCentralComponent.cpp | DebugCentralComponent.cpp | BeginPlay, TickComponent, LateInitialize_Implementation | 2026-01-03 | 2026-01-03 |
+| DebugCentralComponent.h | DebugCentralComponent.h | **UUserWidget, UDebugCentralComponent** | 2026-01-03 | 2026-01-03 |
+| InputBufferComponent.cpp | InputBufferComponent.cpp | BeginPlay, QueueAction_Implementation, ToggleBuffer_Implementation, ConsumeIn... | 2026-01-03 | 2026-01-03 |
+| InputBufferComponent.h | InputBufferComponent.h | **UInputBufferComponent** | 2026-01-03 | 2026-01-03 |
+| InteractionManagerComponent.h | InteractionManagerComponent.h | **UInteractionManagerComponent** | 2026-01-03 | 2026-01-03 |
+| LootDropManagerComponent.h | LootDropManagerComponent.h | **ULootDropManagerComponent** | 2026-01-03 | 2026-01-03 |
+| SLFComponents.h | SLFComponents.h |  | 2026-01-03 | 2026-01-03 |
+
+## C++ Dungeon (`Source/SLFConversion/Dungeon`)
+**15 files**
+
+| File | Description | Key Functions/Classes | Created | Modified |
+|------|-------------|----------------------|---------|----------|
+| SLFCaveEventListener.cpp | SLFCaveEventListener.cpp | OnPostDungeonBuild_Implementation | 2026-03-09 | 2026-03-09 |
+| SLFCaveEventListener.h | SLFCaveEventListener.h | **USLFCaveEventListener** | 2026-03-09 | 2026-03-09 |
+| SLFCaveMarkerEmitter.cpp | SLFCaveMarkerEmitter.cpp | EmitMarkers_Implementation | 2026-03-09 | 2026-03-09 |
+| SLFCaveMarkerEmitter.h | SLFCaveMarkerEmitter.h | **USLFCaveMarkerEmitter**; EmitMarkers_Implementation | 2026-03-09 | 2026-03-09 |
+| SLFCaveMazeBuilder.cpp | SLFCaveMazeBuilder.cpp | CaptureCaveFloor, ExportCellGraphToJson, GenerateTemplateLayout, GenerateOver... | 2026-03-09 | 2026-03-09 |
+| SLFCaveMazeBuilder.h | SLFCaveMazeBuilder.h | **UWorld, ADungeon, FSLFCaveMazeBuilder** | 2026-03-09 | 2026-03-09 |
+| SLFCaveMazeTypes.h | SLFCaveMazeTypes.h |  | 2026-03-09 | 2026-03-09 |
+| SLFCaveRandomTransform.cpp | SLFCaveRandomTransform.cpp | Execute | 2026-03-09 | 2026-03-09 |
+| SLFCaveRandomTransform.h | SLFCaveRandomTransform.h | **USLFCaveRandomTransform**; Execute | 2026-03-09 | 2026-03-09 |
+| SLFCaveRoomSelector.cpp | SLFCaveRoomSelector.cpp | SelectNode_Implementation | 2026-03-09 | 2026-03-09 |
+| SLFCaveRoomSelector.h | SLFCaveRoomSelector.h | **USLFCaveRoomSelector**; SelectNode_Implementation | 2026-03-09 | 2026-03-09 |
+| SLFCaveSpawnLogic.cpp | SLFCaveSpawnLogic.cpp | OnItemSpawn_Implementation, GetLightColor | 2026-03-09 | 2026-03-09 |
+| SLFCaveSpawnLogic.h | SLFCaveSpawnLogic.h | **USLFCaveSpawnLogic** | 2026-03-09 | 2026-03-09 |
+| SLFProceduralCaveManager.cpp | SLFProceduralCaveManager.cpp | BeginPlay, BuildCaveDungeon, ConfigureDungeon, ForceMaterialOnVoxelMeshes, On... | 2026-03-09 | 2026-03-09 |
+| SLFProceduralCaveManager.h | SLFProceduralCaveManager.h | **ADungeon, UCellFlowAsset, UDungeonThemeAsset**; QueryPathPositions | 2026-03-09 | 2026-03-09 |
+
+## C++ Framework (`Source/SLFConversion/Framework`)
+**16 files**
+
+| File | Description | Key Functions/Classes | Created | Modified |
+|------|-------------|----------------------|---------|----------|
+| SLFPlayerController.cpp | SLFPlayerController.cpp | BeginPlay, SetupInputComponent, HandleGameMenuInput, Native_InitializeHUD, Ev... | 2026-01-03 | 2026-03-09 |
+| SLFPlayerController.h | SLFPlayerController.h | **UInputAction, UInputMappingContext, UW_HUD** | 2026-01-03 | 2026-03-09 |
+| SLFGameMode.cpp | SLFGameMode.cpp | BeginPlay | 2026-01-03 | 2026-02-27 |
+| SLFGameInstance.cpp | SLFGameInstance.cpp | Init, GetAllSaveSlots_Implementation, SetLastSlotNameToActive_Implementation,... | 2026-01-03 | 2026-02-07 |
+| SLFGameInstance.h | SLFGameInstance.h | **USG_SaveSlots, UPrimaryDataAsset, USLFGameInstance** | 2026-01-03 | 2026-01-29 |
+| SLFAIController.cpp | SLFAIController.cpp | BeginPlay, OnPossess, Tick, InitializeBehavior_Implementation | 2026-01-03 | 2026-01-26 |
+| SLFAIController.h | SLFAIController.h | **ASLFAIController** | 2026-01-03 | 2026-01-12 |
+| SLFGameMode.h | SLFGameMode.h | **ASLFGameMode** | 2026-01-03 | 2026-01-03 |
+| SLFGameState.cpp | SLFGameState.cpp | BeginPlay | 2026-01-03 | 2026-01-03 |
+| SLFGameState.h | SLFGameState.h | **ASLFGameState** | 2026-01-03 | 2026-01-03 |
+| SLFPlayerState.cpp | SLFPlayerState.cpp | BeginPlay | 2026-01-03 | 2026-01-03 |
+| SLFPlayerState.h | SLFPlayerState.h | **ASLFPlayerState** | 2026-01-03 | 2026-01-03 |
+| SLFSaveGame.cpp | SLFSaveGame.cpp |  | 2026-01-03 | 2026-01-03 |
+| SLFSaveGame.h | SLFSaveGame.h | **USLFSaveGame** | 2026-01-03 | 2026-01-03 |
+| SLFSaveSlots.cpp | SLFSaveSlots.cpp |  | 2026-01-03 | 2026-01-03 |
+| SLFSaveSlots.h | SLFSaveSlots.h | **USLFSaveSlots** | 2026-01-03 | 2026-01-03 |
+
+## C++ GameFramework (`Source/SLFConversion/GameFramework`)
+**10 files**
+
+| File | Description | Key Functions/Classes | Created | Modified |
+|------|-------------|----------------------|---------|----------|
+| GI_SoulslikeFramework.cpp | GI_SoulslikeFramework.cpp |  | 2026-01-03 | 2026-02-07 |
+| GI_SoulslikeFramework.h | GI_SoulslikeFramework.h | **UGI_SoulslikeFramework** | 2026-01-03 | 2026-02-07 |
+| PC_Menu_SoulslikeFramework.cpp | PC_Menu_SoulslikeFramework.cpp | BeginPlay, CreateMainMenuWidget, SetupMenuInput, CheckSaveGameExists, SetActi... | 2026-01-03 | 2026-02-07 |
+| PC_Menu_SoulslikeFramework.h | PC_Menu_SoulslikeFramework.h | **UW_MainMenu, UInputMappingContext, UInputAction** | 2026-01-03 | 2026-02-07 |
+| PC_SoulslikeFramework.cpp | PC_SoulslikeFramework.cpp | BeginPlay, SetupInputComponent, HandleNavigateUp, HandleNavigateDown, HandleN... | 2026-01-03 | 2026-02-07 |
+| PC_SoulslikeFramework.h | PC_SoulslikeFramework.h | **UW_HUD, ULevelSequencePlayer, UInventoryManagerComponent** | 2026-01-03 | 2026-01-29 |
+| GM_Menu_SoulslikeFramework.cpp | GM_Menu_SoulslikeFramework.cpp |  | 2026-01-03 | 2026-01-03 |
+| GM_Menu_SoulslikeFramework.h | GM_Menu_SoulslikeFramework.h | **AGM_Menu_SoulslikeFramework** | 2026-01-03 | 2026-01-03 |
+| GM_SoulslikeFramework.cpp | GM_SoulslikeFramework.cpp |  | 2026-01-03 | 2026-01-03 |
+| GM_SoulslikeFramework.h | GM_SoulslikeFramework.h | **AGM_SoulslikeFramework** | 2026-01-03 | 2026-01-03 |
+
+## C++ Interfaces (`Source/SLFConversion/Interfaces`)
+**37 files**
+
+| File | Description | Key Functions/Classes | Created | Modified |
+|------|-------------|----------------------|---------|----------|
+| SLFPlayerInterface.h | SLFPlayerInterface.h | **UAnimMontage, UAnimInstance, USoundBase** | 2026-01-03 | 2026-02-07 |
+| BPI_AIC.h | BPI_AIC.h | **UBPI_AIC, IBPI_AIC** | 2026-01-03 | 2026-01-03 |
+| BPI_BossDoor.h | BPI_BossDoor.h | **UBPI_BossDoor, IBPI_BossDoor** | 2026-01-03 | 2026-01-03 |
+| BPI_Controller.h | BPI_Controller.h | **UActorComponent, UUserWidget, UMaterialInterface** | 2026-01-03 | 2026-01-03 |
+| BPI_DestructibleHelper.h | BPI_DestructibleHelper.h | **UBPI_DestructibleHelper, IBPI_DestructibleHelper** | 2026-01-03 | 2026-01-03 |
+| BPI_Enemy.h | BPI_Enemy.h | **AB_PatrolPath, UBPI_Enemy, IBPI_Enemy** | 2026-01-03 | 2026-01-03 |
+| BPI_EnemyHealthbar.h | BPI_EnemyHealthbar.h | **UBPI_EnemyHealthbar, IBPI_EnemyHealthbar** | 2026-01-03 | 2026-01-03 |
+| BPI_Executable.h | BPI_Executable.h | **UBPI_Executable, IBPI_Executable** | 2026-01-03 | 2026-01-03 |
+| BPI_ExecutionIndicator.h | BPI_ExecutionIndicator.h | **UBPI_ExecutionIndicator, IBPI_ExecutionIndicator** | 2026-01-03 | 2026-01-03 |
+| BPI_GameInstance.h | BPI_GameInstance.h | **UPrimaryDataAsset, UBPI_GameInstance, IBPI_GameInstance** | 2026-01-03 | 2026-01-03 |
+| BPI_GenericCharacter.h | BPI_GenericCharacter.h | **USceneComponent, UAnimInstance, UAnimMontage**; PlaySoftSoundAtLocation, Sp... | 2026-01-03 | 2026-01-03 |
+| BPI_Interactable.h | BPI_Interactable.h | **UBPI_Interactable, IBPI_Interactable** | 2026-01-03 | 2026-01-03 |
+| BPI_Item.h | BPI_Item.h | **UBPI_Item, IBPI_Item** | 2026-01-03 | 2026-01-03 |
+| BPI_MainMenu.h | BPI_MainMenu.h | **UBPI_MainMenu, IBPI_MainMenu** | 2026-01-03 | 2026-01-03 |
+| BPI_NPC.h | BPI_NPC.h | **UBPI_NPC, IBPI_NPC** | 2026-01-03 | 2026-01-03 |
+| BPI_Player.h | BPI_Player.h | **ULevelSequence, UAnimMontage, UActorComponent** | 2026-01-03 | 2026-01-03 |
+| BPI_Projectile.h | BPI_Projectile.h | **UBPI_Projectile, IBPI_Projectile** | 2026-01-03 | 2026-01-03 |
+| BPI_RestingPoint.h | BPI_RestingPoint.h | **UBPI_RestingPoint, IBPI_RestingPoint** | 2026-01-03 | 2026-01-03 |
+| BPI_StatEntry.h | BPI_StatEntry.h | **UUserWidget, UBPI_StatEntry, IBPI_StatEntry** | 2026-01-03 | 2026-01-03 |
+| SLFAICInterface.h | SLFAICInterface.h | **UAnimMontage, UAnimInstance, USoundBase** | 2026-01-03 | 2026-01-03 |
+| SLFBossDoorInterface.h | SLFBossDoorInterface.h | **UAnimMontage, UAnimInstance, USoundBase** | 2026-01-03 | 2026-01-03 |
+| SLFControllerInterface.h | SLFControllerInterface.h | **UAnimMontage, UAnimInstance, USoundBase** | 2026-01-03 | 2026-01-03 |
+| SLFDestructibleHelperInterface.h | SLFDestructibleHelperInterface.h | **UAnimMontage, UAnimInstance, USoundBase** | 2026-01-03 | 2026-01-03 |
+| SLFEnemyHealthbarInterface.h | SLFEnemyHealthbarInterface.h | **UAnimMontage, UAnimInstance, USoundBase** | 2026-01-03 | 2026-01-03 |
+| SLFEnemyInterface.h | SLFEnemyInterface.h | **UAnimMontage, UAnimInstance, USoundBase** | 2026-01-03 | 2026-01-03 |
+| SLFExecutableInterface.h | SLFExecutableInterface.h | **UAnimMontage, UAnimInstance, USoundBase** | 2026-01-03 | 2026-01-03 |
+| SLFExecutionIndicatorInterface.h | SLFExecutionIndicatorInterface.h | **UAnimMontage, UAnimInstance, USoundBase** | 2026-01-03 | 2026-01-03 |
+| SLFGameInstanceInterface.h | SLFGameInstanceInterface.h | **UAnimMontage, UAnimInstance, USoundBase** | 2026-01-03 | 2026-01-03 |
+| SLFGenericCharacterInterface.h | SLFGenericCharacterInterface.h | **UAnimMontage, UAnimInstance, USoundBase** | 2026-01-03 | 2026-01-03 |
+| SLFInteractableInterface.h | SLFInteractableInterface.h | **UAnimMontage, UAnimInstance, USoundBase** | 2026-01-03 | 2026-01-03 |
+| SLFInterfaces.h | SLFInterfaces.h |  | 2026-01-03 | 2026-01-03 |
+| SLFItemInterface.h | SLFItemInterface.h | **UAnimMontage, UAnimInstance, USoundBase** | 2026-01-03 | 2026-01-03 |
+| SLFMainMenuInterface.h | SLFMainMenuInterface.h | **UAnimMontage, UAnimInstance, USoundBase** | 2026-01-03 | 2026-01-03 |
+| SLFNPCInterface.h | SLFNPCInterface.h | **UAnimMontage, UAnimInstance, USoundBase** | 2026-01-03 | 2026-01-03 |
+| SLFProjectileInterface.h | SLFProjectileInterface.h | **UAnimMontage, UAnimInstance, USoundBase** | 2026-01-03 | 2026-01-03 |
+| SLFRestingPointInterface.h | SLFRestingPointInterface.h | **UAnimMontage, UAnimInstance, USoundBase** | 2026-01-03 | 2026-01-03 |
+| SLFStatEntryInterface.h | SLFStatEntryInterface.h | **UAnimMontage, UAnimInstance, USoundBase** | 2026-01-03 | 2026-01-03 |
+
+## C++ Testing (`Source/SLFConversion/Testing`)
+**6 files**
+
+| File | Description | Key Functions/Classes | Created | Modified |
+|------|-------------|----------------------|---------|----------|
+| SLFPIETestRunner.cpp | SLFPIETestRunner.cpp | Initialize, Deinitialize, RunAllTests, RunTest, RunActionSystemTest | 2026-01-03 | 2026-03-22 |
+| SLFTestManager.cpp | SLFTestManager.cpp | BeginPlay, EndPlay, RunTest, SpawnTestEnemy, CaptureScreenshot | 2026-02-18 | 2026-02-18 |
+| SLFTestManager.h | SLFTestManager.h | **ASLFTestManager** | 2026-02-18 | 2026-02-18 |
+| SLFPIETestRunner.h | SLFPIETestRunner.h | **USLFPIETestRunner, FSLFTestCommands** | 2026-01-03 | 2026-02-07 |
+| SLFInputSimulator.cpp | SLFInputSimulator.cpp | Initialize, Deinitialize, GetLocalPlayerController, InjectKeyEvent, SimulateK... | 2026-01-03 | 2026-01-03 |
+| SLFInputSimulator.h | SLFInputSimulator.h | **USLFInputSimulator, USLFInputSimulatorLibrary** | 2026-01-03 | 2026-01-03 |
+
+## C++ Tests (`Source/SLFConversion/Tests`)
+**8 files**
+
+| File | Description | Key Functions/Classes | Created | Modified |
+|------|-------------|----------------------|---------|----------|
+| SLFSpawnTests.cpp | SLFSpawnTests.cpp | RunTest | 2026-01-12 | 2026-02-27 |
+| SLFAITests.cpp | SLFAITests.cpp | RunTest | 2026-01-12 | 2026-01-12 |
+| SLFAnimNotifyTests.cpp | SLFAnimNotifyTests.cpp | RunTest | 2026-01-12 | 2026-01-12 |
+| SLFCombatTests.cpp | SLFCombatTests.cpp | RunTest, Clamp | 2026-01-12 | 2026-01-12 |
+| SLFComponentTests.cpp | SLFComponentTests.cpp | RunTest | 2026-01-12 | 2026-01-12 |
+| SLFFunctionalTests.cpp | SLFFunctionalTests.cpp | RunTest | 2026-01-12 | 2026-01-12 |
+| SLFStatActionTests.cpp | SLFStatActionTests.cpp | RunTest | 2026-01-12 | 2026-01-12 |
+| SLFWorldTests.cpp | SLFWorldTests.cpp | RunTest | 2026-01-12 | 2026-01-12 |
+
+## C++ Utilities (`Source/SLFConversion/Utilities`)
+**2 files**
+
+| File | Description | Key Functions/Classes | Created | Modified |
+|------|-------------|----------------------|---------|----------|
+| SLFNiagaraFactory.cpp | SLFNiagaraFactory.cpp | CreateMagicProjectileEffect, CreateImpactBurstEffect, CreateFireSpellEffect, ... | 2026-02-07 | 2026-02-07 |
+| SLFNiagaraFactory.h | SLFNiagaraFactory.h | **USLFNiagaraFactory**; CreateMagicProjectileEffect, CreateImpactBurstEffect | 2026-02-07 | 2026-02-07 |
+
+## C++ Widgets (`Source/SLFConversion/Widgets`)
+**246 files**
+
+| File | Description | Key Functions/Classes | Created | Modified |
+|------|-------------|----------------------|---------|----------|
+| W_WorldMap.cpp | W_WorldMap.cpp | RebuildWidget, NativeConstruct, NativeOnKeyDown, Handled, NativeOnMouseButton... | 2026-02-27 | 2026-03-09 |
+| W_WorldMap.h | W_WorldMap.h | **UImage, UCanvasPanel, UTextBlock** | 2026-02-27 | 2026-03-09 |
+| W_Crafting.cpp | W_Crafting.cpp | NativeConstruct, NativeDestruct, NativeOnKeyDown, Handled, CacheWidgetReferences | 2026-01-03 | 2026-02-27 |
+| W_GameMenu.cpp | W_GameMenu.cpp | NativePreConstruct, NativeConstruct, NativeDestruct, NativeOnKeyDown, Handled | 2026-01-03 | 2026-02-27 |
+| W_GameMenu.h | W_GameMenu.h | **UW_GameMenu_Button, UWidgetAnimation, UPanelWidget** | 2026-01-03 | 2026-02-27 |
+| W_HUD.cpp | W_HUD.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, GetTargetWidgetVisibi... | 2026-01-03 | 2026-02-27 |
+| W_HUD.h | W_HUD.h | **UW_LoadingScreen, UW_Inventory, UW_Equipment** | 2026-01-03 | 2026-02-27 |
+| W_MainMenu.cpp | W_MainMenu.cpp | NativeConstruct, NativeDestruct, NativeOnKeyDown, Handled, InitializeButtons | 2026-01-03 | 2026-02-27 |
+| W_MainMenu.h | W_MainMenu.h | **UW_LoadingScreen, UW_MainMenu_Button, UW_CharacterSelection** | 2026-01-03 | 2026-02-27 |
+| W_CharacterSelection.cpp | W_CharacterSelection.cpp | NativeConstruct, NativeDestruct, InitializeAndStoreClassAssets_Implementation... | 2026-01-03 | 2026-02-07 |
+| W_CharacterSelection.h | W_CharacterSelection.h | **UW_CharacterSelectionCard, UScrollBox, UW_CharacterSelection** | 2026-01-03 | 2026-02-07 |
+| W_CharacterSelectionCard.cpp | W_CharacterSelectionCard.cpp | NativeConstruct, NativeDestruct, PopulateCardDisplay, SetCardSelected_Impleme... | 2026-01-03 | 2026-02-07 |
+| W_CharacterSelectionCard.h | W_CharacterSelectionCard.h | **UTextBlock, UImage, UBorder** | 2026-01-03 | 2026-02-07 |
+| W_GenericButton.cpp | W_GenericButton.cpp | NativePreConstruct, NativeConstruct, NativeDestruct, CacheWidgetReferences, S... | 2026-01-03 | 2026-02-07 |
+| W_GenericButton.h | W_GenericButton.h | **UW_GenericButton, UButton** | 2026-01-03 | 2026-02-07 |
+| W_LevelUp.cpp | W_LevelUp.cpp | NativeConstruct, NativeDestruct, NativeOnKeyDown, Handled, OnStatsInitialized | 2026-01-03 | 2026-02-07 |
+| W_LoadGame.cpp | W_LoadGame.cpp | NativeConstruct, NativeDestruct, InitializeSaveSlots_Implementation, EventNav... | 2026-01-03 | 2026-02-07 |
+| W_LoadGame.h | W_LoadGame.h | **UW_LoadGame_Entry, UW_LoadGame** | 2026-01-03 | 2026-02-07 |
+| W_LoadGame_Entry.cpp | W_LoadGame_Entry.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, ApplySaveDataToWidget... | 2026-01-03 | 2026-02-07 |
+| W_LoadGame_Entry.h | W_LoadGame_Entry.h | **UW_LoadingScreen, USG_SoulslikeFramework, UW_LoadGame_Entry** | 2026-01-03 | 2026-02-07 |
+| W_MainMenu_Button.cpp | W_MainMenu_Button.cpp | NativePreConstruct, NativeConstruct, NativeDestruct, SetMenuButtonSelected_Im... | 2026-01-03 | 2026-02-07 |
+| W_NPC_Window.h | W_NPC_Window.h | **UW_RestMenu_Button, UW_NPC_Window_Vendor, UAIInteractionManagerComponent** | 2026-01-03 | 2026-02-07 |
+| W_Settings.cpp | W_Settings.cpp | NativeConstruct, NativeDestruct, NativeOnPreviewKeyDown, Unhandled, Handled | 2026-01-03 | 2026-02-07 |
+| W_Settings.h | W_Settings.h | **UW_GenericButton, UW_Settings_CategoryEntry, UW_Settings_Entry** | 2026-01-03 | 2026-02-07 |
+| W_Settings_CategoryEntry.cpp | W_Settings_CategoryEntry.cpp | NativePreConstruct, NativeConstruct, NativeDestruct, CacheWidgetReferences, B... | 2026-01-03 | 2026-02-07 |
+| W_Settings_CategoryEntry.h | W_Settings_CategoryEntry.h | **UW_Settings, UButton, UImage** | 2026-01-03 | 2026-02-07 |
+| W_Settings_CenteredText.cpp | W_Settings_CenteredText.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, EventSetText_Implemen... | 2026-01-03 | 2026-02-07 |
+| W_Settings_CenteredText.h | W_Settings_CenteredText.h | **UW_Settings_CenteredText, UTextBlock** | 2026-01-03 | 2026-02-07 |
+| W_Settings_Entry.cpp | W_Settings_Entry.cpp | NativePreConstruct, NativeConstruct, NativeDestruct, ApplyVisualConfig, SetEn... | 2026-01-03 | 2026-02-07 |
+| W_Settings_Entry.h | W_Settings_Entry.h | **UBorder, UTextBlock, USlider** | 2026-01-03 | 2026-02-07 |
+| W_Settings_PlayerCard.cpp | W_Settings_PlayerCard.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, EventOnLevelUpdated_I... | 2026-01-03 | 2026-02-07 |
+| W_Settings_PlayerCard.h | W_Settings_PlayerCard.h | **UW_Settings_PlayerCard, UTextBlock, UTextBlock** | 2026-01-03 | 2026-02-07 |
+| W_Settings_QuitConfirmation.cpp | W_Settings_QuitConfirmation.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, OnYesButtonPressed, O... | 2026-01-03 | 2026-02-07 |
+| W_Settings_QuitConfirmation.h | W_Settings_QuitConfirmation.h | **UW_GenericButton, UTextBlock, UW_Settings_QuitConfirmation** | 2026-01-03 | 2026-02-07 |
+| W_StatBlock_LevelUp.cpp | W_StatBlock_LevelUp.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, OnStatsInitialized, I... | 2026-01-03 | 2026-02-07 |
+| W_InventoryActionAmount.cpp | W_InventoryActionAmount.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, BindButtonEvents, Upd... | 2026-01-03 | 2026-02-01 |
+| W_InventoryActionAmount.h | W_InventoryActionAmount.h | **UW_InventorySlot, UW_GenericButton, UButton** | 2026-01-03 | 2026-02-01 |
+| W_NPC_Window.cpp | W_NPC_Window.cpp | NativeConstruct, NativeDestruct, NativeOnKeyDown, Handled, CacheWidgetReferences | 2026-01-03 | 2026-02-01 |
+| W_NPC_Window_Vendor.cpp | W_NPC_Window_Vendor.cpp | NativeConstruct, NativeDestruct, NativeOnKeyDown, Handled, CacheWidgetReferences | 2026-01-03 | 2026-02-01 |
+| W_NPC_Window_Vendor.h | W_NPC_Window_Vendor.h | **UW_Inventory_CategoryEntry, UW_VendorSlot, UW_VendorAction** | 2026-01-03 | 2026-02-01 |
+| W_VendorAction.cpp | W_VendorAction.cpp | NativeConstruct, NativeDestruct, NativeOnKeyDown, Handled, CacheWidgetReferences | 2026-01-03 | 2026-02-01 |
+| W_VendorAction.h | W_VendorAction.h | **UW_VendorSlot, UTextBlock, UW_GenericButton** | 2026-01-03 | 2026-02-01 |
+| W_VendorSlot.cpp | W_VendorSlot.cpp | NativeConstruct, NativeDestruct, NativeOnMouseButtonDown, Handled, NativeOnMo... | 2026-01-03 | 2026-02-01 |
+| W_VendorSlot.h | W_VendorSlot.h | **UButton, UW_VendorSlot** | 2026-01-03 | 2026-02-01 |
+| W_StatusEffectBar.cpp | W_StatusEffectBar.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, SetupEffect, OnBuildu... | 2026-01-03 | 2026-01-30 |
+| W_StatusEffectBar.h | W_StatusEffectBar.h | **UB_StatusEffect, UProgressBar, UImage** | 2026-01-03 | 2026-01-30 |
+| W_Equipment.cpp | W_Equipment.cpp | NativeConstruct, NativeDestruct, NativeOnKeyDown, Handled, CacheWidgetReferences | 2026-01-03 | 2026-01-29 |
+| W_ItemWheelSlot.cpp | W_ItemWheelSlot.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, HandleOnItemEquippedT... | 2026-01-03 | 2026-01-29 |
+| W_ItemWheelSlot.h | W_ItemWheelSlot.h | **UW_ItemWheel_NextSlot, UAC_EquipmentManager, UImage** | 2026-01-03 | 2026-01-29 |
+| W_StatusEffectNotification.cpp | W_StatusEffectNotification.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, EventFinishNotificati... | 2026-01-03 | 2026-01-29 |
+| W_AbilityDisplay.cpp | W_AbilityDisplay.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, EventOnAbilityInfoRec... | 2026-01-03 | 2026-01-26 |
+| W_BigScreenMessage.cpp | W_BigScreenMessage.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, EventShowMessage_Impl... | 2026-01-03 | 2026-01-26 |
+| W_Boss_Healthbar.cpp | W_Boss_Healthbar.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, EventHideBossBar_Impl... | 2026-01-03 | 2026-01-26 |
+| W_Boss_Healthbar.h | W_Boss_Healthbar.h | **USLFStatBase, UW_Boss_Healthbar, UProgressBar** | 2026-01-03 | 2026-01-26 |
+| W_BrowserFilterEntry.cpp | W_BrowserFilterEntry.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, EventSetup_Implementa... | 2026-01-03 | 2026-01-26 |
+| W_Browser_Action.cpp | W_Browser_Action.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, GetToolTipWidget_Impl... | 2026-01-03 | 2026-01-26 |
+| W_Browser_Action_Tooltip.cpp | W_Browser_Action_Tooltip.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences | 2026-01-03 | 2026-01-26 |
+| W_Browser_Animset.cpp | W_Browser_Animset.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, GetToolTipWidget_Impl... | 2026-01-03 | 2026-01-26 |
+| W_Browser_AnimsetTooltip.cpp | W_Browser_AnimsetTooltip.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences | 2026-01-03 | 2026-01-26 |
+| W_Browser_Animset_OwnerEntry.cpp | W_Browser_Animset_OwnerEntry.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences | 2026-01-03 | 2026-01-26 |
+| W_Browser_Categories.cpp | W_Browser_Categories.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, EventOnCategoryClicke... | 2026-01-03 | 2026-01-26 |
+| W_Browser_CategoryEntry.cpp | W_Browser_CategoryEntry.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences | 2026-01-03 | 2026-01-26 |
+| W_Browser_Item.cpp | W_Browser_Item.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, GetToolTipWidget_Impl... | 2026-01-03 | 2026-01-26 |
+| W_Browser_StatusEffect.cpp | W_Browser_StatusEffect.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, GetToolTipWidget_Impl... | 2026-01-03 | 2026-01-26 |
+| W_Browser_StatusEffect_Tooltip.cpp | W_Browser_StatusEffect_Tooltip.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences | 2026-01-03 | 2026-01-26 |
+| W_Browser_Tooltip.cpp | W_Browser_Tooltip.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences | 2026-01-03 | 2026-01-26 |
+| W_Browser_WeaponAbility.cpp | W_Browser_WeaponAbility.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, GetToolTipWidget_Impl... | 2026-01-03 | 2026-01-26 |
+| W_Browser_WeaponAbility_Tooltip.cpp | W_Browser_WeaponAbility_Tooltip.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences | 2026-01-03 | 2026-01-26 |
+| W_Buff.cpp | W_Buff.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences | 2026-01-03 | 2026-01-26 |
+| W_CategoryEntry.cpp | W_CategoryEntry.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences | 2026-01-03 | 2026-01-26 |
+| W_CharacterSelection_StatEntry.cpp | W_CharacterSelection_StatEntry.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences | 2026-01-03 | 2026-01-26 |
+| W_CraftingEntry.cpp | W_CraftingEntry.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, GetOwnedAmount_Implem... | 2026-01-03 | 2026-01-26 |
+| W_CraftingEntrySimple.cpp | W_CraftingEntrySimple.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, GetOwnedAmount_Implem... | 2026-01-03 | 2026-01-26 |
+| W_CreditEntry.cpp | W_CreditEntry.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, EventInitializeSubEnt... | 2026-01-03 | 2026-01-26 |
+| W_CreditEntry_Extra.cpp | W_CreditEntry_Extra.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences | 2026-01-03 | 2026-01-26 |
+| W_CreditEntry_Sub.cpp | W_CreditEntry_Sub.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, EventInitializeNames_... | 2026-01-03 | 2026-01-26 |
+| W_CreditEntry_Sub_NameEntry.cpp | W_CreditEntry_Sub_NameEntry.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences | 2026-01-03 | 2026-01-26 |
+| W_Credits.cpp | W_Credits.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, SetupEntries_Implemen... | 2026-01-03 | 2026-01-26 |
+| W_CurrencyContainer.cpp | W_CurrencyContainer.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, EventOnCurrencyIncrea... | 2026-01-03 | 2026-01-26 |
+| W_DebugWindow.cpp | W_DebugWindow.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, SetMovePositionClickD... | 2026-01-03 | 2026-01-26 |
+| W_Debug_ComponentSlot.cpp | W_Debug_ComponentSlot.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences | 2026-01-03 | 2026-01-26 |
+| W_Debug_ComponentTooltip.cpp | W_Debug_ComponentTooltip.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences | 2026-01-03 | 2026-01-26 |
+| W_Debug_HUD.cpp | W_Debug_HUD.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, FindWindowForComponen... | 2026-01-03 | 2026-01-26 |
+| W_Equipment_Item_ItemEffect.cpp | W_Equipment_Item_ItemEffect.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, EventSetupItemEffect_... | 2026-01-03 | 2026-01-26 |
+| W_Equipment_Item_OnUseEffect.cpp | W_Equipment_Item_OnUseEffect.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, EventSetupOnUseText_I... | 2026-01-03 | 2026-01-26 |
+| W_Error.cpp | W_Error.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, EventSetMessage_Imple... | 2026-01-03 | 2026-01-26 |
+| W_FirstLootNotification.cpp | W_FirstLootNotification.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, EventOnFinish_Impleme... | 2026-01-03 | 2026-01-26 |
+| W_InteractionError.cpp | W_InteractionError.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, EventRemoveMessage_Im... | 2026-01-03 | 2026-01-26 |
+| W_InventoryAction.cpp | W_InventoryAction.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, OnActionButtonPressed... | 2026-01-03 | 2026-01-26 |
+| W_InventorySlot.cpp | W_InventorySlot.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, BindButtonEvents, OnS... | 2026-01-03 | 2026-01-26 |
+| W_InventorySlot.h | W_InventorySlot.h | **UButton, UImage, UTextBlock** | 2026-01-03 | 2026-01-26 |
+| W_Inventory_ActionButton.cpp | W_Inventory_ActionButton.cpp | NativePreConstruct, NativeConstruct, NativeDestruct, CacheWidgetReferences, S... | 2026-01-03 | 2026-01-26 |
+| W_Inventory_ActionButton.h | W_Inventory_ActionButton.h | **UW_Inventory_ActionButton, UButton** | 2026-01-03 | 2026-01-26 |
+| W_ItemWheel_NextSlot.cpp | W_ItemWheel_NextSlot.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, HandleChildItem_Imple... | 2026-01-03 | 2026-01-26 |
+| W_ItemWheel_NextSlot.h | W_ItemWheel_NextSlot.h | **UW_ItemWheelSlot, UImage, UW_ItemWheel_NextSlot** | 2026-01-03 | 2026-01-26 |
+| W_LevelCurrencyBlock_LevelUp.cpp | W_LevelCurrencyBlock_LevelUp.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, EventInitializeLevelU... | 2026-01-03 | 2026-01-26 |
+| W_LevelUpCost.cpp | W_LevelUpCost.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, EventInitializeLevelU... | 2026-01-03 | 2026-01-26 |
+| W_LoadingScreen.cpp | W_LoadingScreen.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, EventFadeOutAndNotify... | 2026-01-03 | 2026-01-26 |
+| W_LoadingScreen.h | W_LoadingScreen.h | **UImage, UTextBlock, UW_LoadingScreen** | 2026-01-03 | 2026-01-26 |
+| W_Navigable.cpp | W_Navigable.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, CanNavigate_Implement... | 2026-01-03 | 2026-01-26 |
+| W_Navigable_InputReader.cpp | W_Navigable_InputReader.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, GetInputIconForKey_Im... | 2026-01-03 | 2026-01-26 |
+| W_Radar.cpp | W_Radar.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, AddCardinal_Implement... | 2026-01-03 | 2026-01-26 |
+| W_Radar.h | W_Radar.h | **UW_Radar_Cardinal, UW_Radar_TrackedElement, UOverlay** | 2026-01-03 | 2026-01-26 |
+| W_Radar_Cardinal.cpp | W_Radar_Cardinal.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, UpdateCardinalDisplay | 2026-01-03 | 2026-01-26 |
+| W_Radar_Cardinal.h | W_Radar_Cardinal.h | **UW_Radar_Cardinal, UTextBlock** | 2026-01-03 | 2026-01-26 |
+| W_Radar_TrackedElement.cpp | W_Radar_TrackedElement.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences | 2026-01-03 | 2026-01-26 |
+| W_Resources.cpp | W_Resources.cpp | NativePreConstruct, NativeConstruct, HideBarSeparators, NativeDestruct, Cache... | 2026-01-03 | 2026-01-26 |
+| W_RestMenu.cpp | W_RestMenu.cpp | NativeConstruct, NativeDestruct, NativeOnKeyDown, Handled, CacheWidgetReferences | 2026-01-03 | 2026-01-26 |
+| W_RestMenu.h | W_RestMenu.h | **UW_RestMenu_Button, UW_RestMenu_TimeEntry, UW_TimePass** | 2026-01-03 | 2026-01-26 |
+| W_RestMenu_Button.cpp | W_RestMenu_Button.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, SetRestMenuButtonSele... | 2026-01-03 | 2026-01-26 |
+| W_RestMenu_Button.h | W_RestMenu_Button.h | **UW_RestMenu_Button, UBorder, UTextBlock** | 2026-01-03 | 2026-01-26 |
+| W_RestMenu_TimeEntry.cpp | W_RestMenu_TimeEntry.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, SetTimeEntrySelected_... | 2026-01-03 | 2026-01-26 |
+| W_RestMenu_TimeEntry.h | W_RestMenu_TimeEntry.h | **UW_RestMenu_TimeEntry, UTextBlock, UBorder** | 2026-01-03 | 2026-01-26 |
+| W_Settings_ControlEntry.cpp | W_Settings_ControlEntry.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences | 2026-01-03 | 2026-01-26 |
+| W_Settings_ControlsDisplay.cpp | W_Settings_ControlsDisplay.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences | 2026-01-03 | 2026-01-26 |
+| W_Settings_InputKeySelector.cpp | W_Settings_InputKeySelector.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, TryGetKeyIcon_Impleme... | 2026-01-03 | 2026-01-26 |
+| W_Settings_KeyMapping.cpp | W_Settings_KeyMapping.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, OnInputDeviceChanged_... | 2026-01-03 | 2026-01-26 |
+| W_Settings_KeyMapping.h | W_Settings_KeyMapping.h | **UW_Settings_KeyMapping_Entry, UW_Settings_KeyMapping** | 2026-01-03 | 2026-01-26 |
+| W_Settings_KeyMapping_Category.cpp | W_Settings_KeyMapping_Category.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences | 2026-01-03 | 2026-01-26 |
+| W_Settings_KeyMapping_Entry.cpp | W_Settings_KeyMapping_Entry.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, SelectMappingForSlot_... | 2026-01-03 | 2026-01-26 |
+| W_StatBlock.cpp | W_StatBlock.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, OnStatsInitialized, S... | 2026-01-03 | 2026-01-26 |
+| W_StatEntry_StatName.cpp | W_StatEntry_StatName.cpp | NativePreConstruct, NativeConstruct, NativeDestruct, CacheWidgetReferences, S... | 2026-01-03 | 2026-01-26 |
+| W_StatEntry_StatName.h | W_StatEntry_StatName.h | **UW_StatEntry_StatName, UTextBlock** | 2026-01-03 | 2026-01-26 |
+| W_StatusEffectNotification.h | W_StatusEffectNotification.h | **UTextBlock, UAC_StatusEffectManager, UStatusEffectManagerComponent** | 2026-01-03 | 2026-01-26 |
+| W_Status_StatBlock.cpp | W_Status_StatBlock.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, SetupCurrentStats_Imp... | 2026-01-03 | 2026-01-26 |
+| W_TargetLock.cpp | W_TargetLock.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences | 2026-01-03 | 2026-01-26 |
+| W_Utility_Asset.cpp | W_Utility_Asset.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, GetToolTipWidget_Impl... | 2026-01-03 | 2026-01-26 |
+| W_Utility_AssetTooltip.cpp | W_Utility_AssetTooltip.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences | 2026-01-03 | 2026-01-26 |
+| W_Utility_Component.cpp | W_Utility_Component.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, GetToolTipWidget_Impl... | 2026-01-03 | 2026-01-26 |
+| W_Crafting.h | W_Crafting.h | **UW_EquipmentSlot, UW_InventorySlot, UW_CraftingAction** | 2026-01-03 | 2026-01-22 |
+| W_CraftingAction.cpp | W_CraftingAction.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, BindButtonEvents, Han... | 2026-01-03 | 2026-01-22 |
+| W_CraftingAction.h | W_CraftingAction.h | **UW_InventorySlot, UW_CraftingAction, UW_GenericButton** | 2026-01-03 | 2026-01-22 |
+| W_Inventory.cpp | W_Inventory.cpp | IsActionMenuBlockingNavigation, NativeConstruct, NativeDestruct, NativeOnKeyD... | 2026-01-03 | 2026-01-19 |
+| W_Inventory.h | W_Inventory.h | **UW_InventorySlot, UW_Inventory_CategoryEntry, UW_InventoryAction** | 2026-01-03 | 2026-01-19 |
+| W_InventoryAction.h | W_InventoryAction.h | **UW_InventorySlot, UW_Inventory_ActionButton, UW_InventoryActionAmount** | 2026-01-03 | 2026-01-19 |
+| W_LevelUp.h | W_LevelUp.h | **UW_StatEntry_LevelUp, UW_StatBlock_LevelUp, UAC_InventoryManager** | 2026-01-03 | 2026-01-18 |
+| W_Resources.h | W_Resources.h | **UW_Buff, UProgressBar, USizeBox** | 2026-01-03 | 2026-01-18 |
+| W_StatBlock_LevelUp.h | W_StatBlock_LevelUp.h | **UW_StatEntry_LevelUp, UVerticalBox, UStatManagerComponent** | 2026-01-03 | 2026-01-18 |
+| W_StatEntry_LevelUp.cpp | W_StatEntry_LevelUp.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, InitStatEntry_Impleme... | 2026-01-03 | 2026-01-18 |
+| W_StatEntry_LevelUp.h | W_StatEntry_LevelUp.h | **USLFStatBase, UW_StatEntry_LevelUp** | 2026-01-03 | 2026-01-18 |
+| W_Status.cpp | W_Status.cpp | NativeConstruct, NativeDestruct, NativeOnKeyDown, Handled, InitializeLevelCur... | 2026-01-03 | 2026-01-18 |
+| W_TimePass.cpp | W_TimePass.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, EventAnimate_Implemen... | 2026-01-03 | 2026-01-17 |
+| W_TimePass.h | W_TimePass.h | **UW_TimePass, UWidget** | 2026-01-03 | 2026-01-17 |
+| W_Equipment.h | W_Equipment.h | **UW_EquipmentSlot, UW_InventorySlot, UW_GenericError** | 2026-01-03 | 2026-01-16 |
+| W_Equipment_Item_AttackPower.cpp | W_Equipment_Item_AttackPower.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, GetStatDisplayName, F... | 2026-01-03 | 2026-01-16 |
+| W_Equipment_Item_AttackPower.h | W_Equipment_Item_AttackPower.h | **UW_ItemInfoEntry, UAC_StatManager, UStatManagerComponent** | 2026-01-03 | 2026-01-16 |
+| W_Equipment_Item_DamageNegation.cpp | W_Equipment_Item_DamageNegation.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, GetDisplayNameFromTag... | 2026-01-03 | 2026-01-16 |
+| W_Equipment_Item_DamageNegation.h | W_Equipment_Item_DamageNegation.h | **UW_ItemInfoEntry, UW_Equipment_Item_DamageNegation** | 2026-01-03 | 2026-01-16 |
+| W_Equipment_Item_RequiredStats.cpp | W_Equipment_Item_RequiredStats.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, GetStatDisplayName, F... | 2026-01-03 | 2026-01-16 |
+| W_Equipment_Item_RequiredStats.h | W_Equipment_Item_RequiredStats.h | **UW_ItemInfoEntry_RequiredStats, UAC_StatManager, UStatManagerComponent** | 2026-01-03 | 2026-01-16 |
+| W_Equipment_Item_Resistance.cpp | W_Equipment_Item_Resistance.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, GetDisplayNameFromTag... | 2026-01-03 | 2026-01-16 |
+| W_Equipment_Item_Resistance.h | W_Equipment_Item_Resistance.h | **UW_ItemInfoEntry, UW_Equipment_Item_Resistance** | 2026-01-03 | 2026-01-16 |
+| W_Equipment_Item_StatScaling.cpp | W_Equipment_Item_StatScaling.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, GetStatDisplayName, F... | 2026-01-03 | 2026-01-16 |
+| W_Equipment_Item_StatScaling.h | W_Equipment_Item_StatScaling.h | **UW_ItemInfoEntry_StatScaling, UAC_StatManager, UStatManagerComponent** | 2026-01-03 | 2026-01-16 |
+| W_Equipment_Item_StatsGranted.cpp | W_Equipment_Item_StatsGranted.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, GetStatDisplayName, F... | 2026-01-03 | 2026-01-16 |
+| W_Equipment_Item_StatsGranted.h | W_Equipment_Item_StatsGranted.h | **UW_ItemInfoEntry, UW_Equipment_Item_StatsGranted** | 2026-01-03 | 2026-01-16 |
+| W_ItemInfoEntry.cpp | W_ItemInfoEntry.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences | 2026-01-03 | 2026-01-16 |
+| W_ItemInfoEntry.h | W_ItemInfoEntry.h | **UW_ItemInfoEntry** | 2026-01-03 | 2026-01-16 |
+| W_ItemInfoEntry_RequiredStats.cpp | W_ItemInfoEntry_RequiredStats.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences | 2026-01-03 | 2026-01-16 |
+| W_ItemInfoEntry_RequiredStats.h | W_ItemInfoEntry_RequiredStats.h | **UW_ItemInfoEntry_RequiredStats** | 2026-01-03 | 2026-01-16 |
+| W_ItemInfoEntry_StatScaling.cpp | W_ItemInfoEntry_StatScaling.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences | 2026-01-03 | 2026-01-16 |
+| W_ItemInfoEntry_StatScaling.h | W_ItemInfoEntry_StatScaling.h | **UW_ItemInfoEntry_StatScaling** | 2026-01-03 | 2026-01-16 |
+| W_StatEntry_Status.cpp | W_StatEntry_Status.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, InitStatEntry_Impleme... | 2026-01-03 | 2026-01-16 |
+| W_StatEntry_Status.h | W_StatEntry_Status.h | **UB_Stat, USLFStatBase, UW_StatEntry_Status** | 2026-01-03 | 2026-01-16 |
+| W_Status.h | W_Status.h | **UW_Status_LevelCurrencyBlock, UW_Status_StatBlock, UInventoryManagerCompone... | 2026-01-03 | 2026-01-16 |
+| W_Status_LevelCurrencyBlock.cpp | W_Status_LevelCurrencyBlock.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, EventInitializeLevelA... | 2026-01-03 | 2026-01-16 |
+| W_Status_LevelCurrencyBlock.h | W_Status_LevelCurrencyBlock.h | **UTextBlock, UW_Status_LevelCurrencyBlock, UTextBlock** | 2026-01-03 | 2026-01-16 |
+| W_Status_StatBlock.h | W_Status_StatBlock.h | **UW_StatEntry_Status, UVerticalBox, USLFStatBase** | 2026-01-03 | 2026-01-16 |
+| W_TargetExecutionIndicator.cpp | W_TargetExecutionIndicator.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, ToggleExecutionIcon_I... | 2026-01-03 | 2026-01-16 |
+| W_TargetExecutionIndicator.h | W_TargetExecutionIndicator.h | **UW_TargetExecutionIndicator** | 2026-01-03 | 2026-01-16 |
+| W_BigScreenMessage.h | W_BigScreenMessage.h | **UW_BigScreenMessage, UTextBlock, UTextBlock** | 2026-01-03 | 2026-01-12 |
+| W_EnemyHealthbar.cpp | W_EnemyHealthbar.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, UpdateEnemyHealthbar_... | 2026-01-03 | 2026-01-12 |
+| W_EnemyHealthbar.h | W_EnemyHealthbar.h | **UW_EnemyHealthbar, UProgressBar, UProgressBar** | 2026-01-03 | 2026-01-12 |
+| W_CurrencyEntry.cpp | W_CurrencyEntry.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, UpdateCurrencyDisplay... | 2026-01-03 | 2026-01-09 |
+| W_CurrencyEntry.h | W_CurrencyEntry.h | **UTextBlock, UInventoryManagerComponent, UW_StatEntry_StatName** | 2026-01-03 | 2026-01-09 |
+| W_EquipmentSlot.cpp | W_EquipmentSlot.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, EventClearEquipmentSl... | 2026-01-03 | 2026-01-09 |
+| W_FirstLootNotification.h | W_FirstLootNotification.h | **UTexture2D, UWidgetAnimation, UW_FirstLootNotification** | 2026-01-03 | 2026-01-09 |
+| W_Interaction.cpp | W_Interaction.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, EventHide_Implementat... | 2026-01-03 | 2026-01-09 |
+| W_Interaction.h | W_Interaction.h | **UTextBlock, UW_Interaction** | 2026-01-03 | 2026-01-09 |
+| W_Inventory_CategoryEntry.cpp | W_Inventory_CategoryEntry.cpp | NativePreConstruct, NativeConstruct, NativeDestruct, CacheWidgetReferences, S... | 2026-01-03 | 2026-01-09 |
+| W_Inventory_CategoryEntry.h | W_Inventory_CategoryEntry.h | **UImage, UButton, UW_Inventory_CategoryEntry** | 2026-01-03 | 2026-01-09 |
+| W_LevelEntry.cpp | W_LevelEntry.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, UpdateLevelDisplay, E... | 2026-01-03 | 2026-01-09 |
+| W_LevelEntry.h | W_LevelEntry.h | **UTextBlock, UStatManagerComponent, UW_StatEntry_StatName** | 2026-01-03 | 2026-01-09 |
+| W_LootNotification.cpp | W_LootNotification.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, EventFinished_Impleme... | 2026-01-03 | 2026-01-09 |
+| W_LootNotification.h | W_LootNotification.h | **UWidgetAnimation, UW_LootNotification** | 2026-01-03 | 2026-01-09 |
+| W_StatBlock.h | W_StatBlock.h | **UW_StatEntry, UVerticalBox, UStatManagerComponent** | 2026-01-03 | 2026-01-09 |
+| W_StatEntry.cpp | W_StatEntry.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, InitStatEntry_Impleme... | 2026-01-03 | 2026-01-09 |
+| W_StatEntry.h | W_StatEntry.h | **USLFStatBase, UW_StatEntry** | 2026-01-03 | 2026-01-09 |
+| W_GenericError.cpp | W_GenericError.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, EventErrorOkPressed_I... | 2026-01-03 | 2026-01-08 |
+| W_Dialog.cpp | W_Dialog.cpp | NativeConstruct, NativeDestruct, CacheWidgetReferences, EventCloseDialog_Impl... | 2026-01-03 | 2026-01-07 |
+| W_GameMenu_Button.cpp | W_GameMenu_Button.cpp | NativePreConstruct, NativeConstruct, NativeDestruct, ApplyVisualConfig, SetGa... | 2026-01-03 | 2026-01-07 |
+| W_GameMenu_Button.h | W_GameMenu_Button.h | **UButton, UBorder, UImage** | 2026-01-03 | 2026-01-07 |
+| W_Navigable.h | W_Navigable.h | **UW_Navigable** | 2026-01-03 | 2026-01-07 |
+| W_Navigable_InputReader.h | W_Navigable_InputReader.h | **UW_Navigable_InputReader** | 2026-01-03 | 2026-01-07 |
+| W_Settings_KeyMapping_Entry.h | W_Settings_KeyMapping_Entry.h | **UW_Settings_KeyMapping_Entry** | 2026-01-03 | 2026-01-07 |
+| W_SkipCinematic.cpp | W_SkipCinematic.cpp | NativePreConstruct, NativeConstruct, NativeDestruct, CacheWidgetReferences, E... | 2026-01-03 | 2026-01-07 |
+| W_AbilityDisplay.h | W_AbilityDisplay.h | **UW_AbilityDisplay** | 2026-01-03 | 2026-01-03 |
+| W_BrowserFilterEntry.h | W_BrowserFilterEntry.h | **UW_BrowserFilterEntry** | 2026-01-03 | 2026-01-03 |
+| W_Browser_Action.h | W_Browser_Action.h | **UW_Browser_Action_Tooltip, UB_Action, UW_Browser_Action** | 2026-01-03 | 2026-01-03 |
+| W_Browser_Action_Tooltip.h | W_Browser_Action_Tooltip.h | **UB_Action, UW_Browser_Action_Tooltip** | 2026-01-03 | 2026-01-03 |
+| W_Browser_Animset.h | W_Browser_Animset.h | **UW_Browser_AnimsetTooltip, UW_Browser_Animset** | 2026-01-03 | 2026-01-03 |
+| W_Browser_AnimsetTooltip.h | W_Browser_AnimsetTooltip.h | **UW_Browser_AnimsetTooltip** | 2026-01-03 | 2026-01-03 |
+| W_Browser_Animset_OwnerEntry.h | W_Browser_Animset_OwnerEntry.h | **UW_Browser_Animset_OwnerEntry** | 2026-01-03 | 2026-01-03 |
+| W_Browser_Categories.h | W_Browser_Categories.h | **UW_Browser_Categories** | 2026-01-03 | 2026-01-03 |
+| W_Browser_CategoryEntry.h | W_Browser_CategoryEntry.h | **UW_Browser_CategoryEntry** | 2026-01-03 | 2026-01-03 |
+| W_Browser_Item.h | W_Browser_Item.h | **UW_Browser_Tooltip, UW_Browser_Item** | 2026-01-03 | 2026-01-03 |
+| W_Browser_StatusEffect.h | W_Browser_StatusEffect.h | **UW_Browser_StatusEffect_Tooltip, UB_StatusEffect, UW_Browser_StatusEffect** | 2026-01-03 | 2026-01-03 |
+| W_Browser_StatusEffect_Tooltip.h | W_Browser_StatusEffect_Tooltip.h | **UB_StatusEffect, UW_Browser_StatusEffect_Tooltip** | 2026-01-03 | 2026-01-03 |
+| W_Browser_Tooltip.h | W_Browser_Tooltip.h | **UW_Browser_Tooltip** | 2026-01-03 | 2026-01-03 |
+| W_Browser_WeaponAbility.h | W_Browser_WeaponAbility.h | **UW_Browser_WeaponAbility_Tooltip, UW_Browser_WeaponAbility** | 2026-01-03 | 2026-01-03 |
+| W_Browser_WeaponAbility_Tooltip.h | W_Browser_WeaponAbility_Tooltip.h | **UW_Browser_WeaponAbility_Tooltip** | 2026-01-03 | 2026-01-03 |
+| W_Buff.h | W_Buff.h | **UW_Buff** | 2026-01-03 | 2026-01-03 |
+| W_CategoryEntry.h | W_CategoryEntry.h | **UW_CategoryEntry** | 2026-01-03 | 2026-01-03 |
+| W_CharacterSelection_StatEntry.h | W_CharacterSelection_StatEntry.h | **UW_CharacterSelection_StatEntry** | 2026-01-03 | 2026-01-03 |
+| W_CraftingEntry.h | W_CraftingEntry.h | **UW_CraftingEntry** | 2026-01-03 | 2026-01-03 |
+| W_CraftingEntrySimple.h | W_CraftingEntrySimple.h | **UW_CraftingEntrySimple** | 2026-01-03 | 2026-01-03 |
+| W_CreditEntry.h | W_CreditEntry.h | **UW_CreditEntry** | 2026-01-03 | 2026-01-03 |
+| W_CreditEntry_Extra.h | W_CreditEntry_Extra.h | **UW_CreditEntry_Extra** | 2026-01-03 | 2026-01-03 |
+| W_CreditEntry_Sub.h | W_CreditEntry_Sub.h | **UW_CreditEntry_Sub** | 2026-01-03 | 2026-01-03 |
+| W_CreditEntry_Sub_NameEntry.h | W_CreditEntry_Sub_NameEntry.h | **UW_CreditEntry_Sub_NameEntry** | 2026-01-03 | 2026-01-03 |
+| W_Credits.h | W_Credits.h | **UW_Credits** | 2026-01-03 | 2026-01-03 |
+| W_CurrencyContainer.h | W_CurrencyContainer.h | **UW_CurrencyContainer** | 2026-01-03 | 2026-01-03 |
+| W_DebugWindow.h | W_DebugWindow.h | **UAC_DebugCentral, UW_DebugWindow** | 2026-01-03 | 2026-01-03 |
+| W_Debug_ComponentSlot.h | W_Debug_ComponentSlot.h | **UW_Debug_ComponentSlot** | 2026-01-03 | 2026-01-03 |
+| W_Debug_ComponentTooltip.h | W_Debug_ComponentTooltip.h | **UW_Debug_ComponentTooltip** | 2026-01-03 | 2026-01-03 |
+| W_Debug_HUD.h | W_Debug_HUD.h | **UW_DebugWindow, UW_Debug_HUD** | 2026-01-03 | 2026-01-03 |
+| W_Dialog.h | W_Dialog.h | **UW_Dialog** | 2026-01-03 | 2026-01-03 |
+| W_EquipmentSlot.h | W_EquipmentSlot.h | **UW_EquipmentSlot** | 2026-01-03 | 2026-01-03 |
+| W_Equipment_Item_ItemEffect.h | W_Equipment_Item_ItemEffect.h | **UW_Equipment_Item_ItemEffect** | 2026-01-03 | 2026-01-03 |
+| W_Equipment_Item_OnUseEffect.h | W_Equipment_Item_OnUseEffect.h | **UW_Equipment_Item_OnUseEffect** | 2026-01-03 | 2026-01-03 |
+| W_Error.h | W_Error.h | **UW_Error** | 2026-01-03 | 2026-01-03 |
+| W_GenericError.h | W_GenericError.h | **UW_GenericError** | 2026-01-03 | 2026-01-03 |
+| W_InteractionError.h | W_InteractionError.h | **UW_InteractionError** | 2026-01-03 | 2026-01-03 |
+| W_LevelCurrencyBlock_LevelUp.h | W_LevelCurrencyBlock_LevelUp.h | **UW_LevelCurrencyBlock_LevelUp** | 2026-01-03 | 2026-01-03 |
+| W_LevelUpCost.h | W_LevelUpCost.h | **UW_LevelUpCost** | 2026-01-03 | 2026-01-03 |
+| W_MainMenu_Button.h | W_MainMenu_Button.h | **USizeBox, UBorder, UButton** | 2026-01-03 | 2026-01-03 |
+| W_Radar_TrackedElement.h | W_Radar_TrackedElement.h | **UW_Radar_TrackedElement** | 2026-01-03 | 2026-01-03 |
+| W_Settings_ControlEntry.h | W_Settings_ControlEntry.h | **UW_Settings_ControlEntry** | 2026-01-03 | 2026-01-03 |
+| W_Settings_ControlsDisplay.h | W_Settings_ControlsDisplay.h | **UW_Settings_ControlsDisplay** | 2026-01-03 | 2026-01-03 |
+| W_Settings_InputKeySelector.h | W_Settings_InputKeySelector.h | **UW_Settings_InputKeySelector** | 2026-01-03 | 2026-01-03 |
+| W_Settings_KeyMapping_Category.h | W_Settings_KeyMapping_Category.h | **UW_Settings_KeyMapping_Category** | 2026-01-03 | 2026-01-03 |
+| W_SkipCinematic.h | W_SkipCinematic.h | **UTextBlock, USizeBox, UImage** | 2026-01-03 | 2026-01-03 |
+| W_TargetLock.h | W_TargetLock.h | **UW_TargetLock** | 2026-01-03 | 2026-01-03 |
+| W_Utility_Asset.h | W_Utility_Asset.h | **UW_Utility_AssetTooltip, UW_Utility_Asset** | 2026-01-03 | 2026-01-03 |
+| W_Utility_AssetTooltip.h | W_Utility_AssetTooltip.h | **UB_Action, UW_Utility_AssetTooltip** | 2026-01-03 | 2026-01-03 |
+| W_Utility_Component.h | W_Utility_Component.h | **UW_Utility_AssetTooltip, UW_Utility_Component** | 2026-01-03 | 2026-01-03 |
+
 ## Elden Ring Tools (root) (`C:/scripts/elden_ring_tools/`)
 **528 files**
 
@@ -1934,7 +3213,7 @@ Last generated: 2026-03-22 15:01
 | visual_compare_v6_v2.py | Visual comparison v2: Import original at 100x scale to match cm-scale v6. | clean_scene, import_mesh, import_action, apply_action, clear_action | unknown | unknown |
 | visual_compare_v7.py | Visual comparison: Original c3100 Knight vs V7 Reskinned Mannequin. | clean_scene, import_fbx, import_action, apply_action, get_mesh_bounds | unknown | unknown |
 
-## Elden Ring Tools (test_meshes) (`C:/scripts/elden_ring_tools/test_meshes/`)
+## Elden Ring Tools (test_meshes) (`C:/scripts/elden_ring_tools/test_meshes`)
 **56 files**
 
 | File | Description | Key Functions/Classes | Created | Modified |
@@ -1996,5 +3275,6 @@ Last generated: 2026-03-22 15:01
 | verify_rest_vs_anim.py | Compare weapon position at REST pose vs animation frame 0. |  | unknown | unknown |
 | verify_weapon_tracking.py | Render screenshots at multiple frames to verify weapon tracks the hand. |  | unknown | unknown |
 
+
 ---
-**Total: updated with correct git dates**
+**Total: 3131 files cataloged**
