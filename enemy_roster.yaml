@@ -1,0 +1,946 @@
+# ============================================================================
+# ASHBORNE — Enemy Roster & Animation Tracker
+# ============================================================================
+# For each enemy: mesh source, rig, animations, approval status
+# Set approved: true/false and add notes: for feedback
+# Last updated: 2026-03-22
+# ============================================================================
+
+# Animation source key:
+#   c3100 = Crucible Knight       c3010 = Banished Knight
+#   c5830 = Messmer Soldier       c3000 = Exile Soldier
+#   c4310 = Lordsworn Soldier     c4350 = Lordsworn Knight
+#   c4320 = Vulgar Militia        c3970 = Azula Beastman
+#   c3400 = Grave Warden          c3300 = Nox Swordstress
+
+# ============================================================================
+# ASHEN ORDER — Sanctum of Ash (Hard)
+# ============================================================================
+ashen_champion:
+  display_name: "Ashen Champion"
+  faction: ashen_order
+  zone: sanctum_of_ash
+  role: elite
+  type: humanoid
+  mesh_type: single  # single mesh (weapon part of body)
+  concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/ashen_champion.png"
+  original_model: "C:/scripts/elden_ring_tools/test_meshes/ashen_champion/model.fbx"
+  original_glb: "C:/scripts/elden_ring_tools/test_meshes/ashen_champion/model.glb"
+  textures:
+    base_color: "C:/scripts/elden_ring_tools/test_meshes/ashen_champion/texture_base_color.png"
+    metallic: "C:/scripts/elden_ring_tools/test_meshes/ashen_champion/texture_metallic.png"
+    normal: "C:/scripts/elden_ring_tools/test_meshes/ashen_champion/texture_normal.png"
+    roughness: "C:/scripts/elden_ring_tools/test_meshes/ashen_champion/texture_roughness.png"
+  rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/ashen_champion/rigged.blend"
+  animation_config: "C:/scripts/elden_ring_tools/test_meshes/ashen_champion/animation_config.json"
+  attack_preview_dir: "C:/scripts/elden_ring_tools/test_meshes/ashen_champion/attack_preview/"
+  ue5_folder: "Content/CustomEnemies/AshenChampion"
+  ue5_assets: 23
+  mesh_approved: true
+  mesh_notes: ""
+
+  animations:
+    idle:
+      montage: AM_AshenChampion_Idle
+      source: c3100
+      anim_id: a000_000020
+      approved: false
+      notes: ""
+    walk:
+      montage: AM_AshenChampion_Walk
+      source: c3100
+      anim_id: a000_002000
+      approved: false
+      notes: ""
+    run:
+      montage: AM_AshenChampion_Run
+      source: c3100
+      anim_id: a000_002100
+      approved: false
+      notes: ""
+    attack_01:
+      montage: AM_AshenChampion_Attack01
+      source: c3010
+      label: "Banished Knight - attack"
+      approved: false
+      notes: ""
+    attack_02:
+      montage: AM_AshenChampion_Attack02
+      source: c4320
+      label: "Vulgar Militia - chaotic swing"
+      approved: false
+      notes: ""
+    attack_03:
+      montage: AM_AshenChampion_Attack03
+      source: c4310
+      label: "Lordsworn Soldier - strike"
+      approved: false
+      notes: ""
+    attack_04:
+      montage: AM_AshenChampion_Attack04
+      source: c3970
+      label: "Beastman - feral swing"
+      approved: false
+      notes: ""
+    attack_05:
+      montage: AM_AshenChampion_Attack05
+      source: c4350
+      label: "Lordsworn Knight - sweeping strike"
+      approved: false
+      notes: ""
+    heavy_attack:
+      montage: AM_AshenChampion_HeavyAttack
+      source: c3400
+      label: "Grave Warden - heavy slam"
+      approved: false
+      notes: ""
+    dodge_01:
+      montage: null
+      status: not_imported
+      notes: "No dodge animations imported yet"
+    dodge_02:
+      montage: null
+      status: not_imported
+    dodge_03:
+      montage: null
+      status: not_imported
+    hit_react_01:
+      montage: null
+      status: not_imported
+    hit_react_02:
+      montage: null
+      status: not_imported
+    death_01:
+      montage: null
+      status: not_imported
+    death_02:
+      montage: null
+      status: not_imported
+    death_03:
+      montage: null
+      status: not_imported
+    guard:
+      montage: null
+      status: not_imported
+    guard_hit:
+      montage: null
+      status: not_imported
+
+ashen_heavy:
+  display_name: "Ashen Heavy"
+  faction: ashen_order
+  zone: sanctum_of_ash
+  role: regular
+  type: humanoid
+  mesh_type: single
+  concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/ashen_heavy.png"
+  original_model: "C:/scripts/elden_ring_tools/test_meshes/ashen_heavy/model.fbx"
+  original_glb: "C:/scripts/elden_ring_tools/test_meshes/ashen_heavy/model.glb"
+  textures:
+    base_color: "C:/scripts/elden_ring_tools/test_meshes/ashen_heavy/texture_base_color.png"
+    metallic: "C:/scripts/elden_ring_tools/test_meshes/ashen_heavy/texture_metallic.png"
+    normal: "C:/scripts/elden_ring_tools/test_meshes/ashen_heavy/texture_normal.png"
+    roughness: "C:/scripts/elden_ring_tools/test_meshes/ashen_heavy/texture_roughness.png"
+  rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/ashen_heavy/rigged.blend"
+  animation_config: "C:/scripts/elden_ring_tools/test_meshes/ashen_heavy/animation_config.json"
+  attack_preview_dir: "C:/scripts/elden_ring_tools/test_meshes/ashen_heavy/attack_preview/"
+  ue5_folder: "Content/CustomEnemies/AshenHeavy"
+  ue5_assets: 28
+  mesh_approved: true
+  mesh_notes: "Adjusted arm rest pose to match armature"
+
+  animations:
+    idle:
+      montage: AM_AshenHeavy_Idle
+      source: c3100
+      anim_id: a000_000020
+      approved: false
+      notes: ""
+    walk:
+      montage: AM_AshenHeavy_Walk
+      source: c3100
+      anim_id: a000_002000
+      approved: false
+      notes: ""
+    run:
+      montage: AM_AshenHeavy_Run
+      source: c3100
+      anim_id: a000_002100
+      approved: false
+      notes: ""
+    attack_01:
+      montage: AM_AshenHeavy_Attack01
+      source: c3010
+      label: "Banished Knight - attack"
+      approved: false
+      notes: ""
+    attack_02:
+      montage: AM_AshenHeavy_Attack02
+      source: c4320
+      label: "Vulgar Militia - chaotic swing"
+      approved: false
+      notes: ""
+    attack_03:
+      montage: AM_AshenHeavy_Attack03
+      source: c4310
+      label: "Lordsworn Soldier - strike"
+      approved: false
+      notes: ""
+    attack_04:
+      montage: AM_AshenHeavy_Attack04
+      source: c3970
+      label: "Beastman - feral swing"
+      approved: false
+      notes: ""
+    attack_05:
+      montage: AM_AshenHeavy_Attack05
+      source: c4350
+      label: "Lordsworn Knight - sweeping strike"
+      approved: false
+      notes: ""
+    heavy_attack:
+      montage: AM_AshenHeavy_HeavyAttack
+      source: c3400
+      label: "Grave Warden - heavy slam"
+      approved: false
+      notes: "User adjusted arm rotation in Graph Editor for more exaggerated swing"
+    dodge_01:
+      montage: null
+      status: not_imported
+    hit_react_01:
+      montage: null
+      status: not_imported
+    death_01:
+      montage: null
+      status: not_imported
+
+ashen_flagellant:
+  display_name: "Ashen Flagellant"
+  faction: ashen_order
+  zone: sanctum_of_ash
+  role: regular
+  type: humanoid
+  mesh_type: single
+  concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/ashen_flagellant.png"
+  original_model: "C:/scripts/elden_ring_tools/test_meshes/ashen_flagellant/model.fbx"
+  original_glb: "C:/scripts/elden_ring_tools/test_meshes/ashen_flagellant/model.glb"
+  textures:
+    base_color: "C:/scripts/elden_ring_tools/test_meshes/ashen_flagellant/texture_base_color.png"
+    metallic: "C:/scripts/elden_ring_tools/test_meshes/ashen_flagellant/texture_metallic.png"
+    normal: "C:/scripts/elden_ring_tools/test_meshes/ashen_flagellant/texture_normal.png"
+    roughness: "C:/scripts/elden_ring_tools/test_meshes/ashen_flagellant/texture_roughness.png"
+  rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/ashen_flagellant/rigged.blend"
+  animation_config: "C:/scripts/elden_ring_tools/test_meshes/ashen_flagellant/animation_config.json"
+  attack_preview_dir: "C:/scripts/elden_ring_tools/test_meshes/ashen_flagellant/attack_preview/"
+  ue5_folder: "Content/CustomEnemies/AshenFlagellant"
+  ue5_assets: 45
+  iterations: 5  # ashen_flagellant_old, v2, v3 exist
+  mesh_approved: false
+  mesh_notes: ""
+
+  animations:
+    idle: { montage: AM_AshenFlagellant_Idle, source: c3100, approved: false, notes: "" }
+    walk: { montage: AM_AshenFlagellant_Walk, source: c3100, approved: false, notes: "" }
+    run: { montage: AM_AshenFlagellant_Run, source: c3100, approved: false, notes: "" }
+    attack_01: { montage: AM_AshenFlagellant_Attack01, approved: false, notes: "" }
+    attack_02: { montage: AM_AshenFlagellant_Attack02, approved: false, notes: "" }
+    attack_03: { montage: AM_AshenFlagellant_Attack03, approved: false, notes: "" }
+    attack_04: { montage: AM_AshenFlagellant_Attack04, approved: false, notes: "" }
+    attack_05: { montage: AM_AshenFlagellant_Attack05, approved: false, notes: "" }
+    attack_06: { montage: AM_AshenFlagellant_Attack06, approved: false, notes: "" }
+    attack_07: { montage: AM_AshenFlagellant_Attack07, approved: false, notes: "" }
+    attack_08: { montage: AM_AshenFlagellant_Attack08, approved: false, notes: "" }
+    heavy_attack_01: { montage: AM_AshenFlagellant_HeavyAttack01, approved: false, notes: "" }
+    heavy_attack_02: { montage: AM_AshenFlagellant_HeavyAttack02, approved: false, notes: "" }
+    dodge_01: { montage: AM_AshenFlagellant_Dodge01, approved: false, notes: "" }
+    dodge_02: { montage: AM_AshenFlagellant_Dodge02, approved: false, notes: "" }
+    dodge_03: { montage: AM_AshenFlagellant_Dodge03, approved: false, notes: "" }
+    hit_react_01: { montage: AM_AshenFlagellant_HitReact01, approved: false, notes: "" }
+    hit_react_02: { montage: AM_AshenFlagellant_HitReact02, approved: false, notes: "" }
+    hit_react_03: { montage: AM_AshenFlagellant_HitReact03, approved: false, notes: "" }
+    death_01: { montage: AM_AshenFlagellant_Death01, approved: false, notes: "" }
+    death_02: { montage: AM_AshenFlagellant_Death02, approved: false, notes: "" }
+    death_03: { montage: AM_AshenFlagellant_Death03, approved: false, notes: "" }
+    guard: { montage: AM_AshenFlagellant_Guard, approved: false, notes: "" }
+    guard_hit: { montage: AM_AshenFlagellant_GuardHit, approved: false, notes: "" }
+
+ashen_hierophant:
+  display_name: "Ashen Hierophant"
+  faction: ashen_order
+  zone: sanctum_of_ash
+  role: boss
+  type: humanoid
+  mesh_type: single
+  concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/ashen_hierophant.png"
+  original_model: "C:/scripts/elden_ring_tools/test_meshes/ashen_hierophant/model.fbx"
+  rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/ashen_hierophant/rigged.blend"
+  animation_config: null
+  ue5_folder: "Content/CustomEnemies/AshenHierophant"
+  ue5_assets: 45
+  mesh_approved: false
+  mesh_notes: ""
+  animations:
+    idle: { montage: AM_AshenHierophant_Idle, approved: false, notes: "" }
+    walk: { montage: AM_AshenHierophant_Walk, approved: false, notes: "" }
+    run: { montage: AM_AshenHierophant_Run, approved: false, notes: "" }
+    attack_01: { montage: AM_AshenHierophant_Attack01, approved: false, notes: "" }
+    attack_02: { montage: AM_AshenHierophant_Attack02, approved: false, notes: "" }
+    attack_03: { montage: AM_AshenHierophant_Attack03, approved: false, notes: "" }
+    attack_04: { montage: AM_AshenHierophant_Attack04, approved: false, notes: "" }
+    attack_05: { montage: AM_AshenHierophant_Attack05, approved: false, notes: "" }
+    attack_06: { montage: AM_AshenHierophant_Attack06, approved: false, notes: "" }
+    attack_07: { montage: AM_AshenHierophant_Attack07, approved: false, notes: "" }
+    attack_08: { montage: AM_AshenHierophant_Attack08, approved: false, notes: "" }
+    heavy_attack_01: { montage: AM_AshenHierophant_HeavyAttack01, approved: false, notes: "" }
+    heavy_attack_02: { montage: AM_AshenHierophant_HeavyAttack02, approved: false, notes: "" }
+    dodge_01: { montage: AM_AshenHierophant_Dodge01, approved: false, notes: "" }
+    dodge_02: { montage: AM_AshenHierophant_Dodge02, approved: false, notes: "" }
+    dodge_03: { montage: AM_AshenHierophant_Dodge03, approved: false, notes: "" }
+    hit_react_01: { montage: AM_AshenHierophant_HitReact01, approved: false, notes: "" }
+    hit_react_02: { montage: AM_AshenHierophant_HitReact02, approved: false, notes: "" }
+    hit_react_03: { montage: AM_AshenHierophant_HitReact03, approved: false, notes: "" }
+    death_01: { montage: AM_AshenHierophant_Death01, approved: false, notes: "" }
+    death_02: { montage: AM_AshenHierophant_Death02, approved: false, notes: "" }
+    death_03: { montage: AM_AshenHierophant_Death03, approved: false, notes: "" }
+    guard: { montage: AM_AshenHierophant_Guard, approved: false, notes: "" }
+    guard_hit: { montage: AM_AshenHierophant_GuardHit, approved: false, notes: "" }
+
+ashen_inquisitor:
+  display_name: "Ashen Inquisitor"
+  faction: ashen_order
+  zone: sanctum_of_ash
+  role: regular
+  type: humanoid
+  mesh_type: single
+  concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/ashen_inquisitor.png"
+  original_model: "C:/scripts/elden_ring_tools/test_meshes/ashen_inquisitor/model.fbx"
+  rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/ashen_inquisitor/rigged.blend"
+  animation_config: null
+  ue5_folder: "Content/CustomEnemies/AshenInquisitor"
+  ue5_assets: 44
+  mesh_approved: false
+  mesh_notes: ""
+  animations:
+    idle: { montage: AM_AshenInquisitor_Idle, approved: false, notes: "" }
+    walk: { montage: AM_AshenInquisitor_Walk, approved: false, notes: "" }
+    run: { montage: AM_AshenInquisitor_Run, approved: false, notes: "" }
+    attack_01: { montage: AM_AshenInquisitor_Attack01, approved: false, notes: "" }
+    attack_02: { montage: AM_AshenInquisitor_Attack02, approved: false, notes: "" }
+    attack_03: { montage: AM_AshenInquisitor_Attack03, approved: false, notes: "" }
+    attack_04: { montage: AM_AshenInquisitor_Attack04, approved: false, notes: "" }
+    attack_05: { montage: AM_AshenInquisitor_Attack05, approved: false, notes: "" }
+    attack_06: { montage: AM_AshenInquisitor_Attack06, approved: false, notes: "" }
+    attack_07: { montage: AM_AshenInquisitor_Attack07, approved: false, notes: "" }
+    attack_08: { montage: AM_AshenInquisitor_Attack08, approved: false, notes: "" }
+    heavy_attack_01: { montage: AM_AshenInquisitor_HeavyAttack01, approved: false, notes: "" }
+    heavy_attack_02: { montage: AM_AshenInquisitor_HeavyAttack02, approved: false, notes: "" }
+    dodge_01: { montage: AM_AshenInquisitor_Dodge01, approved: false, notes: "" }
+    dodge_02: { montage: AM_AshenInquisitor_Dodge02, approved: false, notes: "" }
+    dodge_03: { montage: AM_AshenInquisitor_Dodge03, approved: false, notes: "" }
+    hit_react_01: { montage: AM_AshenInquisitor_HitReact01, approved: false, notes: "" }
+    hit_react_02: { montage: AM_AshenInquisitor_HitReact02, approved: false, notes: "" }
+    hit_react_03: { montage: AM_AshenInquisitor_HitReact03, approved: false, notes: "" }
+    death_01: { montage: AM_AshenInquisitor_Death01, approved: false, notes: "" }
+    death_02: { montage: AM_AshenInquisitor_Death02, approved: false, notes: "" }
+    death_03: { montage: AM_AshenInquisitor_Death03, approved: false, notes: "" }
+    guard: { montage: AM_AshenInquisitor_Guard, approved: false, notes: "" }
+    guard_hit: { montage: AM_AshenInquisitor_GuardHit, approved: false, notes: "" }
+
+ashen_marksman:
+  display_name: "Ashen Marksman"
+  faction: ashen_order
+  zone: sanctum_of_ash
+  role: regular
+  type: humanoid
+  mesh_type: single
+  concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/ashen_marksman.png"
+  original_model: "C:/scripts/elden_ring_tools/test_meshes/ashen_marksman/model.fbx"
+  rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/ashen_marksman/rigged.blend"
+  animation_config: null
+  ue5_folder: "Content/CustomEnemies/AshenMarksman"
+  ue5_assets: 45
+  mesh_approved: false
+  mesh_notes: ""
+  animations:
+    idle: { montage: AM_AshenMarksman_Idle, approved: false, notes: "" }
+    walk: { montage: AM_AshenMarksman_Walk, approved: false, notes: "" }
+    run: { montage: AM_AshenMarksman_Run, approved: false, notes: "" }
+    attack_01: { montage: AM_AshenMarksman_Attack01, approved: false, notes: "" }
+    attack_02: { montage: AM_AshenMarksman_Attack02, approved: false, notes: "" }
+    attack_03: { montage: AM_AshenMarksman_Attack03, approved: false, notes: "" }
+    attack_04: { montage: AM_AshenMarksman_Attack04, approved: false, notes: "" }
+    attack_05: { montage: AM_AshenMarksman_Attack05, approved: false, notes: "" }
+    attack_06: { montage: AM_AshenMarksman_Attack06, approved: false, notes: "" }
+    attack_07: { montage: AM_AshenMarksman_Attack07, approved: false, notes: "" }
+    attack_08: { montage: AM_AshenMarksman_Attack08, approved: false, notes: "" }
+    heavy_attack_01: { montage: AM_AshenMarksman_HeavyAttack01, approved: false, notes: "" }
+    heavy_attack_02: { montage: AM_AshenMarksman_HeavyAttack02, approved: false, notes: "" }
+    dodge_01: { montage: AM_AshenMarksman_Dodge01, approved: false, notes: "" }
+    dodge_02: { montage: AM_AshenMarksman_Dodge02, approved: false, notes: "" }
+    dodge_03: { montage: AM_AshenMarksman_Dodge03, approved: false, notes: "" }
+    hit_react_01: { montage: AM_AshenMarksman_HitReact01, approved: false, notes: "" }
+    hit_react_02: { montage: AM_AshenMarksman_HitReact02, approved: false, notes: "" }
+    hit_react_03: { montage: AM_AshenMarksman_HitReact03, approved: false, notes: "" }
+    death_01: { montage: AM_AshenMarksman_Death01, approved: false, notes: "" }
+    death_02: { montage: AM_AshenMarksman_Death02, approved: false, notes: "" }
+    death_03: { montage: AM_AshenMarksman_Death03, approved: false, notes: "" }
+    guard: { montage: AM_AshenMarksman_Guard, approved: false, notes: "" }
+    guard_hit: { montage: AM_AshenMarksman_GuardHit, approved: false, notes: "" }
+
+ashen_militant:
+  display_name: "Ashen Militant"
+  faction: ashen_order
+  zone: sanctum_of_ash
+  role: regular
+  type: humanoid
+  mesh_type: single
+  concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/ashen_militant.png"
+  original_model: "C:/scripts/elden_ring_tools/test_meshes/ashen_militant/model.fbx"
+  rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/ashen_militant/rigged.blend"
+  animation_config: null
+  ue5_folder: "Content/CustomEnemies/AshenMilitant"
+  ue5_assets: 41
+  mesh_approved: false
+  mesh_notes: ""
+  animations:
+    idle: { montage: AM_AshenMilitant_Idle, approved: false, notes: "" }
+    walk: { montage: AM_AshenMilitant_Walk, approved: false, notes: "" }
+    run: { montage: AM_AshenMilitant_Run, approved: false, notes: "" }
+    attack_01: { montage: AM_AshenMilitant_Attack01, approved: false, notes: "" }
+    attack_02: { montage: AM_AshenMilitant_Attack02, approved: false, notes: "" }
+    attack_03: { montage: AM_AshenMilitant_Attack03, approved: false, notes: "" }
+    attack_04: { montage: AM_AshenMilitant_Attack04, approved: false, notes: "" }
+    attack_05: { montage: AM_AshenMilitant_Attack05, approved: false, notes: "" }
+    heavy_attack_01: { montage: AM_AshenMilitant_HeavyAttack01, approved: false, notes: "" }
+    dodge_01: { montage: AM_AshenMilitant_Dodge01, approved: false, notes: "" }
+    dodge_02: { montage: AM_AshenMilitant_Dodge02, approved: false, notes: "" }
+    dodge_03: { montage: AM_AshenMilitant_Dodge03, approved: false, notes: "" }
+    hit_react_01: { montage: AM_AshenMilitant_HitReact01, approved: false, notes: "" }
+    hit_react_02: { montage: AM_AshenMilitant_HitReact02, approved: false, notes: "" }
+    hit_react_03: { montage: AM_AshenMilitant_HitReact03, approved: false, notes: "" }
+    death_01: { montage: AM_AshenMilitant_Death01, approved: false, notes: "" }
+    death_02: { montage: AM_AshenMilitant_Death02, approved: false, notes: "" }
+    death_03: { montage: AM_AshenMilitant_Death03, approved: false, notes: "" }
+    guard: { montage: AM_AshenMilitant_Guard, approved: false, notes: "" }
+    guard_hit: { montage: AM_AshenMilitant_GuardHit, approved: false, notes: "" }
+
+ashen_purifier:
+  display_name: "Ashen Purifier"
+  faction: ashen_order
+  zone: sanctum_of_ash
+  role: regular
+  type: humanoid
+  mesh_type: single
+  concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/ashen_purifier.png"
+  original_model: "C:/scripts/elden_ring_tools/test_meshes/ashen_purifier/model.fbx"
+  rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/ashen_purifier/rigged.blend"
+  animation_config: null
+  ue5_folder: "Content/CustomEnemies/AshenPurifier"
+  ue5_assets: 44
+  mesh_approved: false
+  mesh_notes: ""
+  animations:
+    idle: { montage: AM_AshenPurifier_Idle, approved: false, notes: "" }
+    walk: { montage: AM_AshenPurifier_Walk, approved: false, notes: "" }
+    run: { montage: AM_AshenPurifier_Run, approved: false, notes: "" }
+    attack_01: { montage: AM_AshenPurifier_Attack01, approved: false, notes: "" }
+    attack_02: { montage: AM_AshenPurifier_Attack02, approved: false, notes: "" }
+    attack_03: { montage: AM_AshenPurifier_Attack03, approved: false, notes: "" }
+    attack_04: { montage: AM_AshenPurifier_Attack04, approved: false, notes: "" }
+    attack_05: { montage: AM_AshenPurifier_Attack05, approved: false, notes: "" }
+    attack_06: { montage: AM_AshenPurifier_Attack06, approved: false, notes: "" }
+    attack_07: { montage: AM_AshenPurifier_Attack07, approved: false, notes: "" }
+    attack_08: { montage: AM_AshenPurifier_Attack08, approved: false, notes: "" }
+    heavy_attack_01: { montage: AM_AshenPurifier_HeavyAttack01, approved: false, notes: "" }
+    heavy_attack_02: { montage: AM_AshenPurifier_HeavyAttack02, approved: false, notes: "" }
+    dodge_01: { montage: AM_AshenPurifier_Dodge01, approved: false, notes: "" }
+    dodge_02: { montage: AM_AshenPurifier_Dodge02, approved: false, notes: "" }
+    dodge_03: { montage: AM_AshenPurifier_Dodge03, approved: false, notes: "" }
+    hit_react_01: { montage: AM_AshenPurifier_HitReact01, approved: false, notes: "" }
+    hit_react_02: { montage: AM_AshenPurifier_HitReact02, approved: false, notes: "" }
+    hit_react_03: { montage: AM_AshenPurifier_HitReact03, approved: false, notes: "" }
+    death_01: { montage: AM_AshenPurifier_Death01, approved: false, notes: "" }
+    death_02: { montage: AM_AshenPurifier_Death02, approved: false, notes: "" }
+    death_03: { montage: AM_AshenPurifier_Death03, approved: false, notes: "" }
+    guard: { montage: AM_AshenPurifier_Guard, approved: false, notes: "" }
+    guard_hit: { montage: AM_AshenPurifier_GuardHit, approved: false, notes: "" }
+
+ashen_revenant:
+  display_name: "Ashen Revenant"
+  faction: ashen_order
+  zone: sanctum_of_ash
+  role: regular
+  type: humanoid
+  mesh_type: single
+  concept_art: null
+  original_model: "C:/scripts/elden_ring_tools/test_meshes/ashen_revenant/model.obj"
+  rigged_blend: null
+  animation_config: null
+  ue5_folder: "Content/CustomEnemies/AshenRevenant"
+  ue5_assets: 5
+  mesh_approved: false
+  mesh_notes: "Stub — only .obj/.mtl/.usdz formats, no rigged blend, minimal UE5 assets"
+  animations: {}
+
+# ============================================================================
+# WITHERED — Ashfields (Easy / Tutorial)
+# ============================================================================
+withered_wanderer:
+  display_name: "Withered Wanderer"
+  faction: withered
+  zone: ashfields
+  role: regular
+  type: humanoid
+  mesh_type: body_weapon  # separate body + weapon mesh
+  concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/withered_wanderer.png"
+  original_model: "C:/scripts/elden_ring_tools/test_meshes/withered_wanderer/model.fbx"
+  body_fbx: "C:/scripts/elden_ring_tools/test_meshes/withered_wanderer/body.fbx"
+  weapon_fbx: "C:/scripts/elden_ring_tools/test_meshes/withered_wanderer/weapon.fbx"
+  textures:
+    base_color: "C:/scripts/elden_ring_tools/test_meshes/withered_wanderer/texture_base_color.png"
+    metallic: "C:/scripts/elden_ring_tools/test_meshes/withered_wanderer/texture_metallic.png"
+    normal: "C:/scripts/elden_ring_tools/test_meshes/withered_wanderer/texture_normal.png"
+    roughness: "C:/scripts/elden_ring_tools/test_meshes/withered_wanderer/texture_roughness.png"
+  rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/withered_wanderer/rigged.blend"
+  animation_config: "C:/scripts/elden_ring_tools/test_meshes/withered_wanderer/animation_config.json"
+  tae_hitboxes: "C:/scripts/elden_ring_tools/test_meshes/withered_wanderer/tae_hitboxes.json"
+  attack_preview_dir: "C:/scripts/elden_ring_tools/test_meshes/withered_wanderer/attack_preview/"
+  ue5_folder: "Content/CustomEnemies/WitheredWanderer"
+  ue5_assets: 31
+  mesh_approved: true
+  mesh_notes: "Most complete enemy — full pipeline validated"
+
+  animations:
+    idle:
+      montage: AM_WitheredWanderer_Idle
+      source: c3100
+      anim_id: a000_000020
+      approved: false
+      notes: ""
+    walk:
+      montage: AM_WitheredWanderer_Walk
+      source: c3100
+      anim_id: a000_002000
+      approved: false
+      notes: ""
+    run:
+      montage: AM_WitheredWanderer_Run
+      source: c3100
+      anim_id: a000_002100
+      approved: false
+      notes: ""
+    attack_01:
+      montage: AM_WitheredWanderer_Attack01
+      source: c5830
+      label: "Messmer Soldier - precise strike"
+      approved: false
+      notes: ""
+    attack_02:
+      montage: AM_WitheredWanderer_Attack02
+      source: c3970
+      label: "Azula Beastman - feral swing"
+      approved: false
+      notes: ""
+    attack_03:
+      montage: AM_WitheredWanderer_Attack03
+      source: c3300
+      label: "Nox Swordstress - agile slash"
+      approved: false
+      notes: ""
+    attack_04:
+      montage: AM_WitheredWanderer_Attack04
+      source: c4320
+      label: "Vulgar Militia - chaotic swing"
+      approved: false
+      notes: ""
+    attack_05:
+      montage: AM_WitheredWanderer_Attack05
+      source: c3000
+      label: "Exile Soldier - infantry combo"
+      approved: false
+      notes: ""
+    heavy_attack:
+      montage: AM_WitheredWanderer_HeavyAttack
+      source: c3100
+      label: "Crucible Knight - heavy slam"
+      approved: false
+      notes: ""
+    death_01: { montage: AM_WitheredWanderer_Death01, source: c3100, approved: false, notes: "" }
+    death_02: { montage: AM_WitheredWanderer_Death02, source: c3100, approved: false, notes: "" }
+    death_03: { montage: AM_WitheredWanderer_Death03, source: c3100, approved: false, notes: "" }
+
+withered_brute:
+  display_name: "Withered Brute"
+  faction: withered
+  zone: ashfields
+  role: regular
+  type: humanoid
+  mesh_type: single
+  concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/withered_brute.png"
+  original_model: "C:/scripts/elden_ring_tools/test_meshes/withered_brute/model.fbx"
+  rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/withered_brute/rigged.blend"
+  ue5_folder: "Content/CustomEnemies/WitheredBrute"
+  ue5_assets: 44
+  mesh_approved: false
+  mesh_notes: ""
+  animations: &full_anim_set_template
+    idle: { montage: AM_WitheredBrute_Idle, approved: false, notes: "" }
+    walk: { montage: AM_WitheredBrute_Walk, approved: false, notes: "" }
+    run: { montage: AM_WitheredBrute_Run, approved: false, notes: "" }
+    attack_01: { montage: AM_WitheredBrute_Attack01, approved: false, notes: "" }
+    attack_02: { montage: AM_WitheredBrute_Attack02, approved: false, notes: "" }
+    attack_03: { montage: AM_WitheredBrute_Attack03, approved: false, notes: "" }
+    attack_04: { montage: AM_WitheredBrute_Attack04, approved: false, notes: "" }
+    attack_05: { montage: AM_WitheredBrute_Attack05, approved: false, notes: "" }
+    attack_06: { montage: AM_WitheredBrute_Attack06, approved: false, notes: "" }
+    attack_07: { montage: AM_WitheredBrute_Attack07, approved: false, notes: "" }
+    attack_08: { montage: AM_WitheredBrute_Attack08, approved: false, notes: "" }
+    heavy_attack_01: { montage: AM_WitheredBrute_HeavyAttack01, approved: false, notes: "" }
+    heavy_attack_02: { montage: AM_WitheredBrute_HeavyAttack02, approved: false, notes: "" }
+    dodge_01: { montage: AM_WitheredBrute_Dodge01, approved: false, notes: "" }
+    dodge_02: { montage: AM_WitheredBrute_Dodge02, approved: false, notes: "" }
+    dodge_03: { montage: AM_WitheredBrute_Dodge03, approved: false, notes: "" }
+    hit_react_01: { montage: AM_WitheredBrute_HitReact01, approved: false, notes: "" }
+    hit_react_02: { montage: AM_WitheredBrute_HitReact02, approved: false, notes: "" }
+    hit_react_03: { montage: AM_WitheredBrute_HitReact03, approved: false, notes: "" }
+    death_01: { montage: AM_WitheredBrute_Death01, approved: false, notes: "" }
+    death_02: { montage: AM_WitheredBrute_Death02, approved: false, notes: "" }
+    death_03: { montage: AM_WitheredBrute_Death03, approved: false, notes: "" }
+    guard: { montage: AM_WitheredBrute_Guard, approved: false, notes: "" }
+    guard_hit: { montage: AM_WitheredBrute_GuardHit, approved: false, notes: "" }
+
+withered_broodmother:
+  display_name: "Withered Broodmother"
+  faction: withered
+  zone: ashfields
+  role: boss
+  type: humanoid
+  mesh_type: single
+  concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/withered_broodmother.png"
+  original_model: "C:/scripts/elden_ring_tools/test_meshes/withered_broodmother/model.fbx"
+  rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/withered_broodmother/rigged.blend"
+  ue5_folder: "Content/CustomEnemies/WitheredBroodmother"
+  ue5_assets: 43
+  mesh_approved: false
+  mesh_notes: ""
+  animations:
+    idle: { montage: AM_WitheredBroodmother_Idle, approved: false, notes: "" }
+    walk: { montage: AM_WitheredBroodmother_Walk, approved: false, notes: "" }
+    run: { montage: AM_WitheredBroodmother_Run, approved: false, notes: "" }
+    attack_01: { montage: AM_WitheredBroodmother_Attack01, approved: false, notes: "" }
+    attack_02: { montage: AM_WitheredBroodmother_Attack02, approved: false, notes: "" }
+    attack_03: { montage: AM_WitheredBroodmother_Attack03, approved: false, notes: "" }
+    attack_04: { montage: AM_WitheredBroodmother_Attack04, approved: false, notes: "" }
+    attack_05: { montage: AM_WitheredBroodmother_Attack05, approved: false, notes: "" }
+    attack_06: { montage: AM_WitheredBroodmother_Attack06, approved: false, notes: "" }
+    attack_07: { montage: AM_WitheredBroodmother_Attack07, approved: false, notes: "" }
+    attack_08: { montage: AM_WitheredBroodmother_Attack08, approved: false, notes: "" }
+    heavy_attack_01: { montage: AM_WitheredBroodmother_HeavyAttack01, approved: false, notes: "" }
+    heavy_attack_02: { montage: AM_WitheredBroodmother_HeavyAttack02, approved: false, notes: "" }
+    dodge_01: { montage: AM_WitheredBroodmother_Dodge01, approved: false, notes: "" }
+    dodge_02: { montage: AM_WitheredBroodmother_Dodge02, approved: false, notes: "" }
+    dodge_03: { montage: AM_WitheredBroodmother_Dodge03, approved: false, notes: "" }
+    hit_react_01: { montage: AM_WitheredBroodmother_HitReact01, approved: false, notes: "" }
+    hit_react_02: { montage: AM_WitheredBroodmother_HitReact02, approved: false, notes: "" }
+    hit_react_03: { montage: AM_WitheredBroodmother_HitReact03, approved: false, notes: "" }
+    death_01: { montage: AM_WitheredBroodmother_Death01, approved: false, notes: "" }
+    death_02: { montage: AM_WitheredBroodmother_Death02, approved: false, notes: "" }
+    death_03: { montage: AM_WitheredBroodmother_Death03, approved: false, notes: "" }
+    guard: { montage: AM_WitheredBroodmother_Guard, approved: false, notes: "" }
+    guard_hit: { montage: AM_WitheredBroodmother_GuardHit, approved: false, notes: "" }
+
+withered_broodling:
+  display_name: "Withered Broodling"
+  faction: withered
+  zone: ashfields
+  role: regular
+  type: humanoid
+  concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/withered_broodling.png"
+  original_model: "C:/scripts/elden_ring_tools/test_meshes/withered_broodling/model.fbx"
+  rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/withered_broodling/rigged.blend"
+  ue5_folder: "Content/CustomEnemies/WitheredBroodling"
+  ue5_assets: 43
+  mesh_approved: false
+  animations:
+    idle: { montage: AM_WitheredBroodling_Idle, approved: false, notes: "" }
+    walk: { montage: AM_WitheredBroodling_Walk, approved: false, notes: "" }
+    run: { montage: AM_WitheredBroodling_Run, approved: false, notes: "" }
+    attack_01: { montage: AM_WitheredBroodling_Attack01, approved: false, notes: "" }
+    attack_02: { montage: AM_WitheredBroodling_Attack02, approved: false, notes: "" }
+    attack_03: { montage: AM_WitheredBroodling_Attack03, approved: false, notes: "" }
+    attack_04: { montage: AM_WitheredBroodling_Attack04, approved: false, notes: "" }
+    attack_05: { montage: AM_WitheredBroodling_Attack05, approved: false, notes: "" }
+    dodge_01: { montage: AM_WitheredBroodling_Dodge01, approved: false, notes: "" }
+    dodge_02: { montage: AM_WitheredBroodling_Dodge02, approved: false, notes: "" }
+    dodge_03: { montage: AM_WitheredBroodling_Dodge03, approved: false, notes: "" }
+    hit_react_01: { montage: AM_WitheredBroodling_HitReact01, approved: false, notes: "" }
+    hit_react_02: { montage: AM_WitheredBroodling_HitReact02, approved: false, notes: "" }
+    death_01: { montage: AM_WitheredBroodling_Death01, approved: false, notes: "" }
+    death_02: { montage: AM_WitheredBroodling_Death02, approved: false, notes: "" }
+
+withered_hulk:
+  display_name: "Withered Hulk"
+  faction: withered
+  zone: ashfields
+  role: elite
+  type: humanoid
+  concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/withered_hulk.png"
+  original_model: "C:/scripts/elden_ring_tools/test_meshes/withered_hulk/model.fbx"
+  rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/withered_hulk/rigged.blend"
+  ue5_folder: "Content/CustomEnemies/WitheredHulk"
+  ue5_assets: 44
+  mesh_approved: false
+  animations:
+    idle: { montage: AM_WitheredHulk_Idle, approved: false, notes: "" }
+    walk: { montage: AM_WitheredHulk_Walk, approved: false, notes: "" }
+    run: { montage: AM_WitheredHulk_Run, approved: false, notes: "" }
+    attack_01: { montage: AM_WitheredHulk_Attack01, approved: false, notes: "" }
+    attack_02: { montage: AM_WitheredHulk_Attack02, approved: false, notes: "" }
+    attack_03: { montage: AM_WitheredHulk_Attack03, approved: false, notes: "" }
+    attack_04: { montage: AM_WitheredHulk_Attack04, approved: false, notes: "" }
+    attack_05: { montage: AM_WitheredHulk_Attack05, approved: false, notes: "" }
+    attack_06: { montage: AM_WitheredHulk_Attack06, approved: false, notes: "" }
+    attack_07: { montage: AM_WitheredHulk_Attack07, approved: false, notes: "" }
+    attack_08: { montage: AM_WitheredHulk_Attack08, approved: false, notes: "" }
+    heavy_attack_01: { montage: AM_WitheredHulk_HeavyAttack01, approved: false, notes: "" }
+    heavy_attack_02: { montage: AM_WitheredHulk_HeavyAttack02, approved: false, notes: "" }
+    dodge_01: { montage: AM_WitheredHulk_Dodge01, approved: false, notes: "" }
+    dodge_02: { montage: AM_WitheredHulk_Dodge02, approved: false, notes: "" }
+    dodge_03: { montage: AM_WitheredHulk_Dodge03, approved: false, notes: "" }
+    hit_react_01: { montage: AM_WitheredHulk_HitReact01, approved: false, notes: "" }
+    hit_react_02: { montage: AM_WitheredHulk_HitReact02, approved: false, notes: "" }
+    hit_react_03: { montage: AM_WitheredHulk_HitReact03, approved: false, notes: "" }
+    death_01: { montage: AM_WitheredHulk_Death01, approved: false, notes: "" }
+    death_02: { montage: AM_WitheredHulk_Death02, approved: false, notes: "" }
+    death_03: { montage: AM_WitheredHulk_Death03, approved: false, notes: "" }
+    guard: { montage: AM_WitheredHulk_Guard, approved: false, notes: "" }
+    guard_hit: { montage: AM_WitheredHulk_GuardHit, approved: false, notes: "" }
+
+withered_lurker:
+  display_name: "Withered Lurker"
+  faction: withered
+  zone: ashfields
+  role: regular
+  type: humanoid
+  concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/withered_lurker.png"
+  rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/withered_lurker/rigged.blend"
+  ue5_folder: "Content/CustomEnemies/WitheredLurker"
+  ue5_assets: 44
+  mesh_approved: false
+  animations:
+    idle: { montage: AM_WitheredLurker_Idle, approved: false, notes: "" }
+    walk: { montage: AM_WitheredLurker_Walk, approved: false, notes: "" }
+    run: { montage: AM_WitheredLurker_Run, approved: false, notes: "" }
+    attack_01: { montage: AM_WitheredLurker_Attack01, approved: false, notes: "" }
+    attack_02: { montage: AM_WitheredLurker_Attack02, approved: false, notes: "" }
+    attack_03: { montage: AM_WitheredLurker_Attack03, approved: false, notes: "" }
+    attack_04: { montage: AM_WitheredLurker_Attack04, approved: false, notes: "" }
+    attack_05: { montage: AM_WitheredLurker_Attack05, approved: false, notes: "" }
+    attack_06: { montage: AM_WitheredLurker_Attack06, approved: false, notes: "" }
+    attack_07: { montage: AM_WitheredLurker_Attack07, approved: false, notes: "" }
+    attack_08: { montage: AM_WitheredLurker_Attack08, approved: false, notes: "" }
+    heavy_attack_01: { montage: AM_WitheredLurker_HeavyAttack01, approved: false, notes: "" }
+    heavy_attack_02: { montage: AM_WitheredLurker_HeavyAttack02, approved: false, notes: "" }
+    dodge_01: { montage: AM_WitheredLurker_Dodge01, approved: false, notes: "" }
+    dodge_02: { montage: AM_WitheredLurker_Dodge02, approved: false, notes: "" }
+    dodge_03: { montage: AM_WitheredLurker_Dodge03, approved: false, notes: "" }
+    hit_react_01: { montage: AM_WitheredLurker_HitReact01, approved: false, notes: "" }
+    hit_react_02: { montage: AM_WitheredLurker_HitReact02, approved: false, notes: "" }
+    hit_react_03: { montage: AM_WitheredLurker_HitReact03, approved: false, notes: "" }
+    death_01: { montage: AM_WitheredLurker_Death01, approved: false, notes: "" }
+    death_02: { montage: AM_WitheredLurker_Death02, approved: false, notes: "" }
+    death_03: { montage: AM_WitheredLurker_Death03, approved: false, notes: "" }
+    guard: { montage: AM_WitheredLurker_Guard, approved: false, notes: "" }
+    guard_hit: { montage: AM_WitheredLurker_GuardHit, approved: false, notes: "" }
+
+withered_scrounger:
+  display_name: "Withered Scrounger"
+  faction: withered
+  zone: ashfields
+  role: regular
+  type: humanoid
+  concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/withered_scrounger.png"
+  rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/withered_scrounger/rigged.blend"
+  ue5_folder: "Content/CustomEnemies/WitheredScrounger"
+  ue5_assets: 48
+  mesh_approved: false
+  animations:
+    idle: { montage: AM_WitheredScrounger_Idle, approved: false, notes: "" }
+    walk: { montage: AM_WitheredScrounger_Walk, approved: false, notes: "" }
+    run: { montage: AM_WitheredScrounger_Run, approved: false, notes: "" }
+    attack_01: { montage: AM_WitheredScrounger_Attack01, approved: false, notes: "" }
+    attack_02: { montage: AM_WitheredScrounger_Attack02, approved: false, notes: "" }
+    attack_03: { montage: AM_WitheredScrounger_Attack03, approved: false, notes: "" }
+    attack_04: { montage: AM_WitheredScrounger_Attack04, approved: false, notes: "" }
+    attack_05: { montage: AM_WitheredScrounger_Attack05, approved: false, notes: "" }
+    attack_06: { montage: AM_WitheredScrounger_Attack06, approved: false, notes: "" }
+    attack_07: { montage: AM_WitheredScrounger_Attack07, approved: false, notes: "" }
+    attack_08: { montage: AM_WitheredScrounger_Attack08, approved: false, notes: "" }
+    heavy_attack_01: { montage: AM_WitheredScrounger_HeavyAttack01, approved: false, notes: "" }
+    heavy_attack_02: { montage: AM_WitheredScrounger_HeavyAttack02, approved: false, notes: "" }
+    dodge_01: { montage: AM_WitheredScrounger_Dodge01, approved: false, notes: "" }
+    dodge_02: { montage: AM_WitheredScrounger_Dodge02, approved: false, notes: "" }
+    dodge_03: { montage: AM_WitheredScrounger_Dodge03, approved: false, notes: "" }
+    hit_react_01: { montage: AM_WitheredScrounger_HitReact01, approved: false, notes: "" }
+    hit_react_02: { montage: AM_WitheredScrounger_HitReact02, approved: false, notes: "" }
+    hit_react_03: { montage: AM_WitheredScrounger_HitReact03, approved: false, notes: "" }
+    death_01: { montage: AM_WitheredScrounger_Death01, approved: false, notes: "" }
+    death_02: { montage: AM_WitheredScrounger_Death02, approved: false, notes: "" }
+    death_03: { montage: AM_WitheredScrounger_Death03, approved: false, notes: "" }
+    guard: { montage: AM_WitheredScrounger_Guard, approved: false, notes: "" }
+    guard_hit: { montage: AM_WitheredScrounger_GuardHit, approved: false, notes: "" }
+
+withered_spitter:
+  display_name: "Withered Spitter"
+  faction: withered
+  zone: ashfields
+  role: regular
+  type: humanoid
+  concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/withered_spitter.png"
+  rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/withered_spitter/rigged.blend"
+  ue5_folder: "Content/CustomEnemies/WitheredSpitter"
+  ue5_assets: 44
+  mesh_approved: false
+  animations:
+    idle: { montage: AM_WitheredSpitter_Idle, approved: false, notes: "" }
+    walk: { montage: AM_WitheredSpitter_Walk, approved: false, notes: "" }
+    run: { montage: AM_WitheredSpitter_Run, approved: false, notes: "" }
+    attack_01: { montage: AM_WitheredSpitter_Attack01, approved: false, notes: "" }
+    attack_02: { montage: AM_WitheredSpitter_Attack02, approved: false, notes: "" }
+    attack_03: { montage: AM_WitheredSpitter_Attack03, approved: false, notes: "" }
+    attack_04: { montage: AM_WitheredSpitter_Attack04, approved: false, notes: "" }
+    attack_05: { montage: AM_WitheredSpitter_Attack05, approved: false, notes: "" }
+    attack_06: { montage: AM_WitheredSpitter_Attack06, approved: false, notes: "" }
+    attack_07: { montage: AM_WitheredSpitter_Attack07, approved: false, notes: "" }
+    attack_08: { montage: AM_WitheredSpitter_Attack08, approved: false, notes: "" }
+    heavy_attack_01: { montage: AM_WitheredSpitter_HeavyAttack01, approved: false, notes: "" }
+    heavy_attack_02: { montage: AM_WitheredSpitter_HeavyAttack02, approved: false, notes: "" }
+    dodge_01: { montage: AM_WitheredSpitter_Dodge01, approved: false, notes: "" }
+    dodge_02: { montage: AM_WitheredSpitter_Dodge02, approved: false, notes: "" }
+    dodge_03: { montage: AM_WitheredSpitter_Dodge03, approved: false, notes: "" }
+    hit_react_01: { montage: AM_WitheredSpitter_HitReact01, approved: false, notes: "" }
+    hit_react_02: { montage: AM_WitheredSpitter_HitReact02, approved: false, notes: "" }
+    hit_react_03: { montage: AM_WitheredSpitter_HitReact03, approved: false, notes: "" }
+    death_01: { montage: AM_WitheredSpitter_Death01, approved: false, notes: "" }
+    death_02: { montage: AM_WitheredSpitter_Death02, approved: false, notes: "" }
+    death_03: { montage: AM_WitheredSpitter_Death03, approved: false, notes: "" }
+    guard: { montage: AM_WitheredSpitter_Guard, approved: false, notes: "" }
+    guard_hit: { montage: AM_WitheredSpitter_GuardHit, approved: false, notes: "" }
+
+withered_hound:
+  display_name: "Withered Hound"
+  faction: withered
+  zone: ashfields
+  role: regular
+  type: quadruped
+  concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/withered_hound.png"
+  rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/withered_hound/rigged.blend"
+  ue5_folder: "Content/CustomEnemies/WitheredHound"
+  ue5_assets: 16
+  mesh_approved: false
+  mesh_notes: "Minimal blends/fbx — may need re-rigging for quadruped skeleton"
+  animations:
+    idle: { montage: AM_WitheredHound_Idle, approved: false, notes: "" }
+    walk: { montage: AM_WitheredHound_Walk, approved: false, notes: "" }
+    run: { montage: AM_WitheredHound_Run, approved: false, notes: "" }
+    attack_01: { montage: AM_WitheredHound_Attack01, approved: false, notes: "" }
+    attack_02: { montage: AM_WitheredHound_Attack02, approved: false, notes: "" }
+    attack_03: { montage: AM_WitheredHound_Attack03, approved: false, notes: "" }
+
+# ============================================================================
+# Remaining factions follow same pattern — abbreviated for file size.
+# To add an enemy, copy any entry above and change the names.
+# Run: python scripts/generate_catalog.py to regenerate script catalog after edits.
+# ============================================================================
+
+# ============================================================================
+# IRON COVENANT — Ironworks (Medium)
+# ============================================================================
+iron_berserker: { display_name: "Iron Berserker", faction: iron_covenant, zone: ironworks, role: regular, type: humanoid, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/iron_berserker.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/iron_berserker/rigged.blend", ue5_folder: "Content/CustomEnemies/IronBerserker", ue5_assets: 44, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false }, attack_06: { approved: false }, attack_07: { approved: false }, attack_08: { approved: false }, heavy_attack_01: { approved: false }, heavy_attack_02: { approved: false }, dodge_01: { approved: false }, dodge_02: { approved: false }, dodge_03: { approved: false }, hit_react_01: { approved: false }, hit_react_02: { approved: false }, hit_react_03: { approved: false }, death_01: { approved: false }, death_02: { approved: false }, death_03: { approved: false }, guard: { approved: false }, guard_hit: { approved: false } } }
+
+iron_enforcer: { display_name: "Iron Enforcer", faction: iron_covenant, zone: ironworks, role: regular, type: humanoid, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/iron_enforcer.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/iron_enforcer/rigged.blend", ue5_folder: "Content/CustomEnemies/IronEnforcer", ue5_assets: 44, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false }, attack_06: { approved: false }, attack_07: { approved: false }, attack_08: { approved: false }, heavy_attack_01: { approved: false }, heavy_attack_02: { approved: false }, dodge_01: { approved: false }, dodge_02: { approved: false }, dodge_03: { approved: false }, hit_react_01: { approved: false }, hit_react_02: { approved: false }, hit_react_03: { approved: false }, death_01: { approved: false }, death_02: { approved: false }, death_03: { approved: false }, guard: { approved: false }, guard_hit: { approved: false } } }
+
+iron_forgemaster: { display_name: "Iron Forgemaster", faction: iron_covenant, zone: ironworks, role: boss, type: humanoid, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/iron_forgemaster.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/iron_forgemaster/rigged.blend", ue5_folder: "Content/CustomEnemies/IronForgemaster", ue5_assets: 44, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false }, attack_06: { approved: false }, attack_07: { approved: false }, attack_08: { approved: false }, heavy_attack_01: { approved: false }, heavy_attack_02: { approved: false }, dodge_01: { approved: false }, dodge_02: { approved: false }, dodge_03: { approved: false }, hit_react_01: { approved: false }, hit_react_02: { approved: false }, hit_react_03: { approved: false }, death_01: { approved: false }, death_02: { approved: false }, death_03: { approved: false }, guard: { approved: false }, guard_hit: { approved: false } } }
+
+iron_grunt: { display_name: "Iron Grunt", faction: iron_covenant, zone: ironworks, role: regular, type: humanoid, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/iron_grunt.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/iron_grunt/rigged.blend", ue5_folder: "Content/CustomEnemies/IronGrunt", ue5_assets: 44, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false }, attack_06: { approved: false }, attack_07: { approved: false }, attack_08: { approved: false }, heavy_attack_01: { approved: false }, heavy_attack_02: { approved: false }, dodge_01: { approved: false }, dodge_02: { approved: false }, dodge_03: { approved: false }, hit_react_01: { approved: false }, hit_react_02: { approved: false }, hit_react_03: { approved: false }, death_01: { approved: false }, death_02: { approved: false }, death_03: { approved: false }, guard: { approved: false }, guard_hit: { approved: false } } }
+
+iron_heavymech: { display_name: "Iron Heavymech", faction: iron_covenant, zone: ironworks, role: elite, type: humanoid, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/iron_heavymech.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/iron_heavymech/rigged.blend", ue5_folder: "Content/CustomEnemies/IronHeavymech", ue5_assets: 44, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false }, attack_06: { approved: false }, attack_07: { approved: false }, attack_08: { approved: false }, heavy_attack_01: { approved: false }, heavy_attack_02: { approved: false }, dodge_01: { approved: false }, dodge_02: { approved: false }, dodge_03: { approved: false }, hit_react_01: { approved: false }, hit_react_02: { approved: false }, hit_react_03: { approved: false }, death_01: { approved: false }, death_02: { approved: false }, death_03: { approved: false }, guard: { approved: false }, guard_hit: { approved: false } } }
+
+iron_priest: { display_name: "Iron Priest", faction: iron_covenant, zone: ironworks, role: regular, type: humanoid, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/iron_priest.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/iron_priest/rigged.blend", ue5_folder: "Content/CustomEnemies/IronPriest", ue5_assets: 44, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false }, attack_06: { approved: false }, attack_07: { approved: false }, attack_08: { approved: false }, heavy_attack_01: { approved: false }, heavy_attack_02: { approved: false }, dodge_01: { approved: false }, dodge_02: { approved: false }, dodge_03: { approved: false }, hit_react_01: { approved: false }, hit_react_02: { approved: false }, hit_react_03: { approved: false }, death_01: { approved: false }, death_02: { approved: false }, death_03: { approved: false }, guard: { approved: false }, guard_hit: { approved: false } } }
+
+iron_sparkhound: { display_name: "Iron Sparkhound", faction: iron_covenant, zone: ironworks, role: regular, type: quadruped, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/iron_sparkhound.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/iron_sparkhound/rigged.blend", ue5_folder: "Content/CustomEnemies/IronSparkhound", ue5_assets: 36, mesh_approved: false, mesh_notes: "Sparse blends/fbx", animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false } } }
+
+iron_stoker: { display_name: "Iron Stoker", faction: iron_covenant, zone: ironworks, role: regular, type: humanoid, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/iron_stoker.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/iron_stoker/rigged.blend", ue5_folder: "Content/CustomEnemies/IronStoker", ue5_assets: 41, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false }, dodge_01: { approved: false }, dodge_02: { approved: false }, dodge_03: { approved: false }, hit_react_01: { approved: false }, hit_react_02: { approved: false }, hit_react_03: { approved: false }, death_01: { approved: false }, death_02: { approved: false }, death_03: { approved: false }, guard: { approved: false }, guard_hit: { approved: false } } }
+
+# ============================================================================
+# VEILBORN — The Rift (Medium-Hard)
+# ============================================================================
+veilborn_convergent: { display_name: "Veilborn Convergent", faction: veilborn, zone: the_rift, role: boss, type: humanoid, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/veilborn_convergent.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/veilborn_convergent/rigged.blend", ue5_folder: "Content/CustomEnemies/VeilbornConvergent", ue5_assets: 44, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false }, attack_06: { approved: false }, attack_07: { approved: false }, attack_08: { approved: false }, heavy_attack_01: { approved: false }, heavy_attack_02: { approved: false }, dodge_01: { approved: false }, dodge_02: { approved: false }, dodge_03: { approved: false }, hit_react_01: { approved: false }, hit_react_02: { approved: false }, hit_react_03: { approved: false }, death_01: { approved: false }, death_02: { approved: false }, death_03: { approved: false }, guard: { approved: false }, guard_hit: { approved: false } } }
+
+veilborn_operative: { display_name: "Veilborn Operative", faction: veilborn, zone: the_rift, role: regular, type: humanoid, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/veilborn_operative.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/veilborn_operative/rigged.blend", ue5_folder: "Content/CustomEnemies/VeilbornOperative", ue5_assets: 44, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false }, attack_06: { approved: false }, attack_07: { approved: false }, attack_08: { approved: false }, heavy_attack_01: { approved: false }, heavy_attack_02: { approved: false }, dodge_01: { approved: false }, dodge_02: { approved: false }, dodge_03: { approved: false }, hit_react_01: { approved: false }, hit_react_02: { approved: false }, hit_react_03: { approved: false }, death_01: { approved: false }, death_02: { approved: false }, death_03: { approved: false }, guard: { approved: false }, guard_hit: { approved: false } } }
+
+veilborn_phasehunter: { display_name: "Veilborn Phasehunter", faction: veilborn, zone: the_rift, role: regular, type: humanoid, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/veilborn_phasehunter.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/veilborn_phasehunter/rigged.blend", ue5_folder: "Content/CustomEnemies/VeilbornPhasehunter", ue5_assets: 44, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false }, attack_06: { approved: false }, attack_07: { approved: false }, attack_08: { approved: false }, heavy_attack_01: { approved: false }, heavy_attack_02: { approved: false }, dodge_01: { approved: false }, dodge_02: { approved: false }, dodge_03: { approved: false }, hit_react_01: { approved: false }, hit_react_02: { approved: false }, hit_react_03: { approved: false }, death_01: { approved: false }, death_02: { approved: false }, death_03: { approved: false }, guard: { approved: false }, guard_hit: { approved: false } } }
+
+veilborn_pilgrim: { display_name: "Veilborn Pilgrim", faction: veilborn, zone: the_rift, role: regular, type: humanoid, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/veilborn_pilgrim.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/veilborn_pilgrim/rigged.blend", ue5_folder: "Content/CustomEnemies/VeilbornPilgrim", ue5_assets: 44, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false }, attack_06: { approved: false }, attack_07: { approved: false }, attack_08: { approved: false }, heavy_attack_01: { approved: false }, heavy_attack_02: { approved: false }, dodge_01: { approved: false }, dodge_02: { approved: false }, dodge_03: { approved: false }, hit_react_01: { approved: false }, hit_react_02: { approved: false }, hit_react_03: { approved: false }, death_01: { approved: false }, death_02: { approved: false }, death_03: { approved: false }, guard: { approved: false }, guard_hit: { approved: false } } }
+
+veilborn_rifthound: { display_name: "Veilborn Rifthound", faction: veilborn, zone: the_rift, role: regular, type: quadruped, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/veilborn_rifthound.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/veilborn_rifthound/rigged.blend", ue5_folder: "Content/CustomEnemies/VeilbornRifthound", ue5_assets: 36, mesh_approved: false, mesh_notes: "Sparse — no blends generated", animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false } } }
+
+veilborn_sentry: { display_name: "Veilborn Sentry", faction: veilborn, zone: the_rift, role: regular, type: humanoid, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/veilborn_sentry.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/veilborn_sentry/rigged.blend", ue5_folder: "Content/CustomEnemies/VeilbornSentry", ue5_assets: 44, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false }, attack_06: { approved: false }, attack_07: { approved: false }, attack_08: { approved: false }, heavy_attack_01: { approved: false }, heavy_attack_02: { approved: false }, dodge_01: { approved: false }, dodge_02: { approved: false }, dodge_03: { approved: false }, hit_react_01: { approved: false }, hit_react_02: { approved: false }, hit_react_03: { approved: false }, death_01: { approved: false }, death_02: { approved: false }, death_03: { approved: false }, guard: { approved: false }, guard_hit: { approved: false } } }
+
+veilborn_stalker: { display_name: "Veilborn Stalker", faction: veilborn, zone: the_rift, role: regular, type: humanoid, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/veilborn_stalker.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/veilborn_stalker/rigged.blend", ue5_folder: "Content/CustomEnemies/VeilbornStalker", ue5_assets: 44, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false }, attack_06: { approved: false }, attack_07: { approved: false }, attack_08: { approved: false }, heavy_attack_01: { approved: false }, heavy_attack_02: { approved: false }, dodge_01: { approved: false }, dodge_02: { approved: false }, dodge_03: { approved: false }, hit_react_01: { approved: false }, hit_react_02: { approved: false }, hit_react_03: { approved: false }, death_01: { approved: false }, death_02: { approved: false }, death_03: { approved: false }, guard: { approved: false }, guard_hit: { approved: false } } }
+
+veilborn_warden: { display_name: "Veilborn Warden", faction: veilborn, zone: the_rift, role: elite, type: humanoid, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/veilborn_warden.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/veilborn_warden/rigged.blend", ue5_folder: "Content/CustomEnemies/VeilbornWarden", ue5_assets: 44, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false }, attack_06: { approved: false }, attack_07: { approved: false }, attack_08: { approved: false }, heavy_attack_01: { approved: false }, heavy_attack_02: { approved: false }, dodge_01: { approved: false }, dodge_02: { approved: false }, dodge_03: { approved: false }, hit_react_01: { approved: false }, hit_react_02: { approved: false }, hit_react_03: { approved: false }, death_01: { approved: false }, death_02: { approved: false }, death_03: { approved: false }, guard: { approved: false }, guard_hit: { approved: false } } }
+
+# ============================================================================
+# HOLLOW — The Undercroft (Very Hard)
+# ============================================================================
+hollow_alpha: { display_name: "Hollow Alpha", faction: hollow, zone: the_undercroft, role: elite, type: humanoid, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/hollow_alpha.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/hollow_alpha/rigged.blend", ue5_folder: "Content/CustomEnemies/HollowAlpha", ue5_assets: 44, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false }, attack_06: { approved: false }, attack_07: { approved: false }, attack_08: { approved: false }, heavy_attack_01: { approved: false }, heavy_attack_02: { approved: false }, dodge_01: { approved: false }, dodge_02: { approved: false }, dodge_03: { approved: false }, hit_react_01: { approved: false }, hit_react_02: { approved: false }, hit_react_03: { approved: false }, death_01: { approved: false }, death_02: { approved: false }, death_03: { approved: false }, guard: { approved: false }, guard_hit: { approved: false } } }
+
+hollow_breach: { display_name: "Hollow Breach", faction: hollow, zone: the_undercroft, role: regular, type: humanoid, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/hollow_breach.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/hollow_breach/rigged.blend", ue5_folder: "Content/CustomEnemies/HollowBreach", ue5_assets: 44, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false }, attack_06: { approved: false }, attack_07: { approved: false }, attack_08: { approved: false }, heavy_attack_01: { approved: false }, heavy_attack_02: { approved: false }, dodge_01: { approved: false }, dodge_02: { approved: false }, dodge_03: { approved: false }, hit_react_01: { approved: false }, hit_react_02: { approved: false }, hit_react_03: { approved: false }, death_01: { approved: false }, death_02: { approved: false }, death_03: { approved: false }, guard: { approved: false }, guard_hit: { approved: false } } }
+
+hollow_crawler: { display_name: "Hollow Crawler", faction: hollow, zone: the_undercroft, role: regular, type: humanoid, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/hollow_crawler.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/hollow_crawler/rigged.blend", ue5_folder: "Content/CustomEnemies/HollowCrawler", ue5_assets: 41, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false }, dodge_01: { approved: false }, dodge_02: { approved: false }, dodge_03: { approved: false }, hit_react_01: { approved: false }, hit_react_02: { approved: false }, hit_react_03: { approved: false }, death_01: { approved: false }, death_02: { approved: false }, death_03: { approved: false }, guard: { approved: false }, guard_hit: { approved: false } } }
+
+hollow_feral: { display_name: "Hollow Feral", faction: hollow, zone: the_undercroft, role: regular, type: humanoid, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/hollow_feral.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/hollow_feral/rigged.blend", ue5_folder: "Content/CustomEnemies/HollowFeral", ue5_assets: 45, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false }, attack_06: { approved: false }, attack_07: { approved: false }, attack_08: { approved: false }, heavy_attack_01: { approved: false }, heavy_attack_02: { approved: false }, dodge_01: { approved: false }, dodge_02: { approved: false }, dodge_03: { approved: false }, hit_react_01: { approved: false }, hit_react_02: { approved: false }, hit_react_03: { approved: false }, death_01: { approved: false }, death_02: { approved: false }, death_03: { approved: false }, guard: { approved: false }, guard_hit: { approved: false } } }
+
+hollow_primordial: { display_name: "Hollow Primordial", faction: hollow, zone: the_undercroft, role: boss, type: humanoid, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/hollow_primordial.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/hollow_primordial/rigged.blend", ue5_folder: "Content/CustomEnemies/HollowPrimordial", ue5_assets: 44, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false }, attack_06: { approved: false }, attack_07: { approved: false }, attack_08: { approved: false }, heavy_attack_01: { approved: false }, heavy_attack_02: { approved: false }, dodge_01: { approved: false }, dodge_02: { approved: false }, dodge_03: { approved: false }, hit_react_01: { approved: false }, hit_react_02: { approved: false }, hit_react_03: { approved: false }, death_01: { approved: false }, death_02: { approved: false }, death_03: { approved: false }, guard: { approved: false }, guard_hit: { approved: false } } }
+
+hollow_researcher: { display_name: "Hollow Researcher", faction: hollow, zone: the_undercroft, role: regular, type: humanoid, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/hollow_researcher.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/hollow_researcher/rigged.blend", ue5_folder: "Content/CustomEnemies/HollowResearcher", ue5_assets: 44, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false }, attack_06: { approved: false }, attack_07: { approved: false }, attack_08: { approved: false }, heavy_attack_01: { approved: false }, heavy_attack_02: { approved: false }, dodge_01: { approved: false }, dodge_02: { approved: false }, dodge_03: { approved: false }, hit_react_01: { approved: false }, hit_react_02: { approved: false }, hit_react_03: { approved: false }, death_01: { approved: false }, death_02: { approved: false }, death_03: { approved: false }, guard: { approved: false }, guard_hit: { approved: false } } }
+
+hollow_subject: { display_name: "Hollow Subject", faction: hollow, zone: the_undercroft, role: regular, type: humanoid, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/hollow_subject.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/hollow_subject/rigged.blend", ue5_folder: "Content/CustomEnemies/HollowSubject", ue5_assets: 44, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false }, attack_06: { approved: false }, attack_07: { approved: false }, attack_08: { approved: false }, heavy_attack_01: { approved: false }, heavy_attack_02: { approved: false }, dodge_01: { approved: false }, dodge_02: { approved: false }, dodge_03: { approved: false }, hit_react_01: { approved: false }, hit_react_02: { approved: false }, hit_react_03: { approved: false }, death_01: { approved: false }, death_02: { approved: false }, death_03: { approved: false }, guard: { approved: false }, guard_hit: { approved: false } } }
+
+hollow_surgeon: { display_name: "Hollow Surgeon", faction: hollow, zone: the_undercroft, role: regular, type: humanoid, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/hollow_surgeon.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/hollow_surgeon/rigged.blend", ue5_folder: "Content/CustomEnemies/HollowSurgeon", ue5_assets: 44, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false }, attack_06: { approved: false }, attack_07: { approved: false }, attack_08: { approved: false }, heavy_attack_01: { approved: false }, heavy_attack_02: { approved: false }, dodge_01: { approved: false }, dodge_02: { approved: false }, dodge_03: { approved: false }, hit_react_01: { approved: false }, hit_react_02: { approved: false }, hit_react_03: { approved: false }, death_01: { approved: false }, death_02: { approved: false }, death_03: { approved: false }, guard: { approved: false }, guard_hit: { approved: false } } }
+
+hollow_trooper: { display_name: "Hollow Trooper", faction: hollow, zone: the_undercroft, role: regular, type: humanoid, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/hollow_trooper.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/hollow_trooper/rigged.blend", ue5_folder: "Content/CustomEnemies/HollowTrooper", ue5_assets: 44, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false }, attack_06: { approved: false }, attack_07: { approved: false }, attack_08: { approved: false }, heavy_attack_01: { approved: false }, heavy_attack_02: { approved: false }, dodge_01: { approved: false }, dodge_02: { approved: false }, dodge_03: { approved: false }, hit_react_01: { approved: false }, hit_react_02: { approved: false }, hit_react_03: { approved: false }, death_01: { approved: false }, death_02: { approved: false }, death_03: { approved: false }, guard: { approved: false }, guard_hit: { approved: false } } }
+
+hollow_warden: { display_name: "Hollow Warden", faction: hollow, zone: the_undercroft, role: regular, type: humanoid, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/hollow_warden.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/hollow_warden/rigged.blend", ue5_folder: "Content/CustomEnemies/HollowWarden", ue5_assets: 48, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false }, attack_06: { approved: false }, attack_07: { approved: false }, attack_08: { approved: false }, heavy_attack_01: { approved: false }, heavy_attack_02: { approved: false }, dodge_01: { approved: false }, dodge_02: { approved: false }, dodge_03: { approved: false }, hit_react_01: { approved: false }, hit_react_02: { approved: false }, hit_react_03: { approved: false }, death_01: { approved: false }, death_02: { approved: false }, death_03: { approved: false }, guard: { approved: false }, guard_hit: { approved: false } } }
+
+# ============================================================================
+# CORE — The Core (Final)
+# ============================================================================
+core_convergence: { display_name: "Core Convergence", faction: core, zone: the_core, role: boss, type: humanoid, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/core_convergence.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/core_convergence/rigged.blend", ue5_folder: "Content/CustomEnemies/CoreConvergence", ue5_assets: 45, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false }, attack_06: { approved: false }, attack_07: { approved: false }, attack_08: { approved: false }, heavy_attack_01: { approved: false }, heavy_attack_02: { approved: false }, dodge_01: { approved: false }, dodge_02: { approved: false }, dodge_03: { approved: false }, hit_react_01: { approved: false }, hit_react_02: { approved: false }, hit_react_03: { approved: false }, death_01: { approved: false }, death_02: { approved: false }, death_03: { approved: false }, guard: { approved: false }, guard_hit: { approved: false } } }
+
+core_vanguard: { display_name: "Core Vanguard", faction: core, zone: the_core, role: elite, type: humanoid, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/core_vanguard.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/core_vanguard/rigged.blend", ue5_folder: "Content/CustomEnemies/CoreVanguard", ue5_assets: 44, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false }, attack_06: { approved: false }, attack_07: { approved: false }, attack_08: { approved: false }, heavy_attack_01: { approved: false }, heavy_attack_02: { approved: false }, dodge_01: { approved: false }, dodge_02: { approved: false }, dodge_03: { approved: false }, hit_react_01: { approved: false }, hit_react_02: { approved: false }, hit_react_03: { approved: false }, death_01: { approved: false }, death_02: { approved: false }, death_03: { approved: false }, guard: { approved: false }, guard_hit: { approved: false } } }
+
+# ============================================================================
+# WILDLIFE & OTHER
+# ============================================================================
+wildlife_rat: { display_name: "Wildlife Rat", faction: wildlife, zone: all, role: ambient, type: quadruped, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/wildlife_rat.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/wildlife_rat/rigged.blend", ue5_folder: "Content/CustomEnemies/WildlifeRat", ue5_assets: 36, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false } } }
+
+wildlife_wolf: { display_name: "Wildlife Wolf", faction: wildlife, zone: all, role: ambient, type: quadruped, concept_art: "C:/scripts/elden_ring_tools/test_meshes/concepts/wildlife_wolf.png", rigged_blend: "C:/scripts/elden_ring_tools/test_meshes/wildlife_wolf/rigged.blend", ue5_folder: "Content/CustomEnemies/WildlifeWolf", ue5_assets: 36, mesh_approved: false, animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false } } }
+
+feral_hound: { display_name: "Feral Hound", faction: withered, zone: ashfields, role: regular, type: quadruped, rigged_blend: null, ue5_folder: "Content/CustomEnemies/FeralHound", ue5_assets: 36, mesh_approved: false, mesh_notes: "No rigged.blend — only rigged.blend1", animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false } } }
+
+sentinel: { display_name: "Sentinel", faction: test, zone: demo, role: test, type: humanoid, mesh_type: single, rigged_blend: null, ue5_folder: "Content/CustomEnemies/Sentinel", ue5_assets: 29, mesh_approved: true, mesh_notes: "Primary test enemy — full pipeline validated, PBR material M_Sentinel", animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false }, attack_04: { approved: false }, attack_05: { approved: false } } }
+
+ash_lurker: { display_name: "Ash Lurker", faction: ashen_order, zone: sanctum_of_ash, role: regular, type: humanoid, mesh_type: body_weapon, body_fbx: "C:/scripts/elden_ring_tools/test_meshes/ash_lurker/body.fbx", weapon_fbx: "C:/scripts/elden_ring_tools/test_meshes/ash_lurker/weapon.fbx", rigged_blend: null, ue5_folder: "Content/CustomEnemies/AshLurker", ue5_assets: 37, mesh_approved: false, mesh_notes: "Has body+weapon FBX but no rigged.blend (only .blend1)", animations: { idle: { approved: false }, walk: { approved: false }, run: { approved: false }, attack_01: { approved: false }, attack_02: { approved: false }, attack_03: { approved: false } } }
+
+# ============================================================================
+# STUBS — Minimal assets, need full pipeline run
+# ============================================================================
+bloated_spitter: { display_name: "Bloated Spitter", faction: withered, zone: ashfields, role: regular, type: humanoid, rigged_blend: null, ue5_folder: "Content/CustomEnemies/BloatedSpitter", ue5_assets: 37, mesh_approved: false, mesh_notes: "No rigged.blend, only .blend1" }
+broodling: { display_name: "Broodling", faction: withered, zone: ashfields, role: regular, type: creature, rigged_blend: null, ue5_folder: "Content/CustomEnemies/Broodling", ue5_assets: 39, mesh_approved: false }
+broodmother: { display_name: "Broodmother", faction: withered, zone: ashfields, role: boss, type: creature, rigged_blend: null, ue5_folder: "Content/CustomEnemies/Broodmother", ue5_assets: 39, mesh_approved: false }
+irradiated_hulk: { display_name: "Irradiated Hulk", faction: withered, zone: ashfields, role: regular, type: humanoid, rigged_blend: null, ue5_folder: "Content/CustomEnemies/IrradiatedHulk", ue5_assets: 39, mesh_approved: false }
+mutant_brute: { display_name: "Mutant Brute", faction: withered, zone: ashfields, role: elite, type: humanoid, rigged_blend: null, ue5_folder: "Content/CustomEnemies/MutantBrute", ue5_assets: 39, mesh_approved: false }
+plague_herald: { display_name: "Plague Herald", faction: withered, zone: ashfields, role: regular, type: humanoid, rigged_blend: null, ue5_folder: "Content/CustomEnemies/PlagueHerald", ue5_assets: 14, mesh_approved: false, mesh_notes: "Stub — minimal assets" }
+wasteland_scavenger: { display_name: "Wasteland Scavenger", faction: withered, zone: ashfields, role: regular, type: humanoid, rigged_blend: null, ue5_folder: "Content/CustomEnemies/WastelandScavenger", ue5_assets: 39, mesh_approved: false }
