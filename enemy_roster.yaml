@@ -21,8 +21,8 @@
 #   Production:  42 enemies (full pipeline, rigged.blend + UE5 imported)
 #   Partial:      8 enemies (imported but missing rig or sparse anims)
 #   Stub:         3 enemies (minimal assets, need full pipeline)
-#   Duplicate:    5 enemies (overlap with faction-prefixed versions)
-#   TOTAL:       58 entries (45 unique production-ready)
+#   Removed:      5 duplicates (Broodling, Broodmother, BloatedSpitter, IrradiatedHulk, MutantBrute)
+#   TOTAL:       53 entries (45 unique production-ready)
 #
 # GAPS TO FILL:
 #   - Ranged enemies (archers, gunners, casters) — 0 exist, need ~10
@@ -980,10 +980,5 @@ ash_lurker: { pipeline_status: partial, display_name: "Ash Lurker", faction: ash
 # ============================================================================
 # STUBS — Minimal assets, need full pipeline run
 # ============================================================================
-bloated_spitter: { pipeline_status: duplicate, duplicate_notes: "Possibly same as withered_spitter — verify", display_name: "Bloated Spitter", faction: withered, zone: ashfields, role: regular, type: humanoid, rigged_blend: null, ue5_folder: "Content/CustomEnemies/BloatedSpitter", ue5_assets: 37, mesh_approved: false, mesh_notes: "No rigged.blend, only .blend1" }
-broodling: { pipeline_status: duplicate, duplicate_notes: "Duplicate of withered_broodling — consider removing", display_name: "Broodling", faction: withered, zone: ashfields, role: regular, type: creature, rigged_blend: null, ue5_folder: "Content/CustomEnemies/Broodling", ue5_assets: 39, mesh_approved: false }
-broodmother: { pipeline_status: duplicate, duplicate_notes: "Duplicate of withered_broodmother — consider removing", display_name: "Broodmother", faction: withered, zone: ashfields, role: boss, type: creature, rigged_blend: null, ue5_folder: "Content/CustomEnemies/Broodmother", ue5_assets: 39, mesh_approved: false }
-irradiated_hulk: { pipeline_status: duplicate, duplicate_notes: "Possibly same as withered_hulk — verify", display_name: "Irradiated Hulk", faction: withered, zone: ashfields, role: regular, type: humanoid, rigged_blend: null, ue5_folder: "Content/CustomEnemies/IrradiatedHulk", ue5_assets: 39, mesh_approved: false }
-mutant_brute: { pipeline_status: duplicate, duplicate_notes: "Possibly same as withered_brute — verify", display_name: "Mutant Brute", faction: withered, zone: ashfields, role: elite, type: humanoid, rigged_blend: null, ue5_folder: "Content/CustomEnemies/MutantBrute", ue5_assets: 39, mesh_approved: false }
 plague_herald: { pipeline_status: stub, display_name: "Plague Herald", faction: withered, zone: ashfields, role: regular, type: humanoid, rigged_blend: null, ue5_folder: "Content/CustomEnemies/PlagueHerald", ue5_assets: 14, mesh_approved: false, mesh_notes: "Stub — minimal assets" }
 wasteland_scavenger: { pipeline_status: stub, display_name: "Wasteland Scavenger", faction: withered, zone: ashfields, role: regular, type: humanoid, rigged_blend: null, ue5_folder: "Content/CustomEnemies/WastelandScavenger", ue5_assets: 39, mesh_approved: false }
