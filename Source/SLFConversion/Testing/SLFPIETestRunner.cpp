@@ -1141,43 +1141,8 @@ void USLFPIETestRunner::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
-	// Auto-spawn a custom enemy 3 seconds after PIE starts
-	if (GetWorld() && GetWorld()->IsPlayInEditor())
-	{
-		FTimerHandle SpawnTimer;
-		GetWorld()->GetTimerManager().SetTimer(SpawnTimer, [this]()
-		{
-			UWorld* World = GetWorld();
-			if (!World) return;
-
-			APlayerController* PC = World->GetFirstPlayerController();
-			APawn* Player = PC ? PC->GetPawn() : nullptr;
-			if (!Player) return;
-
-			FVector SpawnLoc = Player->GetActorLocation() + Player->GetActorForwardVector() * 600.f;
-
-			// Ground trace
-			FHitResult Hit;
-			if (World->LineTraceSingleByChannel(Hit,
-				SpawnLoc + FVector(0, 0, 500), SpawnLoc - FVector(0, 0, 2000), ECC_Visibility))
-			{
-				SpawnLoc.Z = Hit.ImpactPoint.Z + 92.f;
-			}
-
-			FActorSpawnParameters Params;
-			Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-
-			ASLFEnemyGeneric* Enemy = World->SpawnActor<ASLFEnemyGeneric>(
-				ASLFEnemyGeneric::StaticClass(), SpawnLoc, FRotator::ZeroRotator, Params);
-
-			if (Enemy)
-			{
-				Enemy->EnemyTypeName = TEXT("WitheredWanderer");
-				Enemy->ApplyEnemyConfig();
-				UE_LOG(LogTemp, Warning, TEXT("[PIE AutoSpawn] WitheredWanderer at %s"), *SpawnLoc.ToString());
-			}
-		}, 3.0f, false);
-	}
+	// Auto-spawn disabled — use SLF.SpawnCustom <enemy_name> in console instead
+	// if (GetWorld() && GetWorld()->IsPlayInEditor()) { ... }
 
 	UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] Test runner initialized"));
 	UE_LOG(LogTemp, Log, TEXT("[SLFPIETestRunner] Console commands available:"));

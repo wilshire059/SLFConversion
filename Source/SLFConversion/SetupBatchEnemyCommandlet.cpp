@@ -781,6 +781,8 @@ bool USetupBatchEnemyCommandlet::ImportTexturesAndCreateMaterial(
 		goto CreateMaterial;
 	}
 
+	// Use UTextureFactory::FactoryCreateBinary (works in commandlet mode).
+	// UAssetImportTask goes through Interchange which crashes on Slate/ContentBrowser null ptr.
 	for (const auto& TexFile : TextureFiles)
 	{
 		FString FilePath = EnemyDir / TexFile.FileName;
@@ -791,29 +793,48 @@ bool USetupBatchEnemyCommandlet::ImportTexturesAndCreateMaterial(
 		}
 
 		FString TexName = FString::Printf(TEXT("T_%s%s"), *PascalName, TexFile.Suffix);
+		FString PackagePath = DestDir / TexName;
+		UPackage* TexPackage = CreatePackage(*PackagePath);
+		if (!TexPackage) continue;
 
-		UAssetImportTask* TexTask = NewObject<UAssetImportTask>();
-		TexTask->AddToRoot();
-		TexTask->Filename = FilePath;
-		TexTask->DestinationPath = DestDir;
-		TexTask->DestinationName = TexName;
-		TexTask->bAutomated = true;
-		TexTask->bReplaceExisting = true;
-		TexTask->bSave = true;
-
-		ATModule.Get().ImportAssetTasks({TexTask});
-
-		TArray<UObject*> Results = TexTask->GetObjects();
-		for (UObject* Obj : Results)
+		TArray<uint8> FileData;
+		if (!FFileHelper::LoadFileToArray(FileData, *FilePath))
 		{
-			if (UTexture2D* Tex = Cast<UTexture2D>(Obj))
-			{
-				ImportedTextures.Add(FString(TexFile.Suffix), Tex);
-				UE_LOG(LogTemp, Warning, TEXT("  Imported texture: %s"), *TexName);
-				break;
-			}
+			UE_LOG(LogTemp, Error, TEXT("  Failed to read: %s"), *FilePath);
+			continue;
 		}
-		TexTask->RemoveFromRoot();
+
+		UTextureFactory* Factory = NewObject<UTextureFactory>();
+		Factory->SuppressImportOverwriteDialog();
+
+		const uint8* DataPtr = FileData.GetData();
+		UObject* ImportedObj = Factory->FactoryCreateBinary(
+			UTexture2D::StaticClass(),
+			TexPackage,
+			FName(*TexName),
+			RF_Public | RF_Standalone,
+			nullptr,
+			TEXT("png"),
+			DataPtr,
+			DataPtr + FileData.Num(),
+			GWarn);
+
+		if (UTexture2D* Tex = Cast<UTexture2D>(ImportedObj))
+		{
+			FAssetCompilingManager::Get().FinishAllCompilation();
+			TexPackage->MarkPackageDirty();
+			FSavePackageArgs SaveArgs;
+			SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
+			UPackage::SavePackage(TexPackage, Tex,
+				*FPackageName::LongPackageNameToFilename(PackagePath, FPackageName::GetAssetPackageExtension()),
+				SaveArgs);
+			ImportedTextures.Add(FString(TexFile.Suffix), Tex);
+			UE_LOG(LogTemp, Warning, TEXT("  Imported texture: %s (%dx%d)"), *TexName, Tex->GetSizeX(), Tex->GetSizeY());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("  Failed to import texture: %s"), *FilePath);
+		}
 	}
 
 CreateMaterial:
