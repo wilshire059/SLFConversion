@@ -1597,47 +1597,28 @@ void USetupBatchEnemyCommandlet::AddWeaponTraces(const FString& DestDir, const F
 		if (!Montage) continue;
 
 		float Duration = Montage->GetPlayLength();
-		bool bLongAttack = Duration >= 1.5f;
-		float StartTime = Duration * (bLongAttack ? 0.2f : 0.3f);
-		float EndTime = Duration * (bLongAttack ? 0.8f : 0.6f);
+		// Tighter hitbox windows: active during the swing only (40-65% of animation)
+		float StartTime = Duration * 0.35f;
+		float EndTime = Duration * 0.65f;
 
 		Result = USLFAutomationLibrary::AddWeaponTraceToMontage(
 			MontagePath,
 			StartTime,
 			EndTime,
-			120.0f,
+			80.0f,              // Smaller radius (was 120)
 			FName("weapon_start"),
 			FName("weapon_end"),
-			300.0f,
+			180.0f,             // Shorter reach (was 300 — too far)
 			EAxis::X,
 			false,
-			bLongAttack ? 40.0f : 60.0f,
-			bLongAttack ? 20.0f : 30.0f,
+			40.0f,              // Base damage
+			20.0f,              // Poise damage
 			true,
 			FName("lowerarm_r")
 		);
 
-		if (bLongAttack)
-		{
-			for (FAnimNotifyEvent& Evt : Montage->Notifies)
-			{
-				if (USLFAnimNotifyStateWeaponTrace* WT = Cast<USLFAnimNotifyStateWeaponTrace>(Evt.NotifyStateClass))
-				{
-					WT->HitResetInterval = 0.25f;
-				}
-			}
-			UPackage* MontPkg = Montage->GetOutermost();
-			MontPkg->MarkPackageDirty();
-			FString MontFn = FPackageName::LongPackageNameToFilename(MontPkg->GetName(), FPackageName::GetAssetPackageExtension());
-			FSavePackageArgs MontSA;
-			MontSA.TopLevelFlags = RF_Standalone;
-			UPackage::SavePackage(MontPkg, Montage, *MontFn, MontSA);
-		}
-
-		UE_LOG(LogTemp, Warning, TEXT("  %s (%.2f-%.2fs, %s): %s"),
-			*MontageName, StartTime, EndTime,
-			bLongAttack ? TEXT("multi-hit") : TEXT("single"),
-			*Result);
+		UE_LOG(LogTemp, Warning, TEXT("  %s (%.2f-%.2fs): %s"),
+			*MontageName, StartTime, EndTime, *Result);
 	}
 
 	// Heavy attack montages — skip any already processed by TAE
@@ -1652,21 +1633,22 @@ void USetupBatchEnemyCommandlet::AddWeaponTraces(const FString& DestDir, const F
 		if (!Montage) continue;
 
 		float Duration = Montage->GetPlayLength();
-		float StartTime = Duration * 0.4f;
-		float EndTime = Duration * 0.7f;
+		// Heavy attacks: slam comes late (55-75% of animation)
+		float StartTime = Duration * 0.50f;
+		float EndTime = Duration * 0.70f;
 
 		Result = USLFAutomationLibrary::AddWeaponTraceToMontage(
 			MontagePath,
 			StartTime,
 			EndTime,
-			150.0f,
+			100.0f,             // Moderate radius (was 150)
 			FName("weapon_start"),
 			FName("weapon_end"),
-			350.0f,
+			220.0f,             // Shorter reach (was 350)
 			EAxis::X,
 			false,
-			100.0f,
-			60.0f,
+			80.0f,              // High damage
+			50.0f,              // High poise
 			true,
 			FName("lowerarm_r")
 		);
