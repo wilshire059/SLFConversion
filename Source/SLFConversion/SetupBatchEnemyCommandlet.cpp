@@ -1575,21 +1575,23 @@ void USetupBatchEnemyCommandlet::AddSockets(const FString& SkeletonPath)
 void USetupBatchEnemyCommandlet::AddWeaponTraces(const FString& DestDir, const FString& PascalName, const FString& EnemySnakeName)
 {
 	// Try TAE-driven multi-window placement first
-	if (AddWeaponTracesFromTAE(DestDir, PascalName, EnemySnakeName))
+	TSet<FString> TAEProcessedMontages;
+	AddWeaponTracesFromTAE(DestDir, PascalName, EnemySnakeName, &TAEProcessedMontages);
+
+	if (TAEProcessedMontages.Num() > 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("  TAE-driven weapon traces applied successfully"));
-		return;
+		UE_LOG(LogTemp, Warning, TEXT("  TAE-driven weapon traces: %d montages processed"), TAEProcessedMontages.Num());
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("  No TAE JSON found, using heuristic weapon trace placement"));
-
-	// Heuristic fallback: single window per montage
+	// Heuristic fallback for montages that TAE didn't cover
+	UE_LOG(LogTemp, Warning, TEXT("  Applying heuristic weapon traces to remaining montages..."));
 	FString Result;
 
-	// Auto-detect attack montages
+	// Auto-detect attack montages — skip any already processed by TAE
 	for (int32 i = 1; i <= 8; i++)
 	{
 		FString MontageName = FString::Printf(TEXT("AM_%s_Attack%02d"), *PascalName, i);
+		if (TAEProcessedMontages.Contains(MontageName)) continue;
 		FString MontagePath = DestDir / MontageName;
 		UAnimMontage* Montage = LoadObject<UAnimMontage>(nullptr, *MontagePath);
 		if (!Montage) continue;
@@ -1638,12 +1640,13 @@ void USetupBatchEnemyCommandlet::AddWeaponTraces(const FString& DestDir, const F
 			*Result);
 	}
 
-	// Heavy attack montages
+	// Heavy attack montages — skip any already processed by TAE
 	for (int32 i = 1; i <= 2; i++)
 	{
 		FString MontageName = (i == 1)
 			? FString::Printf(TEXT("AM_%s_HeavyAttack"), *PascalName)
 			: FString::Printf(TEXT("AM_%s_HeavyAttack%02d"), *PascalName, i);
+		if (TAEProcessedMontages.Contains(MontageName)) continue;
 		FString MontagePath = DestDir / MontageName;
 		UAnimMontage* Montage = LoadObject<UAnimMontage>(nullptr, *MontagePath);
 		if (!Montage) continue;
@@ -1671,7 +1674,7 @@ void USetupBatchEnemyCommandlet::AddWeaponTraces(const FString& DestDir, const F
 	}
 }
 
-bool USetupBatchEnemyCommandlet::AddWeaponTracesFromTAE(const FString& DestDir, const FString& PascalName, const FString& EnemySnakeName)
+bool USetupBatchEnemyCommandlet::AddWeaponTracesFromTAE(const FString& DestDir, const FString& PascalName, const FString& EnemySnakeName, TSet<FString>* OutProcessedMontages)
 {
 	// Look for tae_hitboxes.json in source directory
 	FString JsonPath = FString(SourceBaseDir) / EnemySnakeName / TEXT("tae_hitboxes.json");
@@ -1837,6 +1840,7 @@ bool USetupBatchEnemyCommandlet::AddWeaponTracesFromTAE(const FString& DestDir, 
 		UE_LOG(LogTemp, Warning, TEXT("    %s [%s]: %d windows -> %s"),
 			*MontageName, *AnimId, Windows.Num(), *Result);
 		MontagesProcessed++;
+		if (OutProcessedMontages) OutProcessedMontages->Add(MontageName);
 	}
 
 	// Process heavy attack montages
@@ -1914,6 +1918,7 @@ bool USetupBatchEnemyCommandlet::AddWeaponTracesFromTAE(const FString& DestDir, 
 		UE_LOG(LogTemp, Warning, TEXT("    %s [%s]: %d windows -> %s"),
 			*MontageName, *AnimId, Windows.Num(), *Result);
 		MontagesProcessed++;
+		if (OutProcessedMontages) OutProcessedMontages->Add(MontageName);
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("  TAE weapon traces: %d montages processed"), MontagesProcessed);

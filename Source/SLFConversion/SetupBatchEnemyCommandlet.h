@@ -53,7 +53,7 @@ private:
 	void AddWeaponTraces(const FString& DestDir, const FString& PascalName, const FString& EnemySnakeName);
 
 	// Add weapon traces from TAE-extracted hitbox JSON. Returns true if JSON found and applied.
-	bool AddWeaponTracesFromTAE(const FString& DestDir, const FString& PascalName, const FString& EnemySnakeName);
+	bool AddWeaponTracesFromTAE(const FString& DestDir, const FString& PascalName, const FString& EnemySnakeName, TSet<FString>* OutProcessedMontages = nullptr);
 
 	// Helper: save asset
 	static bool SaveAsset(UObject* Asset, UPackage* Pkg);
