@@ -414,21 +414,38 @@ int32 USetupBatchEnemyCommandlet::Main(const FString& Params)
 				ATModule.Get().ImportAssetTasks({Task});
 
 				bool bImported = false;
+				UAnimSequence* ImportedSeq = nullptr;
 				for (UObject* Obj : Task->GetObjects())
 				{
 					if (UAnimSequence* Seq = Cast<UAnimSequence>(Obj))
 					{
 						Seq->bForceRootLock = true;
 						Seq->RootMotionRootLock = ERootMotionRootLock::AnimFirstFrame;
+						ImportedSeq = Seq;
 						bImported = true;
 					}
 				}
 				Task->RemoveFromRoot();
 
-				if (!bImported)
+				if (!bImported || !ImportedSeq)
 				{
 					UE_LOG(LogTemp, Warning, TEXT("    Failed to import: %s"), *FBXName);
 					return false;
+				}
+
+				// Force save the imported animation to disk BEFORE creating montage
+				// This fixes Bug #21: package not flushed before LoadObject in montage creation
+				UPackage* SeqPackage = ImportedSeq->GetOutermost();
+				if (SeqPackage)
+				{
+					FString PackageFilename;
+					if (FPackageName::DoesPackageExist(SeqPackage->GetName(), &PackageFilename) || true)
+					{
+						PackageFilename = FPackageName::LongPackageNameToFilename(SeqPackage->GetName(), FPackageName::GetAssetPackageExtension());
+						FSavePackageArgs SaveArgs;
+						SaveArgs.TopLevelFlags = RF_Standalone;
+						UPackage::SavePackage(SeqPackage, ImportedSeq, *PackageFilename, SaveArgs);
+					}
 				}
 
 				// Create montage
