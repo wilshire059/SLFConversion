@@ -1,0 +1,1150 @@
+# ============================================================================
+# ASHBORNE — 100 Enemy Plan with Animation Assignments
+# ============================================================================
+# All enemies use c3100 locomotion (idle/walk/run) and c3100 base for
+# hit reacts, deaths, guard. Only attacks/heavies/dodges/specials are mixed.
+#
+# Attack mixing rule: each enemy uses 2-3 DIFFERENT ER sources per combo
+# so consecutive attacks feel distinct (different swing directions/speeds).
+#
+# Status: existing = already built, new = needs pipeline run
+# approved: false = needs your review, true = good to go
+#
+# Animation source key:
+#   c3010 = Banished Knight (heavy, right→left)
+#   c3400 = Grave Warden (overhead, dual-wield)
+#   c4350 = Lordsworn Knight (disciplined, left→right)
+#   c5830 = Messmer Soldier (thrust, spear)
+#   c3970 = Beastman (feral, uppercut)
+#   c4310 = Lordsworn Soldier (wide sweep, most variety)
+#   c2100 = Black Knife (fast dagger flurry)
+#   c3300 = Nox Priest (flowing + CASTING)
+#   c3700 = Scholar (CASTING, staff)
+#   c3900 = Fire Monk (CASTING + flail)
+#   c4320 = Vulgar Militia (chaotic, small weapon)
+#   c3450 = Misbegotten (feral beast)
+#   c3800 = Cleanrot Knight (spear + holy)
+#   c4290 = Bloodhound Knight (fast, teleport)
+#   c3550 = Sanguine Noble (elegant rapier)
+#   c3070 = Celebrant (varied, 832 anims)
+#   c4050 = Kaiden Sellsword (curved sword)
+#   c3850 = Marionette Soldier (ranged crossbow)
+# ============================================================================
+
+# ============================================================================
+# ZONE 1: THE ASHFIELDS (Withered faction — Easy/Tutorial)
+# Target: 14 enemies (9 existing + 5 new)
+# ============================================================================
+
+# --- EXISTING (9) ---
+withered_wanderer:
+  status: existing
+  zone: ashfields
+  role: regular
+  attack_sources:
+    attack_01: { source: c4310, anim: a000_003000, swing: "right→left horizontal" }
+    attack_02: { source: c3400, anim: a000_003001, swing: "overhead chop" }
+    attack_03: { source: c4350, anim: a000_003003, swing: "left→right sweep" }
+    attack_04: { source: c3970, anim: a000_003002, swing: "rising uppercut" }
+    attack_05: { source: c4310, anim: a000_003005, swing: "wide backhand" }
+    heavy_01: { source: c3400, anim: a000_004100, swing: "overhead slam" }
+
+withered_brute:
+  status: existing
+  zone: ashfields
+  role: regular
+  attack_sources:
+    attack_01: { source: c3400, anim: a000_003000, swing: "wide horizontal" }
+    attack_02: { source: c3010, anim: a000_003001, swing: "heavy overhead" }
+    attack_03: { source: c3400, anim: a000_003003, swing: "double swing" }
+    attack_04: { source: c3970, anim: a000_003004, swing: "feral lunge" }
+    attack_05: { source: c3010, anim: a000_003005, swing: "charging strike" }
+    heavy_01: { source: c3400, anim: a000_004100, swing: "ground slam" }
+
+withered_broodmother:
+  status: existing
+  zone: ashfields
+  role: boss
+  attack_sources:
+    attack_01: { source: c3970, anim: a000_003000, swing: "claw swipe right" }
+    attack_02: { source: c3450, anim: a000_003001, swing: "feral lunge" }
+    attack_03: { source: c3970, anim: a000_003002, swing: "claw swipe left" }
+    attack_04: { source: c3450, anim: a000_003003, swing: "jumping slam" }
+    attack_05: { source: c3070, anim: a000_003004, swing: "spin attack" }
+    attack_06: { source: c3970, anim: a000_003005, swing: "double claw" }
+    attack_07: { source: c3450, anim: a000_003006, swing: "charge rush" }
+    attack_08: { source: c3070, anim: a000_003007, swing: "tail sweep" }
+    attack_09: { source: c3970, anim: a000_003008, swing: "grab attempt" }
+    attack_10: { source: c3450, anim: a000_003009, swing: "berserker flurry" }
+    heavy_01: { source: c3400, anim: a000_004100, swing: "massive slam" }
+    heavy_02: { source: c3010, anim: a000_004101, swing: "leaping crush" }
+    heavy_03: { source: c3970, anim: a000_004120, swing: "ground pound" }
+    dodge_01: { source: c4290, anim: a000_003010, type: "backstep" }
+    dodge_02: { source: c4290, anim: a000_003012, type: "sidestep" }
+    dodge_03: { source: c2100, anim: a000_003014, type: "quick retreat" }
+    special_01: { source: c3300, anim: a000_003020, type: "AOE screech" }
+    special_02: { source: c3070, anim: a000_003025, type: "summon broodlings" }
+
+withered_broodling:
+  status: existing
+  zone: ashfields
+  role: regular
+  attack_sources:
+    attack_01: { source: c3970, anim: a000_003000, swing: "bite lunge" }
+    attack_02: { source: c3450, anim: a000_003001, swing: "claw swipe" }
+    attack_03: { source: c3970, anim: a000_003002, swing: "pounce" }
+    attack_04: { source: c3450, anim: a000_003003, swing: "quick bite" }
+    attack_05: { source: c3970, anim: a000_003004, swing: "flailing attack" }
+    heavy_01: { source: c3450, anim: a000_004100, swing: "leaping pounce" }
+
+withered_hulk:
+  status: existing
+  zone: ashfields
+  role: elite
+  attack_sources:
+    attack_01: { source: c3400, anim: a000_003000, swing: "heavy right swing" }
+    attack_02: { source: c3010, anim: a000_003001, swing: "overhead crush" }
+    attack_03: { source: c3400, anim: a000_003002, swing: "backhand sweep" }
+    attack_04: { source: c3010, anim: a000_003003, swing: "charging slam" }
+    attack_05: { source: c3400, anim: a000_003004, swing: "double swing" }
+    attack_06: { source: c3970, anim: a000_003005, swing: "grab swipe" }
+    heavy_01: { source: c3400, anim: a000_004100, swing: "ground pound" }
+    heavy_02: { source: c3010, anim: a000_004101, swing: "jumping slam" }
+    dodge_01: { source: c3010, anim: a000_003010, type: "shove retreat" }
+    dodge_02: { source: c3400, anim: a000_003012, type: "sidestep" }
+
+withered_lurker:
+  status: existing
+  zone: ashfields
+  role: regular
+  attack_sources:
+    attack_01: { source: c2100, anim: a000_003000, swing: "quick stab" }
+    attack_02: { source: c4320, anim: a000_003001, swing: "chaotic slash" }
+    attack_03: { source: c2100, anim: a000_003002, swing: "backstab lunge" }
+    attack_04: { source: c4320, anim: a000_003003, swing: "wild swing" }
+    attack_05: { source: c2100, anim: a000_003004, swing: "double stab" }
+    heavy_01: { source: c4320, anim: a000_004100, swing: "lunging thrust" }
+
+withered_scrounger:
+  status: existing
+  zone: ashfields
+  role: regular
+  attack_sources:
+    attack_01: { source: c4310, anim: a000_003000, swing: "scrap weapon swing" }
+    attack_02: { source: c4320, anim: a000_003001, swing: "wild chop" }
+    attack_03: { source: c4310, anim: a000_003002, swing: "desperate lunge" }
+    attack_04: { source: c4320, anim: a000_003003, swing: "flailing combo" }
+    attack_05: { source: c4310, anim: a000_003004, swing: "backhand" }
+    heavy_01: { source: c3400, anim: a000_004100, swing: "overhead smash" }
+
+withered_spitter:
+  status: existing
+  zone: ashfields
+  role: regular
+  attack_sources:
+    attack_01: { source: c3970, anim: a000_003000, swing: "claw swipe" }
+    attack_02: { source: c3450, anim: a000_003001, swing: "bite" }
+    attack_03: { source: c3970, anim: a000_003002, swing: "acid spit (projectile)", projectile: true }
+    attack_04: { source: c3450, anim: a000_003003, swing: "lunge bite" }
+    attack_05: { source: c3970, anim: a000_003004, swing: "spray (projectile AOE)", projectile: true }
+    heavy_01: { source: c3450, anim: a000_004100, swing: "charged spit" }
+
+withered_hound:
+  status: existing
+  zone: ashfields
+  role: regular
+  attack_sources:
+    attack_01: { source: c3970, anim: a000_003000, swing: "bite lunge" }
+    attack_02: { source: c3450, anim: a000_003001, swing: "claw rake" }
+    attack_03: { source: c3970, anim: a000_003002, swing: "pounce" }
+    attack_04: { source: c3450, anim: a000_003003, swing: "quick snap" }
+    attack_05: { source: c3970, anim: a000_003004, swing: "spinning bite" }
+    heavy_01: { source: c3450, anim: a000_004100, swing: "leaping tackle" }
+
+# --- NEW ASHFIELDS (5) ---
+withered_crawler:
+  status: new
+  zone: ashfields
+  role: regular
+  concept: "Low-to-ground mutant that scurries and lunges, ambush predator"
+  attack_sources:
+    attack_01: { source: c3450, anim: a000_003000, swing: "lunging claw" }
+    attack_02: { source: c3970, anim: a000_003001, swing: "rising swipe" }
+    attack_03: { source: c3450, anim: a000_003002, swing: "pounce from crawl" }
+    attack_04: { source: c2100, anim: a000_003003, swing: "quick jab" }
+    attack_05: { source: c3450, anim: a000_003004, swing: "tail lash" }
+    heavy_01: { source: c3970, anim: a000_004100, swing: "leaping ambush" }
+
+withered_stalker:
+  status: new
+  zone: ashfields
+  role: regular
+  concept: "Taller mutant with long reach, patient attacker"
+  attack_sources:
+    attack_01: { source: c5830, anim: a000_003000, swing: "long reach thrust" }
+    attack_02: { source: c4350, anim: a000_003001, swing: "sweeping slash" }
+    attack_03: { source: c5830, anim: a000_003002, swing: "double thrust" }
+    attack_04: { source: c4350, anim: a000_003003, swing: "overhead swing" }
+    attack_05: { source: c5830, anim: a000_003004, swing: "retreating poke" }
+    heavy_01: { source: c3010, anim: a000_004100, swing: "charging impale" }
+
+withered_sentinel:
+  status: new
+  zone: ashfields
+  role: elite
+  concept: "Large mutant standing guard at key locations, shield-like arm"
+  attack_sources:
+    attack_01: { source: c3010, anim: a000_003000, swing: "shield bash" }
+    attack_02: { source: c4350, anim: a000_003001, swing: "right sword slash" }
+    attack_03: { source: c3010, anim: a000_003002, swing: "combo: bash + slash" }
+    attack_04: { source: c4350, anim: a000_003003, swing: "overhead chop" }
+    attack_05: { source: c3010, anim: a000_003004, swing: "running bash" }
+    attack_06: { source: c4350, anim: a000_003005, swing: "wide sweep" }
+    heavy_01: { source: c3400, anim: a000_004100, swing: "slam + shockwave" }
+    heavy_02: { source: c3010, anim: a000_004101, swing: "leaping crush" }
+    dodge_01: { source: c3010, anim: a000_003010, type: "backstep" }
+    dodge_02: { source: c4350, anim: a000_003012, type: "shield retreat" }
+
+mutant_alpha:
+  status: new
+  zone: ashfields
+  role: miniboss
+  concept: "Field boss — larger Broodmother variant roaming the wasteland"
+  attack_sources:
+    attack_01: { source: c3970, anim: a000_003000, swing: "claw combo opener" }
+    attack_02: { source: c3450, anim: a000_003001, swing: "lunging bite" }
+    attack_03: { source: c3970, anim: a000_003002, swing: "tail sweep" }
+    attack_04: { source: c3450, anim: a000_003003, swing: "double claw" }
+    attack_05: { source: c3070, anim: a000_003004, swing: "spinning attack" }
+    attack_06: { source: c3970, anim: a000_003005, swing: "grab swipe" }
+    attack_07: { source: c3450, anim: a000_003006, swing: "charge rush" }
+    attack_08: { source: c3070, anim: a000_003007, swing: "ground tremor" }
+    heavy_01: { source: c3400, anim: a000_004100, swing: "massive slam" }
+    heavy_02: { source: c3970, anim: a000_004120, swing: "ground pound AOE" }
+    dodge_01: { source: c4290, anim: a000_003010, type: "quick retreat" }
+    dodge_02: { source: c3970, anim: a000_003012, type: "sidestep lunge" }
+    special_01: { source: c3300, anim: a000_003020, type: "mutation burst AOE" }
+
+withered_shaman:
+  status: new
+  zone: ashfields
+  role: regular
+  concept: "Corrupted healer — melee + acid projectile hybrid"
+  ranged: true
+  attack_sources:
+    attack_01: { source: c3900, anim: a000_003000, swing: "staff swing" }
+    attack_02: { source: c3700, anim: a000_003001, swing: "casting gesture → projectile", projectile: true }
+    attack_03: { source: c3900, anim: a000_003002, swing: "backhand strike" }
+    attack_04: { source: c3700, anim: a000_003003, swing: "double cast → 2 projectiles", projectile: true }
+    attack_05: { source: c3900, anim: a000_003004, swing: "overhead slam" }
+    heavy_01: { source: c3300, anim: a000_004100, swing: "channeled AOE cast", projectile: true }
+
+# ============================================================================
+# ZONE 2: IRONWORKS (Iron Covenant — Medium)
+# Target: 15 enemies (8 existing + 7 new)
+# ============================================================================
+
+# --- EXISTING (8) ---
+iron_berserker:
+  status: existing
+  zone: ironworks
+  role: regular
+  attack_sources:
+    attack_01: { source: c3970, anim: a000_003000, swing: "wild right swing" }
+    attack_02: { source: c3010, anim: a000_003001, swing: "overhead chop" }
+    attack_03: { source: c3970, anim: a000_003002, swing: "feral combo" }
+    attack_04: { source: c3010, anim: a000_003003, swing: "left→right slash" }
+    attack_05: { source: c3970, anim: a000_003004, swing: "spinning attack" }
+    heavy_01: { source: c3010, anim: a000_004100, swing: "berserker leap" }
+
+iron_enforcer:
+  status: existing
+  zone: ironworks
+  role: regular
+  attack_sources:
+    attack_01: { source: c4350, anim: a000_003000, swing: "disciplined thrust" }
+    attack_02: { source: c5830, anim: a000_003001, swing: "spear combo" }
+    attack_03: { source: c4350, anim: a000_003002, swing: "shield bash" }
+    attack_04: { source: c5830, anim: a000_003003, swing: "sweep + thrust" }
+    attack_05: { source: c4350, anim: a000_003004, swing: "guard counter" }
+    heavy_01: { source: c5830, anim: a000_004100, swing: "charging impale" }
+
+iron_forgemaster:
+  status: existing
+  zone: ironworks
+  role: boss
+  attack_sources:
+    attack_01: { source: c3400, anim: a000_003000, swing: "hammer right swing" }
+    attack_02: { source: c3010, anim: a000_003001, swing: "overhead smash" }
+    attack_03: { source: c3400, anim: a000_003002, swing: "backhand sweep" }
+    attack_04: { source: c3010, anim: a000_003003, swing: "combo: swing+slam" }
+    attack_05: { source: c3070, anim: a000_003004, swing: "spin attack" }
+    attack_06: { source: c3400, anim: a000_003005, swing: "uppercut" }
+    attack_07: { source: c3010, anim: a000_003006, swing: "running charge" }
+    attack_08: { source: c3070, anim: a000_003007, swing: "ground pound" }
+    attack_09: { source: c3400, anim: a000_003008, swing: "grab attempt" }
+    attack_10: { source: c3010, anim: a000_003009, swing: "triple slam combo" }
+    heavy_01: { source: c3400, anim: a000_004100, swing: "forge slam + fire" }
+    heavy_02: { source: c3010, anim: a000_004101, swing: "leaping crush" }
+    heavy_03: { source: c3070, anim: a000_004120, swing: "ground shatter" }
+    dodge_01: { source: c3010, anim: a000_003010, type: "heavy backstep" }
+    dodge_02: { source: c4290, anim: a000_003012, type: "sidestep" }
+    dodge_03: { source: c3010, anim: a000_003014, type: "retreat + swing" }
+    special_01: { source: c3900, anim: a000_003020, type: "flame breath", projectile: true }
+    special_02: { source: c3300, anim: a000_003025, type: "forge eruption AOE" }
+
+iron_grunt:
+  status: existing
+  zone: ironworks
+  role: regular
+  attack_sources:
+    attack_01: { source: c4310, anim: a000_003000, swing: "basic right swing" }
+    attack_02: { source: c4350, anim: a000_003001, swing: "left→right chop" }
+    attack_03: { source: c4310, anim: a000_003002, swing: "thrust" }
+    attack_04: { source: c4350, anim: a000_003003, swing: "overhead" }
+    attack_05: { source: c4310, anim: a000_003004, swing: "combo finisher" }
+    heavy_01: { source: c4350, anim: a000_004100, swing: "charging slash" }
+
+iron_heavymech:
+  status: existing
+  zone: ironworks
+  role: elite
+  attack_sources:
+    attack_01: { source: c3010, anim: a000_003000, swing: "heavy punch" }
+    attack_02: { source: c3400, anim: a000_003001, swing: "arm slam" }
+    attack_03: { source: c3010, anim: a000_003002, swing: "haymaker" }
+    attack_04: { source: c3400, anim: a000_003003, swing: "double slam" }
+    attack_05: { source: c3010, anim: a000_003004, swing: "uppercut launch" }
+    attack_06: { source: c3400, anim: a000_003005, swing: "grab crush" }
+    heavy_01: { source: c3400, anim: a000_004100, swing: "piston slam" }
+    heavy_02: { source: c3010, anim: a000_004101, swing: "charging tackle" }
+    dodge_01: { source: c3010, anim: a000_003010, type: "heavy backstep" }
+    dodge_02: { source: c3400, anim: a000_003012, type: "pivot turn" }
+
+iron_priest:
+  status: existing
+  zone: ironworks
+  role: regular
+  ranged: true
+  attack_sources:
+    attack_01: { source: c3900, anim: a000_003000, swing: "flail swing" }
+    attack_02: { source: c3700, anim: a000_003001, swing: "tech blast", projectile: true }
+    attack_03: { source: c3900, anim: a000_003002, swing: "overhead flail" }
+    attack_04: { source: c3700, anim: a000_003003, swing: "seeking orb", projectile: true }
+    attack_05: { source: c3900, anim: a000_003004, swing: "combo: swing + cast" }
+    heavy_01: { source: c3300, anim: a000_004100, swing: "channeled beam", projectile: true }
+
+iron_sparkhound:
+  status: existing
+  zone: ironworks
+  role: regular
+  attack_sources:
+    attack_01: { source: c3970, anim: a000_003000, swing: "spark bite" }
+    attack_02: { source: c3450, anim: a000_003001, swing: "lunge" }
+    attack_03: { source: c3970, anim: a000_003002, swing: "pounce" }
+    attack_04: { source: c3450, anim: a000_003003, swing: "electric snap" }
+    attack_05: { source: c3970, anim: a000_003004, swing: "spinning charge" }
+    heavy_01: { source: c3450, anim: a000_004100, swing: "overcharge pounce" }
+
+iron_stoker:
+  status: existing
+  zone: ironworks
+  role: regular
+  attack_sources:
+    attack_01: { source: c4310, anim: a000_003000, swing: "shovel swing" }
+    attack_02: { source: c3400, anim: a000_003001, swing: "overhead slam" }
+    attack_03: { source: c4310, anim: a000_003002, swing: "horizontal sweep" }
+    attack_04: { source: c3400, anim: a000_003003, swing: "uppercut scoop" }
+    attack_05: { source: c4310, anim: a000_003004, swing: "spinning swing" }
+    heavy_01: { source: c3400, anim: a000_004100, swing: "ember throw", projectile: true }
+
+# --- NEW IRONWORKS (7) ---
+iron_welder:
+  status: new
+  zone: ironworks
+  role: regular
+  concept: "Melee soldier with arc welder weapon — short range but fast"
+  attack_sources:
+    attack_01: { source: c2100, anim: a000_003000, swing: "quick jab" }
+    attack_02: { source: c4320, anim: a000_003001, swing: "chaotic swing" }
+    attack_03: { source: c2100, anim: a000_003002, swing: "double stab" }
+    attack_04: { source: c4320, anim: a000_003003, swing: "spinning slash" }
+    attack_05: { source: c2100, anim: a000_003004, swing: "quick retreat slash" }
+    heavy_01: { source: c4320, anim: a000_004100, swing: "lunging overhead" }
+
+iron_scout:
+  status: new
+  zone: ironworks
+  role: regular
+  concept: "Fast recon unit, light weapon, alerts other enemies"
+  attack_sources:
+    attack_01: { source: c4050, anim: a000_003000, swing: "curved sword slash" }
+    attack_02: { source: c2100, anim: a000_003001, swing: "quick cut" }
+    attack_03: { source: c4050, anim: a000_003002, swing: "dash attack" }
+    attack_04: { source: c2100, anim: a000_003003, swing: "backstep + slash" }
+    attack_05: { source: c4050, anim: a000_003004, swing: "combo finisher" }
+    heavy_01: { source: c2100, anim: a000_004100, swing: "gap-closer lunge" }
+
+iron_hound:
+  status: new
+  zone: ironworks
+  role: regular
+  concept: "Mechanical hound, fast quadruped attacker"
+  attack_sources:
+    attack_01: { source: c3970, anim: a000_003000, swing: "bite" }
+    attack_02: { source: c3450, anim: a000_003001, swing: "claw rake" }
+    attack_03: { source: c3970, anim: a000_003002, swing: "pounce" }
+    attack_04: { source: c3450, anim: a000_003003, swing: "spinning charge" }
+    attack_05: { source: c3970, anim: a000_003004, swing: "quick snap" }
+    heavy_01: { source: c3450, anim: a000_004100, swing: "leaping tackle" }
+
+iron_rifleman:
+  status: new
+  zone: ironworks
+  role: regular
+  ranged: true
+  concept: "Ranged soldier with scrap rifle, melee butt-strike when close"
+  attack_sources:
+    attack_01: { source: c3850, anim: a000_003000, swing: "ranged shot", projectile: true }
+    attack_02: { source: c4310, anim: a000_003001, swing: "rifle butt strike" }
+    attack_03: { source: c3850, anim: a000_003002, swing: "double shot", projectile: true }
+    attack_04: { source: c4310, anim: a000_003003, swing: "shove + shoot", projectile: true }
+    attack_05: { source: c3850, anim: a000_003004, swing: "rapid fire burst", projectile: true }
+    heavy_01: { source: c4310, anim: a000_004100, swing: "charged shot", projectile: true }
+
+iron_technomancer:
+  status: new
+  zone: ironworks
+  role: regular
+  ranged: true
+  concept: "Tech caster — uses device to shoot energy bolts + melee staff"
+  attack_sources:
+    attack_01: { source: c3700, anim: a000_003000, swing: "energy bolt", projectile: true }
+    attack_02: { source: c3900, anim: a000_003001, swing: "staff swing" }
+    attack_03: { source: c3700, anim: a000_003002, swing: "triple bolt burst", projectile: true }
+    attack_04: { source: c3900, anim: a000_003003, swing: "overhead staff slam" }
+    attack_05: { source: c3300, anim: a000_003004, swing: "seeking orb", projectile: true }
+    heavy_01: { source: c3300, anim: a000_004100, swing: "channeled beam", projectile: true }
+
+iron_overseer:
+  status: new
+  zone: ironworks
+  role: miniboss
+  concept: "Factory mini-boss — heavy mech suit, slow but devastating"
+  attack_sources:
+    attack_01: { source: c3010, anim: a000_003000, swing: "heavy right hook" }
+    attack_02: { source: c3400, anim: a000_003001, swing: "overhead slam" }
+    attack_03: { source: c3010, anim: a000_003002, swing: "left hook" }
+    attack_04: { source: c3400, anim: a000_003003, swing: "ground pound" }
+    attack_05: { source: c3070, anim: a000_003004, swing: "spinning backfist" }
+    attack_06: { source: c3010, anim: a000_003005, swing: "charging tackle" }
+    attack_07: { source: c3400, anim: a000_003006, swing: "double slam" }
+    attack_08: { source: c3070, anim: a000_003007, swing: "grab + throw" }
+    heavy_01: { source: c3400, anim: a000_004100, swing: "piston slam AOE" }
+    heavy_02: { source: c3010, anim: a000_004101, swing: "rocket charge" }
+    dodge_01: { source: c3010, anim: a000_003010, type: "heavy backstep" }
+    dodge_02: { source: c3400, anim: a000_003012, type: "stomp retreat" }
+    special_01: { source: c3900, anim: a000_003020, type: "steam vent AOE" }
+
+sentry_drone:
+  status: new
+  zone: ironworks
+  role: ambient
+  concept: "Small floating drone, patrol + alert, minimal combat"
+  attack_sources:
+    attack_01: { source: c3850, anim: a000_003000, swing: "electric zap", projectile: true }
+    attack_02: { source: c3850, anim: a000_003001, swing: "dive bomb" }
+    attack_03: { source: c3850, anim: a000_003002, swing: "burst fire", projectile: true }
+    heavy_01: { source: c3850, anim: a000_004100, swing: "self-destruct" }
+
+# ============================================================================
+# ZONE 3: THE RIFT (Veilborn — Medium-Hard)
+# Target: 15 enemies (8 existing + 7 new)
+# ============================================================================
+
+# --- EXISTING (8) ---
+veilborn_convergent:
+  status: existing
+  zone: the_rift
+  role: boss
+  notes: "Zone boss — uses Nox Priest casting + Bloodhound fast attacks"
+  attack_sources:
+    attack_01: { source: c3300, anim: a000_003000, swing: "flowing slash" }
+    attack_02: { source: c4290, anim: a000_003001, swing: "teleport strike" }
+    attack_03: { source: c3300, anim: a000_003002, swing: "double slash" }
+    attack_04: { source: c4290, anim: a000_003003, swing: "dash + slash" }
+    attack_05: { source: c3300, anim: a000_003004, swing: "wide arc" }
+    attack_06: { source: c4290, anim: a000_003005, swing: "flurry combo" }
+    attack_07: { source: c3550, anim: a000_003006, swing: "elegant thrust" }
+    attack_08: { source: c3300, anim: a000_003007, swing: "void slash", projectile: true }
+    attack_09: { source: c4290, anim: a000_003008, swing: "vanish + backstab" }
+    attack_10: { source: c3550, anim: a000_003009, swing: "riposte combo" }
+    heavy_01: { source: c3300, anim: a000_004100, swing: "void explosion", projectile: true }
+    heavy_02: { source: c4290, anim: a000_004101, swing: "blink strike" }
+    heavy_03: { source: c3550, anim: a000_004120, swing: "charged thrust" }
+    dodge_01: { source: c4290, anim: a000_003010, type: "blink dodge" }
+    dodge_02: { source: c2100, anim: a000_003012, type: "shadow step" }
+    dodge_03: { source: c4290, anim: a000_003014, type: "vanish" }
+    special_01: { source: c3300, anim: a000_003020, type: "rift tear AOE", projectile: true }
+    special_02: { source: c3300, anim: a000_003025, type: "void storm" }
+
+veilborn_operative: { status: existing, zone: the_rift, role: regular }
+veilborn_phasehunter: { status: existing, zone: the_rift, role: regular }
+veilborn_pilgrim: { status: existing, zone: the_rift, role: regular }
+veilborn_rifthound: { status: existing, zone: the_rift, role: regular }
+veilborn_sentry: { status: existing, zone: the_rift, role: regular }
+veilborn_stalker: { status: existing, zone: the_rift, role: regular }
+veilborn_warden: { status: existing, zone: the_rift, role: elite }
+
+# --- NEW RIFT (7) ---
+veilborn_acolyte:
+  status: new
+  zone: the_rift
+  role: regular
+  concept: "Junior Veilborn, learning rift powers, erratic attacks"
+  attack_sources:
+    attack_01: { source: c4320, anim: a000_003000, swing: "erratic slash" }
+    attack_02: { source: c3300, anim: a000_003001, swing: "unstable energy swipe" }
+    attack_03: { source: c4320, anim: a000_003002, swing: "wild combo" }
+    attack_04: { source: c3300, anim: a000_003003, swing: "rift flicker slash" }
+    attack_05: { source: c4320, anim: a000_003004, swing: "desperate lunge" }
+    heavy_01: { source: c3300, anim: a000_004100, swing: "rift burst", projectile: true }
+
+veilborn_shade:
+  status: new
+  zone: the_rift
+  role: regular
+  concept: "Translucent enemy, hard to see, ambush attacker"
+  attack_sources:
+    attack_01: { source: c2100, anim: a000_003000, swing: "appearing stab" }
+    attack_02: { source: c4290, anim: a000_003001, swing: "phase strike" }
+    attack_03: { source: c2100, anim: a000_003002, swing: "double slash" }
+    attack_04: { source: c4290, anim: a000_003003, swing: "blink attack" }
+    attack_05: { source: c2100, anim: a000_003004, swing: "retreating cut" }
+    heavy_01: { source: c4290, anim: a000_004100, swing: "teleport slam" }
+
+veilborn_crawler:
+  status: new
+  zone: the_rift
+  role: regular
+  concept: "Reality-warped creature, moves unnaturally"
+  attack_sources:
+    attack_01: { source: c3450, anim: a000_003000, swing: "distorted lunge" }
+    attack_02: { source: c3970, anim: a000_003001, swing: "claw rake" }
+    attack_03: { source: c3450, anim: a000_003002, swing: "pounce" }
+    attack_04: { source: c3970, anim: a000_003003, swing: "spinning attack" }
+    attack_05: { source: c3450, anim: a000_003004, swing: "ground slam" }
+    heavy_01: { source: c3970, anim: a000_004100, swing: "reality rip" }
+
+veilborn_caster:
+  status: new
+  zone: the_rift
+  role: regular
+  ranged: true
+  concept: "Rift mage — void projectiles at range, weak melee"
+  attack_sources:
+    attack_01: { source: c3300, anim: a000_003000, swing: "void bolt", projectile: true }
+    attack_02: { source: c3700, anim: a000_003001, swing: "seeking orb", projectile: true }
+    attack_03: { source: c3300, anim: a000_003002, swing: "triple void bolt", projectile: true }
+    attack_04: { source: c3700, anim: a000_003003, swing: "staff poke (melee)" }
+    attack_05: { source: c3300, anim: a000_003004, swing: "void wave", projectile: true }
+    heavy_01: { source: c3300, anim: a000_004100, swing: "channeled rift beam", projectile: true }
+
+veilborn_sniper:
+  status: new
+  zone: the_rift
+  role: regular
+  ranged: true
+  concept: "Long-range rift marksman, repositions after each shot"
+  attack_sources:
+    attack_01: { source: c3850, anim: a000_003000, swing: "aimed shot", projectile: true }
+    attack_02: { source: c3850, anim: a000_003001, swing: "quick shot", projectile: true }
+    attack_03: { source: c2100, anim: a000_003002, swing: "knife slash (close range)" }
+    attack_04: { source: c3850, anim: a000_003003, swing: "charged shot", projectile: true }
+    attack_05: { source: c2100, anim: a000_003004, swing: "backstep + shoot", projectile: true }
+    heavy_01: { source: c3850, anim: a000_004100, swing: "penetrating shot", projectile: true }
+
+veilborn_archon:
+  status: new
+  zone: the_rift
+  role: miniboss
+  concept: "Rift mini-boss — Bloodhound speed + Nox casting, teleports"
+  attack_sources:
+    attack_01: { source: c4290, anim: a000_003000, swing: "blink slash" }
+    attack_02: { source: c3300, anim: a000_003001, swing: "void arc" }
+    attack_03: { source: c4290, anim: a000_003002, swing: "triple blink combo" }
+    attack_04: { source: c3300, anim: a000_003003, swing: "flowing double slash" }
+    attack_05: { source: c4290, anim: a000_003004, swing: "vanish + overhead" }
+    attack_06: { source: c3550, anim: a000_003005, swing: "elegant thrust" }
+    attack_07: { source: c3300, anim: a000_003006, swing: "void orb toss", projectile: true }
+    attack_08: { source: c4290, anim: a000_003007, swing: "blink flurry" }
+    heavy_01: { source: c3300, anim: a000_004100, swing: "rift collapse AOE" }
+    heavy_02: { source: c4290, anim: a000_004101, swing: "teleport slam" }
+    dodge_01: { source: c4290, anim: a000_003010, type: "blink" }
+    dodge_02: { source: c2100, anim: a000_003012, type: "shadow dodge" }
+    special_01: { source: c3300, anim: a000_003020, type: "reality tear summon" }
+
+rift_wisp:
+  status: new
+  zone: the_rift
+  role: ambient
+  concept: "Small rift anomaly, floats, minor electric damage on contact"
+  attack_sources:
+    attack_01: { source: c3300, anim: a000_003000, swing: "energy pulse", projectile: true }
+    attack_02: { source: c3300, anim: a000_003001, swing: "spark burst" }
+    attack_03: { source: c3300, anim: a000_003002, swing: "zap", projectile: true }
+    heavy_01: { source: c3300, anim: a000_004100, swing: "overcharge pop" }
+
+# ============================================================================
+# ZONE 4: SANCTUM OF ASH (Ashen Order — Hard)
+# Target: 15 enemies (9 existing + 6 new)
+# ============================================================================
+
+# --- EXISTING (9) ---
+ashen_champion: { status: existing, zone: sanctum_of_ash, role: elite }
+ashen_flagellant: { status: existing, zone: sanctum_of_ash, role: regular }
+ashen_heavy: { status: existing, zone: sanctum_of_ash, role: regular }
+ashen_hierophant: { status: existing, zone: sanctum_of_ash, role: boss }
+ashen_inquisitor: { status: existing, zone: sanctum_of_ash, role: regular }
+ashen_marksman: { status: existing, zone: sanctum_of_ash, role: regular }
+ashen_militant: { status: existing, zone: sanctum_of_ash, role: regular }
+ashen_purifier: { status: existing, zone: sanctum_of_ash, role: regular }
+ash_lurker: { status: existing, zone: sanctum_of_ash, role: regular }
+
+# --- NEW SANCTUM (6) ---
+ashen_sentinel:
+  status: new
+  zone: sanctum_of_ash
+  role: regular
+  concept: "Temple guard — shield + mace, defensive fighter"
+  attack_sources:
+    attack_01: { source: c4350, anim: a000_003000, swing: "shield bash" }
+    attack_02: { source: c3800, anim: a000_003001, swing: "mace overhead" }
+    attack_03: { source: c4350, anim: a000_003002, swing: "shield+mace combo" }
+    attack_04: { source: c3800, anim: a000_003003, swing: "thrust with shield" }
+    attack_05: { source: c4350, anim: a000_003004, swing: "backhand swing" }
+    heavy_01: { source: c3800, anim: a000_004100, swing: "shield charge" }
+
+ashen_fanatic:
+  status: new
+  zone: sanctum_of_ash
+  role: regular
+  concept: "Zealous cultist — dual daggers, fast and reckless"
+  attack_sources:
+    attack_01: { source: c2100, anim: a000_003000, swing: "dagger flurry" }
+    attack_02: { source: c4050, anim: a000_003001, swing: "cross slash" }
+    attack_03: { source: c2100, anim: a000_003002, swing: "backstep + lunge" }
+    attack_04: { source: c4050, anim: a000_003003, swing: "spinning cut" }
+    attack_05: { source: c2100, anim: a000_003004, swing: "leaping stab" }
+    heavy_01: { source: c4050, anim: a000_004100, swing: "berserker rush" }
+
+ashen_pyromancer:
+  status: new
+  zone: sanctum_of_ash
+  role: regular
+  ranged: true
+  concept: "Fire cultist — incantation casting + torch melee"
+  attack_sources:
+    attack_01: { source: c3900, anim: a000_003000, swing: "fire bolt", projectile: true }
+    attack_02: { source: c3900, anim: a000_003001, swing: "torch swing" }
+    attack_03: { source: c3700, anim: a000_003002, swing: "fire orb", projectile: true }
+    attack_04: { source: c3900, anim: a000_003003, swing: "flame arc", projectile: true }
+    attack_05: { source: c3900, anim: a000_003004, swing: "overhead torch slam" }
+    heavy_01: { source: c3900, anim: a000_004100, swing: "flame pillar", projectile: true }
+
+ashen_bowman:
+  status: new
+  zone: sanctum_of_ash
+  role: regular
+  ranged: true
+  concept: "Ranged archer cultist — scrap crossbow + knife"
+  attack_sources:
+    attack_01: { source: c3850, anim: a000_003000, swing: "crossbow shot", projectile: true }
+    attack_02: { source: c2100, anim: a000_003001, swing: "knife slash" }
+    attack_03: { source: c3850, anim: a000_003002, swing: "rapid fire", projectile: true }
+    attack_04: { source: c2100, anim: a000_003003, swing: "kick + shoot", projectile: true }
+    attack_05: { source: c3850, anim: a000_003004, swing: "aimed shot", projectile: true }
+    heavy_01: { source: c3850, anim: a000_004100, swing: "explosive bolt", projectile: true }
+
+ashen_templar:
+  status: new
+  zone: sanctum_of_ash
+  role: miniboss
+  concept: "Temple guardian mini-boss — greatsword + holy fire"
+  attack_sources:
+    attack_01: { source: c3010, anim: a000_003000, swing: "greatsword right sweep" }
+    attack_02: { source: c3800, anim: a000_003001, swing: "holy thrust" }
+    attack_03: { source: c3010, anim: a000_003002, swing: "overhead chop" }
+    attack_04: { source: c3800, anim: a000_003003, swing: "spear combo" }
+    attack_05: { source: c3010, anim: a000_003004, swing: "wide backswing" }
+    attack_06: { source: c3800, anim: a000_003005, swing: "shield bash + thrust" }
+    attack_07: { source: c3010, anim: a000_003006, swing: "running slash" }
+    attack_08: { source: c3900, anim: a000_003007, swing: "fire wave", projectile: true }
+    heavy_01: { source: c3010, anim: a000_004100, swing: "greatsword slam" }
+    heavy_02: { source: c3800, anim: a000_004101, swing: "holy explosion AOE" }
+    dodge_01: { source: c3010, anim: a000_003010, type: "heavy backstep" }
+    dodge_02: { source: c3800, anim: a000_003012, type: "parry stance" }
+    special_01: { source: c3900, anim: a000_003020, type: "blessing aura (buff)" }
+
+ashen_wraith:
+  status: new
+  zone: sanctum_of_ash
+  role: ambient
+  concept: "Ghost-like presence, patrols temple halls, weak but spooky"
+  attack_sources:
+    attack_01: { source: c3300, anim: a000_003000, swing: "spectral slash" }
+    attack_02: { source: c3300, anim: a000_003001, swing: "phase through + hit" }
+    attack_03: { source: c3300, anim: a000_003002, swing: "wail burst", projectile: true }
+    heavy_01: { source: c3300, anim: a000_004100, swing: "despair shriek AOE" }
+
+# ============================================================================
+# ZONE 5: THE UNDERCROFT (Hollow — Very Hard)
+# Target: 17 enemies (10 existing + 7 new)
+# ============================================================================
+
+# --- EXISTING (10) ---
+hollow_alpha: { status: existing, zone: the_undercroft, role: elite }
+hollow_breach: { status: existing, zone: the_undercroft, role: regular }
+hollow_crawler: { status: existing, zone: the_undercroft, role: regular }
+hollow_feral: { status: existing, zone: the_undercroft, role: regular }
+hollow_primordial: { status: existing, zone: the_undercroft, role: boss }
+hollow_researcher: { status: existing, zone: the_undercroft, role: regular }
+hollow_subject: { status: existing, zone: the_undercroft, role: regular }
+hollow_surgeon: { status: existing, zone: the_undercroft, role: regular }
+hollow_trooper: { status: existing, zone: the_undercroft, role: regular }
+hollow_warden: { status: existing, zone: the_undercroft, role: regular }
+
+# --- NEW UNDERCROFT (7) ---
+hollow_splicer:
+  status: new
+  zone: the_undercroft
+  role: regular
+  concept: "Lab technician gone mad — scalpel + syringe attacks"
+  attack_sources:
+    attack_01: { source: c2100, anim: a000_003000, swing: "scalpel slash" }
+    attack_02: { source: c3550, anim: a000_003001, swing: "syringe thrust" }
+    attack_03: { source: c2100, anim: a000_003002, swing: "quick double cut" }
+    attack_04: { source: c3550, anim: a000_003003, swing: "injection stab (poison)" }
+    attack_05: { source: c2100, anim: a000_003004, swing: "retreating slash" }
+    heavy_01: { source: c3550, anim: a000_004100, swing: "lunging injection" }
+
+hollow_drone:
+  status: new
+  zone: the_undercroft
+  role: regular
+  concept: "Mindless experiment — erratic, unpredictable movements"
+  attack_sources:
+    attack_01: { source: c4320, anim: a000_003000, swing: "flailing arm" }
+    attack_02: { source: c3450, anim: a000_003001, swing: "headbutt" }
+    attack_03: { source: c4320, anim: a000_003002, swing: "random swing" }
+    attack_04: { source: c3450, anim: a000_003003, swing: "stumble attack" }
+    attack_05: { source: c4320, anim: a000_003004, swing: "grapple lurch" }
+    heavy_01: { source: c3450, anim: a000_004100, swing: "self-destruct lunge" }
+
+hollow_defector:
+  status: new
+  zone: the_undercroft
+  role: regular
+  concept: "Escaped experiment with stolen weapon — fights like a soldier"
+  attack_sources:
+    attack_01: { source: c4310, anim: a000_003000, swing: "sword slash" }
+    attack_02: { source: c4350, anim: a000_003001, swing: "overhead chop" }
+    attack_03: { source: c4310, anim: a000_003002, swing: "combo: slash + thrust" }
+    attack_04: { source: c4350, anim: a000_003003, swing: "wide sweep" }
+    attack_05: { source: c4310, anim: a000_003004, swing: "backstep + counter" }
+    heavy_01: { source: c4350, anim: a000_004100, swing: "charging slash" }
+
+hollow_emitter:
+  status: new
+  zone: the_undercroft
+  role: regular
+  ranged: true
+  concept: "Experiment with energy device grafted to arm — ranged tech"
+  attack_sources:
+    attack_01: { source: c3700, anim: a000_003000, swing: "energy pulse", projectile: true }
+    attack_02: { source: c3700, anim: a000_003001, swing: "arm sweep (melee)" }
+    attack_03: { source: c3300, anim: a000_003002, swing: "rapid pulse", projectile: true }
+    attack_04: { source: c3700, anim: a000_003003, swing: "backhand strike" }
+    attack_05: { source: c3300, anim: a000_003004, swing: "charged burst", projectile: true }
+    heavy_01: { source: c3300, anim: a000_004100, swing: "overload beam", projectile: true }
+
+hollow_sniper:
+  status: new
+  zone: the_undercroft
+  role: regular
+  ranged: true
+  concept: "Experiment with enhanced eyes — long range precision"
+  attack_sources:
+    attack_01: { source: c3850, anim: a000_003000, swing: "precision shot", projectile: true }
+    attack_02: { source: c2100, anim: a000_003001, swing: "pistol whip" }
+    attack_03: { source: c3850, anim: a000_003002, swing: "double tap", projectile: true }
+    attack_04: { source: c2100, anim: a000_003003, swing: "knife slash" }
+    attack_05: { source: c3850, anim: a000_003004, swing: "charged railshot", projectile: true }
+    heavy_01: { source: c3850, anim: a000_004100, swing: "penetrating shot", projectile: true }
+
+hollow_overseer:
+  status: new
+  zone: the_undercroft
+  role: miniboss
+  concept: "Lead researcher — controls experiments, powerful tech + melee"
+  attack_sources:
+    attack_01: { source: c3800, anim: a000_003000, swing: "spear thrust" }
+    attack_02: { source: c3300, anim: a000_003001, swing: "energy wave", projectile: true }
+    attack_03: { source: c3800, anim: a000_003002, swing: "sweep + thrust combo" }
+    attack_04: { source: c3300, anim: a000_003003, swing: "void orb", projectile: true }
+    attack_05: { source: c3800, anim: a000_003004, swing: "spear spin" }
+    attack_06: { source: c3550, anim: a000_003005, swing: "elegant riposte" }
+    attack_07: { source: c3300, anim: a000_003006, swing: "seeking missiles", projectile: true }
+    attack_08: { source: c3800, anim: a000_003007, swing: "impaling charge" }
+    heavy_01: { source: c3300, anim: a000_004100, swing: "experiment release AOE" }
+    heavy_02: { source: c3800, anim: a000_004101, swing: "holy lance" }
+    dodge_01: { source: c4290, anim: a000_003010, type: "phase shift" }
+    dodge_02: { source: c2100, anim: a000_003012, type: "backstep" }
+    special_01: { source: c3700, anim: a000_003020, type: "summon hollow drone" }
+
+hollow_parasite:
+  status: new
+  zone: the_undercroft
+  role: ambient
+  concept: "Tiny swarming creature, weak individually, appears in groups"
+  attack_sources:
+    attack_01: { source: c3450, anim: a000_003000, swing: "latch bite" }
+    attack_02: { source: c3450, anim: a000_003001, swing: "acid spit", projectile: true }
+    attack_03: { source: c3450, anim: a000_003002, swing: "pounce" }
+    heavy_01: { source: c3450, anim: a000_004100, swing: "burrow + emerge" }
+
+# ============================================================================
+# ZONE 6: THE CORE (Final — All Corruption)
+# Target: 10 enemies (2 existing + 8 new)
+# ============================================================================
+
+# --- EXISTING (2) ---
+core_convergence:
+  status: existing
+  zone: the_core
+  role: boss
+  notes: "FINAL BOSS — phases, all attack types, most complex moveset"
+  attack_sources:
+    attack_01: { source: c4290, anim: a000_003000, swing: "blink slash" }
+    attack_02: { source: c3300, anim: a000_003001, swing: "void arc" }
+    attack_03: { source: c3010, anim: a000_003002, swing: "heavy overhead" }
+    attack_04: { source: c3550, anim: a000_003003, swing: "elegant combo" }
+    attack_05: { source: c4290, anim: a000_003004, swing: "teleport flurry" }
+    attack_06: { source: c3300, anim: a000_003005, swing: "void projectile burst", projectile: true }
+    attack_07: { source: c3010, anim: a000_003006, swing: "charging slash" }
+    attack_08: { source: c3970, anim: a000_003007, swing: "feral claw combo" }
+    attack_09: { source: c4290, anim: a000_003008, swing: "vanish + 3-hit" }
+    attack_10: { source: c3300, anim: a000_003009, swing: "reality tear" }
+    attack_11: { source: c3550, anim: a000_003010, swing: "rapier riposte" }
+    attack_12: { source: c3010, anim: a000_003011, swing: "greatsword sweep" }
+    heavy_01: { source: c3400, anim: a000_004100, swing: "convergence slam AOE" }
+    heavy_02: { source: c3010, anim: a000_004101, swing: "void explosion" }
+    heavy_03: { source: c3300, anim: a000_004120, swing: "reality collapse" }
+    heavy_04: { source: c4290, anim: a000_004121, swing: "blink slam" }
+    dodge_01: { source: c4290, anim: a000_003015, type: "blink" }
+    dodge_02: { source: c2100, anim: a000_003016, type: "shadow step" }
+    dodge_03: { source: c4290, anim: a000_003017, type: "phase shift" }
+    special_01: { source: c3300, anim: a000_003020, type: "reality storm AOE" }
+    special_02: { source: c3700, anim: a000_003025, type: "convergence beam", projectile: true }
+    special_03: { source: c3900, anim: a000_003030, type: "phase transition" }
+
+core_vanguard: { status: existing, zone: the_core, role: elite }
+
+# --- NEW CORE (8) ---
+core_drone:
+  status: new
+  zone: the_core
+  role: regular
+  concept: "Corrupted automaton — mechanical + organic hybrid"
+  attack_sources:
+    attack_01: { source: c4310, anim: a000_003000, swing: "blade arm slash" }
+    attack_02: { source: c3070, anim: a000_003001, swing: "spin attack" }
+    attack_03: { source: c4310, anim: a000_003002, swing: "double slash" }
+    attack_04: { source: c3070, anim: a000_003003, swing: "overhead chop" }
+    attack_05: { source: c4310, anim: a000_003004, swing: "thrust" }
+    heavy_01: { source: c3070, anim: a000_004100, swing: "overclocked slam" }
+
+core_sentinel:
+  status: new
+  zone: the_core
+  role: regular
+  concept: "Elite Core guardian — disciplined, shield + energy weapon"
+  attack_sources:
+    attack_01: { source: c4350, anim: a000_003000, swing: "energy sword slash" }
+    attack_02: { source: c3800, anim: a000_003001, swing: "shield thrust" }
+    attack_03: { source: c4350, anim: a000_003002, swing: "combo: slash + bash" }
+    attack_04: { source: c3800, anim: a000_003003, swing: "sweep" }
+    attack_05: { source: c4350, anim: a000_003004, swing: "counter strike" }
+    heavy_01: { source: c3800, anim: a000_004100, swing: "energy discharge", projectile: true }
+
+core_aberration:
+  status: new
+  zone: the_core
+  role: regular
+  concept: "Badly mutated creature — unpredictable, part machine"
+  attack_sources:
+    attack_01: { source: c3450, anim: a000_003000, swing: "tendril whip" }
+    attack_02: { source: c3970, anim: a000_003001, swing: "claw lunge" }
+    attack_03: { source: c3450, anim: a000_003002, swing: "acid spray", projectile: true }
+    attack_04: { source: c3970, anim: a000_003003, swing: "grab" }
+    attack_05: { source: c3450, anim: a000_003004, swing: "ground pound" }
+    heavy_01: { source: c3970, anim: a000_004100, swing: "mutation burst AOE" }
+
+core_fragment:
+  status: new
+  zone: the_core
+  role: regular
+  concept: "Piece of the Convergence itself — pure energy entity"
+  attack_sources:
+    attack_01: { source: c3300, anim: a000_003000, swing: "energy slash" }
+    attack_02: { source: c3300, anim: a000_003001, swing: "void bolt", projectile: true }
+    attack_03: { source: c3300, anim: a000_003002, swing: "pulse wave" }
+    attack_04: { source: c3300, anim: a000_003003, swing: "seeking orb", projectile: true }
+    attack_05: { source: c3300, anim: a000_003004, swing: "energy burst" }
+    heavy_01: { source: c3300, anim: a000_004100, swing: "convergence pulse AOE" }
+
+core_emitter:
+  status: new
+  zone: the_core
+  role: regular
+  ranged: true
+  concept: "Ranged core enemy — fires convergence energy at distance"
+  attack_sources:
+    attack_01: { source: c3700, anim: a000_003000, swing: "energy beam", projectile: true }
+    attack_02: { source: c3700, anim: a000_003001, swing: "tracking orb", projectile: true }
+    attack_03: { source: c3300, anim: a000_003002, swing: "burst fire", projectile: true }
+    attack_04: { source: c3700, anim: a000_003003, swing: "staff strike (melee)" }
+    attack_05: { source: c3300, anim: a000_003004, swing: "void barrage", projectile: true }
+    heavy_01: { source: c3700, anim: a000_004100, swing: "focused beam", projectile: true }
+
+core_channeler:
+  status: new
+  zone: the_core
+  role: regular
+  ranged: true
+  concept: "Support caster — buffs other Core enemies, AOE debuffs"
+  attack_sources:
+    attack_01: { source: c3900, anim: a000_003000, swing: "corruption bolt", projectile: true }
+    attack_02: { source: c3900, anim: a000_003001, swing: "staff swing" }
+    attack_03: { source: c3700, anim: a000_003002, swing: "buff allies cast" }
+    attack_04: { source: c3900, anim: a000_003003, swing: "debuff aura" }
+    attack_05: { source: c3700, anim: a000_003004, swing: "chain lightning", projectile: true }
+    heavy_01: { source: c3900, anim: a000_004100, swing: "mass corruption AOE" }
+
+core_herald:
+  status: new
+  zone: the_core
+  role: miniboss
+  concept: "Mini-boss — avatar of the Convergence, precursor to final boss"
+  attack_sources:
+    attack_01: { source: c3010, anim: a000_003000, swing: "greatsword sweep" }
+    attack_02: { source: c3300, anim: a000_003001, swing: "void slash" }
+    attack_03: { source: c3010, anim: a000_003002, swing: "overhead smash" }
+    attack_04: { source: c4290, anim: a000_003003, swing: "teleport strike" }
+    attack_05: { source: c3300, anim: a000_003004, swing: "double void arc" }
+    attack_06: { source: c3010, anim: a000_003005, swing: "charging combo" }
+    attack_07: { source: c4290, anim: a000_003006, swing: "blink flurry" }
+    attack_08: { source: c3300, anim: a000_003007, swing: "void storm", projectile: true }
+    heavy_01: { source: c3400, anim: a000_004100, swing: "convergence slam" }
+    heavy_02: { source: c3300, anim: a000_004101, swing: "reality tear AOE" }
+    dodge_01: { source: c4290, anim: a000_003010, type: "blink" }
+    dodge_02: { source: c2100, anim: a000_003012, type: "phase dodge" }
+    special_01: { source: c3300, anim: a000_003020, type: "summon fragments" }
+
+core_warden:
+  status: new
+  zone: the_core
+  role: elite
+  concept: "Heavy Core elite — tank that guards key areas"
+  attack_sources:
+    attack_01: { source: c3010, anim: a000_003000, swing: "heavy slash" }
+    attack_02: { source: c3400, anim: a000_003001, swing: "double hammer" }
+    attack_03: { source: c3010, anim: a000_003002, swing: "overhead" }
+    attack_04: { source: c3400, anim: a000_003003, swing: "sweep" }
+    attack_05: { source: c3010, anim: a000_003004, swing: "charge" }
+    attack_06: { source: c3400, anim: a000_003005, swing: "grab attempt" }
+    heavy_01: { source: c3400, anim: a000_004100, swing: "shockwave slam" }
+    heavy_02: { source: c3010, anim: a000_004101, swing: "leaping crush" }
+    dodge_01: { source: c3010, anim: a000_003010, type: "heavy backstep" }
+    dodge_02: { source: c3400, anim: a000_003012, type: "shove retreat" }
+
+# ============================================================================
+# HUB + CROSSOVER + WILDLIFE
+# Target: 14 enemies (existing wildlife + 5 new)
+# ============================================================================
+
+# --- EXISTING ---
+wildlife_rat: { status: existing, zone: all, role: ambient }
+wildlife_wolf: { status: existing, zone: all, role: ambient }
+feral_hound: { status: existing, zone: ashfields, role: regular }
+sentinel_test: { status: existing, zone: demo, role: test, notes: "Pipeline test enemy" }
+
+# --- NEW WILDLIFE & CROSSOVER (5) ---
+wasteland_boar:
+  status: new
+  zone: ashfields
+  role: ambient
+  concept: "Irradiated boar — charges when provoked, otherwise passive"
+  attack_sources:
+    attack_01: { source: c3970, anim: a000_003000, swing: "charge gore" }
+    attack_02: { source: c3450, anim: a000_003001, swing: "tusk swipe" }
+    attack_03: { source: c3970, anim: a000_003002, swing: "headbutt" }
+    heavy_01: { source: c3450, anim: a000_004100, swing: "full charge" }
+
+cave_bat:
+  status: new
+  zone: the_undercroft
+  role: ambient
+  concept: "Swooping bat creature in dungeon ceilings"
+  attack_sources:
+    attack_01: { source: c3450, anim: a000_003000, swing: "dive swoop" }
+    attack_02: { source: c3450, anim: a000_003001, swing: "claw rake" }
+    attack_03: { source: c3450, anim: a000_003002, swing: "screech stun" }
+    heavy_01: { source: c3450, anim: a000_004100, swing: "diving tackle" }
+
+sewer_crawler:
+  status: new
+  zone: the_undercroft
+  role: ambient
+  concept: "Skittering insect-like creature in pipes and tunnels"
+  attack_sources:
+    attack_01: { source: c3450, anim: a000_003000, swing: "mandible bite" }
+    attack_02: { source: c3970, anim: a000_003001, swing: "acid spit", projectile: true }
+    attack_03: { source: c3450, anim: a000_003002, swing: "pounce" }
+    heavy_01: { source: c3970, anim: a000_004100, swing: "burrow ambush" }
+
+corrupted_knight:
+  status: new
+  zone: crossover
+  role: elite
+  concept: "Appears zones 3-6 — soldier consumed by Convergence, tough"
+  zones_present: [the_rift, sanctum_of_ash, the_undercroft, the_core]
+  attack_sources:
+    attack_01: { source: c3010, anim: a000_003000, swing: "corrupted slash" }
+    attack_02: { source: c3300, anim: a000_003001, swing: "void-infused swing" }
+    attack_03: { source: c3010, anim: a000_003002, swing: "overhead smash" }
+    attack_04: { source: c3300, anim: a000_003003, swing: "energy discharge" }
+    attack_05: { source: c3010, anim: a000_003004, swing: "combo: 3-hit" }
+    attack_06: { source: c3300, anim: a000_003005, swing: "void burst", projectile: true }
+    heavy_01: { source: c3010, anim: a000_004100, swing: "corrupted slam" }
+    heavy_02: { source: c3300, anim: a000_004101, swing: "convergence blast AOE" }
+    dodge_01: { source: c3010, anim: a000_003010, type: "heavy backstep" }
+    dodge_02: { source: c4290, anim: a000_003012, type: "corruption blink" }
+
+ash_remnant:
+  status: new
+  zone: crossover
+  role: elite
+  concept: "Appears zones 4-6 — Ashen Order deserter, fire + sword"
+  zones_present: [sanctum_of_ash, the_undercroft, the_core]
+  attack_sources:
+    attack_01: { source: c4050, anim: a000_003000, swing: "curved sword slash" }
+    attack_02: { source: c3900, anim: a000_003001, swing: "fire gesture", projectile: true }
+    attack_03: { source: c4050, anim: a000_003002, swing: "dash + slash" }
+    attack_04: { source: c3900, anim: a000_003003, swing: "fire orb toss", projectile: true }
+    attack_05: { source: c4050, anim: a000_003004, swing: "spinning cut" }
+    attack_06: { source: c3900, anim: a000_003005, swing: "flame pillar", projectile: true }
+    heavy_01: { source: c4050, anim: a000_004100, swing: "burning rush" }
+    heavy_02: { source: c3900, anim: a000_004101, swing: "fire explosion AOE" }
+    dodge_01: { source: c4050, anim: a000_003010, type: "rolling dodge" }
+    dodge_02: { source: c2100, anim: a000_003012, type: "backstep" }
+
+# ============================================================================
+# SUMMARY
+# ============================================================================
+# Existing: 47 (keeping all production enemies)
+# New:      53 (filling gaps per zone)
+# Total:   100
+#
+# By role:
+#   Regular:   54 (tutorial through endgame fodder)
+#   Elite:     13 (tougher variants, wider movesets)
+#   Mini-boss:  7 (field bosses, one per zone + 1 extra)
+#   Zone Boss:  6 (one per zone, 25 animations each)
+#   Final Boss: 1 (Core Convergence, 29 animations)
+#   Ranged:    10 (hybrid melee+projectile)
+#   Ambient:    9 (wildlife, drones, parasites)
+#
+# Animation totals:
+#   Regular:   54 × 13 =  702 attack/heavy animations
+#   Elite:     13 × 17 =  221
+#   Mini-boss:  7 × 20 =  140
+#   Boss:       6 × 25 =  150
+#   Final:      1 × 29 =   29
+#   Ambient:    9 × 6  =   54
+#   TOTAL:              ~1,296 unique attack animations
+#   + shared c3100 locomotion/hit_react/death/guard per enemy
+#
+# All sourced from 27,065 available ER animations across 289 characters.
+# ============================================================================
+
+# --- ADDITIONAL TO REACH 100 (5 more) ---
+wasteland_scavenger:
+  status: existing
+  zone: ashfields
+  role: regular
+  concept: "Scrap-armored survivor turned hostile, fights with junk weapons"
+  attack_sources:
+    attack_01: { source: c4310, anim: a000_003000, swing: "pipe swing" }
+    attack_02: { source: c4320, anim: a000_003001, swing: "wild chop" }
+    attack_03: { source: c4310, anim: a000_003002, swing: "desperate thrust" }
+    attack_04: { source: c4320, anim: a000_003003, swing: "flailing combo" }
+    attack_05: { source: c4310, anim: a000_003004, swing: "shove + swing" }
+    heavy_01: { source: c3400, anim: a000_004100, swing: "overhead smash" }
+
+plague_herald:
+  status: existing
+  zone: ashfields
+  role: regular
+  concept: "Disease-spreading mutant, poison buildup on hit"
+  attack_sources:
+    attack_01: { source: c3970, anim: a000_003000, swing: "toxic swipe" }
+    attack_02: { source: c3450, anim: a000_003001, swing: "poison spit", projectile: true }
+    attack_03: { source: c3970, anim: a000_003002, swing: "lunge" }
+    attack_04: { source: c3450, anim: a000_003003, swing: "gas cloud", projectile: true }
+    attack_05: { source: c3970, anim: a000_003004, swing: "grab + infect" }
+    heavy_01: { source: c3450, anim: a000_004100, swing: "plague eruption AOE" }
+
+iron_sniper:
+  status: new
+  zone: ironworks
+  role: regular
+  ranged: true
+  concept: "Long-range turret operator, repositions between shots"
+  attack_sources:
+    attack_01: { source: c3850, anim: a000_003000, swing: "aimed shot", projectile: true }
+    attack_02: { source: c3850, anim: a000_003001, swing: "quick shot", projectile: true }
+    attack_03: { source: c2100, anim: a000_003002, swing: "pistol whip (close)" }
+    attack_04: { source: c3850, anim: a000_003003, swing: "burst fire", projectile: true }
+    attack_05: { source: c2100, anim: a000_003004, swing: "knife slash" }
+    heavy_01: { source: c3850, anim: a000_004100, swing: "charged railshot", projectile: true }
+
+veilborn_wraith:
+  status: new
+  zone: the_rift
+  role: regular
+  concept: "Partially phased entity, flickers in and out of visibility"
+  attack_sources:
+    attack_01: { source: c3300, anim: a000_003000, swing: "phase slash" }
+    attack_02: { source: c4290, anim: a000_003001, swing: "blink strike" }
+    attack_03: { source: c3300, anim: a000_003002, swing: "void wave", projectile: true }
+    attack_04: { source: c4290, anim: a000_003003, swing: "teleport combo" }
+    attack_05: { source: c3300, anim: a000_003004, swing: "spectral burst" }
+    heavy_01: { source: c4290, anim: a000_004100, swing: "reality rend" }
+
+hollow_guardian:
+  status: new
+  zone: the_undercroft
+  role: elite
+  concept: "Ancient security system reactivated, fights with precision"
+  attack_sources:
+    attack_01: { source: c3800, anim: a000_003000, swing: "lance thrust" }
+    attack_02: { source: c4350, anim: a000_003001, swing: "shield bash" }
+    attack_03: { source: c3800, anim: a000_003002, swing: "sweep + thrust" }
+    attack_04: { source: c4350, anim: a000_003003, swing: "overhead chop" }
+    attack_05: { source: c3800, anim: a000_003004, swing: "spinning lance" }
+    attack_06: { source: c4350, anim: a000_003005, swing: "shield charge" }
+    heavy_01: { source: c3800, anim: a000_004100, swing: "energy lance AOE" }
+    heavy_02: { source: c4350, anim: a000_004101, swing: "slamming bash" }
+    dodge_01: { source: c3800, anim: a000_003010, type: "parry stance" }
+    dodge_02: { source: c4350, anim: a000_003012, type: "backstep" }
