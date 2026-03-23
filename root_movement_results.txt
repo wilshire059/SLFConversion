@@ -1,0 +1,845 @@
+Found 833 animations with 2.5+ root motion displacement
+
+
+=== BACKSTEP (107) ===
+  c3910  Blackflame Monk        a001_003018          [attack  ] netX=  -0.18 netZ= +10.80 total= 10.8 maxBack=+10.8 maxLat= 0.6 dur= 3.7s
+  c4270  Leyndell Knight        a000_006001          [hit_react] netX=  -0.49 netZ= +10.00 total= 10.0 maxBack=+10.4 maxLat= 0.8 dur= 1.7s
+  c4300  Godrick Soldier        a002_003007          [attack  ] netX=  +0.02 netZ=  +9.84 total=  9.8 maxBack= +9.8 maxLat= 0.2 dur= 4.7s
+  c3000  Exile Soldier          a000_006011          [hit_react] netX=  +0.00 netZ=  +8.76 total=  8.8 maxBack= +8.8 maxLat= 0.0 dur= 1.7s
+  c3000  Exile Soldier          a001_006011          [hit_react] netX=  +0.00 netZ=  +8.76 total=  8.8 maxBack= +8.8 maxLat= 0.0 dur= 1.7s
+  c3000  Exile Soldier          a004_006011          [hit_react] netX=  +0.00 netZ=  +8.76 total=  8.8 maxBack= +8.8 maxLat= 0.0 dur= 1.7s
+  c3300  Nox Swordstress        a001_003022          [attack  ] netX=  -0.02 netZ=  +8.72 total=  8.7 maxBack= +8.7 maxLat= 0.2 dur= 2.3s
+  c3010  Banished Knight        a001_006011          [hit_react] netX=  +0.00 netZ=  +8.65 total=  8.6 maxBack= +8.6 maxLat= 0.0 dur= 2.1s
+  c3010  Banished Knight        a002_006011          [hit_react] netX=  +0.00 netZ=  +8.65 total=  8.6 maxBack= +8.6 maxLat= 0.0 dur= 2.1s
+  c3010  Banished Knight        a000_006011          [hit_react] netX=  +0.00 netZ=  +8.63 total=  8.6 maxBack= +8.6 maxLat= 0.0 dur= 2.1s
+  c3000  Exile Soldier          a005_006011          [hit_react] netX=  +0.00 netZ=  +8.58 total=  8.6 maxBack= +8.6 maxLat= 0.0 dur= 1.7s
+  c3910  Blackflame Monk        a001_003017          [attack  ] netX=  -0.18 netZ=  +8.42 total=  8.4 maxBack= +8.5 maxLat= 0.6 dur= 3.3s
+  c4350  Lordsworn Knight       a000_006011          [hit_react] netX=  +0.00 netZ=  +8.33 total=  8.3 maxBack= +8.3 maxLat= 0.0 dur= 1.6s
+  c4350  Lordsworn Knight       a002_006011          [hit_react] netX=  +0.00 netZ=  +8.21 total=  8.2 maxBack= +8.2 maxLat= 0.0 dur= 1.6s
+  c4290  Bloodhound Knight      a000_003009          [attack  ] netX=  +0.62 netZ=  +8.11 total=  8.1 maxBack= +8.6 maxLat= 0.8 dur= 3.7s
+  c3000  Exile Soldier          a002_006011          [hit_react] netX=  +0.00 netZ=  +7.96 total=  8.0 maxBack= +8.0 maxLat= 0.0 dur= 1.6s
+  c3800  Cleanrot Knight        a000_003006          [attack  ] netX=  +0.00 netZ=  +7.72 total=  7.7 maxBack= +7.7 maxLat= 0.0 dur= 2.0s
+  c4290  Bloodhound Knight      a000_003016          [attack  ] netX=  +0.86 netZ=  +7.27 total=  7.3 maxBack= +8.5 maxLat= 0.9 dur= 3.2s
+  c3700  Raya Lucaria Scholar   a000_003038          [attack  ] netX=  +0.00 netZ=  +6.72 total=  6.7 maxBack= +6.7 maxLat= 0.0 dur= 2.0s
+  c3950  Man-Serpent            a000_003023          [attack  ] netX=  +0.12 netZ=  +6.33 total=  6.3 maxBack= +6.3 maxLat= 0.5 dur= 2.8s
+  c3700  Raya Lucaria Scholar   a000_006001          [hit_react] netX=  +0.00 netZ=  +6.32 total=  6.3 maxBack= +6.3 maxLat= 0.0 dur= 1.3s
+  c3300  Nox Swordstress        a000_006001          [hit_react] netX=  +0.00 netZ=  +6.28 total=  6.3 maxBack= +6.3 maxLat= 0.1 dur= 1.3s
+  c3300  Nox Swordstress        a002_006001          [hit_react] netX=  +0.00 netZ=  +6.28 total=  6.3 maxBack= +6.3 maxLat= 0.0 dur= 1.3s
+  c3300  Nox Swordstress        a001_006001          [hit_react] netX=  +0.00 netZ=  +6.15 total=  6.2 maxBack= +6.2 maxLat= 0.0 dur= 1.3s
+  c3300  Nox Swordstress        a005_006001          [hit_react] netX=  +0.00 netZ=  +6.15 total=  6.2 maxBack= +6.2 maxLat= 0.0 dur= 1.3s
+  c3700  Raya Lucaria Scholar   a002_003008          [attack  ] netX=  +0.00 netZ=  +6.13 total=  6.1 maxBack= +6.1 maxLat= 0.1 dur= 2.2s
+  c4310  Lordsworn Soldier      a002_003024          [attack  ] netX=  +0.00 netZ=  +6.11 total=  6.1 maxBack= +6.1 maxLat= 0.1 dur= 1.7s
+  c3450  Misbegotten            a000_003012          [attack  ] netX=  +0.09 netZ=  +6.00 total=  6.0 maxBack= +6.0 maxLat= 0.2 dur= 1.6s
+  c3160  Carian Knight          a000_005012          [dodge   ] netX=  +0.00 netZ=  +5.93 total=  5.9 maxBack= +5.9 maxLat= 1.4 dur= 2.2s
+  c3160  Carian Knight          a000_005013          [dodge   ] netX=  -0.00 netZ=  +5.93 total=  5.9 maxBack= +5.9 maxLat= 1.5 dur= 2.2s
+  c4310  Lordsworn Soldier      a004_003024          [attack  ] netX=  -0.00 netZ=  +5.79 total=  5.8 maxBack= +5.8 maxLat= 0.1 dur= 1.7s
+  c4310  Lordsworn Soldier      a000_003024          [attack  ] netX=  -0.00 netZ=  +5.78 total=  5.8 maxBack= +5.8 maxLat= 0.1 dur= 1.6s
+  c3950  Man-Serpent            a000_006001          [hit_react] netX=  +0.00 netZ=  +5.52 total=  5.5 maxBack= +5.6 maxLat= 0.0 dur= 1.5s
+  c4290  Bloodhound Knight      a000_006001          [hit_react] netX=  +0.00 netZ=  +5.00 total=  5.0 maxBack= +5.2 maxLat= 0.0 dur= 1.2s
+  c3970  Azula Beastman         a001_006001          [hit_react] netX=  +0.00 netZ=  +4.99 total=  5.0 maxBack= +5.2 maxLat= 0.0 dur= 1.3s
+  c3970  Azula Beastman         a000_006001          [hit_react] netX=  +0.00 netZ=  +4.96 total=  5.0 maxBack= +5.2 maxLat= 0.0 dur= 1.1s
+  c4300  Godrick Soldier        a000_003023          [attack  ] netX=  +0.08 netZ=  +4.78 total=  4.8 maxBack= +4.8 maxLat= 0.3 dur= 5.3s
+  c3010  Banished Knight        a001_006001          [hit_react] netX=  +0.00 netZ=  +4.77 total=  4.8 maxBack= +4.8 maxLat= 0.0 dur= 2.1s
+  c3010  Banished Knight        a002_006001          [hit_react] netX=  +0.00 netZ=  +4.77 total=  4.8 maxBack= +4.8 maxLat= 0.0 dur= 2.1s
+  c3010  Banished Knight        a000_006001          [hit_react] netX=  +0.00 netZ=  +4.75 total=  4.7 maxBack= +4.7 maxLat= 0.0 dur= 2.1s
+  c4290  Bloodhound Knight      a000_003003          [attack  ] netX=  +0.66 netZ=  +4.48 total=  4.5 maxBack= +5.5 maxLat= 0.8 dur= 3.5s
+  c3910  Blackflame Monk        a001_003016          [attack  ] netX=  +0.17 netZ=  +4.37 total=  4.4 maxBack= +4.4 maxLat= 0.6 dur= 4.7s
+  c3700  Raya Lucaria Scholar   a002_003011          [attack  ] netX=  +0.00 netZ=  +4.24 total=  4.2 maxBack= +4.2 maxLat= 0.1 dur= 2.1s
+  c3400  Grave Warden           a000_003015          [attack  ] netX=  +0.78 netZ=  +3.95 total=  4.0 maxBack= +4.0 maxLat= 0.8 dur= 3.5s
+  c3800  Cleanrot Knight        a000_006001          [hit_react] netX=  +0.00 netZ=  +4.00 total=  4.0 maxBack= +4.1 maxLat= 0.0 dur= 1.1s
+  c3150  Redmane Knight         a000_006001          [hit_react] netX=  +0.00 netZ=  +4.00 total=  4.0 maxBack= +4.0 maxLat= 0.0 dur= 2.0s
+  c4270  Leyndell Knight        a000_002031          [movement] netX=  +0.00 netZ=  +4.00 total=  4.0 maxBack= +4.0 maxLat= 0.0 dur= 2.3s
+  c4270  Leyndell Knight        a000_002001          [movement] netX=  +0.00 netZ=  +4.00 total=  4.0 maxBack= +4.0 maxLat= 0.0 dur= 1.9s
+  c3450  Misbegotten            a001_002001          [movement] netX=  +0.00 netZ=  +3.70 total=  3.7 maxBack= +3.7 maxLat= 0.0 dur= 1.0s
+  c4350  Lordsworn Knight       a000_003100          [attack  ] netX=  +0.04 netZ=  +3.63 total=  3.6 maxBack= +3.7 maxLat= 0.1 dur= 1.3s
+  c3910  Blackflame Monk        a000_006001          [hit_react] netX=  +0.00 netZ=  +3.62 total=  3.6 maxBack= +3.9 maxLat= 0.0 dur= 1.5s
+  c3800  Cleanrot Knight        a000_003003          [attack  ] netX=  +0.00 netZ=  +3.50 total=  3.5 maxBack= +3.5 maxLat= 0.2 dur= 2.1s
+  c3800  Cleanrot Knight        a000_003017          [attack  ] netX=  +0.00 netZ=  +3.50 total=  3.5 maxBack= +3.6 maxLat= 0.3 dur= 2.1s
+  c3800  Cleanrot Knight        a000_006011          [hit_react] netX=  +0.00 netZ=  +3.50 total=  3.5 maxBack= +3.6 maxLat= 0.0 dur= 1.1s
+  c4340  Pumpkin Head           a000_002001          [movement] netX=  +0.00 netZ=  +3.50 total=  3.5 maxBack= +3.5 maxLat= 0.0 dur= 1.5s
+  c4340  Pumpkin Head           a001_002001          [movement] netX=  +0.00 netZ=  +3.50 total=  3.5 maxBack= +3.5 maxLat= 0.0 dur= 1.5s
+  c4310  Lordsworn Soldier      a004_006011          [hit_react] netX=  +0.00 netZ=  +3.48 total=  3.5 maxBack= +3.5 maxLat= 0.0 dur= 1.3s
+  c4310  Lordsworn Soldier      a004_006021          [hit_react] netX=  +0.00 netZ=  +3.48 total=  3.5 maxBack= +3.5 maxLat= 0.0 dur= 1.3s
+  c5830  Messmer Soldier        a002_006011          [hit_react] netX=  +0.00 netZ=  +3.48 total=  3.5 maxBack= +3.5 maxLat= 0.0 dur= 1.3s
+  c5830  Messmer Soldier        a002_006021          [hit_react] netX=  +0.00 netZ=  +3.48 total=  3.5 maxBack= +3.5 maxLat= 0.0 dur= 1.3s
+  c3300  Nox Swordstress        a002_003003          [attack  ] netX=  +0.00 netZ=  +3.39 total=  3.4 maxBack= +3.4 maxLat= 0.1 dur= 2.0s
+  c3300  Nox Swordstress        a002_003004          [attack  ] netX=  +0.00 netZ=  +3.39 total=  3.4 maxBack= +3.4 maxLat= 0.1 dur= 2.0s
+  c4320  Vulgar Militia         a000_006001          [hit_react] netX=  +0.00 netZ=  +3.38 total=  3.4 maxBack= +3.4 maxLat= 0.0 dur= 1.8s
+  c4320  Vulgar Militia         a001_006001          [hit_react] netX=  +0.00 netZ=  +3.38 total=  3.4 maxBack= +3.4 maxLat= 0.0 dur= 1.8s
+  c4090  Grafted Scion          a000_005003          [dodge   ] netX=  -0.00 netZ=  +3.34 total=  3.3 maxBack= +3.3 maxLat= 1.5 dur= 1.2s
+  c4090  Grafted Scion          a000_005002          [dodge   ] netX=  +0.00 netZ=  +3.34 total=  3.3 maxBack= +3.3 maxLat= 1.3 dur= 1.2s
+  c3100  Crucible Knight        a000_006001          [hit_react] netX=  +0.00 netZ=  +3.30 total=  3.3 maxBack= +3.5 maxLat= 0.0 dur= 2.2s
+  c3900  Fire Monk              a000_006001          [hit_react] netX=  +0.00 netZ=  +3.24 total=  3.2 maxBack= +3.2 maxLat= 0.0 dur= 2.3s
+  c4320  Vulgar Militia         a000_003013          [attack  ] netX=  -0.19 netZ=  +3.14 total=  3.1 maxBack= +3.4 maxLat= 0.4 dur= 3.2s
+  c4300  Godrick Soldier        a000_003022          [attack  ] netX=  +0.01 netZ=  +3.10 total=  3.1 maxBack= +3.1 maxLat= 0.3 dur= 2.6s
+  c4090  Grafted Scion          a000_006001          [hit_react] netX=  -0.00 netZ=  +3.03 total=  3.0 maxBack= +3.1 maxLat= 0.1 dur= 1.7s
+  c3000  Exile Soldier          a000_006001          [hit_react] netX=  +0.00 netZ=  +3.00 total=  3.0 maxBack= +3.0 maxLat= 0.0 dur= 1.1s
+  c4320  Vulgar Militia         a001_003002          [attack  ] netX=  -0.21 netZ=  +2.97 total=  3.0 maxBack= +3.1 maxLat= 0.3 dur= 4.5s
+  c4380  Starcaller             a002_003003          [attack  ] netX=  -0.00 netZ=  +2.93 total=  2.9 maxBack= +3.0 maxLat= 0.3 dur= 3.0s
+  c3700  Raya Lucaria Scholar   a001_006001          [hit_react] netX=  +0.00 netZ=  +2.91 total=  2.9 maxBack= +3.1 maxLat= 0.0 dur= 1.5s
+  c4350  Lordsworn Knight       a001_003010          [attack  ] netX=  +0.01 netZ=  +2.91 total=  2.9 maxBack= +3.0 maxLat= 0.4 dur= 2.7s
+  c3160  Carian Knight          a000_002001          [movement] netX=  +0.00 netZ=  +2.89 total=  2.9 maxBack= +2.9 maxLat= 0.0 dur= 1.2s
+  c4090  Grafted Scion          a000_003010          [attack  ] netX=  -0.27 netZ=  +2.85 total=  2.9 maxBack= +3.0 maxLat= 1.4 dur= 2.2s
+  c4090  Grafted Scion          a000_003008          [attack  ] netX=  +0.27 netZ=  +2.85 total=  2.9 maxBack= +3.0 maxLat= 1.4 dur= 2.2s
+  c3700  Raya Lucaria Scholar   a000_003033          [attack  ] netX=  +0.02 netZ=  +2.84 total=  2.8 maxBack= +2.8 maxLat= 0.2 dur= 2.7s
+  c3450  Misbegotten            a000_006001          [hit_react] netX=  +0.00 netZ=  +2.80 total=  2.8 maxBack= +3.4 maxLat= 0.0 dur= 1.3s
+  c3800  Cleanrot Knight        a000_002001          [movement] netX=  +0.00 netZ=  +2.72 total=  2.7 maxBack= +2.7 maxLat= 0.0 dur= 2.0s
+  c3500  Skeleton               a000_002001          [movement] netX=  +0.00 netZ=  +2.70 total=  2.7 maxBack= +2.7 maxLat= 0.0 dur= 2.2s
+  c3400  Grave Warden           a000_002001          [movement] netX=  +0.00 netZ=  +2.67 total=  2.7 maxBack= +2.7 maxLat= 0.0 dur= 1.7s
+  c3400  Grave Warden           a001_002001          [movement] netX=  +0.00 netZ=  +2.67 total=  2.7 maxBack= +2.7 maxLat= 0.0 dur= 1.7s
+  c3970  Azula Beastman         a000_002001          [movement] netX=  +0.00 netZ=  +2.67 total=  2.7 maxBack= +2.7 maxLat= 0.0 dur= 1.3s
+  c3970  Azula Beastman         a000_002031          [movement] netX=  +0.00 netZ=  +2.67 total=  2.7 maxBack= +2.7 maxLat= 0.0 dur= 1.3s
+  c3970  Azula Beastman         a001_002001          [movement] netX=  +0.00 netZ=  +2.67 total=  2.7 maxBack= +2.7 maxLat= 0.0 dur= 1.3s
+  c3010  Banished Knight        a002_003009          [attack  ] netX=  -0.00 netZ=  +2.64 total=  2.6 maxBack= +2.7 maxLat= 0.3 dur= 3.7s
+  c4350  Lordsworn Knight       a000_006001          [hit_react] netX=  +0.00 netZ=  +2.62 total=  2.6 maxBack= +2.7 maxLat= 0.0 dur= 1.5s
+  c5840  Black Knight           a000_006001          [hit_react] netX=  +0.00 netZ=  +2.62 total=  2.6 maxBack= +2.7 maxLat= 0.0 dur= 1.5s
+  c4050  Kaiden Sellsword       a000_002001          [movement] netX=  +0.00 netZ=  +2.62 total=  2.6 maxBack= +2.6 maxLat= 0.0 dur= 1.7s
+  c4380  Starcaller             a002_003011          [attack  ] netX=  +0.01 netZ=  +2.61 total=  2.6 maxBack= +2.7 maxLat= 0.1 dur=10.7s
+  c4270  Leyndell Knight        a000_005022          [dodge   ] netX=  -0.00 netZ=  +2.60 total=  2.6 maxBack= +2.6 maxLat= 1.3 dur= 2.4s
+  c4270  Leyndell Knight        a000_005023          [dodge   ] netX=  -0.00 netZ=  +2.60 total=  2.6 maxBack= +2.6 maxLat= 0.7 dur= 2.4s
+  c4270  Leyndell Knight        a000_005003          [dodge   ] netX=  -0.00 netZ=  +2.60 total=  2.6 maxBack= +2.6 maxLat= 0.5 dur= 1.8s
+  c4270  Leyndell Knight        a000_005002          [dodge   ] netX=  +0.00 netZ=  +2.60 total=  2.6 maxBack= +2.6 maxLat= 0.4 dur= 1.8s
+  c4290  Bloodhound Knight      a000_002001          [movement] netX=  +0.00 netZ=  +2.60 total=  2.6 maxBack= +2.6 maxLat= 0.0 dur= 1.7s
+  c4300  Godrick Soldier        a000_003017          [attack  ] netX=  +0.08 netZ=  +2.56 total=  2.6 maxBack= +2.7 maxLat= 0.2 dur= 4.6s
+  c4310  Lordsworn Soldier      a000_006001          [hit_react] netX=  +0.00 netZ=  +2.51 total=  2.5 maxBack= +2.6 maxLat= 0.0 dur= 1.5s
+  c4310  Lordsworn Soldier      a002_006001          [hit_react] netX=  +0.00 netZ=  +2.51 total=  2.5 maxBack= +2.6 maxLat= 0.0 dur= 1.5s
+  c4310  Lordsworn Soldier      a003_006001          [hit_react] netX=  +0.00 netZ=  +2.51 total=  2.5 maxBack= +2.6 maxLat= 0.0 dur= 1.5s
+  c4310  Lordsworn Soldier      a004_006001          [hit_react] netX=  +0.00 netZ=  +2.51 total=  2.5 maxBack= +2.6 maxLat= 0.0 dur= 1.5s
+  c5830  Messmer Soldier        a000_006001          [hit_react] netX=  +0.00 netZ=  +2.51 total=  2.5 maxBack= +2.6 maxLat= 0.0 dur= 1.5s
+  c5830  Messmer Soldier        a001_006001          [hit_react] netX=  +0.00 netZ=  +2.51 total=  2.5 maxBack= +2.6 maxLat= 0.0 dur= 1.5s
+  c5830  Messmer Soldier        a002_006001          [hit_react] netX=  +0.00 netZ=  +2.51 total=  2.5 maxBack= +2.6 maxLat= 0.0 dur= 1.5s
+  c3250  Crucible Tree Knight   a000_003016          [attack  ] netX=  -0.00 netZ=  +2.51 total=  2.5 maxBack= +4.0 maxLat= 0.2 dur= 3.5s
+
+=== BACK_THEN_LUNGE (6) ===
+  c4270  Leyndell Knight        a000_003007          [attack  ] netX=  +5.86 netZ=  -7.83 total=  9.8 maxBack= +4.0 maxLat= 6.5 dur= 2.9s
+  c4270  Leyndell Knight        a000_003001          [attack  ] netX=  +5.22 netZ=  -2.78 total=  5.9 maxBack= +3.2 maxLat= 5.3 dur= 2.2s
+  c4290  Bloodhound Knight      a000_003006          [attack  ] netX=  +0.00 netZ=  -1.32 total=  1.3 maxBack= +3.6 maxLat= 0.7 dur= 3.9s
+  c3970  Azula Beastman         a000_003006          [attack  ] netX=  -0.50 netZ=  -0.52 total=  0.7 maxBack= +7.7 maxLat= 0.8 dur= 4.4s
+  c3550  Sanguine Noble         a000_003007          [attack  ] netX=  +0.10 netZ=  -0.50 total=  0.5 maxBack= +3.1 maxLat= 0.3 dur= 2.5s
+  c4270  Leyndell Knight        a000_003021          [attack  ] netX=  +0.06 netZ=  -0.17 total=  0.2 maxBack= +3.4 maxLat= 0.4 dur= 2.5s
+
+=== DIAGONAL (55) ===
+  c3970  Azula Beastman         a000_003027          [attack  ] netX=  -7.32 netZ=  +4.56 total=  8.6 maxBack= +4.6 maxLat= 7.4 dur= 1.8s
+  c3970  Azula Beastman         a000_003026          [attack  ] netX=  +6.92 netZ=  +4.59 total=  8.3 maxBack= +4.8 maxLat= 7.2 dur= 1.8s
+  c3800  Cleanrot Knight        a000_003004          [attack  ] netX=  +4.88 netZ=  -5.93 total=  7.7 maxBack= +0.0 maxLat= 5.1 dur= 3.2s
+  c4270  Leyndell Knight        a000_003016          [attack  ] netX=  +3.95 netZ=  +5.07 total=  6.4 maxBack= +5.8 maxLat= 6.6 dur= 3.7s
+  c4290  Bloodhound Knight      a000_006002          [hit_react] netX=  +5.00 netZ=  -3.00 total=  5.8 maxBack= +0.3 maxLat= 5.0 dur= 1.2s
+  c4290  Bloodhound Knight      a000_006003          [hit_react] netX=  -5.00 netZ=  -3.00 total=  5.8 maxBack= +0.8 maxLat= 5.3 dur= 1.2s
+  c4270  Leyndell Knight        a000_003003          [attack  ] netX=  -3.55 netZ=  -3.92 total=  5.3 maxBack= +0.0 maxLat= 3.6 dur= 1.8s
+  c4270  Leyndell Knight        a000_003019          [attack  ] netX=  -3.55 netZ=  -3.92 total=  5.3 maxBack= +0.0 maxLat= 3.6 dur= 1.8s
+  c4270  Leyndell Knight        a000_003002          [attack  ] netX=  +2.45 netZ=  -3.52 total=  4.3 maxBack= +0.0 maxLat= 2.5 dur= 2.0s
+  c3400  Grave Warden           a001_003010          [attack  ] netX=  +3.39 netZ=  -2.22 total=  4.1 maxBack= +0.0 maxLat= 3.6 dur= 3.6s
+  c3400  Grave Warden           a001_003009          [attack  ] netX=  -3.39 netZ=  -2.22 total=  4.1 maxBack= +0.0 maxLat= 3.6 dur= 3.6s
+  c4270  Leyndell Knight        a000_003000          [attack  ] netX=  -2.03 netZ=  -2.75 total=  3.4 maxBack= +2.0 maxLat= 2.0 dur= 2.4s
+  c3970  Azula Beastman         a001_003014          [attack  ] netX=  -2.42 netZ=  +2.27 total=  3.3 maxBack= +2.3 maxLat= 2.8 dur= 2.3s
+  c4370  Haligtree Knight       a000_003024          [attack  ] netX=  +2.74 netZ=  -1.80 total=  3.3 maxBack= +0.1 maxLat= 2.8 dur= 2.2s
+  c3970  Azula Beastman         a001_003015          [attack  ] netX=  -2.47 netZ=  +2.13 total=  3.3 maxBack= +2.2 maxLat= 2.9 dur= 2.3s
+  c4300  Godrick Soldier        a000_003016          [attack  ] netX=  -1.56 netZ=  -2.33 total=  2.8 maxBack= +0.3 maxLat= 1.6 dur= 4.7s
+  c4380  Starcaller             a002_003004          [attack  ] netX=  +1.41 netZ=  +2.37 total=  2.8 maxBack= +2.4 maxLat= 1.9 dur= 3.3s
+  c3450  Misbegotten            a002_003001          [attack  ] netX=  -0.32 netZ=  +2.50 total=  2.5 maxBack= +2.5 maxLat= 0.5 dur= 4.0s
+  c3400  Grave Warden           a000_003009          [attack  ] netX=  +2.48 netZ=  -0.37 total=  2.5 maxBack= +0.0 maxLat= 2.7 dur= 3.3s
+  c3800  Cleanrot Knight        a000_003000          [attack  ] netX=  -0.09 netZ=  -2.48 total=  2.5 maxBack= +0.0 maxLat= 0.2 dur= 3.0s
+  c4370  Haligtree Knight       a001_003011          [attack  ] netX=  +0.19 netZ=  -2.46 total=  2.5 maxBack= +0.1 maxLat= 0.3 dur= 4.0s
+  c3550  Sanguine Noble         a000_003011          [attack  ] netX=  -0.19 netZ=  -2.45 total=  2.5 maxBack= +0.0 maxLat= 0.3 dur= 2.3s
+  c4270  Leyndell Knight        a000_003005          [attack  ] netX=  -0.81 netZ=  +2.31 total=  2.4 maxBack= +4.4 maxLat= 3.0 dur= 3.2s
+  c3910  Blackflame Monk        a000_003017          [attack  ] netX=  -0.56 netZ=  -2.38 total=  2.4 maxBack= +0.0 maxLat= 1.3 dur= 3.9s
+  c3010  Banished Knight        a001_003012          [attack  ] netX=  -0.05 netZ=  +2.43 total=  2.4 maxBack= +2.7 maxLat= 0.2 dur= 3.7s
+  c3800  Cleanrot Knight        a000_003012          [attack  ] netX=  -0.07 netZ=  -2.43 total=  2.4 maxBack= +0.0 maxLat= 0.3 dur= 3.5s
+  c3910  Blackflame Monk        a001_003012          [attack  ] netX=  -1.12 netZ=  -2.15 total=  2.4 maxBack= +0.0 maxLat= 1.1 dur= 4.7s
+  c3000  Exile Soldier          a002_003011          [attack  ] netX=  +0.00 netZ=  -2.40 total=  2.4 maxBack= +0.0 maxLat= 0.1 dur= 3.0s
+  c4340  Pumpkin Head           a000_006100          [hit_react] netX=  +0.00 netZ=  -2.37 total=  2.4 maxBack= +0.0 maxLat= 0.0 dur= 2.7s
+  c4340  Pumpkin Head           a001_006100          [hit_react] netX=  +0.00 netZ=  -2.37 total=  2.4 maxBack= +0.1 maxLat= 0.0 dur= 2.7s
+  c4090  Grafted Scion          a000_003004          [attack  ] netX=  -1.67 netZ=  +1.67 total=  2.4 maxBack= +2.6 maxLat= 1.8 dur= 2.7s
+  c4090  Grafted Scion          a000_003005          [attack  ] netX=  +1.67 netZ=  +1.67 total=  2.4 maxBack= +2.8 maxLat= 1.7 dur= 2.5s
+  c3800  Cleanrot Knight        a000_003010          [attack  ] netX=  +0.05 netZ=  -2.36 total=  2.4 maxBack= +0.2 maxLat= 0.3 dur= 3.9s
+  c3950  Man-Serpent            a000_003012          [attack  ] netX=  -0.09 netZ=  -2.33 total=  2.3 maxBack= +0.0 maxLat= 0.4 dur= 4.0s
+  c4050  Kaiden Sellsword       a000_003008          [attack  ] netX=  -0.00 netZ=  -2.32 total=  2.3 maxBack= +0.3 maxLat= 0.0 dur= 3.7s
+  c3400  Grave Warden           a000_003005          [attack  ] netX=  -0.19 netZ=  -2.31 total=  2.3 maxBack= +0.4 maxLat= 1.1 dur= 6.5s
+  c3500  Skeleton               a000_003014          [attack  ] netX=  +0.20 netZ=  -2.29 total=  2.3 maxBack= +0.3 maxLat= 0.4 dur= 5.5s
+  c3500  Skeleton               a000_003011          [attack  ] netX=  -0.24 netZ=  -2.28 total=  2.3 maxBack= +0.4 maxLat= 0.4 dur= 4.0s
+  c3400  Grave Warden           a001_003005          [attack  ] netX=  -0.53 netZ=  -2.22 total=  2.3 maxBack= +0.0 maxLat= 1.1 dur= 4.9s
+  c4320  Vulgar Militia         a000_003003          [attack  ] netX=  -0.67 netZ=  -2.12 total=  2.2 maxBack= +0.0 maxLat= 0.7 dur= 3.0s
+  c3910  Blackflame Monk        a000_003023          [attack  ] netX=  -0.14 netZ=  -2.20 total=  2.2 maxBack= +0.0 maxLat= 0.2 dur= 3.2s
+  c3010  Banished Knight        a001_003009          [attack  ] netX=  +0.18 netZ=  +2.18 total=  2.2 maxBack= +2.8 maxLat= 0.3 dur= 3.3s
+  c3910  Blackflame Monk        a001_003011          [attack  ] netX=  -0.98 netZ=  -1.96 total=  2.2 maxBack= +0.1 maxLat= 1.2 dur= 4.2s
+  c3000  Exile Soldier          a000_003014          [attack  ] netX=  +0.00 netZ=  -2.17 total=  2.2 maxBack= +0.1 maxLat= 0.3 dur= 6.0s
+  c3910  Blackflame Monk        a000_003012          [attack  ] netX=  +0.52 netZ=  -2.08 total=  2.1 maxBack= +1.3 maxLat= 0.6 dur= 3.7s
+  c4270  Leyndell Knight        a000_003006          [attack  ] netX=  -1.13 netZ=  +1.78 total=  2.1 maxBack= +2.5 maxLat= 2.7 dur= 3.6s
+  c3910  Blackflame Monk        a001_003010          [attack  ] netX=  +0.24 netZ=  -2.03 total=  2.0 maxBack= +0.0 maxLat= 0.7 dur= 4.1s
+  c3000  Exile Soldier          a000_003002          [attack  ] netX=  +0.02 netZ=  -2.02 total=  2.0 maxBack= +0.0 maxLat= 0.2 dur= 3.1s
+  c4340  Pumpkin Head           a000_003005          [attack  ] netX=  -0.18 netZ=  -1.83 total=  1.8 maxBack= +0.1 maxLat= 0.3 dur= 3.5s
+  c4340  Pumpkin Head           a001_003006          [attack  ] netX=  -0.16 netZ=  -1.83 total=  1.8 maxBack= +0.1 maxLat= 0.3 dur= 3.5s
+  c4340  Pumpkin Head           a000_003024          [attack  ] netX=  +0.64 netZ=  +1.63 total=  1.8 maxBack= +2.7 maxLat= 0.8 dur= 3.9s
+  c4340  Pumpkin Head           a001_003009          [attack  ] netX=  -0.68 netZ=  +1.60 total=  1.7 maxBack= +2.7 maxLat= 0.9 dur= 3.9s
+  c4370  Haligtree Knight       a000_003016          [attack  ] netX=  +0.04 netZ=  -1.33 total=  1.3 maxBack= +0.0 maxLat= 0.2 dur= 8.0s
+  c4340  Pumpkin Head           a001_003019          [attack  ] netX=  -0.92 netZ=  +0.28 total=  1.0 maxBack= +2.6 maxLat= 1.0 dur= 4.7s
+  c4320  Vulgar Militia         a001_004100          [heavy   ] netX=  +0.58 netZ=  +0.31 total=  0.7 maxBack= +0.4 maxLat= 0.8 dur= 4.1s
+
+=== LUNGE_FWD (551) ===
+  c3160  Carian Knight          a000_003005          [attack  ] netX=  +0.00 netZ= -45.63 total= 45.6 maxBack= +0.0 maxLat= 0.0 dur= 4.3s
+  c3160  Carian Knight          a000_006100          [hit_react] netX=  +0.00 netZ= -25.95 total= 26.0 maxBack= +0.0 maxLat= 0.0 dur= 2.1s
+  c5840  Black Knight           a001_003010          [attack  ] netX=  +0.65 netZ= -19.88 total= 19.9 maxBack= +0.6 maxLat= 0.7 dur= 4.3s
+  c3160  Carian Knight          a000_003000          [attack  ] netX=  -1.02 netZ= -19.64 total= 19.7 maxBack= +0.0 maxLat= 1.0 dur= 4.7s
+  c5840  Black Knight           a001_003006          [attack  ] netX=  +0.02 netZ= -19.41 total= 19.4 maxBack= +0.5 maxLat= 1.1 dur= 6.8s
+  c5840  Black Knight           a001_003007          [attack  ] netX=  +0.33 netZ= -19.19 total= 19.2 maxBack= +0.0 maxLat= 0.5 dur= 3.9s
+  c3250  Crucible Tree Knight   a000_006100          [hit_react] netX=  -0.00 netZ= -18.90 total= 18.9 maxBack= +0.0 maxLat= 0.0 dur= 1.7s
+  c4290  Bloodhound Knight      a000_003001          [attack  ] netX=  +3.30 netZ= -17.75 total= 18.1 maxBack= +0.0 maxLat= 3.3 dur= 5.0s
+  c3160  Carian Knight          a000_003008          [attack  ] netX=  +0.00 netZ= -17.70 total= 17.7 maxBack= +0.3 maxLat= 0.2 dur= 2.4s
+  c3050  Commander Niall        a000_003010          [attack  ] netX=  +0.70 netZ= -16.99 total= 17.0 maxBack= +0.0 maxLat= 0.8 dur= 5.3s
+  c3970  Azula Beastman         a000_003004          [attack  ] netX=  -0.50 netZ= -16.75 total= 16.8 maxBack= +0.2 maxLat= 0.7 dur= 6.0s
+  c3250  Crucible Tree Knight   a000_003034          [attack  ] netX=  -0.00 netZ= -16.31 total= 16.3 maxBack= +0.0 maxLat= 0.2 dur= 3.2s
+  c3160  Carian Knight          a000_003009          [attack  ] netX=  +0.00 netZ= -16.05 total= 16.1 maxBack= +0.3 maxLat= 0.2 dur= 2.4s
+  c3500  Skeleton               a000_003030          [attack  ] netX=  -1.27 netZ= -15.76 total= 15.8 maxBack= +2.1 maxLat= 2.3 dur= 8.2s
+  c3500  Skeleton               a001_003030          [attack  ] netX=  -1.27 netZ= -15.76 total= 15.8 maxBack= +2.1 maxLat= 2.3 dur= 8.2s
+  c3160  Carian Knight          a000_003010          [attack  ] netX=  +3.59 netZ= -15.32 total= 15.7 maxBack= +0.0 maxLat= 3.6 dur= 2.6s
+  c3160  Carian Knight          a000_003001          [attack  ] netX=  +0.00 netZ= -15.62 total= 15.6 maxBack= +0.0 maxLat= 0.0 dur= 3.5s
+  c3400  Grave Warden           a001_003007          [attack  ] netX=  -0.90 netZ= -15.04 total= 15.1 maxBack= +0.0 maxLat= 0.9 dur= 6.3s
+  c3200  Battlemage             a003_003007          [attack  ] netX=  +0.00 netZ= -15.00 total= 15.0 maxBack= +0.0 maxLat= 0.0 dur= 2.5s
+  c3050  Commander Niall        a000_003015          [attack  ] netX=  +0.05 netZ= -13.24 total= 13.2 maxBack= +0.0 maxLat= 0.2 dur= 6.6s
+  c4290  Bloodhound Knight      a000_003007          [attack  ] netX=  +0.45 netZ= -12.96 total= 13.0 maxBack= +0.4 maxLat= 0.5 dur= 5.5s
+  c3400  Grave Warden           a001_003011          [attack  ] netX=  -0.04 netZ= -12.68 total= 12.7 maxBack= +0.0 maxLat= 0.2 dur= 4.3s
+  c4310  Lordsworn Soldier      a004_003010          [attack  ] netX=  +0.00 netZ= -12.66 total= 12.7 maxBack= +0.3 maxLat= 0.2 dur= 4.5s
+  c4270  Leyndell Knight        a000_006000          [hit_react] netX=  -0.05 netZ= -12.40 total= 12.4 maxBack= +0.5 maxLat= 0.8 dur= 2.7s
+  c3450  Misbegotten            a001_003004          [attack  ] netX=  -0.03 netZ= -12.20 total= 12.2 maxBack= +1.7 maxLat= 0.2 dur= 2.6s
+  c3010  Banished Knight        a001_003018          [attack  ] netX=  -0.04 netZ= -11.95 total= 11.9 maxBack= +2.1 maxLat= 0.2 dur= 6.8s
+  c3400  Grave Warden           a000_003006          [attack  ] netX=  +0.28 netZ= -11.85 total= 11.9 maxBack= +0.0 maxLat= 0.7 dur= 5.8s
+  c3050  Commander Niall        a000_003027          [attack  ] netX=  +2.42 netZ= -11.56 total= 11.8 maxBack= +0.3 maxLat= 7.6 dur=11.0s
+  c3970  Azula Beastman         a001_003004          [attack  ] netX=  -0.14 netZ= -11.70 total= 11.7 maxBack= +1.7 maxLat= 0.7 dur= 7.5s
+  c3250  Crucible Tree Knight   a000_003033          [attack  ] netX=  -3.46 netZ= -10.96 total= 11.5 maxBack= +0.1 maxLat= 3.5 dur= 4.0s
+  c3900  Fire Monk              a001_003023          [attack  ] netX=  -0.53 netZ= -11.47 total= 11.5 maxBack= +0.0 maxLat= 0.7 dur= 3.9s
+  c4270  Leyndell Knight        a000_003010          [attack  ] netX=  +4.27 netZ= -10.60 total= 11.4 maxBack= +0.0 maxLat= 4.5 dur= 3.3s
+  c4310  Lordsworn Soldier      a002_003026          [attack  ] netX=  -0.00 netZ= -11.02 total= 11.0 maxBack= +0.0 maxLat= 0.1 dur= 1.7s
+  c3450  Misbegotten            a000_003016          [attack  ] netX=  -0.00 netZ= -10.85 total= 10.8 maxBack= +0.0 maxLat= 0.1 dur= 3.3s
+  c4290  Bloodhound Knight      a000_003018          [attack  ] netX=  +3.08 netZ= -10.38 total= 10.8 maxBack= +0.0 maxLat= 3.5 dur= 2.7s
+  c4310  Lordsworn Soldier      a004_003026          [attack  ] netX=  -0.00 netZ= -10.80 total= 10.8 maxBack= +0.0 maxLat= 0.1 dur= 1.7s
+  c4310  Lordsworn Soldier      a000_003026          [attack  ] netX=  -0.00 netZ= -10.76 total= 10.8 maxBack= +0.0 maxLat= 0.1 dur= 1.7s
+  c4290  Bloodhound Knight      a000_003000          [attack  ] netX=  +1.11 netZ= -10.58 total= 10.6 maxBack= +0.0 maxLat= 1.5 dur= 5.5s
+  c3800  Cleanrot Knight        a000_003015          [attack  ] netX=  -0.02 netZ= -10.36 total= 10.4 maxBack= +0.0 maxLat= 0.2 dur= 4.3s
+  c4290  Bloodhound Knight      a000_003017          [attack  ] netX=  -2.95 netZ=  -9.80 total= 10.2 maxBack= +0.3 maxLat= 3.3 dur= 2.7s
+  c3550  Sanguine Noble         a000_003017          [attack  ] netX=  +0.07 netZ= -10.22 total= 10.2 maxBack= +0.0 maxLat= 0.3 dur= 3.0s
+  c3010  Banished Knight        a001_003016          [attack  ] netX=  -0.19 netZ= -10.10 total= 10.1 maxBack= +0.0 maxLat= 0.4 dur= 6.5s
+  c4340  Pumpkin Head           a000_003007          [attack  ] netX=  -0.15 netZ= -10.09 total= 10.1 maxBack= +0.0 maxLat= 0.4 dur= 4.2s
+  c3010  Banished Knight        a000_006010          [hit_react] netX=  -0.00 netZ= -10.07 total= 10.1 maxBack= +0.0 maxLat= 0.0 dur= 2.1s
+  c3010  Banished Knight        a001_006010          [hit_react] netX=  -0.00 netZ= -10.07 total= 10.1 maxBack= +0.0 maxLat= 0.0 dur= 2.1s
+  c3010  Banished Knight        a002_006010          [hit_react] netX=  -0.00 netZ= -10.07 total= 10.1 maxBack= +0.0 maxLat= 0.0 dur= 2.1s
+  c3450  Misbegotten            a000_003000          [attack  ] netX=  +0.54 netZ= -10.04 total= 10.1 maxBack= +0.0 maxLat= 0.5 dur= 2.5s
+  c4270  Leyndell Knight        a000_002100          [movement] netX=  -0.00 netZ= -10.00 total= 10.0 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c4350  Lordsworn Knight       a002_006010          [hit_react] netX=  -0.00 netZ=  -9.84 total=  9.8 maxBack= +0.0 maxLat= 0.0 dur= 1.6s
+  c4350  Lordsworn Knight       a000_006010          [hit_react] netX=  -0.00 netZ=  -9.79 total=  9.8 maxBack= +0.0 maxLat= 0.0 dur= 1.6s
+  c3910  Blackflame Monk        a001_003014          [attack  ] netX=  +0.42 netZ=  -9.76 total=  9.8 maxBack= +0.0 maxLat= 1.2 dur= 6.5s
+  c3900  Fire Monk              a000_003015          [attack  ] netX=  +0.13 netZ=  -9.75 total=  9.8 maxBack= +0.0 maxLat= 0.2 dur= 3.2s
+  c3160  Carian Knight          a000_003007          [attack  ] netX=  -0.00 netZ=  -9.72 total=  9.7 maxBack= +0.0 maxLat= 0.7 dur= 3.2s
+  c3010  Banished Knight        a002_003018          [attack  ] netX=  -0.30 netZ=  -9.67 total=  9.7 maxBack= +0.3 maxLat= 0.5 dur= 4.7s
+  c3000  Exile Soldier          a000_006010          [hit_react] netX=  -0.00 netZ=  -9.67 total=  9.7 maxBack= +0.0 maxLat= 0.0 dur= 1.7s
+  c3000  Exile Soldier          a001_006010          [hit_react] netX=  -0.00 netZ=  -9.67 total=  9.7 maxBack= +0.0 maxLat= 0.0 dur= 1.7s
+  c3000  Exile Soldier          a004_006010          [hit_react] netX=  -0.00 netZ=  -9.67 total=  9.7 maxBack= +0.0 maxLat= 0.0 dur= 1.7s
+  c3000  Exile Soldier          a005_006010          [hit_react] netX=  -0.00 netZ=  -9.67 total=  9.7 maxBack= +0.0 maxLat= 0.0 dur= 1.7s
+  c3400  Grave Warden           a000_003023          [attack  ] netX=  +0.00 netZ=  -9.65 total=  9.7 maxBack= +0.0 maxLat= 0.0 dur= 1.1s
+  c3010  Banished Knight        a002_003008          [attack  ] netX=  -0.05 netZ=  -9.65 total=  9.7 maxBack= +0.0 maxLat= 0.4 dur= 6.3s
+  c3250  Crucible Tree Knight   a000_003037          [attack  ] netX=  +2.11 netZ=  -9.37 total=  9.6 maxBack= +0.0 maxLat= 2.1 dur= 4.5s
+  c3100  Crucible Knight        a000_003011          [attack  ] netX=  +0.00 netZ=  -9.44 total=  9.4 maxBack= +0.0 maxLat= 0.2 dur= 3.2s
+  c4340  Pumpkin Head           a000_003002          [attack  ] netX=  -0.02 netZ=  -9.44 total=  9.4 maxBack= +0.0 maxLat= 0.2 dur= 4.7s
+  c3000  Exile Soldier          a002_006010          [hit_react] netX=  -0.00 netZ=  -9.24 total=  9.2 maxBack= +0.0 maxLat= 0.0 dur= 1.6s
+  c4090  Grafted Scion          a000_006100          [hit_react] netX=  -0.00 netZ=  -9.09 total=  9.1 maxBack= +0.0 maxLat= 0.0 dur= 1.7s
+  c3010  Banished Knight        a000_003008          [attack  ] netX=  -0.19 netZ=  -9.08 total=  9.1 maxBack= +0.1 maxLat= 0.4 dur= 4.2s
+  c3700  Raya Lucaria Scholar   a002_003009          [attack  ] netX=  +0.03 netZ=  -9.06 total=  9.1 maxBack= +0.0 maxLat= 0.3 dur= 3.0s
+  c3010  Banished Knight        a002_003016          [attack  ] netX=  +0.21 netZ=  -8.96 total=  9.0 maxBack= +0.7 maxLat= 0.8 dur= 6.0s
+  c4350  Lordsworn Knight       a001_003025          [attack  ] netX=  -0.00 netZ=  -8.92 total=  8.9 maxBack= +0.0 maxLat= 0.3 dur= 3.5s
+  c4270  Leyndell Knight        a000_003014          [attack  ] netX=  +1.00 netZ=  -8.85 total=  8.9 maxBack= +0.0 maxLat= 1.1 dur= 4.7s
+  c3970  Azula Beastman         a001_003002          [attack  ] netX=  +0.82 netZ=  -8.83 total=  8.9 maxBack= +0.0 maxLat= 0.9 dur= 2.8s
+  c3450  Misbegotten            a000_003008          [attack  ] netX=  -0.00 netZ=  -8.62 total=  8.6 maxBack= +0.0 maxLat= 0.1 dur= 3.0s
+  c4340  Pumpkin Head           a001_003003          [attack  ] netX=  -0.07 netZ=  -8.48 total=  8.5 maxBack= +0.0 maxLat= 0.6 dur= 4.8s
+  c3050  Commander Niall        a000_003006          [attack  ] netX=  +0.37 netZ=  -8.47 total=  8.5 maxBack= +0.0 maxLat= 0.4 dur= 3.5s
+  c4370  Haligtree Knight       a000_003013          [attack  ] netX=  +0.04 netZ=  -8.42 total=  8.4 maxBack= +0.0 maxLat= 0.2 dur= 3.8s
+  c3400  Grave Warden           a000_003024          [attack  ] netX=  +0.35 netZ=  -8.32 total=  8.3 maxBack= +0.0 maxLat= 1.0 dur= 2.8s
+  c3400  Grave Warden           a000_003017          [attack  ] netX=  +0.76 netZ=  -8.12 total=  8.2 maxBack= +0.1 maxLat= 0.8 dur= 5.4s
+  c4290  Bloodhound Knight      a000_003002          [attack  ] netX=  -0.43 netZ=  -8.01 total=  8.0 maxBack= +0.2 maxLat= 0.7 dur= 3.9s
+  c3910  Blackflame Monk        a000_003018          [attack  ] netX=  -0.08 netZ=  -8.02 total=  8.0 maxBack= +0.0 maxLat= 0.6 dur= 5.3s
+  c3010  Banished Knight        a001_003002          [attack  ] netX=  -0.45 netZ=  -8.00 total=  8.0 maxBack= +0.0 maxLat= 0.5 dur= 3.9s
+  c3010  Banished Knight        a002_003007          [attack  ] netX=  +0.31 netZ=  -8.00 total=  8.0 maxBack= +0.0 maxLat= 0.5 dur= 3.1s
+  c3970  Azula Beastman         a001_003000          [attack  ] netX=  -0.32 netZ=  -7.95 total=  8.0 maxBack= +0.0 maxLat= 0.3 dur= 3.8s
+  c3450  Misbegotten            a000_003023          [attack  ] netX=  -2.66 netZ=  -7.43 total=  7.9 maxBack= +0.0 maxLat= 2.7 dur= 4.3s
+  c3450  Misbegotten            a002_006000          [hit_react] netX=  -0.00 netZ=  -7.87 total=  7.9 maxBack= +0.1 maxLat= 0.0 dur= 3.0s
+  c3160  Carian Knight          a000_003017          [attack  ] netX=  +0.01 netZ=  -7.69 total=  7.7 maxBack= +0.0 maxLat= 1.2 dur= 2.7s
+  c3160  Carian Knight          a000_003012          [attack  ] netX=  +0.01 netZ=  -7.69 total=  7.7 maxBack= +0.0 maxLat= 1.2 dur= 2.7s
+  c3000  Exile Soldier          a002_003010          [attack  ] netX=  +0.00 netZ=  -7.68 total=  7.7 maxBack= +0.0 maxLat= 0.1 dur= 2.5s
+  c4320  Vulgar Militia         a000_003010          [attack  ] netX=  -0.05 netZ=  -7.68 total=  7.7 maxBack= +0.0 maxLat= 0.2 dur= 3.3s
+  c4290  Bloodhound Knight      a000_003004          [attack  ] netX=  -0.00 netZ=  -7.66 total=  7.7 maxBack= +0.0 maxLat= 0.4 dur= 2.5s
+  c4370  Haligtree Knight       a001_003010          [attack  ] netX=  +0.00 netZ=  -7.63 total=  7.6 maxBack= +0.0 maxLat= 0.1 dur= 4.8s
+  c3800  Cleanrot Knight        a000_003005          [attack  ] netX=  -0.00 netZ=  -7.59 total=  7.6 maxBack= +0.0 maxLat= 0.0 dur= 1.8s
+  c3450  Misbegotten            a000_003007          [attack  ] netX=  +0.69 netZ=  -7.35 total=  7.4 maxBack= +0.0 maxLat= 0.8 dur= 2.2s
+  c4380  Starcaller             a001_003004          [attack  ] netX=  +0.91 netZ=  -7.32 total=  7.4 maxBack= +0.0 maxLat= 0.9 dur= 4.2s
+  c5830  Messmer Soldier        a000_003008          [attack  ] netX=  +0.00 netZ=  -7.35 total=  7.3 maxBack= +0.0 maxLat= 0.1 dur= 3.5s
+  c5830  Messmer Soldier        a001_003008          [attack  ] netX=  +0.00 netZ=  -7.35 total=  7.3 maxBack= +0.0 maxLat= 0.1 dur= 3.5s
+  c5840  Black Knight           a001_003008          [attack  ] netX=  +0.13 netZ=  -7.26 total=  7.3 maxBack= +0.2 maxLat= 0.2 dur= 4.0s
+  c3900  Fire Monk              a001_003003          [attack  ] netX=  -0.26 netZ=  -7.25 total=  7.3 maxBack= +0.2 maxLat= 0.5 dur= 6.9s
+  c4310  Lordsworn Soldier      a002_003003          [attack  ] netX=  -0.00 netZ=  -7.25 total=  7.3 maxBack= +0.0 maxLat= 0.2 dur= 4.0s
+  c3550  Sanguine Noble         a000_003018          [attack  ] netX=  +0.03 netZ=  -7.24 total=  7.2 maxBack= +0.1 maxLat= 0.2 dur= 2.6s
+  c3400  Grave Warden           a000_003016          [attack  ] netX=  +0.20 netZ=  -7.16 total=  7.2 maxBack= +0.0 maxLat= 0.5 dur= 3.1s
+  c3160  Carian Knight          a000_003002          [attack  ] netX=  +0.06 netZ=  -7.16 total=  7.2 maxBack= +0.0 maxLat= 0.3 dur= 4.1s
+  c3670  Demi-Human             a000_003021          [attack  ] netX=  -0.00 netZ=  -7.13 total=  7.1 maxBack= +0.0 maxLat= 0.0 dur= 3.3s
+  c4380  Starcaller             a001_003007          [attack  ] netX=  -0.23 netZ=  -7.12 total=  7.1 maxBack= +0.0 maxLat= 0.3 dur=10.3s
+  c4050  Kaiden Sellsword       a000_003005          [attack  ] netX=  -0.00 netZ=  -7.07 total=  7.1 maxBack= +0.0 maxLat= 0.2 dur= 3.1s
+  c4050  Kaiden Sellsword       a000_003014          [attack  ] netX=  -0.00 netZ=  -7.06 total=  7.1 maxBack= +0.0 maxLat= 0.0 dur= 3.7s
+  c4350  Lordsworn Knight       a000_003006          [attack  ] netX=  +0.24 netZ=  -7.01 total=  7.0 maxBack= +0.2 maxLat= 0.3 dur= 4.0s
+  c3250  Crucible Tree Knight   a000_002100          [movement] netX=  -0.00 netZ=  -6.99 total=  7.0 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c4380  Starcaller             a004_003011          [attack  ] netX=  -0.13 netZ=  -6.99 total=  7.0 maxBack= +0.0 maxLat= 0.2 dur= 6.0s
+  c3450  Misbegotten            a002_003006          [attack  ] netX=  +0.02 netZ=  -6.98 total=  7.0 maxBack= +0.0 maxLat= 0.6 dur= 6.1s
+  c3300  Nox Swordstress        a001_003013          [attack  ] netX=  +0.14 netZ=  -6.86 total=  6.9 maxBack= +0.0 maxLat= 0.3 dur= 3.4s
+  c3910  Blackflame Monk        a000_003013          [attack  ] netX=  -0.08 netZ=  -6.86 total=  6.9 maxBack= +0.0 maxLat= 0.6 dur= 5.1s
+  c3050  Commander Niall        a000_003019          [attack  ] netX=  +0.31 netZ=  -6.82 total=  6.8 maxBack= +0.0 maxLat= 0.5 dur= 5.1s
+  c3400  Grave Warden           a001_003008          [attack  ] netX=  -0.29 netZ=  -6.70 total=  6.7 maxBack= +0.0 maxLat= 0.5 dur= 4.0s
+  c5840  Black Knight           a001_003011          [attack  ] netX=  +0.04 netZ=  -6.69 total=  6.7 maxBack= +0.2 maxLat= 0.2 dur= 4.2s
+  c3970  Azula Beastman         a000_003002          [attack  ] netX=  +0.25 netZ=  -6.69 total=  6.7 maxBack= +0.0 maxLat= 0.4 dur= 2.2s
+  c3970  Azula Beastman         a000_003012          [attack  ] netX=  +0.09 netZ=  -6.66 total=  6.7 maxBack= +0.0 maxLat= 0.3 dur= 2.8s
+  c4340  Pumpkin Head           a001_003008          [attack  ] netX=  +0.66 netZ=  -6.52 total=  6.6 maxBack= +0.0 maxLat= 0.7 dur= 4.0s
+  c5830  Messmer Soldier        a001_003009          [attack  ] netX=  +0.02 netZ=  -6.51 total=  6.5 maxBack= +0.0 maxLat= 0.2 dur= 4.3s
+  c5830  Messmer Soldier        a003_003007          [attack  ] netX=  +0.02 netZ=  -6.51 total=  6.5 maxBack= +0.0 maxLat= 0.2 dur= 4.2s
+  c5830  Messmer Soldier        a003_003009          [attack  ] netX=  +0.02 netZ=  -6.51 total=  6.5 maxBack= +0.0 maxLat= 0.2 dur= 4.3s
+  c3160  Carian Knight          a000_002100          [movement] netX=  -0.00 netZ=  -6.50 total=  6.5 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c4310  Lordsworn Soldier      a001_003003          [attack  ] netX=  +0.09 netZ=  -6.35 total=  6.4 maxBack= +0.0 maxLat= 0.2 dur= 3.0s
+  c4310  Lordsworn Soldier      a005_003003          [attack  ] netX=  +0.09 netZ=  -6.35 total=  6.4 maxBack= +0.0 maxLat= 0.2 dur= 3.0s
+  c5830  Messmer Soldier        a000_003003          [attack  ] netX=  +0.09 netZ=  -6.35 total=  6.4 maxBack= +0.0 maxLat= 0.2 dur= 3.0s
+  c5830  Messmer Soldier        a001_003003          [attack  ] netX=  +0.09 netZ=  -6.35 total=  6.4 maxBack= +0.0 maxLat= 0.2 dur= 3.0s
+  c4350  Lordsworn Knight       a000_003009          [attack  ] netX=  +0.08 netZ=  -6.34 total=  6.3 maxBack= +0.0 maxLat= 0.2 dur= 2.9s
+  c3400  Grave Warden           a000_003004          [attack  ] netX=  +0.76 netZ=  -6.29 total=  6.3 maxBack= +0.0 maxLat= 2.0 dur= 5.0s
+  c3970  Azula Beastman         a001_003001          [attack  ] netX=  +0.48 netZ=  -6.30 total=  6.3 maxBack= +0.0 maxLat= 0.6 dur= 4.0s
+  c4290  Bloodhound Knight      a000_003011          [attack  ] netX=  +0.47 netZ=  -6.28 total=  6.3 maxBack= +0.0 maxLat= 0.5 dur= 4.1s
+  c4050  Kaiden Sellsword       a000_003006          [attack  ] netX=  +0.00 netZ=  -6.29 total=  6.3 maxBack= +0.0 maxLat= 0.5 dur= 4.6s
+  c5830  Messmer Soldier        a000_003007          [attack  ] netX=  +0.02 netZ=  -6.26 total=  6.3 maxBack= +0.0 maxLat= 0.2 dur= 4.7s
+  c5830  Messmer Soldier        a000_003009          [attack  ] netX=  +0.02 netZ=  -6.26 total=  6.3 maxBack= +0.0 maxLat= 0.2 dur= 4.7s
+  c5830  Messmer Soldier        a001_003007          [attack  ] netX=  +0.02 netZ=  -6.22 total=  6.2 maxBack= +0.0 maxLat= 0.2 dur= 4.7s
+  c3450  Misbegotten            a002_003007          [attack  ] netX=  +0.08 netZ=  -6.19 total=  6.2 maxBack= +0.2 maxLat= 0.5 dur= 6.0s
+  c3300  Nox Swordstress        a001_006000          [hit_react] netX=  -0.00 netZ=  -6.15 total=  6.2 maxBack= +0.0 maxLat= 0.0 dur= 1.3s
+  c3300  Nox Swordstress        a002_006000          [hit_react] netX=  -0.00 netZ=  -6.15 total=  6.2 maxBack= +0.0 maxLat= 0.0 dur= 1.3s
+  c3010  Banished Knight        a001_003004          [attack  ] netX=  +0.00 netZ=  -6.13 total=  6.1 maxBack= +0.0 maxLat= 0.4 dur= 3.4s
+  c4320  Vulgar Militia         a000_002100          [movement] netX=  -0.00 netZ=  -6.08 total=  6.1 maxBack= +0.0 maxLat= 0.0 dur= 0.9s
+  c4320  Vulgar Militia         a001_002100          [movement] netX=  -0.00 netZ=  -6.08 total=  6.1 maxBack= +0.0 maxLat= 0.0 dur= 0.9s
+  c5830  Messmer Soldier        a002_003005          [attack  ] netX=  -0.12 netZ=  -6.07 total=  6.1 maxBack= +0.3 maxLat= 0.2 dur= 3.8s
+  c4290  Bloodhound Knight      a000_002100          [movement] netX=  -0.00 netZ=  -6.02 total=  6.0 maxBack= +0.0 maxLat= 0.0 dur= 0.8s
+  c4350  Lordsworn Knight       a001_003027          [attack  ] netX=  +0.01 netZ=  -5.99 total=  6.0 maxBack= +0.4 maxLat= 0.2 dur= 3.3s
+  c3500  Skeleton               a001_003014          [attack  ] netX=  +0.00 netZ=  -5.98 total=  6.0 maxBack= +0.6 maxLat= 0.1 dur= 3.3s
+  c3950  Man-Serpent            a000_003005          [attack  ] netX=  +0.15 netZ=  -5.96 total=  6.0 maxBack= +0.0 maxLat= 1.0 dur= 7.1s
+  c5840  Black Knight           a001_003003          [attack  ] netX=  +0.00 netZ=  -5.91 total=  5.9 maxBack= +0.2 maxLat= 0.2 dur= 3.6s
+  c4320  Vulgar Militia         a001_003000          [attack  ] netX=  +0.20 netZ=  -5.91 total=  5.9 maxBack= +0.0 maxLat= 0.2 dur= 3.7s
+  c3300  Nox Swordstress        a002_003006          [attack  ] netX=  -0.00 netZ=  -5.82 total=  5.8 maxBack= +0.0 maxLat= 0.2 dur= 2.3s
+  c3400  Grave Warden           a001_003013          [attack  ] netX=  -0.30 netZ=  -5.80 total=  5.8 maxBack= +0.0 maxLat= 0.7 dur= 3.9s
+  c4370  Haligtree Knight       a000_003021          [attack  ] netX=  +0.00 netZ=  -5.77 total=  5.8 maxBack= +0.0 maxLat= 0.3 dur= 5.0s
+  c4270  Leyndell Knight        a000_003004          [attack  ] netX=  -0.97 netZ=  -5.67 total=  5.8 maxBack= +1.4 maxLat= 1.0 dur= 3.8s
+  c4300  Godrick Soldier        a000_003025          [attack  ] netX=  -0.00 netZ=  -5.75 total=  5.8 maxBack= +0.0 maxLat= 0.0 dur= 1.6s
+  c4320  Vulgar Militia         a000_003001          [attack  ] netX=  -0.10 netZ=  -5.73 total=  5.7 maxBack= +0.0 maxLat= 0.2 dur= 4.2s
+  c3450  Misbegotten            a001_002100          [movement] netX=  -0.00 netZ=  -5.70 total=  5.7 maxBack= +0.0 maxLat= 0.0 dur= 0.9s
+  c3010  Banished Knight        a002_002300          [movement] netX=  -0.00 netZ=  -5.70 total=  5.7 maxBack= +0.0 maxLat= 0.0 dur= 4.0s
+  c3950  Man-Serpent            a000_002100          [movement] netX=  -0.00 netZ=  -5.68 total=  5.7 maxBack= +0.0 maxLat= 0.0 dur= 0.8s
+  c4350  Lordsworn Knight       a000_003008          [attack  ] netX=  +0.59 netZ=  -5.64 total=  5.7 maxBack= +0.0 maxLat= 0.7 dur= 4.0s
+  c3010  Banished Knight        a001_003017          [attack  ] netX=  +0.03 netZ=  -5.64 total=  5.6 maxBack= +0.0 maxLat= 0.1 dur= 3.3s
+  c4320  Vulgar Militia         a000_003000          [attack  ] netX=  -0.14 netZ=  -5.63 total=  5.6 maxBack= +0.0 maxLat= 0.3 dur= 3.8s
+  c3300  Nox Swordstress        a002_003005          [attack  ] netX=  -0.07 netZ=  -5.59 total=  5.6 maxBack= +0.0 maxLat= 0.2 dur= 2.7s
+  c3300  Nox Swordstress        a001_003002          [attack  ] netX=  -0.07 netZ=  -5.59 total=  5.6 maxBack= +0.0 maxLat= 0.2 dur= 2.7s
+  c3900  Fire Monk              a000_003039          [attack  ] netX=  +0.02 netZ=  -5.59 total=  5.6 maxBack= +0.0 maxLat= 0.3 dur= 5.2s
+  c3700  Raya Lucaria Scholar   a001_003030          [attack  ] netX=  +0.00 netZ=  -5.59 total=  5.6 maxBack= +0.0 maxLat= 0.2 dur= 3.9s
+  c3010  Banished Knight        a000_006000          [hit_react] netX=  -0.00 netZ=  -5.56 total=  5.6 maxBack= +0.0 maxLat= 0.0 dur= 2.1s
+  c3010  Banished Knight        a001_006000          [hit_react] netX=  -0.00 netZ=  -5.56 total=  5.6 maxBack= +0.0 maxLat= 0.0 dur= 2.1s
+  c3010  Banished Knight        a002_006000          [hit_react] netX=  -0.00 netZ=  -5.56 total=  5.6 maxBack= +0.0 maxLat= 0.0 dur= 2.1s
+  c3970  Azula Beastman         a000_003003          [attack  ] netX=  -0.06 netZ=  -5.54 total=  5.5 maxBack= +0.1 maxLat= 0.5 dur= 3.0s
+  c3950  Man-Serpent            a000_006000          [hit_react] netX=  -0.00 netZ=  -5.52 total=  5.5 maxBack= +0.0 maxLat= 0.0 dur= 1.5s
+  c3450  Misbegotten            a002_003005          [attack  ] netX=  -0.04 netZ=  -5.49 total=  5.5 maxBack= +0.0 maxLat= 0.2 dur= 2.8s
+  c3700  Raya Lucaria Scholar   a002_003004          [attack  ] netX=  +0.34 netZ=  -5.46 total=  5.5 maxBack= +0.0 maxLat= 0.5 dur= 2.7s
+  c3010  Banished Knight        a001_003013          [attack  ] netX=  +1.98 netZ=  -5.08 total=  5.5 maxBack= +0.0 maxLat= 2.0 dur= 6.3s
+  c4350  Lordsworn Knight       a000_003034          [attack  ] netX=  +0.04 netZ=  -5.43 total=  5.4 maxBack= +0.3 maxLat= 0.4 dur= 2.9s
+  c3010  Banished Knight        a000_003005          [attack  ] netX=  +0.27 netZ=  -5.38 total=  5.4 maxBack= +0.0 maxLat= 0.3 dur= 3.5s
+  c4300  Godrick Soldier        a000_003009          [attack  ] netX=  -0.07 netZ=  -5.33 total=  5.3 maxBack= +0.0 maxLat= 0.5 dur= 8.3s
+  c4340  Pumpkin Head           a001_003007          [attack  ] netX=  +0.98 netZ=  -5.20 total=  5.3 maxBack= +0.1 maxLat= 1.1 dur= 4.9s
+  c3700  Raya Lucaria Scholar   a001_003027          [attack  ] netX=  -0.00 netZ=  -5.28 total=  5.3 maxBack= +0.0 maxLat= 0.2 dur= 3.2s
+  c3400  Grave Warden           a000_003007          [attack  ] netX=  -0.18 netZ=  -5.26 total=  5.3 maxBack= +0.0 maxLat= 0.5 dur= 3.8s
+  c4300  Godrick Soldier        a000_003007          [attack  ] netX=  +0.01 netZ=  -5.26 total=  5.3 maxBack= +0.5 maxLat= 0.4 dur= 6.0s
+  c3400  Grave Warden           a000_003012          [attack  ] netX=  +1.48 netZ=  -5.03 total=  5.2 maxBack= +0.0 maxLat= 2.1 dur= 4.8s
+  c3800  Cleanrot Knight        a001_003013          [attack  ] netX=  +0.38 netZ=  -5.21 total=  5.2 maxBack= +0.0 maxLat= 1.0 dur= 5.6s
+  c3910  Blackflame Monk        a000_003000          [attack  ] netX=  -0.00 netZ=  -5.20 total=  5.2 maxBack= +0.1 maxLat= 0.3 dur= 5.7s
+  c4350  Lordsworn Knight       a001_003009          [attack  ] netX=  +0.08 netZ=  -5.20 total=  5.2 maxBack= +0.2 maxLat= 0.2 dur= 3.8s
+  c5840  Black Knight           a001_003005          [attack  ] netX=  +0.00 netZ=  -5.19 total=  5.2 maxBack= +0.0 maxLat= 0.1 dur= 3.0s
+  c3100  Crucible Knight        a000_003008          [attack  ] netX=  -0.00 netZ=  -5.15 total=  5.1 maxBack= +0.0 maxLat= 0.2 dur= 4.2s
+  c3050  Commander Niall        a000_003013          [attack  ] netX=  +0.05 netZ=  -5.15 total=  5.1 maxBack= +0.0 maxLat= 0.3 dur= 4.4s
+  c4290  Bloodhound Knight      a000_003013          [attack  ] netX=  +0.35 netZ=  -5.12 total=  5.1 maxBack= +0.3 maxLat= 0.6 dur= 3.5s
+  c3000  Exile Soldier          a000_003003          [attack  ] netX=  +0.00 netZ=  -5.10 total=  5.1 maxBack= +0.0 maxLat= 0.3 dur= 2.9s
+  c4340  Pumpkin Head           a001_003013          [attack  ] netX=  +0.55 netZ=  -5.06 total=  5.1 maxBack= +0.2 maxLat= 0.6 dur= 4.1s
+  c3000  Exile Soldier          a005_003010          [attack  ] netX=  +0.00 netZ=  -5.07 total=  5.1 maxBack= +0.0 maxLat= 0.2 dur= 5.0s
+  c3700  Raya Lucaria Scholar   a003_003002          [attack  ] netX=  +0.04 netZ=  -5.06 total=  5.1 maxBack= +0.0 maxLat= 0.1 dur= 3.0s
+  c4300  Godrick Soldier        a000_003024          [attack  ] netX=  -0.00 netZ=  -5.05 total=  5.0 maxBack= +0.0 maxLat= 0.0 dur= 1.5s
+  c3910  Blackflame Monk        a000_003016          [attack  ] netX=  -0.00 netZ=  -5.04 total=  5.0 maxBack= +0.0 maxLat= 0.0 dur= 0.8s
+  c4050  Kaiden Sellsword       a000_003004          [attack  ] netX=  -0.17 netZ=  -5.02 total=  5.0 maxBack= +0.0 maxLat= 0.3 dur= 3.2s
+  c3000  Exile Soldier          a005_003003          [attack  ] netX=  -0.04 netZ=  -5.02 total=  5.0 maxBack= +0.0 maxLat= 0.3 dur= 3.3s
+  c3400  Grave Warden           a000_002100          [movement] netX=  -0.00 netZ=  -5.02 total=  5.0 maxBack= +0.0 maxLat= 0.0 dur= 0.9s
+  c3400  Grave Warden           a001_002100          [movement] netX=  -0.00 netZ=  -5.02 total=  5.0 maxBack= +0.0 maxLat= 0.0 dur= 0.9s
+  c4350  Lordsworn Knight       a000_003033          [attack  ] netX=  -0.00 netZ=  -5.00 total=  5.0 maxBack= +0.2 maxLat= 0.0 dur= 4.3s
+  c4290  Bloodhound Knight      a000_006000          [hit_react] netX=  -0.00 netZ=  -5.00 total=  5.0 maxBack= +0.0 maxLat= 0.0 dur= 1.2s
+  c4340  Pumpkin Head           a000_003018          [attack  ] netX=  +0.64 netZ=  -4.96 total=  5.0 maxBack= +0.0 maxLat= 1.0 dur= 2.6s
+  c3100  Crucible Knight        a000_001800          [backstep] netX=  -0.00 netZ=  -4.98 total=  5.0 maxBack= +0.0 maxLat= 0.0 dur= 7.3s
+  c4350  Lordsworn Knight       a001_003006          [attack  ] netX=  -0.00 netZ=  -4.98 total=  5.0 maxBack= +0.0 maxLat= 0.3 dur= 2.7s
+  c3700  Raya Lucaria Scholar   a001_003022          [attack  ] netX=  -0.10 netZ=  -4.98 total=  5.0 maxBack= +0.0 maxLat= 0.2 dur= 3.1s
+  c3010  Banished Knight        a002_003006          [attack  ] netX=  +0.00 netZ=  -4.96 total=  5.0 maxBack= +0.0 maxLat= 0.2 dur= 3.1s
+  c3550  Sanguine Noble         a000_003004          [attack  ] netX=  -0.00 netZ=  -4.94 total=  4.9 maxBack= +0.0 maxLat= 0.1 dur= 1.9s
+  c3970  Azula Beastman         a001_003016          [attack  ] netX=  +1.04 netZ=  -4.82 total=  4.9 maxBack= +0.0 maxLat= 1.2 dur= 3.3s
+  c3970  Azula Beastman         a001_003017          [attack  ] netX=  +1.04 netZ=  -4.82 total=  4.9 maxBack= +0.0 maxLat= 1.2 dur= 3.3s
+  c5830  Messmer Soldier        a002_003006          [attack  ] netX=  +0.04 netZ=  -4.93 total=  4.9 maxBack= +0.1 maxLat= 0.1 dur= 3.6s
+  c3910  Blackflame Monk        a000_003015          [attack  ] netX=  -0.00 netZ=  -4.89 total=  4.9 maxBack= +0.0 maxLat= 0.2 dur= 3.3s
+  c3800  Cleanrot Knight        a000_006000          [hit_react] netX=  -0.00 netZ=  -4.88 total=  4.9 maxBack= +0.0 maxLat= 0.0 dur= 1.1s
+  c3400  Grave Warden           a001_003001          [attack  ] netX=  -0.30 netZ=  -4.86 total=  4.9 maxBack= +0.0 maxLat= 0.5 dur= 4.2s
+  c5840  Black Knight           a000_003007          [attack  ] netX=  -0.00 netZ=  -4.86 total=  4.9 maxBack= +0.4 maxLat= 0.2 dur= 2.7s
+  c4340  Pumpkin Head           a001_003004          [attack  ] netX=  +0.98 netZ=  -4.74 total=  4.8 maxBack= +0.0 maxLat= 1.0 dur= 4.6s
+  c3800  Cleanrot Knight        a000_002100          [movement] netX=  -0.00 netZ=  -4.79 total=  4.8 maxBack= +0.0 maxLat= 0.0 dur= 0.9s
+  c3800  Cleanrot Knight        a000_002310          [movement] netX=  -0.00 netZ=  -4.79 total=  4.8 maxBack= +0.0 maxLat= 0.0 dur= 0.9s
+  c4350  Lordsworn Knight       a001_003033          [attack  ] netX=  +0.00 netZ=  -4.77 total=  4.8 maxBack= +0.0 maxLat= 0.3 dur= 2.8s
+  c3670  Demi-Human             a000_003006          [attack  ] netX=  +0.00 netZ=  -4.75 total=  4.7 maxBack= +0.0 maxLat= 0.4 dur= 5.2s
+  c3050  Commander Niall        a000_003002          [attack  ] netX=  +0.40 netZ=  -4.73 total=  4.7 maxBack= +0.0 maxLat= 0.7 dur= 3.0s
+  c3050  Commander Niall        a000_003028          [attack  ] netX=  +0.40 netZ=  -4.73 total=  4.7 maxBack= +0.0 maxLat= 0.7 dur= 3.3s
+  c4320  Vulgar Militia         a001_003001          [attack  ] netX=  +0.00 netZ=  -4.73 total=  4.7 maxBack= +0.0 maxLat= 0.1 dur= 2.7s
+  c4290  Bloodhound Knight      a000_003012          [attack  ] netX=  +0.41 netZ=  -4.71 total=  4.7 maxBack= +0.0 maxLat= 0.4 dur= 4.5s
+  c4350  Lordsworn Knight       a000_003005          [attack  ] netX=  +0.20 netZ=  -4.71 total=  4.7 maxBack= +0.0 maxLat= 0.3 dur= 4.5s
+  c4310  Lordsworn Soldier      a000_003004          [attack  ] netX=  -0.02 netZ=  -4.70 total=  4.7 maxBack= +0.0 maxLat= 0.2 dur= 3.0s
+  c4310  Lordsworn Soldier      a003_003004          [attack  ] netX=  -0.02 netZ=  -4.70 total=  4.7 maxBack= +0.0 maxLat= 0.2 dur= 3.0s
+  c3450  Misbegotten            a002_003009          [attack  ] netX=  +0.57 netZ=  -4.64 total=  4.7 maxBack= +0.0 maxLat= 0.6 dur= 1.7s
+  c3010  Banished Knight        a002_003017          [attack  ] netX=  +0.79 netZ=  -4.59 total=  4.7 maxBack= +0.1 maxLat= 1.0 dur= 6.4s
+  c3700  Raya Lucaria Scholar   a000_002100          [movement] netX=  -0.00 netZ=  -4.60 total=  4.6 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c4380  Starcaller             a002_003023          [attack  ] netX=  -0.00 netZ=  -4.58 total=  4.6 maxBack= +0.0 maxLat= 0.2 dur= 5.3s
+  c3910  Blackflame Monk        a000_002100          [movement] netX=  -0.00 netZ=  -4.57 total=  4.6 maxBack= +0.0 maxLat= 0.0 dur= 0.8s
+  c3910  Blackflame Monk        a000_002310          [movement] netX=  -0.00 netZ=  -4.57 total=  4.6 maxBack= +0.0 maxLat= 0.0 dur= 0.9s
+  c3050  Commander Niall        a000_003004          [attack  ] netX=  -0.52 netZ=  -4.52 total=  4.5 maxBack= +0.0 maxLat= 0.6 dur= 5.4s
+  c3050  Commander Niall        a000_003012          [attack  ] netX=  -0.10 netZ=  -4.52 total=  4.5 maxBack= +0.0 maxLat= 0.2 dur= 4.6s
+  c4320  Vulgar Militia         a000_003012          [attack  ] netX=  +0.08 netZ=  -4.51 total=  4.5 maxBack= +0.0 maxLat= 0.3 dur= 3.6s
+  c3150  Redmane Knight         a000_002100          [movement] netX=  -0.00 netZ=  -4.51 total=  4.5 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c4310  Lordsworn Soldier      a000_003013          [attack  ] netX=  -0.37 netZ=  -4.47 total=  4.5 maxBack= +0.0 maxLat= 0.5 dur= 3.5s
+  c4340  Pumpkin Head           a000_003000          [attack  ] netX=  +0.02 netZ=  -4.45 total=  4.5 maxBack= +0.0 maxLat= 0.5 dur= 3.5s
+  c3400  Grave Warden           a001_003012          [attack  ] netX=  +0.00 netZ=  -4.44 total=  4.4 maxBack= +0.3 maxLat= 0.3 dur= 6.2s
+  c3910  Blackflame Monk        a000_003010          [attack  ] netX=  -0.25 netZ=  -4.43 total=  4.4 maxBack= +0.0 maxLat= 0.5 dur= 3.7s
+  c4300  Godrick Soldier        a000_003015          [attack  ] netX=  +0.76 netZ=  -4.36 total=  4.4 maxBack= +0.1 maxLat= 0.9 dur= 5.1s
+  c4090  Grafted Scion          a000_003009          [attack  ] netX=  +0.14 netZ=  -4.41 total=  4.4 maxBack= +0.0 maxLat= 0.3 dur= 3.1s
+  c3050  Commander Niall        a000_003003          [attack  ] netX=  +0.30 netZ=  -4.40 total=  4.4 maxBack= +0.0 maxLat= 0.7 dur= 3.5s
+  c3700  Raya Lucaria Scholar   a002_003001          [attack  ] netX=  -0.07 netZ=  -4.40 total=  4.4 maxBack= +0.0 maxLat= 0.1 dur= 2.5s
+  c3100  Crucible Knight        a000_002100          [movement] netX=  -0.00 netZ=  -4.39 total=  4.4 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c3950  Man-Serpent            a000_003017          [attack  ] netX=  +0.20 netZ=  -4.38 total=  4.4 maxBack= +0.0 maxLat= 0.3 dur= 2.7s
+  c3900  Fire Monk              a000_003006          [attack  ] netX=  +0.46 netZ=  -4.36 total=  4.4 maxBack= +0.0 maxLat= 0.5 dur= 2.8s
+  c4350  Lordsworn Knight       a000_003010          [attack  ] netX=  +0.39 netZ=  -4.36 total=  4.4 maxBack= +0.0 maxLat= 0.4 dur= 4.0s
+  c3010  Banished Knight        a000_003006          [attack  ] netX=  -0.00 netZ=  -4.35 total=  4.3 maxBack= +0.3 maxLat= 0.3 dur= 3.5s
+  c3050  Commander Niall        a000_003026          [attack  ] netX=  -0.47 netZ=  -4.31 total=  4.3 maxBack= +0.0 maxLat= 0.7 dur= 7.2s
+  c3400  Grave Warden           a000_003010          [attack  ] netX=  -0.00 netZ=  -4.33 total=  4.3 maxBack= +0.0 maxLat= 0.6 dur= 4.2s
+  c3500  Skeleton               a000_003000          [attack  ] netX=  -0.00 netZ=  -4.32 total=  4.3 maxBack= +0.0 maxLat= 0.1 dur= 4.1s
+  c4340  Pumpkin Head           a000_003001          [attack  ] netX=  +0.21 netZ=  -4.30 total=  4.3 maxBack= +0.0 maxLat= 0.5 dur= 4.0s
+  c4380  Starcaller             a000_003016          [attack  ] netX=  +0.05 netZ=  -4.29 total=  4.3 maxBack= +0.0 maxLat= 0.2 dur= 5.0s
+  c3900  Fire Monk              a000_003005          [attack  ] netX=  +0.02 netZ=  -4.29 total=  4.3 maxBack= +0.0 maxLat= 0.7 dur= 3.4s
+  c3450  Misbegotten            a000_002100          [movement] netX=  -0.00 netZ=  -4.29 total=  4.3 maxBack= +0.0 maxLat= 0.0 dur= 0.6s
+  c3050  Commander Niall        a000_003016          [attack  ] netX=  +0.05 netZ=  -4.27 total=  4.3 maxBack= +0.3 maxLat= 0.3 dur= 4.1s
+  c3900  Fire Monk              a001_003005          [attack  ] netX=  -0.11 netZ=  -4.26 total=  4.3 maxBack= +0.0 maxLat= 0.2 dur= 2.5s
+  c4370  Haligtree Knight       a000_003026          [attack  ] netX=  +0.12 netZ=  -4.25 total=  4.3 maxBack= +0.0 maxLat= 0.2 dur= 2.1s
+  c3050  Commander Niall        a000_003018          [attack  ] netX=  -0.08 netZ=  -4.24 total=  4.2 maxBack= +0.0 maxLat= 0.5 dur= 4.7s
+  c3300  Nox Swordstress        a001_003021          [attack  ] netX=  +0.22 netZ=  -4.22 total=  4.2 maxBack= +0.0 maxLat= 0.6 dur= 2.6s
+  c4310  Lordsworn Soldier      a002_003011          [attack  ] netX=  -0.05 netZ=  -4.22 total=  4.2 maxBack= +0.0 maxLat= 0.3 dur= 4.1s
+  c3300  Nox Swordstress        a000_003020          [attack  ] netX=  +0.15 netZ=  -4.21 total=  4.2 maxBack= +0.0 maxLat= 0.4 dur= 3.1s
+  c3000  Exile Soldier          a000_002100          [movement] netX=  -0.00 netZ=  -4.20 total=  4.2 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c3000  Exile Soldier          a001_002100          [movement] netX=  -0.00 netZ=  -4.20 total=  4.2 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c3000  Exile Soldier          a002_002130          [movement] netX=  -0.00 netZ=  -4.20 total=  4.2 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c3000  Exile Soldier          a004_002100          [movement] netX=  -0.00 netZ=  -4.20 total=  4.2 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c3050  Commander Niall        a000_003033          [attack  ] netX=  +0.30 netZ=  -4.19 total=  4.2 maxBack= +0.0 maxLat= 0.7 dur= 2.9s
+  c4340  Pumpkin Head           a001_003000          [attack  ] netX=  -0.97 netZ=  -4.06 total=  4.2 maxBack= +0.5 maxLat= 1.1 dur= 5.9s
+  c4340  Pumpkin Head           a000_002100          [movement] netX=  -0.00 netZ=  -4.16 total=  4.2 maxBack= +0.0 maxLat= 0.0 dur= 1.1s
+  c4340  Pumpkin Head           a001_002100          [movement] netX=  -0.00 netZ=  -4.16 total=  4.2 maxBack= +0.0 maxLat= 0.0 dur= 1.1s
+  c3970  Azula Beastman         a000_003001          [attack  ] netX=  +0.04 netZ=  -4.14 total=  4.1 maxBack= +1.4 maxLat= 0.3 dur= 2.1s
+  c3010  Banished Knight        a000_003010          [attack  ] netX=  +0.00 netZ=  -4.09 total=  4.1 maxBack= +0.0 maxLat= 0.2 dur= 2.3s
+  c3450  Misbegotten            a000_003009          [attack  ] netX=  -0.10 netZ=  -4.07 total=  4.1 maxBack= +0.0 maxLat= 0.3 dur= 2.3s
+  c3900  Fire Monk              a000_002100          [movement] netX=  -0.00 netZ=  -4.07 total=  4.1 maxBack= +0.0 maxLat= 0.0 dur= 0.9s
+  c3910  Blackflame Monk        a000_003011          [attack  ] netX=  +0.39 netZ=  -4.05 total=  4.1 maxBack= +0.0 maxLat= 0.6 dur= 3.5s
+  c3450  Misbegotten            a000_003022          [attack  ] netX=  -1.12 netZ=  -3.91 total=  4.1 maxBack= +0.0 maxLat= 1.2 dur= 2.5s
+  c3400  Grave Warden           a001_003004          [attack  ] netX=  -0.30 netZ=  -4.04 total=  4.0 maxBack= +0.1 maxLat= 0.7 dur= 3.9s
+  c4350  Lordsworn Knight       a000_003007          [attack  ] netX=  -0.00 netZ=  -4.04 total=  4.0 maxBack= +0.0 maxLat= 0.3 dur= 4.0s
+  c3010  Banished Knight        a000_003000          [attack  ] netX=  +0.39 netZ=  -4.02 total=  4.0 maxBack= +0.0 maxLat= 0.4 dur= 2.8s
+  c4270  Leyndell Knight        a000_003018          [attack  ] netX=  +0.06 netZ=  -4.03 total=  4.0 maxBack= +3.5 maxLat= 0.6 dur= 2.5s
+  c3700  Raya Lucaria Scholar   a001_002100          [movement] netX=  -0.00 netZ=  -4.02 total=  4.0 maxBack= +0.0 maxLat= 0.0 dur= 0.9s
+  c3700  Raya Lucaria Scholar   a001_002130          [movement] netX=  -0.00 netZ=  -4.02 total=  4.0 maxBack= +0.0 maxLat= 0.0 dur= 0.9s
+  c3450  Misbegotten            a002_003002          [attack  ] netX=  -0.48 netZ=  -3.99 total=  4.0 maxBack= +0.0 maxLat= 0.6 dur= 3.3s
+  c3800  Cleanrot Knight        a000_002130          [movement] netX=  -0.00 netZ=  -4.00 total=  4.0 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c4270  Leyndell Knight        a000_002030          [movement] netX=  -0.00 netZ=  -4.00 total=  4.0 maxBack= +0.0 maxLat= 0.0 dur= 2.3s
+  c4270  Leyndell Knight        a000_002000          [movement] netX=  -0.00 netZ=  -4.00 total=  4.0 maxBack= +0.0 maxLat= 0.0 dur= 1.9s
+  c3300  Nox Swordstress        a000_002100          [movement] netX=  -0.00 netZ=  -3.99 total=  4.0 maxBack= +0.0 maxLat= 0.0 dur= 0.9s
+  c3300  Nox Swordstress        a000_002130          [movement] netX=  -0.00 netZ=  -3.99 total=  4.0 maxBack= +0.0 maxLat= 0.0 dur= 0.9s
+  c3300  Nox Swordstress        a001_002100          [movement] netX=  -0.00 netZ=  -3.99 total=  4.0 maxBack= +0.0 maxLat= 0.0 dur= 0.8s
+  c3300  Nox Swordstress        a002_002100          [movement] netX=  -0.00 netZ=  -3.99 total=  4.0 maxBack= +0.0 maxLat= 0.0 dur= 0.8s
+  c3100  Crucible Knight        a000_003020          [attack  ] netX=  +0.18 netZ=  -3.98 total=  4.0 maxBack= +0.1 maxLat= 0.2 dur= 3.3s
+  c3900  Fire Monk              a000_003013          [attack  ] netX=  -0.30 netZ=  -3.93 total=  3.9 maxBack= +0.0 maxLat= 0.3 dur= 3.5s
+  c5830  Messmer Soldier        a000_003005          [attack  ] netX=  +0.16 netZ=  -3.93 total=  3.9 maxBack= +0.0 maxLat= 0.2 dur= 3.7s
+  c5830  Messmer Soldier        a001_003005          [attack  ] netX=  +0.16 netZ=  -3.93 total=  3.9 maxBack= +0.0 maxLat= 0.2 dur= 3.7s
+  c5830  Messmer Soldier        a003_003005          [attack  ] netX=  +0.16 netZ=  -3.93 total=  3.9 maxBack= +0.0 maxLat= 0.2 dur= 3.0s
+  c4090  Grafted Scion          a000_003006          [attack  ] netX=  +0.00 netZ=  -3.93 total=  3.9 maxBack= +1.1 maxLat= 1.3 dur= 2.8s
+  c3970  Azula Beastman         a001_002100          [movement] netX=  -0.00 netZ=  -3.93 total=  3.9 maxBack= +0.0 maxLat= 0.0 dur= 0.8s
+  c3050  Commander Niall        a000_003000          [attack  ] netX=  -0.01 netZ=  -3.92 total=  3.9 maxBack= +0.0 maxLat= 0.4 dur= 3.7s
+  c3050  Commander Niall        a000_003029          [attack  ] netX=  -0.01 netZ=  -3.92 total=  3.9 maxBack= +0.3 maxLat= 0.4 dur= 3.5s
+  c3010  Banished Knight        a000_003007          [attack  ] netX=  +0.09 netZ=  -3.92 total=  3.9 maxBack= +0.0 maxLat= 0.2 dur= 2.3s
+  c3550  Sanguine Noble         a000_003010          [attack  ] netX=  +0.01 netZ=  -3.90 total=  3.9 maxBack= +0.0 maxLat= 0.1 dur= 2.5s
+  c3010  Banished Knight        a001_003001          [attack  ] netX=  -0.11 netZ=  -3.90 total=  3.9 maxBack= +0.0 maxLat= 0.5 dur= 3.1s
+  c4380  Starcaller             a000_002100          [movement] netX=  -0.00 netZ=  -3.90 total=  3.9 maxBack= +0.0 maxLat= 0.0 dur= 0.8s
+  c4380  Starcaller             a001_002100          [movement] netX=  -0.00 netZ=  -3.90 total=  3.9 maxBack= +0.0 maxLat= 0.0 dur= 0.8s
+  c3400  Grave Warden           a000_003011          [attack  ] netX=  +0.08 netZ=  -3.89 total=  3.9 maxBack= +0.0 maxLat= 0.4 dur= 3.3s
+  c3970  Azula Beastman         a001_003003          [attack  ] netX=  -0.27 netZ=  -3.88 total=  3.9 maxBack= +0.0 maxLat= 0.4 dur= 3.3s
+  c4340  Pumpkin Head           a000_003019          [attack  ] netX=  -0.32 netZ=  -3.87 total=  3.9 maxBack= +0.0 maxLat= 0.8 dur= 4.1s
+  c3800  Cleanrot Knight        a001_003012          [attack  ] netX=  -0.60 netZ=  -3.82 total=  3.9 maxBack= +0.0 maxLat= 1.1 dur= 3.8s
+  c3000  Exile Soldier          a000_003000          [attack  ] netX=  +0.00 netZ=  -3.87 total=  3.9 maxBack= +0.0 maxLat= 0.2 dur= 3.0s
+  c3000  Exile Soldier          a000_003015          [attack  ] netX=  +0.00 netZ=  -3.87 total=  3.9 maxBack= +0.0 maxLat= 0.3 dur= 3.1s
+  c4350  Lordsworn Knight       a000_003002          [attack  ] netX=  +0.28 netZ=  -3.86 total=  3.9 maxBack= +0.1 maxLat= 0.3 dur= 3.0s
+  c4380  Starcaller             a002_002100          [movement] netX=  -0.00 netZ=  -3.87 total=  3.9 maxBack= +0.0 maxLat= 0.0 dur= 0.8s
+  c3550  Sanguine Noble         a000_002100          [movement] netX=  -0.00 netZ=  -3.85 total=  3.8 maxBack= +0.0 maxLat= 0.0 dur= 0.6s
+  c3010  Banished Knight        a002_003005          [attack  ] netX=  -0.00 netZ=  -3.84 total=  3.8 maxBack= +0.0 maxLat= 0.4 dur= 3.3s
+  c3300  Nox Swordstress        a000_003104          [attack  ] netX=  -0.27 netZ=  -3.83 total=  3.8 maxBack= +0.1 maxLat= 0.5 dur= 2.6s
+  c5840  Black Knight           a000_003003          [attack  ] netX=  -0.05 netZ=  -3.82 total=  3.8 maxBack= +0.6 maxLat= 0.2 dur= 4.2s
+  c3010  Banished Knight        a001_002310          [movement] netX=  -0.00 netZ=  -3.81 total=  3.8 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c3010  Banished Knight        a000_002100          [movement] netX=  -0.00 netZ=  -3.81 total=  3.8 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c3010  Banished Knight        a000_002130          [movement] netX=  -0.00 netZ=  -3.81 total=  3.8 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c3010  Banished Knight        a001_002100          [movement] netX=  -0.00 netZ=  -3.81 total=  3.8 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c3010  Banished Knight        a002_002100          [movement] netX=  -0.00 netZ=  -3.81 total=  3.8 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c3010  Banished Knight        a002_002310          [movement] netX=  -0.00 netZ=  -3.81 total=  3.8 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c3400  Grave Warden           a001_003014          [attack  ] netX=  -0.06 netZ=  -3.79 total=  3.8 maxBack= +0.1 maxLat= 0.4 dur= 2.7s
+  c3400  Grave Warden           a000_003014          [attack  ] netX=  -0.06 netZ=  -3.79 total=  3.8 maxBack= +0.2 maxLat= 0.4 dur= 2.7s
+  c4350  Lordsworn Knight       a000_002100          [movement] netX=  -0.00 netZ=  -3.77 total=  3.8 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c4350  Lordsworn Knight       a000_002130          [movement] netX=  -0.00 netZ=  -3.77 total=  3.8 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c5840  Black Knight           a000_002100          [movement] netX=  -0.00 netZ=  -3.77 total=  3.8 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c5840  Black Knight           a000_002130          [movement] netX=  -0.00 netZ=  -3.77 total=  3.8 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c3900  Fire Monk              a001_003008          [attack  ] netX=  +0.07 netZ=  -3.76 total=  3.8 maxBack= +0.0 maxLat= 0.2 dur= 2.7s
+  c4340  Pumpkin Head           a000_003017          [attack  ] netX=  -0.34 netZ=  -3.73 total=  3.7 maxBack= +0.0 maxLat= 0.8 dur= 3.3s
+  c3970  Azula Beastman         a001_003013          [attack  ] netX=  -0.13 netZ=  -3.73 total=  3.7 maxBack= +0.0 maxLat= 0.2 dur= 2.8s
+  c3010  Banished Knight        a000_003004          [attack  ] netX=  -0.12 netZ=  -3.73 total=  3.7 maxBack= +0.1 maxLat= 0.4 dur= 4.0s
+  c3910  Blackflame Monk        a000_003014          [attack  ] netX=  +0.00 netZ=  -3.72 total=  3.7 maxBack= +0.0 maxLat= 0.4 dur= 3.8s
+  c3900  Fire Monk              a000_003022          [attack  ] netX=  +0.46 netZ=  -3.69 total=  3.7 maxBack= +0.0 maxLat= 0.5 dur= 2.5s
+  c3010  Banished Knight        a001_003003          [attack  ] netX=  +0.00 netZ=  -3.70 total=  3.7 maxBack= +0.0 maxLat= 0.2 dur= 2.7s
+  c3450  Misbegotten            a001_002000          [movement] netX=  -0.00 netZ=  -3.70 total=  3.7 maxBack= +0.0 maxLat= 0.0 dur= 1.0s
+  c4050  Kaiden Sellsword       a000_002100          [movement] netX=  +0.00 netZ=  -3.70 total=  3.7 maxBack= +0.0 maxLat= 0.1 dur= 0.7s
+  c4050  Kaiden Sellsword       a000_002130          [movement] netX=  +0.00 netZ=  -3.70 total=  3.7 maxBack= +0.0 maxLat= 0.1 dur= 0.7s
+  c4350  Lordsworn Knight       a000_003000          [attack  ] netX=  +0.36 netZ=  -3.68 total=  3.7 maxBack= +0.0 maxLat= 0.4 dur= 3.0s
+  c4380  Starcaller             a002_003022          [attack  ] netX=  -0.21 netZ=  -3.67 total=  3.7 maxBack= +0.0 maxLat= 0.5 dur= 4.5s
+  c3970  Azula Beastman         a000_002100          [movement] netX=  -0.00 netZ=  -3.67 total=  3.7 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c4270  Leyndell Knight        a000_003017          [attack  ] netX=  +1.00 netZ=  -3.53 total=  3.7 maxBack= +1.5 maxLat= 1.1 dur= 4.8s
+  c3050  Commander Niall        a000_003001          [attack  ] netX=  +0.05 netZ=  -3.65 total=  3.7 maxBack= +0.0 maxLat= 0.3 dur= 4.7s
+  c3450  Misbegotten            a000_003020          [attack  ] netX=  +0.31 netZ=  -3.61 total=  3.6 maxBack= +0.0 maxLat= 0.4 dur= 3.3s
+  c3700  Raya Lucaria Scholar   a002_003006          [attack  ] netX=  -0.31 netZ=  -3.61 total=  3.6 maxBack= +0.2 maxLat= 0.4 dur= 2.7s
+  c3050  Commander Niall        a000_003014          [attack  ] netX=  +0.44 netZ=  -3.60 total=  3.6 maxBack= +0.0 maxLat= 1.3 dur= 3.8s
+  c3910  Blackflame Monk        a000_006000          [hit_react] netX=  -0.00 netZ=  -3.62 total=  3.6 maxBack= +0.0 maxLat= 0.0 dur= 1.5s
+  c3910  Blackflame Monk        a000_006100          [hit_react] netX=  -0.00 netZ=  -3.62 total=  3.6 maxBack= +0.0 maxLat= 0.0 dur= 1.9s
+  c4340  Pumpkin Head           a000_003003          [attack  ] netX=  +0.41 netZ=  -3.57 total=  3.6 maxBack= +0.0 maxLat= 0.5 dur= 3.9s
+  c4090  Grafted Scion          a000_002100          [movement] netX=  +0.00 netZ=  -3.58 total=  3.6 maxBack= +0.0 maxLat= 0.1 dur= 0.4s
+  c3450  Misbegotten            a000_003002          [attack  ] netX=  +0.34 netZ=  -3.56 total=  3.6 maxBack= +0.0 maxLat= 0.4 dur= 2.2s
+  c3450  Misbegotten            a000_003021          [attack  ] netX=  +0.08 netZ=  -3.58 total=  3.6 maxBack= +0.0 maxLat= 0.2 dur= 3.2s
+  c3900  Fire Monk              a000_003003          [attack  ] netX=  +0.25 netZ=  -3.57 total=  3.6 maxBack= +0.0 maxLat= 0.3 dur= 4.6s
+  c3010  Banished Knight        a001_003000          [attack  ] netX=  +0.22 netZ=  -3.56 total=  3.6 maxBack= +0.0 maxLat= 0.2 dur= 2.6s
+  c4320  Vulgar Militia         a000_003016          [attack  ] netX=  +0.15 netZ=  -3.56 total=  3.6 maxBack= +0.0 maxLat= 0.1 dur= 3.2s
+  c3300  Nox Swordstress        a001_002310          [movement] netX=  -0.00 netZ=  -3.56 total=  3.6 maxBack= +0.0 maxLat= 0.0 dur= 0.8s
+  c3900  Fire Monk              a000_003004          [attack  ] netX=  -0.03 netZ=  -3.55 total=  3.6 maxBack= +0.0 maxLat= 0.2 dur= 2.9s
+  c3970  Azula Beastman         a001_003031          [attack  ] netX=  +0.09 netZ=  -3.54 total=  3.5 maxBack= +0.5 maxLat= 0.5 dur= 3.6s
+  c3100  Crucible Knight        a000_003017          [attack  ] netX=  +0.13 netZ=  -3.54 total=  3.5 maxBack= +0.6 maxLat= 0.2 dur= 2.3s
+  c3500  Skeleton               a001_003002          [attack  ] netX=  +0.02 netZ=  -3.54 total=  3.5 maxBack= +0.0 maxLat= 0.1 dur= 3.3s
+  c5840  Black Knight           a001_003001          [attack  ] netX=  +0.02 netZ=  -3.54 total=  3.5 maxBack= +0.0 maxLat= 0.2 dur= 2.7s
+  c3950  Man-Serpent            a000_003022          [attack  ] netX=  +0.43 netZ=  -3.48 total=  3.5 maxBack= +0.0 maxLat= 0.6 dur= 4.0s
+  c4380  Starcaller             a001_003006          [attack  ] netX=  -0.00 netZ=  -3.50 total=  3.5 maxBack= +0.0 maxLat= 0.1 dur= 5.3s
+  c3800  Cleanrot Knight        a000_006010          [hit_react] netX=  -0.00 netZ=  -3.50 total=  3.5 maxBack= +0.0 maxLat= 0.0 dur= 1.1s
+  c3500  Skeleton               a000_002100          [movement] netX=  -0.00 netZ=  -3.50 total=  3.5 maxBack= +0.0 maxLat= 0.0 dur= 0.8s
+  c3500  Skeleton               a001_002100          [movement] netX=  -0.00 netZ=  -3.50 total=  3.5 maxBack= +0.0 maxLat= 0.0 dur= 0.8s
+  c3500  Skeleton               a001_002130          [movement] netX=  -0.00 netZ=  -3.50 total=  3.5 maxBack= +0.0 maxLat= 0.0 dur= 0.8s
+  c4340  Pumpkin Head           a000_002000          [movement] netX=  -0.00 netZ=  -3.50 total=  3.5 maxBack= +0.0 maxLat= 0.0 dur= 1.5s
+  c4340  Pumpkin Head           a000_002300          [movement] netX=  -0.00 netZ=  -3.50 total=  3.5 maxBack= +0.0 maxLat= 0.0 dur= 1.9s
+  c4340  Pumpkin Head           a001_002000          [movement] netX=  -0.00 netZ=  -3.50 total=  3.5 maxBack= +0.0 maxLat= 0.0 dur= 1.5s
+  c4340  Pumpkin Head           a001_002300          [movement] netX=  -0.00 netZ=  -3.50 total=  3.5 maxBack= +0.0 maxLat= 0.0 dur= 1.9s
+  c5840  Black Knight           a000_003005          [attack  ] netX=  +0.01 netZ=  -3.49 total=  3.5 maxBack= +0.0 maxLat= 0.1 dur= 2.6s
+  c4350  Lordsworn Knight       a000_003030          [attack  ] netX=  -0.00 netZ=  -3.49 total=  3.5 maxBack= +0.4 maxLat= 0.2 dur= 2.5s
+  c4350  Lordsworn Knight       a001_003030          [attack  ] netX=  -0.00 netZ=  -3.49 total=  3.5 maxBack= +0.4 maxLat= 0.2 dur= 2.5s
+  c4350  Lordsworn Knight       a001_003004          [attack  ] netX=  -0.07 netZ=  -3.47 total=  3.5 maxBack= +0.7 maxLat= 0.3 dur= 3.1s
+  c3900  Fire Monk              a000_003014          [attack  ] netX=  +0.01 netZ=  -3.47 total=  3.5 maxBack= +0.4 maxLat= 0.2 dur= 5.3s
+  c3200  Battlemage             a000_003015          [attack  ] netX=  +0.20 netZ=  -3.45 total=  3.5 maxBack= +0.0 maxLat= 0.3 dur= 5.1s
+  c3100  Crucible Knight        a000_003000          [attack  ] netX=  -0.00 netZ=  -3.46 total=  3.5 maxBack= +0.0 maxLat= 0.2 dur= 3.2s
+  c5840  Black Knight           a000_003001          [attack  ] netX=  +0.00 netZ=  -3.43 total=  3.4 maxBack= +0.0 maxLat= 0.4 dur= 3.4s
+  c3250  Crucible Tree Knight   a000_003013          [attack  ] netX=  +0.08 netZ=  -3.39 total=  3.4 maxBack= +1.6 maxLat= 0.3 dur= 7.6s
+  c3200  Battlemage             a000_003014          [attack  ] netX=  +0.18 netZ=  -3.39 total=  3.4 maxBack= +0.0 maxLat= 0.3 dur= 4.3s
+  c3000  Exile Soldier          a005_002100          [movement] netX=  -0.00 netZ=  -3.36 total=  3.4 maxBack= +0.0 maxLat= 0.0 dur= 0.9s
+  c5840  Black Knight           a000_003004          [attack  ] netX=  -0.00 netZ=  -3.34 total=  3.3 maxBack= +0.1 maxLat= 0.3 dur= 4.8s
+  c4300  Godrick Soldier        a000_003005          [attack  ] netX=  +0.29 netZ=  -3.33 total=  3.3 maxBack= +0.0 maxLat= 0.4 dur= 4.3s
+  c4350  Lordsworn Knight       a001_003007          [attack  ] netX=  -0.00 netZ=  -3.31 total=  3.3 maxBack= +0.3 maxLat= 0.3 dur= 4.3s
+  c4370  Haligtree Knight       a001_003021          [attack  ] netX=  -0.00 netZ=  -3.31 total=  3.3 maxBack= +0.0 maxLat= 0.1 dur= 4.0s
+  c3250  Crucible Tree Knight   a000_003006          [attack  ] netX=  -0.13 netZ=  -3.30 total=  3.3 maxBack= +0.2 maxLat= 0.5 dur= 5.3s
+  c3160  Carian Knight          a000_003011          [attack  ] netX=  -0.25 netZ=  -3.29 total=  3.3 maxBack= +0.0 maxLat= 0.4 dur= 3.4s
+  c3200  Battlemage             a000_002100          [movement] netX=  -0.00 netZ=  -3.29 total=  3.3 maxBack= +0.0 maxLat= 0.0 dur= 0.8s
+  c4340  Pumpkin Head           a001_003012          [attack  ] netX=  -0.22 netZ=  -3.27 total=  3.3 maxBack= +0.0 maxLat= 0.9 dur= 4.4s
+  c3050  Commander Niall        a000_003005          [attack  ] netX=  +0.05 netZ=  -3.26 total=  3.3 maxBack= +0.0 maxLat= 0.6 dur= 3.1s
+  c4340  Pumpkin Head           a000_003006          [attack  ] netX=  +0.22 netZ=  -3.24 total=  3.2 maxBack= +0.0 maxLat= 0.5 dur= 4.8s
+  c3800  Cleanrot Knight        a000_003011          [attack  ] netX=  -0.03 netZ=  -3.24 total=  3.2 maxBack= +0.4 maxLat= 0.2 dur= 2.9s
+  c3900  Fire Monk              a000_006000          [hit_react] netX=  -0.00 netZ=  -3.24 total=  3.2 maxBack= +0.0 maxLat= 0.0 dur= 2.3s
+  c4310  Lordsworn Soldier      a002_003004          [attack  ] netX=  +0.02 netZ=  -3.23 total=  3.2 maxBack= +0.0 maxLat= 0.2 dur= 3.8s
+  c3250  Crucible Tree Knight   a000_002000          [movement] netX=  -0.00 netZ=  -3.22 total=  3.2 maxBack= +0.0 maxLat= 0.0 dur= 1.4s
+  c3700  Raya Lucaria Scholar   a000_003012          [attack  ] netX=  -0.28 netZ=  -3.21 total=  3.2 maxBack= +0.0 maxLat= 0.3 dur= 2.3s
+  c5830  Messmer Soldier        a002_003004          [attack  ] netX=  -0.02 netZ=  -3.21 total=  3.2 maxBack= +0.7 maxLat= 0.1 dur= 3.4s
+  c4310  Lordsworn Soldier      a000_002100          [movement] netX=  -0.00 netZ=  -3.20 total=  3.2 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c4310  Lordsworn Soldier      a002_002100          [movement] netX=  -0.00 netZ=  -3.20 total=  3.2 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c4310  Lordsworn Soldier      a002_002310          [movement] netX=  -0.00 netZ=  -3.20 total=  3.2 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c4310  Lordsworn Soldier      a003_002100          [movement] netX=  -0.00 netZ=  -3.20 total=  3.2 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c4310  Lordsworn Soldier      a004_002310          [movement] netX=  -0.00 netZ=  -3.20 total=  3.2 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c5830  Messmer Soldier        a000_002100          [movement] netX=  -0.00 netZ=  -3.20 total=  3.2 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c5830  Messmer Soldier        a001_002100          [movement] netX=  -0.00 netZ=  -3.20 total=  3.2 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c5830  Messmer Soldier        a002_002310          [movement] netX=  -0.00 netZ=  -3.20 total=  3.2 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c5840  Black Knight           a001_003000          [attack  ] netX=  -0.04 netZ=  -3.19 total=  3.2 maxBack= +0.0 maxLat= 0.2 dur= 2.7s
+  c4270  Leyndell Knight        a000_003020          [attack  ] netX=  -0.22 netZ=  -3.18 total=  3.2 maxBack= +0.8 maxLat= 1.4 dur= 3.7s
+  c3700  Raya Lucaria Scholar   a002_003005          [attack  ] netX=  -0.14 netZ=  -3.18 total=  3.2 maxBack= +0.0 maxLat= 0.2 dur= 1.9s
+  c3950  Man-Serpent            a000_003024          [attack  ] netX=  -0.94 netZ=  -3.04 total=  3.2 maxBack= +0.0 maxLat= 1.0 dur= 3.5s
+  c3700  Raya Lucaria Scholar   a002_003007          [attack  ] netX=  +0.29 netZ=  -3.16 total=  3.2 maxBack= +0.0 maxLat= 0.4 dur= 2.3s
+  c4350  Lordsworn Knight       a000_003024          [attack  ] netX=  -0.00 netZ=  -3.17 total=  3.2 maxBack= +0.0 maxLat= 0.3 dur= 2.9s
+  c4310  Lordsworn Soldier      a002_002130          [movement] netX=  -0.00 netZ=  -3.16 total=  3.2 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c4290  Bloodhound Knight      a000_003010          [attack  ] netX=  +0.47 netZ=  -3.13 total=  3.2 maxBack= +0.0 maxLat= 0.6 dur= 3.5s
+  c4050  Kaiden Sellsword       a000_003013          [attack  ] netX=  -0.02 netZ=  -3.15 total=  3.2 maxBack= +0.0 maxLat= 0.3 dur= 3.0s
+  c3400  Grave Warden           a000_003003          [attack  ] netX=  +0.54 netZ=  -3.09 total=  3.1 maxBack= +0.0 maxLat= 0.7 dur= 3.0s
+  c3160  Carian Knight          a000_003003          [attack  ] netX=  -0.52 netZ=  -3.09 total=  3.1 maxBack= +0.0 maxLat= 0.7 dur= 3.9s
+  c3010  Banished Knight        a001_003005          [attack  ] netX=  +0.03 netZ=  -3.13 total=  3.1 maxBack= +0.0 maxLat= 0.2 dur= 2.3s
+  c4370  Haligtree Knight       a000_003012          [attack  ] netX=  -0.03 netZ=  -3.13 total=  3.1 maxBack= +0.0 maxLat= 0.2 dur= 3.8s
+  c3160  Carian Knight          a000_003004          [attack  ] netX=  -0.18 netZ=  -3.12 total=  3.1 maxBack= +0.0 maxLat= 0.3 dur= 3.9s
+  c3300  Nox Swordstress        a000_003010          [attack  ] netX=  +0.16 netZ=  -3.12 total=  3.1 maxBack= +0.0 maxLat= 0.3 dur= 3.2s
+  c3450  Misbegotten            a000_003017          [attack  ] netX=  +0.00 netZ=  -3.12 total=  3.1 maxBack= +0.0 maxLat= 0.0 dur= 3.8s
+  c3400  Grave Warden           a000_004100          [heavy   ] netX=  +1.27 netZ=  -2.84 total=  3.1 maxBack= +0.0 maxLat= 1.3 dur= 7.5s
+  c3400  Grave Warden           a001_004100          [heavy   ] netX=  +1.27 netZ=  -2.84 total=  3.1 maxBack= +0.0 maxLat= 1.3 dur= 7.5s
+  c3500  Skeleton               a001_003015          [attack  ] netX=  +0.00 netZ=  -3.11 total=  3.1 maxBack= +0.6 maxLat= 0.1 dur= 2.7s
+  c3900  Fire Monk              a001_003022          [attack  ] netX=  +0.54 netZ=  -3.04 total=  3.1 maxBack= +0.0 maxLat= 0.6 dur= 1.9s
+  c3100  Crucible Knight        a000_003001          [attack  ] netX=  +0.18 netZ=  -3.08 total=  3.1 maxBack= +0.1 maxLat= 0.2 dur= 2.6s
+  c3010  Banished Knight        a000_003002          [attack  ] netX=  +0.00 netZ=  -3.09 total=  3.1 maxBack= +0.1 maxLat= 0.3 dur= 2.8s
+  c5840  Black Knight           a000_003002          [attack  ] netX=  -0.00 netZ=  -3.07 total=  3.1 maxBack= +0.3 maxLat= 0.1 dur= 3.5s
+  c4290  Bloodhound Knight      a000_003008          [attack  ] netX=  +0.26 netZ=  -3.05 total=  3.1 maxBack= +0.0 maxLat= 0.6 dur= 3.9s
+  c4300  Godrick Soldier        a000_003000          [attack  ] netX=  +0.22 netZ=  -3.03 total=  3.0 maxBack= +0.3 maxLat= 0.6 dur= 6.1s
+  c4310  Lordsworn Soldier      a001_003000          [attack  ] netX=  -0.17 netZ=  -3.03 total=  3.0 maxBack= +0.0 maxLat= 0.3 dur= 2.5s
+  c4310  Lordsworn Soldier      a005_003000          [attack  ] netX=  -0.17 netZ=  -3.03 total=  3.0 maxBack= +0.0 maxLat= 0.3 dur= 2.5s
+  c5830  Messmer Soldier        a000_003000          [attack  ] netX=  -0.17 netZ=  -3.03 total=  3.0 maxBack= +0.0 maxLat= 0.3 dur= 2.5s
+  c5830  Messmer Soldier        a001_003000          [attack  ] netX=  -0.17 netZ=  -3.03 total=  3.0 maxBack= +0.0 maxLat= 0.3 dur= 2.5s
+  c3300  Nox Swordstress        a002_003002          [attack  ] netX=  -0.00 netZ=  -3.04 total=  3.0 maxBack= +0.4 maxLat= 0.2 dur= 2.7s
+  c3300  Nox Swordstress        a000_003100          [attack  ] netX=  -0.05 netZ=  -3.03 total=  3.0 maxBack= +0.0 maxLat= 0.4 dur= 2.2s
+  c3900  Fire Monk              a000_003009          [attack  ] netX=  +0.32 netZ=  -3.01 total=  3.0 maxBack= +0.0 maxLat= 0.3 dur= 2.3s
+  c4320  Vulgar Militia         a000_003004          [attack  ] netX=  -0.46 netZ=  -2.97 total=  3.0 maxBack= +0.0 maxLat= 0.5 dur= 1.8s
+  c4300  Godrick Soldier        a000_002100          [movement] netX=  -0.00 netZ=  -3.00 total=  3.0 maxBack= +0.0 maxLat= 0.0 dur= 1.0s
+  c4300  Godrick Soldier        a005_002100          [movement] netX=  -0.00 netZ=  -3.00 total=  3.0 maxBack= +0.0 maxLat= 0.0 dur= 1.0s
+  c4350  Lordsworn Knight       a001_002310          [movement] netX=  -0.00 netZ=  -3.00 total=  3.0 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c3700  Raya Lucaria Scholar   a000_002310          [movement] netX=  -0.00 netZ=  -3.00 total=  3.0 maxBack= +0.0 maxLat= 0.0 dur= 1.0s
+  c3400  Grave Warden           a001_003006          [attack  ] netX=  -0.53 netZ=  -2.95 total=  3.0 maxBack= +0.0 maxLat= 0.6 dur= 3.0s
+  c3160  Carian Knight          a000_002000          [movement] netX=  -0.00 netZ=  -3.00 total=  3.0 maxBack= +0.0 maxLat= 0.0 dur= 1.2s
+  c3160  Carian Knight          a000_002300          [movement] netX=  -0.00 netZ=  -3.00 total=  3.0 maxBack= +0.0 maxLat= 0.0 dur= 1.2s
+  c4310  Lordsworn Soldier      a004_003011          [attack  ] netX=  -0.02 netZ=  -2.99 total=  3.0 maxBack= +0.0 maxLat= 0.2 dur= 2.1s
+  c3970  Azula Beastman         a001_002310          [movement] netX=  -0.00 netZ=  -2.99 total=  3.0 maxBack= +0.0 maxLat= 0.0 dur= 0.8s
+  c5840  Black Knight           a001_003002          [attack  ] netX=  -0.26 netZ=  -2.97 total=  3.0 maxBack= +0.0 maxLat= 0.4 dur= 3.0s
+  c4050  Kaiden Sellsword       a000_003010          [attack  ] netX=  -0.01 netZ=  -2.98 total=  3.0 maxBack= +0.3 maxLat= 0.4 dur= 3.9s
+  c4320  Vulgar Militia         a000_003002          [attack  ] netX=  +0.00 netZ=  -2.98 total=  3.0 maxBack= +0.0 maxLat= 0.3 dur= 3.6s
+  c3300  Nox Swordstress        a000_003101          [attack  ] netX=  +0.00 netZ=  -2.97 total=  3.0 maxBack= +0.0 maxLat= 0.3 dur= 2.4s
+  c3900  Fire Monk              a000_003023          [attack  ] netX=  +0.17 netZ=  -2.96 total=  3.0 maxBack= +0.0 maxLat= 0.4 dur= 2.7s
+  c3950  Man-Serpent            a000_003020          [attack  ] netX=  -0.12 netZ=  -2.95 total=  2.9 maxBack= +0.1 maxLat= 0.7 dur= 4.5s
+  c4380  Starcaller             a000_003017          [attack  ] netX=  +0.78 netZ=  -2.84 total=  2.9 maxBack= +0.0 maxLat= 1.0 dur= 4.7s
+  c3950  Man-Serpent            a000_002130          [movement] netX=  -0.00 netZ=  -2.94 total=  2.9 maxBack= +0.0 maxLat= 0.0 dur= 0.8s
+  c3950  Man-Serpent            a000_002310          [movement] netX=  -0.00 netZ=  -2.94 total=  2.9 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c3950  Man-Serpent            a002_002100          [movement] netX=  -0.00 netZ=  -2.94 total=  2.9 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c3950  Man-Serpent            a002_002310          [movement] netX=  -0.00 netZ=  -2.94 total=  2.9 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c3250  Crucible Tree Knight   a000_003004          [attack  ] netX=  +0.05 netZ=  -2.94 total=  2.9 maxBack= +0.0 maxLat= 0.5 dur= 4.1s
+  c3250  Crucible Tree Knight   a000_002300          [movement] netX=  -0.00 netZ=  -2.90 total=  2.9 maxBack= +0.0 maxLat= 0.0 dur= 1.8s
+  c4370  Haligtree Knight       a000_002100          [movement] netX=  -0.00 netZ=  -2.90 total=  2.9 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c4370  Haligtree Knight       a001_002100          [movement] netX=  -0.00 netZ=  -2.90 total=  2.9 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c4340  Pumpkin Head           a001_003002          [attack  ] netX=  -0.09 netZ=  -2.87 total=  2.9 maxBack= +0.0 maxLat= 0.5 dur= 4.1s
+  c3900  Fire Monk              a001_003002          [attack  ] netX=  +0.28 netZ=  -2.85 total=  2.9 maxBack= +0.0 maxLat= 0.8 dur= 3.4s
+  c3900  Fire Monk              a001_003028          [attack  ] netX=  +0.02 netZ=  -2.85 total=  2.8 maxBack= +0.0 maxLat= 0.5 dur= 3.5s
+  c3010  Banished Knight        a000_002300          [movement] netX=  +0.00 netZ=  -2.85 total=  2.8 maxBack= +0.0 maxLat= 0.0 dur= 2.0s
+  c3450  Misbegotten            a000_003006          [attack  ] netX=  -0.44 netZ=  -2.81 total=  2.8 maxBack= +0.0 maxLat= 0.6 dur= 2.5s
+  c3970  Azula Beastman         a000_003025          [attack  ] netX=  -0.80 netZ=  -2.73 total=  2.8 maxBack= +0.0 maxLat= 0.9 dur= 3.5s
+  c4350  Lordsworn Knight       a001_003011          [attack  ] netX=  +0.22 netZ=  -2.83 total=  2.8 maxBack= +0.2 maxLat= 0.3 dur= 3.0s
+  c3300  Nox Swordstress        a001_003014          [attack  ] netX=  +0.16 netZ=  -2.84 total=  2.8 maxBack= +0.0 maxLat= 0.3 dur= 3.9s
+  c3700  Raya Lucaria Scholar   a003_003004          [attack  ] netX=  -0.11 netZ=  -2.82 total=  2.8 maxBack= +0.0 maxLat= 0.5 dur= 3.5s
+  c3010  Banished Knight        a000_003001          [attack  ] netX=  +0.00 netZ=  -2.82 total=  2.8 maxBack= +0.0 maxLat= 0.2 dur= 2.2s
+  c3150  Redmane Knight         a000_002000          [movement] netX=  -0.00 netZ=  -2.81 total=  2.8 maxBack= +0.0 maxLat= 0.0 dur= 1.9s
+  c3450  Misbegotten            a000_003001          [attack  ] netX=  -0.07 netZ=  -2.80 total=  2.8 maxBack= +0.0 maxLat= 0.3 dur= 2.5s
+  c4350  Lordsworn Knight       a000_003023          [attack  ] netX=  -0.14 netZ=  -2.80 total=  2.8 maxBack= +0.0 maxLat= 0.2 dur= 2.3s
+  c3500  Skeleton               a000_002000          [movement] netX=  -0.00 netZ=  -2.80 total=  2.8 maxBack= +0.0 maxLat= 0.0 dur= 2.2s
+  c4310  Lordsworn Soldier      a000_002130          [movement] netX=  -0.00 netZ=  -2.80 total=  2.8 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c4310  Lordsworn Soldier      a003_002130          [movement] netX=  -0.00 netZ=  -2.80 total=  2.8 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c5830  Messmer Soldier        a000_002130          [movement] netX=  -0.00 netZ=  -2.80 total=  2.8 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c5830  Messmer Soldier        a001_002130          [movement] netX=  -0.00 netZ=  -2.80 total=  2.8 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c3050  Commander Niall        a000_003022          [attack  ] netX=  -0.10 netZ=  -2.80 total=  2.8 maxBack= +0.0 maxLat= 0.3 dur= 4.0s
+  c3900  Fire Monk              a000_003025          [attack  ] netX=  +0.46 netZ=  -2.76 total=  2.8 maxBack= +0.0 maxLat= 0.5 dur= 2.3s
+  c3450  Misbegotten            a002_003003          [attack  ] netX=  +0.00 netZ=  -2.79 total=  2.8 maxBack= +0.0 maxLat= 0.0 dur= 2.7s
+  c4300  Godrick Soldier        a000_003010          [attack  ] netX=  +0.13 netZ=  -2.79 total=  2.8 maxBack= +0.0 maxLat= 0.3 dur= 5.0s
+  c3800  Cleanrot Knight        a001_003011          [attack  ] netX=  +0.28 netZ=  -2.77 total=  2.8 maxBack= +0.2 maxLat= 1.2 dur= 3.3s
+  c4350  Lordsworn Knight       a001_003005          [attack  ] netX=  +0.00 netZ=  -2.78 total=  2.8 maxBack= +0.0 maxLat= 0.4 dur= 3.0s
+  c3450  Misbegotten            a000_003003          [attack  ] netX=  +0.00 netZ=  -2.78 total=  2.8 maxBack= +0.0 maxLat= 0.2 dur= 2.6s
+  c5830  Messmer Soldier        a002_003002          [attack  ] netX=  -0.01 netZ=  -2.78 total=  2.8 maxBack= +0.1 maxLat= 0.3 dur= 4.0s
+  c4380  Starcaller             a001_003001          [attack  ] netX=  -0.12 netZ=  -2.78 total=  2.8 maxBack= +0.0 maxLat= 0.2 dur= 3.2s
+  c3910  Blackflame Monk        a000_002000          [movement] netX=  -0.00 netZ=  -2.78 total=  2.8 maxBack= +0.0 maxLat= 0.0 dur= 1.5s
+  c3910  Blackflame Monk        a000_002300          [movement] netX=  -0.00 netZ=  -2.78 total=  2.8 maxBack= +0.0 maxLat= 0.0 dur= 1.5s
+  c3000  Exile Soldier          a004_003011          [attack  ] netX=  -0.00 netZ=  -2.77 total=  2.8 maxBack= +0.0 maxLat= 0.3 dur= 3.9s
+  c4050  Kaiden Sellsword       a000_002300          [movement] netX=  -0.00 netZ=  -2.77 total=  2.8 maxBack= +0.0 maxLat= 0.0 dur= 2.0s
+  c4340  Pumpkin Head           a000_003013          [attack  ] netX=  +0.41 netZ=  -2.73 total=  2.8 maxBack= +0.1 maxLat= 0.4 dur= 5.2s
+  c3970  Azula Beastman         a000_003011          [attack  ] netX=  -0.89 netZ=  -2.61 total=  2.8 maxBack= +0.0 maxLat= 1.2 dur= 2.7s
+  c4350  Lordsworn Knight       a001_003002          [attack  ] netX=  -0.06 netZ=  -2.76 total=  2.8 maxBack= +0.3 maxLat= 0.2 dur= 2.2s
+  c3900  Fire Monk              a000_003027          [attack  ] netX=  -0.24 netZ=  -2.74 total=  2.8 maxBack= +0.0 maxLat= 0.2 dur= 3.2s
+  c3400  Grave Warden           a000_003022          [attack  ] netX=  +0.07 netZ=  -2.74 total=  2.7 maxBack= +0.0 maxLat= 0.1 dur= 1.6s
+  c3100  Crucible Knight        a000_002000          [movement] netX=  -0.00 netZ=  -2.74 total=  2.7 maxBack= +0.0 maxLat= 0.0 dur= 1.9s
+  c3010  Banished Knight        a000_003009          [attack  ] netX=  +0.01 netZ=  -2.73 total=  2.7 maxBack= +0.0 maxLat= 0.1 dur= 2.6s
+  c4310  Lordsworn Soldier      a004_003001          [attack  ] netX=  +0.21 netZ=  -2.71 total=  2.7 maxBack= +0.2 maxLat= 0.3 dur= 3.0s
+  c3700  Raya Lucaria Scholar   a003_003003          [attack  ] netX=  -0.00 netZ=  -2.72 total=  2.7 maxBack= +0.5 maxLat= 0.3 dur= 4.5s
+  c4050  Kaiden Sellsword       a000_003007          [attack  ] netX=  +0.00 netZ=  -2.71 total=  2.7 maxBack= +0.0 maxLat= 0.1 dur= 5.5s
+  c4370  Haligtree Knight       a001_003020          [attack  ] netX=  +0.11 netZ=  -2.71 total=  2.7 maxBack= +0.0 maxLat= 0.1 dur= 5.0s
+  c5840  Black Knight           a001_003004          [attack  ] netX=  +0.02 netZ=  -2.70 total=  2.7 maxBack= +0.0 maxLat= 0.3 dur= 2.8s
+  c3450  Misbegotten            a002_003008          [attack  ] netX=  -0.16 netZ=  -2.69 total=  2.7 maxBack= +0.4 maxLat= 0.4 dur= 5.0s
+  c3050  Commander Niall        a000_003034          [attack  ] netX=  +0.18 netZ=  -2.69 total=  2.7 maxBack= +0.0 maxLat= 0.4 dur= 2.8s
+  c3300  Nox Swordstress        a000_003013          [attack  ] netX=  -0.41 netZ=  -2.65 total=  2.7 maxBack= +0.0 maxLat= 0.5 dur= 2.4s
+  c4050  Kaiden Sellsword       a000_003003          [attack  ] netX=  +0.25 netZ=  -2.67 total=  2.7 maxBack= +0.0 maxLat= 0.4 dur= 2.8s
+  c5830  Messmer Soldier        a002_003003          [attack  ] netX=  +0.04 netZ=  -2.68 total=  2.7 maxBack= +0.0 maxLat= 0.1 dur= 2.8s
+  c3400  Grave Warden           a000_002300          [movement] netX=  -0.00 netZ=  -2.67 total=  2.7 maxBack= +0.0 maxLat= 0.2 dur= 2.2s
+  c3400  Grave Warden           a000_002000          [movement] netX=  -0.00 netZ=  -2.67 total=  2.7 maxBack= +0.0 maxLat= 0.0 dur= 1.7s
+  c3400  Grave Warden           a001_002000          [movement] netX=  -0.00 netZ=  -2.67 total=  2.7 maxBack= +0.0 maxLat= 0.0 dur= 1.7s
+  c3400  Grave Warden           a001_002300          [movement] netX=  -0.00 netZ=  -2.67 total=  2.7 maxBack= +0.0 maxLat= 0.2 dur= 2.2s
+  c3970  Azula Beastman         a000_002000          [movement] netX=  -0.00 netZ=  -2.67 total=  2.7 maxBack= +0.0 maxLat= 0.0 dur= 1.3s
+  c3970  Azula Beastman         a000_002030          [movement] netX=  -0.00 netZ=  -2.67 total=  2.7 maxBack= +0.0 maxLat= 0.0 dur= 1.7s
+  c3970  Azula Beastman         a001_002000          [movement] netX=  -0.00 netZ=  -2.67 total=  2.7 maxBack= +0.0 maxLat= 0.0 dur= 1.3s
+  c3970  Azula Beastman         a000_002300          [movement] netX=  -0.00 netZ=  -2.67 total=  2.7 maxBack= +0.0 maxLat= 0.0 dur= 1.7s
+  c3970  Azula Beastman         a001_002300          [movement] netX=  -0.00 netZ=  -2.67 total=  2.7 maxBack= +0.0 maxLat= 0.0 dur= 1.7s
+  c3250  Crucible Tree Knight   a000_003005          [attack  ] netX=  -0.14 netZ=  -2.66 total=  2.7 maxBack= +0.8 maxLat= 0.6 dur= 3.1s
+  c4380  Starcaller             a000_003001          [attack  ] netX=  +0.11 netZ=  -2.66 total=  2.7 maxBack= +0.4 maxLat= 0.3 dur= 6.3s
+  c4380  Starcaller             a002_003025          [attack  ] netX=  +0.11 netZ=  -2.66 total=  2.7 maxBack= +0.4 maxLat= 0.3 dur= 6.2s
+  c5840  Black Knight           a000_003010          [attack  ] netX=  +0.00 netZ=  -2.66 total=  2.7 maxBack= +0.0 maxLat= 0.2 dur= 2.3s
+  c4310  Lordsworn Soldier      a004_002100          [movement] netX=  -0.00 netZ=  -2.65 total=  2.6 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c5830  Messmer Soldier        a002_002100          [movement] netX=  -0.00 netZ=  -2.65 total=  2.6 maxBack= +0.0 maxLat= 0.0 dur= 0.7s
+  c3300  Nox Swordstress        a000_002000          [movement] netX=  -0.00 netZ=  -2.65 total=  2.6 maxBack= +0.0 maxLat= 0.0 dur= 1.9s
+  c4050  Kaiden Sellsword       a000_002000          [movement] netX=  -0.00 netZ=  -2.64 total=  2.6 maxBack= +0.0 maxLat= 0.0 dur= 1.7s
+  c5840  Black Knight           a000_003008          [attack  ] netX=  -0.20 netZ=  -2.63 total=  2.6 maxBack= +0.3 maxLat= 0.2 dur= 3.9s
+  c4350  Lordsworn Knight       a000_003022          [attack  ] netX=  -0.00 netZ=  -2.62 total=  2.6 maxBack= +0.3 maxLat= 0.2 dur= 3.2s
+  c3550  Sanguine Noble         a000_003016          [attack  ] netX=  +0.05 netZ=  -2.62 total=  2.6 maxBack= +0.0 maxLat= 0.1 dur= 1.8s
+  c4350  Lordsworn Knight       a000_002000          [movement] netX=  -0.00 netZ=  -2.61 total=  2.6 maxBack= +0.0 maxLat= 0.0 dur= 1.6s
+  c4350  Lordsworn Knight       a000_002030          [movement] netX=  -0.00 netZ=  -2.61 total=  2.6 maxBack= +0.0 maxLat= 0.0 dur= 1.6s
+  c5840  Black Knight           a000_002000          [movement] netX=  -0.00 netZ=  -2.61 total=  2.6 maxBack= +0.0 maxLat= 0.0 dur= 1.6s
+  c5840  Black Knight           a000_002030          [movement] netX=  -0.00 netZ=  -2.61 total=  2.6 maxBack= +0.0 maxLat= 0.0 dur= 1.6s
+  c4350  Lordsworn Knight       a000_002300          [movement] netX=  -0.00 netZ=  -2.61 total=  2.6 maxBack= +0.0 maxLat= 0.0 dur= 2.0s
+  c5840  Black Knight           a000_002300          [movement] netX=  -0.00 netZ=  -2.61 total=  2.6 maxBack= +0.0 maxLat= 0.0 dur= 2.0s
+  c4290  Bloodhound Knight      a000_002000          [movement] netX=  -0.00 netZ=  -2.60 total=  2.6 maxBack= +0.0 maxLat= 0.0 dur= 1.7s
+  c3700  Raya Lucaria Scholar   a001_003029          [attack  ] netX=  +0.17 netZ=  -2.59 total=  2.6 maxBack= +0.0 maxLat= 0.3 dur= 2.8s
+  c3800  Cleanrot Knight        a000_002300          [movement] netX=  -0.00 netZ=  -2.59 total=  2.6 maxBack= +0.0 maxLat= 0.0 dur= 2.2s
+  c3800  Cleanrot Knight        a000_002000          [movement] netX=  -0.00 netZ=  -2.59 total=  2.6 maxBack= +0.0 maxLat= 0.0 dur= 1.8s
+  c3800  Cleanrot Knight        a000_003002          [attack  ] netX=  -0.15 netZ=  -2.58 total=  2.6 maxBack= +0.0 maxLat= 0.3 dur= 2.5s
+  c5840  Black Knight           a000_003006          [attack  ] netX=  -0.00 netZ=  -2.58 total=  2.6 maxBack= +0.0 maxLat= 0.2 dur= 4.0s
+  c5840  Black Knight           a000_003000          [attack  ] netX=  -0.00 netZ=  -2.58 total=  2.6 maxBack= +0.0 maxLat= 0.2 dur= 3.0s
+  c3300  Nox Swordstress        a000_003002          [attack  ] netX=  -0.09 netZ=  -2.56 total=  2.6 maxBack= +0.0 maxLat= 0.2 dur= 2.8s
+  c3970  Azula Beastman         a000_003031          [attack  ] netX=  +0.09 netZ=  -2.55 total=  2.6 maxBack= +0.5 maxLat= 0.5 dur= 2.5s
+  c4310  Lordsworn Soldier      a001_003002          [attack  ] netX=  -0.17 netZ=  -2.53 total=  2.5 maxBack= +0.0 maxLat= 0.3 dur= 2.4s
+  c4310  Lordsworn Soldier      a005_003002          [attack  ] netX=  -0.17 netZ=  -2.53 total=  2.5 maxBack= +0.0 maxLat= 0.3 dur= 2.4s
+  c5830  Messmer Soldier        a000_003002          [attack  ] netX=  -0.17 netZ=  -2.53 total=  2.5 maxBack= +0.0 maxLat= 0.3 dur= 2.4s
+  c5830  Messmer Soldier        a001_003002          [attack  ] netX=  -0.17 netZ=  -2.53 total=  2.5 maxBack= +0.0 maxLat= 0.3 dur= 2.4s
+  c3900  Fire Monk              a001_003009          [attack  ] netX=  -0.00 netZ=  -2.53 total=  2.5 maxBack= +0.1 maxLat= 0.3 dur= 2.4s
+  c3900  Fire Monk              a001_003007          [attack  ] netX=  -0.00 netZ=  -2.53 total=  2.5 maxBack= +0.0 maxLat= 0.1 dur= 2.3s
+  c4350  Lordsworn Knight       a000_003001          [attack  ] netX=  -0.01 netZ=  -2.52 total=  2.5 maxBack= +0.0 maxLat= 0.4 dur= 2.6s
+  c4310  Lordsworn Soldier      a000_003009          [attack  ] netX=  -0.00 netZ=  -2.51 total=  2.5 maxBack= +0.3 maxLat= 0.2 dur= 3.0s
+
+=== SIDESTEP (114) ===
+  c3450  Misbegotten            a001_003001          [attack  ] netX= -10.60 netZ=  +0.00 total= 10.6 maxBack= +0.3 maxLat=10.6 dur= 4.8s
+  c3450  Misbegotten            a001_003002          [attack  ] netX= +10.60 netZ=  +0.00 total= 10.6 maxBack= +0.3 maxLat=10.6 dur= 4.8s
+  c4270  Leyndell Knight        a000_006003          [hit_react] netX= -10.23 netZ=  +0.00 total= 10.2 maxBack= +0.0 maxLat=10.3 dur= 1.7s
+  c4270  Leyndell Knight        a000_006002          [hit_react] netX= +10.00 netZ=  +0.00 total= 10.0 maxBack= +0.0 maxLat=10.2 dur= 1.7s
+  c4300  Godrick Soldier        a002_003008          [attack  ] netX=  +9.87 netZ=  +0.12 total=  9.9 maxBack= +0.2 maxLat= 9.9 dur= 4.7s
+  c4300  Godrick Soldier        a002_003009          [attack  ] netX=  -9.78 netZ=  -0.06 total=  9.8 maxBack= +0.3 maxLat= 9.8 dur= 4.7s
+  c3010  Banished Knight        a000_006012          [hit_react] netX=  +8.44 netZ=  +0.00 total=  8.4 maxBack= +0.0 maxLat= 8.4 dur= 2.1s
+  c3010  Banished Knight        a002_006012          [hit_react] netX=  +8.44 netZ=  +0.00 total=  8.4 maxBack= +0.0 maxLat= 8.4 dur= 2.1s
+  c3010  Banished Knight        a000_006013          [hit_react] netX=  -8.39 netZ=  +0.00 total=  8.4 maxBack= +0.0 maxLat= 8.4 dur= 2.0s
+  c3010  Banished Knight        a001_006013          [hit_react] netX=  -8.39 netZ=  +0.00 total=  8.4 maxBack= +0.0 maxLat= 8.4 dur= 2.0s
+  c3010  Banished Knight        a002_006013          [hit_react] netX=  -8.39 netZ=  +0.00 total=  8.4 maxBack= +0.0 maxLat= 8.4 dur= 2.0s
+  c3050  Commander Niall        a000_006002          [hit_react] netX=  +8.33 netZ=  +0.00 total=  8.3 maxBack= +0.0 maxLat= 8.7 dur= 2.6s
+  c3050  Commander Niall        a000_006003          [hit_react] netX=  -8.33 netZ=  -0.00 total=  8.3 maxBack= +0.0 maxLat= 8.7 dur= 2.6s
+  c3010  Banished Knight        a001_006012          [hit_react] netX=  +8.27 netZ=  +0.00 total=  8.3 maxBack= +0.0 maxLat= 8.3 dur= 2.0s
+  c4350  Lordsworn Knight       a002_006012          [hit_react] netX=  +8.08 netZ=  +0.00 total=  8.1 maxBack= +0.0 maxLat= 8.1 dur= 1.6s
+  c4350  Lordsworn Knight       a000_006013          [hit_react] netX=  -8.07 netZ=  +0.00 total=  8.1 maxBack= +0.0 maxLat= 8.1 dur= 1.6s
+  c4350  Lordsworn Knight       a000_006012          [hit_react] netX=  +8.06 netZ=  +0.00 total=  8.1 maxBack= +0.0 maxLat= 8.1 dur= 1.6s
+  c4350  Lordsworn Knight       a002_006013          [hit_react] netX=  -8.02 netZ=  +0.00 total=  8.0 maxBack= +0.0 maxLat= 8.0 dur= 1.6s
+  c3000  Exile Soldier          a005_006013          [hit_react] netX=  -8.01 netZ=  +0.00 total=  8.0 maxBack= +0.0 maxLat= 8.0 dur= 1.7s
+  c3000  Exile Soldier          a002_006013          [hit_react] netX=  -7.98 netZ=  +0.00 total=  8.0 maxBack= +0.0 maxLat= 8.0 dur= 1.7s
+  c3000  Exile Soldier          a000_006013          [hit_react] netX=  -7.98 netZ=  +0.00 total=  8.0 maxBack= +0.0 maxLat= 8.0 dur= 1.7s
+  c3000  Exile Soldier          a001_006013          [hit_react] netX=  -7.98 netZ=  +0.00 total=  8.0 maxBack= +0.0 maxLat= 8.0 dur= 1.7s
+  c3000  Exile Soldier          a004_006013          [hit_react] netX=  -7.98 netZ=  +0.00 total=  8.0 maxBack= +0.0 maxLat= 8.0 dur= 1.7s
+  c3000  Exile Soldier          a000_006012          [hit_react] netX=  +7.94 netZ=  +0.00 total=  7.9 maxBack= +0.0 maxLat= 7.9 dur= 1.7s
+  c3000  Exile Soldier          a001_006012          [hit_react] netX=  +7.94 netZ=  +0.00 total=  7.9 maxBack= +0.0 maxLat= 7.9 dur= 1.7s
+  c3000  Exile Soldier          a002_006012          [hit_react] netX=  +7.94 netZ=  +0.00 total=  7.9 maxBack= +0.0 maxLat= 7.9 dur= 1.7s
+  c3000  Exile Soldier          a004_006012          [hit_react] netX=  +7.94 netZ=  +0.00 total=  7.9 maxBack= +0.0 maxLat= 7.9 dur= 1.7s
+  c3000  Exile Soldier          a005_006012          [hit_react] netX=  +7.94 netZ=  +0.00 total=  7.9 maxBack= +0.0 maxLat= 7.9 dur= 1.7s
+  c3250  Crucible Tree Knight   a000_003035          [attack  ] netX=  +7.52 netZ=  +0.14 total=  7.5 maxBack= +0.1 maxLat= 7.5 dur= 2.4s
+  c3250  Crucible Tree Knight   a000_003036          [attack  ] netX=  -7.51 netZ=  +0.03 total=  7.5 maxBack= +0.1 maxLat= 7.5 dur= 2.4s
+  c3800  Cleanrot Knight        a000_003008          [attack  ] netX=  -6.66 netZ=  +0.00 total=  6.7 maxBack= +0.0 maxLat= 6.7 dur= 2.0s
+  c3800  Cleanrot Knight        a000_003007          [attack  ] netX=  +6.37 netZ=  +0.00 total=  6.4 maxBack= +0.0 maxLat= 6.4 dur= 2.0s
+  c3700  Raya Lucaria Scholar   a000_006003          [hit_react] netX=  -6.35 netZ=  +0.00 total=  6.3 maxBack= +0.0 maxLat= 6.3 dur= 1.3s
+  c3700  Raya Lucaria Scholar   a000_006002          [hit_react] netX=  +6.35 netZ=  +0.00 total=  6.3 maxBack= +0.0 maxLat= 6.3 dur= 1.3s
+  c3300  Nox Swordstress        a000_006003          [hit_react] netX=  -6.30 netZ=  -0.00 total=  6.3 maxBack= +0.1 maxLat= 6.3 dur= 1.3s
+  c3300  Nox Swordstress        a001_006003          [hit_react] netX=  -6.30 netZ=  +0.00 total=  6.3 maxBack= +0.0 maxLat= 6.3 dur= 1.3s
+  c3300  Nox Swordstress        a002_006003          [hit_react] netX=  -6.30 netZ=  +0.00 total=  6.3 maxBack= +0.0 maxLat= 6.3 dur= 1.3s
+  c3300  Nox Swordstress        a000_006002          [hit_react] netX=  +6.30 netZ=  -0.00 total=  6.3 maxBack= +0.1 maxLat= 6.3 dur= 1.3s
+  c3300  Nox Swordstress        a001_006002          [hit_react] netX=  +6.30 netZ=  +0.00 total=  6.3 maxBack= +0.0 maxLat= 6.3 dur= 1.3s
+  c3300  Nox Swordstress        a002_006002          [hit_react] netX=  +6.30 netZ=  +0.00 total=  6.3 maxBack= +0.0 maxLat= 6.3 dur= 1.3s
+  c3450  Misbegotten            a000_003014          [attack  ] netX=  +5.65 netZ=  +2.29 total=  6.1 maxBack= +2.5 maxLat= 5.7 dur= 2.7s
+  c3450  Misbegotten            a000_003013          [attack  ] netX=  -5.52 netZ=  +2.60 total=  6.1 maxBack= +2.8 maxLat= 5.5 dur= 2.7s
+  c3160  Carian Knight          a000_003020          [attack  ] netX=  -5.92 netZ=  -0.46 total=  5.9 maxBack= +0.7 maxLat= 6.3 dur= 3.1s
+  c3950  Man-Serpent            a000_006002          [hit_react] netX=  +5.52 netZ=  +0.00 total=  5.5 maxBack= +0.0 maxLat= 5.7 dur= 1.5s
+  c3950  Man-Serpent            a000_006003          [hit_react] netX=  -5.52 netZ=  +0.00 total=  5.5 maxBack= +0.0 maxLat= 5.7 dur= 1.5s
+  c4310  Lordsworn Soldier      a002_003028          [attack  ] netX=  +4.69 netZ=  +0.00 total=  4.7 maxBack= +0.0 maxLat= 4.7 dur= 1.7s
+  c4310  Lordsworn Soldier      a002_003027          [attack  ] netX=  -4.67 netZ=  -0.00 total=  4.7 maxBack= +0.0 maxLat= 4.7 dur= 1.7s
+  c3010  Banished Knight        a000_006002          [hit_react] netX=  +4.66 netZ=  +0.00 total=  4.7 maxBack= +0.0 maxLat= 4.7 dur= 2.1s
+  c3010  Banished Knight        a002_006002          [hit_react] netX=  +4.66 netZ=  +0.00 total=  4.7 maxBack= +0.0 maxLat= 4.7 dur= 2.1s
+  c3010  Banished Knight        a000_006003          [hit_react] netX=  -4.66 netZ=  +0.00 total=  4.7 maxBack= +0.0 maxLat= 4.7 dur= 2.0s
+  c3010  Banished Knight        a001_006003          [hit_react] netX=  -4.66 netZ=  +0.00 total=  4.7 maxBack= +0.0 maxLat= 4.7 dur= 2.0s
+  c3010  Banished Knight        a002_006003          [hit_react] netX=  -4.66 netZ=  +0.00 total=  4.7 maxBack= +0.0 maxLat= 4.7 dur= 2.0s
+  c4310  Lordsworn Soldier      a000_003028          [attack  ] netX=  +4.65 netZ=  +0.00 total=  4.6 maxBack= +0.0 maxLat= 4.6 dur= 1.7s
+  c4310  Lordsworn Soldier      a004_003028          [attack  ] netX=  +4.65 netZ=  +0.00 total=  4.6 maxBack= +0.0 maxLat= 4.6 dur= 1.7s
+  c3800  Cleanrot Knight        a000_006003          [hit_react] netX=  -4.58 netZ=  +0.00 total=  4.6 maxBack= +0.0 maxLat= 4.6 dur= 1.1s
+  c4310  Lordsworn Soldier      a000_003027          [attack  ] netX=  -4.52 netZ=  +0.00 total=  4.5 maxBack= +0.0 maxLat= 4.5 dur= 1.7s
+  c4310  Lordsworn Soldier      a004_003027          [attack  ] netX=  -4.52 netZ=  +0.00 total=  4.5 maxBack= +0.0 maxLat= 4.5 dur= 1.7s
+  c3800  Cleanrot Knight        a000_006002          [hit_react] netX=  +4.51 netZ=  +0.00 total=  4.5 maxBack= +0.0 maxLat= 4.6 dur= 1.1s
+  c4270  Leyndell Knight        a000_002002          [movement] netX=  +4.50 netZ=  +0.00 total=  4.5 maxBack= +0.0 maxLat= 4.5 dur= 1.9s
+  c4270  Leyndell Knight        a000_002003          [movement] netX=  -4.50 netZ=  +0.00 total=  4.5 maxBack= +0.0 maxLat= 4.5 dur= 1.9s
+  c3010  Banished Knight        a001_006002          [hit_react] netX=  +4.49 netZ=  +0.00 total=  4.5 maxBack= +0.0 maxLat= 4.5 dur= 2.0s
+  c3970  Azula Beastman         a000_006002          [hit_react] netX=  +4.14 netZ=  +0.00 total=  4.1 maxBack= +0.0 maxLat= 4.3 dur= 1.1s
+  c3970  Azula Beastman         a000_006003          [hit_react] netX=  -4.14 netZ=  +0.00 total=  4.1 maxBack= +0.0 maxLat= 4.2 dur= 1.1s
+  c3970  Azula Beastman         a001_006002          [hit_react] netX=  +4.14 netZ=  +0.00 total=  4.1 maxBack= +0.0 maxLat= 4.4 dur= 1.3s
+  c3970  Azula Beastman         a001_006003          [hit_react] netX=  -4.14 netZ=  +0.00 total=  4.1 maxBack= +0.0 maxLat= 4.1 dur= 1.3s
+  c3250  Crucible Tree Knight   a000_003028          [attack  ] netX=  +3.76 netZ=  +0.33 total=  3.8 maxBack= +2.1 maxLat= 4.0 dur= 4.0s
+  c4270  Leyndell Knight        a000_002033          [movement] netX=  -3.75 netZ=  +0.00 total=  3.8 maxBack= +0.0 maxLat= 3.8 dur= 2.5s
+  c4270  Leyndell Knight        a000_002032          [movement] netX=  +3.75 netZ=  +0.00 total=  3.7 maxBack= +0.0 maxLat= 3.7 dur= 2.5s
+  c3450  Misbegotten            a001_002002          [movement] netX=  +3.70 netZ=  +0.00 total=  3.7 maxBack= +0.0 maxLat= 3.7 dur= 1.0s
+  c3450  Misbegotten            a001_002003          [movement] netX=  -3.70 netZ=  +0.00 total=  3.7 maxBack= +0.0 maxLat= 3.7 dur= 1.0s
+  c3910  Blackflame Monk        a000_006002          [hit_react] netX=  +3.67 netZ=  +0.00 total=  3.7 maxBack= +0.0 maxLat= 3.7 dur= 1.5s
+  c3910  Blackflame Monk        a000_006003          [hit_react] netX=  -3.67 netZ=  +0.00 total=  3.7 maxBack= +0.0 maxLat= 3.7 dur= 1.5s
+  c3250  Crucible Tree Knight   a000_003023          [attack  ] netX=  +3.58 netZ=  -0.16 total=  3.6 maxBack= +0.6 maxLat= 3.9 dur= 4.0s
+  c3800  Cleanrot Knight        a000_006012          [hit_react] netX=  +3.50 netZ=  +0.00 total=  3.5 maxBack= +0.0 maxLat= 3.5 dur= 1.1s
+  c3800  Cleanrot Knight        a000_006013          [hit_react] netX=  -3.50 netZ=  +0.00 total=  3.5 maxBack= +0.0 maxLat= 3.5 dur= 1.1s
+  c4370  Haligtree Knight       a000_003025          [attack  ] netX=  -3.01 netZ=  -1.44 total=  3.3 maxBack= +0.0 maxLat= 3.1 dur= 2.2s
+  c3900  Fire Monk              a000_006002          [hit_react] netX=  +3.32 netZ=  +0.00 total=  3.3 maxBack= +0.0 maxLat= 3.4 dur= 2.3s
+  c3900  Fire Monk              a000_006003          [hit_react] netX=  -3.32 netZ=  +0.00 total=  3.3 maxBack= +0.0 maxLat= 3.3 dur= 2.3s
+  c3100  Crucible Knight        a000_006002          [hit_react] netX=  +3.30 netZ=  +0.00 total=  3.3 maxBack= +0.0 maxLat= 3.3 dur= 1.5s
+  c3100  Crucible Knight        a000_006003          [hit_react] netX=  -3.30 netZ=  +0.00 total=  3.3 maxBack= +0.0 maxLat= 3.3 dur= 1.5s
+  c4320  Vulgar Militia         a001_006002          [hit_react] netX=  +3.21 netZ=  +0.00 total=  3.2 maxBack= +0.0 maxLat= 3.2 dur= 1.8s
+  c4320  Vulgar Militia         a000_006002          [hit_react] netX=  +3.17 netZ=  +0.00 total=  3.2 maxBack= +0.0 maxLat= 3.2 dur= 1.8s
+  c4320  Vulgar Militia         a000_006003          [hit_react] netX=  -3.13 netZ=  +0.00 total=  3.1 maxBack= +0.0 maxLat= 3.2 dur= 1.8s
+  c3550  Sanguine Noble         a000_003005          [attack  ] netX=  +3.13 netZ=  +0.00 total=  3.1 maxBack= +0.1 maxLat= 3.3 dur= 1.7s
+  c4320  Vulgar Militia         a001_006003          [hit_react] netX=  -3.13 netZ=  +0.00 total=  3.1 maxBack= +0.0 maxLat= 3.2 dur= 1.8s
+  c3550  Sanguine Noble         a000_003006          [attack  ] netX=  -3.06 netZ=  -0.07 total=  3.1 maxBack= +0.3 maxLat= 3.2 dur= 1.7s
+  c3000  Exile Soldier          a000_006002          [hit_react] netX=  +3.00 netZ=  +0.10 total=  3.0 maxBack= +0.2 maxLat= 3.0 dur= 1.2s
+  c3000  Exile Soldier          a000_006003          [hit_react] netX=  -3.00 netZ=  +0.03 total=  3.0 maxBack= +0.2 maxLat= 3.0 dur= 1.2s
+  c3700  Raya Lucaria Scholar   a001_006002          [hit_react] netX=  +2.91 netZ=  +0.00 total=  2.9 maxBack= +0.0 maxLat= 2.9 dur= 1.5s
+  c3700  Raya Lucaria Scholar   a001_006003          [hit_react] netX=  -2.91 netZ=  +0.00 total=  2.9 maxBack= +0.0 maxLat= 3.0 dur= 1.5s
+  c4350  Lordsworn Knight       a000_006002          [hit_react] netX=  +2.85 netZ=  +0.00 total=  2.9 maxBack= +0.0 maxLat= 2.9 dur= 1.5s
+  c4350  Lordsworn Knight       a000_006003          [hit_react] netX=  -2.85 netZ=  +0.00 total=  2.9 maxBack= +0.0 maxLat= 2.9 dur= 1.5s
+  c5840  Black Knight           a000_006002          [hit_react] netX=  +2.85 netZ=  +0.00 total=  2.9 maxBack= +0.0 maxLat= 2.9 dur= 1.5s
+  c5840  Black Knight           a000_006003          [hit_react] netX=  -2.85 netZ=  +0.00 total=  2.9 maxBack= +0.0 maxLat= 2.9 dur= 1.5s
+  c3450  Misbegotten            a000_006002          [hit_react] netX=  +2.80 netZ=  +0.00 total=  2.8 maxBack= +0.0 maxLat= 3.0 dur= 1.3s
+  c3450  Misbegotten            a000_006003          [hit_react] netX=  -2.80 netZ=  +0.00 total=  2.8 maxBack= +0.0 maxLat= 3.0 dur= 1.3s
+  c3250  Crucible Tree Knight   a000_003032          [attack  ] netX=  -2.63 netZ=  -0.94 total=  2.8 maxBack= +0.0 maxLat= 2.6 dur= 5.8s
+  c3250  Crucible Tree Knight   a000_003029          [attack  ] netX=  +2.63 netZ=  -0.86 total=  2.8 maxBack= +0.0 maxLat= 2.6 dur= 3.8s
+  c4310  Lordsworn Soldier      a000_006002          [hit_react] netX=  +2.73 netZ=  +0.00 total=  2.7 maxBack= +0.0 maxLat= 2.8 dur= 1.5s
+  c4310  Lordsworn Soldier      a000_006003          [hit_react] netX=  -2.73 netZ=  +0.00 total=  2.7 maxBack= +0.0 maxLat= 2.7 dur= 1.5s
+  c4310  Lordsworn Soldier      a002_006002          [hit_react] netX=  +2.73 netZ=  +0.00 total=  2.7 maxBack= +0.0 maxLat= 2.8 dur= 1.5s
+  c4310  Lordsworn Soldier      a002_006003          [hit_react] netX=  -2.73 netZ=  +0.00 total=  2.7 maxBack= +0.0 maxLat= 2.7 dur= 1.5s
+  c4310  Lordsworn Soldier      a003_006002          [hit_react] netX=  +2.73 netZ=  +0.00 total=  2.7 maxBack= +0.0 maxLat= 2.8 dur= 1.5s
+  c4310  Lordsworn Soldier      a003_006003          [hit_react] netX=  -2.73 netZ=  +0.00 total=  2.7 maxBack= +0.0 maxLat= 2.7 dur= 1.5s
+  c4310  Lordsworn Soldier      a004_006002          [hit_react] netX=  +2.73 netZ=  +0.00 total=  2.7 maxBack= +0.0 maxLat= 2.8 dur= 1.5s
+  c4310  Lordsworn Soldier      a004_006003          [hit_react] netX=  -2.73 netZ=  +0.00 total=  2.7 maxBack= +0.0 maxLat= 2.7 dur= 1.5s
+  c5830  Messmer Soldier        a000_006002          [hit_react] netX=  +2.73 netZ=  +0.00 total=  2.7 maxBack= +0.0 maxLat= 2.8 dur= 1.5s
+  c5830  Messmer Soldier        a000_006003          [hit_react] netX=  -2.73 netZ=  +0.00 total=  2.7 maxBack= +0.0 maxLat= 2.7 dur= 1.5s
+  c5830  Messmer Soldier        a001_006002          [hit_react] netX=  +2.73 netZ=  +0.00 total=  2.7 maxBack= +0.0 maxLat= 2.8 dur= 1.5s
+  c5830  Messmer Soldier        a001_006003          [hit_react] netX=  -2.73 netZ=  +0.00 total=  2.7 maxBack= +0.0 maxLat= 2.7 dur= 1.5s
+  c5830  Messmer Soldier        a002_006002          [hit_react] netX=  +2.73 netZ=  +0.00 total=  2.7 maxBack= +0.0 maxLat= 2.8 dur= 1.5s
+  c5830  Messmer Soldier        a002_006003          [hit_react] netX=  -2.73 netZ=  +0.00 total=  2.7 maxBack= +0.0 maxLat= 2.7 dur= 1.5s
+  c3160  Carian Knight          a000_002002          [movement] netX=  +2.59 netZ=  +0.00 total=  2.6 maxBack= +0.0 maxLat= 2.6 dur= 1.2s
+  c3160  Carian Knight          a000_002003          [movement] netX=  -2.59 netZ=  +0.00 total=  2.6 maxBack= +0.0 maxLat= 2.6 dur= 1.2s

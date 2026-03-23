@@ -408,3 +408,8 @@ Use Gemini for:
 | `.claude/skills/animBP-fix/SKILL.md` | AnimBP troubleshooting |
 | `.claude/skills/play-test-loop/SKILL.md` | Automated PIE testing |
 | `.claude/skills/dungeon-building/SKILL.md` | DA dungeon generation, themes, level streaming |
+| `.claude/reference/animation-selection-guide.md` | **How to pick attack/dodge animations from ER catalog** |
+| `swing_catalog.yaml` | 7,162 animations: direction, speed, range, hit count, L_Hand behavior |
+| `root_movement_results.txt` | 833 animations with 2.5+ root motion (reference_frame_samples) |
+| `game_status.yaml` | Full game status: built vs planned features, all systems |
+| `enemy_roster.yaml` | 53 enemies: mesh source, rig, per-animation approval tracking |
