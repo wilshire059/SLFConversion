@@ -1200,19 +1200,46 @@ void USLFAIStateMachineComponent::TickCombat_Dodging(float DeltaTime)
 
 bool USLFAIStateMachineComponent::TryDodge()
 {
-	if (!Config.bCanDodge) return false;
-	if (DodgeMontages.Num() == 0) return false;
+	FString PawnName = CachedPawn.IsValid() ? CachedPawn->GetName() : TEXT("Unknown");
+
+	if (!Config.bCanDodge)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[DODGE] %s: bCanDodge=false"), *PawnName);
+		return false;
+	}
+	if (DodgeMontages.Num() == 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[DODGE] %s: No dodge montages loaded"), *PawnName);
+		return false;
+	}
 
 	float TimeSinceLastDodge = GetWorld()->GetTimeSeconds() - LastDodgeTime;
-	if (TimeSinceLastDodge < Config.DodgeCooldown) return false;
+	if (TimeSinceLastDodge < Config.DodgeCooldown)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[DODGE] %s: On cooldown (%.1f/%.1f)"), *PawnName, TimeSinceLastDodge, Config.DodgeCooldown);
+		return false;
+	}
 
-	if (FMath::FRand() > Config.DodgeChance) return false;
+	float Roll = FMath::FRand();
+	if (Roll > Config.DodgeChance)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[DODGE] %s: Roll failed (%.2f > %.2f)"), *PawnName, Roll, Config.DodgeChance);
+		return false;
+	}
 
 	// Pick a random dodge montage
 	UAnimMontage* DodgeMontage = DodgeMontages[FMath::RandRange(0, DodgeMontages.Num() - 1)];
-	if (!DodgeMontage) return false;
+	if (!DodgeMontage)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[DODGE] %s: Selected montage is null"), *PawnName);
+		return false;
+	}
 
-	if (!CachedAnimInstance.IsValid()) return false;
+	if (!CachedAnimInstance.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[DODGE] %s: No AnimInstance"), *PawnName);
+		return false;
+	}
 
 	float MontageLength = CachedAnimInstance->Montage_Play(DodgeMontage, 1.0f);
 	if (MontageLength > 0.0f)
@@ -1231,14 +1258,13 @@ bool USLFAIStateMachineComponent::TryDodge()
 		});
 		CachedAnimInstance->Montage_SetEndDelegate(EndDelegate, DodgeMontage);
 
-		if (bDebugEnabled)
-		{
-			UE_LOG(LogTemp, Log, TEXT("[AIStateMachine] %s - DODGE: %s"),
-				CachedPawn.IsValid() ? *CachedPawn->GetName() : TEXT("Unknown"),
-				*DodgeMontage->GetName());
-		}
+		UE_LOG(LogTemp, Warning, TEXT("[DODGE] %s: PLAYING %s (%.2fs)"),
+			*PawnName, *DodgeMontage->GetName(), MontageLength);
 		return true;
 	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[DODGE] %s: Montage_Play returned 0 for %s"),
+		*PawnName, *DodgeMontage->GetName());
 	return false;
 }
 

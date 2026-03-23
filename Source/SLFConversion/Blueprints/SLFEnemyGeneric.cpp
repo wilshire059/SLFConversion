@@ -188,11 +188,18 @@ void ASLFEnemyGeneric::ApplyEnemyConfig()
 			if (UAnimMontage* DodgeMont = LoadObject<UAnimMontage>(nullptr, *MontPath))
 			{
 				AISM->DodgeMontages.Add(DodgeMont);
+				UE_LOG(LogTemp, Warning, TEXT("[DODGE SETUP] %s: Loaded %s"), *GetName(), *MontPath);
 			}
 		}
 		if (AISM->DodgeMontages.Num() == 0)
 		{
-			AISM->Config.bCanDodge = false;  // No dodge montages available
+			AISM->Config.bCanDodge = false;
+			UE_LOG(LogTemp, Warning, TEXT("[DODGE SETUP] %s: No dodge montages found — dodge disabled"), *GetName());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[DODGE SETUP] %s: %d dodge montages, chance=%.0f%%, cooldown=%.1fs"),
+				*GetName(), AISM->DodgeMontages.Num(), AISM->Config.DodgeChance * 100.0f, AISM->Config.DodgeCooldown);
 		}
 	}
 
