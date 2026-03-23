@@ -28,7 +28,7 @@ c0000:
 
 # ======================================================================
 c0100:
-  name: Unknown (c0100)
+  name: Dummy (Generic)
   type: unknown
   total_animations: 9
   attack_animations: 0
@@ -48,7 +48,7 @@ c0100:
 
 # ======================================================================
 c0110:
-  name: Unknown (c0110)
+  name: Caravan Dummy
   type: unknown
   total_animations: 9
   attack_animations: 0
@@ -68,7 +68,7 @@ c0110:
 
 # ======================================================================
 c0120:
-  name: Unknown (c0120)
+  name: Bullet Dummy
   type: unknown
   total_animations: 9
   attack_animations: 0
@@ -88,7 +88,7 @@ c0120:
 
 # ======================================================================
 c0130:
-  name: Unknown (c0130)
+  name: Cutscene Dummy
   type: unknown
   total_animations: 1
   attack_animations: 0
@@ -98,7 +98,7 @@ c0130:
 
 # ======================================================================
 c1000:
-  name: Unknown (c1000)
+  name: Talk Dummy
   type: unknown
   total_animations: 1
   attack_animations: 0
@@ -108,8 +108,8 @@ c1000:
 
 # ======================================================================
 c2010:
-  name: Unknown (c2010)
-  type: unknown
+  name: Blaidd
+  type: npc
   total_animations: 168
   attack_animations: 0
   animations:
@@ -293,8 +293,8 @@ c2010:
 
 # ======================================================================
 c2030:
-  name: Unknown (c2030)
-  type: unknown
+  name: "Rennala, Queen of the Full Moon"
+  type: boss
   total_animations: 30
   attack_animations: 0
   animations:
@@ -334,8 +334,8 @@ c2030:
 
 # ======================================================================
 c2031:
-  name: Unknown (c2031)
-  type: unknown
+  name: Rennala (Phase 2)
+  type: boss
   total_animations: 112
   attack_animations: 0
   animations:
@@ -462,8 +462,8 @@ c2031:
 
 # ======================================================================
 c2040:
-  name: Unknown (c2040)
-  type: unknown
+  name: Juvenile Scholar / Rennala Student
+  type: humanoid
   total_animations: 152
   attack_animations: 0
   animations:
@@ -621,16 +621,16 @@ c2040:
 
 # ======================================================================
 c2041:
-  name: Unknown (c2041)
-  type: unknown
+  name: Larva of Rot / Small Pest
+  type: large_creature
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c2050:
-  name: Unknown (c2050)
-  type: unknown
+  name: Ranni the Witch
+  type: npc
   total_animations: 22
   attack_animations: 0
   animations:
@@ -657,8 +657,8 @@ c2050:
 
 # ======================================================================
 c2060:
-  name: Unknown (c2060)
-  type: unknown
+  name: The Two Fingers
+  type: npc
   total_animations: 17
   attack_animations: 0
   animations:
@@ -859,8 +859,8 @@ c2100:
 
 # ======================================================================
 c2110:
-  name: Unknown (c2110)
-  type: unknown
+  name: Beast Clergyman / Maliketh
+  type: boss
   total_animations: 106
   attack_animations: 0
   animations:
@@ -980,8 +980,8 @@ c2110:
 
 # ======================================================================
 c2120:
-  name: Unknown (c2120)
-  type: unknown
+  name: "Malenia, Blade of Miquella"
+  type: boss
   total_animations: 146
   attack_animations: 0
   animations:
@@ -1143,8 +1143,8 @@ c2120:
 
 # ======================================================================
 c2130:
-  name: Unknown (c2130)
-  type: unknown
+  name: "Morgott, the Omen King"
+  type: boss
   total_animations: 102
   attack_animations: 0
   animations:
@@ -1262,8 +1262,8 @@ c2130:
 
 # ======================================================================
 c2131:
-  name: Unknown (c2131)
-  type: unknown
+  name: Morgott (Dead)
+  type: boss
   total_animations: 9
   attack_animations: 0
   animations:
@@ -1278,8 +1278,8 @@ c2131:
 
 # ======================================================================
 c2140:
-  name: Unknown (c2140)
-  type: unknown
+  name: Fell Twin / Omen
+  type: humanoid_large
   total_animations: 191
   attack_animations: 0
   animations:
@@ -1457,7 +1457,7 @@ c2140:
 
 # ======================================================================
 c2150:
-  name: Unknown (c2150)
+  name: Lightning Ball (Empty/Placeholder)
   type: unknown
   total_animations: 7
   attack_animations: 0
@@ -1475,8 +1475,8 @@ c2150:
 
 # ======================================================================
 c2160:
-  name: Unknown (c2160)
-  type: unknown
+  name: Finger Reader Crone (Wooden Chair)
+  type: npc
   total_animations: 30
   attack_animations: 0
   animations:
@@ -1514,8 +1514,8 @@ c2160:
 
 # ======================================================================
 c2170:
-  name: Unknown (c2170)
-  type: unknown
+  name: Finger Reader Crone (No Chair)
+  type: npc
   total_animations: 29
   attack_animations: 0
   animations:
@@ -1552,8 +1552,8 @@ c2170:
 
 # ======================================================================
 c2180:
-  name: Unknown (c2180)
-  type: unknown
+  name: Melina
+  type: npc
   total_animations: 155
   attack_animations: 0
   animations:
@@ -1719,8 +1719,8 @@ c2180:
 
 # ======================================================================
 c2190:
-  name: Unknown (c2190)
-  type: unknown
+  name: Radagon of the Golden Order
+  type: boss
   total_animations: 80
   attack_animations: 0
   animations:
@@ -1821,8 +1821,8 @@ c2190:
 
 # ======================================================================
 c2200:
-  name: Unknown (c2200)
-  type: unknown
+  name: Elden Beast
+  type: boss
   total_animations: 66
   attack_animations: 0
   animations:
@@ -1907,8 +1907,8 @@ c2200:
 
 # ======================================================================
 c2270:
-  name: Unknown (c2270)
-  type: unknown
+  name: Giant Crab
+  type: large_creature
   total_animations: 77
   attack_animations: 0
   animations:
@@ -2002,8 +2002,8 @@ c2270:
 
 # ======================================================================
 c2271:
-  name: Unknown (c2271)
-  type: unknown
+  name: Crab
+  type: quadruped
   total_animations: 68
   attack_animations: 0
   animations:
@@ -2085,48 +2085,48 @@ c2271:
 
 # ======================================================================
 c2272:
-  name: Unknown (c2272)
-  type: unknown
+  name: Giant Crab (Damaged/Black)
+  type: large_creature
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c2273:
-  name: Unknown (c2273)
-  type: unknown
+  name: Crab (Maggots/Black)
+  type: quadruped
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c2274:
-  name: Unknown (c2274)
-  type: unknown
+  name: Giant Crab (Clean/Albinauric)
+  type: large_creature
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c2275:
-  name: Unknown (c2275)
-  type: unknown
+  name: Crab (Clean/Albinauric)
+  type: quadruped
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c2276:
-  name: Unknown (c2276)
-  type: unknown
+  name: Giant Crab (Golden Tufts/Death)
+  type: large_creature
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c2277:
-  name: Unknown (c2277)
-  type: unknown
+  name: Crab (Golden Tufts/Death)
+  type: quadruped
   total_animations: 0
   attack_animations: 0
   animations:
@@ -3443,8 +3443,8 @@ c3010:
 
 # ======================================================================
 c3020:
-  name: Unknown (c3020)
-  type: unknown
+  name: Large Castle Exile
+  type: humanoid_large
   total_animations: 0
   attack_animations: 0
   animations:
@@ -3538,8 +3538,8 @@ c3050:
 
 # ======================================================================
 c3060:
-  name: Unknown (c3060)
-  type: unknown
+  name: Undead Mariner
+  type: humanoid
   total_animations: 190
   attack_animations: 0
   animations:
@@ -3716,16 +3716,16 @@ c3060:
 
 # ======================================================================
 c3061:
-  name: Unknown (c3061)
-  type: unknown
+  name: Undead Azula Beastman
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c3070:
-  name: Unknown (c3070)
-  type: unknown
+  name: Dominula Celebrant
+  type: humanoid
   total_animations: 832
   attack_animations: 0
   animations:
@@ -4497,8 +4497,8 @@ c3070:
 
 # ======================================================================
 c3080:
-  name: Unknown (c3080)
-  type: unknown
+  name: Imp
+  type: humanoid
   total_animations: 320
   attack_animations: 0
   animations:
@@ -5145,8 +5145,8 @@ c3150:
 
 # ======================================================================
 c3160:
-  name: Unknown (c3160)
-  type: unknown
+  name: "Night's Cavalry Horse"
+  type: quadruped
   total_animations: 66
   attack_animations: 0
   animations:
@@ -5227,8 +5227,8 @@ c3160:
 
 # ======================================================================
 c3170:
-  name: Unknown (c3170)
-  type: unknown
+  name: Albinauric Archer
+  type: humanoid
   total_animations: 165
   attack_animations: 0
   animations:
@@ -5401,8 +5401,8 @@ c3170:
 
 # ======================================================================
 c3171:
-  name: Unknown (c3171)
-  type: unknown
+  name: Giant Albinauric Archer
+  type: humanoid_large
   total_animations: 0
   attack_animations: 0
   animations:
@@ -5531,8 +5531,8 @@ c3180:
 
 # ======================================================================
 c3181:
-  name: Unknown (c3181)
-  type: unknown
+  name: Red Wolf of Radagon
+  type: quadruped
   total_animations: 84
   attack_animations: 0
   animations:
@@ -5632,8 +5632,8 @@ c3181:
 
 # ======================================================================
 c3200:
-  name: Unknown (c3200)
-  type: unknown
+  name: Nomad Trader
+  type: npc
   total_animations: 293
   attack_animations: 0
   animations:
@@ -5903,16 +5903,16 @@ c3200:
 
 # ======================================================================
 c3201:
-  name: Unknown (c3201)
-  type: unknown
+  name: Nomad Trader (variant)
+  type: npc
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c3210:
-  name: Unknown (c3210)
-  type: unknown
+  name: Nomad Mule
+  type: quadruped
   total_animations: 84
   attack_animations: 0
   animations:
@@ -6007,8 +6007,8 @@ c3210:
 
 # ======================================================================
 c3250:
-  name: Unknown (c3250)
-  type: unknown
+  name: Draconic Tree Sentinel
+  type: humanoid_large
   total_animations: 77
   attack_animations: 0
   animations:
@@ -6100,8 +6100,8 @@ c3250:
 
 # ======================================================================
 c3251:
-  name: Unknown (c3251)
-  type: unknown
+  name: Tree Sentinel
+  type: humanoid_large
   total_animations: 85
   attack_animations: 0
   animations:
@@ -6201,8 +6201,8 @@ c3251:
 
 # ======================================================================
 c3252:
-  name: Unknown (c3252)
-  type: unknown
+  name: Nox Swordstress
+  type: humanoid
   total_animations: 79
   attack_animations: 0
   animations:
@@ -6917,8 +6917,8 @@ c3300:
 
 # ======================================================================
 c3320:
-  name: Unknown (c3320)
-  type: unknown
+  name: Silver Tear
+  type: humanoid
   total_animations: 49
   attack_animations: 0
   animations:
@@ -6986,8 +6986,8 @@ c3320:
 
 # ======================================================================
 c3330:
-  name: Unknown (c3330)
-  type: unknown
+  name: Silver Tear Orb
+  type: large_creature
   total_animations: 24
   attack_animations: 0
   animations:
@@ -7027,8 +7027,8 @@ c3330:
 
 # ======================================================================
 c3350:
-  name: Unknown (c3350)
-  type: unknown
+  name: Crystalian
+  type: humanoid
   total_animations: 162
   attack_animations: 0
   animations:
@@ -7208,8 +7208,8 @@ c3350:
 
 # ======================================================================
 c3360:
-  name: Unknown (c3360)
-  type: unknown
+  name: Ancestral Follower
+  type: humanoid
   total_animations: 254
   attack_animations: 0
   animations:
@@ -7436,16 +7436,16 @@ c3360:
 
 # ======================================================================
 c3361:
-  name: Unknown (c3361)
-  type: unknown
+  name: Undead Ancestral Follower
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c3370:
-  name: Unknown (c3370)
-  type: unknown
+  name: Ancestral Follower Shaman
+  type: humanoid
   total_animations: 168
   attack_animations: 0
   animations:
@@ -7599,8 +7599,8 @@ c3370:
 
 # ======================================================================
 c3371:
-  name: Unknown (c3371)
-  type: unknown
+  name: Undead Ancestral Follower Shaman
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
@@ -7916,8 +7916,8 @@ c3400:
 
 # ======================================================================
 c3450:
-  name: Unknown (c3450)
-  type: unknown
+  name: Misbegotten
+  type: humanoid
   total_animations: 444
   attack_animations: 0
   animations:
@@ -8301,16 +8301,16 @@ c3450:
 
 # ======================================================================
 c3451:
-  name: Unknown (c3451)
-  type: unknown
+  name: Misbegotten (variant)
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c3460:
-  name: Unknown (c3460)
-  type: unknown
+  name: Leonine Misbegotten
+  type: humanoid
   total_animations: 136
   attack_animations: 0
   animations:
@@ -8463,8 +8463,8 @@ c3460:
 
 # ======================================================================
 c3470:
-  name: Unknown (c3470)
-  type: unknown
+  name: Albinauric
+  type: humanoid
   total_animations: 415
   attack_animations: 0
   animations:
@@ -8825,8 +8825,8 @@ c3470:
 
 # ======================================================================
 c3471:
-  name: Unknown (c3471)
-  type: unknown
+  name: Albinauric (variant)
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
@@ -9154,8 +9154,8 @@ c3500:
 
 # ======================================================================
 c3510:
-  name: Unknown (c3510)
-  type: unknown
+  name: Skeleton (Scimitar)
+  type: humanoid
   total_animations: 201
   attack_animations: 0
   animations:
@@ -9621,8 +9621,8 @@ c3560:
 
 # ======================================================================
 c3570:
-  name: Unknown (c3570)
-  type: unknown
+  name: Godskin Noble
+  type: humanoid_large
   total_animations: 68
   attack_animations: 0
   animations:
@@ -9705,8 +9705,8 @@ c3570:
 
 # ======================================================================
 c3600:
-  name: Unknown (c3600)
-  type: unknown
+  name: Alabaster Lord
+  type: humanoid
   total_animations: 191
   attack_animations: 0
   animations:
@@ -10161,8 +10161,8 @@ c3620:
 
 # ======================================================================
 c3630:
-  name: Unknown (c3630)
-  type: unknown
+  name: Giant Oracle Envoy
+  type: humanoid_large
   total_animations: 40
   attack_animations: 0
   animations:
@@ -10216,8 +10216,8 @@ c3630:
 
 # ======================================================================
 c3650:
-  name: Unknown (c3650)
-  type: unknown
+  name: Erdtree Guardian
+  type: humanoid
   total_animations: 217
   attack_animations: 0
   animations:
@@ -10412,8 +10412,8 @@ c3650:
 
 # ======================================================================
 c3660:
-  name: Unknown (c3660)
-  type: unknown
+  name: Commoner
+  type: humanoid
   total_animations: 604
   attack_animations: 0
   animations:
@@ -10947,48 +10947,48 @@ c3660:
 
 # ======================================================================
 c3661:
-  name: Unknown (c3661)
-  type: unknown
+  name: Putrid Corpse
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c3662:
-  name: Unknown (c3662)
-  type: unknown
+  name: Scarlet Putrid Corpse
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c3664:
-  name: Unknown (c3664)
-  type: unknown
+  name: Cemetery Shade
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c3665:
-  name: Unknown (c3665)
-  type: unknown
+  name: Devious Commoner
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c3666:
-  name: Unknown (c3666)
-  type: unknown
+  name: Sunflower Commoner
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c3670:
-  name: Unknown (c3670)
-  type: unknown
+  name: Albinauric Lookout
+  type: humanoid
   total_animations: 153
   attack_animations: 0
   animations:
@@ -11543,40 +11543,40 @@ c3700:
 
 # ======================================================================
 c3701:
-  name: Unknown (c3701)
-  type: unknown
+  name: White Veil Perfumer
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c3702:
-  name: Unknown (c3702)
-  type: unknown
+  name: Raya Lucaria Scholar
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c3703:
-  name: Unknown (c3703)
-  type: unknown
+  name: "Noble's Page"
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c3704:
-  name: Unknown (c3704)
-  type: unknown
+  name: Battlemage
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c3710:
-  name: Unknown (c3710)
-  type: unknown
+  name: Master Azur
+  type: npc
   total_animations: 14
   attack_animations: 0
   animations:
@@ -11602,8 +11602,8 @@ c3710:
 
 # ======================================================================
 c3720:
-  name: Unknown (c3720)
-  type: unknown
+  name: Master Lusat
+  type: npc
   total_animations: 14
   attack_animations: 0
   animations:
@@ -11629,8 +11629,8 @@ c3720:
 
 # ======================================================================
 c3730:
-  name: Unknown (c3730)
-  type: unknown
+  name: Orb of Many Faces
+  type: large_creature
   total_animations: 12
   attack_animations: 0
   animations:
@@ -11657,8 +11657,8 @@ c3730:
 
 # ======================================================================
 c3750:
-  name: Unknown (c3750)
-  type: unknown
+  name: Clayman
+  type: humanoid
   total_animations: 211
   attack_animations: 0
   animations:
@@ -12057,8 +12057,8 @@ c3800:
 
 # ======================================================================
 c3810:
-  name: Unknown (c3810)
-  type: unknown
+  name: Kindred of Rot
+  type: humanoid
   total_animations: 206
   attack_animations: 0
   animations:
@@ -12246,8 +12246,8 @@ c3810:
 
 # ======================================================================
 c3850:
-  name: Unknown (c3850)
-  type: unknown
+  name: Marionette Soldier
+  type: humanoid
   total_animations: 313
   attack_animations: 0
   animations:
@@ -12544,8 +12544,8 @@ c3850:
 
 # ======================================================================
 c3860:
-  name: Unknown (c3860)
-  type: unknown
+  name: Avionette Soldier
+  type: flying
   total_animations: 281
   attack_animations: 0
   animations:
@@ -13041,8 +13041,8 @@ c3900:
 
 # ======================================================================
 c3901:
-  name: Unknown (c3901)
-  type: unknown
+  name: Godskin Monk / Fire Monk (variant)
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
@@ -13810,8 +13810,8 @@ c3970:
 
 # ======================================================================
 c4000:
-  name: Unknown (c4000)
-  type: unknown
+  name: Royal Rider / Night Rider
+  type: humanoid
   total_animations: 197
   attack_animations: 0
   animations:
@@ -14026,8 +14026,8 @@ c4000:
 
 # ======================================================================
 c4020:
-  name: Unknown (c4020)
-  type: unknown
+  name: Royal Revenant
+  type: large_creature
   total_animations: 75
   attack_animations: 0
   animations:
@@ -14122,8 +14122,8 @@ c4020:
 
 # ======================================================================
 c4040:
-  name: Unknown (c4040)
-  type: unknown
+  name: Slug
+  type: quadruped
   total_animations: 39
   attack_animations: 0
   animations:
@@ -14547,8 +14547,8 @@ c4060:
 
 # ======================================================================
 c4070:
-  name: Unknown (c4070)
-  type: unknown
+  name: Grey Wolf
+  type: quadruped
   total_animations: 152
   attack_animations: 0
   animations:
@@ -14715,8 +14715,8 @@ c4070:
 
 # ======================================================================
 c4071:
-  name: Unknown (c4071)
-  type: unknown
+  name: White Wolf
+  type: quadruped
   total_animations: 0
   attack_animations: 0
   animations:
@@ -14962,8 +14962,8 @@ c4090:
 
 # ======================================================================
 c4100:
-  name: Unknown (c4100)
-  type: unknown
+  name: Demi-Human
+  type: humanoid
   total_animations: 367
   attack_animations: 0
   animations:
@@ -15334,8 +15334,8 @@ c4100:
 
 # ======================================================================
 c4101:
-  name: Unknown (c4101)
-  type: unknown
+  name: Large Demi-Human
+  type: humanoid_large
   total_animations: 0
   attack_animations: 0
   animations:
@@ -15352,8 +15352,8 @@ c4110:
 
 # ======================================================================
 c4120:
-  name: Unknown (c4120)
-  type: unknown
+  name: Demi-Human Beastman
+  type: humanoid
   total_animations: 150
   attack_animations: 0
   animations:
@@ -15519,8 +15519,8 @@ c4120:
 
 # ======================================================================
 c4130:
-  name: Unknown (c4130)
-  type: unknown
+  name: Demi-Human Queen
+  type: humanoid_large
   total_animations: 153
   attack_animations: 0
   animations:
@@ -15687,8 +15687,8 @@ c4130:
 
 # ======================================================================
 c4140:
-  name: Unknown (c4140)
-  type: unknown
+  name: Snail (Spirit-Caller)
+  type: large_creature
   total_animations: 96
   attack_animations: 0
   animations:
@@ -15802,8 +15802,8 @@ c4140:
 
 # ======================================================================
 c4150:
-  name: Unknown (c4150)
-  type: unknown
+  name: Basilisk
+  type: quadruped
   total_animations: 116
   attack_animations: 0
   animations:
@@ -15931,8 +15931,8 @@ c4150:
 
 # ======================================================================
 c4160:
-  name: Unknown (c4160)
-  type: unknown
+  name: Large Starved Dog
+  type: quadruped
   total_animations: 126
   attack_animations: 0
   animations:
@@ -16071,64 +16071,64 @@ c4160:
 
 # ======================================================================
 c4161:
-  name: Unknown (c4161)
-  type: unknown
+  name: Starved Dog
+  type: quadruped
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4162:
-  name: Unknown (c4162)
-  type: unknown
+  name: Large Braided Dog
+  type: quadruped
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4163:
-  name: Unknown (c4163)
-  type: unknown
+  name: Braided Dog
+  type: quadruped
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4164:
-  name: Unknown (c4164)
-  type: unknown
+  name: Large Rotten Dog
+  type: quadruped
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4165:
-  name: Unknown (c4165)
-  type: unknown
+  name: Rotten Dog
+  type: quadruped
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4166:
-  name: Unknown (c4166)
-  type: unknown
+  name: Large Mushroom Dog
+  type: quadruped
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4167:
-  name: Unknown (c4167)
-  type: unknown
+  name: Mushroom Dog
+  type: quadruped
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4170:
-  name: Unknown (c4170)
-  type: unknown
+  name: Small Living Mass
+  type: large_creature
   total_animations: 54
   attack_animations: 0
   animations:
@@ -16198,16 +16198,16 @@ c4170:
 
 # ======================================================================
 c4171:
-  name: Unknown (c4171)
-  type: unknown
+  name: Giant Living Mass
+  type: large_creature
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4180:
-  name: Unknown (c4180)
-  type: unknown
+  name: Jellyfish
+  type: flying
   total_animations: 88
   attack_animations: 0
   animations:
@@ -16314,8 +16314,8 @@ c4180:
 
 # ======================================================================
 c4190:
-  name: Unknown (c4190)
-  type: unknown
+  name: Large Tear Scarab
+  type: quadruped
   total_animations: 80
   attack_animations: 0
   animations:
@@ -16414,24 +16414,24 @@ c4190:
 
 # ======================================================================
 c4191:
-  name: Unknown (c4191)
-  type: unknown
+  name: Tear Scarab
+  type: quadruped
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4192:
-  name: Unknown (c4192)
-  type: unknown
+  name: Ash Scarab
+  type: quadruped
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4200:
-  name: Unknown (c4200)
-  type: unknown
+  name: Giant Bat
+  type: flying
   total_animations: 197
   attack_animations: 0
   animations:
@@ -16640,16 +16640,16 @@ c4200:
 
 # ======================================================================
 c4201:
-  name: Unknown (c4201)
-  type: unknown
+  name: Bat Harpy
+  type: flying
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4210:
-  name: Unknown (c4210)
-  type: unknown
+  name: Warhawk
+  type: flying
   total_animations: 177
   attack_animations: 0
   animations:
@@ -16836,8 +16836,8 @@ c4210:
 
 # ======================================================================
 c4220:
-  name: Unknown (c4220)
-  type: unknown
+  name: Giant Land Octopus
+  type: large_creature
   total_animations: 74
   attack_animations: 0
   animations:
@@ -16926,8 +16926,8 @@ c4220:
 
 # ======================================================================
 c4230:
-  name: Unknown (c4230)
-  type: unknown
+  name: Small Land Octopus
+  type: large_creature
   total_animations: 40
   attack_animations: 0
   animations:
@@ -16979,8 +16979,8 @@ c4230:
 
 # ======================================================================
 c4240:
-  name: Unknown (c4240)
-  type: unknown
+  name: Large Fingercreeper
+  type: large_creature
   total_animations: 139
   attack_animations: 0
   animations:
@@ -17140,24 +17140,24 @@ c4240:
 
 # ======================================================================
 c4241:
-  name: Unknown (c4241)
-  type: unknown
+  name: Giant Fingercreeper
+  type: large_creature
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4250:
-  name: Unknown (c4250)
-  type: unknown
+  name: Small Fingercreeper
+  type: large_creature
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4260:
-  name: Unknown (c4260)
-  type: unknown
+  name: Burial Watchdog
+  type: humanoid_large
   total_animations: 51
   attack_animations: 0
   animations:
@@ -17340,8 +17340,8 @@ c4270:
 
 # ======================================================================
 c4280:
-  name: Unknown (c4280)
-  type: unknown
+  name: Giant Ant
+  type: quadruped
   total_animations: 169
   attack_animations: 0
   animations:
@@ -17520,8 +17520,8 @@ c4280:
 
 # ======================================================================
 c4281:
-  name: Unknown (c4281)
-  type: unknown
+  name: Giant Ant (Egg Sac)
+  type: quadruped
   total_animations: 0
   attack_animations: 0
   animations:
@@ -19004,48 +19004,48 @@ c4310:
 
 # ======================================================================
 c4311:
-  name: Unknown (c4311)
-  type: unknown
+  name: Godrick Soldier
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4312:
-  name: Unknown (c4312)
-  type: unknown
+  name: Raya Lucaria Soldier
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4313:
-  name: Unknown (c4313)
-  type: unknown
+  name: Leyndell Soldier
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4314:
-  name: Unknown (c4314)
-  type: unknown
+  name: Radahn Soldier
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4315:
-  name: Unknown (c4315)
-  type: unknown
+  name: Mausoleum Soldier (Headless)
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4316:
-  name: Unknown (c4316)
-  type: unknown
+  name: Haligtree Soldier
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
@@ -19314,8 +19314,8 @@ c4320:
 
 # ======================================================================
 c4321:
-  name: Unknown (c4321)
-  type: unknown
+  name: Vulgar Militia (variant)
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
@@ -19557,8 +19557,8 @@ c4340:
 
 # ======================================================================
 c4341:
-  name: Unknown (c4341)
-  type: unknown
+  name: Grinning Torturer / Mad Pumpkin Head (variant)
+  type: humanoid_large
   total_animations: 0
   attack_animations: 0
   animations:
@@ -19886,56 +19886,56 @@ c4350:
 
 # ======================================================================
 c4351:
-  name: Unknown (c4351)
-  type: unknown
+  name: Godrick Knight
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4352:
-  name: Unknown (c4352)
-  type: unknown
+  name: Cuckoo Knight
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4353:
-  name: Unknown (c4353)
-  type: unknown
+  name: Leyndell Knight
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4354:
-  name: Unknown (c4354)
-  type: unknown
+  name: Redmane Knight
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4355:
-  name: Unknown (c4355)
-  type: unknown
+  name: Mausoleum Knight (Headless)
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4356:
-  name: Unknown (c4356)
-  type: unknown
+  name: Haligtree Knight
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4360:
-  name: Unknown (c4360)
-  type: unknown
+  name: "Knight's Horse (Generic)"
+  type: quadruped
   total_animations: 70
   attack_animations: 0
   animations:
@@ -20015,40 +20015,40 @@ c4360:
 
 # ======================================================================
 c4361:
-  name: Unknown (c4361)
-  type: unknown
+  name: "Godrick Knight's Horse"
+  type: quadruped
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4362:
-  name: Unknown (c4362)
-  type: unknown
+  name: "Cuckoo Knight's Horse"
+  type: quadruped
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4363:
-  name: Unknown (c4363)
-  type: unknown
+  name: "Leyndell Knight's Horse"
+  type: quadruped
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4364:
-  name: Unknown (c4364)
-  type: unknown
+  name: "Redmane Knight's Horse"
+  type: quadruped
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4365:
-  name: Unknown (c4365)
-  type: unknown
+  name: "Mausoleum Knight's Horse"
+  type: quadruped
   total_animations: 0
   attack_animations: 0
   animations:
@@ -20391,48 +20391,48 @@ c4370:
 
 # ======================================================================
 c4371:
-  name: Unknown (c4371)
-  type: unknown
+  name: Godrick Foot Soldier
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4372:
-  name: Unknown (c4372)
-  type: unknown
+  name: Raya Lucaria Foot Soldier
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4373:
-  name: Unknown (c4373)
-  type: unknown
+  name: Leyndell Foot Soldier
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4374:
-  name: Unknown (c4374)
-  type: unknown
+  name: Radahn Foot Soldier
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4375:
-  name: Unknown (c4375)
-  type: unknown
+  name: Mausoleum Foot Soldier
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4376:
-  name: Unknown (c4376)
-  type: unknown
+  name: Haligtree Foot Soldier
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
@@ -20877,48 +20877,48 @@ c4380:
 
 # ======================================================================
 c4381:
-  name: Unknown (c4381)
-  type: unknown
+  name: Bloodthorn Exile / Starcaller (variant)
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4382:
-  name: Unknown (c4382)
-  type: unknown
+  name: Tunnel Miner (Big Sack)
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4383:
-  name: Unknown (c4383)
-  type: unknown
+  name: Glintstone Miner
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4384:
-  name: Unknown (c4384)
-  type: unknown
+  name: Glintstone Miner (Small Sack)
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4385:
-  name: Unknown (c4385)
-  type: unknown
+  name: Fungal Sorcerer
+  type: humanoid
   total_animations: 1
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4420:
-  name: Unknown (c4420)
-  type: unknown
+  name: Giant Lobster
+  type: large_creature
   total_animations: 73
   attack_animations: 0
   animations:
@@ -21003,8 +21003,8 @@ c4420:
 
 # ======================================================================
 c4430:
-  name: Unknown (c4430)
-  type: unknown
+  name: Abnormal Stone Cluster
+  type: large_creature
   total_animations: 41
   attack_animations: 0
   animations:
@@ -21063,8 +21063,8 @@ c4430:
 
 # ======================================================================
 c4440:
-  name: Unknown (c4440)
-  type: unknown
+  name: Fungal Pod
+  type: large_creature
   total_animations: 32
   attack_animations: 0
   animations:
@@ -21114,24 +21114,24 @@ c4440:
 
 # ======================================================================
 c4441:
-  name: Unknown (c4441)
-  type: unknown
+  name: Giant Fungal Pod
+  type: large_creature
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4442:
-  name: Unknown (c4442)
-  type: unknown
+  name: Giant Rotten Pod
+  type: large_creature
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4450:
-  name: Unknown (c4450)
-  type: unknown
+  name: Walking Mausoleum
+  type: large_creature
   total_animations: 38
   attack_animations: 0
   animations:
@@ -21182,8 +21182,8 @@ c4450:
 
 # ======================================================================
 c4460:
-  name: Unknown (c4460)
-  type: unknown
+  name: Maneuverable Flamethrower Tank
+  type: object
   total_animations: 44
   attack_animations: 0
   animations:
@@ -21333,8 +21333,8 @@ c4470:
 
 # ======================================================================
 c4480:
-  name: Unknown (c4480)
-  type: unknown
+  name: Giant Miranda Sprout
+  type: large_creature
   total_animations: 47
   attack_animations: 0
   animations:
@@ -21392,8 +21392,8 @@ c4480:
 
 # ======================================================================
 c4481:
-  name: Unknown (c4481)
-  type: unknown
+  name: Miranda Sprout
+  type: large_creature
   total_animations: 79
   attack_animations: 0
   animations:
@@ -21480,24 +21480,24 @@ c4481:
 
 # ======================================================================
 c4482:
-  name: Unknown (c4482)
-  type: unknown
+  name: Fading Giant Miranda Sprout
+  type: large_creature
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4483:
-  name: Unknown (c4483)
-  type: unknown
+  name: Fading Miranda Sprout
+  type: large_creature
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4490:
-  name: Unknown (c4490)
-  type: unknown
+  name: Living Pot (Large)
+  type: humanoid
   total_animations: 131
   attack_animations: 0
   animations:
@@ -21644,24 +21644,24 @@ c4490:
 
 # ======================================================================
 c4491:
-  name: Unknown (c4491)
-  type: unknown
+  name: Living Pot (Small)
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4492:
-  name: Unknown (c4492)
-  type: unknown
+  name: Living Pot (Huge)
+  type: humanoid_large
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4500:
-  name: Unknown (c4500)
-  type: unknown
+  name: Dragon
+  type: large_creature
   total_animations: 87
   attack_animations: 0
   animations:
@@ -21761,48 +21761,48 @@ c4500:
 
 # ======================================================================
 c4501:
-  name: Unknown (c4501)
-  type: unknown
+  name: Dragon (variant)
+  type: large_creature
   total_animations: 1
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4502:
-  name: Unknown (c4502)
-  type: unknown
+  name: Dragon (Blade in Mouth)
+  type: large_creature
   total_animations: 1
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4503:
-  name: Unknown (c4503)
-  type: unknown
+  name: Dragon (variant 2)
+  type: large_creature
   total_animations: 1
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4504:
-  name: Unknown (c4504)
-  type: unknown
+  name: Elder Dragon Greyoll
+  type: boss
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4505:
-  name: Unknown (c4505)
-  type: unknown
+  name: Lesser Elder Dragon
+  type: large_creature
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4510:
-  name: Unknown (c4510)
-  type: unknown
+  name: Ancient Dragon (Lansseax/etc)
+  type: large_creature
   total_animations: 73
   attack_animations: 0
   animations:
@@ -21894,16 +21894,16 @@ c4510:
 
 # ======================================================================
 c4511:
-  name: Unknown (c4511)
-  type: unknown
+  name: Lichdragon Fortissax
+  type: boss
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4520:
-  name: Unknown (c4520)
-  type: unknown
+  name: Dragonlord Placidusax
+  type: boss
   total_animations: 79
   attack_animations: 0
   animations:
@@ -22000,8 +22000,8 @@ c4520:
 
 # ======================================================================
 c4550:
-  name: Unknown (c4550)
-  type: unknown
+  name: Monstrous Dog
+  type: quadruped
   total_animations: 154
   attack_animations: 0
   animations:
@@ -22171,8 +22171,8 @@ c4550:
 
 # ======================================================================
 c4560:
-  name: Unknown (c4560)
-  type: unknown
+  name: Monstrous Crow
+  type: quadruped
   total_animations: 93
   attack_animations: 0
   animations:
@@ -22284,16 +22284,16 @@ c4560:
 
 # ======================================================================
 c4561:
-  name: Unknown (c4561)
-  type: unknown
+  name: Monstrous Rotten Crow
+  type: quadruped
   total_animations: 1
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4570:
-  name: Unknown (c4570)
-  type: unknown
+  name: Large Wormface
+  type: humanoid_large
   total_animations: 90
   attack_animations: 0
   animations:
@@ -22402,8 +22402,8 @@ c4570:
 
 # ======================================================================
 c4580:
-  name: Unknown (c4580)
-  type: unknown
+  name: Giant Wormface
+  type: humanoid_large
   total_animations: 65
   attack_animations: 0
   animations:
@@ -22488,8 +22488,8 @@ c4580:
 
 # ======================================================================
 c4600:
-  name: Unknown (c4600)
-  type: unknown
+  name: Troll Knight (Blade)
+  type: humanoid_large
   total_animations: 151
   attack_animations: 0
   animations:
@@ -22645,16 +22645,16 @@ c4600:
 
 # ======================================================================
 c4601:
-  name: Unknown (c4601)
-  type: unknown
+  name: Armored Troll Knight (Blade)
+  type: humanoid_large
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4602:
-  name: Unknown (c4602)
-  type: unknown
+  name: Troll Knight
+  type: humanoid_large
   total_animations: 1
   attack_animations: 0
   animations:
@@ -22663,24 +22663,24 @@ c4602:
 
 # ======================================================================
 c4603:
-  name: Unknown (c4603)
-  type: unknown
+  name: Troll Knight (Club)
+  type: humanoid_large
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4604:
-  name: Unknown (c4604)
-  type: unknown
+  name: "Troll Knight (Covered Face, Club & Book)"
+  type: humanoid_large
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4620:
-  name: Unknown (c4620)
-  type: unknown
+  name: "Astel, Stars of Darkness"
+  type: boss
   total_animations: 87
   attack_animations: 0
   animations:
@@ -22786,8 +22786,8 @@ c4620:
 
 # ======================================================================
 c4630:
-  name: Unknown (c4630)
-  type: unknown
+  name: Runebear
+  type: quadruped
   total_animations: 109
   attack_animations: 0
   animations:
@@ -22912,8 +22912,8 @@ c4630:
 
 # ======================================================================
 c4640:
-  name: Unknown (c4640)
-  type: unknown
+  name: Ulcerated Tree Spirit
+  type: large_creature
   total_animations: 71
   attack_animations: 0
   animations:
@@ -23002,8 +23002,8 @@ c4640:
 
 # ======================================================================
 c4650:
-  name: Unknown (c4650)
-  type: unknown
+  name: Dragonkin Soldier
+  type: humanoid_large
   total_animations: 64
   attack_animations: 0
   animations:
@@ -23086,8 +23086,8 @@ c4650:
 
 # ======================================================================
 c4660:
-  name: Unknown (c4660)
-  type: unknown
+  name: Golem
+  type: humanoid_large
   total_animations: 73
   attack_animations: 0
   animations:
@@ -23178,8 +23178,8 @@ c4660:
 
 # ======================================================================
 c4670:
-  name: Unknown (c4670)
-  type: unknown
+  name: Ancestor Spirit
+  type: boss
   total_animations: 66
   attack_animations: 0
   animations:
@@ -23261,8 +23261,8 @@ c4670:
 
 # ======================================================================
 c4680:
-  name: Unknown (c4680)
-  type: unknown
+  name: Fallingstar Beast
+  type: large_creature
   total_animations: 86
   attack_animations: 0
   animations:
@@ -23367,8 +23367,8 @@ c4680:
 
 # ======================================================================
 c4690:
-  name: Unknown (c4690)
-  type: unknown
+  name: Grafted Scion
+  type: large_creature
   total_animations: 132
   attack_animations: 0
   animations:
@@ -23518,8 +23518,8 @@ c4690:
 
 # ======================================================================
 c4710:
-  name: Unknown (c4710)
-  type: unknown
+  name: God-Devouring Serpent / Rykard
+  type: boss
   total_animations: 112
   attack_animations: 0
   animations:
@@ -23641,8 +23641,8 @@ c4710:
 
 # ======================================================================
 c4711:
-  name: Unknown (c4711)
-  type: unknown
+  name: Writhing Mass (Rykard arena)
+  type: large_creature
   total_animations: 1
   attack_animations: 0
   animations:
@@ -23651,8 +23651,8 @@ c4711:
 
 # ======================================================================
 c4720:
-  name: Unknown (c4720)
-  type: unknown
+  name: "Godfrey, First Elden Lord"
+  type: boss
   total_animations: 55
   attack_animations: 0
   animations:
@@ -23722,8 +23722,8 @@ c4720:
 
 # ======================================================================
 c4721:
-  name: Unknown (c4721)
-  type: unknown
+  name: "Hoarah Loux, Warrior"
+  type: boss
   total_animations: 64
   attack_animations: 0
   animations:
@@ -23802,8 +23802,8 @@ c4721:
 
 # ======================================================================
 c4730:
-  name: Unknown (c4730)
-  type: unknown
+  name: Starscourge Radahn
+  type: boss
   total_animations: 108
   attack_animations: 0
   animations:
@@ -23928,8 +23928,8 @@ c4730:
 
 # ======================================================================
 c4750:
-  name: Unknown (c4750)
-  type: unknown
+  name: Godrick the Grafted
+  type: boss
   total_animations: 72
   attack_animations: 0
   animations:
@@ -24016,8 +24016,8 @@ c4750:
 
 # ======================================================================
 c4751:
-  name: Unknown (c4751)
-  type: unknown
+  name: Godrick (Head and Torso)
+  type: boss
   total_animations: 1
   attack_animations: 0
   animations:
@@ -24026,8 +24026,8 @@ c4751:
 
 # ======================================================================
 c4760:
-  name: Unknown (c4760)
-  type: unknown
+  name: Fire Giant
+  type: boss
   total_animations: 98
   attack_animations: 0
   animations:
@@ -24141,8 +24141,8 @@ c4760:
 
 # ======================================================================
 c4770:
-  name: Unknown (c4770)
-  type: unknown
+  name: Gargoyle (Black Blade / Valiant)
+  type: humanoid_large
   total_animations: 173
   attack_animations: 0
   animations:
@@ -24335,8 +24335,8 @@ c4770:
 
 # ======================================================================
 c4800:
-  name: Unknown (c4800)
-  type: unknown
+  name: "Mohg, The Omen"
+  type: boss
   total_animations: 87
   attack_animations: 0
   animations:
@@ -24508,8 +24508,8 @@ c4810:
 
 # ======================================================================
 c4811:
-  name: Unknown (c4811)
-  type: unknown
+  name: Erdtree Avatar (variant)
+  type: humanoid_large
   total_animations: 0
   attack_animations: 0
   animations:
@@ -24655,8 +24655,8 @@ c4820:
 
 # ======================================================================
 c4910:
-  name: Unknown (c4910)
-  type: unknown
+  name: Magma Wyrm
+  type: large_creature
   total_animations: 83
   attack_animations: 0
   animations:
@@ -24756,16 +24756,16 @@ c4910:
 
 # ======================================================================
 c4911:
-  name: Unknown (c4911)
-  type: unknown
+  name: Magma Wyrm (Standing)
+  type: large_creature
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c4950:
-  name: Unknown (c4950)
-  type: unknown
+  name: Tibia Mariner
+  type: humanoid
   total_animations: 65
   attack_animations: 0
   animations:
@@ -24845,8 +24845,8 @@ c4950:
 
 # ======================================================================
 c4960:
-  name: Unknown (c4960)
-  type: unknown
+  name: Giant Skeleton Torso
+  type: large_creature
   total_animations: 39
   attack_animations: 0
   animations:
@@ -24901,8 +24901,8 @@ c4960:
 
 # ======================================================================
 c4980:
-  name: Unknown (c4980)
-  type: unknown
+  name: Death Rite Bird
+  type: flying
   total_animations: 71
   attack_animations: 0
   animations:
@@ -24993,8 +24993,8 @@ c4980:
 
 # ======================================================================
 c5040:
-  name: Unknown (c5040)
-  type: unknown
+  name: Curseblade Labirith
+  type: humanoid
   total_animations: 146
   attack_animations: 0
   animations:
@@ -25158,8 +25158,8 @@ c5040:
 
 # ======================================================================
 c5080:
-  name: Unknown (c5080)
-  type: unknown
+  name: Bloodfiend
+  type: humanoid
   total_animations: 148
   attack_animations: 0
   animations:
@@ -25321,8 +25321,8 @@ c5080:
 
 # ======================================================================
 c5090:
-  name: Unknown (c5090)
-  type: unknown
+  name: Gravebird
+  type: flying
   total_animations: 122
   attack_animations: 0
   animations:
@@ -25464,8 +25464,8 @@ c5090:
 
 # ======================================================================
 c5160:
-  name: Unknown (c5160)
-  type: unknown
+  name: Fire Knight
+  type: humanoid
   total_animations: 192
   attack_animations: 0
   animations:
@@ -25641,8 +25641,8 @@ c5160:
 
 # ======================================================================
 c5190:
-  name: Unknown (c5190)
-  type: unknown
+  name: Spider Scorpion
+  type: quadruped
   total_animations: 136
   attack_animations: 0
   animations:
@@ -25792,16 +25792,16 @@ c5190:
 
 # ======================================================================
 c5194:
-  name: Unknown (c5194)
-  type: unknown
+  name: Spider Scorpion (Small)
+  type: quadruped
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c5250:
-  name: Unknown (c5250)
-  type: unknown
+  name: Horned Warrior
+  type: humanoid
   total_animations: 156
   attack_animations: 0
   animations:
@@ -25975,8 +25975,8 @@ c5250:
 
 # ======================================================================
 c5260:
-  name: Unknown (c5260)
-  type: unknown
+  name: Golem Smith
+  type: humanoid_large
   total_animations: 75
   attack_animations: 0
   animations:
@@ -26069,16 +26069,16 @@ c5260:
 
 # ======================================================================
 c5261:
-  name: Unknown (c5261)
-  type: unknown
+  name: Smith Golem (variant)
+  type: humanoid_large
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c5310:
-  name: Unknown (c5310)
-  type: unknown
+  name: Inquisitor
+  type: humanoid
   total_animations: 253
   attack_animations: 0
   animations:
@@ -26349,16 +26349,16 @@ c5310:
 
 # ======================================================================
 c5311:
-  name: Unknown (c5311)
-  type: unknown
+  name: Inquisitor (Candles)
+  type: humanoid
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c5550:
-  name: Unknown (c5550)
-  type: unknown
+  name: Fingercreeper (DLC)
+  type: large_creature
   total_animations: 140
   attack_animations: 0
   animations:
@@ -26519,16 +26519,16 @@ c5550:
 
 # ======================================================================
 c5560:
-  name: Unknown (c5560)
-  type: unknown
+  name: Fingercreeper Small (DLC)
+  type: large_creature
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c5810:
-  name: Unknown (c5810)
-  type: unknown
+  name: Demi-Human Swordmaster Onze
+  type: humanoid
   total_animations: 145
   attack_animations: 0
   animations:
@@ -27459,8 +27459,8 @@ c5840:
 
 # ======================================================================
 c5870:
-  name: Unknown (c5870)
-  type: unknown
+  name: Imp (Lion Head / DLC)
+  type: humanoid
   total_animations: 338
   attack_animations: 0
   animations:
@@ -27784,8 +27784,8 @@ c5870:
 
 # ======================================================================
 c5900:
-  name: Unknown (c5900)
-  type: unknown
+  name: Man-Fly
+  type: flying
   total_animations: 87
   attack_animations: 0
   animations:
@@ -27887,8 +27887,8 @@ c5900:
 
 # ======================================================================
 c6000:
-  name: Unknown (c6000)
-  type: unknown
+  name: Hawk
+  type: ambient
   total_animations: 28
   attack_animations: 0
   animations:
@@ -27922,16 +27922,16 @@ c6000:
 
 # ======================================================================
 c6001:
-  name: Unknown (c6001)
-  type: unknown
+  name: Hawk (variant)
+  type: ambient
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c6010:
-  name: Unknown (c6010)
-  type: unknown
+  name: Deer
+  type: ambient
   total_animations: 46
   attack_animations: 0
   animations:
@@ -27989,8 +27989,8 @@ c6010:
 
 # ======================================================================
 c6030:
-  name: Unknown (c6030)
-  type: unknown
+  name: Bear
+  type: ambient
   total_animations: 53
   attack_animations: 0
   animations:
@@ -28054,16 +28054,16 @@ c6030:
 
 # ======================================================================
 c6031:
-  name: Unknown (c6031)
-  type: unknown
+  name: Bear (variant)
+  type: ambient
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c6040:
-  name: Unknown (c6040)
-  type: unknown
+  name: Owl
+  type: ambient
   total_animations: 25
   attack_animations: 0
   animations:
@@ -28097,8 +28097,8 @@ c6040:
 
 # ======================================================================
 c6050:
-  name: Unknown (c6050)
-  type: unknown
+  name: Boar
+  type: ambient
   total_animations: 47
   attack_animations: 0
   animations:
@@ -28157,8 +28157,8 @@ c6050:
 
 # ======================================================================
 c6060:
-  name: Unknown (c6060)
-  type: unknown
+  name: Goat
+  type: ambient
   total_animations: 48
   attack_animations: 0
   animations:
@@ -28220,8 +28220,8 @@ c6060:
 
 # ======================================================================
 c6070:
-  name: Unknown (c6070)
-  type: unknown
+  name: Gull
+  type: ambient
   total_animations: 43
   attack_animations: 0
   animations:
@@ -28275,8 +28275,8 @@ c6070:
 
 # ======================================================================
 c6071:
-  name: Unknown (c6071)
-  type: unknown
+  name: Gull (variant)
+  type: ambient
   total_animations: 39
   attack_animations: 0
   animations:
@@ -28326,16 +28326,16 @@ c6071:
 
 # ======================================================================
 c6072:
-  name: Unknown (c6072)
-  type: unknown
+  name: Gull (variant 2)
+  type: ambient
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c6080:
-  name: Unknown (c6080)
-  type: unknown
+  name: Dragonfly
+  type: ambient
   total_animations: 63
   attack_animations: 0
   animations:
@@ -28403,24 +28403,24 @@ c6080:
 
 # ======================================================================
 c6081:
-  name: Unknown (c6081)
-  type: unknown
+  name: Dragonfly (variant)
+  type: ambient
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c6082:
-  name: Unknown (c6082)
-  type: unknown
+  name: Dragonfly (variant 2)
+  type: ambient
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c6090:
-  name: Unknown (c6090)
-  type: unknown
+  name: Turtle
+  type: ambient
   total_animations: 57
   attack_animations: 0
   animations:
@@ -28487,16 +28487,16 @@ c6090:
 
 # ======================================================================
 c6091:
-  name: Unknown (c6091)
-  type: unknown
+  name: Turtle Pope (Miriel)
+  type: npc
   total_animations: 0
   attack_animations: 0
   animations:
 
 # ======================================================================
 c6100:
-  name: Unknown (c6100)
-  type: unknown
+  name: Rabbitgaroo
+  type: ambient
   total_animations: 42
   attack_animations: 0
   animations:
@@ -28550,8 +28550,8 @@ c6100:
 
 # ======================================================================
 c7000:
-  name: Unknown (c7000)
-  type: unknown
+  name: Fallen Hawk Soldier
+  type: humanoid
   total_animations: 253
   attack_animations: 0
   animations:
@@ -28781,8 +28781,8 @@ c7000:
 
 # ======================================================================
 c7100:
-  name: Unknown (c7100)
-  type: unknown
+  name: "White Mask Assailant (Varre's quest)"
+  type: humanoid
   total_animations: 152
   attack_animations: 0
   animations:
@@ -28952,8 +28952,8 @@ c7100:
 
 # ======================================================================
 c8000:
-  name: Unknown (c8000)
-  type: unknown
+  name: Torrent (Player Mount)
+  type: quadruped
   total_animations: 77
   attack_animations: 0
   animations:
@@ -29039,8 +29039,8 @@ c8000:
 
 # ======================================================================
 c8100:
-  name: Unknown (c8100)
-  type: unknown
+  name: Ballista (Siege)
+  type: object
   total_animations: 10
   attack_animations: 0
   animations:
@@ -29062,8 +29062,8 @@ c8100:
 
 # ======================================================================
 c8101:
-  name: Unknown (c8101)
-  type: unknown
+  name: Giant Ballista
+  type: object
   total_animations: 10
   attack_animations: 0
   animations:
@@ -29085,8 +29085,8 @@ c8101:
 
 # ======================================================================
 c8110:
-  name: Unknown (c8110)
-  type: unknown
+  name: Dragon-faced Flamethrower
+  type: object
   total_animations: 10
   attack_animations: 0
   animations:
@@ -29108,8 +29108,8 @@ c8110:
 
 # ======================================================================
 c8120:
-  name: Unknown (c8120)
-  type: unknown
+  name: Merciless Chariot
+  type: object
   total_animations: 10
   attack_animations: 0
   animations:
@@ -29131,7 +29131,7 @@ c8120:
 
 # ======================================================================
 c9001:
-  name: Unknown (c9001)
+  name: Debug / Test Entity
   type: unknown
   total_animations: 1
   attack_animations: 0
