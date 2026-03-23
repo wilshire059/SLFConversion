@@ -105,7 +105,7 @@ public:
 
 	/** Draw debug trace spheres in PIE for visual tuning */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace|Debug")
-	bool bDrawDebugTrace = false;
+	bool bDrawDebugTrace = true;
 
 	// --- Runtime state ---
 
