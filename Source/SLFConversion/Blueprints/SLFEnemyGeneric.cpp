@@ -178,8 +178,8 @@ void ASLFEnemyGeneric::ApplyEnemyConfig()
 		AISM->Config.MaxAttackDelay = 0.4f;         // Short max delay
 		AISM->Config.GapCloserChance = 0.8f;        // Often lunge when far (was 0.6)
 		AISM->Config.bCanDodge = true;               // Enable dodge evasion
-		AISM->Config.DodgeChance = 0.3f;             // 30% chance when triggered
-		AISM->Config.DodgeCooldown = 2.5f;           // 2.5s between dodges
+		AISM->Config.DodgeChance = 0.7f;             // 70% chance for testing (lower to 0.3 for production)
+		AISM->Config.DodgeCooldown = 1.5f;           // 1.5s between dodges (testing)
 
 		// Load dodge montages from content folder
 		for (int32 i = 1; i <= 3; i++)

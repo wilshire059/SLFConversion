@@ -370,7 +370,7 @@ int32 USetupBatchEnemyCommandlet::Main(const FString& Params)
 
 			// Helper: import a specific FBX by source+anim_id, assign a specific montage name
 			auto ImportAndCreateMontage = [&](const FString& Source, const FString& AnimId,
-				const FString& MontageSuffix) -> bool
+				const FString& MontageSuffix, bool bNeedsRootMotion = false) -> bool
 			{
 				// Find the FBX: {enemy}_{source}_{anim_id}.fbx
 				FString FBXName = FString::Printf(TEXT("%s_%s_%s.fbx"), *Enemy, *Source, *AnimId);
@@ -419,8 +419,18 @@ int32 USetupBatchEnemyCommandlet::Main(const FString& Params)
 				{
 					if (UAnimSequence* Seq = Cast<UAnimSequence>(Obj))
 					{
-						Seq->bForceRootLock = true;
-						Seq->RootMotionRootLock = ERootMotionRootLock::AnimFirstFrame;
+						if (bNeedsRootMotion)
+						{
+							// Dodge/movement anims: enable root motion so character translates
+							Seq->bForceRootLock = false;
+							Seq->bEnableRootMotion = true;
+						}
+						else
+						{
+							// Attack/locomotion anims: lock root to prevent sliding
+							Seq->bForceRootLock = true;
+							Seq->RootMotionRootLock = ERootMotionRootLock::AnimFirstFrame;
+						}
 						ImportedSeq = Seq;
 						bImported = true;
 					}
@@ -505,7 +515,7 @@ int32 USetupBatchEnemyCommandlet::Main(const FString& Params)
 			ImportSingle(TEXT("guard"), TEXT("Guard"));
 
 			// Import arrays
-			auto ImportArray = [&](const FString& Key, const FString& Prefix, int32 Max)
+			auto ImportArray = [&](const FString& Key, const FString& Prefix, int32 Max, bool bRootMotion = false)
 			{
 				const TArray<TSharedPtr<FJsonValue>>* Arr;
 				if (Config->TryGetArrayField(Key, Arr))
@@ -516,11 +526,11 @@ int32 USetupBatchEnemyCommandlet::Main(const FString& Params)
 						FString Src = A->GetStringField(TEXT("source"));
 						FString Aid = A->GetStringField(TEXT("anim_id"));
 						FString Suffix = FString::Printf(TEXT("%s%02d"), *Prefix, i + 1);
-						ImportAndCreateMontage(Src, Aid, Suffix);
+						ImportAndCreateMontage(Src, Aid, Suffix, bRootMotion);
 					}
 				}
 			};
-			ImportArray(TEXT("dodges"), TEXT("Dodge"), 4);
+			ImportArray(TEXT("dodges"), TEXT("Dodge"), 4, true);  // Dodges need root motion
 			ImportArray(TEXT("hit_reacts"), TEXT("HitReact"), 3);
 			ImportArray(TEXT("deaths"), TEXT("Death"), 3);
 
