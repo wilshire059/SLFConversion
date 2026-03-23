@@ -762,6 +762,9 @@ void USLFAIStateMachineComponent::TickCombat(float DeltaTime)
 	case ESLFCombatSubState::Retreating:
 		TickCombat_Retreating(DeltaTime);
 		break;
+	case ESLFCombatSubState::Dodging:
+		TickCombat_Dodging(DeltaTime);
+		break;
 	default:
 		SetCombatSubState(ESLFCombatSubState::Engaging);
 		break;
@@ -1048,7 +1051,9 @@ void USLFAIStateMachineComponent::TickCombat_Positioning(float DeltaTime)
 	SetMovementSpeed(Config.StrafeSpeed);
 
 	// After some time, decide next action based on aggression
-	if (TimeInCombatSubState > Config.RepositionInterval)
+	// Use half the reposition interval for more aggressive feel
+	float EffectiveRepositionTime = Config.RepositionInterval * (1.0f - CurrentAggression * 0.5f);
+	if (TimeInCombatSubState > EffectiveRepositionTime)
 	{
 		// Higher aggression = more likely to attack, lower = keep circling
 		if (FMath::FRand() < CurrentAggression)
@@ -1138,31 +1143,35 @@ void USLFAIStateMachineComponent::TickCombat_Attacking(float DeltaTime)
 
 void USLFAIStateMachineComponent::TickCombat_Recovering(float DeltaTime)
 {
-	// Post-attack recovery
-	if (TimeInCombatSubState >= Config.PostAttackRecovery)
+	// Post-attack recovery — try to dodge if we can
+	if (TimeInCombatSubState < Config.PostAttackRecovery)
 	{
-		// Decide next action
-		float Distance = GetDistanceToTarget();
+		return;  // Still in forced recovery window
+	}
 
-		if (Distance > Config.AttackRange * 1.5f)
+	// Chance to dodge after recovery (creates space, looks reactive)
+	if (Config.bCanDodge && DodgeMontages.Num() > 0 && FMath::FRand() < Config.DodgeChance * 0.5f)
+	{
+		if (TryDodge()) return;
+	}
+
+	// Decide next action — bias heavily toward re-engaging quickly
+	float Distance = GetDistanceToTarget();
+	if (Distance > Config.AttackRange * 1.5f)
+	{
+		SetCombatSubState(ESLFCombatSubState::Engaging);
+	}
+	else
+	{
+		// In range — reduced strafe chance for more aggressive feel
+		float StrafeChance = (1.0f - CurrentAggression) * 0.5f;  // Halved from original
+		if (FMath::FRand() < StrafeChance)
 		{
-			// Too far, close the distance
-			SetCombatSubState(ESLFCombatSubState::Engaging);
+			SetCombatSubState(ESLFCombatSubState::Positioning);
 		}
 		else
 		{
-			// In range - decide between strafe and attack based on inverse aggression
-			// Higher aggression = more attacks, lower = more strafing
-			// Strafe chance = 1 - CurrentAggression (so 0.5 aggression = 50% strafe)
-			float StrafeChance = 1.0f - CurrentAggression;
-			if (FMath::FRand() < StrafeChance)
-			{
-				SetCombatSubState(ESLFCombatSubState::Positioning);
-			}
-			else
-			{
-				SetCombatSubState(ESLFCombatSubState::Engaging);
-			}
+			SetCombatSubState(ESLFCombatSubState::Engaging);
 		}
 	}
 }
@@ -1180,6 +1189,57 @@ void USLFAIStateMachineComponent::TickCombat_Retreating(float DeltaTime)
 	{
 		SetCombatSubState(ESLFCombatSubState::Engaging);
 	}
+}
+
+void USLFAIStateMachineComponent::TickCombat_Dodging(float DeltaTime)
+{
+	// Dodge animation is playing — wait for it to finish
+	// The montage end callback will transition us back to Engaging
+	FaceTarget();
+}
+
+bool USLFAIStateMachineComponent::TryDodge()
+{
+	if (!Config.bCanDodge) return false;
+	if (DodgeMontages.Num() == 0) return false;
+
+	float TimeSinceLastDodge = GetWorld()->GetTimeSeconds() - LastDodgeTime;
+	if (TimeSinceLastDodge < Config.DodgeCooldown) return false;
+
+	if (FMath::FRand() > Config.DodgeChance) return false;
+
+	// Pick a random dodge montage
+	UAnimMontage* DodgeMontage = DodgeMontages[FMath::RandRange(0, DodgeMontages.Num() - 1)];
+	if (!DodgeMontage) return false;
+
+	if (!CachedAnimInstance.IsValid()) return false;
+
+	float MontageLength = CachedAnimInstance->Montage_Play(DodgeMontage, 1.0f);
+	if (MontageLength > 0.0f)
+	{
+		LastDodgeTime = GetWorld()->GetTimeSeconds();
+		SetCombatSubState(ESLFCombatSubState::Dodging);
+
+		// Bind montage end to return to Engaging
+		FOnMontageEnded EndDelegate;
+		EndDelegate.BindLambda([this](UAnimMontage* Montage, bool bInterrupted)
+		{
+			if (CombatSubState == ESLFCombatSubState::Dodging)
+			{
+				SetCombatSubState(ESLFCombatSubState::Engaging);
+			}
+		});
+		CachedAnimInstance->Montage_SetEndDelegate(EndDelegate, DodgeMontage);
+
+		if (bDebugEnabled)
+		{
+			UE_LOG(LogTemp, Log, TEXT("[AIStateMachine] %s - DODGE: %s"),
+				CachedPawn.IsValid() ? *CachedPawn->GetName() : TEXT("Unknown"),
+				*DodgeMontage->GetName());
+		}
+		return true;
+	}
+	return false;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════

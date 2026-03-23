@@ -77,7 +77,8 @@ enum class ESLFCombatSubState : uint8
 	Attacking       = 4,   // Attack animation playing
 	Recovering      = 5,   // Post-attack cooldown
 	Blocking        = 6,   // Holding block
-	Retreating      = 7    // Backing away
+	Retreating      = 7,   // Backing away
+	Dodging         = 8    // Evasive dodge (playing dodge montage)
 };
 
 /** Boss Phase */
@@ -290,6 +291,20 @@ struct FSLFAIConfig
 	float GapCloserChance = 0.4f;
 
 	// === VARIETY ===
+	// === EVASION ===
+	/** Chance to dodge when player attacks (0-1). Only for enemies without shields. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Evasion", meta = (ClampMin = "0.0", ClampMax = "1.0"))
+	float DodgeChance = 0.25f;
+
+	/** Cooldown between dodge attempts (seconds) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Evasion")
+	float DodgeCooldown = 3.0f;
+
+	/** If true, enemy can dodge (set false for shield enemies that block instead) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Evasion")
+	bool bCanDodge = true;
+
+	// === VARIETY ===
 	/** Chance to feint (start wind-up then cancel into strafe) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variety", meta = (ClampMin = "0.0", ClampMax = "1.0"))
 	float FeintChance = 0.02f;  // Rare feints - mostly just attack
@@ -470,6 +485,16 @@ private:
 	bool bPlayerIsRolling = false;
 	float PlayerStateDetectedTime = 0.0f;
 
+	// Dodge / Evasion
+	float LastDodgeTime = -999.0f;
+
+public:
+	/** Dodge montages — populated from PDA_CombatReaction or manually */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Config|Dodge")
+	TArray<UAnimMontage*> DodgeMontages;
+
+private:
+
 	// Target acquisition grace period (after player respawn)
 	// Skips FOV check and uses extended detection radius for a few seconds
 	bool bInTargetAcquisitionGracePeriod = false;
@@ -520,6 +545,10 @@ private:
 	void TickCombat_Attacking(float DeltaTime);
 	void TickCombat_Recovering(float DeltaTime);
 	void TickCombat_Retreating(float DeltaTime);
+	void TickCombat_Dodging(float DeltaTime);
+
+	/** Try to dodge — returns true if dodge started */
+	bool TryDodge();
 
 	// ═══════════════════════════════════════════════════════════════════════════
 	// STATE ENTER/EXIT

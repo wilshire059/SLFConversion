@@ -177,6 +177,23 @@ void ASLFEnemyGeneric::ApplyEnemyConfig()
 		AISM->Config.MinAttackDelay = 0.1f;         // Almost instant follow-up
 		AISM->Config.MaxAttackDelay = 0.4f;         // Short max delay
 		AISM->Config.GapCloserChance = 0.8f;        // Often lunge when far (was 0.6)
+		AISM->Config.bCanDodge = true;               // Enable dodge evasion
+		AISM->Config.DodgeChance = 0.3f;             // 30% chance when triggered
+		AISM->Config.DodgeCooldown = 2.5f;           // 2.5s between dodges
+
+		// Load dodge montages from content folder
+		for (int32 i = 1; i <= 3; i++)
+		{
+			FString MontPath = FString::Printf(TEXT("%sAM_%s_Dodge%02d"), *Dir, *EnemyTypeName, i);
+			if (UAnimMontage* DodgeMont = LoadObject<UAnimMontage>(nullptr, *MontPath))
+			{
+				AISM->DodgeMontages.Add(DodgeMont);
+			}
+		}
+		if (AISM->DodgeMontages.Num() == 0)
+		{
+			AISM->Config.bCanDodge = false;  // No dodge montages available
+		}
 	}
 
 	// Cache locomotion montages and disable root motion on them
