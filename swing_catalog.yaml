@@ -1,0 +1,612 @@
+# ============================================================================
+# ELDEN RING — Attack Swing Direction Catalog
+# ============================================================================
+# Auto-generated from R_Hand bone trajectory during peak velocity
+# Directions: right_to_left, left_to_right, overhead, uppercut, thrust,
+#   diag_r_down, diag_l_down, diag_r_up, diag_l_up, spin, static
+# ============================================================================
+
+# Total: 538 unique attack animations across 27 source characters
+# Direction distribution:
+#   thrust                     256
+#   spin                        94
+#   diag_r_down                 39
+#   overhead                    33
+#   right_to_left               31
+#   left_to_right               25
+#   diag_l_down                 23
+#   diag_r_up                   17
+#   uppercut                    14
+#   diag_l_up                    6
+
+c2100:  # 24 attacks
+  a000_3000: { direction: diag_l_up, magnitude: 1.6876, duration: 2.633s, window: "24-30", frames: 79 }
+  a000_3001: { direction: spin, magnitude: 0.596, duration: 2.8s, window: "9-25", frames: 84 }
+  a000_3002: { direction: thrust, magnitude: 1.4607, duration: 2.167s, window: "12-16", frames: 65 }
+  a000_3003: { direction: spin, magnitude: 0.7693, duration: 2.333s, window: "15-21", frames: 70 }
+  a000_3004: { direction: spin, magnitude: 0.7739, duration: 2.067s, window: "12-18", frames: 62 }
+  a000_3005: { direction: thrust, magnitude: 1.9564, duration: 2.833s, window: "26-30", frames: 85 }
+  a000_3006: { direction: spin, magnitude: 1.3515, duration: 3.167s, window: "33-41", frames: 95 }
+  a000_3007: { direction: diag_l_down, magnitude: 0.6403, duration: 3.933s, window: "42-48", frames: 118 }
+  a000_3008: { direction: uppercut, magnitude: 0.8562, duration: 2.6s, window: "14-18", frames: 78 }
+  a000_3009: { direction: thrust, magnitude: 0.3489, duration: 2.067s, window: "1-6", frames: 62 }
+  a000_3010: { direction: spin, magnitude: 1.033, duration: 2.667s, window: "1-5", frames: 80 }
+  a000_3011: { direction: thrust, magnitude: 0.3589, duration: 4.567s, window: "1-7", frames: 137 }
+  a000_3012: { direction: thrust, magnitude: 0.8605, duration: 3.0s, window: "33-36", frames: 90 }
+  a000_3014: { direction: thrust, magnitude: 2.2034, duration: 3.7s, window: "28-32", frames: 111 }
+  a000_3015: { direction: thrust, magnitude: 1.2653, duration: 2.3s, window: "7-12", frames: 69 }
+  a000_3016: { direction: thrust, magnitude: 1.9588, duration: 2.167s, window: "12-16", frames: 65 }
+  a000_3017: { direction: spin, magnitude: 1.3179, duration: 2.667s, window: "23-30", frames: 80 }
+  a000_3018: { direction: overhead, magnitude: 1.7159, duration: 2.567s, window: "14-20", frames: 77 }
+  a000_3020: { direction: spin, magnitude: 1.4165, duration: 2.733s, window: "41-48", frames: 82 }
+  a000_3025: { direction: overhead, magnitude: 1.8779, duration: 4.3s, window: "52-56", frames: 129 }
+  a000_4100: { direction: diag_l_down, magnitude: 1.3848, duration: 9.2s, window: "58-62", frames: 276 }
+  a000_4101: { direction: left_to_right, magnitude: 1.0513, duration: 1.667s, window: "1-14", frames: 50 }
+  a000_4120: { direction: thrust, magnitude: 1.7741, duration: 4.067s, window: "16-20", frames: 122 }
+  a000_4121: { direction: diag_l_down, magnitude: 1.113, duration: 0.967s, window: "1-7", frames: 29 }
+
+c2500:  # 20 attacks
+  a000_3000: { direction: diag_r_down, magnitude: 1.9161, duration: 2.067s, window: "16-21", frames: 62 }
+  a000_3001: { direction: spin, magnitude: 1.1372, duration: 2.567s, window: "30-36", frames: 77 }
+  a000_3002: { direction: thrust, magnitude: 2.0838, duration: 2.367s, window: "24-27", frames: 71 }
+  a000_3003: { direction: spin, magnitude: 0.6283, duration: 2.3s, window: "1-20", frames: 69 }
+  a000_3004: { direction: thrust, magnitude: 2.0808, duration: 3.1s, window: "42-49", frames: 93 }
+  a000_3005: { direction: thrust, magnitude: 1.5628, duration: 2.4s, window: "25-30", frames: 72 }
+  a000_3006: { direction: thrust, magnitude: 2.0967, duration: 2.467s, window: "27-30", frames: 74 }
+  a000_3007: { direction: diag_l_down, magnitude: 1.3279, duration: 1.367s, window: "22-27", frames: 41 }
+  a000_3008: { direction: spin, magnitude: 0.212, duration: 1.9s, window: "18-23", frames: 57 }
+  a000_3010: { direction: uppercut, magnitude: 1.0866, duration: 2.567s, window: "33-37", frames: 77 }
+  a000_3011: { direction: thrust, magnitude: 1.2052, duration: 1.933s, window: "13-18", frames: 58 }
+  a000_3012: { direction: spin, magnitude: 1.0213, duration: 3.467s, window: "15-30", frames: 104 }
+  a000_3016: { direction: thrust, magnitude: 0.8621, duration: 3.5s, window: "7-14", frames: 105 }
+  a000_3018: { direction: thrust, magnitude: 1.0145, duration: 2.867s, window: "21-27", frames: 86 }
+  a000_3021: { direction: thrust, magnitude: 1.3123, duration: 4.3s, window: "49-52", frames: 129 }
+  a000_3023: { direction: thrust, magnitude: 1.3875, duration: 2.7s, window: "21-26", frames: 81 }
+  a000_3025: { direction: diag_r_down, magnitude: 1.7492, duration: 3.8s, window: "49-55", frames: 114 }
+  a000_3026: { direction: thrust, magnitude: 1.7307, duration: 3.9s, window: "26-32", frames: 117 }
+  a000_3027: { direction: thrust, magnitude: 2.1285, duration: 4.733s, window: "39-45", frames: 142 }
+  a000_3028: { direction: overhead, magnitude: 2.1843, duration: 3.933s, window: "61-65", frames: 118 }
+
+c3000:  # 14 attacks
+  a000_3000: { direction: diag_r_down, magnitude: 1.7967, duration: 2.433s, window: "15-20", frames: 73 }
+  a000_3001: { direction: diag_l_down, magnitude: 1.3366, duration: 1.933s, window: "14-20", frames: 58 }
+  a000_3002: { direction: thrust, magnitude: 1.902, duration: 2.467s, window: "20-25", frames: 74 }
+  a000_3003: { direction: thrust, magnitude: 2.3803, duration: 2.367s, window: "13-17", frames: 71 }
+  a000_3004: { direction: left_to_right, magnitude: 1.5649, duration: 2.3s, window: "15-21", frames: 69 }
+  a000_3005: { direction: diag_r_down, magnitude: 2.569, duration: 4.2s, window: "33-39", frames: 126 }
+  a000_3008: { direction: right_to_left, magnitude: 0.5843, duration: 7.9s, window: "3-23", frames: 237 }
+  a000_3009: { direction: overhead, magnitude: 0.6647, duration: 8.3s, window: "38-44", frames: 249 }
+  a000_3010: { direction: thrust, magnitude: 1.322, duration: 2.733s, window: "31-46", frames: 82 }
+  a000_3012: { direction: thrust, magnitude: 1.3173, duration: 2.633s, window: "33-45", frames: 79 }
+  a000_3014: { direction: diag_r_down, magnitude: 2.0245, duration: 4.833s, window: "11-16", frames: 145 }
+  a000_3015: { direction: diag_r_down, magnitude: 2.0847, duration: 2.467s, window: "14-18", frames: 74 }
+  a000_3017: { direction: thrust, magnitude: 1.5871, duration: 2.467s, window: "26-30", frames: 74 }
+  a000_3018: { direction: diag_r_down, magnitude: 1.9094, duration: 1.667s, window: "19-24", frames: 50 }
+
+c3010:  # 15 attacks
+  a000_3000: { direction: diag_r_down, magnitude: 2.0172, duration: 2.267s, window: "12-16", frames: 68 }
+  a000_3001: { direction: spin, magnitude: 1.5134, duration: 1.767s, window: "13-18", frames: 53 }
+  a000_3002: { direction: thrust, magnitude: 2.1428, duration: 2.233s, window: "14-17", frames: 67 }
+  a000_3003: { direction: right_to_left, magnitude: 1.4289, duration: 3.9s, window: "46-51", frames: 117 }
+  a000_3004: { direction: overhead, magnitude: 2.4194, duration: 3.267s, window: "27-31", frames: 98 }
+  a000_3005: { direction: spin, magnitude: 1.1901, duration: 2.833s, window: "17-25", frames: 85 }
+  a000_3006: { direction: overhead, magnitude: 2.3659, duration: 2.867s, window: "29-34", frames: 86 }
+  a000_3007: { direction: left_to_right, magnitude: 1.2236, duration: 1.9s, window: "15-22", frames: 57 }
+  a000_3008: { direction: thrust, magnitude: 1.5748, duration: 3.367s, window: "27-36", frames: 101 }
+  a000_3009: { direction: thrust, magnitude: 0.6214, duration: 2.1s, window: "17-22", frames: 63 }
+  a000_3010: { direction: spin, magnitude: 1.5626, duration: 1.9s, window: "18-23", frames: 57 }
+  a000_3011: { direction: thrust, magnitude: 0.7143, duration: 1.667s, window: "2-9", frames: 50 }
+  a000_3015: { direction: diag_r_up, magnitude: 0.9001, duration: 2.2s, window: "18-25", frames: 66 }
+  a000_3021: { direction: thrust, magnitude: 1.3733, duration: 3.767s, window: "32-51", frames: 113 }
+  a000_4001: { direction: thrust, magnitude: 1.6536, duration: 4.567s, window: "12-19", frames: 137 }
+
+c3050:  # 34 attacks
+  a000_3000: { direction: thrust, magnitude: 1.0464, duration: 2.967s, window: "34-40", frames: 89 }
+  a000_3001: { direction: thrust, magnitude: 2.0197, duration: 3.767s, window: "29-32", frames: 113 }
+  a000_3002: { direction: thrust, magnitude: 1.3476, duration: 2.433s, window: "19-26", frames: 73 }
+  a000_3003: { direction: spin, magnitude: 1.0189, duration: 2.8s, window: "37-45", frames: 84 }
+  a000_3004: { direction: diag_l_down, magnitude: 1.7161, duration: 4.333s, window: "63-67", frames: 130 }
+  a000_3005: { direction: right_to_left, magnitude: 1.1049, duration: 2.467s, window: "1-12", frames: 74 }
+  a000_3006: { direction: diag_r_up, magnitude: 1.5152, duration: 2.833s, window: "1-11", frames: 85 }
+  a000_3007: { direction: thrust, magnitude: 1.9382, duration: 3.1s, window: "1-16", frames: 93 }
+  a000_3008: { direction: thrust, magnitude: 1.6714, duration: 3.667s, window: "44-53", frames: 110 }
+  a000_3009: { direction: spin, magnitude: 0.9285, duration: 3.533s, window: "37-43", frames: 106 }
+  a000_3010: { direction: spin, magnitude: 0.3739, duration: 4.3s, window: "70-76", frames: 129 }
+  a000_3011: { direction: thrust, magnitude: 0.4709, duration: 3.1s, window: "39-43", frames: 93 }
+  a000_3012: { direction: diag_l_down, magnitude: 1.7306, duration: 3.7s, window: "43-47", frames: 111 }
+  a000_3013: { direction: left_to_right, magnitude: 1.026, duration: 3.567s, window: "39-44", frames: 107 }
+  a000_3014: { direction: thrust, magnitude: 1.1502, duration: 3.033s, window: "4-9", frames: 91 }
+  a000_3015: { direction: thrust, magnitude: 1.4045, duration: 5.3s, window: "94-98", frames: 159 }
+  a000_3016: { direction: spin, magnitude: 1.2915, duration: 3.3s, window: "30-39", frames: 99 }
+  a000_3017: { direction: right_to_left, magnitude: 1.0601, duration: 3.533s, window: "37-43", frames: 106 }
+  a000_3018: { direction: thrust, magnitude: 0.6786, duration: 3.767s, window: "56-61", frames: 113 }
+  a000_3019: { direction: thrust, magnitude: 1.9096, duration: 4.133s, window: "21-27", frames: 124 }
+  a000_3020: { direction: thrust, magnitude: 1.9369, duration: 2.967s, window: "35-43", frames: 89 }
+  a000_3021: { direction: right_to_left, magnitude: 1.5986, duration: 6.7s, window: "1-6", frames: 201 }
+  a000_3022: { direction: spin, magnitude: 1.1558, duration: 3.233s, window: "28-37", frames: 97 }
+  a000_3023: { direction: diag_l_down, magnitude: 1.026, duration: 2.433s, window: "32-38", frames: 73 }
+  a000_3024: { direction: thrust, magnitude: 0.3698, duration: 8.033s, window: "109-112", frames: 241 }
+  a000_3025: { direction: thrust, magnitude: 1.8468, duration: 4.3s, window: "20-29", frames: 129 }
+  a000_3026: { direction: spin, magnitude: 0.4956, duration: 5.8s, window: "10-15", frames: 174 }
+  a000_3027: { direction: spin, magnitude: 1.1124, duration: 8.833s, window: "63-68", frames: 265 }
+  a000_3028: { direction: thrust, magnitude: 1.2549, duration: 2.7s, window: "27-35", frames: 81 }
+  a000_3029: { direction: thrust, magnitude: 0.9801, duration: 2.833s, window: "30-36", frames: 85 }
+  a000_3030: { direction: thrust, magnitude: 1.2128, duration: 5.9s, window: "57-62", frames: 177 }
+  a000_3031: { direction: thrust, magnitude: 1.716, duration: 5.367s, window: "20-25", frames: 161 }
+  a000_3033: { direction: right_to_left, magnitude: 1.1766, duration: 2.367s, window: "25-31", frames: 71 }
+  a000_3034: { direction: diag_l_up, magnitude: 1.3053, duration: 2.267s, window: "16-26", frames: 68 }
+
+c3100:  # 4 attacks
+  a000_3000: { direction: spin, magnitude: 1.3668, duration: 2.567s, window: "27-33", frames: 77 }
+  a000_3001: { direction: spin, magnitude: 1.4134, duration: 2.133s, window: "16-22", frames: 64 }
+  a000_3008: { direction: thrust, magnitude: 0.9129, duration: 3.367s, window: "51-56", frames: 101 }
+  a000_4100: { direction: thrust, magnitude: 3.0246, duration: 4.633s, window: "52-59", frames: 139 }
+
+c3150:  # 6 attacks
+  a000_3000: { direction: spin, magnitude: 0.8384, duration: 3.633s, window: "55-62", frames: 109 }
+  a000_3001: { direction: spin, magnitude: 1.0154, duration: 2.867s, window: "24-29", frames: 86 }
+  a000_3002: { direction: thrust, magnitude: 1.1625, duration: 2.6s, window: "33-38", frames: 78 }
+  a000_3003: { direction: spin, magnitude: 0.8141, duration: 2.567s, window: "20-27", frames: 77 }
+  a000_3007: { direction: overhead, magnitude: 2.0081, duration: 3.1s, window: "33-40", frames: 93 }
+  a000_3008: { direction: spin, magnitude: 1.0564, duration: 2.867s, window: "24-29", frames: 86 }
+
+c3180:  # 18 attacks
+  a000_3000: { direction: thrust, magnitude: 0.5607, duration: 2.433s, window: "71-72", frames: 73 }
+  a000_3001: { direction: thrust, magnitude: 0.5664, duration: 2.433s, window: "71-72", frames: 73 }
+  a000_3002: { direction: spin, magnitude: 0.3015, duration: 3.633s, window: "63-69", frames: 109 }
+  a000_3003: { direction: diag_r_down, magnitude: 0.2509, duration: 2.067s, window: "15-20", frames: 62 }
+  a000_3004: { direction: spin, magnitude: 0.7544, duration: 2.2s, window: "12-22", frames: 66 }
+  a000_3005: { direction: right_to_left, magnitude: 1.92, duration: 3.633s, window: "11-24", frames: 109 }
+  a000_3006: { direction: thrust, magnitude: 3.102, duration: 2.833s, window: "2-13", frames: 85 }
+  a000_3007: { direction: right_to_left, magnitude: 1.3394, duration: 1.833s, window: "1-9", frames: 55 }
+  a000_3008: { direction: overhead, magnitude: 1.796, duration: 3.533s, window: "17-34", frames: 106 }
+  a000_3009: { direction: thrust, magnitude: 0.1476, duration: 2.3s, window: "4-21", frames: 69 }
+  a000_3010: { direction: diag_l_down, magnitude: 0.3069, duration: 6.4s, window: "26-29", frames: 192 }
+  a000_3011: { direction: thrust, magnitude: 1.1175, duration: 2.967s, window: "79-88", frames: 89 }
+  a000_3012: { direction: right_to_left, magnitude: 0.5501, duration: 2.967s, window: "1-21", frames: 89 }
+  a000_3013: { direction: overhead, magnitude: 0.4612, duration: 2.967s, window: "80-86", frames: 89 }
+  a000_3014: { direction: overhead, magnitude: 2.0179, duration: 4.567s, window: "16-21", frames: 137 }
+  a000_3015: { direction: overhead, magnitude: 1.3532, duration: 2.1s, window: "14-25", frames: 63 }
+  a000_3030: { direction: thrust, magnitude: 1.7285, duration: 1.1s, window: "3-13", frames: 33 }
+  a000_3031: { direction: thrust, magnitude: 1.0129, duration: 1.1s, window: "1-5", frames: 33 }
+
+c3300:  # 21 attacks
+  a000_3000: { direction: right_to_left, magnitude: 1.2833, duration: 2.3s, window: "23-27", frames: 69 }
+  a000_3001: { direction: thrust, magnitude: 1.6035, duration: 2.1s, window: "17-22", frames: 63 }
+  a000_3002: { direction: overhead, magnitude: 2.11, duration: 2.267s, window: "27-31", frames: 68 }
+  a000_3003: { direction: spin, magnitude: 1.0279, duration: 2.3s, window: "22-27", frames: 69 }
+  a000_3004: { direction: thrust, magnitude: 2.0454, duration: 2.933s, window: "47-51", frames: 88 }
+  a000_3005: { direction: thrust, magnitude: 2.4072, duration: 3.867s, window: "45-51", frames: 116 }
+  a000_3010: { direction: diag_l_down, magnitude: 1.1785, duration: 2.567s, window: "64-69", frames: 77 }
+  a000_3011: { direction: diag_r_up, magnitude: 1.7379, duration: 3.233s, window: "1-6", frames: 97 }
+  a000_3012: { direction: diag_l_down, magnitude: 1.303, duration: 2.467s, window: "54-58", frames: 74 }
+  a000_3013: { direction: diag_r_down, magnitude: 1.5575, duration: 1.933s, window: "9-15", frames: 58 }
+  a000_3020: { direction: thrust, magnitude: 1.6148, duration: 2.5s, window: "28-34", frames: 75 }
+  a000_3021: { direction: diag_r_down, magnitude: 2.0069, duration: 2.733s, window: "15-20", frames: 82 }
+  a000_3022: { direction: thrust, magnitude: 1.7189, duration: 1.667s, window: "22-25", frames: 50 }
+  a000_3030: { direction: thrust, magnitude: 0.47, duration: 2.567s, window: "66-76", frames: 77 }
+  a000_3100: { direction: spin, magnitude: 1.0414, duration: 1.8s, window: "20-26", frames: 54 }
+  a000_3101: { direction: spin, magnitude: 0.6077, duration: 1.933s, window: "6-11", frames: 58 }
+  a000_3102: { direction: thrust, magnitude: 1.0413, duration: 1.3s, window: "8-11", frames: 39 }
+  a000_3103: { direction: spin, magnitude: 1.2758, duration: 2.0s, window: "24-31", frames: 60 }
+  a000_3104: { direction: thrust, magnitude: 1.7756, duration: 2.1s, window: "1-7", frames: 63 }
+  a000_4100: { direction: overhead, magnitude: 2.5889, duration: 4.467s, window: "66-71", frames: 134 }
+  a000_4101: { direction: diag_l_down, magnitude: 1.8256, duration: 1.367s, window: "17-24", frames: 41 }
+
+c3400:  # 25 attacks
+  a000_3000: { direction: thrust, magnitude: 1.4188, duration: 2.167s, window: "10-14", frames: 65 }
+  a000_3001: { direction: thrust, magnitude: 1.1118, duration: 2.433s, window: "20-25", frames: 73 }
+  a000_3002: { direction: thrust, magnitude: 1.5797, duration: 2.333s, window: "20-26", frames: 70 }
+  a000_3003: { direction: spin, magnitude: 1.3198, duration: 2.433s, window: "16-28", frames: 73 }
+  a000_3004: { direction: thrust, magnitude: 1.8689, duration: 4.033s, window: "23-29", frames: 121 }
+  a000_3005: { direction: thrust, magnitude: 2.3391, duration: 5.267s, window: "70-81", frames: 158 }
+  a000_3006: { direction: overhead, magnitude: 2.3384, duration: 4.7s, window: "89-94", frames: 141 }
+  a000_3007: { direction: overhead, magnitude: 2.9551, duration: 3.1s, window: "35-40", frames: 93 }
+  a000_3008: { direction: right_to_left, magnitude: 1.8611, duration: 2.433s, window: "15-21", frames: 73 }
+  a000_3009: { direction: thrust, magnitude: 1.6501, duration: 2.7s, window: "26-34", frames: 81 }
+  a000_3010: { direction: thrust, magnitude: 2.7551, duration: 6.733s, window: "104-114", frames: 202 }
+  a000_3011: { direction: thrust, magnitude: 1.3281, duration: 2.667s, window: "31-37", frames: 80 }
+  a000_3012: { direction: thrust, magnitude: 1.6929, duration: 3.867s, window: "72-77", frames: 116 }
+  a000_3014: { direction: thrust, magnitude: 1.7664, duration: 2.167s, window: "27-31", frames: 65 }
+  a000_3015: { direction: diag_r_up, magnitude: 0.7605, duration: 5.633s, window: "67-80", frames: 169 }
+  a000_3016: { direction: right_to_left, magnitude: 1.3212, duration: 2.5s, window: "20-24", frames: 75 }
+  a000_3017: { direction: thrust, magnitude: 1.2845, duration: 8.667s, window: "65-75", frames: 260 }
+  a000_3019: { direction: thrust, magnitude: 1.7665, duration: 2.833s, window: "42-48", frames: 85 }
+  a000_3020: { direction: diag_r_down, magnitude: 0.9434, duration: 2.967s, window: "59-88", frames: 89 }
+  a000_3022: { direction: right_to_left, magnitude: 1.1274, duration: 1.333s, window: "1-17", frames: 40 }
+  a000_3023: { direction: overhead, magnitude: 0.2228, duration: 0.867s, window: "1-4", frames: 26 }
+  a000_3024: { direction: spin, magnitude: 0.628, duration: 2.233s, window: "15-23", frames: 67 }
+  a000_3025: { direction: thrust, magnitude: 0.4391, duration: 3.167s, window: "4-9", frames: 95 }
+  a000_4100: { direction: diag_r_down, magnitude: 2.0971, duration: 6.0s, window: "93-99", frames: 180 }
+  a000_4101: { direction: left_to_right, magnitude: 1.1523, duration: 1.667s, window: "1-49", frames: 50 }
+
+c3500:  # 16 attacks
+  a000_3000: { direction: thrust, magnitude: 1.3991, duration: 3.267s, window: "38-42", frames: 98 }
+  a000_3001: { direction: thrust, magnitude: 1.8541, duration: 2.167s, window: "19-23", frames: 65 }
+  a000_3002: { direction: thrust, magnitude: 2.0293, duration: 2.3s, window: "22-27", frames: 69 }
+  a000_3003: { direction: thrust, magnitude: 2.1961, duration: 2.033s, window: "13-17", frames: 61 }
+  a000_3004: { direction: thrust, magnitude: 1.3693, duration: 3.233s, window: "29-34", frames: 97 }
+  a000_3010: { direction: overhead, magnitude: 1.0378, duration: 4.3s, window: "76-81", frames: 129 }
+  a000_3011: { direction: thrust, magnitude: 1.0794, duration: 3.233s, window: "30-35", frames: 97 }
+  a000_3012: { direction: thrust, magnitude: 2.2664, duration: 4.3s, window: "53-59", frames: 129 }
+  a000_3013: { direction: overhead, magnitude: 1.0935, duration: 2.7s, window: "24-29", frames: 81 }
+  a000_3014: { direction: right_to_left, magnitude: 1.9018, duration: 4.433s, window: "67-72", frames: 133 }
+  a000_3015: { direction: thrust, magnitude: 1.728, duration: 3.1s, window: "25-32", frames: 93 }
+  a000_3020: { direction: left_to_right, magnitude: 0.4818, duration: 3.767s, window: "37-41", frames: 113 }
+  a000_3021: { direction: left_to_right, magnitude: 0.483, duration: 4.833s, window: "71-75", frames: 145 }
+  a000_3025: { direction: overhead, magnitude: 0.8653, duration: 1.7s, window: "20-24", frames: 51 }
+  a000_3030: { direction: left_to_right, magnitude: 1.6634, duration: 6.6s, window: "15-23", frames: 198 }
+  a000_3035: { direction: thrust, magnitude: 0.8325, duration: 2.833s, window: "16-23", frames: 85 }
+
+c3550:  # 26 attacks
+  a000_3000: { direction: left_to_right, magnitude: 2.0393, duration: 1.3s, window: "8-12", frames: 39 }
+  a000_3001: { direction: thrust, magnitude: 1.744, duration: 1.433s, window: "12-15", frames: 43 }
+  a000_3002: { direction: left_to_right, magnitude: 1.7919, duration: 1.633s, window: "11-16", frames: 49 }
+  a000_3003: { direction: uppercut, magnitude: 0.8445, duration: 0.833s, window: "1-10", frames: 25 }
+  a000_3004: { direction: thrust, magnitude: 1.6958, duration: 1.533s, window: "11-15", frames: 46 }
+  a000_3005: { direction: thrust, magnitude: 1.4492, duration: 1.4s, window: "12-19", frames: 42 }
+  a000_3006: { direction: thrust, magnitude: 1.4445, duration: 1.4s, window: "13-19", frames: 42 }
+  a000_3007: { direction: thrust, magnitude: 1.7856, duration: 2.033s, window: "33-36", frames: 61 }
+  a000_3008: { direction: thrust, magnitude: 1.6555, duration: 1.167s, window: "13-16", frames: 35 }
+  a000_3009: { direction: thrust, magnitude: 2.122, duration: 1.167s, window: "14-17", frames: 35 }
+  a000_3010: { direction: left_to_right, magnitude: 1.4443, duration: 2.067s, window: "1-11", frames: 62 }
+  a000_3011: { direction: thrust, magnitude: 1.6547, duration: 1.9s, window: "28-33", frames: 57 }
+  a000_3012: { direction: left_to_right, magnitude: 0.6834, duration: 2.867s, window: "41-50", frames: 86 }
+  a000_3013: { direction: thrust, magnitude: 1.5619, duration: 1.367s, window: "19-22", frames: 41 }
+  a000_3014: { direction: thrust, magnitude: 2.3054, duration: 1.9s, window: "9-15", frames: 57 }
+  a000_3015: { direction: thrust, magnitude: 2.1502, duration: 1.133s, window: "9-12", frames: 34 }
+  a000_3016: { direction: thrust, magnitude: 1.7174, duration: 1.5s, window: "16-18", frames: 45 }
+  a000_3017: { direction: thrust, magnitude: 1.8904, duration: 2.433s, window: "5-10", frames: 73 }
+  a000_3018: { direction: thrust, magnitude: 2.125, duration: 2.1s, window: "42-45", frames: 63 }
+  a000_3019: { direction: thrust, magnitude: 2.0259, duration: 2.033s, window: "29-33", frames: 61 }
+  a000_3020: { direction: thrust, magnitude: 1.4935, duration: 2.433s, window: "45-51", frames: 73 }
+  a000_3021: { direction: thrust, magnitude: 1.4058, duration: 2.233s, window: "39-45", frames: 67 }
+  a000_3025: { direction: thrust, magnitude: 1.5198, duration: 1.233s, window: "14-18", frames: 37 }
+  a000_4000: { direction: thrust, magnitude: 0.6533, duration: 1.133s, window: "1-3", frames: 34 }
+  a000_4001: { direction: thrust, magnitude: 1.6641, duration: 4.433s, window: "16-22", frames: 133 }
+  a000_4100: { direction: thrust, magnitude: 1.5002, duration: 3.367s, window: "53-57", frames: 101 }
+
+c3700:  # 22 attacks
+  a000_3002: { direction: thrust, magnitude: 1.8846, duration: 2.0s, window: "18-31", frames: 60 }
+  a000_3003: { direction: spin, magnitude: 1.9607, duration: 2.0s, window: "1-28", frames: 60 }
+  a000_3005: { direction: uppercut, magnitude: 1.1539, duration: 1.867s, window: "1-12", frames: 56 }
+  a000_3006: { direction: thrust, magnitude: 0.8717, duration: 2.6s, window: "1-5", frames: 78 }
+  a000_3007: { direction: spin, magnitude: 0.5768, duration: 2.333s, window: "21-34", frames: 70 }
+  a000_3009: { direction: uppercut, magnitude: 1.3235, duration: 1.633s, window: "1-15", frames: 49 }
+  a000_3010: { direction: diag_r_down, magnitude: 0.6983, duration: 1.7s, window: "11-20", frames: 51 }
+  a000_3011: { direction: thrust, magnitude: 0.4954, duration: 1.633s, window: "9-14", frames: 49 }
+  a000_3012: { direction: thrust, magnitude: 1.6687, duration: 1.867s, window: "24-31", frames: 56 }
+  a000_3013: { direction: spin, magnitude: 0.9449, duration: 2.467s, window: "13-25", frames: 74 }
+  a000_3015: { direction: thrust, magnitude: 1.2175, duration: 1.7s, window: "11-19", frames: 51 }
+  a000_3016: { direction: thrust, magnitude: 1.0843, duration: 1.9s, window: "13-21", frames: 57 }
+  a000_3017: { direction: spin, magnitude: 2.2583, duration: 2.4s, window: "21-41", frames: 72 }
+  a000_3020: { direction: thrust, magnitude: 1.9221, duration: 3.233s, window: "46-55", frames: 97 }
+  a000_3021: { direction: diag_l_down, magnitude: 1.9162, duration: 2.4s, window: "26-41", frames: 72 }
+  a000_3022: { direction: thrust, magnitude: 1.9804, duration: 1.667s, window: "19-23", frames: 50 }
+  a000_3030: { direction: right_to_left, magnitude: 1.8101, duration: 1.633s, window: "9-19", frames: 49 }
+  a000_3031: { direction: diag_l_down, magnitude: 1.8966, duration: 2.4s, window: "25-36", frames: 72 }
+  a000_3033: { direction: diag_l_down, magnitude: 2.2685, duration: 2.2s, window: "21-30", frames: 66 }
+  a000_3036: { direction: thrust, magnitude: 2.048, duration: 1.367s, window: "10-15", frames: 41 }
+  a000_3038: { direction: spin, magnitude: 1.4683, duration: 1.633s, window: "17-28", frames: 49 }
+  a000_4100: { direction: thrust, magnitude: 1.7155, duration: 2.967s, window: "28-32", frames: 89 }
+
+c3800:  # 26 attacks
+  a000_3000: { direction: right_to_left, magnitude: 2.2773, duration: 2.433s, window: "13-17", frames: 73 }
+  a000_3001: { direction: left_to_right, magnitude: 2.0478, duration: 2.3s, window: "8-13", frames: 69 }
+  a000_3002: { direction: thrust, magnitude: 1.3574, duration: 2.033s, window: "15-18", frames: 61 }
+  a000_3003: { direction: left_to_right, magnitude: 2.0158, duration: 1.7s, window: "16-21", frames: 51 }
+  a000_3004: { direction: right_to_left, magnitude: 2.2333, duration: 2.6s, window: "20-25", frames: 78 }
+  a000_3005: { direction: thrust, magnitude: 0.2053, duration: 1.5s, window: "12-26", frames: 45 }
+  a000_3006: { direction: thrust, magnitude: 0.1396, duration: 1.633s, window: "1-8", frames: 49 }
+  a000_3007: { direction: thrust, magnitude: 0.2153, duration: 1.633s, window: "1-11", frames: 49 }
+  a000_3008: { direction: spin, magnitude: 0.0561, duration: 1.633s, window: "1-38", frames: 49 }
+  a000_3010: { direction: spin, magnitude: 1.2612, duration: 3.133s, window: "1-40", frames: 94 }
+  a000_3011: { direction: thrust, magnitude: 1.423, duration: 2.367s, window: "29-40", frames: 71 }
+  a000_3012: { direction: thrust, magnitude: 0.973, duration: 2.8s, window: "36-39", frames: 84 }
+  a000_3013: { direction: thrust, magnitude: 1.3749, duration: 1.733s, window: "5-16", frames: 52 }
+  a000_3014: { direction: diag_r_up, magnitude: 1.5302, duration: 1.967s, window: "14-29", frames: 59 }
+  a000_3015: { direction: thrust, magnitude: 1.7358, duration: 3.5s, window: "48-53", frames: 105 }
+  a000_3016: { direction: thrust, magnitude: 1.3849, duration: 2.7s, window: "32-37", frames: 81 }
+  a000_3017: { direction: thrust, magnitude: 1.3917, duration: 1.667s, window: "3-13", frames: 50 }
+  a000_3025: { direction: thrust, magnitude: 1.4534, duration: 1.7s, window: "1-9", frames: 51 }
+  a000_3026: { direction: thrust, magnitude: 1.2675, duration: 1.633s, window: "17-20", frames: 49 }
+  a000_3027: { direction: right_to_left, magnitude: 0.95, duration: 1.7s, window: "1-4", frames: 51 }
+  a000_3028: { direction: thrust, magnitude: 1.4357, duration: 1.7s, window: "19-22", frames: 51 }
+  a000_3029: { direction: thrust, magnitude: 1.8148, duration: 2.633s, window: "20-25", frames: 79 }
+  a000_3100: { direction: thrust, magnitude: 2.0881, duration: 1.133s, window: "13-16", frames: 34 }
+  a000_3101: { direction: spin, magnitude: 1.7104, duration: 2.167s, window: "15-21", frames: 65 }
+  a000_3102: { direction: thrust, magnitude: 1.8522, duration: 2.633s, window: "20-25", frames: 79 }
+  a000_4100: { direction: thrust, magnitude: 1.8725, duration: 5.1s, window: "31-36", frames: 153 }
+
+c3900:  # 24 attacks
+  a000_3000: { direction: thrust, magnitude: 2.5611, duration: 1.8s, window: "18-24", frames: 54 }
+  a000_3001: { direction: diag_l_down, magnitude: 2.333, duration: 2.167s, window: "18-24", frames: 65 }
+  a000_3002: { direction: diag_r_down, magnitude: 2.1389, duration: 2.833s, window: "37-41", frames: 85 }
+  a000_3003: { direction: overhead, magnitude: 2.8256, duration: 3.667s, window: "42-48", frames: 110 }
+  a000_3004: { direction: thrust, magnitude: 2.188, duration: 2.333s, window: "41-46", frames: 70 }
+  a000_3005: { direction: diag_r_down, magnitude: 1.957, duration: 2.733s, window: "35-48", frames: 82 }
+  a000_3006: { direction: diag_l_down, magnitude: 1.9974, duration: 2.3s, window: "48-57", frames: 69 }
+  a000_3007: { direction: thrust, magnitude: 2.3212, duration: 2.167s, window: "24-29", frames: 65 }
+  a000_3008: { direction: thrust, magnitude: 2.0877, duration: 2.767s, window: "54-59", frames: 83 }
+  a000_3009: { direction: thrust, magnitude: 2.2499, duration: 1.9s, window: "23-27", frames: 57 }
+  a000_3012: { direction: thrust, magnitude: 1.5326, duration: 2.3s, window: "1-9", frames: 69 }
+  a000_3013: { direction: left_to_right, magnitude: 2.182, duration: 2.867s, window: "41-50", frames: 86 }
+  a000_3014: { direction: thrust, magnitude: 1.0726, duration: 4.3s, window: "22-39", frames: 129 }
+  a000_3015: { direction: thrust, magnitude: 2.8641, duration: 2.567s, window: "33-39", frames: 77 }
+  a000_3018: { direction: thrust, magnitude: 1.2972, duration: 1.833s, window: "16-22", frames: 55 }
+  a000_3020: { direction: uppercut, magnitude: 0.4613, duration: 1.867s, window: "14-18", frames: 56 }
+  a000_3022: { direction: diag_l_down, magnitude: 2.3895, duration: 2.033s, window: "32-40", frames: 61 }
+  a000_3023: { direction: diag_l_down, magnitude: 2.2595, duration: 2.167s, window: "18-25", frames: 65 }
+  a000_3025: { direction: diag_r_up, magnitude: 1.7348, duration: 1.9s, window: "19-29", frames: 57 }
+  a000_3027: { direction: diag_r_down, magnitude: 2.0124, duration: 2.567s, window: "28-31", frames: 77 }
+  a000_3029: { direction: spin, magnitude: 0.2214, duration: 1.667s, window: "13-21", frames: 50 }
+  a000_3030: { direction: uppercut, magnitude: 1.2836, duration: 2.967s, window: "6-12", frames: 89 }
+  a000_3031: { direction: uppercut, magnitude: 1.2688, duration: 3.767s, window: "5-11", frames: 113 }
+  a000_3039: { direction: thrust, magnitude: 0.6427, duration: 4.2s, window: "109-122", frames: 126 }
+
+c3910:  # 17 attacks
+  a000_3000: { direction: diag_r_down, magnitude: 0.5786, duration: 4.567s, window: "55-62", frames: 137 }
+  a000_3001: { direction: overhead, magnitude: 0.214, duration: 4.833s, window: "65-70", frames: 145 }
+  a000_3010: { direction: right_to_left, magnitude: 1.4206, duration: 2.967s, window: "29-35", frames: 89 }
+  a000_3011: { direction: spin, magnitude: 1.3082, duration: 2.833s, window: "17-31", frames: 85 }
+  a000_3012: { direction: thrust, magnitude: 2.3268, duration: 2.967s, window: "19-24", frames: 89 }
+  a000_3013: { direction: diag_r_down, magnitude: 1.3322, duration: 4.1s, window: "29-34", frames: 123 }
+  a000_3014: { direction: thrust, magnitude: 2.144, duration: 6.167s, window: "85-96", frames: 185 }
+  a000_3015: { direction: diag_r_down, magnitude: 1.4857, duration: 2.667s, window: "69-72", frames: 80 }
+  a000_3016: { direction: thrust, magnitude: 0.3292, duration: 0.667s, window: "14-19", frames: 20 }
+  a000_3017: { direction: thrust, magnitude: 2.0854, duration: 3.133s, window: "19-25", frames: 94 }
+  a000_3018: { direction: spin, magnitude: 0.4, duration: 4.267s, window: "34-55", frames: 128 }
+  a000_3023: { direction: diag_r_down, magnitude: 2.0344, duration: 2.567s, window: "12-16", frames: 77 }
+  a000_3025: { direction: spin, magnitude: 0.1606, duration: 1.933s, window: "1-8", frames: 58 }
+  a000_3026: { direction: spin, magnitude: 0.1644, duration: 1.6s, window: "13-20", frames: 48 }
+  a000_3027: { direction: thrust, magnitude: 2.2242, duration: 2.567s, window: "49-52", frames: 77 }
+  a000_3028: { direction: thrust, magnitude: 0.3404, duration: 1.833s, window: "43-49", frames: 55 }
+  a000_3029: { direction: spin, magnitude: 1.0883, duration: 2.967s, window: "29-34", frames: 89 }
+
+c3950:  # 21 attacks
+  a000_3000: { direction: right_to_left, magnitude: 1.621, duration: 3.367s, window: "37-41", frames: 101 }
+  a000_3002: { direction: left_to_right, magnitude: 1.7179, duration: 2.2s, window: "30-33", frames: 66 }
+  a000_3003: { direction: spin, magnitude: 1.4637, duration: 3.9s, window: "51-61", frames: 117 }
+  a000_3005: { direction: spin, magnitude: 1.3, duration: 11.4s, window: "283-289", frames: 342 }
+  a000_3007: { direction: thrust, magnitude: 1.9198, duration: 5.533s, window: "133-138", frames: 166 }
+  a000_3008: { direction: thrust, magnitude: 1.0702, duration: 2.233s, window: "19-23", frames: 67 }
+  a000_3010: { direction: diag_r_down, magnitude: 2.0692, duration: 2.067s, window: "20-25", frames: 62 }
+  a000_3011: { direction: diag_l_up, magnitude: 1.843, duration: 1.267s, window: "7-14", frames: 38 }
+  a000_3012: { direction: thrust, magnitude: 2.0133, duration: 3.267s, window: "24-29", frames: 98 }
+  a000_3014: { direction: spin, magnitude: 1.1488, duration: 2.867s, window: "31-37", frames: 86 }
+  a000_3015: { direction: spin, magnitude: 0.2425, duration: 3.367s, window: "28-39", frames: 101 }
+  a000_3016: { direction: spin, magnitude: 0.7653, duration: 2.333s, window: "30-41", frames: 70 }
+  a000_3017: { direction: diag_r_down, magnitude: 2.2176, duration: 2.2s, window: "20-25", frames: 66 }
+  a000_3018: { direction: thrust, magnitude: 2.0159, duration: 2.4s, window: "16-21", frames: 72 }
+  a000_3020: { direction: thrust, magnitude: 1.8184, duration: 3.633s, window: "61-65", frames: 109 }
+  a000_3021: { direction: diag_l_down, magnitude: 1.8946, duration: 2.067s, window: "26-33", frames: 62 }
+  a000_3022: { direction: left_to_right, magnitude: 2.1711, duration: 3.2s, window: "30-37", frames: 96 }
+  a000_3023: { direction: left_to_right, magnitude: 1.8873, duration: 2.233s, window: "27-36", frames: 67 }
+  a000_3024: { direction: right_to_left, magnitude: 2.186, duration: 2.867s, window: "13-20", frames: 86 }
+  a000_4100: { direction: thrust, magnitude: 0.5717, duration: 4.733s, window: "1-3", frames: 142 }
+  a000_4110: { direction: thrust, magnitude: 1.1781, duration: 3.0s, window: "24-34", frames: 90 }
+
+c3970:  # 25 attacks
+  a000_3000: { direction: spin, magnitude: 1.2435, duration: 1.633s, window: "26-32", frames: 49 }
+  a000_3001: { direction: thrust, magnitude: 2.4576, duration: 1.733s, window: "25-30", frames: 52 }
+  a000_3002: { direction: spin, magnitude: 1.1493, duration: 1.767s, window: "9-18", frames: 53 }
+  a000_3003: { direction: thrust, magnitude: 1.8701, duration: 2.433s, window: "30-33", frames: 73 }
+  a000_3004: { direction: thrust, magnitude: 2.5736, duration: 4.867s, window: "90-94", frames: 146 }
+  a000_3005: { direction: diag_r_up, magnitude: 1.0955, duration: 1.8s, window: "14-19", frames: 54 }
+  a000_3006: { direction: thrust, magnitude: 2.5224, duration: 3.567s, window: "45-49", frames: 107 }
+  a000_3008: { direction: thrust, magnitude: 0.5355, duration: 2.033s, window: "13-19", frames: 61 }
+  a000_3009: { direction: uppercut, magnitude: 0.7877, duration: 3.767s, window: "5-15", frames: 113 }
+  a000_3011: { direction: spin, magnitude: 0.7745, duration: 2.167s, window: "11-16", frames: 65 }
+  a000_3012: { direction: spin, magnitude: 0.8314, duration: 2.3s, window: "31-39", frames: 69 }
+  a000_3014: { direction: thrust, magnitude: 2.0975, duration: 2.467s, window: "30-34", frames: 74 }
+  a000_3015: { direction: thrust, magnitude: 0.5433, duration: 2.3s, window: "1-7", frames: 69 }
+  a000_3016: { direction: thrust, magnitude: 1.1225, duration: 3.5s, window: "41-53", frames: 105 }
+  a000_3017: { direction: spin, magnitude: 0.1176, duration: 1.667s, window: "5-14", frames: 50 }
+  a000_3021: { direction: spin, magnitude: 1.4174, duration: 2.267s, window: "22-32", frames: 68 }
+  a000_3022: { direction: spin, magnitude: 1.2532, duration: 2.7s, window: "22-34", frames: 81 }
+  a000_3023: { direction: right_to_left, magnitude: 1.1418, duration: 1.4s, window: "15-20", frames: 42 }
+  a000_3025: { direction: spin, magnitude: 0.789, duration: 2.833s, window: "23-28", frames: 85 }
+  a000_3026: { direction: thrust, magnitude: 0.8842, duration: 1.5s, window: "20-24", frames: 45 }
+  a000_3027: { direction: spin, magnitude: 0.9694, duration: 1.5s, window: "14-22", frames: 45 }
+  a000_3028: { direction: spin, magnitude: 1.137, duration: 2.0s, window: "4-9", frames: 60 }
+  a000_3031: { direction: thrust, magnitude: 0.7526, duration: 2.033s, window: "25-30", frames: 61 }
+  a000_3032: { direction: diag_l_up, magnitude: 0.7974, duration: 1.533s, window: "9-15", frames: 46 }
+  a000_3036: { direction: diag_l_down, magnitude: 0.2567, duration: 2.567s, window: "68-76", frames: 77 }
+
+c4290:  # 19 attacks
+  a000_3000: { direction: spin, magnitude: 1.5035, duration: 4.467s, window: "32-41", frames: 134 }
+  a000_3001: { direction: spin, magnitude: 0.8167, duration: 4.033s, window: "26-34", frames: 121 }
+  a000_3002: { direction: thrust, magnitude: 2.1589, duration: 3.133s, window: "27-33", frames: 94 }
+  a000_3003: { direction: spin, magnitude: 0.5525, duration: 2.867s, window: "11-24", frames: 86 }
+  a000_3004: { direction: thrust, magnitude: 0.8126, duration: 2.033s, window: "18-23", frames: 61 }
+  a000_3005: { direction: spin, magnitude: 1.4359, duration: 2.6s, window: "9-17", frames: 78 }
+  a000_3006: { direction: spin, magnitude: 0.657, duration: 3.167s, window: "27-39", frames: 95 }
+  a000_3007: { direction: thrust, magnitude: 2.2347, duration: 8.867s, window: "147-156", frames: 266 }
+  a000_3008: { direction: thrust, magnitude: 1.867, duration: 3.167s, window: "22-26", frames: 95 }
+  a000_3009: { direction: spin, magnitude: 0.5602, duration: 3.0s, window: "12-27", frames: 90 }
+  a000_3010: { direction: thrust, magnitude: 1.8465, duration: 2.833s, window: "12-19", frames: 85 }
+  a000_3011: { direction: thrust, magnitude: 1.4603, duration: 3.267s, window: "42-46", frames: 98 }
+  a000_3012: { direction: thrust, magnitude: 1.4313, duration: 3.667s, window: "31-35", frames: 110 }
+  a000_3013: { direction: thrust, magnitude: 2.387, duration: 2.833s, window: "12-20", frames: 85 }
+  a000_3015: { direction: diag_r_up, magnitude: 1.2367, duration: 1.9s, window: "7-17", frames: 57 }
+  a000_3016: { direction: spin, magnitude: 1.7785, duration: 2.6s, window: "16-27", frames: 78 }
+  a000_3017: { direction: diag_r_up, magnitude: 0.694, duration: 2.167s, window: "15-20", frames: 65 }
+  a000_3018: { direction: thrust, magnitude: 1.0503, duration: 2.167s, window: "14-28", frames: 65 }
+  a000_3020: { direction: spin, magnitude: 1.5635, duration: 2.033s, window: "1-11", frames: 61 }
+
+c4310:  # 31 attacks
+  a000_3000: { direction: right_to_left, magnitude: 2.235, duration: 1.9s, window: "16-22", frames: 57 }
+  a000_3001: { direction: diag_l_down, magnitude: 2.0694, duration: 1.367s, window: "11-16", frames: 41 }
+  a000_3002: { direction: diag_r_down, magnitude: 2.3204, duration: 1.767s, window: "23-27", frames: 53 }
+  a000_3003: { direction: thrust, magnitude: 1.8377, duration: 2.133s, window: "28-31", frames: 64 }
+  a000_3004: { direction: thrust, magnitude: 2.3005, duration: 2.433s, window: "24-29", frames: 73 }
+  a000_3005: { direction: thrust, magnitude: 1.0811, duration: 1.3s, window: "6-10", frames: 39 }
+  a000_3006: { direction: diag_l_down, magnitude: 2.0205, duration: 1.5s, window: "15-20", frames: 45 }
+  a000_3007: { direction: thrust, magnitude: 0.958, duration: 2.167s, window: "33-39", frames: 65 }
+  a000_3008: { direction: thrust, magnitude: 1.6819, duration: 2.467s, window: "26-30", frames: 74 }
+  a000_3009: { direction: thrust, magnitude: 2.3649, duration: 2.4s, window: "33-38", frames: 72 }
+  a000_3010: { direction: thrust, magnitude: 1.4697, duration: 1.633s, window: "1-6", frames: 49 }
+  a000_3011: { direction: left_to_right, magnitude: 1.7563, duration: 2.067s, window: "26-31", frames: 62 }
+  a000_3012: { direction: thrust, magnitude: 0.9535, duration: 3.667s, window: "6-12", frames: 110 }
+  a000_3013: { direction: right_to_left, magnitude: 1.9109, duration: 2.8s, window: "35-39", frames: 84 }
+  a000_3015: { direction: spin, magnitude: 1.1076, duration: 5.467s, window: "140-153", frames: 164 }
+  a000_3016: { direction: spin, magnitude: 1.0708, duration: 5.667s, window: "146-159", frames: 170 }
+  a000_3017: { direction: spin, magnitude: 1.1101, duration: 5.667s, window: "146-159", frames: 170 }
+  a000_3018: { direction: spin, magnitude: 1.0777, duration: 5.467s, window: "140-153", frames: 164 }
+  a000_3020: { direction: spin, magnitude: 1.0215, duration: 7.1s, window: "190-202", frames: 213 }
+  a000_3021: { direction: spin, magnitude: 1.0103, duration: 7.1s, window: "190-202", frames: 213 }
+  a000_3022: { direction: spin, magnitude: 1.0272, duration: 7.1s, window: "190-202", frames: 213 }
+  a000_3023: { direction: uppercut, magnitude: 1.6239, duration: 2.433s, window: "7-17", frames: 73 }
+  a000_3024: { direction: thrust, magnitude: 0.622, duration: 1.333s, window: "11-31", frames: 40 }
+  a000_3025: { direction: thrust, magnitude: 1.4809, duration: 3.367s, window: "40-49", frames: 101 }
+  a000_3026: { direction: thrust, magnitude: 0.1355, duration: 1.367s, window: "1-7", frames: 41 }
+  a000_3027: { direction: left_to_right, magnitude: 0.1055, duration: 1.367s, window: "22-29", frames: 41 }
+  a000_3028: { direction: thrust, magnitude: 0.184, duration: 1.367s, window: "1-11", frames: 41 }
+  a000_3030: { direction: diag_r_up, magnitude: 1.536, duration: 8.033s, window: "7-25", frames: 241 }
+  a000_3031: { direction: right_to_left, magnitude: 0.7527, duration: 8.833s, window: "58-91", frames: 265 }
+  a000_3034: { direction: thrust, magnitude: 0.3851, duration: 1.3s, window: "25-37", frames: 39 }
+  a000_3035: { direction: thrust, magnitude: 0.4341, duration: 1.3s, window: "2-14", frames: 39 }
+
+c4320:  # 13 attacks
+  a000_3000: { direction: diag_r_down, magnitude: 2.8512, duration: 3.067s, window: "28-31", frames: 92 }
+  a000_3001: { direction: overhead, magnitude: 2.5743, duration: 3.367s, window: "30-36", frames: 101 }
+  a000_3002: { direction: spin, magnitude: 1.1214, duration: 2.933s, window: "25-32", frames: 88 }
+  a000_3003: { direction: thrust, magnitude: 1.2064, duration: 2.433s, window: "24-28", frames: 73 }
+  a000_3004: { direction: thrust, magnitude: 1.6961, duration: 1.467s, window: "10-16", frames: 44 }
+  a000_3010: { direction: spin, magnitude: 1.8078, duration: 2.7s, window: "27-33", frames: 81 }
+  a000_3011: { direction: spin, magnitude: 0.6827, duration: 2.3s, window: "20-32", frames: 69 }
+  a000_3012: { direction: spin, magnitude: 1.3643, duration: 2.9s, window: "39-45", frames: 87 }
+  a000_3013: { direction: thrust, magnitude: 1.3998, duration: 2.567s, window: "16-24", frames: 77 }
+  a000_3016: { direction: diag_r_down, magnitude: 2.4211, duration: 2.567s, window: "18-24", frames: 77 }
+  a000_3020: { direction: thrust, magnitude: 2.7574, duration: 2.567s, window: "25-33", frames: 77 }
+  a000_3030: { direction: right_to_left, magnitude: 0.8837, duration: 5.133s, window: "3-11", frames: 154 }
+  a000_3035: { direction: diag_r_up, magnitude: 2.5344, duration: 3.6s, window: "36-41", frames: 108 }
+
+c4340:  # 23 attacks
+  a000_3000: { direction: thrust, magnitude: 1.754, duration: 2.833s, window: "13-22", frames: 85 }
+  a000_3001: { direction: thrust, magnitude: 1.6803, duration: 3.233s, window: "27-34", frames: 97 }
+  a000_3002: { direction: thrust, magnitude: 1.8055, duration: 3.8s, window: "45-53", frames: 114 }
+  a000_3003: { direction: thrust, magnitude: 2.528, duration: 3.133s, window: "23-28", frames: 94 }
+  a000_3004: { direction: thrust, magnitude: 0.8409, duration: 2.833s, window: "19-24", frames: 85 }
+  a000_3005: { direction: thrust, magnitude: 0.6352, duration: 2.8s, window: "26-30", frames: 84 }
+  a000_3006: { direction: thrust, magnitude: 2.5213, duration: 3.9s, window: "49-58", frames: 117 }
+  a000_3007: { direction: overhead, magnitude: 1.7991, duration: 3.367s, window: "61-65", frames: 101 }
+  a000_3009: { direction: thrust, magnitude: 1.4071, duration: 4.567s, window: "86-93", frames: 137 }
+  a000_3010: { direction: right_to_left, magnitude: 0.7099, duration: 5.533s, window: "61-66", frames: 166 }
+  a000_3011: { direction: uppercut, magnitude: 0.6202, duration: 7.6s, window: "20-26", frames: 228 }
+  a000_3012: { direction: thrust, magnitude: 1.5709, duration: 2.867s, window: "38-43", frames: 86 }
+  a000_3013: { direction: thrust, magnitude: 1.3691, duration: 4.167s, window: "43-53", frames: 125 }
+  a000_3014: { direction: thrust, magnitude: 0.818, duration: 2.367s, window: "13-17", frames: 71 }
+  a000_3015: { direction: left_to_right, magnitude: 0.7135, duration: 2.8s, window: "26-30", frames: 84 }
+  a000_3016: { direction: thrust, magnitude: 0.9165, duration: 2.8s, window: "26-30", frames: 84 }
+  a000_3017: { direction: thrust, magnitude: 2.2884, duration: 2.7s, window: "16-23", frames: 81 }
+  a000_3018: { direction: diag_r_up, magnitude: 1.5431, duration: 2.067s, window: "18-24", frames: 62 }
+  a000_3019: { direction: spin, magnitude: 1.3779, duration: 3.3s, window: "46-53", frames: 99 }
+  a000_3024: { direction: uppercut, magnitude: 1.8799, duration: 3.133s, window: "39-46", frames: 94 }
+  a000_3025: { direction: spin, magnitude: 1.1739, duration: 2.467s, window: "23-30", frames: 74 }
+  a000_4100: { direction: thrust, magnitude: 0.6907, duration: 4.333s, window: "69-73", frames: 130 }
+  a000_4101: { direction: diag_r_down, magnitude: 0.6449, duration: 1.233s, window: "1-16", frames: 37 }
+
+c4350:  # 28 attacks
+  a000_3000: { direction: diag_r_down, magnitude: 1.7012, duration: 2.433s, window: "12-17", frames: 73 }
+  a000_3001: { direction: thrust, magnitude: 1.5264, duration: 2.133s, window: "17-23", frames: 64 }
+  a000_3002: { direction: thrust, magnitude: 2.0606, duration: 2.433s, window: "20-23", frames: 73 }
+  a000_3003: { direction: thrust, magnitude: 0.6514, duration: 2.1s, window: "17-22", frames: 63 }
+  a000_3004: { direction: thrust, magnitude: 1.884, duration: 2.033s, window: "23-28", frames: 61 }
+  a000_3005: { direction: diag_r_down, magnitude: 1.9206, duration: 3.633s, window: "43-49", frames: 109 }
+  a000_3006: { direction: thrust, magnitude: 1.5364, duration: 3.233s, window: "35-38", frames: 97 }
+  a000_3007: { direction: overhead, magnitude: 2.0187, duration: 6.433s, window: "61-68", frames: 193 }
+  a000_3008: { direction: overhead, magnitude: 2.2484, duration: 6.433s, window: "60-68", frames: 193 }
+  a000_3009: { direction: thrust, magnitude: 1.8398, duration: 2.367s, window: "23-27", frames: 71 }
+  a000_3010: { direction: right_to_left, magnitude: 1.5683, duration: 3.233s, window: "35-40", frames: 97 }
+  a000_3011: { direction: thrust, magnitude: 2.6578, duration: 2.233s, window: "24-28", frames: 67 }
+  a000_3014: { direction: thrust, magnitude: 1.6879, duration: 6.067s, window: "115-125", frames: 182 }
+  a000_3020: { direction: diag_r_up, magnitude: 0.5763, duration: 0.7s, window: "1-6", frames: 21 }
+  a000_3021: { direction: thrust, magnitude: 1.4566, duration: 3.367s, window: "40-49", frames: 101 }
+  a000_3022: { direction: thrust, magnitude: 2.5234, duration: 5.1s, window: "78-86", frames: 153 }
+  a000_3023: { direction: overhead, magnitude: 2.3051, duration: 3.767s, window: "36-43", frames: 113 }
+  a000_3024: { direction: thrust, magnitude: 2.4132, duration: 2.367s, window: "27-33", frames: 71 }
+  a000_3026: { direction: thrust, magnitude: 0.6451, duration: 3.133s, window: "5-12", frames: 94 }
+  a000_3029: { direction: diag_r_down, magnitude: 2.4876, duration: 3.367s, window: "41-45", frames: 101 }
+  a000_3030: { direction: right_to_left, magnitude: 0.9856, duration: 2.033s, window: "25-34", frames: 61 }
+  a000_3031: { direction: thrust, magnitude: 1.4102, duration: 1.767s, window: "1-10", frames: 53 }
+  a000_3032: { direction: thrust, magnitude: 0.7904, duration: 2.167s, window: "11-13", frames: 65 }
+  a000_3033: { direction: thrust, magnitude: 1.8555, duration: 3.5s, window: "43-48", frames: 105 }
+  a000_3034: { direction: thrust, magnitude: 1.735, duration: 2.333s, window: "32-36", frames: 70 }
+  a000_3036: { direction: diag_r_up, magnitude: 0.8032, duration: 2.433s, window: "1-3", frames: 73 }
+  a000_3037: { direction: uppercut, magnitude: 1.4995, duration: 2.433s, window: "7-17", frames: 73 }
+  a000_3100: { direction: left_to_right, magnitude: 0.5176, duration: 1.1s, window: "1-6", frames: 33 }
+
+c4370:  # 20 attacks
+  a000_3000: { direction: thrust, magnitude: 2.4164, duration: 2.433s, window: "29-33", frames: 73 }
+  a000_3001: { direction: thrust, magnitude: 1.7109, duration: 2.167s, window: "26-35", frames: 65 }
+  a000_3005: { direction: thrust, magnitude: 0.2841, duration: 3.767s, window: "27-31", frames: 113 }
+  a000_3006: { direction: thrust, magnitude: 0.6392, duration: 0.867s, window: "1-3", frames: 26 }
+  a000_3010: { direction: thrust, magnitude: 2.4068, duration: 2.3s, window: "23-29", frames: 69 }
+  a000_3011: { direction: left_to_right, magnitude: 1.7427, duration: 2.167s, window: "15-19", frames: 65 }
+  a000_3012: { direction: diag_r_down, magnitude: 2.0314, duration: 3.1s, window: "41-45", frames: 93 }
+  a000_3013: { direction: overhead, magnitude: 2.483, duration: 3.1s, window: "47-52", frames: 93 }
+  a000_3014: { direction: spin, magnitude: 1.3844, duration: 2.967s, window: "39-44", frames: 89 }
+  a000_3015: { direction: diag_l_up, magnitude: 2.3749, duration: 2.033s, window: "20-25", frames: 61 }
+  a000_3016: { direction: thrust, magnitude: 2.3297, duration: 6.433s, window: "45-50", frames: 193 }
+  a000_3020: { direction: left_to_right, magnitude: 1.5327, duration: 1.9s, window: "22-26", frames: 57 }
+  a000_3021: { direction: left_to_right, magnitude: 1.7866, duration: 4.033s, window: "87-92", frames: 121 }
+  a000_3023: { direction: thrust, magnitude: 2.0347, duration: 1.1s, window: "8-12", frames: 33 }
+  a000_3024: { direction: spin, magnitude: 1.0202, duration: 1.767s, window: "28-33", frames: 53 }
+  a000_3025: { direction: thrust, magnitude: 1.974, duration: 1.767s, window: "27-31", frames: 53 }
+  a000_3026: { direction: thrust, magnitude: 1.6529, duration: 1.7s, window: "22-25", frames: 51 }
+  a000_3028: { direction: thrust, magnitude: 0.5037, duration: 3.367s, window: "40-45", frames: 101 }
+  a000_3030: { direction: thrust, magnitude: 1.1735, duration: 7.767s, window: "180-203", frames: 233 }
+  a000_3033: { direction: thrust, magnitude: 1.1361, duration: 6.167s, window: "131-155", frames: 185 }
+
+c4380:  # 17 attacks
+  a000_3000: { direction: diag_r_down, magnitude: 1.8686, duration: 2.667s, window: "24-28", frames: 80 }
+  a000_3001: { direction: overhead, magnitude: 2.108, duration: 5.1s, window: "57-60", frames: 153 }
+  a000_3002: { direction: right_to_left, magnitude: 1.5289, duration: 2.633s, window: "26-30", frames: 79 }
+  a000_3003: { direction: diag_l_up, magnitude: 1.7643, duration: 2.867s, window: "19-25", frames: 86 }
+  a000_3004: { direction: thrust, magnitude: 2.7869, duration: 4.833s, window: "40-45", frames: 145 }
+  a000_3005: { direction: thrust, magnitude: 1.5835, duration: 2.167s, window: "26-30", frames: 65 }
+  a000_3006: { direction: thrust, magnitude: 1.662, duration: 4.967s, window: "63-83", frames: 149 }
+  a000_3007: { direction: thrust, magnitude: 1.3193, duration: 2.7s, window: "25-44", frames: 81 }
+  a000_3009: { direction: overhead, magnitude: 2.1789, duration: 3.933s, window: "23-26", frames: 118 }
+  a000_3010: { direction: thrust, magnitude: 2.9578, duration: 4.167s, window: "21-26", frames: 125 }
+  a000_3011: { direction: thrust, magnitude: 2.1502, duration: 2.567s, window: "15-21", frames: 77 }
+  a000_3012: { direction: thrust, magnitude: 2.7012, duration: 2.567s, window: "18-24", frames: 77 }
+  a000_3013: { direction: thrust, magnitude: 2.1334, duration: 3.233s, window: "27-31", frames: 97 }
+  a000_3015: { direction: overhead, magnitude: 2.0188, duration: 4.433s, window: "36-41", frames: 133 }
+  a000_3016: { direction: diag_r_down, magnitude: 1.7852, duration: 4.033s, window: "46-49", frames: 121 }
+  a000_3017: { direction: diag_r_down, magnitude: 2.2501, duration: 3.767s, window: "39-43", frames: 113 }
+  a000_3018: { direction: diag_r_down, magnitude: 2.1643, duration: 3.367s, window: "33-37", frames: 101 }
+
+c5830:  # 17 attacks
+  a000_3000: { direction: diag_r_down, magnitude: 1.4519, duration: 2.033s, window: "16-20", frames: 61 }
+  a000_3001: { direction: thrust, magnitude: 1.3148, duration: 1.767s, window: "13-18", frames: 53 }
+  a000_3002: { direction: spin, magnitude: 0.8185, duration: 1.933s, window: "12-18", frames: 58 }
+  a000_3003: { direction: thrust, magnitude: 2.0824, duration: 2.4s, window: "29-34", frames: 72 }
+  a000_3004: { direction: thrust, magnitude: 1.9901, duration: 2.867s, window: "26-30", frames: 86 }
+  a000_3005: { direction: thrust, magnitude: 1.9341, duration: 3.0s, window: "26-31", frames: 90 }
+  a000_3006: { direction: thrust, magnitude: 0.2026, duration: 2.0s, window: "13-16", frames: 60 }
+  a000_3007: { direction: overhead, magnitude: 1.8748, duration: 3.767s, window: "50-53", frames: 113 }
+  a000_3008: { direction: thrust, magnitude: 0.9438, duration: 2.867s, window: "25-32", frames: 86 }
+  a000_3009: { direction: overhead, magnitude: 1.8624, duration: 3.767s, window: "50-53", frames: 113 }
+  a000_3010: { direction: thrust, magnitude: 0.2809, duration: 2.433s, window: "29-34", frames: 73 }
+  a000_3012: { direction: thrust, magnitude: 0.8794, duration: 2.167s, window: "33-39", frames: 65 }
+  a000_3015: { direction: spin, magnitude: 1.0541, duration: 5.467s, window: "140-153", frames: 164 }
+  a000_3016: { direction: spin, magnitude: 1.0295, duration: 5.667s, window: "146-159", frames: 170 }
+  a000_3017: { direction: spin, magnitude: 1.0372, duration: 5.667s, window: "146-159", frames: 170 }
+  a000_3018: { direction: spin, magnitude: 1.0042, duration: 5.467s, window: "140-154", frames: 164 }
+  a000_3021: { direction: spin, magnitude: 1.0517, duration: 7.1s, window: "190-202", frames: 213 }
+
+c5840:  # 12 attacks
+  a000_3000: { direction: diag_r_down, magnitude: 1.8383, duration: 2.4s, window: "20-24", frames: 72 }
+  a000_3001: { direction: overhead, magnitude: 1.4508, duration: 2.733s, window: "21-25", frames: 82 }
+  a000_3002: { direction: spin, magnitude: 1.2814, duration: 2.833s, window: "25-35", frames: 85 }
+  a000_3003: { direction: diag_r_up, magnitude: 1.9983, duration: 3.367s, window: "32-38", frames: 101 }
+  a000_3004: { direction: diag_r_down, magnitude: 2.0862, duration: 3.9s, window: "49-54", frames: 117 }
+  a000_3005: { direction: right_to_left, magnitude: 0.7095, duration: 2.1s, window: "17-22", frames: 63 }
+  a000_3006: { direction: diag_r_down, magnitude: 2.0326, duration: 3.233s, window: "30-34", frames: 97 }
+  a000_3007: { direction: thrust, magnitude: 0.5067, duration: 2.167s, window: "30-36", frames: 65 }
+  a000_3008: { direction: diag_r_up, magnitude: 0.6855, duration: 6.333s, window: "39-51", frames: 190 }
+  a000_3010: { direction: thrust, magnitude: 0.4598, duration: 1.9s, window: "14-20", frames: 57 }
+  a000_3015: { direction: uppercut, magnitude: 1.1196, duration: 3.8s, window: "51-58", frames: 114 }
+  a000_3016: { direction: diag_r_up, magnitude: 0.8122, duration: 2.433s, window: "1-3", frames: 73 }
