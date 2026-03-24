@@ -248,6 +248,54 @@ void ASLFEnemyGeneric::Tick(float DeltaTime)
 	USkeletalMeshComponent* MeshComp = GetMesh();
 	if (!MeshComp) return;
 
+	// One-time bone diagnostic (tick 10)
+	if (TicksAfterBeginPlay == 10)
+	{
+		TArray<FName> DiagBones = {
+			FName("R_Hand"), FName("L_Hand"),
+			FName("R_Sword"), FName("L_Shield"),
+			FName("R_Finger02"), FName("L_Finger02"),
+			FName("R_Forearm"), FName("L_Forearm"),
+			FName("Pelvis"), FName("Master")
+		};
+		for (const FName& BoneName : DiagBones)
+		{
+			int32 BoneIdx = MeshComp->GetBoneIndex(BoneName);
+			if (BoneIdx != INDEX_NONE)
+			{
+				FVector WorldPos = MeshComp->GetBoneLocation(BoneName);
+				FVector ActorLoc = GetActorLocation();
+				FVector Relative = WorldPos - ActorLoc;
+				UE_LOG(LogTemp, Warning, TEXT("[BONE DIAG] %s: bone=%s idx=%d world=(%.0f,%.0f,%.0f) relative=(%.0f,%.0f,%.0f)"),
+					*GetName(), *BoneName.ToString(), BoneIdx,
+					WorldPos.X, WorldPos.Y, WorldPos.Z,
+					Relative.X, Relative.Y, Relative.Z);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[BONE DIAG] %s: bone=%s NOT FOUND"), *GetName(), *BoneName.ToString());
+			}
+		}
+
+		// Check ref pose for R_Hand vs R_Finger02
+		if (USkeletalMesh* SkelMesh = MeshComp->GetSkeletalMeshAsset())
+		{
+			const FReferenceSkeleton& RefSkel = SkelMesh->GetRefSkeleton();
+			for (const FName& BoneName : DiagBones)
+			{
+				int32 Idx = RefSkel.FindBoneIndex(BoneName);
+				if (Idx != INDEX_NONE)
+				{
+					FTransform RefPose = RefSkel.GetRefBonePose()[Idx];
+					UE_LOG(LogTemp, Warning, TEXT("[REF POSE] %s: bone=%s pos=(%.1f,%.1f,%.1f) rot=(%.3f,%.3f,%.3f,%.3f)"),
+						*GetName(), *BoneName.ToString(),
+						RefPose.GetLocation().X, RefPose.GetLocation().Y, RefPose.GetLocation().Z,
+						RefPose.GetRotation().X, RefPose.GetRotation().Y, RefPose.GetRotation().Z, RefPose.GetRotation().W);
+				}
+			}
+		}
+	}
+
 	// Deferred AnimBP application (Bug #8: mesh change nulls AnimInstance)
 	if (!bAnimBPApplied && TicksAfterBeginPlay > 5)
 	{
