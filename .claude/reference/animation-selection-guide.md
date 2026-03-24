@@ -111,12 +111,54 @@ The Root bone Y translation maxes out at ~0.5 units even for animations that vis
 ### Quadruped animations on humanoid rigs
 Some ER characters (Carian Knight dodges, some Grafted Scion anims) produce quadruped-looking motion when retargeted to a standard humanoid skeleton. Always preview before committing.
 
+## V2 Pipeline: Direct Import + Forensic Post-Processing
+
+The streamlined pipeline (v2) skips ARP retarget entirely. Cleaner results, fewer distortion issues, stronger forensic profile.
+
+### Quick Reference (full enemy in ~15 minutes)
+```bash
+# 1. Pick attacks from catalogs, extract into rigged.blend via Blender
+#    (use extract_animations.py import_animation_to_action)
+
+# 2. User reviews rigged.blend in Action Editor, approves animations
+
+# 3. Pre-forensic: strip translations, weapon fcurves, mirror lower body
+blender --background --python pre_forensic_processing.py -- --enemy <name>
+
+# 4. Full forensic: 13 transforms + rotation-space noise
+blender --background --python apply_forensic_transforms.py -- --enemy <name>
+
+# 5. Auto-generate hitbox timing from hand velocity
+blender --background --python generate_hitbox_timing.py -- --enemy <name>
+
+# 6. Export animation-only FBX (armature only, NO mesh)
+
+# 7. Import to UE5
+UnrealEditor-Cmd.exe SLFConversion.uproject -run=SetupBatchEnemy -name=<name>
+```
+
+### Forensic Safety: 9/10
+- 13 transforms (offset, phase shift, noise, low-pass, time warp, speed, resample, decimation, prune, rest pose, bone rename)
+- Pre-forensic strip (translations zeroed, weapon/hand/finger fcurves deleted — irrecoverable)
+- Lower-body L/R mirror on 50% of animations
+- Rotation-space noise (2° max) — changes motion direction, not just magnitude
+- Multi-source mixing (5+ ER enemies per character)
+
+### Critical Rules
+- **FBX must be animation-only** (armature, no mesh) for UE5 Interchange importer
+- **Animations are 24fps** after forensic resample — hitbox timing must account for this
+- **Dodges need root motion enabled** (`bForceRootLock=false, bEnableRootMotion=true`)
+- **Use different ER sources per enemy** for forensic mixing
+
 ## Scripts Reference
 
 | Script | Purpose |
 |--------|---------|
 | `swing_partial/enhanced_analysis.py` | Generate swing_catalog.yaml (R_Hand direction + combat context) |
 | `swing_partial/find_root_movement.py` | Generate root_movement_results.txt (reference_frame_samples displacement) |
-| `swing_partial/full_analysis.py` | Original swing analysis (superseded by enhanced) |
-| `extract_animations.py` | Extract HKX → Blender actions with root motion baked to object location |
-| `build_combo_preview.py` | Build NLA-stitched combo previews for visual validation |
+| `test_meshes/pre_forensic_processing.py` | Strip translations, weapon fcurves, mirror lower body |
+| `test_meshes/apply_forensic_transforms.py` | 13 forensic transforms (uses mesh_animation_pipeline.py) |
+| `test_meshes/generate_hitbox_timing.py` | Auto-generate tae_hitboxes.json from hand velocity |
+| `test_meshes/remove_fingers.py` | Remove finger geometry (use carefully) |
+| `mesh_animation_pipeline.py` | Core forensic transform functions (13 transforms) |
+| `extract_animations.py` | Extract HKX → Blender actions with root motion |
