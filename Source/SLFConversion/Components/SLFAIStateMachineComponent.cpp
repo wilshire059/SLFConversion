@@ -1254,7 +1254,7 @@ bool USLFAIStateMachineComponent::TryDodge()
 		if (ACharacter* Char = Cast<ACharacter>(CachedPawn.Get()))
 		{
 			FVector BackDir = -CachedPawn->GetActorForwardVector();
-			FVector Impulse = BackDir * 150.0f;
+			FVector Impulse = BackDir * 400.0f;
 			Char->LaunchCharacter(Impulse, true, false);
 			UE_LOG(LogTemp, Warning, TEXT("[DODGE] %s: Impulse=(%.0f, %.0f, %.0f) Dir=(%.2f, %.2f, %.2f)"),
 				*PawnName, Impulse.X, Impulse.Y, Impulse.Z, BackDir.X, BackDir.Y, BackDir.Z);
