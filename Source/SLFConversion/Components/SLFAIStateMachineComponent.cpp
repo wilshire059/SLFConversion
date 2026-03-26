@@ -1250,34 +1250,21 @@ bool USLFAIStateMachineComponent::TryDodge()
 		LastDodgeTime = GetWorld()->GetTimeSeconds();
 		SetCombatSubState(ESLFCombatSubState::Dodging);
 
-		// Disable root motion for this montage — we handle movement manually
-		if (USkeletalMeshComponent* MeshComp = CachedPawn->FindComponentByClass<USkeletalMeshComponent>())
-		{
-			MeshComp->SetRootMotionMode(ERootMotionMode::IgnoreRootMotion);
-		}
-
 		// Apply a small backward impulse (150 units — about 1.5m, subtle backstep)
+		// Root motion is ignored because LaunchCharacter overrides it
 		if (ACharacter* Char = Cast<ACharacter>(CachedPawn.Get()))
 		{
 			FVector BackDir = -CachedPawn->GetActorForwardVector();
 			Char->LaunchCharacter(BackDir * 150.0f, true, false);
 		}
 
-		// Bind montage end to return to Engaging and re-enable root motion
+		// Bind montage end to return to Engaging
 		FOnMontageEnded EndDelegate;
 		EndDelegate.BindLambda([this](UAnimMontage* Montage, bool bInterrupted)
 		{
 			if (CombatSubState == ESLFCombatSubState::Dodging)
 			{
 				SetCombatSubState(ESLFCombatSubState::Engaging);
-			}
-			// Re-enable root motion for attack montages
-			if (CachedPawn.IsValid())
-			{
-				if (USkeletalMeshComponent* MeshComp = CachedPawn->FindComponentByClass<USkeletalMeshComponent>())
-				{
-					MeshComp->SetRootMotionMode(ERootMotionMode::RootMotionFromMontagesOnly);
-				}
 			}
 		});
 		CachedAnimInstance->Montage_SetEndDelegate(EndDelegate, DodgeMontage);
