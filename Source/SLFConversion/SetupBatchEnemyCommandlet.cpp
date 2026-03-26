@@ -1841,17 +1841,19 @@ bool USetupBatchEnemyCommandlet::AddWeaponTracesFromTAE(const FString& DestDir, 
 			LW.DamageMultiplier = 1.0f;
 			LWindows.Add(LW);
 		}
+		// Use hand_l as start socket so trace originates from LEFT hand
+		// (weapon_start socket is on R arm — using it for L trace traces from wrong position)
 		USLFAutomationLibrary::AddMultipleWeaponTracesToMontage(
 			MontagePath,
 			LWindows,
-			120.0f,                 // Same radius as R arm
-			FName("weapon_start"),
-			FName("weapon_end"),
-			300.0f,                 // Same reach as R arm
+			120.0f,
+			FName("hand_l"),        // Start from L hand bone
+			FName("hand_l"),        // End at same (reach mode extends from here)
+			300.0f,
 			DamagePerHit,
 			PoiseDamagePerHit,
 			true,
-			FName("lowerarm_l")
+			FName("lowerarm_l")     // Direction: from L elbow toward L hand
 		);
 
 		UE_LOG(LogTemp, Warning, TEXT("    %s [%s]: %d windows (dual arm, L offset 0.12s) -> %s"),
