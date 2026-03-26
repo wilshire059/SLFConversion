@@ -1,0 +1,288 @@
+{
+  "c3100_a000_003000": [
+    {
+      "start_frame_30fps": 38,
+      "end_frame_30fps": 41,
+      "start_sec": 1.267,
+      "end_sec": 1.367
+    }
+  ],
+  "c3100_a000_003008": [
+    {
+      "start_frame_30fps": 66,
+      "end_frame_30fps": 72,
+      "start_sec": 2.2,
+      "end_sec": 2.4
+    }
+  ],
+  "c3100_a000_003011": [
+    {
+      "start_frame_30fps": 39,
+      "end_frame_30fps": 51,
+      "start_sec": 1.3,
+      "end_sec": 1.7
+    }
+  ],
+  "c3100_a000_003017": [
+    {
+      "start_frame_30fps": 24,
+      "end_frame_30fps": 28,
+      "start_sec": 0.8,
+      "end_sec": 0.933
+    }
+  ],
+  "c3150_a000_003000": [
+    {
+      "start_frame_30fps": 40,
+      "end_frame_30fps": 45,
+      "start_sec": 1.333,
+      "end_sec": 1.5
+    },
+    {
+      "start_frame_30fps": 68,
+      "end_frame_30fps": 76,
+      "start_sec": 2.267,
+      "end_sec": 2.533
+    }
+  ],
+  "c3250_a000_003000": [
+    {
+      "start_frame_30fps": 34,
+      "end_frame_30fps": 39,
+      "start_sec": 1.133,
+      "end_sec": 1.3
+    }
+  ],
+  "c3300_a000_003001": [
+    {
+      "start_frame_30fps": 23,
+      "end_frame_30fps": 27,
+      "start_sec": 0.767,
+      "end_sec": 0.9
+    }
+  ],
+  "c3400_a000_003000": [
+    {
+      "start_frame_30fps": 16,
+      "end_frame_30fps": 19,
+      "start_sec": 0.533,
+      "end_sec": 0.633
+    },
+    {
+      "start_frame_30fps": 16,
+      "end_frame_30fps": 19,
+      "start_sec": 0.533,
+      "end_sec": 0.633
+    }
+  ],
+  "c3400_a000_003001": [
+    {
+      "start_frame_30fps": 28,
+      "end_frame_30fps": 31,
+      "start_sec": 0.933,
+      "end_sec": 1.033
+    },
+    {
+      "start_frame_30fps": 28,
+      "end_frame_30fps": 31,
+      "start_sec": 0.933,
+      "end_sec": 1.033
+    }
+  ],
+  "c3550_a000_003000": [
+    {
+      "start_frame_30fps": 12,
+      "end_frame_30fps": 15,
+      "start_sec": 0.4,
+      "end_sec": 0.5
+    }
+  ],
+  "c3800_a000_003000": [
+    {
+      "start_frame_30fps": 18,
+      "end_frame_30fps": 23,
+      "start_sec": 0.6,
+      "end_sec": 0.767
+    }
+  ],
+  "c3900_a000_003000": [
+    {
+      "start_frame_30fps": 27,
+      "end_frame_30fps": 30,
+      "start_sec": 0.9,
+      "end_sec": 1.0
+    }
+  ],
+  "c3910_a000_003000": [
+    {
+      "start_frame_30fps": 72,
+      "end_frame_30fps": 75,
+      "start_sec": 2.4,
+      "end_sec": 2.5
+    }
+  ],
+  "c3910_a000_003010": [
+    {
+      "start_frame_30fps": 40,
+      "end_frame_30fps": 44,
+      "start_sec": 1.333,
+      "end_sec": 1.467
+    }
+  ],
+  "c3950_a000_003002": [
+    {
+      "start_frame_30fps": 39,
+      "end_frame_30fps": 48,
+      "start_sec": 1.3,
+      "end_sec": 1.6
+    },
+    {
+      "start_frame_30fps": 39,
+      "end_frame_30fps": 48,
+      "start_sec": 1.3,
+      "end_sec": 1.6
+    },
+    {
+      "start_frame_30fps": 39,
+      "end_frame_30fps": 48,
+      "start_sec": 1.3,
+      "end_sec": 1.6
+    }
+  ],
+  "c3970_a000_003000": [
+    {
+      "start_frame_30fps": 32,
+      "end_frame_30fps": 35,
+      "start_sec": 1.067,
+      "end_sec": 1.167
+    },
+    {
+      "start_frame_30fps": 32,
+      "end_frame_30fps": 35,
+      "start_sec": 1.067,
+      "end_sec": 1.167
+    }
+  ],
+  "c4050_a000_003000": [
+    {
+      "start_frame_30fps": 22,
+      "end_frame_30fps": 25,
+      "start_sec": 0.733,
+      "end_sec": 0.833
+    }
+  ],
+  "c4270_a000_003005": [
+    {
+      "start_frame_30fps": 25,
+      "end_frame_30fps": 32,
+      "start_sec": 0.833,
+      "end_sec": 1.067
+    }
+  ],
+  "c4290_a000_003000": [
+    {
+      "start_frame_30fps": 47,
+      "end_frame_30fps": 50,
+      "start_sec": 1.567,
+      "end_sec": 1.667
+    }
+  ],
+  "c4310_a000_003003": [
+    {
+      "start_frame_30fps": 35,
+      "end_frame_30fps": 39,
+      "start_sec": 1.167,
+      "end_sec": 1.3
+    },
+    {
+      "start_frame_30fps": 35,
+      "end_frame_30fps": 39,
+      "start_sec": 1.167,
+      "end_sec": 1.3
+    },
+    {
+      "start_frame_30fps": 35,
+      "end_frame_30fps": 39,
+      "start_sec": 1.167,
+      "end_sec": 1.3
+    }
+  ],
+  "c4340_a000_003001": [
+    {
+      "start_frame_30fps": 40,
+      "end_frame_30fps": 44,
+      "start_sec": 1.333,
+      "end_sec": 1.467
+    },
+    {
+      "start_frame_30fps": 65,
+      "end_frame_30fps": 68,
+      "start_sec": 2.167,
+      "end_sec": 2.267
+    },
+    {
+      "start_frame_30fps": 40,
+      "end_frame_30fps": 44,
+      "start_sec": 1.333,
+      "end_sec": 1.467
+    },
+    {
+      "start_frame_30fps": 65,
+      "end_frame_30fps": 68,
+      "start_sec": 2.167,
+      "end_sec": 2.267
+    }
+  ],
+  "c4350_a000_003002": [
+    {
+      "start_frame_30fps": 27,
+      "end_frame_30fps": 30,
+      "start_sec": 0.9,
+      "end_sec": 1.0
+    },
+    {
+      "start_frame_30fps": 27,
+      "end_frame_30fps": 30,
+      "start_sec": 0.9,
+      "end_sec": 1.0
+    },
+    {
+      "start_frame_30fps": 27,
+      "end_frame_30fps": 30,
+      "start_sec": 0.9,
+      "end_sec": 1.0
+    },
+    {
+      "start_frame_30fps": 27,
+      "end_frame_30fps": 30,
+      "start_sec": 0.9,
+      "end_sec": 1.0
+    },
+    {
+      "start_frame_30fps": 27,
+      "end_frame_30fps": 30,
+      "start_sec": 0.9,
+      "end_sec": 1.0
+    },
+    {
+      "start_frame_30fps": 27,
+      "end_frame_30fps": 30,
+      "start_sec": 0.9,
+      "end_sec": 1.0
+    },
+    {
+      "start_frame_30fps": 27,
+      "end_frame_30fps": 30,
+      "start_sec": 0.9,
+      "end_sec": 1.0
+    }
+  ],
+  "c5840_a000_003002": [
+    {
+      "start_frame_30fps": 37,
+      "end_frame_30fps": 43,
+      "start_sec": 1.233,
+      "end_sec": 1.433
+    }
+  ]
+}
