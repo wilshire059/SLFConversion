@@ -172,13 +172,13 @@ struct FSLFAIConfig
 
 	// === MOVEMENT ===
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float WalkSpeed = 200.0f;
+	float WalkSpeed = 125.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float RunSpeed = 450.0f;
+	float RunSpeed = 300.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float StrafeSpeed = 150.0f;
+	float StrafeSpeed = 100.0f;
 
 	/** Distance beyond which AI sprints instead of walks */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")

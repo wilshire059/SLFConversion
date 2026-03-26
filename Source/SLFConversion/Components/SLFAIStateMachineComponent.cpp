@@ -1241,7 +1241,8 @@ bool USLFAIStateMachineComponent::TryDodge()
 		return false;
 	}
 
-	float MontageLength = CachedAnimInstance->Montage_Play(DodgeMontage, 1.0f);
+	// Play dodge at reduced speed (0.4x) to prevent excessive root motion displacement
+	float MontageLength = CachedAnimInstance->Montage_Play(DodgeMontage, 0.4f);
 	if (MontageLength > 0.0f)
 	{
 		LastDodgeTime = GetWorld()->GetTimeSeconds();
