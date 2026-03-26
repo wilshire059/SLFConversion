@@ -1830,21 +1830,30 @@ bool USetupBatchEnemyCommandlet::AddWeaponTracesFromTAE(const FString& DestDir, 
 			FName("lowerarm_r")
 		);
 
-		// Left arm trace (same windows, dual-wielding enemies)
+		// Left arm trace — offset by 0.12s to match natural swing delay
+		TArray<USLFAutomationLibrary::FWeaponTraceWindow> LWindows;
+		for (const auto& W : Windows)
+		{
+			USLFAutomationLibrary::FWeaponTraceWindow LW;
+			LW.StartTime = W.StartTime + 0.12f;
+			LW.EndTime = W.EndTime + 0.15f;
+			LW.DamageMultiplier = 0.5f; // Half damage to prevent double-dipping
+			LWindows.Add(LW);
+		}
 		USLFAutomationLibrary::AddMultipleWeaponTracesToMontage(
 			MontagePath,
-			Windows,
-			100.0f,                 // Slightly smaller radius for L arm
+			LWindows,
+			100.0f,                 // Slightly smaller radius
 			FName("weapon_start"),
 			FName("weapon_end"),
 			250.0f,                 // Slightly shorter reach
-			DamagePerHit * 0.5f,    // Half damage (prevent double-dipping)
+			DamagePerHit * 0.5f,
 			PoiseDamagePerHit * 0.5f,
 			true,
 			FName("lowerarm_l")
 		);
 
-		UE_LOG(LogTemp, Warning, TEXT("    %s [%s]: %d windows (dual arm) -> %s"),
+		UE_LOG(LogTemp, Warning, TEXT("    %s [%s]: %d windows (dual arm, L offset 0.12s) -> %s"),
 			*MontageName, *AnimId, Windows.Num(), *Result);
 		MontagesProcessed++;
 		if (OutProcessedMontages) OutProcessedMontages->Add(MontageName);

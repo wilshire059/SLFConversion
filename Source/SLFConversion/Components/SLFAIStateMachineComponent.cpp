@@ -1241,15 +1241,29 @@ bool USLFAIStateMachineComponent::TryDodge()
 		return false;
 	}
 
-	// Play dodge at reduced speed (0.15x) to minimize root motion displacement
-	// The dodge animations have 5-8 units of root motion baked in, 0.15x keeps it subtle
-	float MontageLength = CachedAnimInstance->Montage_Play(DodgeMontage, 0.15f);
+	// Play dodge montage at normal speed but disable root motion
+	// Root motion on dodge anims causes excessive displacement (travels across room)
+	// Instead, apply a small backward impulse manually
+	float MontageLength = CachedAnimInstance->Montage_Play(DodgeMontage, 1.0f);
 	if (MontageLength > 0.0f)
 	{
 		LastDodgeTime = GetWorld()->GetTimeSeconds();
 		SetCombatSubState(ESLFCombatSubState::Dodging);
 
-		// Bind montage end to return to Engaging
+		// Disable root motion for this montage — we handle movement manually
+		if (USkeletalMeshComponent* MeshComp = CachedPawn->FindComponentByClass<USkeletalMeshComponent>())
+		{
+			MeshComp->SetRootMotionMode(ERootMotionMode::IgnoreRootMotion);
+		}
+
+		// Apply a small backward impulse (150 units — about 1.5m, subtle backstep)
+		if (ACharacter* Char = Cast<ACharacter>(CachedPawn.Get()))
+		{
+			FVector BackDir = -CachedPawn->GetActorForwardVector();
+			Char->LaunchCharacter(BackDir * 150.0f, true, false);
+		}
+
+		// Bind montage end to return to Engaging and re-enable root motion
 		FOnMontageEnded EndDelegate;
 		EndDelegate.BindLambda([this](UAnimMontage* Montage, bool bInterrupted)
 		{
@@ -1257,10 +1271,18 @@ bool USLFAIStateMachineComponent::TryDodge()
 			{
 				SetCombatSubState(ESLFCombatSubState::Engaging);
 			}
+			// Re-enable root motion for attack montages
+			if (CachedPawn.IsValid())
+			{
+				if (USkeletalMeshComponent* MeshComp = CachedPawn->FindComponentByClass<USkeletalMeshComponent>())
+				{
+					MeshComp->SetRootMotionMode(ERootMotionMode::RootMotionFromMontagesOnly);
+				}
+			}
 		});
 		CachedAnimInstance->Montage_SetEndDelegate(EndDelegate, DodgeMontage);
 
-		UE_LOG(LogTemp, Warning, TEXT("[DODGE] %s: PLAYING %s (%.2fs)"),
+		UE_LOG(LogTemp, Warning, TEXT("[DODGE] %s: PLAYING %s (%.2fs) with 150u backstep impulse"),
 			*PawnName, *DodgeMontage->GetName(), MontageLength);
 		return true;
 	}
