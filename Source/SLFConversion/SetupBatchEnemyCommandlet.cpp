@@ -1816,6 +1816,7 @@ bool USetupBatchEnemyCommandlet::AddWeaponTracesFromTAE(const FString& DestDir, 
 		float DamagePerHit = (Windows.Num() > 1) ? 40.0f : 60.0f;
 		float PoiseDamagePerHit = (Windows.Num() > 1) ? 20.0f : 30.0f;
 
+		// Right arm trace
 		FString Result = USLFAutomationLibrary::AddMultipleWeaponTracesToMontage(
 			MontagePath,
 			Windows,
@@ -1829,7 +1830,21 @@ bool USetupBatchEnemyCommandlet::AddWeaponTracesFromTAE(const FString& DestDir, 
 			FName("lowerarm_r")
 		);
 
-		UE_LOG(LogTemp, Warning, TEXT("    %s [%s]: %d windows -> %s"),
+		// Left arm trace (same windows, dual-wielding enemies)
+		USLFAutomationLibrary::AddMultipleWeaponTracesToMontage(
+			MontagePath,
+			Windows,
+			100.0f,                 // Slightly smaller radius for L arm
+			FName("weapon_start"),
+			FName("weapon_end"),
+			250.0f,                 // Slightly shorter reach
+			DamagePerHit * 0.5f,    // Half damage (prevent double-dipping)
+			PoiseDamagePerHit * 0.5f,
+			true,
+			FName("lowerarm_l")
+		);
+
+		UE_LOG(LogTemp, Warning, TEXT("    %s [%s]: %d windows (dual arm) -> %s"),
 			*MontageName, *AnimId, Windows.Num(), *Result);
 		MontagesProcessed++;
 		if (OutProcessedMontages) OutProcessedMontages->Add(MontageName);
