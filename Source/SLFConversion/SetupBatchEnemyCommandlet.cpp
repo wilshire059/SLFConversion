@@ -530,7 +530,7 @@ int32 USetupBatchEnemyCommandlet::Main(const FString& Params)
 					}
 				}
 			};
-			ImportArray(TEXT("dodges"), TEXT("Dodge"), 4, true);  // Dodges need root motion
+			ImportArray(TEXT("dodges"), TEXT("Dodge"), 4, false);  // No root motion — AI applies controlled impulse
 			ImportArray(TEXT("hit_reacts"), TEXT("HitReact"), 3);
 			ImportArray(TEXT("deaths"), TEXT("Death"), 3);
 

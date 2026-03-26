@@ -1251,11 +1251,13 @@ bool USLFAIStateMachineComponent::TryDodge()
 		SetCombatSubState(ESLFCombatSubState::Dodging);
 
 		// Apply a small backward impulse (150 units — about 1.5m, subtle backstep)
-		// Root motion is ignored because LaunchCharacter overrides it
 		if (ACharacter* Char = Cast<ACharacter>(CachedPawn.Get()))
 		{
 			FVector BackDir = -CachedPawn->GetActorForwardVector();
-			Char->LaunchCharacter(BackDir * 150.0f, true, false);
+			FVector Impulse = BackDir * 150.0f;
+			Char->LaunchCharacter(Impulse, true, false);
+			UE_LOG(LogTemp, Warning, TEXT("[DODGE] %s: Impulse=(%.0f, %.0f, %.0f) Dir=(%.2f, %.2f, %.2f)"),
+				*PawnName, Impulse.X, Impulse.Y, Impulse.Z, BackDir.X, BackDir.Y, BackDir.Z);
 		}
 
 		// Bind montage end to return to Engaging
