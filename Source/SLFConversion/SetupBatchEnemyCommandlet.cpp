@@ -1831,24 +1831,25 @@ bool USetupBatchEnemyCommandlet::AddWeaponTracesFromTAE(const FString& DestDir, 
 		);
 
 		// Left arm trace — offset by 0.12s to match natural swing delay
+		// Full damage on both arms (ER dual-wield does full damage per arm)
 		TArray<USLFAutomationLibrary::FWeaponTraceWindow> LWindows;
 		for (const auto& W : Windows)
 		{
 			USLFAutomationLibrary::FWeaponTraceWindow LW;
 			LW.StartTime = W.StartTime + 0.12f;
 			LW.EndTime = W.EndTime + 0.15f;
-			LW.DamageMultiplier = 0.5f; // Half damage to prevent double-dipping
+			LW.DamageMultiplier = 1.0f;
 			LWindows.Add(LW);
 		}
 		USLFAutomationLibrary::AddMultipleWeaponTracesToMontage(
 			MontagePath,
 			LWindows,
-			100.0f,                 // Slightly smaller radius
+			120.0f,                 // Same radius as R arm
 			FName("weapon_start"),
 			FName("weapon_end"),
-			250.0f,                 // Slightly shorter reach
-			DamagePerHit * 0.5f,
-			PoiseDamagePerHit * 0.5f,
+			300.0f,                 // Same reach as R arm
+			DamagePerHit,
+			PoiseDamagePerHit,
 			true,
 			FName("lowerarm_l")
 		);
